@@ -136,7 +136,7 @@ export default function OnboardingBirthChart({ onComplete }) {
         .ob-mono { font-family: 'JetBrains Mono', monospace; }
         .ob-input {
           width: 100%; background: rgba(255,255,255,0.03); border: 1px solid #2A2833; border-radius: 10px;
-          color: #EDE7DA; padding: 13px 14px 13px 42px; font-size: 15px; outline: none;
+          color: #EDE7DA; padding: 13px 14px 13px 42px; font-size: 16px; outline: none;
           transition: border-color 0.2s ease, background 0.2s ease; -webkit-appearance: none; appearance: none;
         }
         .ob-input::placeholder { color: #6B6775; }

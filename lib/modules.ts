@@ -15,6 +15,12 @@ import { MODULE2_QUESTIONS, MODULE2_DIMENSION_ITEM_COUNTS, MODULE2_DIMENSION_LAB
 import { MODULE3_QUESTIONS, MODULE3_DIMENSION_ITEM_COUNTS, MODULE3_DIMENSION_LABELS, MODULE3_TYPE_NAMES } from "./module3Burnout";
 import { MODULE4_QUESTIONS, MODULE4_DIMENSION_ITEM_COUNTS, MODULE4_DIMENSION_LABELS, MODULE4_TYPE_NAMES } from "./module4Mask";
 import { MODULE5_QUESTIONS, MODULE5_DIMENSION_ITEM_COUNTS, MODULE5_DIMENSION_LABELS, MODULE5_TYPE_NAMES } from "./module5Execution";
+import { MODULE6_QUESTIONS, MODULE6_DIMENSION_ITEM_COUNTS, MODULE6_DIMENSION_LABELS, MODULE6_TYPE_NAMES } from "./module6Anger";
+import { MODULE7_QUESTIONS, MODULE7_DIMENSION_ITEM_COUNTS, MODULE7_DIMENSION_LABELS, MODULE7_TYPE_NAMES } from "./module7Sensitivity";
+import { MODULE8_QUESTIONS, MODULE8_DIMENSION_ITEM_COUNTS, MODULE8_DIMENSION_LABELS, MODULE8_TYPE_NAMES } from "./module8Sleep";
+import { MODULE9_QUESTIONS, MODULE9_DIMENSION_ITEM_COUNTS, MODULE9_DIMENSION_LABELS, MODULE9_TYPE_NAMES } from "./module9Family";
+import { MODULE10_QUESTIONS, MODULE10_DIMENSION_ITEM_COUNTS, MODULE10_DIMENSION_LABELS, MODULE10_TYPE_NAMES } from "./module10Focus";
+import { MODULE11_QUESTIONS, MODULE11_DIMENSION_ITEM_COUNTS, MODULE11_DIMENSION_LABELS, MODULE11_TYPE_NAMES } from "./module11Instinct";
 import type { ModuleQuestion } from "./quizProfile";
 
 export interface ModuleDefinition {
@@ -79,6 +85,66 @@ export const MODULES: ModuleDefinition[] = [
     dimensionLabels: MODULE5_DIMENSION_LABELS,
     typeNames: MODULE5_TYPE_NAMES,
     dimensionShortNames: { perfectionism: "완벽주의", avoidance: "회피", decisionParalysis: "선택마비" },
+  },
+  {
+    id: "module6",
+    title: "모듈 6 · 분노",
+    subtitle: "억압 / 폭발 / 반추",
+    questions: MODULE6_QUESTIONS,
+    dimensionItemCounts: MODULE6_DIMENSION_ITEM_COUNTS,
+    dimensionLabels: MODULE6_DIMENSION_LABELS,
+    typeNames: MODULE6_TYPE_NAMES,
+    dimensionShortNames: { suppression: "억압", explosion: "폭발", rumination: "반추" },
+  },
+  {
+    id: "module7",
+    title: "모듈 7 · 예민함",
+    subtitle: "자극과부하 / 심미적민감성 / 낮은감각역치",
+    questions: MODULE7_QUESTIONS,
+    dimensionItemCounts: MODULE7_DIMENSION_ITEM_COUNTS,
+    dimensionLabels: MODULE7_DIMENSION_LABELS,
+    typeNames: MODULE7_TYPE_NAMES,
+    dimensionShortNames: { overstimulation: "자극과부하", aestheticSensitivity: "심미적민감성", lowSensoryThreshold: "낮은감각역치" },
+  },
+  {
+    id: "module8",
+    title: "모듈 8 · 수면",
+    subtitle: "인지적각성 / 신체적각성 / 무의식누수",
+    questions: MODULE8_QUESTIONS,
+    dimensionItemCounts: MODULE8_DIMENSION_ITEM_COUNTS,
+    dimensionLabels: MODULE8_DIMENSION_LABELS,
+    typeNames: MODULE8_TYPE_NAMES,
+    dimensionShortNames: { cognitiveArousal: "인지적각성", somaticArousal: "신체적각성", subconsciousLeak: "무의식누수" },
+  },
+  {
+    id: "module9",
+    title: "모듈 9 · 원가족",
+    subtitle: "정서적얽힘 / 정서적단절 / 역할부담",
+    questions: MODULE9_QUESTIONS,
+    dimensionItemCounts: MODULE9_DIMENSION_ITEM_COUNTS,
+    dimensionLabels: MODULE9_DIMENSION_LABELS,
+    typeNames: MODULE9_TYPE_NAMES,
+    dimensionShortNames: { enmeshment: "정서적얽힘", cutoff: "정서적단절", parentification: "역할부담" },
+  },
+  {
+    id: "module10",
+    title: "모듈 10 · 몰입",
+    subtitle: "산만함 / 과집중 / 충동성",
+    questions: MODULE10_QUESTIONS,
+    dimensionItemCounts: MODULE10_DIMENSION_ITEM_COUNTS,
+    dimensionLabels: MODULE10_DIMENSION_LABELS,
+    typeNames: MODULE10_TYPE_NAMES,
+    dimensionShortNames: { distractibility: "산만함", hyperfocus: "과집중", impulsivity: "충동성" },
+  },
+  {
+    id: "module11",
+    title: "모듈 11 · 본능",
+    subtitle: "표현억제 / 즉흥성억제 / 확신부족",
+    questions: MODULE11_QUESTIONS,
+    dimensionItemCounts: MODULE11_DIMENSION_ITEM_COUNTS,
+    dimensionLabels: MODULE11_DIMENSION_LABELS,
+    typeNames: MODULE11_TYPE_NAMES,
+    dimensionShortNames: { expressionSuppression: "표현억제", spontaneitySuppression: "즉흥성억제", confidenceLack: "확신부족" },
   },
 ];
 

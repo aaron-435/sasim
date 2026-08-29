@@ -206,7 +206,7 @@ export default function ChatScreen({ chatContext, onComplete }) {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
               placeholder={turn === 0 ? "안녕하세요 :)" : "편하게 이야기해주세요"}
-              style={{ flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "12px 16px", color: "#EDE7DA", fontSize: "14px", outline: "none" }}
+              style={{ flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "12px 16px", color: "#EDE7DA", fontSize: "16px", outline: "none" }}
             />
             <button onClick={handleSend} style={{ width: "42px", height: "42px", borderRadius: "50%", background: "#C9A24B", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
               <Send size={16} color="#100F16" />
