@@ -170,8 +170,11 @@ export default function OnboardingBirthChart({ onComplete }) {
             Fatesaid
           </div>
           <h1 className="ob-serif" style={{ fontSize: "32px", fontWeight: 500, color: "#EDE7DA", margin: 0, lineHeight: 1.25 }}>
-            패턴이 반복되는 이유는<br />당신의 사주 안에 있습니다.
+            운명은 이미 말했습니다.<br />이제, 답할 차례는 당신입니다.
           </h1>
+          <p style={{ fontSize: "14px", color: "#9C97A6", margin: "14px 0 0", lineHeight: 1.6 }}>
+            운명을 바꾸고 싶나요? 사주를 분석하고 지금 시작하세요.
+          </p>
         </div>
 
         {/* Track toggle */}
