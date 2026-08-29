@@ -105,7 +105,7 @@ export default function ReportScreen({ nickname = "OOO", elements = DEFAULT_ELEM
         {psychTestDiagnosis && (
           <div className="rp-section">
             <div className="rp-num">{nextNum()}</div>
-            <h1 className="rp-h1">{psychTestDiagnosis.typeInfo?.title} <span style={{ fontSize: "11px", color: "#6B6775" }}>{psychTestDiagnosis.moduleTitle ?? "심리테스트"} 분석</span></h1>
+            <h1 className="rp-h1">{psychTestDiagnosis.typeInfo?.title} <span style={{ fontSize: "11px", color: "#847E90" }}>{psychTestDiagnosis.moduleTitle ?? "심리테스트"} 분석</span></h1>
             <p className="rp-body">{psychTestDiagnosis.typeInfo?.hook}</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", margin: "16px 0" }}>
               {psychTestDiagnosis.dimensionResults?.map((r, i) => (
@@ -126,7 +126,7 @@ export default function ReportScreen({ nickname = "OOO", elements = DEFAULT_ELEM
 
         <div className="rp-section">
           <div className="rp-num">{nextNum()}</div>
-          <h1 className="rp-h1">무엇이 이 패턴을 만들었나 <span style={{ fontSize: "11px", color: "#6B6775" }}>사주 원국 분석</span></h1>
+          <h1 className="rp-h1">무엇이 이 패턴을 만들었나 <span style={{ fontSize: "11px", color: "#847E90" }}>사주 원국 분석</span></h1>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "16px" }}>
             {Object.entries(elements).map(([key, val]) => {
               const label = { wood: "목(木)", fire: "화(火)", earth: "토(土)", metal: "금(金)", water: "수(水)" }[key];
@@ -152,7 +152,7 @@ export default function ReportScreen({ nickname = "OOO", elements = DEFAULT_ELEM
 
         <div className="rp-section">
           <div className="rp-num">{nextNum()}</div>
-          <h1 className="rp-h1">몸과 마음이 보내온 신호 <span style={{ fontSize: "11px", color: "#6B6775" }}>MBI 기반</span></h1>
+          <h1 className="rp-h1">몸과 마음이 보내온 신호 <span style={{ fontSize: "11px", color: "#847E90" }}>MBI 기반</span></h1>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "16px" }}>
             {[
               { key: "exhaustion", label: "소진", active: true },
@@ -161,7 +161,7 @@ export default function ReportScreen({ nickname = "OOO", elements = DEFAULT_ELEM
             ].map((d) => (
               <div key={d.key}>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11.5px", color: "#9C97A6", marginBottom: "3px" }}>
-                  <span>{d.label} {d.active ? <span style={{ color: "#C1503B" }}>● 활성</span> : <span style={{ color: "#4E8368" }}>● 비활성</span>}</span>
+                  <span>{d.label} {d.active ? <span style={{ color: "#CB6249" }}>● 활성</span> : <span style={{ color: "#4E8368" }}>● 비활성</span>}</span>
                   <span>{dimensions[d.key]}%</span>
                 </div>
                 <div className="rp-bar-track"><div className="rp-bar-fill" style={{ width: `${dimensions[d.key]}%`, background: d.active ? "#C1503B" : "#4E8368" }} /></div>
@@ -261,7 +261,7 @@ export default function ReportScreen({ nickname = "OOO", elements = DEFAULT_ELEM
             노력과 결과가 눈에 바로 보이는 구조 — 명확한 마감, 구체적인 피드백이 있는 일.
           </div>
           <div className="rp-fitbad">
-            <span className="rp-fit-label" style={{ color: "#C1503B" }}>이런 환경은 피하세요</span>
+            <span className="rp-fit-label" style={{ color: "#CB6249" }}>이런 환경은 피하세요</span>
             성과가 몇 달 뒤에야 드러나는 장기 프로젝트 단독 담당, 피드백이 거의 없는 업무.
           </div>
         </div>
@@ -294,7 +294,7 @@ export default function ReportScreen({ nickname = "OOO", elements = DEFAULT_ELEM
           <p className="rp-body">타고난 화력은 부족함이 없습니다 — 문제는 그 화력을 담아낼 토가 아직
           충분히 갖춰지지 않았다는 데 있습니다. 매일 밤 다시 타오르기만 하던 불이, 이제는
           조금씩 재를 남기기 시작할 시간입니다.</p>
-          <p style={{ fontSize: "10.5px", color: "#5C586A", lineHeight: 1.6, marginTop: "22px", borderTop: "1px solid #1C1B24", paddingTop: "14px" }}>
+          <p style={{ fontSize: "11px", color: "#847E90", lineHeight: 1.6, marginTop: "22px", borderTop: "1px solid #1C1B24", paddingTop: "14px" }}>
             본 리포트는 SAZU 사주 데이터, 자체 설계된 번아웃 척도(MBI 기반), 상담 대화 내용을
             결합해 생성되었습니다. 사례(B씨)는 이해를 돕기 위한 각색된 예시입니다.
           </p>

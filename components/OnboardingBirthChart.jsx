@@ -1,8 +1,12 @@
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
-import { Calendar, Clock, MapPin, Heart, Briefcase, ArrowRight, HelpCircle, Sparkles, Loader2 } from "lucide-react";
+import { Calendar, Clock, MapPin, Heart, Briefcase, ArrowRight, HelpCircle, Sparkles } from "lucide-react";
 import { BIRTH_CITIES, resolveBirthCity } from "@/lib/birthCities";
+import LoadingReveal from "./LoadingReveal";
+import ErrorNotice from "./ErrorNotice";
+
+const MIN_LOADING_MS = 2400;
 
 /**
  * OnboardingBirthChart — CONNECTED version
@@ -87,6 +91,7 @@ export default function OnboardingBirthChart({ onComplete }) {
 
     const resolvedCity = resolveBirthCity(cityInput);
     const [hh, mm] = tob ? tob.split(":").map(Number) : [null, 0];
+    const startedAt = Date.now();
 
     try {
       const res = await fetch("/api/saju", {
@@ -105,9 +110,16 @@ export default function OnboardingBirthChart({ onComplete }) {
       });
       const json = await res.json();
       if (!res.ok) {
-        setApiError(json.error || "사주 계산에 실패했습니다.");
+        // 429/503 = 일시적 장애(새로고침이 실제로 도움됨). 그 외(422 베타 샘플 제한 등)는
+        // 재시도해도 결과가 안 바뀌므로 메시지를 있는 그대로 보여준다.
+        const kind = res.status === 429 || res.status === 503 ? "network" : "server";
+        setApiError({ kind, message: json.error || "사주 계산에 실패했습니다." });
         setLoading(false);
         return;
+      }
+      const elapsed = Date.now() - startedAt;
+      if (elapsed < MIN_LOADING_MS) {
+        await new Promise((resolve) => window.setTimeout(resolve, MIN_LOADING_MS - elapsed));
       }
       onComplete?.({
         birthInput: { dob, tob: timeUnknown ? null : tob, cityInput, resolvedCity, isFemale, track },
@@ -115,11 +127,13 @@ export default function OnboardingBirthChart({ onComplete }) {
         track,
       });
     } catch {
-      setApiError("네트워크 오류로 사주 계산에 실패했습니다.");
+      setApiError({ kind: "network", message: "네트워크 오류로 사주 계산에 실패했습니다." });
     } finally {
       setLoading(false);
     }
   }, [parsedDate, cityInput, isFemale, tob, timeUnknown, dob, track, onComplete]);
+
+  if (loading) return <LoadingReveal />;
 
   return (
     <div
@@ -139,15 +153,14 @@ export default function OnboardingBirthChart({ onComplete }) {
           color: #EDE7DA; padding: 13px 14px 13px 42px; font-size: 16px; outline: none;
           transition: border-color 0.2s ease, background 0.2s ease; -webkit-appearance: none; appearance: none;
         }
-        .ob-input::placeholder { color: #6B6775; }
+        .ob-input::placeholder { color: #847E90; }
         .ob-input:focus { border-color: #C9A24B; background: rgba(201,162,75,0.05); }
         .ob-field-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #8B879A; pointer-events: none; }
-        .ob-track-btn { flex: 1; border: none; background: transparent; padding: 14px 12px; border-radius: 10px; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 600; }
+        .ob-track-btn { flex: 1; border: none; background: transparent; padding: 14px 12px; border-radius: 10px; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 600; min-height: 44px; }
         .ob-fade-in { animation: obFade 0.32s ease both; }
         @keyframes obFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-        .ob-spin { animation: obSpin 0.8s linear infinite; }
-        @keyframes obSpin { to { transform: rotate(360deg); } }
-        .ob-gender-btn { flex: 1; padding: 11px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+        .ob-gender-btn { flex: 1; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; min-height: 44px; }
+        .ob-root button:focus-visible, .ob-root input:focus-visible { outline: 2px solid #C9A24B; outline-offset: 2px; }
       ` }} />
 
       <div className="ob-root" style={{ width: "100%", maxWidth: "460px", padding: "40px 22px 64px" }}>
@@ -186,7 +199,7 @@ export default function OnboardingBirthChart({ onComplete }) {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <label style={labelStyle}>태어난 시간</label>
               <button type="button" onClick={() => { setTimeUnknown((v) => !v); if (!timeUnknown) setTob(""); }}
-                style={{ background: "none", border: "none", color: timeUnknown ? "#C9A24B" : "#6B6775", fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}>
+                style={{ background: "none", border: "none", color: timeUnknown ? "#C9A24B" : "#847E90", fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px", padding: "6px 4px", margin: "-6px -4px" }}>
                 <HelpCircle size={12} strokeWidth={1.75} /> 모름
               </button>
             </div>
@@ -226,7 +239,7 @@ export default function OnboardingBirthChart({ onComplete }) {
                     onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.04)")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
                     <span>{c.ko}</span>
-                    <span style={{ color: "#5C586A", fontSize: "12px" }}>{c.region}</span>
+                    <span style={{ color: "#847E90", fontSize: "12px" }}>{c.region}</span>
                   </div>
                 ))}
               </div>
@@ -242,8 +255,8 @@ export default function OnboardingBirthChart({ onComplete }) {
         )}
 
         {apiError && (
-          <div className="ob-fade-in" style={{ marginTop: "14px", background: "rgba(193,80,59,0.08)", border: "1px solid rgba(193,80,59,0.3)", borderRadius: "10px", padding: "12px 14px", fontSize: "13px", color: "#E08A76" }}>
-            {apiError}
+          <div className="ob-fade-in" style={{ marginTop: "14px" }}>
+            <ErrorNotice kind={apiError.kind} message={apiError.message} onRetry={handleSubmit} />
           </div>
         )}
 
@@ -252,9 +265,9 @@ export default function OnboardingBirthChart({ onComplete }) {
             width: "100%", marginTop: "22px", padding: "16px", borderRadius: "12px", border: "none",
             background: canProceed ? "#C9A24B" : "rgba(255,255,255,0.06)", color: canProceed ? "#100F16" : "#6B6775",
             fontSize: "15px", fontWeight: 700, cursor: canProceed ? "pointer" : "not-allowed",
-            display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "52px",
           }}>
-          {loading ? (<><Loader2 size={17} className="ob-spin" /> 계산 중...</>) : (<>내 블루프린트 확인하기 <ArrowRight size={17} strokeWidth={2.25} /></>)}
+          내 블루프린트 확인하기 <ArrowRight size={17} strokeWidth={2.25} />
         </button>
         <p style={{ textAlign: "center", fontSize: "11.5px", color: "#5C586A", marginTop: "12px" }}>
           무료 10분 리딩 · 신용카드 불필요

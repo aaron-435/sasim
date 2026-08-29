@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { Sparkles, Send, ShieldCheck } from "lucide-react";
+import ErrorNotice from "./ErrorNotice";
 
 /**
  * ChatScreen — CONNECTED version
@@ -75,7 +76,8 @@ export default function ChatScreen({ chatContext, onComplete }) {
 
       if (!res.ok) {
         setIsTyping(false);
-        setErrorText(json.error || "챗봇 응답을 받아오지 못했습니다.");
+        const kind = res.status === 429 || res.status === 503 ? "network" : "server";
+        setErrorText({ kind, message: json.error || "챗봇 응답을 받아오지 못했습니다." });
         return;
       }
 
@@ -90,7 +92,7 @@ export default function ChatScreen({ chatContext, onComplete }) {
       }
     } catch {
       setIsTyping(false);
-      setErrorText("네트워크 오류로 챗봇 응답을 받지 못했습니다.");
+      setErrorText({ kind: "network", message: "네트워크 오류로 챗봇 응답을 받지 못했습니다." });
     }
   }
 
@@ -128,7 +130,7 @@ export default function ChatScreen({ chatContext, onComplete }) {
         .ch-serif { font-family: 'Cormorant Garamond', 'Noto Sans KR', serif; }
         .ch-bubble-bot { background: rgba(255,255,255,0.05); border: 1px solid #2A2833; color: #EDE7DA; }
         .ch-bubble-user { background: #C9A24B; color: #100F16; }
-        .ch-chip { background: rgba(201,162,75,0.08); border: 1px solid rgba(201,162,75,0.4); color: #C9A24B; }
+        .ch-chip { background: rgba(201,162,75,0.08); border: 1px solid rgba(201,162,75,0.4); color: #C9A24B; min-height: 44px; }
         .ch-chip:active { background: rgba(201,162,75,0.2); }
         .ch-fade { animation: chFade 0.28s ease both; }
         @keyframes chFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -136,6 +138,7 @@ export default function ChatScreen({ chatContext, onComplete }) {
         .ch-dot:nth-child(2) { animation-delay: 0.15s; }
         .ch-dot:nth-child(3) { animation-delay: 0.3s; }
         @keyframes chBlink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+        .ch-root button:focus-visible, .ch-root input:focus-visible { outline: 2px solid #C9A24B; outline-offset: 2px; }
       ` }} />
 
       <div className="ch-root" style={{ width: "100%", maxWidth: "460px", display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -171,7 +174,7 @@ export default function ChatScreen({ chatContext, onComplete }) {
           {chips && !isTyping && (
             <div className="ch-fade" style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "6px", marginBottom: "10px" }}>
               {chips.map((c) => (
-                <button key={c} className="ch-chip" onClick={() => handleChip(c)} style={{ padding: "9px 14px", borderRadius: "999px", fontSize: "13px", cursor: "pointer" }}>
+                <button key={c} className="ch-chip" onClick={() => handleChip(c)} style={{ padding: "11px 16px", borderRadius: "999px", fontSize: "13px", cursor: "pointer" }}>
                   {c}
                 </button>
               ))}
@@ -180,18 +183,13 @@ export default function ChatScreen({ chatContext, onComplete }) {
 
           {errorText && !isTyping && (
             <div className="ch-fade" style={{ marginBottom: "10px" }}>
-              <div style={{ background: "rgba(193,80,59,0.08)", border: "1px solid rgba(193,80,59,0.3)", borderRadius: "10px", padding: "12px 14px", fontSize: "13px", color: "#E08A76", marginBottom: "8px" }}>
-                {errorText}
-              </div>
-              <button onClick={handleRetry} className="ch-chip" style={{ padding: "9px 14px", borderRadius: "999px", fontSize: "13px", cursor: "pointer" }}>
-                다시 시도
-              </button>
+              <ErrorNotice kind={errorText.kind} message={errorText.message} onRetry={handleRetry} />
             </div>
           )}
 
           {doneMax && (
             <div className="ch-fade" style={{ textAlign: "center", marginTop: "20px" }}>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#6B6775", background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "6px 12px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#847E90", background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "6px 12px" }}>
                 <ShieldCheck size={12} /> 상담 종료 — 리포트를 준비하고 있어요
               </div>
             </div>
@@ -208,7 +206,7 @@ export default function ChatScreen({ chatContext, onComplete }) {
               placeholder={turn === 0 ? "안녕하세요 :)" : "편하게 이야기해주세요"}
               style={{ flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "12px 16px", color: "#EDE7DA", fontSize: "16px", outline: "none" }}
             />
-            <button onClick={handleSend} style={{ width: "42px", height: "42px", borderRadius: "50%", background: "#C9A24B", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+            <button onClick={handleSend} aria-label="메시지 보내기" style={{ width: "44px", height: "44px", borderRadius: "50%", background: "#C9A24B", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
               <Send size={16} color="#100F16" />
             </button>
           </div>
