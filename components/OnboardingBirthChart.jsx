@@ -167,7 +167,7 @@ export default function OnboardingBirthChart({ onComplete }) {
         <div style={{ textAlign: "center", marginBottom: "26px" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", letterSpacing: "0.16em", color: "#C9A24B", textTransform: "uppercase", marginBottom: "14px" }}>
             <Sparkles size={12} strokeWidth={1.75} />
-            더 파이브 엘리먼츠 블루프린트
+            Fatesaid
           </div>
           <h1 className="ob-serif" style={{ fontSize: "32px", fontWeight: 500, color: "#EDE7DA", margin: 0, lineHeight: 1.25 }}>
             패턴이 반복되는 이유는<br />당신의 사주 안에 있습니다.

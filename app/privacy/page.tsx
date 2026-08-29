@@ -1,14 +1,14 @@
 import LegalPage from "@/components/LegalPage";
 
 export const metadata = {
-  title: "개인정보처리방침 | 더 파이브 엘리먼츠 블루프린트",
+  title: "개인정보처리방침 | Fatesaid",
 };
 
 export default function PrivacyPage() {
   return (
     <LegalPage title="개인정보처리방침" updatedAt="2026년 8월 30일">
       <p>
-        &ldquo;더 파이브 엘리먼츠 블루프린트&rdquo;(이하 &ldquo;서비스&rdquo;)는 이용자의 개인정보를 소중히 다루며,
+        &ldquo;Fatesaid&rdquo;(이하 &ldquo;서비스&rdquo;)는 이용자의 개인정보를 소중히 다루며,
         「개인정보 보호법」 등 관련 법령을 준수합니다. 본 방침은 서비스가 어떤 개인정보를 수집하고, 어떻게
         이용·보관·파기하는지 안내합니다.
       </p>

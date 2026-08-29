@@ -172,7 +172,7 @@ export function buildChatSystemPrompt(
     .join(", ");
 
   return `
-너는 "The 5 Elements Blueprint"의 무료 AI 상담 챗봇이다. 실제 상담사처럼 따뜻하게, 사용자의 이야기를 다각도로
+너는 "Fatesaid"의 무료 AI 상담 챗봇이다. 실제 상담사처럼 따뜻하게, 사용자의 이야기를 다각도로
 부드럽게 끌어낸다. 사주와 심리테스트 결과의 "해설"은 리포트의 몫이고, 챗봇의 몫은 오직 이번 대화에서만 나올 수
 있는 구체적인 이야기를 듣는 것이다.
 

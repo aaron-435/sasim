@@ -103,7 +103,7 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
     const url = typeof window !== "undefined" ? window.location.origin : "";
     try {
       if (typeof navigator !== "undefined" && navigator.share) {
-        await navigator.share({ title: "더 파이브 엘리먼츠 블루프린트", text: shareText, url });
+        await navigator.share({ title: "Fatesaid", text: shareText, url });
       } else if (typeof navigator !== "undefined" && navigator.clipboard) {
         await navigator.clipboard.writeText(`${shareText}\n${url}`);
         setShareCopied(true);
@@ -214,7 +214,7 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "16px", borderTop: "1px solid rgba(201,162,75,0.18)" }}>
                 <span style={{ fontSize: "11px", color: "#847E90" }}>{moduleDef.title}</span>
-                <span className="qz-serif" style={{ fontSize: "13px", color: "#C9A24B" }}>더 파이브 엘리먼츠</span>
+                <span className="qz-serif" style={{ fontSize: "13px", color: "#C9A24B" }}>Fatesaid</span>
               </div>
             </div>
 

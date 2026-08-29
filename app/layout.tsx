@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "더 파이브 엘리먼츠 블루프린트",
+  title: "Fatesaid",
   description: "사주와 심리테스트, AI 상담을 결합한 무료 성향 분석",
 };
 

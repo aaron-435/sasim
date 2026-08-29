@@ -68,7 +68,7 @@ export default function ReportScreen({ nickname = "OOO", elements = DEFAULT_ELEM
       <div className="rp-root" style={{ width: "100%", maxWidth: "460px" }}>
         <div style={{ padding: "48px 24px 40px", textAlign: "center", borderBottom: "1px solid #17161D" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "10.5px", letterSpacing: "0.14em", color: "#C9A24B", textTransform: "uppercase", marginBottom: "18px" }}>
-            <Sparkles size={12} /> The Five Elements Blueprint
+            <Sparkles size={12} /> Fatesaid
           </div>
           <h1 className="rp-serif" style={{ fontSize: "26px", color: "#EDE7DA", lineHeight: 1.5, margin: "0 0 10px" }}>
             꺼지지 않는 불 앞에서,<br />혼자 재를 기다리는 사람

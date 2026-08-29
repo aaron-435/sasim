@@ -1,7 +1,7 @@
 import LegalPage from "@/components/LegalPage";
 
 export const metadata = {
-  title: "이용약관 | 더 파이브 엘리먼츠 블루프린트",
+  title: "이용약관 | Fatesaid",
 };
 
 export default function TermsPage() {
@@ -9,7 +9,7 @@ export default function TermsPage() {
     <LegalPage title="이용약관" updatedAt="2026년 8월 30일">
       <h2>제1조 (목적)</h2>
       <p>
-        이 약관은 &ldquo;더 파이브 엘리먼츠 블루프린트&rdquo;(이하 &ldquo;서비스&rdquo;)가 제공하는 사주 분석,
+        이 약관은 &ldquo;Fatesaid&rdquo;(이하 &ldquo;서비스&rdquo;)가 제공하는 사주 분석,
         심리테스트, AI 상담, 리포트 서비스의 이용과 관련하여 서비스 운영자와 이용자 간의 권리, 의무 및
         책임사항을 정하는 것을 목적으로 합니다.
       </p>
