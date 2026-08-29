@@ -1,25 +1,29 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Sparkles, Send, ShieldCheck } from "lucide-react";
 import ErrorNotice from "./ErrorNotice";
 
 /**
- * ChatScreen — CONNECTED version
+ * ChatScreen — messenger-style version
  * ------------------------------------------------------------------
- * Real GPT-4o backed chat via POST /api/chat, one call per bot turn
- * (1-7), per 챗봇_3턴시나리오_5.md. The bot's opening greeting stays a
- * static line (no API call needed for it) — the first real API call
- * happens once the user replies to that greeting.
+ * Turn 1 (the opener — greeting + a light nod to the psych-test result,
+ * never a full explanation of it) now fires automatically on mount via
+ * POST /api/chat, instead of a hardcoded static greeting. There's no
+ * more Phase A / chip mechanic — every turn is open free-text, because
+ * the user's own words make better report material than a forced pick
+ * from 2-3 options.
  *
- * Phase A (turns 1-2) requests structured `{ text, chips }` JSON from
- * the server so real clickable chips can be rendered — see
- * lib/chat.ts / lib/chatPrompts.ts for why. Phase B (turns 3-6) and
- * Phase C (turn 7) are plain text with a free-text input only.
+ * Every reply comes back as `{ lines: string[] }` — 2-4 short messages,
+ * revealed one at a time with a brief "typing..." pause between each
+ * (see revealLines), the same cadence as someone texting several short
+ * messages in a row rather than one dense paragraph.
  *
- * On turn 7, the API also returns `extract` (the structured summary
- * ReportScreen needs) — computed server-side via a second, separate
- * LLM call right after the turn-7 reply (see lib/chat.ts).
+ * `turnHistoryRef` tracks the actual one-entry-per-API-turn history sent
+ * to the server (a bot turn's lines are rejoined into one string there),
+ * kept separate from `messages` (the UI's one-bubble-per-line list) so
+ * the model always sees "the assistant said X" as a single turn, not as
+ * several unrelated turns.
  * ------------------------------------------------------------------
  */
 
@@ -27,100 +31,120 @@ const TOTAL_TURNS = 7;
 
 export default function ChatScreen({ chatContext, onComplete }) {
   const [messages, setMessages] = useState([]);
-  const [turn, setTurn] = useState(0); // 0 = only the static greeting shown so far; 1-7 = completed AI turns
+  const [turn, setTurn] = useState(0); // 0 = opener not back yet; 1-7 = completed AI turns
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [chips, setChips] = useState(null);
   const [errorText, setErrorText] = useState(null);
   const scrollRef = useRef(null);
   const sessionStartedAt = useRef(Date.now()).current;
   const doneRef = useRef(false);
+  const turnHistoryRef = useRef([]);
+  const mountedRef = useRef(true);
+  const openerFiredRef = useRef(false);
 
   useEffect(() => {
-    setMessages([{ role: "bot", text: "안녕하세요! 오늘 어떤 이야기를 나누고 싶으신가요?" }]);
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
   }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, isTyping, chips, errorText]);
+  }, [messages, isTyping, errorText]);
 
-  async function requestNextTurn(nextTurn, historyMessages) {
-    setIsTyping(true);
-    setChips(null);
-    setErrorText(null);
-
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          turnNumber: nextTurn,
-          sessionStartedAt,
-          context: {
-            track: chatContext?.track ?? "romance",
-            sajuElements: chatContext?.sajuElements ?? { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 },
-            dominantSajuElement: chatContext?.dominantSajuElement ?? "wood",
-            psychTestType: chatContext?.psychTestType ?? "",
-            psychTestSummary: chatContext?.psychTestSummary ?? "",
-            quizAnswer: chatContext?.headlineAnswer
-              ? { prompt: chatContext.headlineAnswer.prompt, label: chatContext.headlineAnswer.label }
-              : null,
-          },
-          history: historyMessages.map((m) => ({
-            role: m.role === "bot" ? "assistant" : "user",
-            content: m.text,
-          })),
-        }),
-      });
-      const json = await res.json();
-
-      if (!res.ok) {
-        setIsTyping(false);
-        const kind = res.status === 429 || res.status === 503 ? "network" : "server";
-        setErrorText({ kind, message: json.error || "챗봇 응답을 받아오지 못했습니다." });
-        return;
-      }
-
+  const revealLines = useCallback(async (lines) => {
+    for (const line of lines) {
+      if (!mountedRef.current) return;
+      setIsTyping(true);
+      const delay = Math.min(1800, 450 + line.length * 18);
+      await new Promise((r) => window.setTimeout(r, delay));
+      if (!mountedRef.current) return;
       setIsTyping(false);
-      setMessages((m) => [...m, { role: "bot", text: json.reply }]);
-      if (json.chips?.length) setChips(json.chips);
-      setTurn(nextTurn);
-
-      if (nextTurn >= TOTAL_TURNS && json.extract) {
-        doneRef.current = true;
-        window.setTimeout(() => onComplete?.(json.extract), 1200);
-      }
-    } catch {
-      setIsTyping(false);
-      setErrorText({ kind: "network", message: "네트워크 오류로 챗봇 응답을 받지 못했습니다." });
+      setMessages((m) => [...m, { role: "bot", text: line }]);
+      await new Promise((r) => window.setTimeout(r, 180));
     }
-  }
+  }, []);
 
-  function advance(userText) {
-    if (doneRef.current || isTyping) return;
-    const updated = [...messages, { role: "user", text: userText }];
-    setMessages(updated);
-    requestNextTurn(turn + 1, updated);
-  }
+  const requestNextTurn = useCallback(
+    async (nextTurn, apiHistory) => {
+      setIsTyping(true);
+      setErrorText(null);
 
-  function handleChip(label) {
-    if (isTyping) return;
-    advance(label);
-  }
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            turnNumber: nextTurn,
+            sessionStartedAt,
+            context: {
+              track: chatContext?.track ?? "romance",
+              sajuElements: chatContext?.sajuElements ?? { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 },
+              dominantSajuElement: chatContext?.dominantSajuElement ?? "wood",
+              psychTestType: chatContext?.psychTestType ?? "",
+              psychTestSummary: chatContext?.psychTestSummary ?? "",
+              quizAnswer: chatContext?.headlineAnswer
+                ? { prompt: chatContext.headlineAnswer.prompt, label: chatContext.headlineAnswer.label }
+                : null,
+            },
+            history: apiHistory,
+          }),
+        });
+        const json = await res.json();
+
+        if (!res.ok) {
+          setIsTyping(false);
+          const kind = res.status === 429 || res.status === 503 ? "network" : "server";
+          setErrorText({ kind, message: json.error || "챗봇 응답을 받아오지 못했습니다." });
+          return;
+        }
+
+        const lines = Array.isArray(json.lines) ? json.lines : [];
+        await revealLines(lines);
+        if (!mountedRef.current) return;
+
+        turnHistoryRef.current = [...apiHistory, { role: "assistant", content: lines.join(" ") }];
+        setTurn(nextTurn);
+
+        if (nextTurn >= TOTAL_TURNS && json.extract) {
+          doneRef.current = true;
+          window.setTimeout(() => onComplete?.(json.extract), 1200);
+        }
+      } catch {
+        if (!mountedRef.current) return;
+        setIsTyping(false);
+        setErrorText({ kind: "network", message: "네트워크 오류로 챗봇 응답을 받지 못했습니다." });
+      }
+    },
+    [chatContext, onComplete, revealLines, sessionStartedAt]
+  );
+
+  // 턴1(오프닝)은 사용자 입력 없이 마운트 즉시 시작한다. React StrictMode가
+  // 개발 모드에서 effect를 두 번 실행하므로, ref 가드로 실제 호출은 한 번만 나가게 한다.
+  useEffect(() => {
+    if (openerFiredRef.current) return;
+    openerFiredRef.current = true;
+    requestNextTurn(1, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleSend() {
     const text = input.trim();
-    if (!text || isTyping) return;
+    if (!text || isTyping || doneRef.current) return;
     setInput("");
-    advance(text);
+    setMessages((m) => [...m, { role: "user", text }]);
+    const nextHistory = [...turnHistoryRef.current, { role: "user", content: text }];
+    turnHistoryRef.current = nextHistory;
+    requestNextTurn(turn + 1, nextHistory);
   }
 
   function handleRetry() {
-    requestNextTurn(turn + 1, messages);
+    requestNextTurn(turn + 1, turnHistoryRef.current);
   }
 
   const doneMax = turn >= TOTAL_TURNS;
-  const showTextInput = !isTyping && !chips && !doneMax && !errorText;
+  const showTextInput = !isTyping && !doneMax && !errorText;
 
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#08080C", display: "flex", justifyContent: "center" }}>
@@ -130,8 +154,6 @@ export default function ChatScreen({ chatContext, onComplete }) {
         .ch-serif { font-family: 'Cormorant Garamond', 'Noto Sans KR', serif; }
         .ch-bubble-bot { background: rgba(255,255,255,0.05); border: 1px solid #2A2833; color: #EDE7DA; }
         .ch-bubble-user { background: #C9A24B; color: #100F16; }
-        .ch-chip { background: rgba(201,162,75,0.08); border: 1px solid rgba(201,162,75,0.4); color: #C9A24B; min-height: 44px; }
-        .ch-chip:active { background: rgba(201,162,75,0.2); }
         .ch-fade { animation: chFade 0.28s ease both; }
         @keyframes chFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         .ch-dot { animation: chBlink 1.2s infinite ease-in-out; }
@@ -171,16 +193,6 @@ export default function ChatScreen({ chatContext, onComplete }) {
             </div>
           )}
 
-          {chips && !isTyping && (
-            <div className="ch-fade" style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "6px", marginBottom: "10px" }}>
-              {chips.map((c) => (
-                <button key={c} className="ch-chip" onClick={() => handleChip(c)} style={{ padding: "11px 16px", borderRadius: "999px", fontSize: "13px", cursor: "pointer" }}>
-                  {c}
-                </button>
-              ))}
-            </div>
-          )}
-
           {errorText && !isTyping && (
             <div className="ch-fade" style={{ marginBottom: "10px" }}>
               <ErrorNotice kind={errorText.kind} message={errorText.message} onRetry={handleRetry} />
@@ -203,7 +215,7 @@ export default function ChatScreen({ chatContext, onComplete }) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              placeholder={turn === 0 ? "안녕하세요 :)" : "편하게 이야기해주세요"}
+              placeholder="편하게 이야기해주세요"
               style={{ flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "12px 16px", color: "#EDE7DA", fontSize: "16px", outline: "none" }}
             />
             <button onClick={handleSend} aria-label="메시지 보내기" style={{ width: "44px", height: "44px", borderRadius: "50%", background: "#C9A24B", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>

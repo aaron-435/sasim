@@ -1,16 +1,17 @@
 /**
  * app/api/chat/route.ts
  * ------------------------------------------------------------------
- * Route Handler the ChatScreen calls once per bot turn (1-7). Keeps
- * OPENAI_API_KEY server-side only. See 챗봇_3턴시나리오_5.md and
- * lib/chatPrompts.ts for the conversation design.
+ * Route Handler the ChatScreen calls once per bot turn (1-7), including
+ * turn 1 (fired automatically on mount, before any user message — see
+ * lib/chatPrompts.ts's opener instruction). Keeps OPENAI_API_KEY
+ * server-side only.
  *
  * Request body:
  *   { turnNumber, sessionStartedAt, context: ChatSessionContext, history: ChatMessage[] }
  *
  * Response body:
- *   { reply: string, chips?: string[] }
- *   { reply, chips?, extract: ChatExtract }  — only when turnNumber >= 7
+ *   { lines: string[] }
+ *   { lines, extract: ChatExtract }  — only when turnNumber >= 7
  *   or { error: string } with a non-200 status
  * ------------------------------------------------------------------
  */
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { text, chips } = await getChatReply({
+    const { lines } = await getChatReply({
       turnNumber,
       history,
       context,
@@ -51,12 +52,14 @@ export async function POST(req: NextRequest) {
     });
 
     if (turnNumber >= TOTAL_TURNS) {
-      const fullTranscript: ChatMessage[] = [...history, { role: "assistant", content: text }];
+      // 추출 프롬프트는 한 턴 = 한 메시지 단위로 트랜스크립트를 읽으므로,
+      // 화면에 여러 버블로 나뉘어 보이는 lines를 다시 한 줄로 합쳐서 전달한다.
+      const fullTranscript: ChatMessage[] = [...history, { role: "assistant", content: lines.join(" ") }];
       const extract = await extractChatSummary(fullTranscript, context);
-      return NextResponse.json({ reply: text, chips, extract });
+      return NextResponse.json({ lines, extract });
     }
 
-    return NextResponse.json({ reply: text, chips });
+    return NextResponse.json({ lines });
   } catch (err) {
     if (err instanceof OpenAI.APIError) {
       if (err.status === 401) {

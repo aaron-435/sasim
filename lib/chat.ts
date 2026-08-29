@@ -2,19 +2,19 @@
  * lib/chat.ts
  * ------------------------------------------------------------------
  * Server-side wrapper around the OpenAI Chat Completions API for the
- * Layer 3 무료 AI 상담 챗봇 (see 챗봇_3턴시나리오_5.md).
+ * Layer 3 무료 AI 상담 챗봇 (see lib/chatPrompts.ts for the design).
  * NEVER import this in a client component — it reads process.env.OPENAI_API_KEY.
  * Call it only from Route Handlers / Server Actions.
  *
  * Two calls per session:
- *   1. getChatReply() — one call per bot turn (1-7). Phase A (turns 1-2)
- *      requests structured `{ text, chips }` JSON so the UI can render real
- *      clickable chip buttons; Phase B/C (turns 3-7) return plain text, per
- *      the doc's "no JSON in the conversational text" rule.
+ *   1. getChatReply() — one call per bot turn (1-7). Every turn requests
+ *      structured `{ lines: string[] }` JSON — a short array of separate
+ *      messenger-style messages, rendered as sequential chat bubbles on
+ *      the client (see components/ChatScreen.jsx) rather than one long
+ *      paragraph.
  *   2. extractChatSummary() — one extra call right after turn 7, to pull the
  *      structured chatExtract (primary_concern, emotional_state, ...) that
- *      ReportScreen.jsx consumes. Kept separate from the turn-7 reply itself
- *      because turn 7's response must stay natural prose, not JSON.
+ *      ReportScreen.jsx consumes.
  * ------------------------------------------------------------------
  */
 
@@ -45,9 +45,8 @@ export interface ChatExtract {
 }
 
 export interface ChatReply {
-  text: string;
-  /** Only present for Phase A turns (1-2) — clickable options to render as chips. */
-  chips?: string[];
+  /** 2-4 short messenger-style messages, rendered as sequential bubbles. */
+  lines: string[];
 }
 
 export async function getChatReply(params: {
@@ -56,29 +55,23 @@ export async function getChatReply(params: {
   context: ChatSessionContext;
   sessionStartedAt: number;
 }): Promise<ChatReply> {
-  const effectiveTurn = params.turnNumber >= TOTAL_TURNS ? TOTAL_TURNS : Math.max(1, params.turnNumber);
-  const isPhaseA = effectiveTurn <= 2;
   const elapsedMinutes = Math.floor((Date.now() - params.sessionStartedAt) / 60000);
-  const systemPrompt = buildChatSystemPrompt(params.turnNumber, params.context, elapsedMinutes, isPhaseA);
+  const systemPrompt = buildChatSystemPrompt(params.turnNumber, params.context, elapsedMinutes);
 
   const completion = await client.chat.completions.create({
     model: CHAT_MODEL,
     temperature: 0.8,
     messages: [{ role: "system", content: systemPrompt }, ...params.history],
-    ...(isPhaseA ? { response_format: { type: "json_object" as const } } : {}),
+    response_format: { type: "json_object" },
   });
 
   const content = completion.choices[0]?.message?.content?.trim();
   if (!content) throw new Error("OpenAI가 빈 응답을 반환했습니다.");
 
-  if (isPhaseA) {
-    const parsed = JSON.parse(content);
-    return {
-      text: String(parsed.text ?? ""),
-      chips: Array.isArray(parsed.chips) ? parsed.chips.map((c: unknown) => String(c)) : undefined,
-    };
-  }
-  return { text: content };
+  const parsed = JSON.parse(content);
+  const lines = Array.isArray(parsed.lines) ? parsed.lines.map((l: unknown) => String(l)).filter(Boolean) : [];
+  if (lines.length === 0) throw new Error("OpenAI 응답에 lines가 없습니다.");
+  return { lines };
 }
 
 export async function extractChatSummary(transcript: ChatMessage[], context: ChatSessionContext): Promise<ChatExtract> {

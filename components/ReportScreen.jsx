@@ -298,6 +298,10 @@ export default function ReportScreen({ nickname = "OOO", elements = DEFAULT_ELEM
             본 리포트는 SAZU 사주 데이터, 자체 설계된 번아웃 척도(MBI 기반), 상담 대화 내용을
             결합해 생성되었습니다. 사례(B씨)는 이해를 돕기 위한 각색된 예시입니다.
           </p>
+          <p style={{ fontSize: "11px", color: "#847E90", lineHeight: 1.6, marginTop: "8px" }}>
+            이 리포트는 자기 이해를 돕기 위한 참고 자료이며, 의학적·심리학적 진단이 아니고 전문적인
+            심리상담을 대체하지 않습니다.
+          </p>
         </div>
       </div>
     </div>

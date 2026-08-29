@@ -160,7 +160,7 @@ export default function OnboardingBirthChart({ onComplete }) {
         .ob-fade-in { animation: obFade 0.32s ease both; }
         @keyframes obFade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         .ob-gender-btn { flex: 1; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; min-height: 44px; }
-        .ob-root button:focus-visible, .ob-root input:focus-visible { outline: 2px solid #C9A24B; outline-offset: 2px; }
+        .ob-root button:focus-visible, .ob-root input:focus-visible, .ob-root a:focus-visible { outline: 2px solid #C9A24B; outline-offset: 2px; }
       ` }} />
 
       <div className="ob-root" style={{ width: "100%", maxWidth: "460px", padding: "40px 22px 64px" }}>
@@ -269,8 +269,17 @@ export default function OnboardingBirthChart({ onComplete }) {
           }}>
           내 블루프린트 확인하기 <ArrowRight size={17} strokeWidth={2.25} />
         </button>
-        <p style={{ textAlign: "center", fontSize: "11.5px", color: "#5C586A", marginTop: "12px" }}>
+        <p style={{ textAlign: "center", fontSize: "11.5px", color: "#847E90", marginTop: "12px" }}>
           무료 10분 리딩 · 신용카드 불필요
+        </p>
+        <p style={{ textAlign: "center", fontSize: "11px", color: "#847E90", marginTop: "8px", lineHeight: 1.7 }}>
+          만 14세 이상만 이용할 수 있으며, 계속 진행 시{" "}
+          <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#847E90", textDecoration: "underline" }}>이용약관</a>
+          {" "}및{" "}
+          <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#847E90", textDecoration: "underline" }}>개인정보처리방침</a>
+          에 동의하는 것으로 간주됩니다.
+          <br />
+          사주 풀이와 심리테스트 결과는 참고용이며, 의학적·심리학적 진단이 아닙니다.
         </p>
       </div>
     </div>
