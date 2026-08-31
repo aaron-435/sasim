@@ -16,6 +16,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { calculateSaju, SazuApiError } from "@/lib/sazu";
+import { getSupabaseAdmin } from "@/lib/supabase";
 
 interface SajuRequestBody {
   birthYear?: number;
@@ -26,6 +27,39 @@ interface SajuRequestBody {
   isFemale?: boolean;
   birthCity?: string;
   isLunar?: boolean;
+  sessionId?: string;
+  track?: string;
+}
+
+/**
+ * 세션/사주 결과 저장은 "best effort"다 — 실패해도 사용자에게 보여줄 사주
+ * 계산 결과 자체는 이미 나온 상태이므로, 절대 응답을 막지 않는다.
+ */
+async function saveSajuResult(sessionId: string | undefined, track: string | undefined, input: SajuRequestBody, result: Awaited<ReturnType<typeof calculateSaju>>) {
+  if (!sessionId) return;
+  try {
+    const supabaseAdmin = getSupabaseAdmin();
+    const { error: sessionErr } = await supabaseAdmin.from("sessions").upsert({ id: sessionId, track: track ?? null }, { onConflict: "id" });
+    if (sessionErr) throw sessionErr;
+
+    const { error: resultErr } = await supabaseAdmin.from("saju_results").insert({
+      session_id: sessionId,
+      birth_year: input.birthYear,
+      birth_month: input.birthMonth,
+      birth_day: input.birthDay,
+      birth_hour: input.birthHour ?? null,
+      birth_minute: input.birthMinute ?? 0,
+      is_female: input.isFemale,
+      birth_city: input.birthCity ?? null,
+      elements: result.elements,
+      four_pillars: result.fourPillars,
+      decade_fortune: result.decadeFortune,
+      summary: result.summary,
+    });
+    if (resultErr) throw resultErr;
+  } catch (err) {
+    console.error("[api/saju] failed to persist result (non-fatal)", err);
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -36,7 +70,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { birthYear, birthMonth, birthDay, birthHour, birthMinute, isFemale, birthCity, isLunar } = body ?? {};
+  const { birthYear, birthMonth, birthDay, birthHour, birthMinute, isFemale, birthCity, isLunar, sessionId, track } = body ?? {};
 
   if (!birthYear || !birthMonth || !birthDay || typeof isFemale !== "boolean") {
     return NextResponse.json(
@@ -56,6 +90,8 @@ export async function POST(req: NextRequest) {
       birthCity, // 현재 "서울"만 검증됨 — Pro 전환 후 타 도시 검증 필요 (lib/sazu.ts 주석 참고)
       isLunar,
     });
+
+    await saveSajuResult(sessionId, track, body, result);
 
     return NextResponse.json({
       elements: result.elements,

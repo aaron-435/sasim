@@ -29,7 +29,7 @@ import ErrorNotice from "./ErrorNotice";
 
 const TOTAL_TURNS = 7;
 
-export default function ChatScreen({ chatContext, onComplete }) {
+export default function ChatScreen({ chatContext, sessionId, onComplete }) {
   const [messages, setMessages] = useState([]);
   const [turn, setTurn] = useState(0); // 0 = opener not back yet; 1-7 = completed AI turns
   const [input, setInput] = useState("");
@@ -89,6 +89,7 @@ export default function ChatScreen({ chatContext, onComplete }) {
                 : null,
             },
             history: apiHistory,
+            sessionId,
           }),
         });
         const json = await res.json();
@@ -117,7 +118,7 @@ export default function ChatScreen({ chatContext, onComplete }) {
         setErrorText({ kind: "network", message: "네트워크 오류로 챗봇 응답을 받지 못했습니다." });
       }
     },
-    [chatContext, onComplete, revealLines, sessionStartedAt]
+    [chatContext, onComplete, revealLines, sessionStartedAt, sessionId]
   );
 
   // 턴1(오프닝)은 사용자 입력 없이 마운트 즉시 시작한다. React StrictMode가

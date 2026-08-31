@@ -55,7 +55,7 @@ function getZodiac(month, day) {
   );
 }
 
-export default function OnboardingBirthChart({ onComplete }) {
+export default function OnboardingBirthChart({ sessionId, onComplete }) {
   const locale = "ko";
   const [track, setTrack] = useState("romance");
   const [dob, setDob] = useState("");
@@ -106,6 +106,8 @@ export default function OnboardingBirthChart({ onComplete }) {
           isFemale,
           birthCity: resolvedCity,
           isLunar: false,
+          sessionId,
+          track,
         }),
       });
       const json = await res.json();
@@ -131,7 +133,7 @@ export default function OnboardingBirthChart({ onComplete }) {
     } finally {
       setLoading(false);
     }
-  }, [parsedDate, cityInput, isFemale, tob, timeUnknown, dob, track, onComplete]);
+  }, [parsedDate, cityInput, isFemale, tob, timeUnknown, dob, track, sessionId, onComplete]);
 
   if (loading) return <LoadingReveal />;
 

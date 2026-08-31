@@ -29,7 +29,7 @@ const ELEMENT_INFO = {
  * ------------------------------------------------------------------
  */
 
-export default function QuizScreen({ track: trackProp, moduleId, sajuElements, isSandboxSample, onComplete }) {
+export default function QuizScreen({ track: trackProp, moduleId, sajuElements, isSandboxSample, sessionId, onComplete }) {
   const [track] = useState(trackProp || "romance");
   const moduleDef = useMemo(() => getModuleById(moduleId) ?? getModuleById("module1"), [moduleId]);
   const questions = moduleDef.questions;
@@ -113,6 +113,38 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
       // 사용자가 공유 시트를 취소한 경우 — 별도 처리 없음
     }
   }, [diagnosis, moduleDef]);
+
+  const handleContinueToChat = useCallback(() => {
+    if (!diagnosis) return;
+    // 저장 실패해도 다음 단계(챗봇)로 넘어가는 걸 막지 않는다 — fire-and-forget.
+    if (sessionId) {
+      fetch("/api/quiz-result", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          moduleId: moduleDef.id,
+          moduleTitle: moduleDef.title,
+          answers,
+          dimensionResults: diagnosis.dimensionResults,
+          typeInfo: diagnosis.typeInfo,
+          nuancedSummary: diagnosis.nuancedSummary,
+        }),
+      }).catch(() => {});
+    }
+    onComplete?.({
+      moduleId: moduleDef.id,
+      moduleTitle: moduleDef.title,
+      answers,
+      dimensionResults: diagnosis.dimensionResults,
+      classification: diagnosis.classification,
+      typeInfo: diagnosis.typeInfo,
+      nuancedSummary: diagnosis.nuancedSummary,
+      elements,
+      dominantElement,
+      track,
+    });
+  }, [diagnosis, moduleDef, answers, elements, dominantElement, track, sessionId, onComplete]);
 
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#08080C", backgroundImage: "radial-gradient(circle at 50% -10%, rgba(201,162,75,0.10), transparent 55%)", display: "flex", justifyContent: "center" }}>
@@ -232,20 +264,7 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
 
             <button
               type="button"
-              onClick={() =>
-                onComplete?.({
-                  moduleId: moduleDef.id,
-                  moduleTitle: moduleDef.title,
-                  answers,
-                  dimensionResults: diagnosis.dimensionResults,
-                  classification: diagnosis.classification,
-                  typeInfo: diagnosis.typeInfo,
-                  nuancedSummary: diagnosis.nuancedSummary,
-                  elements,
-                  dominantElement,
-                  track,
-                })
-              }
+              onClick={handleContinueToChat}
               style={{ width: "100%", padding: "16px", borderRadius: "12px", border: "none", background: "#C9A24B", color: "#100F16", fontSize: "15px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "52px" }}
             >
               AI 상담으로 이어가기 <ArrowRight size={17} strokeWidth={2.25} />

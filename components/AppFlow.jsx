@@ -32,6 +32,10 @@ import { getModuleById } from "@/lib/modules";
  */
 
 export default function AppFlow() {
+  // 익명 세션 ID — 로그인 없이도 온보딩→퀴즈→챗봇 결과를 하나의 세션으로 묶어
+  // DB에 저장하기 위한 값. 나중에 로그인을 붙이면 이 세션을 계정에 연결하면 되고,
+  // 지금은 계속 null user_id로 저장된다 (supabase/schema.sql 참고).
+  const [sessionId] = useState(() => (typeof crypto !== "undefined" ? crypto.randomUUID() : ""));
   const [step, setStep] = useState("onboarding"); // 'onboarding' | 'moduleSelect' | 'quiz' | 'chat' | 'report'
   const [sajuResult, setSajuResult] = useState(null);
   const [track, setTrack] = useState("romance");
@@ -86,7 +90,7 @@ export default function AppFlow() {
   }
 
   if (step === "chat") {
-    return <ChatScreen chatContext={chatContextForChat} onComplete={handleChatComplete} />;
+    return <ChatScreen chatContext={chatContextForChat} sessionId={sessionId} onComplete={handleChatComplete} />;
   }
 
   if (step === "quiz") {
@@ -96,6 +100,7 @@ export default function AppFlow() {
         moduleId={moduleId}
         sajuElements={sajuResult?.elements}
         isSandboxSample={sajuResult?.isSandboxSample}
+        sessionId={sessionId}
         onComplete={handleQuizComplete}
       />
     );
@@ -105,5 +110,5 @@ export default function AppFlow() {
     return <ModuleSelect onSelect={handleModuleSelect} />;
   }
 
-  return <OnboardingBirthChart onComplete={handleOnboardingComplete} />;
+  return <OnboardingBirthChart sessionId={sessionId} onComplete={handleOnboardingComplete} />;
 }

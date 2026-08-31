@@ -21,12 +21,24 @@ import OpenAI from "openai";
 import { getChatReply, extractChatSummary, type ChatMessage } from "@/lib/chat";
 import type { ChatSessionContext } from "@/lib/chatPrompts";
 import { TOTAL_TURNS } from "@/lib/chatPrompts";
+import { getSupabaseAdmin } from "@/lib/supabase";
 
 interface ChatRequestBody {
   turnNumber?: number;
   sessionStartedAt?: number;
   context?: ChatSessionContext;
   history?: ChatMessage[];
+  sessionId?: string;
+}
+
+async function saveChatSession(sessionId: string | undefined, transcript: ChatMessage[], extract: unknown) {
+  if (!sessionId) return;
+  try {
+    const { error } = await getSupabaseAdmin().from("chat_sessions").insert({ session_id: sessionId, transcript, extract });
+    if (error) throw error;
+  } catch (err) {
+    console.error("[api/chat] failed to persist chat session (non-fatal)", err);
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -37,7 +49,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { turnNumber, sessionStartedAt, context, history } = body ?? {};
+  const { turnNumber, sessionStartedAt, context, history, sessionId } = body ?? {};
 
   if (!turnNumber || !context || !Array.isArray(history)) {
     return NextResponse.json({ error: "turnNumber, context, history는 필수입니다." }, { status: 400 });
@@ -56,6 +68,7 @@ export async function POST(req: NextRequest) {
       // 화면에 여러 버블로 나뉘어 보이는 lines를 다시 한 줄로 합쳐서 전달한다.
       const fullTranscript: ChatMessage[] = [...history, { role: "assistant", content: lines.join(" ") }];
       const extract = await extractChatSummary(fullTranscript, context);
+      await saveChatSession(sessionId, fullTranscript, extract);
       return NextResponse.json({ lines, extract });
     }
 
