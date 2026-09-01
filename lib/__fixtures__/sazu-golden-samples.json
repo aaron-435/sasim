@@ -1,0 +1,127 @@
+{
+  "strong-male": {
+    "input": {
+      "birthYear": 1998,
+      "birthMonth": 5,
+      "birthDay": 19,
+      "birthHour": 10,
+      "isFemale": false
+    },
+    "expected": {
+      "fourPillars": {
+        "year": "무인",
+        "month": "정사",
+        "day": "병인",
+        "hour": "계사"
+      },
+      "elements": {
+        "wood": 25,
+        "fire": 50,
+        "earth": 12.5,
+        "metal": 0,
+        "water": 12.5
+      },
+      "decadeFortuneDirection": "순행"
+    }
+  },
+  "weak-female": {
+    "input": {
+      "birthYear": 1970,
+      "birthMonth": 5,
+      "birthDay": 5,
+      "birthHour": 10,
+      "isFemale": true
+    },
+    "expected": {
+      "fourPillars": {
+        "year": "경술",
+        "month": "경진",
+        "day": "을유",
+        "hour": "신사"
+      },
+      "elements": {
+        "wood": 12.5,
+        "fire": 12.5,
+        "earth": 25,
+        "metal": 50,
+        "water": 0
+      },
+      "decadeFortuneDirection": "역행"
+    }
+  },
+  "unknown-hour": {
+    "input": {
+      "birthYear": 1985,
+      "birthMonth": 8,
+      "birthDay": 12,
+      "birthHour": null,
+      "isFemale": false
+    },
+    "expected": {
+      "fourPillars": {
+        "year": "을축",
+        "month": "갑신",
+        "day": "계미",
+        "hour": null
+      },
+      "elements": {
+        "wood": 33.3,
+        "fire": 0,
+        "earth": 33.3,
+        "metal": 16.7,
+        "water": 16.7
+      },
+      "decadeFortuneDirection": "역행"
+    }
+  },
+  "balanced": {
+    "input": {
+      "birthYear": 1972,
+      "birthMonth": 5,
+      "birthDay": 19,
+      "birthHour": 10,
+      "isFemale": false
+    },
+    "expected": {
+      "fourPillars": {
+        "year": "임자",
+        "month": "을사",
+        "day": "경술",
+        "hour": "신사"
+      },
+      "elements": {
+        "wood": 12.5,
+        "fire": 25,
+        "earth": 12.5,
+        "metal": 25,
+        "water": 25
+      },
+      "decadeFortuneDirection": "순행"
+    }
+  },
+  "rich-sinsal": {
+    "input": {
+      "birthYear": 1993,
+      "birthMonth": 11,
+      "birthDay": 19,
+      "birthHour": 10,
+      "isFemale": true
+    },
+    "expected": {
+      "fourPillars": {
+        "year": "계유",
+        "month": "계해",
+        "day": "갑진",
+        "hour": "기사"
+      },
+      "elements": {
+        "wood": 12.5,
+        "fire": 12.5,
+        "earth": 25,
+        "metal": 12.5,
+        "water": 37.5
+      },
+      "decadeFortuneDirection": "순행"
+    }
+  }
+}
