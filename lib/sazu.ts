@@ -40,8 +40,10 @@ export interface SazuCalculateInput {
   birthHour?: number | null; // null/undefined if user chose "don't know my birth time"
   birthMinute?: number;
   isFemale: boolean;
-  /** Korean city string, e.g. "서울". Only "서울" is confirmed working so far. */
+  /** Display-name fallback (SAZU's own city list / lib/birthCities.ts). */
   birthCity?: string;
+  /** lib/worldCities.ts city id — precise worldwide lookup, self-hosted engine only. */
+  birthCityId?: string;
   isLunar?: boolean;
   /** Which modules to request. Keep this list minimal to control Pro usage cost. */
   modules?: string[];
@@ -53,6 +55,8 @@ export interface NormalizedSajuResult {
   dominantElement: ElementKey | null;
   fourPillars: unknown; // pass through modules.fourPillars as-is for the 4-pillar cards
   decadeFortune: unknown; // pass through modules.decadeFortune as-is
+  /** self-hosted engine only — which city/offset was actually used (QA/debug) */
+  resolvedLocation?: { source: "worldCity" | "koreaFallback"; cityLabel: string; longitude: number; civilOffsetMinutes: number };
   summary: unknown; // pass through modules.summary (dayMaster, elementBalance, harmony/conflict, fortunePhase — FREE tier)
   timezoneNote: unknown; // data.timezone (진태양시 보정 정보)
   isSandboxSample: boolean; // true when meta.sample === true (Free tier fixed profile)
@@ -92,6 +96,7 @@ async function calculateViaManseryeok(input: SazuCalculateInput): Promise<Normal
     birthMinute: input.birthMinute,
     isFemale: input.isFemale,
     birthCity: input.birthCity,
+    birthCityId: input.birthCityId,
   });
 
   const elements: Record<ElementKey, number> = {
@@ -111,6 +116,7 @@ async function calculateViaManseryeok(input: SazuCalculateInput): Promise<Normal
     summary: result.summary,
     timezoneNote: null,
     isSandboxSample: false, // self-hosted engine has no sandbox restriction
+    resolvedLocation: result.resolvedLocation,
   };
 }
 

@@ -20,31 +20,55 @@
  *     calc, all 5 profiles matched exactly on pillars + elements.
  *   - 시주(hour pillar) is derived locally via the standard 오자시 조견표.
  *
- * UPDATE 2026-09-01: added 진태양시(longitude) correction after a user
+ * UPDATE 2026-09-01 (v1): added 진태양시(longitude) correction after a user
  * caught a wrong hour pillar in production (1997-10-21 03:00 Seoul male —
  * expected 기축, we gave 경인). Root cause: no longitude correction was
- * applied at all. Seoul's correction vs the KST reference meridian
+ * applied at all — Seoul's correction vs the KST reference meridian
  * (135°E) is about -32min, big enough to flip the branch for any birth
- * within ~32min of a two-hour boundary — not the "~2min, rare edge case"
- * originally assumed (that estimate was based on SAZU's own unusually
- * small "-2min convention" correction, which turned out to disagree with
- * both the standard longitude formula and what the user's own reference
- * manseryeok tool expected). Now applies the full standard correction
- * ((cityLongitude - 135) * 4 minutes, see lib/birthCities.ts) to the
- * birth instant BEFORE deriving the hour pillar, the year/month pillar's
- * 절기 boundary check, and decadeFortune — and re-resolves the calendar
- * date for KASI's day-pillar lookup too, since the correction can push a
- * near-midnight birth into the previous day. Korean cities only (see
- * getKoreanLongitudeCorrectionMinutes) — foreign birthCity gets no
- * correction, and unrecognized/blank input defaults to Seoul's.
- * Re-verified against all 5 golden samples after this change — still
- * exact matches (their times aren't close enough to a boundary to flip).
+ * within ~32min of a two-hour boundary.
+ *
+ * UPDATE 2026-09-01 (v2): generalized to work for ANY country, not just
+ * Korea. v1 assumed every birthHour/Minute was a KST wall-clock reading
+ * (hardcoded "-9" for UTC conversion) — silently wrong for a birthCity
+ * outside Korea, since e.g. "14:00" entered for a New York birth is a
+ * *local* New York clock reading, off by 14 real hours from what a
+ * KST-9 conversion would produce. Now uses two cleanly separated values
+ * (see getLocationCorrection() in lib/birthCities.ts, backed by Node's
+ * built-in Intl/ICU — no extra timezone dependency needed):
+ *   1. civilOffsetMinutes — the birth city's actual (DST-aware) UTC
+ *      offset, used ONLY to convert the input local clock time into the
+ *      correct absolute UTC instant. That instant alone (no further
+ *      location adjustment) is what the year/month pillar's 절기
+ *      boundary check and decadeFortune use — a solar-longitude crossing
+ *      is a specific universal instant, identical for everyone on Earth,
+ *      so it needs the *correct* UTC instant but no per-location tweak
+ *      beyond that.
+ *   2. longitude — combined with that UTC instant via the plain mean-
+ *      solar-time formula (true local solar time = UTC + longitude*4min,
+ *      no timezone/DST concepts involved) to get the location's true
+ *      solar clock reading. THIS is what decides the hour pillar branch,
+ *      and which calendar date to hand KASI for the day pillar (a
+ *      correction can push a birth near local midnight into the
+ *      previous/next day).
+ * Re-verified against all 5 golden Korea samples after each change —
+ * still exact matches (none of their birth times are close enough to a
+ * boundary to flip either way).
+ *
+ * UPDATE 2026-09-01 (v3): worldwide city picker (lib/worldCities.ts,
+ * ~4800 cities vs the old 71-city SAZU-inherited list) replaces free-typed
+ * city names for new requests. When `birthCityId` resolves to a known
+ * city, its exact lat/lng + IANA timezone are used directly (no
+ * name-matching involved). `birthCity` (a plain name string) is kept as
+ * a fallback path — against the small curated lib/birthCities.ts list —
+ * for requests that don't carry a birthCityId (SAZU-fallback requests,
+ * or direct calculateManseryeok() calls that predate the picker).
  * ------------------------------------------------------------------
  */
 
 import { getLunCalInfo } from "./kasi";
 import { findCurrentMonthTerm, MONTH_TERMS } from "./solarTerms";
-import { getKoreanLongitudeCorrectionMinutes } from "./birthCities";
+import { getLocationCorrection, getDstAwareUtcOffsetMinutes } from "./birthCities";
+import { getWorldCityById } from "./worldCities";
 
 const STEMS = ["갑", "을", "병", "정", "무", "기", "경", "신", "임", "계"] as const;
 const BRANCHES = ["자", "축", "인", "묘", "진", "사", "오", "미", "신", "유", "술", "해"] as const;
@@ -231,7 +255,11 @@ export interface ManseryeokInput {
   birthHour?: number | null;
   birthMinute?: number | null;
   isFemale: boolean;
-  birthCity?: string | null; // 진태양시 보정용. 한국 도시만 보정 적용 (lib/birthCities.ts 참고)
+  /** lib/worldCities.ts의 WorldCity.id — 있으면 이걸로 정밀 조회(전세계). */
+  birthCityId?: string | null;
+  /** 표시용/폴백용 도시 이름. birthCityId가 없을 때만 lib/birthCities.ts의
+   *  작은 한국 중심 목록에서 근사 매칭 (진태양시 보정도 이 목록 범위에서만 적용). */
+  birthCity?: string | null;
   isLunar?: boolean; // NOTE: only solar-calendar input supported for now (see calculateManseryeok)
 }
 
@@ -239,6 +267,8 @@ export interface ManseryeokResult {
   fourPillars: FourPillars;
   elements: ElementsResult;
   decadeFortune: DecadeFortune;
+  /** 계산에 실제로 사용된 위치 보정 정보 — QA/디버그 화면에서 확인용 */
+  resolvedLocation: { source: "worldCity" | "koreaFallback"; cityLabel: string; longitude: number; civilOffsetMinutes: number };
   summary: SummaryResult;
   dominantElement: ElementKey | null;
 }
@@ -333,29 +363,48 @@ export async function calculateManseryeok(input: ManseryeokInput): Promise<Manse
     throw new Error("MANSERYEOK_LUNAR_NOT_SUPPORTED");
   }
 
-  // 진태양시 보정: 입력 시각(모르면 정오로 근사) + 도시 경도 보정분을 적용해
-  // "보정된 하루 중 분"과, 자정을 넘겼을 경우를 위한 날짜 이동(dayOffset)을 구한다.
-  const correctionMinutes = getKoreanLongitudeCorrectionMinutes(input.birthCity);
+  // 1) 입력한 현지 시각(모르면 정오로 근사) -> 절대 UTC 시각. DST까지 반영된 그
+  // 도시의 실제 오프셋만 사용 — 절기(태양황경) 판정은 이 UTC 시각 하나면 충분하다.
+  const dstCheckDate = new Date(Date.UTC(input.birthYear, input.birthMonth - 1, input.birthDay, 12));
+  const worldCity = input.birthCityId ? getWorldCityById(input.birthCityId) : undefined;
+  const resolvedLocation = worldCity
+    ? {
+        source: "worldCity" as const,
+        cityLabel: `${worldCity.cityDisplay}, ${worldCity.countryDisplay}`,
+        longitude: worldCity.lng,
+        civilOffsetMinutes: getDstAwareUtcOffsetMinutes(worldCity.timezone, dstCheckDate),
+      }
+    : {
+        source: "koreaFallback" as const,
+        cityLabel: input.birthCity?.trim() || "서울(기본값)",
+        ...getLocationCorrection(input.birthCity, dstCheckDate),
+      };
+  const { civilOffsetMinutes, longitude } = resolvedLocation;
   const rawMinutesOfDay = (input.birthHour ?? 12) * 60 + (input.birthMinute ?? 0);
-  const correctedTotalMinutes = rawMinutesOfDay + correctionMinutes;
-  const dayOffset = Math.floor(correctedTotalMinutes / 1440);
-  const correctedMinutesOfDay = ((correctedTotalMinutes % 1440) + 1440) % 1440;
-
-  const correctedDate = new Date(Date.UTC(input.birthYear, input.birthMonth - 1, input.birthDay));
-  correctedDate.setUTCDate(correctedDate.getUTCDate() + dayOffset);
-  const cYear = correctedDate.getUTCFullYear();
-  const cMonth = correctedDate.getUTCMonth() + 1;
-  const cDay = correctedDate.getUTCDate();
-
-  const lun = await getLunCalInfo(cYear, cMonth, cDay);
-
-  const day = buildPillar(...(Object.values(parseGanji(lun.lunIljin)) as [Stem, Branch]));
-  const hour = input.birthHour != null ? buildHourPillar(day.sky, correctedMinutesOfDay) : null;
-
   const birthUtc = new Date(
-    Date.UTC(cYear, cMonth - 1, cDay, Math.floor(correctedMinutesOfDay / 60) - 9, correctedMinutesOfDay % 60)
+    Date.UTC(input.birthYear, input.birthMonth - 1, input.birthDay, 0, 0) +
+      rawMinutesOfDay * 60000 -
+      civilOffsetMinutes * 60000
   );
   const { year, month } = computeYearAndMonthPillar(birthUtc);
+
+  // 2) 그 UTC 시각으로부터 "진태양시"(그 지역 실제 태양 기준 시각)를 구한다 —
+  // 표준시/DST를 거치지 않는 순수 공식: 진태양시 = UTC + 경도*4분.
+  const utcMinutesOfDay = birthUtc.getUTCHours() * 60 + birthUtc.getUTCMinutes();
+  const solarTotalMinutes = utcMinutesOfDay + longitude * 4;
+  const solarDayOffset = Math.floor(solarTotalMinutes / 1440);
+  const solarMinutesOfDay = ((solarTotalMinutes % 1440) + 1440) % 1440;
+
+  const solarDate = new Date(Date.UTC(birthUtc.getUTCFullYear(), birthUtc.getUTCMonth(), birthUtc.getUTCDate()));
+  solarDate.setUTCDate(solarDate.getUTCDate() + solarDayOffset);
+  const sYear = solarDate.getUTCFullYear();
+  const sMonth = solarDate.getUTCMonth() + 1;
+  const sDay = solarDate.getUTCDate();
+
+  const lun = await getLunCalInfo(sYear, sMonth, sDay);
+
+  const day = buildPillar(...(Object.values(parseGanji(lun.lunIljin)) as [Stem, Branch]));
+  const hour = input.birthHour != null ? buildHourPillar(day.sky, solarMinutesOfDay) : null;
 
   const fourPillars: FourPillars = { year, month, day, hour };
   const elements = tallyElements(fourPillars);
@@ -367,5 +416,5 @@ export async function calculateManseryeok(input: ManseryeokInput): Promise<Manse
   );
   const dominantElement = sortedElements[0][1].total.count > 0 ? sortedElements[0][0] : null;
 
-  return { fourPillars, elements, decadeFortune, summary, dominantElement };
+  return { fourPillars, elements, decadeFortune, summary, dominantElement, resolvedLocation };
 }

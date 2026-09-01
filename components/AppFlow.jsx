@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import OnboardingBirthChart from "./OnboardingBirthChart";
+import SajuTestResult from "./SajuTestResult";
 import ModuleSelect from "./ModuleSelect";
 import QuizScreen from "./QuizScreen";
 import ChatScreen from "./ChatScreen";
@@ -36,8 +37,9 @@ export default function AppFlow() {
   // DB에 저장하기 위한 값. 나중에 로그인을 붙이면 이 세션을 계정에 연결하면 되고,
   // 지금은 계속 null user_id로 저장된다 (supabase/schema.sql 참고).
   const [sessionId] = useState(() => (typeof crypto !== "undefined" ? crypto.randomUUID() : ""));
-  const [step, setStep] = useState("onboarding"); // 'onboarding' | 'moduleSelect' | 'quiz' | 'chat' | 'report'
+  const [step, setStep] = useState("onboarding"); // 'onboarding' | 'sajuTest' | 'moduleSelect' | 'quiz' | 'chat' | 'report'
   const [sajuResult, setSajuResult] = useState(null);
+  const [sajuTestData, setSajuTestData] = useState(null); // { birthInput, sajuResult } for the QA screen only
   const [track, setTrack] = useState("romance");
   const [moduleId, setModuleId] = useState(null);
   const [chatContextForChat, setChatContextForChat] = useState(null);
@@ -48,6 +50,11 @@ export default function AppFlow() {
     setSajuResult(sajuResult);
     setTrack(track);
     setStep("moduleSelect");
+  };
+
+  const handleTestSaju = ({ birthInput, sajuResult }) => {
+    setSajuTestData({ birthInput, sajuResult });
+    setStep("sajuTest");
   };
 
   const handleModuleSelect = (id) => {
@@ -110,5 +117,15 @@ export default function AppFlow() {
     return <ModuleSelect onSelect={handleModuleSelect} />;
   }
 
-  return <OnboardingBirthChart sessionId={sessionId} onComplete={handleOnboardingComplete} />;
+  if (step === "sajuTest") {
+    return (
+      <SajuTestResult
+        birthInput={sajuTestData?.birthInput}
+        sajuResult={sajuTestData?.sajuResult}
+        onBack={() => setStep("onboarding")}
+      />
+    );
+  }
+
+  return <OnboardingBirthChart sessionId={sessionId} onComplete={handleOnboardingComplete} onTestSaju={handleTestSaju} />;
 }

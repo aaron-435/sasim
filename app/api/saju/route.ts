@@ -6,10 +6,15 @@
  *
  * Request body (from the client):
  *   { birthYear, birthMonth, birthDay, birthHour?, birthMinute?, isFemale,
- *     birthCity?, isLunar? }
+ *     birthCity?, birthCityId?, isLunar? }
+ *   birthCityId (added 2026-09-01) is a lib/worldCities.ts city id from the
+ *   worldwide city picker — precise lat/lng+timezone lookup, self-hosted
+ *   engine only. birthCity stays as the display-name fallback (SAZU's own
+ *   city list when the self-hosted path fails over, or the small Korea
+ *   list in lib/birthCities.ts if birthCityId is absent).
  *
  * Response body (to the client):
- *   { elements, dominantElement, fourPillars, decadeFortune, timezoneNote, isSandboxSample }
+ *   { elements, dominantElement, fourPillars, decadeFortune, timezoneNote, isSandboxSample, resolvedLocation? }
  *   or { error: string, code?: string } with a non-200 status
  * ------------------------------------------------------------------
  */
@@ -26,6 +31,7 @@ interface SajuRequestBody {
   birthMinute?: number;
   isFemale?: boolean;
   birthCity?: string;
+  birthCityId?: string;
   isLunar?: boolean;
   sessionId?: string;
   track?: string;
@@ -70,7 +76,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { birthYear, birthMonth, birthDay, birthHour, birthMinute, isFemale, birthCity, isLunar, sessionId, track } = body ?? {};
+  const { birthYear, birthMonth, birthDay, birthHour, birthMinute, isFemale, birthCity, birthCityId, isLunar, sessionId, track } = body ?? {};
 
   if (!birthYear || !birthMonth || !birthDay || typeof isFemale !== "boolean") {
     return NextResponse.json(
@@ -87,7 +93,8 @@ export async function POST(req: NextRequest) {
       birthHour: birthHour ?? null, // "모름" 케이스는 null로 전달
       birthMinute,
       isFemale,
-      birthCity, // 현재 "서울"만 검증됨 — Pro 전환 후 타 도시 검증 필요 (lib/sazu.ts 주석 참고)
+      birthCity,
+      birthCityId,
       isLunar,
     });
 
@@ -101,6 +108,7 @@ export async function POST(req: NextRequest) {
       summary: result.summary,
       timezoneNote: result.timezoneNote,
       isSandboxSample: result.isSandboxSample,
+      resolvedLocation: result.resolvedLocation,
     });
   } catch (err) {
     if (err instanceof SazuApiError) {

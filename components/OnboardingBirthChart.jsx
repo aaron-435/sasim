@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
-import { Calendar, Clock, MapPin, Heart, Briefcase, ArrowRight, HelpCircle, Sparkles } from "lucide-react";
-import { BIRTH_CITIES, resolveBirthCity } from "@/lib/birthCities";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { Calendar, Clock, MapPin, Heart, Briefcase, ArrowRight, HelpCircle, Sparkles, FlaskConical } from "lucide-react";
 import LoadingReveal from "./LoadingReveal";
 import ErrorNotice from "./ErrorNotice";
 
@@ -11,20 +10,30 @@ const MIN_LOADING_MS = 2400;
 /**
  * OnboardingBirthChart — CONNECTED version
  * ------------------------------------------------------------------
- * Builds on the earlier i18n version. What's new:
- *   1. Real 71-city list (from lib/birthCities.ts) replaces the old
- *      12-city dummy CITY_SUGGESTIONS, grouped by region.
- *   2. resolveBirthCity() imported from lib/birthCities.ts (shared with
- *      the server-side onboarding logic) instead of a local inline copy.
- *   3. On submit, calls POST /api/saju with the resolved city and
- *      shows a loading state, then calls onComplete(result) so a
- *      parent flow component can hand the data to QuizScreen.
+ * On submit, calls POST /api/saju with the resolved city and shows a
+ * loading state, then calls onComplete(result) so a parent flow
+ * component can hand the data to QuizScreen.
+ *
+ * UPDATE 2026-09-01: city field is now a Skyscanner/Agoda-style
+ * autocomplete backed by GET /api/cities/search (lib/worldCities.ts,
+ * ~4800 cities worldwide with "City, Country" results) instead of the
+ * old static 71-city list SAZU happened to support — the self-hosted
+ * engine has no reason to inherit that cap. Selecting a result sends
+ * its `birthCityId` to /api/saju for a precise lat/lng+timezone lookup;
+ * `birthCity` is still sent as a plain display-name fallback.
+ *
+ * Also added a second "사주 테스트용" button (QA only) that runs the
+ * same /api/saju call but routes to SajuTestResult instead of the quiz
+ * flow, so pillar/element accuracy can be eyeballed without a live
+ * SAZU key or an unrelated dev script.
  *
  * Props:
  *   onComplete({ birthInput, sajuResult, track }) — called after a
  *   successful /api/saju call. sajuResult is what api/saju/route.ts
  *   returns: { elements, dominantElement, fourPillars, decadeFortune,
- *              timezoneNote, isSandboxSample }.
+ *              timezoneNote, isSandboxSample, resolvedLocation }.
+ *   onTestSaju({ birthInput, sajuResult }) — same shape, routes to the
+ *   QA results screen instead.
  * ------------------------------------------------------------------
  */
 
@@ -55,17 +64,21 @@ function getZodiac(month, day) {
   );
 }
 
-export default function OnboardingBirthChart({ sessionId, onComplete }) {
+export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju }) {
   const locale = "ko";
   const [track, setTrack] = useState("romance");
   const [dob, setDob] = useState("");
   const [timeUnknown, setTimeUnknown] = useState(false);
   const [tob, setTob] = useState("");
   const [cityInput, setCityInput] = useState("");
+  const [selectedCity, setSelectedCity] = useState(null); // { id, cityDisplay, countryDisplay } from /api/cities/search
+  const [cityResults, setCityResults] = useState([]);
   const [cityFocused, setCityFocused] = useState(false);
+  const [citySearching, setCitySearching] = useState(false);
   const [isFemale, setIsFemale] = useState(null); // null = not chosen yet
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
+  const citySearchSeq = useRef(0);
 
   const parsedDate = useMemo(() => {
     if (!dob) return null;
@@ -76,64 +89,96 @@ export default function OnboardingBirthChart({ sessionId, onComplete }) {
 
   const zodiac = useMemo(() => (parsedDate ? getZodiac(parsedDate.month, parsedDate.day) : null), [parsedDate]);
 
-  const filteredCities = useMemo(() => {
-    if (!cityInput) return BIRTH_CITIES.slice(0, 6);
-    const needle = cityInput.toLowerCase();
-    return BIRTH_CITIES.filter((c) => c.ko.includes(cityInput) || c.en.toLowerCase().includes(needle)).slice(0, 6);
+  // Skyscanner/Agoda 스타일 — 입력 300ms 후 서버에 도시 검색 (전세계 ~4800개, lib/worldCities.ts)
+  useEffect(() => {
+    if (selectedCity && cityInput === `${selectedCity.cityDisplay}, ${selectedCity.countryDisplay}`) return;
+    const seq = ++citySearchSeq.current;
+    setCitySearching(true);
+    const t = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/cities/search?q=${encodeURIComponent(cityInput)}`);
+        const json = await res.json();
+        if (citySearchSeq.current === seq) setCityResults(json.results ?? []);
+      } catch {
+        if (citySearchSeq.current === seq) setCityResults([]);
+      } finally {
+        if (citySearchSeq.current === seq) setCitySearching(false);
+      }
+    }, 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cityInput]);
 
-  const canProceed = Boolean(dob && cityInput && isFemale !== null) && !loading;
+  const canProceed = Boolean(dob && selectedCity && isFemale !== null) && !loading;
+
+  const runSajuCalculation = useCallback(async () => {
+    if (!parsedDate || !selectedCity || isFemale === null) return null;
+    const [hh, mm] = tob ? tob.split(":").map(Number) : [null, 0];
+
+    const res = await fetch("/api/saju", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        birthYear: parsedDate.year,
+        birthMonth: parsedDate.month,
+        birthDay: parsedDate.day,
+        birthHour: timeUnknown ? null : hh,
+        birthMinute: timeUnknown ? 0 : mm ?? 0,
+        isFemale,
+        birthCity: selectedCity.cityDisplay,
+        birthCityId: selectedCity.id,
+        isLunar: false,
+        sessionId,
+        track,
+      }),
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      const kind = res.status === 429 || res.status === 503 ? "network" : "server";
+      throw Object.assign(new Error(json.error || "사주 계산에 실패했습니다."), { kind });
+    }
+    return json;
+  }, [parsedDate, selectedCity, isFemale, tob, timeUnknown, sessionId, track]);
 
   const handleSubmit = useCallback(async () => {
-    if (!parsedDate || !cityInput || isFemale === null) return;
     setLoading(true);
     setApiError(null);
-
-    const resolvedCity = resolveBirthCity(cityInput);
-    const [hh, mm] = tob ? tob.split(":").map(Number) : [null, 0];
     const startedAt = Date.now();
-
     try {
-      const res = await fetch("/api/saju", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          birthYear: parsedDate.year,
-          birthMonth: parsedDate.month,
-          birthDay: parsedDate.day,
-          birthHour: timeUnknown ? null : hh,
-          birthMinute: timeUnknown ? 0 : mm ?? 0,
-          isFemale,
-          birthCity: resolvedCity,
-          isLunar: false,
-          sessionId,
-          track,
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) {
-        // 429/503 = 일시적 장애(새로고침이 실제로 도움됨). 그 외(422 베타 샘플 제한 등)는
-        // 재시도해도 결과가 안 바뀌므로 메시지를 있는 그대로 보여준다.
-        const kind = res.status === 429 || res.status === 503 ? "network" : "server";
-        setApiError({ kind, message: json.error || "사주 계산에 실패했습니다." });
-        setLoading(false);
-        return;
-      }
+      const json = await runSajuCalculation();
+      if (!json) return;
       const elapsed = Date.now() - startedAt;
       if (elapsed < MIN_LOADING_MS) {
         await new Promise((resolve) => window.setTimeout(resolve, MIN_LOADING_MS - elapsed));
       }
       onComplete?.({
-        birthInput: { dob, tob: timeUnknown ? null : tob, cityInput, resolvedCity, isFemale, track },
+        birthInput: { dob, tob: timeUnknown ? null : tob, city: selectedCity, isFemale, track },
         sajuResult: json,
         track,
       });
-    } catch {
-      setApiError({ kind: "network", message: "네트워크 오류로 사주 계산에 실패했습니다." });
+    } catch (err) {
+      setApiError({ kind: err?.kind ?? "network", message: err?.message || "네트워크 오류로 사주 계산에 실패했습니다." });
     } finally {
       setLoading(false);
     }
-  }, [parsedDate, cityInput, isFemale, tob, timeUnknown, dob, track, sessionId, onComplete]);
+  }, [runSajuCalculation, dob, tob, timeUnknown, selectedCity, isFemale, track, onComplete]);
+
+  const handleTestSaju = useCallback(async () => {
+    setLoading(true);
+    setApiError(null);
+    try {
+      const json = await runSajuCalculation();
+      if (!json) return;
+      onTestSaju?.({
+        birthInput: { dob, tob: timeUnknown ? null : tob, city: selectedCity, isFemale, track },
+        sajuResult: json,
+      });
+    } catch (err) {
+      setApiError({ kind: err?.kind ?? "network", message: err?.message || "네트워크 오류로 사주 계산에 실패했습니다." });
+    } finally {
+      setLoading(false);
+    }
+  }, [runSajuCalculation, dob, tob, timeUnknown, selectedCity, isFemale, track, onTestSaju]);
 
   if (loading) return <LoadingReveal />;
 
@@ -229,24 +274,29 @@ export default function OnboardingBirthChart({ sessionId, onComplete }) {
           </div>
 
           <div style={{ position: "relative" }}>
-            <label style={labelStyle}>출생 도시 (71개 도시 지원)</label>
+            <label style={labelStyle}>출생 도시 (전세계 검색 가능)</label>
             <div style={{ position: "relative" }}>
               <MapPin size={17} strokeWidth={1.75} className="ob-field-icon" />
               <input type="text" className="ob-input" placeholder="도시 이름을 입력하세요" value={cityInput}
-                onChange={(e) => setCityInput(e.target.value)} onFocus={() => setCityFocused(true)}
+                onChange={(e) => { setCityInput(e.target.value); setSelectedCity(null); }}
+                onFocus={() => setCityFocused(true)}
                 onBlur={() => setTimeout(() => setCityFocused(false), 120)} />
             </div>
-            {cityFocused && filteredCities.length > 0 && (
-              <div className="ob-fade-in" style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, background: "#131219", border: "1px solid #2A2833", borderRadius: "10px", overflow: "hidden", zIndex: 10, maxHeight: "220px", overflowY: "auto" }}>
-                {filteredCities.map((c) => (
-                  <div key={c.en} onMouseDown={() => { setCityInput(c.ko); setCityFocused(false); }}
-                    style={{ padding: "11px 14px", fontSize: "14px", color: "#C7C3D1", cursor: "pointer", display: "flex", justifyContent: "space-between" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.04)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
-                    <span>{c.ko}</span>
-                    <span style={{ color: "#847E90", fontSize: "12px" }}>{c.region}</span>
-                  </div>
-                ))}
+            {cityFocused && (citySearching || cityResults.length > 0) && (
+              <div className="ob-fade-in" style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, background: "#131219", border: "1px solid #2A2833", borderRadius: "10px", overflow: "hidden", zIndex: 10, maxHeight: "260px", overflowY: "auto" }}>
+                {citySearching && cityResults.length === 0 ? (
+                  <div style={{ padding: "12px 14px", fontSize: "13px", color: "#847E90" }}>검색 중...</div>
+                ) : (
+                  cityResults.map((c) => (
+                    <div key={c.id} onMouseDown={() => { setSelectedCity(c); setCityInput(`${c.cityDisplay}, ${c.countryDisplay}`); setCityFocused(false); }}
+                      style={{ padding: "11px 14px", fontSize: "14px", color: "#C7C3D1", cursor: "pointer", display: "flex", justifyContent: "space-between" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.04)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                      <span>{c.cityDisplay}</span>
+                      <span style={{ color: "#847E90", fontSize: "12px" }}>{c.countryDisplay}</span>
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>
@@ -274,6 +324,20 @@ export default function OnboardingBirthChart({ sessionId, onComplete }) {
           }}>
           내 블루프린트 확인하기 <ArrowRight size={17} strokeWidth={2.25} />
         </button>
+
+        {onTestSaju && (
+          <button type="button" disabled={!canProceed} onClick={handleTestSaju}
+            style={{
+              width: "100%", marginTop: "10px", padding: "12px", borderRadius: "10px",
+              border: "1px dashed #3A3745", background: "transparent",
+              color: canProceed ? "#8B879A" : "#4A4854",
+              fontSize: "13px", fontWeight: 600, cursor: canProceed ? "pointer" : "not-allowed",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: "7px", minHeight: "40px",
+            }}>
+            <FlaskConical size={14} strokeWidth={1.75} /> 사주 테스트용 (퀴즈 없이 계산 결과만 보기)
+          </button>
+        )}
+
         <p style={{ textAlign: "center", fontSize: "11.5px", color: "#847E90", marginTop: "12px" }}>
           무료 10분 리딩 · 신용카드 불필요
         </p>
