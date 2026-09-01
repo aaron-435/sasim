@@ -20,16 +20,31 @@
  *     calc, all 5 profiles matched exactly on pillars + elements.
  *   - 시주(hour pillar) is derived locally via the standard 오자시 조견표.
  *
- * KNOWN LIMITATION: hour-pillar branch assignment uses plain KST hour
- * (no 진태양시/longitude correction). SAZU applies a small correction
- * (~2min for Seoul, "convention" mode) — this only matters for births
- * within ~2 minutes of a two-hour branch boundary, which we accept as
- * a rare edge case for now.
+ * UPDATE 2026-09-01: added 진태양시(longitude) correction after a user
+ * caught a wrong hour pillar in production (1997-10-21 03:00 Seoul male —
+ * expected 기축, we gave 경인). Root cause: no longitude correction was
+ * applied at all. Seoul's correction vs the KST reference meridian
+ * (135°E) is about -32min, big enough to flip the branch for any birth
+ * within ~32min of a two-hour boundary — not the "~2min, rare edge case"
+ * originally assumed (that estimate was based on SAZU's own unusually
+ * small "-2min convention" correction, which turned out to disagree with
+ * both the standard longitude formula and what the user's own reference
+ * manseryeok tool expected). Now applies the full standard correction
+ * ((cityLongitude - 135) * 4 minutes, see lib/birthCities.ts) to the
+ * birth instant BEFORE deriving the hour pillar, the year/month pillar's
+ * 절기 boundary check, and decadeFortune — and re-resolves the calendar
+ * date for KASI's day-pillar lookup too, since the correction can push a
+ * near-midnight birth into the previous day. Korean cities only (see
+ * getKoreanLongitudeCorrectionMinutes) — foreign birthCity gets no
+ * correction, and unrecognized/blank input defaults to Seoul's.
+ * Re-verified against all 5 golden samples after this change — still
+ * exact matches (their times aren't close enough to a boundary to flip).
  * ------------------------------------------------------------------
  */
 
 import { getLunCalInfo } from "./kasi";
 import { findCurrentMonthTerm, MONTH_TERMS } from "./solarTerms";
+import { getKoreanLongitudeCorrectionMinutes } from "./birthCities";
 
 const STEMS = ["갑", "을", "병", "정", "무", "기", "경", "신", "임", "계"] as const;
 const BRANCHES = ["자", "축", "인", "묘", "진", "사", "오", "미", "신", "유", "술", "해"] as const;
@@ -106,13 +121,14 @@ const HOUR_STEM_START: Record<Stem, Stem> = {
   무: "임", 계: "임",
 };
 
-/** birthHour(0-23, 로컬 KST 정수시)로부터 지지 인덱스(0=자...11=해) 산출 */
-function branchIndexFromHour(hour: number): number {
-  return Math.floor(((hour + 1) % 24) / 2);
+/** 보정된 하루 중 분(0-1439, 자정=0)으로부터 지지 인덱스(0=자...11=해) 산출 */
+function branchIndexFromMinutes(minutesOfDay: number): number {
+  const shifted = (((minutesOfDay + 60) % 1440) + 1440) % 1440;
+  return Math.floor(shifted / 120);
 }
 
-function buildHourPillar(dayStem: Stem, birthHour: number): Pillar {
-  const branchIdx = branchIndexFromHour(birthHour);
+function buildHourPillar(dayStem: Stem, correctedMinutesOfDay: number): Pillar {
+  const branchIdx = branchIndexFromMinutes(correctedMinutesOfDay);
   const zijShiStem = HOUR_STEM_START[dayStem];
   const stemIdx = (STEMS.indexOf(zijShiStem) + branchIdx) % 10;
   return buildPillar(STEMS[stemIdx], BRANCHES[branchIdx]);
@@ -213,7 +229,9 @@ export interface ManseryeokInput {
   birthMonth: number;
   birthDay: number;
   birthHour?: number | null;
+  birthMinute?: number | null;
   isFemale: boolean;
+  birthCity?: string | null; // 진태양시 보정용. 한국 도시만 보정 적용 (lib/birthCities.ts 참고)
   isLunar?: boolean; // NOTE: only solar-calendar input supported for now (see calculateManseryeok)
 }
 
@@ -314,14 +332,28 @@ export async function calculateManseryeok(input: ManseryeokInput): Promise<Manse
   if (input.isLunar) {
     throw new Error("MANSERYEOK_LUNAR_NOT_SUPPORTED");
   }
-  const lun = await getLunCalInfo(input.birthYear, input.birthMonth, input.birthDay);
+
+  // 진태양시 보정: 입력 시각(모르면 정오로 근사) + 도시 경도 보정분을 적용해
+  // "보정된 하루 중 분"과, 자정을 넘겼을 경우를 위한 날짜 이동(dayOffset)을 구한다.
+  const correctionMinutes = getKoreanLongitudeCorrectionMinutes(input.birthCity);
+  const rawMinutesOfDay = (input.birthHour ?? 12) * 60 + (input.birthMinute ?? 0);
+  const correctedTotalMinutes = rawMinutesOfDay + correctionMinutes;
+  const dayOffset = Math.floor(correctedTotalMinutes / 1440);
+  const correctedMinutesOfDay = ((correctedTotalMinutes % 1440) + 1440) % 1440;
+
+  const correctedDate = new Date(Date.UTC(input.birthYear, input.birthMonth - 1, input.birthDay));
+  correctedDate.setUTCDate(correctedDate.getUTCDate() + dayOffset);
+  const cYear = correctedDate.getUTCFullYear();
+  const cMonth = correctedDate.getUTCMonth() + 1;
+  const cDay = correctedDate.getUTCDate();
+
+  const lun = await getLunCalInfo(cYear, cMonth, cDay);
 
   const day = buildPillar(...(Object.values(parseGanji(lun.lunIljin)) as [Stem, Branch]));
-  const hour = input.birthHour != null ? buildHourPillar(day.sky, input.birthHour) : null;
+  const hour = input.birthHour != null ? buildHourPillar(day.sky, correctedMinutesOfDay) : null;
 
-  const hourForBoundary = input.birthHour ?? 12; // 시 모름이면 정오로 근사 (절기 경계 판정용)
   const birthUtc = new Date(
-    Date.UTC(input.birthYear, input.birthMonth - 1, input.birthDay, hourForBoundary - 9, 0)
+    Date.UTC(cYear, cMonth - 1, cDay, Math.floor(correctedMinutesOfDay / 60) - 9, correctedMinutesOfDay % 60)
   );
   const { year, month } = computeYearAndMonthPillar(birthUtc);
 

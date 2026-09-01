@@ -22,16 +22,18 @@ export interface BirthCity {
   ko: string;
   en: string;
   utcOffsetMinutes: number;
+  /** 동경(도) — 한국 도시만 채워둠. 자체 사주 엔진의 진태양시 보정(lib/manseryeok.ts)에 사용. */
+  longitude?: number;
 }
 
 export const BIRTH_CITIES: BirthCity[] = [
   // 한국
-  { region: "한국", ko: "서울", en: "seoul", utcOffsetMinutes: 540 },
-  { region: "한국", ko: "인천", en: "incheon", utcOffsetMinutes: 540 },
-  { region: "한국", ko: "부산", en: "busan", utcOffsetMinutes: 540 },
-  { region: "한국", ko: "대구", en: "daegu", utcOffsetMinutes: 540 },
-  { region: "한국", ko: "대전", en: "daejeon", utcOffsetMinutes: 540 },
-  { region: "한국", ko: "광주", en: "gwangju", utcOffsetMinutes: 540 },
+  { region: "한국", ko: "서울", en: "seoul", utcOffsetMinutes: 540, longitude: 126.978 },
+  { region: "한국", ko: "인천", en: "incheon", utcOffsetMinutes: 540, longitude: 126.7052 },
+  { region: "한국", ko: "부산", en: "busan", utcOffsetMinutes: 540, longitude: 129.0756 },
+  { region: "한국", ko: "대구", en: "daegu", utcOffsetMinutes: 540, longitude: 128.6014 },
+  { region: "한국", ko: "대전", en: "daejeon", utcOffsetMinutes: 540, longitude: 127.3845 },
+  { region: "한국", ko: "광주", en: "gwangju", utcOffsetMinutes: 540, longitude: 126.8526 },
   // 일본
   { region: "일본", ko: "도쿄", en: "tokyo", utcOffsetMinutes: 540 },
   { region: "일본", ko: "오사카", en: "osaka", utcOffsetMinutes: 540 },
@@ -140,6 +142,30 @@ export function resolveBirthCity(typedCity: string, utcOffsetMinutes?: number): 
   }
 
   return "서울"; // last-resort fallback, matches the API's own default
+}
+
+const KST_REFERENCE_MERIDIAN = 135; // 한국 표준시(KST)의 기준 경도
+
+/**
+ * 진태양시(眞太陽時) 보정값(분) — 한국 표준시(135°E 기준)와 실제 도시 경도의
+ * 차이를 시간으로 환산. 서울은 약 -32분(126.98°E이므로 135°E보다 해가 늦게 뜸).
+ *
+ * 한국 도시만 지원 — 외국 도시는 각자 별도의 표준 자오선을 쓰기 때문에 이 공식이
+ * 그대로 적용되지 않아 보정하지 않음(0분 반환). 한국 도시가 아니거나 인식 못한
+ * 입력은 서울 기준(가장 흔한 실사용 케이스)으로 근사.
+ */
+export function getKoreanLongitudeCorrectionMinutes(typedCity?: string | null): number {
+  const seoul = BIRTH_CITIES.find((c) => c.ko === "서울")!;
+  if (!typedCity) return (seoul.longitude! - KST_REFERENCE_MERIDIAN) * 4;
+
+  const needle = typedCity.trim().toLowerCase();
+  const match = BIRTH_CITIES.find((c) => c.region === "한국" && (c.ko === typedCity.trim() || c.en.toLowerCase() === needle));
+  if (match?.longitude != null) return (match.longitude - KST_REFERENCE_MERIDIAN) * 4;
+
+  const isKnownForeignCity = BIRTH_CITIES.some((c) => c.region !== "한국" && (c.ko === typedCity.trim() || c.en.toLowerCase() === needle));
+  if (isKnownForeignCity) return 0;
+
+  return (seoul.longitude! - KST_REFERENCE_MERIDIAN) * 4; // 인식 못한 입력은 서울로 근사
 }
 
 /** Group cities by region for a <select><optgroup> dropdown. */

@@ -89,7 +89,9 @@ async function calculateViaManseryeok(input: SazuCalculateInput): Promise<Normal
     birthMonth: input.birthMonth,
     birthDay: input.birthDay,
     birthHour: input.birthHour,
+    birthMinute: input.birthMinute,
     isFemale: input.isFemale,
+    birthCity: input.birthCity,
   });
 
   const elements: Record<ElementKey, number> = {
