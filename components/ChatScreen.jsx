@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Sparkles, Send, ShieldCheck } from "lucide-react";
 import ErrorNotice from "./ErrorNotice";
+import { useStrings } from "@/lib/i18n";
 
 /**
  * ChatScreen — messenger-style version
@@ -30,6 +31,7 @@ import ErrorNotice from "./ErrorNotice";
 const TOTAL_TURNS = 7;
 
 export default function ChatScreen({ chatContext, sessionId, onComplete }) {
+  const t = useStrings();
   const [messages, setMessages] = useState([]);
   const [turn, setTurn] = useState(0); // 0 = opener not back yet; 1-7 = completed AI turns
   const [input, setInput] = useState("");
@@ -97,7 +99,7 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
         if (!res.ok) {
           setIsTyping(false);
           const kind = res.status === 429 || res.status === 503 ? "network" : "server";
-          setErrorText({ kind, message: json.error || "챗봇 응답을 받아오지 못했습니다." });
+          setErrorText({ kind, message: json.error || t.chat.errorDefault });
           return;
         }
 
@@ -115,10 +117,10 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
       } catch {
         if (!mountedRef.current) return;
         setIsTyping(false);
-        setErrorText({ kind: "network", message: "네트워크 오류로 챗봇 응답을 받지 못했습니다." });
+        setErrorText({ kind: "network", message: t.chat.errorNetwork });
       }
     },
-    [chatContext, onComplete, revealLines, sessionStartedAt, sessionId]
+    [chatContext, onComplete, revealLines, sessionStartedAt, sessionId, t]
   );
 
   // 턴1(오프닝)은 사용자 입력 없이 마운트 즉시 시작한다. React StrictMode가
@@ -168,7 +170,7 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
         <div style={{ padding: "18px 20px 12px", borderBottom: "1px solid #1C1B24", display: "flex", alignItems: "center", gap: "8px" }}>
           <Sparkles size={14} color="#C9A24B" />
           <span style={{ fontSize: "12px", letterSpacing: "0.08em", color: "#C9A24B", textTransform: "uppercase" }}>
-            무료 AI 상담
+            {t.chat.headerLabel}
           </span>
         </div>
 
@@ -203,7 +205,7 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
           {doneMax && (
             <div className="ch-fade" style={{ textAlign: "center", marginTop: "20px" }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#847E90", background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "6px 12px" }}>
-                <ShieldCheck size={12} /> 상담 종료 — 리포트를 준비하고 있어요
+                <ShieldCheck size={12} /> {t.chat.doneBadge}
               </div>
             </div>
           )}
@@ -216,10 +218,10 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              placeholder="편하게 이야기해주세요"
+              placeholder={t.chat.inputPlaceholder}
               style={{ flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "12px 16px", color: "#EDE7DA", fontSize: "16px", outline: "none" }}
             />
-            <button onClick={handleSend} aria-label="메시지 보내기" style={{ width: "44px", height: "44px", borderRadius: "50%", background: "#C9A24B", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+            <button onClick={handleSend} aria-label={t.chat.sendAriaLabel} style={{ width: "44px", height: "44px", borderRadius: "50%", background: "#C9A24B", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
               <Send size={16} color="#100F16" />
             </button>
           </div>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useStrings } from "@/lib/i18n";
 
 /**
  * LegalPage — shared chrome for /privacy and /terms. Full-width article
@@ -8,6 +9,7 @@ import { ArrowLeft } from "lucide-react";
  * card layout the rest of the app uses.
  */
 export default function LegalPage({ title, updatedAt, children }) {
+  const t = useStrings();
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#08080C", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `
@@ -25,10 +27,10 @@ export default function LegalPage({ title, updatedAt, children }) {
       ` }} />
       <div className="lg-root" style={{ width: "100%", maxWidth: "640px", padding: "40px 24px 80px" }}>
         <Link href="/" className="lg-back" style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "#847E90", fontSize: "13px", textDecoration: "none", marginBottom: "28px" }}>
-          <ArrowLeft size={14} strokeWidth={2} /> 돌아가기
+          <ArrowLeft size={14} strokeWidth={2} /> {t.legal.backLink}
         </Link>
         <h1 className="lg-serif" style={{ fontSize: "28px", fontWeight: 600, color: "#EDE7DA", margin: "0 0 6px" }}>{title}</h1>
-        <p style={{ fontSize: "12px", color: "#847E90", margin: "0 0 32px" }}>시행일자 {updatedAt}</p>
+        <p style={{ fontSize: "12px", color: "#847E90", margin: "0 0 32px" }}>{t.legal.effectiveDatePrefix} {updatedAt}</p>
         {children}
       </div>
     </div>

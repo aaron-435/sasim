@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
+import { getDictionary } from "@/lib/i18n";
 import "./globals.css";
+
+const t = getDictionary();
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -15,8 +18,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Fatesaid",
-  description: "사주와 심리테스트, AI 상담을 결합한 무료 성향 분석",
+  title: t.meta.siteTitle,
+  description: t.meta.siteDescription,
 };
 
 export default function RootLayout({

@@ -4,13 +4,14 @@ import React, { useState, useMemo, useCallback } from "react";
 import { Sparkles, ArrowRight, RotateCcw, ShieldCheck, Share2 } from "lucide-react";
 import { getModuleById } from "@/lib/modules";
 import { scoreSliderValue, computeAllDimensionResults, classifyProfile, resolveTypeName, generateNuancedSummary } from "@/lib/quizProfile";
+import { useStrings } from "@/lib/i18n";
 
-const ELEMENT_INFO = {
-  wood: { label: "목(木)", color: "#4E8368" },
-  fire: { label: "화(火)", color: "#CB6249" },
-  earth: { label: "토(土)", color: "#B98A4E" },
-  metal: { label: "금(金)", color: "#C7C3D1" },
-  water: { label: "수(水)", color: "#3E6EA0" },
+const ELEMENT_COLORS = {
+  wood: "#4E8368",
+  fire: "#CB6249",
+  earth: "#B98A4E",
+  metal: "#C7C3D1",
+  water: "#3E6EA0",
 };
 
 /**
@@ -30,6 +31,7 @@ const ELEMENT_INFO = {
  */
 
 export default function QuizScreen({ track: trackProp, moduleId, sajuElements, isSandboxSample, sessionId, onComplete }) {
+  const t = useStrings();
   const [track] = useState(trackProp || "romance");
   const moduleDef = useMemo(() => getModuleById(moduleId) ?? getModuleById("module1"), [moduleId]);
   const questions = moduleDef.questions;
@@ -87,12 +89,12 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
     const dimensionResults = computeAllDimensionResults(answers, moduleDef.dimensionItemCounts);
     const classification = classifyProfile(dimensionResults);
     const typeInfo = resolveTypeName(classification, moduleDef.typeNames, (dims) => ({
-      title: dims.map((d) => moduleDef.dimensionShortNames[d] ?? d).join("+") + " 혼합형",
-      hook: "여러 성향이 함께 나타나는 패턴입니다.",
+      title: dims.map((d) => moduleDef.dimensionShortNames[d] ?? d).join("+") + t.quiz.combinedTypeSuffix,
+      hook: t.quiz.combinedTypeHook,
     }));
     const nuancedSummary = generateNuancedSummary(dimensionResults, moduleDef.dimensionLabels);
     return { dimensionResults, classification, typeInfo, nuancedSummary };
-  }, [answers, done, moduleDef]);
+  }, [answers, done, moduleDef, t]);
 
   const elements = sajuElements ?? null;
   const dominantElement = elements ? Object.entries(elements).sort((a, b) => b[1] - a[1])[0]?.[0] : null;
@@ -167,7 +169,7 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
         {isSandboxSample && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontSize: "11px", color: "#8B879A", background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "6px 12px", marginBottom: "18px" }}>
             <ShieldCheck size={12} strokeWidth={1.75} />
-            개발 모드 — SAZU 샌드박스 고정 샘플 데이터
+            {t.quiz.devModeBadge}
           </div>
         )}
 
@@ -175,7 +177,7 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
           <div style={{ height: "3px", background: "#1C1B24", borderRadius: "999px", overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${Math.min(progress * 100, 100)}%`, background: "#C9A24B", borderRadius: "999px", transition: "width 0.35s ease" }} />
           </div>
-          <p style={{ fontSize: "11px", color: "#847E90", marginTop: "8px", textAlign: "right" }}>{done ? questions.length : index + 1} / {questions.length}</p>
+          <p style={{ fontSize: "11px", color: "#847E90", marginTop: "8px", textAlign: "right" }}>{t.quiz.progressLabel(done ? questions.length : index + 1, questions.length)}</p>
         </div>
 
         {!done && current && (
@@ -208,7 +210,7 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
                   disabled={transitioning}
                 />
                 <p className="qz-serif" style={{ textAlign: "center", fontSize: "28px", color: "#C9A24B", margin: "10px 0 0" }}>{sliderValue}</p>
-                <button type="button" className="qz-slider-btn" onClick={handleSliderSubmit} disabled={transitioning}>다음</button>
+                <button type="button" className="qz-slider-btn" onClick={handleSliderSubmit} disabled={transitioning}>{t.quiz.nextButton}</button>
               </div>
             )}
           </div>
@@ -218,7 +220,7 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
           <div className="qz-fade" style={{ textAlign: "center", paddingTop: "32px" }}>
             <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", letterSpacing: "0.14em", color: "#C9A24B", textTransform: "uppercase", marginBottom: "18px" }}>
               <Sparkles size={12} strokeWidth={1.75} />
-              첫 블루프린트가 완성됐어요
+              {t.quiz.doneHeader}
             </div>
 
             {/* 공유 카드 — 사주 우세 오행 + 심리테스트 타입만 티저로 보여주고,
@@ -230,10 +232,10 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
             }}>
               <div style={{ position: "absolute", top: "-40%", right: "-25%", width: "70%", height: "140%", background: "radial-gradient(circle, rgba(201,162,75,0.14), transparent 65%)", pointerEvents: "none" }} />
 
-              {dominantElement && ELEMENT_INFO[dominantElement] && (
+              {dominantElement && ELEMENT_COLORS[dominantElement] && (
                 <div style={{ display: "inline-flex", alignItems: "center", gap: "7px", background: "rgba(255,255,255,0.05)", border: "1px solid #2A2833", borderRadius: "999px", padding: "6px 13px", marginBottom: "18px" }}>
-                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: ELEMENT_INFO[dominantElement].color, flexShrink: 0 }} />
-                  <span style={{ fontSize: "12px", color: "#C7C3D1", fontWeight: 600 }}>사주 우세 오행 · {ELEMENT_INFO[dominantElement].label}</span>
+                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: ELEMENT_COLORS[dominantElement], flexShrink: 0 }} />
+                  <span style={{ fontSize: "12px", color: "#C7C3D1", fontWeight: 600 }}>{t.quiz.dominantElementPrefix} · {t.common.elementLabels[dominantElement]}</span>
                 </div>
               )}
 
@@ -251,7 +253,7 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
             </div>
 
             <p style={{ fontSize: "12.5px", color: "#847E90", margin: "16px 0 22px", lineHeight: 1.65 }}>
-              더 자세한 분석(오행 궁합, 성향 상세, 상담 대화 기반 인사이트)은 AI 상담을 마친 뒤 리포트에서 확인하실 수 있어요.
+              {t.quiz.moreDetail}
             </p>
 
             <button
@@ -259,7 +261,7 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
               onClick={handleShare}
               style={{ width: "100%", padding: "14px", borderRadius: "12px", border: "1px solid #2A2833", background: "rgba(255,255,255,0.03)", color: "#EDE7DA", fontSize: "13.5px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "7px", minHeight: "48px", marginBottom: "10px" }}
             >
-              <Share2 size={15} strokeWidth={2} /> {shareCopied ? "복사됐어요" : "공유하기"}
+              <Share2 size={15} strokeWidth={2} /> {shareCopied ? t.quiz.shareCopied : t.quiz.shareButton}
             </button>
 
             <button
@@ -267,10 +269,10 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
               onClick={handleContinueToChat}
               style={{ width: "100%", padding: "16px", borderRadius: "12px", border: "none", background: "#C9A24B", color: "#100F16", fontSize: "15px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "52px" }}
             >
-              AI 상담으로 이어가기 <ArrowRight size={17} strokeWidth={2.25} />
+              {t.quiz.continueToChatButton} <ArrowRight size={17} strokeWidth={2.25} />
             </button>
             <button type="button" onClick={handleRestart} style={{ marginTop: "14px", background: "none", border: "none", color: "#847E90", fontSize: "12px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "5px", padding: "6px" }}>
-              <RotateCcw size={12} strokeWidth={1.75} /> 다시 풀기 (데모용)
+              <RotateCcw size={12} strokeWidth={1.75} /> {t.quiz.restartButton}
             </button>
           </div>
         )}

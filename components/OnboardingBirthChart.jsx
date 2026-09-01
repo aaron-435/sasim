@@ -4,6 +4,7 @@ import React, { useState, useMemo, useCallback, useEffect, useRef } from "react"
 import { Calendar, Clock, MapPin, Heart, Briefcase, ArrowRight, HelpCircle, Sparkles, FlaskConical } from "lucide-react";
 import LoadingReveal from "./LoadingReveal";
 import ErrorNotice from "./ErrorNotice";
+import { useStrings } from "@/lib/i18n";
 
 const MIN_LOADING_MS = 2400;
 
@@ -37,19 +38,22 @@ const MIN_LOADING_MS = 2400;
  * ------------------------------------------------------------------
  */
 
+// nameKey looks up lib/i18n's onboarding.zodiac dictionary — display name comes
+// from useStrings() in the component, not stored here (see ZODIAC's old inline
+// ko/en/es object, replaced 2026-09-02 so there's one dictionary, not two).
 const ZODIAC = [
-  { name: { ko: "염소자리", en: "Capricorn", es: "Capricornio" }, symbol: "♑", from: [12, 22], to: [1, 19], element: "earth" },
-  { name: { ko: "물병자리", en: "Aquarius", es: "Acuario" }, symbol: "♒", from: [1, 20], to: [2, 18], element: "metal" },
-  { name: { ko: "물고기자리", en: "Pisces", es: "Piscis" }, symbol: "♓", from: [2, 19], to: [3, 20], element: "water" },
-  { name: { ko: "양자리", en: "Aries", es: "Aries" }, symbol: "♈", from: [3, 21], to: [4, 19], element: "fire" },
-  { name: { ko: "황소자리", en: "Taurus", es: "Tauro" }, symbol: "♉", from: [4, 20], to: [5, 20], element: "earth" },
-  { name: { ko: "쌍둥이자리", en: "Gemini", es: "Géminis" }, symbol: "♊", from: [5, 21], to: [6, 20], element: "metal" },
-  { name: { ko: "게자리", en: "Cancer", es: "Cáncer" }, symbol: "♋", from: [6, 21], to: [7, 22], element: "water" },
-  { name: { ko: "사자자리", en: "Leo", es: "Leo" }, symbol: "♌", from: [7, 23], to: [8, 22], element: "fire" },
-  { name: { ko: "처녀자리", en: "Virgo", es: "Virgo" }, symbol: "♍", from: [8, 23], to: [9, 22], element: "earth" },
-  { name: { ko: "천칭자리", en: "Libra", es: "Libra" }, symbol: "♎", from: [9, 23], to: [10, 22], element: "metal" },
-  { name: { ko: "전갈자리", en: "Scorpio", es: "Escorpio" }, symbol: "♏", from: [10, 23], to: [11, 21], element: "water" },
-  { name: { ko: "사수자리", en: "Sagittarius", es: "Sagitario" }, symbol: "♐", from: [11, 22], to: [12, 21], element: "fire" },
+  { nameKey: "capricorn", symbol: "♑", from: [12, 22], to: [1, 19], element: "earth" },
+  { nameKey: "aquarius", symbol: "♒", from: [1, 20], to: [2, 18], element: "metal" },
+  { nameKey: "pisces", symbol: "♓", from: [2, 19], to: [3, 20], element: "water" },
+  { nameKey: "aries", symbol: "♈", from: [3, 21], to: [4, 19], element: "fire" },
+  { nameKey: "taurus", symbol: "♉", from: [4, 20], to: [5, 20], element: "earth" },
+  { nameKey: "gemini", symbol: "♊", from: [5, 21], to: [6, 20], element: "metal" },
+  { nameKey: "cancer", symbol: "♋", from: [6, 21], to: [7, 22], element: "water" },
+  { nameKey: "leo", symbol: "♌", from: [7, 23], to: [8, 22], element: "fire" },
+  { nameKey: "virgo", symbol: "♍", from: [8, 23], to: [9, 22], element: "earth" },
+  { nameKey: "libra", symbol: "♎", from: [9, 23], to: [10, 22], element: "metal" },
+  { nameKey: "scorpio", symbol: "♏", from: [10, 23], to: [11, 21], element: "water" },
+  { nameKey: "sagittarius", symbol: "♐", from: [11, 22], to: [12, 21], element: "fire" },
 ];
 
 function getZodiac(month, day) {
@@ -65,7 +69,7 @@ function getZodiac(month, day) {
 }
 
 export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju }) {
-  const locale = "ko";
+  const t = useStrings();
   const [track, setTrack] = useState("romance");
   const [dob, setDob] = useState("");
   const [timeUnknown, setTimeUnknown] = useState(false);
@@ -135,10 +139,10 @@ export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju
     const json = await res.json();
     if (!res.ok) {
       const kind = res.status === 429 || res.status === 503 ? "network" : "server";
-      throw Object.assign(new Error(json.error || "사주 계산에 실패했습니다."), { kind });
+      throw Object.assign(new Error(json.error || t.onboarding.errorDefault), { kind });
     }
     return json;
-  }, [parsedDate, selectedCity, isFemale, tob, timeUnknown, sessionId, track]);
+  }, [parsedDate, selectedCity, isFemale, tob, timeUnknown, sessionId, track, t]);
 
   const handleSubmit = useCallback(async () => {
     setLoading(true);
@@ -157,11 +161,11 @@ export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju
         track,
       });
     } catch (err) {
-      setApiError({ kind: err?.kind ?? "network", message: err?.message || "네트워크 오류로 사주 계산에 실패했습니다." });
+      setApiError({ kind: err?.kind ?? "network", message: err?.message || t.onboarding.errorNetwork });
     } finally {
       setLoading(false);
     }
-  }, [runSajuCalculation, dob, tob, timeUnknown, selectedCity, isFemale, track, onComplete]);
+  }, [runSajuCalculation, dob, tob, timeUnknown, selectedCity, isFemale, track, onComplete, t]);
 
   const handleTestSaju = useCallback(async () => {
     setLoading(true);
@@ -174,11 +178,11 @@ export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju
         sajuResult: json,
       });
     } catch (err) {
-      setApiError({ kind: err?.kind ?? "network", message: err?.message || "네트워크 오류로 사주 계산에 실패했습니다." });
+      setApiError({ kind: err?.kind ?? "network", message: err?.message || t.onboarding.errorNetwork });
     } finally {
       setLoading(false);
     }
-  }, [runSajuCalculation, dob, tob, timeUnknown, selectedCity, isFemale, track, onTestSaju]);
+  }, [runSajuCalculation, dob, tob, timeUnknown, selectedCity, isFemale, track, onTestSaju, t]);
 
   if (loading) return <LoadingReveal />;
 
@@ -214,13 +218,13 @@ export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju
         <div style={{ textAlign: "center", marginBottom: "26px" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", letterSpacing: "0.16em", color: "#C9A24B", textTransform: "uppercase", marginBottom: "14px" }}>
             <Sparkles size={12} strokeWidth={1.75} />
-            Fatesaid
+            {t.common.brand}
           </div>
           <h1 className="ob-serif" style={{ fontSize: "32px", fontWeight: 500, color: "#EDE7DA", margin: 0, lineHeight: 1.25 }}>
-            운명은 이미 말했습니다.<br />이제, 답할 차례는 당신입니다.
+            {t.onboarding.headlineLine1}<br />{t.onboarding.headlineLine2}
           </h1>
           <p style={{ fontSize: "14px", color: "#9C97A6", margin: "14px 0 0", lineHeight: 1.6 }}>
-            운명을 바꾸고 싶나요? 사주를 분석하고 지금 시작하세요.
+            {t.onboarding.subheadline}
           </p>
         </div>
 
@@ -228,17 +232,17 @@ export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju
         <div style={{ display: "flex", gap: "6px", background: "rgba(255,255,255,0.02)", border: "1px solid #201F28", borderRadius: "12px", padding: "5px", marginBottom: "20px" }}>
           <button type="button" className="ob-track-btn" onClick={() => setTrack("romance")}
             style={{ background: track === "romance" ? "rgba(193,80,59,0.14)" : "transparent", color: track === "romance" ? "#E08A76" : "#8B879A", border: track === "romance" ? "1px solid rgba(193,80,59,0.4)" : "1px solid transparent" }}>
-            <Heart size={15} strokeWidth={2} /> 연애 &amp; 애착
+            <Heart size={15} strokeWidth={2} /> {t.onboarding.trackRomance}
           </button>
           <button type="button" className="ob-track-btn" onClick={() => setTrack("career")}
             style={{ background: track === "career" ? "rgba(62,110,160,0.16)" : "transparent", color: track === "career" ? "#7FA8D6" : "#8B879A", border: track === "career" ? "1px solid rgba(62,110,160,0.4)" : "1px solid transparent" }}>
-            <Briefcase size={15} strokeWidth={2} /> 커리어 &amp; 번아웃
+            <Briefcase size={15} strokeWidth={2} /> {t.onboarding.trackCareer}
           </button>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
           <div>
-            <label style={labelStyle}>생년월일</label>
+            <label style={labelStyle}>{t.onboarding.labelDob}</label>
             <div style={{ position: "relative" }}>
               <Calendar size={17} strokeWidth={1.75} className="ob-field-icon" />
               <input type="date" className="ob-input ob-mono" value={dob} max={new Date().toISOString().split("T")[0]} onChange={(e) => setDob(e.target.value)} />
@@ -247,10 +251,10 @@ export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju
 
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <label style={labelStyle}>태어난 시간</label>
+              <label style={labelStyle}>{t.onboarding.labelTob}</label>
               <button type="button" onClick={() => { setTimeUnknown((v) => !v); if (!timeUnknown) setTob(""); }}
                 style={{ background: "none", border: "none", color: timeUnknown ? "#C9A24B" : "#847E90", fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px", padding: "6px 4px", margin: "-6px -4px" }}>
-                <HelpCircle size={12} strokeWidth={1.75} /> 모름
+                <HelpCircle size={12} strokeWidth={1.75} /> {t.onboarding.unknownTime}
               </button>
             </div>
             <div style={{ position: "relative" }}>
@@ -260,24 +264,24 @@ export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju
           </div>
 
           <div>
-            <label style={labelStyle}>성별</label>
+            <label style={labelStyle}>{t.onboarding.labelGender}</label>
             <div style={{ display: "flex", gap: "8px" }}>
               <button type="button" className="ob-gender-btn" onClick={() => setIsFemale(false)}
                 style={{ background: isFemale === false ? "rgba(201,162,75,0.12)" : "rgba(255,255,255,0.03)", color: isFemale === false ? "#C9A24B" : "#8B879A", border: isFemale === false ? "1px solid rgba(201,162,75,0.4)" : "1px solid #2A2833" }}>
-                남성
+                {t.onboarding.male}
               </button>
               <button type="button" className="ob-gender-btn" onClick={() => setIsFemale(true)}
                 style={{ background: isFemale === true ? "rgba(201,162,75,0.12)" : "rgba(255,255,255,0.03)", color: isFemale === true ? "#C9A24B" : "#8B879A", border: isFemale === true ? "1px solid rgba(201,162,75,0.4)" : "1px solid #2A2833" }}>
-                여성
+                {t.onboarding.female}
               </button>
             </div>
           </div>
 
           <div style={{ position: "relative" }}>
-            <label style={labelStyle}>출생 도시 (전세계 검색 가능)</label>
+            <label style={labelStyle}>{t.onboarding.labelCity}</label>
             <div style={{ position: "relative" }}>
               <MapPin size={17} strokeWidth={1.75} className="ob-field-icon" />
-              <input type="text" className="ob-input" placeholder="도시 이름을 입력하세요" value={cityInput}
+              <input type="text" className="ob-input" placeholder={t.onboarding.cityPlaceholder} value={cityInput}
                 onChange={(e) => { setCityInput(e.target.value); setSelectedCity(null); }}
                 onFocus={() => setCityFocused(true)}
                 onBlur={() => setTimeout(() => setCityFocused(false), 120)} />
@@ -285,7 +289,7 @@ export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju
             {cityFocused && (citySearching || cityResults.length > 0) && (
               <div className="ob-fade-in" style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, background: "#131219", border: "1px solid #2A2833", borderRadius: "10px", overflow: "hidden", zIndex: 10, maxHeight: "260px", overflowY: "auto" }}>
                 {citySearching && cityResults.length === 0 ? (
-                  <div style={{ padding: "12px 14px", fontSize: "13px", color: "#847E90" }}>검색 중...</div>
+                  <div style={{ padding: "12px 14px", fontSize: "13px", color: "#847E90" }}>{t.onboarding.citySearching}</div>
                 ) : (
                   cityResults.map((c) => (
                     <div key={c.id} onMouseDown={() => { setSelectedCity(c); setCityInput(`${c.cityDisplay}, ${c.countryDisplay}`); setCityFocused(false); }}
@@ -305,7 +309,7 @@ export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju
         {zodiac && (
           <div className="ob-fade-in" style={{ marginTop: "18px", display: "flex", alignItems: "center", gap: "12px", background: "rgba(201,162,75,0.06)", border: "1px solid rgba(201,162,75,0.25)", borderRadius: "12px", padding: "13px 16px" }}>
             <span className="ob-serif" style={{ fontSize: "26px", color: "#C9A24B", lineHeight: 1 }}>{zodiac.symbol}</span>
-            <p style={{ fontSize: "13px", color: "#EDE7DA", margin: 0, fontWeight: 600 }}>{zodiac.name[locale]}</p>
+            <p style={{ fontSize: "13px", color: "#EDE7DA", margin: 0, fontWeight: 600 }}>{t.onboarding.zodiac[zodiac.nameKey]}</p>
           </div>
         )}
 
@@ -322,7 +326,7 @@ export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju
             fontSize: "15px", fontWeight: 700, cursor: canProceed ? "pointer" : "not-allowed",
             display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "52px",
           }}>
-          내 블루프린트 확인하기 <ArrowRight size={17} strokeWidth={2.25} />
+          {t.onboarding.submitButton} <ArrowRight size={17} strokeWidth={2.25} />
         </button>
 
         {onTestSaju && (
@@ -334,21 +338,21 @@ export default function OnboardingBirthChart({ sessionId, onComplete, onTestSaju
               fontSize: "13px", fontWeight: 600, cursor: canProceed ? "pointer" : "not-allowed",
               display: "flex", alignItems: "center", justifyContent: "center", gap: "7px", minHeight: "40px",
             }}>
-            <FlaskConical size={14} strokeWidth={1.75} /> 사주 테스트용 (퀴즈 없이 계산 결과만 보기)
+            <FlaskConical size={14} strokeWidth={1.75} /> {t.onboarding.testButton}
           </button>
         )}
 
         <p style={{ textAlign: "center", fontSize: "11.5px", color: "#847E90", marginTop: "12px" }}>
-          무료 10분 리딩 · 신용카드 불필요
+          {t.onboarding.freeNote}
         </p>
         <p style={{ textAlign: "center", fontSize: "11px", color: "#847E90", marginTop: "8px", lineHeight: 1.7 }}>
-          만 14세 이상만 이용할 수 있으며, 계속 진행 시{" "}
-          <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#847E90", textDecoration: "underline" }}>이용약관</a>
-          {" "}및{" "}
-          <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#847E90", textDecoration: "underline" }}>개인정보처리방침</a>
-          에 동의하는 것으로 간주됩니다.
+          {t.onboarding.ageNoticePrefix}{" "}
+          <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#847E90", textDecoration: "underline" }}>{t.onboarding.termsLinkLabel}</a>
+          {" "}{t.onboarding.ageNoticeAnd}{" "}
+          <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#847E90", textDecoration: "underline" }}>{t.onboarding.privacyLinkLabel}</a>
+          {t.onboarding.ageNoticeSuffix}
           <br />
-          사주 풀이와 심리테스트 결과는 참고용이며, 의학적·심리학적 진단이 아닙니다.
+          {t.onboarding.disclaimerNotDiagnosis}
         </p>
       </div>
     </div>

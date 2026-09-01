@@ -3,6 +3,7 @@
 import React from "react";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { MODULES } from "@/lib/modules";
+import { useStrings } from "@/lib/i18n";
 
 /**
  * ModuleSelect — lets a tester pick which of the 5 wired-up 30-question
@@ -15,6 +16,7 @@ import { MODULES } from "@/lib/modules";
  */
 
 export default function ModuleSelect({ onSelect }) {
+  const t = useStrings();
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#08080C", backgroundImage: "radial-gradient(circle at 50% -10%, rgba(201,162,75,0.10), transparent 55%)", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `
@@ -28,10 +30,10 @@ export default function ModuleSelect({ onSelect }) {
         <div style={{ textAlign: "center", marginBottom: "32px" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", letterSpacing: "0.16em", color: "#C9A24B", textTransform: "uppercase", marginBottom: "14px" }}>
             <Sparkles size={12} strokeWidth={1.75} />
-            테스트용 모듈 선택
+            {t.moduleSelect.badge}
           </div>
           <h1 className="ms-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#EDE7DA", margin: 0, lineHeight: 1.4 }}>
-            어떤 심리테스트를 진행할까요?
+            {t.moduleSelect.heading}
           </h1>
         </div>
 

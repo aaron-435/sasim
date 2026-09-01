@@ -2,6 +2,7 @@
 
 import React from "react";
 import { AlertCircle, WifiOff, RotateCcw } from "lucide-react";
+import { useStrings } from "@/lib/i18n";
 
 /**
  * ErrorNotice — shared error presentation used by OnboardingBirthChart
@@ -14,9 +15,10 @@ import { AlertCircle, WifiOff, RotateCcw } from "lucide-react";
  * ------------------------------------------------------------------
  */
 export default function ErrorNotice({ kind = "server", message, onRetry }) {
+  const t = useStrings();
   const Icon = kind === "network" ? WifiOff : AlertCircle;
-  const title = kind === "network" ? "연결이 원활하지 않아요" : "문제가 발생했어요";
-  const retryLabel = kind === "network" ? "새로고침 해주세요" : "다시 시도";
+  const title = kind === "network" ? t.common.errorTitleNetwork : t.common.errorTitleServer;
+  const retryLabel = kind === "network" ? t.common.retryNetwork : t.common.retryServer;
 
   return (
     <div

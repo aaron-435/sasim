@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useStrings } from "@/lib/i18n";
 
 /**
  * LoadingReveal — full-screen takeover shown while calculateSaju() is
@@ -24,20 +25,15 @@ const ELEMENTS = [
   { key: "water", color: "#3E6EA0" },
 ];
 
-const DEFAULT_MESSAGES = [
-  "생년월일시를 만세력에 대입하고 있어요",
-  "오행 분포를 계산하고 있어요",
-  "사주 원국을 그리고 있어요",
-  "거의 다 됐어요",
-];
-
-export default function LoadingReveal({ messages = DEFAULT_MESSAGES }) {
+export default function LoadingReveal({ messages }) {
+  const t = useStrings();
+  const activeMessages = messages ?? t.loading.messages;
   const [step, setStep] = useState(0);
 
   useEffect(() => {
-    const id = setInterval(() => setStep((s) => (s + 1) % messages.length), 1500);
+    const id = setInterval(() => setStep((s) => (s + 1) % activeMessages.length), 1500);
     return () => clearInterval(id);
-  }, [messages.length]);
+  }, [activeMessages.length]);
 
   return (
     <div
@@ -76,7 +72,7 @@ export default function LoadingReveal({ messages = DEFAULT_MESSAGES }) {
           fontSize: "18px", color: "#EDE7DA", textAlign: "center", margin: 0, minHeight: "28px",
         }}
       >
-        {messages[step]}
+        {activeMessages[step]}
       </p>
     </div>
   );

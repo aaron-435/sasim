@@ -1,5 +1,6 @@
 import React from "react";
 import { Sparkles, BookOpen } from "lucide-react";
+import { useStrings } from "@/lib/i18n";
 
 /**
  * ReportScreen — module 3 (번아웃/에너지) demo report, dark mobile theme.
@@ -31,6 +32,7 @@ const DEFAULT_DIMENSIONS = { exhaustion: 78, cynicism: 22, efficacyLoss: 71 };
 const DIMENSION_BAR_COLORS = ["#C1503B", "#3E6EA0", "#B98A4E", "#4E8368", "#8B6BB0"];
 
 export default function ReportScreen({ nickname = "OOO", elements = DEFAULT_ELEMENTS, dimensions = DEFAULT_DIMENSIONS, chatExtract, psychTestDiagnosis }) {
+  const t = useStrings();
   let sectionCounter = 0;
   const nextNum = () => String(++sectionCounter).padStart(2, "0");
 
@@ -129,7 +131,7 @@ export default function ReportScreen({ nickname = "OOO", elements = DEFAULT_ELEM
           <h1 className="rp-h1">무엇이 이 패턴을 만들었나 <span style={{ fontSize: "11px", color: "#847E90" }}>사주 원국 분석</span></h1>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "16px" }}>
             {Object.entries(elements).map(([key, val]) => {
-              const label = { wood: "목(木)", fire: "화(火)", earth: "토(土)", metal: "금(金)", water: "수(水)" }[key];
+              const label = t.common.elementLabels[key];
               const color = { wood: "#4E8368", fire: "#C1503B", earth: "#B98A4E", metal: "#C7CAD1", water: "#3E6EA0" }[key];
               return (
                 <div key={key}>
@@ -299,8 +301,7 @@ export default function ReportScreen({ nickname = "OOO", elements = DEFAULT_ELEM
             결합해 생성되었습니다. 사례(B씨)는 이해를 돕기 위한 각색된 예시입니다.
           </p>
           <p style={{ fontSize: "11px", color: "#847E90", lineHeight: 1.6, marginTop: "8px" }}>
-            이 리포트는 자기 이해를 돕기 위한 참고 자료이며, 의학적·심리학적 진단이 아니고 전문적인
-            심리상담을 대체하지 않습니다.
+            {t.report.disclaimer}
           </p>
         </div>
       </div>
