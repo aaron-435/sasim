@@ -1,34 +1,31 @@
 /**
  * lib/sazu.ts
  * ------------------------------------------------------------------
- * Server-side wrapper around the SAZU 사주 API, via the official
- * @sazuapp/client SDK. NEVER import this in a client component — it
- * reads process.env.SAZU_API_KEY. Call it only from Route Handlers /
- * Server Actions.
+ * Saju calculation entry point. As of 2026-09 SAZU raised Free-tier
+ * pricing sharply, so the primary path is now our own self-hosted
+ * engine (lib/manseryeok.ts, built on KASI's free government Open API
+ * + an in-house solar-term calculation) — see that file's header for
+ * validation notes. SAZU is kept ONLY as an automatic fallback for
+ * when the self-hosted path throws (KASI outage, unsupported lunar
+ * input, unexpected bug) so this endpoint never goes fully dark.
  *
- * Adapted to the installed @sazuapp/client@0.4.0 SDK shape:
- *   - `client.calculate(input)` is a direct method (not client.sazu.calculate).
- *   - It resolves with the CalculateResult directly (no {success,data} envelope)
- *     and THROWS the SDK's own SazuApiError on failure instead of returning
- *     {success:false}. calculateSaju() below catches that and rethrows the
- *     local SazuApiError class (below) so callers (app/api/saju/route.ts)
- *     keep the same catch-shape regardless of SDK internals.
- *   - modules.elements shape (per SAZU docs): keys are lowercase English
- *     (wood/fire/earth/metal/water), each with total.percentage (0-100).
+ * calculateSaju() tries calculateViaManseryeok() first; any error
+ * (caught broadly, on purpose) falls through to calculateViaSazuApi(),
+ * the original @sazuapp/client-based implementation. Callers
+ * (app/api/saju/route.ts) are unaffected either way — same return
+ * shape, same SazuApiError class on failure.
  *
- * NOT CURRENTLY EXPOSED by this SDK version: a sandbox/sample-data flag on
- * the calculate() response. `isSandboxSample` below is left `false` until
- * the SDK surfaces one — if you need to distinguish sandbox vs. real data,
- * check `client.me().tier === 'free'` separately.
+ * Bonus: the self-hosted engine has no "5 sample profiles only" sandbox
+ * restriction, so real birthdates that used to hit SAMPLE_PROFILE_REQUIRED
+ * on the Free SAZU tier now just work.
  *
- * STILL OPEN — Free sandbox only accepts the 5 documented sample inputs (birthCity
- * always "서울" in all 5), so non-Seoul birthCity strings are UNVERIFIED until you
- * test against Pro. Do not assume other city names work in this exact format yet —
- * confirm with a Pro key before wiring the onboarding city field through untested.
+ * Known gaps in the self-hosted path (falls back to SAZU when hit):
+ *   - isLunar input (음력 생일) — not implemented yet, see manseryeok.ts.
  * ------------------------------------------------------------------
  */
 
 import { SazuClient, SazuApiError as SdkSazuApiError } from "@sazuapp/client";
+import { calculateManseryeok } from "./manseryeok";
 
 const client = new SazuClient({
   apiKey: process.env.SAZU_API_KEY!, // set in .env.local, never exposed to client
@@ -75,6 +72,47 @@ function normalizeElements(
 }
 
 export async function calculateSaju(input: SazuCalculateInput): Promise<NormalizedSajuResult> {
+  if (!input.isLunar) {
+    try {
+      return await calculateViaManseryeok(input);
+    } catch (err) {
+      console.error("[sazu] self-hosted manseryeok engine failed, falling back to SAZU API:", err);
+      // fall through to the SAZU-backed path below
+    }
+  }
+  return calculateViaSazuApi(input);
+}
+
+async function calculateViaManseryeok(input: SazuCalculateInput): Promise<NormalizedSajuResult> {
+  const result = await calculateManseryeok({
+    birthYear: input.birthYear,
+    birthMonth: input.birthMonth,
+    birthDay: input.birthDay,
+    birthHour: input.birthHour,
+    isFemale: input.isFemale,
+  });
+
+  const elements: Record<ElementKey, number> = {
+    wood: result.elements.wood.total.percentage,
+    fire: result.elements.fire.total.percentage,
+    earth: result.elements.earth.total.percentage,
+    metal: result.elements.metal.total.percentage,
+    water: result.elements.water.total.percentage,
+  };
+
+  return {
+    raw: result,
+    elements,
+    dominantElement: result.dominantElement,
+    fourPillars: result.fourPillars,
+    decadeFortune: result.decadeFortune,
+    summary: result.summary,
+    timezoneNote: null,
+    isSandboxSample: false, // self-hosted engine has no sandbox restriction
+  };
+}
+
+async function calculateViaSazuApi(input: SazuCalculateInput): Promise<NormalizedSajuResult> {
   let response;
   try {
     response = await client.calculate({
