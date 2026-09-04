@@ -2,7 +2,7 @@
  * lib/i18n/ko.ts
  * ------------------------------------------------------------------
  * Source-of-truth dictionary — every UI string used across
- * OnboardingBirthChart/QuizScreen(chrome)/ChatScreen/ModuleSelect/
+ * OnboardingWizard/QuizScreen(chrome)/ChatScreen/ModuleSelect/
  * ErrorNotice/LoadingReveal/LegalPage/app layout metadata, keyed by
  * screen. This is the ONLY locale fully populated today (see
  * lib/i18n/README.md) — en.ts/es.ts mirror this shape but currently
@@ -42,19 +42,31 @@ export const ko = {
 
   onboarding: {
     headlineLine1: "운명은 이미 말했습니다.",
-    headlineLine2: "이제, 답할 차례는 당신입니다.",
+    headlineLine2: "이제 당신이 답할 차례입니다.",
     subheadline: "운명을 바꾸고 싶나요? 사주를 분석하고 지금 시작하세요.",
+    introStartButton: "시작하기",
+    stepOf: (current: number, total: number) => `STEP ${current} / ${total}`,
+    backButton: "이전",
+    nextButton: "다음",
+    labelNickname: "뭐라고 불러 드릴까요?",
+    nicknameSubtext: "이 이름으로 결과를 안내해 드릴게요.",
+    nicknamePlaceholder: "닉네임을 입력하세요",
     trackRomance: "연애 & 애착",
     trackCareer: "커리어 & 번아웃",
     labelDob: "생년월일",
     labelTob: "태어난 시간",
     unknownTime: "모름",
+    hourPlaceholder: "시",
+    minutePlaceholder: "분",
+    periodAM: "오전",
+    periodPM: "오후",
     labelGender: "성별",
     male: "남성",
     female: "여성",
     labelCity: "출생 도시 (전세계 검색 가능)",
     cityPlaceholder: "도시 이름을 입력하세요",
     citySearching: "검색 중...",
+    cityConfirmedPrefix: "선택한 도시",
     submitButton: "내 블루프린트 확인하기",
     testButton: "사주 테스트용 (퀴즈 없이 계산 결과만 보기)",
     freeNote: "무료 10분 리딩 · 신용카드 불필요",
@@ -63,7 +75,6 @@ export const ko = {
     ageNoticeSuffix: "에 동의하는 것으로 간주됩니다.",
     termsLinkLabel: "이용약관",
     privacyLinkLabel: "개인정보처리방침",
-    disclaimerNotDiagnosis: "사주 풀이와 심리테스트 결과는 참고용이며, 의학적·심리학적 진단이 아닙니다.",
     errorDefault: "사주 계산에 실패했습니다.",
     errorNetwork: "네트워크 오류로 사주 계산에 실패했습니다.",
     zodiac: {

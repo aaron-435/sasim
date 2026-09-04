@@ -4,7 +4,7 @@ import React from "react";
 import { ArrowLeft, FlaskConical, AlertTriangle } from "lucide-react";
 
 /**
- * SajuTestResult — QA-only screen (components/OnboardingBirthChart.jsx's
+ * SajuTestResult — QA-only screen (components/OnboardingWizard.jsx's
  * "사주 테스트용" button routes here via AppFlow.jsx instead of the quiz
  * flow). Dumps everything /api/saju computed, cleanly laid out, so pillar/
  * element accuracy can be eyeballed against a real manseryeok reference

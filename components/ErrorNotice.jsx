@@ -5,7 +5,7 @@ import { AlertCircle, WifiOff, RotateCcw } from "lucide-react";
 import { useStrings } from "@/lib/i18n";
 
 /**
- * ErrorNotice — shared error presentation used by OnboardingBirthChart
+ * ErrorNotice — shared error presentation used by OnboardingWizard
  * and ChatScreen. kind="network" covers transient/connection failures
  * (browser fetch throw, 429/503 responses) where "새로고침 해주세요" /
  * retry is the right call to action. kind="server" covers everything

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import OnboardingBirthChart from "./OnboardingBirthChart";
+import OnboardingWizard from "./OnboardingWizard";
 import SajuTestResult from "./SajuTestResult";
 import ModuleSelect from "./ModuleSelect";
 import QuizScreen from "./QuizScreen";
@@ -127,5 +127,5 @@ export default function AppFlow() {
     );
   }
 
-  return <OnboardingBirthChart sessionId={sessionId} onComplete={handleOnboardingComplete} onTestSaju={handleTestSaju} />;
+  return <OnboardingWizard sessionId={sessionId} onComplete={handleOnboardingComplete} onTestSaju={handleTestSaju} />;
 }
