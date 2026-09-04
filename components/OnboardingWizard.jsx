@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
-import { Calendar, Clock, MapPin, ArrowRight, ArrowLeft, HelpCircle, Sparkles, FlaskConical } from "lucide-react";
+import { Calendar, Clock, MapPin, ArrowRight, ArrowLeft, HelpCircle, Sparkles } from "lucide-react";
 import LoadingReveal from "./LoadingReveal";
 import ErrorNotice from "./ErrorNotice";
 import { useStrings } from "@/lib/i18n";
@@ -19,32 +19,39 @@ const MIN_LOADING_MS = 2400;
  *   0 intro    — hook + small ToS/age notice tucked under the CTA
  *                (Wysa pattern: put legal text on the screen people
  *                tap through on autopilot, not a separate "I agree" gate)
- *   1 nickname — new field, not persisted to Supabase yet (no column
- *                on `sessions` for it) — carried client-side in
- *                birthInput for future personalization (chat/report
- *                greetings) once that's wired up.
+ *   1 nickname — sent to /api/saju and persisted onto `sessions.nickname`
+ *                (2026-09-04, alongside the verification-code handoff —
+ *                see app/api/verification-code/route.ts), plus carried
+ *                client-side in birthInput for the same-session UI
+ *                (QAChat's greeting).
  *   2 gender   — was inline on the old single page; split out because
  *                the calc genuinely needs it (대운 순행/역행), even
  *                though it wasn't in the 5-step list this replaces —
  *                there's no way to drop it.
- *   3 dob
- *   4 tob      — 12h hour/minute text inputs + explicit 오전/오후
- *                buttons (2026-09-04: replaced the native
- *                <input type="time">, whose AM/PM handling is
- *                inconsistent across browsers/locales) plus the
- *                "모름" escape hatch. to24HourString() converts to
- *                the "HH:MM" 24h string /api/saju expects.
+ *   3 dob      — year/month/day text inputs (YYYY . MM . DD), not a
+ *                native <input type="date"> — on Android that opens a
+ *                full-screen calendar dialog, which tested slower/
+ *                clunkier than just typing. toISODateString() builds
+ *                the "YYYY-MM-DD" string from the three fields.
+ *   4 tob      — same reasoning, 12h hour/minute text inputs +
+ *                explicit 오전/오후 buttons instead of a native
+ *                <input type="time"> (inconsistent AM/PM handling
+ *                across browsers/locales) plus the "모름" escape
+ *                hatch. to24HourString() converts to the "HH:MM" 24h
+ *                string /api/saju expects.
  *   5 city     — same Skyscanner-style ~4800-city autocomplete as
- *                before, now with a small OpenStreetMap embed (no
- *                API key needed) confirming the pin once a result is
- *                picked — /api/cities/search started returning
- *                lat/lng for this. This step also fires the actual
- *                /api/saju call and both submit buttons (real + QA
- *                test).
+ *                before. (A map-pin confirmation via OpenStreetMap
+ *                was tried here 2026-09-04 and then dropped after
+ *                review — not worth the extra step.) This step also
+ *                fires the actual /api/saju call and both submit
+ *                buttons (real + QA test).
  *
  * Steps 1-5 share a StepShell (back arrow + thin progress bar); step 0
  * is a distinct cover screen with no chrome, matching Wysa's actual
- * first screen.
+ * first screen. The gap between each step's fields and its CTA button
+ * is a fixed vh, not a flex-grow spacer — on a tall phone screen a
+ * flex-grow spacer pins the button to the very bottom of the viewport,
+ * which tested as "too far to reach" (2026-09-04 real-device feedback).
  *
  * NOTE — track (romance/career) toggle from the old single page is
  * dropped from this shared wizard on purpose: it wasn't part of the
@@ -53,10 +60,11 @@ const MIN_LOADING_MS = 2400;
  * a manual toggle. Defaulted to "romance" below until that dual-funnel
  * branching is actually built — see AppFlow.jsx.
  *
- * Props / callback shapes are UNCHANGED from OnboardingBirthChart so
- * AppFlow.jsx only needed a one-line swap:
- *   onComplete({ birthInput, sajuResult, track })
- *   onTestSaju({ birthInput, sajuResult })
+ * Single callback: onComplete({ birthInput, sajuResult, track }).
+ * (The QA-only "사주 테스트용" button/onTestSaju prop that used to sit
+ * here was removed 2026-09-04 along with its dead-end sajuTest step in
+ * AppFlow.jsx, once QAChat became the real post-onboarding screen —
+ * components/SajuTestResult.jsx itself is left on disk, just unwired.)
  * ------------------------------------------------------------------
  */
 
@@ -86,6 +94,22 @@ function to24HourString(hour12, minuteInput, period) {
   return `${String(h24).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
+// year/month/day text fields -> "YYYY-MM-DD", or "" while incomplete/invalid.
+// Not in the future (year/month/day compared against today) and month/day
+// kept within calendar-plausible ranges — exact days-in-month isn't
+// validated here, /api/saju's own date handling catches anything odd.
+function toISODateString(year, month, day) {
+  const y = parseInt(year, 10);
+  const m = parseInt(month, 10);
+  const d = parseInt(day, 10);
+  if (!Number.isInteger(y) || y < 1900 || y > 9999) return "";
+  if (!Number.isInteger(m) || m < 1 || m > 12) return "";
+  if (!Number.isInteger(d) || d < 1 || d > 31) return "";
+  const iso = `${String(y).padStart(4, "0")}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+  if (iso > new Date().toISOString().split("T")[0]) return "";
+  return iso;
+}
+
 function getZodiac(month, day) {
   if (!month || !day) return null;
   return (
@@ -101,14 +125,16 @@ function getZodiac(month, day) {
 const STEP_IDS = ["intro", "nickname", "gender", "dob", "tob", "city"];
 const PROGRESS_STEP_IDS = STEP_IDS.slice(1); // intro has no progress chrome
 
-export default function OnboardingWizard({ sessionId, onComplete, onTestSaju }) {
+export default function OnboardingWizard({ sessionId, onComplete }) {
   const t = useStrings();
   const [stepIndex, setStepIndex] = useState(0);
   const stepId = STEP_IDS[stepIndex];
 
   const [nickname, setNickname] = useState("");
   const [isFemale, setIsFemale] = useState(null);
-  const [dob, setDob] = useState("");
+  const [dobYear, setDobYear] = useState("");
+  const [dobMonth, setDobMonth] = useState("");
+  const [dobDay, setDobDay] = useState("");
   const [timeUnknown, setTimeUnknown] = useState(false);
   const [hour12, setHour12] = useState("");
   const [minuteInput, setMinuteInput] = useState("");
@@ -122,6 +148,7 @@ export default function OnboardingWizard({ sessionId, onComplete, onTestSaju }) 
   const [apiError, setApiError] = useState(null);
   const citySearchSeq = useRef(0);
 
+  const dob = useMemo(() => toISODateString(dobYear, dobMonth, dobDay), [dobYear, dobMonth, dobDay]);
   const parsedDate = useMemo(() => {
     if (!dob) return null;
     const [y, m, d] = dob.split("-").map(Number);
@@ -171,6 +198,7 @@ export default function OnboardingWizard({ sessionId, onComplete, onTestSaju }) 
         isLunar: false,
         sessionId,
         track: TRACK_DEFAULT,
+        nickname,
       }),
     });
     const json = await res.json();
@@ -179,7 +207,7 @@ export default function OnboardingWizard({ sessionId, onComplete, onTestSaju }) 
       throw Object.assign(new Error(json.error || t.onboarding.errorDefault), { kind });
     }
     return json;
-  }, [parsedDate, selectedCity, isFemale, tob, timeUnknown, sessionId, t]);
+  }, [parsedDate, selectedCity, isFemale, tob, timeUnknown, sessionId, nickname, t]);
 
   const birthInputPayload = () => ({
     nickname: nickname.trim(),
@@ -209,21 +237,6 @@ export default function OnboardingWizard({ sessionId, onComplete, onTestSaju }) 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runSajuCalculation, onComplete, t]);
-
-  const handleTestSaju = useCallback(async () => {
-    setLoading(true);
-    setApiError(null);
-    try {
-      const json = await runSajuCalculation();
-      if (!json) return;
-      onTestSaju?.({ birthInput: birthInputPayload(), sajuResult: json });
-    } catch (err) {
-      setApiError({ kind: err?.kind ?? "network", message: err?.message || t.onboarding.errorNetwork });
-    } finally {
-      setLoading(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runSajuCalculation, onTestSaju, t]);
 
   const goNext = () => setStepIndex((i) => Math.min(i + 1, STEP_IDS.length - 1));
   const goBack = () => setStepIndex((i) => Math.max(i - 1, 0));
@@ -309,7 +322,7 @@ export default function OnboardingWizard({ sessionId, onComplete, onTestSaju }) 
               </p>
             </div>
 
-            <div style={{ flex: 1, minHeight: "8vh" }} />
+            <div style={{ height: "20vh" }} />
 
             <button type="button" className="ob-cta" onClick={goNext}
               style={{ background: "#C9A24B", color: "#100F16" }}>
@@ -337,7 +350,7 @@ export default function OnboardingWizard({ sessionId, onComplete, onTestSaju }) 
                 placeholder={t.onboarding.nicknamePlaceholder} value={nickname}
                 onChange={(e) => setNickname(e.target.value)} onKeyDown={handleEnter} maxLength={20} />
             </div>
-            <div style={{ flex: 1, minHeight: "6vh" }} />
+            <div style={{ height: "18vh" }} />
             <NextButton disabled={!canProceed} onClick={goNext} label={t.onboarding.nextButton} />
           </div>
         )}
@@ -357,7 +370,7 @@ export default function OnboardingWizard({ sessionId, onComplete, onTestSaju }) 
                 </button>
               </div>
             </div>
-            <div style={{ flex: 1, minHeight: "6vh" }} />
+            <div style={{ height: "18vh" }} />
             <NextButton disabled={!canProceed} onClick={goNext} label={t.onboarding.nextButton} />
           </div>
         )}
@@ -366,11 +379,33 @@ export default function OnboardingWizard({ sessionId, onComplete, onTestSaju }) 
           <div className="ob-fade-in" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
             <div style={{ marginTop: "6vh" }}>
               <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#EDE7DA", margin: 0 }}>{t.onboarding.labelDob}</h2>
-              <div style={{ position: "relative", marginTop: "24px" }}>
-                <Calendar size={17} strokeWidth={1.75} className="ob-field-icon" />
-                <input type="date" className="ob-input ob-mono" autoFocus value={dob}
-                  max={new Date().toISOString().split("T")[0]}
-                  onChange={(e) => setDob(e.target.value)} onKeyDown={handleEnter} />
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "24px" }}>
+                <div style={{ position: "relative", flex: 1.4 }}>
+                  <Calendar size={17} strokeWidth={1.75} className="ob-field-icon" />
+                  <input type="text" inputMode="numeric" className="ob-input ob-mono" autoFocus
+                    placeholder={t.onboarding.yearPlaceholder} value={dobYear} maxLength={4}
+                    onChange={(e) => setDobYear(e.target.value.replace(/[^0-9]/g, ""))}
+                    onKeyDown={handleEnter}
+                    style={{ textAlign: "center", paddingLeft: "42px" }} />
+                </div>
+                <span className="ob-mono" style={{ color: "#847E90", fontSize: "18px" }}>.</span>
+                <input type="text" inputMode="numeric" className="ob-input ob-mono"
+                  placeholder={t.onboarding.monthPlaceholder} value={dobMonth} maxLength={2}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/[^0-9]/g, "");
+                    if (v === "" || (Number(v) >= 1 && Number(v) <= 12) || v.length < 2) setDobMonth(v);
+                  }}
+                  onKeyDown={handleEnter}
+                  style={{ flex: 1, textAlign: "center", paddingLeft: "14px" }} />
+                <span className="ob-mono" style={{ color: "#847E90", fontSize: "18px" }}>.</span>
+                <input type="text" inputMode="numeric" className="ob-input ob-mono"
+                  placeholder={t.onboarding.dayPlaceholder} value={dobDay} maxLength={2}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/[^0-9]/g, "");
+                    if (v === "" || (Number(v) >= 1 && Number(v) <= 31) || v.length < 2) setDobDay(v);
+                  }}
+                  onKeyDown={handleEnter}
+                  style={{ flex: 1, textAlign: "center", paddingLeft: "14px" }} />
               </div>
               {zodiac && (
                 <div className="ob-fade-in" style={{ marginTop: "16px", display: "flex", alignItems: "center", gap: "12px", background: "rgba(201,162,75,0.06)", border: "1px solid rgba(201,162,75,0.25)", borderRadius: "12px", padding: "13px 16px" }}>
@@ -379,7 +414,7 @@ export default function OnboardingWizard({ sessionId, onComplete, onTestSaju }) 
                 </div>
               )}
             </div>
-            <div style={{ flex: 1, minHeight: "6vh" }} />
+            <div style={{ height: "18vh" }} />
             <NextButton disabled={!canProceed} onClick={goNext} label={t.onboarding.nextButton} />
           </div>
         )}
@@ -433,7 +468,7 @@ export default function OnboardingWizard({ sessionId, onComplete, onTestSaju }) 
                 </button>
               </div>
             </div>
-            <div style={{ flex: 1, minHeight: "6vh" }} />
+            <div style={{ height: "18vh" }} />
             <NextButton disabled={!canProceed} onClick={goNext} label={t.onboarding.nextButton} />
           </div>
         )}
@@ -468,46 +503,17 @@ export default function OnboardingWizard({ sessionId, onComplete, onTestSaju }) 
               )}
             </div>
 
-            {selectedCity && Number.isFinite(selectedCity.lat) && Number.isFinite(selectedCity.lng) && (
-              <div className="ob-fade-in" style={{ marginTop: "18px", borderRadius: "12px", overflow: "hidden", border: "1px solid #2A2833" }}>
-                <iframe
-                  key={selectedCity.id}
-                  title={t.onboarding.cityConfirmedPrefix}
-                  width="100%" height="180" style={{ display: "block", border: 0, filter: "invert(0.92) hue-rotate(180deg) saturate(0.7)" }}
-                  loading="lazy"
-                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${selectedCity.lng - 0.35}%2C${selectedCity.lat - 0.2}%2C${selectedCity.lng + 0.35}%2C${selectedCity.lat + 0.2}&layer=mapnik&marker=${selectedCity.lat}%2C${selectedCity.lng}`}
-                />
-                <div style={{ padding: "10px 14px", background: "rgba(255,255,255,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: "12px", color: "#8B879A" }}>{t.onboarding.cityConfirmedPrefix}</span>
-                  <span style={{ fontSize: "13px", color: "#EDE7DA", fontWeight: 600 }}>{selectedCity.cityDisplay}, {selectedCity.countryDisplay}</span>
-                </div>
-              </div>
-            )}
-
             {apiError && (
               <div className="ob-fade-in" style={{ marginTop: "18px" }}>
                 <ErrorNotice kind={apiError.kind} message={apiError.message} onRetry={handleSubmit} />
               </div>
             )}
 
-            <div style={{ flex: 1, minHeight: "6vh" }} />
+            <div style={{ height: "18vh" }} />
             <button type="button" disabled={!canProceed} className="ob-cta" onClick={handleSubmit}
               style={{ background: canProceed ? "#C9A24B" : "rgba(255,255,255,0.06)", color: canProceed ? "#100F16" : "#6B6775", cursor: canProceed ? "pointer" : "not-allowed" }}>
               {t.onboarding.submitButton} <ArrowRight size={17} strokeWidth={2.25} />
             </button>
-
-            {onTestSaju && (
-              <button type="button" disabled={!canProceed} onClick={handleTestSaju}
-                style={{
-                  width: "100%", marginTop: "10px", padding: "12px", borderRadius: "10px",
-                  border: "1px dashed #3A3745", background: "transparent",
-                  color: canProceed ? "#8B879A" : "#4A4854",
-                  fontSize: "13px", fontWeight: 600, cursor: canProceed ? "pointer" : "not-allowed",
-                  display: "flex", alignItems: "center", justifyContent: "center", gap: "7px", minHeight: "40px",
-                }}>
-                <FlaskConical size={14} strokeWidth={1.75} /> {t.onboarding.testButton}
-              </button>
-            )}
           </div>
         )}
       </div>

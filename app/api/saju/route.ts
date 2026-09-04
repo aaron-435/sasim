@@ -6,7 +6,10 @@
  *
  * Request body (from the client):
  *   { birthYear, birthMonth, birthDay, birthHour?, birthMinute?, isFemale,
- *     birthCity?, birthCityId?, isLunar? }
+ *     birthCity?, birthCityId?, isLunar?, nickname? }
+ *   nickname (added 2026-09-04) is persisted onto the `sessions` row so
+ *   the web→app verification-code handoff (see /api/verification-code)
+ *   can restore it — it's never sent to calculateSaju(), only stored.
  *   birthCityId (added 2026-09-01) is a lib/worldCities.ts city id from the
  *   worldwide city picker — precise lat/lng+timezone lookup, self-hosted
  *   engine only. birthCity stays as the display-name fallback (SAZU's own
@@ -35,6 +38,7 @@ interface SajuRequestBody {
   isLunar?: boolean;
   sessionId?: string;
   track?: string;
+  nickname?: string;
 }
 
 /**
@@ -45,7 +49,9 @@ async function saveSajuResult(sessionId: string | undefined, track: string | und
   if (!sessionId) return;
   try {
     const supabaseAdmin = getSupabaseAdmin();
-    const { error: sessionErr } = await supabaseAdmin.from("sessions").upsert({ id: sessionId, track: track ?? null }, { onConflict: "id" });
+    const { error: sessionErr } = await supabaseAdmin
+      .from("sessions")
+      .upsert({ id: sessionId, track: track ?? null, nickname: input.nickname?.trim() || null }, { onConflict: "id" });
     if (sessionErr) throw sessionErr;
 
     const { error: resultErr } = await supabaseAdmin.from("saju_results").insert({

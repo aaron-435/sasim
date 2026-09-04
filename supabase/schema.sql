@@ -9,8 +9,23 @@ create table if not exists sessions (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users(id),
   track text,
+  nickname text,
+  verify_code text unique,
   created_at timestamptz not null default now()
 );
+
+-- 2026-09-04: nickname (onboarding step 1, needed so the web→app
+-- verification-code handoff can restore it) + verify_code (short code
+-- shown after the 2 free web Q&A questions — see /api/verification-code
+-- — a future native app redeems it to pull this session's birth data
+-- instead of asking the user to re-enter everything) added to an
+-- already-created table. `create table if not exists` above won't add
+-- these to a table that already exists in your Supabase project — run
+-- this once by hand if `sessions` predates 2026-09-04:
+--   alter table sessions add column if not exists nickname text;
+--   alter table sessions add column if not exists verify_code text unique;
+
+create index if not exists idx_sessions_verify_code on sessions(verify_code);
 
 create table if not exists saju_results (
   id uuid primary key default gen_random_uuid(),

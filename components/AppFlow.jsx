@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import OnboardingWizard from "./OnboardingWizard";
-import SajuTestResult from "./SajuTestResult";
+import QAChat from "./QAChat";
 import ModuleSelect from "./ModuleSelect";
 import QuizScreen from "./QuizScreen";
 import ChatScreen from "./ChatScreen";
@@ -13,8 +13,19 @@ import { getModuleById } from "@/lib/modules";
 /**
  * AppFlow — full pipeline
  * ------------------------------------------------------------------
- * Onboarding → Module select (test harness — see ModuleSelect.jsx) →
- * Quiz (30문항, whichever module was picked) → Chat (real GPT-4o) → Report.
+ * Onboarding → QAChat (question-bank Q&A, see components/QAChat.jsx —
+ * replaced Module select as the screen right after onboarding on
+ * 2026-09-04) → Module select (test harness — see ModuleSelect.jsx,
+ * still reachable, just not the default path anymore) → Quiz (30문항,
+ * whichever module was picked) → Chat (real GPT-4o) → Report.
+ *
+ * moduleSelect/quiz/chat/report is the OTHER monetization line (ingan.ai-
+ * style individual deep-report purchase) from the benchmarking-proposal
+ * hybrid model — it isn't gone, QAChat just now sits in front of it as
+ * the immediate post-onboarding screen (the Yodha-style subscription
+ * Q&A line). Nothing currently navigates from QAChat into moduleSelect;
+ * that link (e.g. "심리테스트 해보기" after a Q&A answer) is a natural
+ * next step once this is live, not built yet.
  *
  * Saju x psych-test combination (2026-08-28 redesign): oheng data comes
  * straight from SAZU (sajuResult.elements) — the quiz no longer infers
@@ -37,24 +48,20 @@ export default function AppFlow() {
   // DB에 저장하기 위한 값. 나중에 로그인을 붙이면 이 세션을 계정에 연결하면 되고,
   // 지금은 계속 null user_id로 저장된다 (supabase/schema.sql 참고).
   const [sessionId] = useState(() => (typeof crypto !== "undefined" ? crypto.randomUUID() : ""));
-  const [step, setStep] = useState("onboarding"); // 'onboarding' | 'sajuTest' | 'moduleSelect' | 'quiz' | 'chat' | 'report'
+  const [step, setStep] = useState("onboarding"); // 'onboarding' | 'qaChat' | 'moduleSelect' | 'quiz' | 'chat' | 'report'
   const [sajuResult, setSajuResult] = useState(null);
-  const [sajuTestData, setSajuTestData] = useState(null); // { birthInput, sajuResult } for the QA screen only
+  const [nickname, setNickname] = useState("");
   const [track, setTrack] = useState("romance");
   const [moduleId, setModuleId] = useState(null);
   const [chatContextForChat, setChatContextForChat] = useState(null);
   const [chatExtract, setChatExtract] = useState(null);
   const [psychTestDiagnosis, setPsychTestDiagnosis] = useState(null);
 
-  const handleOnboardingComplete = ({ sajuResult, track }) => {
+  const handleOnboardingComplete = ({ birthInput, sajuResult, track }) => {
     setSajuResult(sajuResult);
+    setNickname(birthInput?.nickname ?? "");
     setTrack(track);
-    setStep("moduleSelect");
-  };
-
-  const handleTestSaju = ({ birthInput, sajuResult }) => {
-    setSajuTestData({ birthInput, sajuResult });
-    setStep("sajuTest");
+    setStep("qaChat");
   };
 
   const handleModuleSelect = (id) => {
@@ -117,15 +124,9 @@ export default function AppFlow() {
     return <ModuleSelect onSelect={handleModuleSelect} />;
   }
 
-  if (step === "sajuTest") {
-    return (
-      <SajuTestResult
-        birthInput={sajuTestData?.birthInput}
-        sajuResult={sajuTestData?.sajuResult}
-        onBack={() => setStep("onboarding")}
-      />
-    );
+  if (step === "qaChat") {
+    return <QAChat nickname={nickname} sajuResult={sajuResult} sessionId={sessionId} />;
   }
 
-  return <OnboardingWizard sessionId={sessionId} onComplete={handleOnboardingComplete} onTestSaju={handleTestSaju} />;
+  return <OnboardingWizard sessionId={sessionId} onComplete={handleOnboardingComplete} />;
 }
