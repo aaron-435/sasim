@@ -69,7 +69,7 @@ export const ko = {
     labelCity: "출생 도시 (전세계 검색 가능)",
     cityPlaceholder: "도시 이름을 입력하세요",
     citySearching: "검색 중...",
-    submitButton: "내 블루프린트 확인하기",
+    submitButton: "사주 확인하러 가기",
     freeNote: "무료 10분 리딩 · 신용카드 불필요",
     ageNoticePrefix: "만 14세 이상만 이용할 수 있으며, 계속 진행 시",
     ageNoticeAnd: "및",

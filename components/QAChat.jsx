@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Sparkles, ShieldCheck, Copy, Check, ArrowRight } from "lucide-react";
+import { Sparkles, ShieldCheck, Copy, Check } from "lucide-react";
 import ErrorNotice from "./ErrorNotice";
 import QASubcategoryPage from "./QASubcategoryPage";
 import QAQuestionPage from "./QAQuestionPage";
@@ -10,19 +10,34 @@ import { useStrings } from "@/lib/i18n";
 
 /**
  * QAChat — Yodha-inspired question-bank chat, replacing moduleSelect as
- * the screen right after onboarding (2026-09-04, page-based nav added
- * same day after review).
+ * the screen right after onboarding (2026-09-04, revised twice same day
+ * after review — see the two notes below).
  * ------------------------------------------------------------------
- * Only the 대분류 picker lives inline in the chat itself (a persistent
- * panel under the message list, the same slot ChatScreen.jsx uses for
- * its text input — not a chat bubble). Picking a category navigates to
- * a full-screen QASubcategoryPage; picking a subcategory navigates to
- * a full-screen QAQuestionPage (lib/questionBank.json subcategories
- * have no third tier today, so this is always the next screen — see
- * QASubcategoryPage's docstring for the one-line branch point if a
- * 소분류 level is ever added). Only the FINAL question pick becomes a
- * real chat message — the category/subcategory taps are pure
- * navigation, nothing is "sent" until an actual question is chosen.
+ * The 대분류 picker is a normal chat bubble in `messages` (pushed right
+ * after the greeting, and again after each "질문 1개 더" prompt) — NOT
+ * a persistent panel anymore. It was a fixed bottom panel briefly; on a
+ * real phone that permanently ate ~1/3 of the screen and covered the
+ * answer text while it was still being read, so it moved back into the
+ * message flow, appearing only once the previous turn is fully done —
+ * closer to the actual Yodha reference screens.
+ *
+ * Picking a category navigates to a full-screen QASubcategoryPage;
+ * picking a subcategory navigates to a full-screen QAQuestionPage
+ * (lib/questionBank.json subcategories have no third tier today, so
+ * this is always the next screen — see QASubcategoryPage's docstring
+ * for the one-line branch point if a 소분류 level is ever added). Only
+ * the FINAL question pick becomes a real chat message — category/
+ * subcategory taps are pure navigation, nothing is "sent" until an
+ * actual question is chosen.
+ *
+ * Hardware/gesture back button fix (2026-09-04 real-device report,
+ * same root cause as OnboardingWizard.jsx): every forward navigation
+ * (category pick, subcategory pick, question pick returning to chat)
+ * pushes a history entry, and a single popstate handler drives `view`
+ * for both the phone's back button/gesture AND the in-page "이전"
+ * buttons (which just call history.back()) — without this, tapping
+ * back on QASubcategoryPage/QAQuestionPage exited the whole site
+ * instead of navigating up one level.
  *
  * From there: picked question pushed as a user bubble → "잠시만
  * 기다려주세요..." placeholder → POST /api/qa-answer (grounds the
@@ -47,11 +62,10 @@ function wait(ms) {
 
 export default function QAChat({ nickname, sajuResult, sessionId }) {
   const t = useStrings();
-  const [messages, setMessages] = useState([]); // {role:'bot'|'user', text}
+  const [messages, setMessages] = useState([]); // {role:'bot'|'user', text} | {role:'picker', options}
   const [view, setView] = useState("chat"); // 'chat' | 'subcategory' | 'question'
   const [activeCategory, setActiveCategory] = useState(null);
   const [activeSubcategory, setActiveSubcategory] = useState(null);
-  const [greeted, setGreeted] = useState(false);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [busy, setBusy] = useState(false); // true while awaiting an API call
   const [errorText, setErrorText] = useState(null);
@@ -73,8 +87,20 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, busy, view]);
 
+  // See docstring — unifies the phone's back button/gesture with the
+  // in-page "이전" buttons via a single popstate handler.
+  useEffect(() => {
+    window.history.replaceState({ view: "chat" }, "");
+    const onPopState = (e) => setView(e.state?.view ?? "chat");
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
   const pushBot = useCallback((text) => setMessages((m) => [...m, { role: "bot", text }]), []);
   const pushUser = useCallback((text) => setMessages((m) => [...m, { role: "user", text }]), []);
+  const pushCategoryPicker = useCallback(() => {
+    setMessages((m) => [...m, { role: "picker", options: questionBank.categories }]);
+  }, []);
 
   // Greeting sequence on mount.
   useEffect(() => {
@@ -90,7 +116,7 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
       await wait(700);
       if (!mountedRef.current) return;
       pushBot(t.qa.promptCategory);
-      setGreeted(true);
+      pushCategoryPicker();
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -98,21 +124,21 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
   function handlePickCategory(cat) {
     setActiveCategory(cat);
     setView("subcategory");
+    window.history.pushState({ view: "subcategory" }, "");
   }
 
   function handleBackFromSubcategory() {
-    setActiveCategory(null);
-    setView("chat");
+    window.history.back();
   }
 
   function handlePickSubcategory(sub) {
     setActiveSubcategory(sub);
     setView("question");
+    window.history.pushState({ view: "question" }, "");
   }
 
   function handleBackFromQuestions() {
-    setActiveSubcategory(null);
-    setView("subcategory");
+    window.history.back();
   }
 
   async function requestAnswer(questionText) {
@@ -151,6 +177,7 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
 
       if (nextCount < FREE_QUESTIONS) {
         pushBot(t.qa.askOneMore);
+        pushCategoryPicker();
         setBusy(false);
       } else {
         pushBot(t.qa.installPitch);
@@ -166,9 +193,8 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
   }
 
   function handleSelectQuestion(q) {
-    setActiveCategory(null);
-    setActiveSubcategory(null);
     setView("chat");
+    window.history.pushState({ view: "chat" }, "");
     pushUser(q.text_ko);
     requestAnswer(q.text_ko);
   }
@@ -217,7 +243,6 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
   }
 
   const done = answeredCount >= FREE_QUESTIONS && !busy;
-  const showCategoryPanel = greeted && !busy && !errorText && answeredCount < FREE_QUESTIONS;
 
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#08080C", display: "flex", justifyContent: "center" }}>
@@ -233,15 +258,13 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
         .qa-dot:nth-child(2) { animation-delay: 0.15s; }
         .qa-dot:nth-child(3) { animation-delay: 0.3s; }
         @keyframes qaBlink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
-        .qa-cat-btn {
+        .qa-option-btn {
           width: 100%; text-align: left; background: rgba(255,255,255,0.03); border: 1px solid #2A2833;
           border-radius: 10px; padding: 12px 14px; color: #EDE7DA; font-size: 14px; cursor: pointer;
           transition: border-color 0.15s ease, background 0.15s ease; margin-bottom: 8px;
-          display: flex; align-items: center; justify-content: space-between;
         }
-        .qa-cat-btn:last-child { margin-bottom: 0; }
-        .qa-cat-btn:hover { border-color: #C9A24B; background: rgba(201,162,75,0.06); }
-        .qa-cat-scroll { max-height: 260px; overflow-y: auto; padding-right: 2px; }
+        .qa-option-btn:last-child { margin-bottom: 0; }
+        .qa-option-btn:hover { border-color: #C9A24B; background: rgba(201,162,75,0.06); }
         .qa-root button:focus-visible, .qa-root input:focus-visible { outline: 2px solid #C9A24B; outline-offset: 2px; }
       ` }} />
 
@@ -254,16 +277,31 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
         </div>
 
         <div ref={scrollRef} style={{ flex: 1, overflowY: "auto", padding: "18px 18px 8px" }}>
-          {messages.map((m, i) => (
-            <div key={i} className="qa-fade" style={{ display: "flex", justifyContent: m.role === "user" ? "flex-end" : "flex-start", marginBottom: "10px" }}>
-              <div
-                className={m.role === "user" ? "qa-bubble-user" : "qa-bubble-bot"}
-                style={{ maxWidth: "82%", padding: "12px 15px", borderRadius: m.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px", fontSize: "14.5px", lineHeight: 1.6, whiteSpace: "pre-wrap" }}
-              >
-                {m.text}
+          {messages.map((m, i) => {
+            if (m.role === "picker") {
+              return (
+                <div key={i} className="qa-fade" style={{ display: "flex", justifyContent: "flex-start", marginBottom: "10px" }}>
+                  <div className="qa-bubble-bot" style={{ maxWidth: "88%", width: "88%", padding: "12px", borderRadius: "16px 16px 16px 4px" }}>
+                    {m.options.map((cat) => (
+                      <button key={cat.id} type="button" className="qa-option-btn" onClick={() => handlePickCategory(cat)}>
+                        {cat.name_ko}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+            return (
+              <div key={i} className="qa-fade" style={{ display: "flex", justifyContent: m.role === "user" ? "flex-end" : "flex-start", marginBottom: "10px" }}>
+                <div
+                  className={m.role === "user" ? "qa-bubble-user" : "qa-bubble-bot"}
+                  style={{ maxWidth: "82%", padding: "12px 15px", borderRadius: m.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px", fontSize: "14.5px", lineHeight: 1.6, whiteSpace: "pre-wrap" }}
+                >
+                  {m.text}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {busy && !errorText && (
             <div className="qa-fade" style={{ display: "flex", justifyContent: "flex-start", marginBottom: "10px" }}>
@@ -306,18 +344,6 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
             </div>
           )}
         </div>
-
-        {showCategoryPanel && (
-          <div className="qa-fade" style={{ padding: "12px 16px 20px", borderTop: "1px solid #1C1B24" }}>
-            <div className="qa-cat-scroll">
-              {questionBank.categories.map((cat) => (
-                <button key={cat.id} type="button" className="qa-cat-btn" onClick={() => handlePickCategory(cat)}>
-                  {cat.name_ko} <ArrowRight size={14} strokeWidth={2.25} color="#C9A24B" />
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -238,8 +238,28 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runSajuCalculation, onComplete, t]);
 
-  const goNext = () => setStepIndex((i) => Math.min(i + 1, STEP_IDS.length - 1));
-  const goBack = () => setStepIndex((i) => Math.max(i - 1, 0));
+  // Hardware/gesture back button fix (2026-09-04 real-device report): this
+  // is a client-only SPA with no per-step URL, so without this the phone's
+  // back button/gesture had nothing to "go back" to and just exited the
+  // whole site from any step. Every forward step pushes a history entry;
+  // going back — via the in-app "이전" button OR the phone's own back
+  // button/gesture — both route through history.back()/popstate, so
+  // they're indistinguishable and neither one exits the page early.
+  useEffect(() => {
+    window.history.replaceState({ stepIndex: 0 }, "");
+    const onPopState = (e) => setStepIndex(e.state?.stepIndex ?? 0);
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  // Not a setState-updater side effect on purpose — React 18 Strict Mode
+  // double-invokes updater functions in dev, which would double-push here.
+  const goNext = () => {
+    const next = Math.min(stepIndex + 1, STEP_IDS.length - 1);
+    window.history.pushState({ stepIndex: next }, "");
+    setStepIndex(next);
+  };
+  const goBack = () => window.history.back();
 
   const canProceed = {
     nickname: nickname.trim().length > 0,
@@ -380,13 +400,13 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
             <div style={{ marginTop: "6vh" }}>
               <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#EDE7DA", margin: 0 }}>{t.onboarding.labelDob}</h2>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "24px" }}>
-                <div style={{ position: "relative", flex: 1.4 }}>
+                <div style={{ position: "relative", flex: 2.3 }}>
                   <Calendar size={17} strokeWidth={1.75} className="ob-field-icon" />
                   <input type="text" inputMode="numeric" className="ob-input ob-mono" autoFocus
                     placeholder={t.onboarding.yearPlaceholder} value={dobYear} maxLength={4}
                     onChange={(e) => setDobYear(e.target.value.replace(/[^0-9]/g, ""))}
                     onKeyDown={handleEnter}
-                    style={{ textAlign: "center", paddingLeft: "42px" }} />
+                    style={{ textAlign: "center", paddingLeft: "38px", paddingRight: "6px" }} />
                 </div>
                 <span className="ob-mono" style={{ color: "#847E90", fontSize: "18px" }}>.</span>
                 <input type="text" inputMode="numeric" className="ob-input ob-mono"
@@ -396,7 +416,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
                     if (v === "" || (Number(v) >= 1 && Number(v) <= 12) || v.length < 2) setDobMonth(v);
                   }}
                   onKeyDown={handleEnter}
-                  style={{ flex: 1, textAlign: "center", paddingLeft: "14px" }} />
+                  style={{ flex: 0.85, textAlign: "center", paddingLeft: "10px", paddingRight: "10px" }} />
                 <span className="ob-mono" style={{ color: "#847E90", fontSize: "18px" }}>.</span>
                 <input type="text" inputMode="numeric" className="ob-input ob-mono"
                   placeholder={t.onboarding.dayPlaceholder} value={dobDay} maxLength={2}
@@ -405,7 +425,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
                     if (v === "" || (Number(v) >= 1 && Number(v) <= 31) || v.length < 2) setDobDay(v);
                   }}
                   onKeyDown={handleEnter}
-                  style={{ flex: 1, textAlign: "center", paddingLeft: "14px" }} />
+                  style={{ flex: 0.85, textAlign: "center", paddingLeft: "10px", paddingRight: "10px" }} />
               </div>
               {zodiac && (
                 <div className="ob-fade-in" style={{ marginTop: "16px", display: "flex", alignItems: "center", gap: "12px", background: "rgba(201,162,75,0.06)", border: "1px solid rgba(201,162,75,0.25)", borderRadius: "12px", padding: "13px 16px" }}>
