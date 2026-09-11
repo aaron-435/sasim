@@ -88,15 +88,6 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, busy, view]);
 
-  // See docstring — unifies the phone's back button/gesture with the
-  // in-page "이전" buttons via a single popstate handler.
-  useEffect(() => {
-    window.history.replaceState({ view: "chat" }, "");
-    const onPopState = (e) => setView(e.state?.view ?? "chat");
-    window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
-  }, []);
-
   const pushBot = useCallback((text) => setMessages((m) => [...m, { role: "bot", text }]), []);
   const pushUser = useCallback((text) => setMessages((m) => [...m, { role: "user", text }]), []);
   const pushCategoryPicker = useCallback(() => {
@@ -122,24 +113,33 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 2026-09-04 fix attempt (REVERTED 2026-09-11): this used to drive view
+  // transitions through window.history.pushState()/back() + a popstate
+  // listener (see git history), to unify the in-page "이전" buttons with
+  // the phone's hardware back gesture. Live testing found this actively
+  // broke the in-page buttons: manually-pushed history entries aren't
+  // recognized by Next.js App Router's own popstate listener, so clicking
+  // "이전" anywhere made Next fall back to a full hard reload of "/" —
+  // wiping the whole session (nickname, saju data, everything) and
+  // dropping the user back on the onboarding intro screen instead of one
+  // view back. Back to plain in-memory view state; hardware back exiting
+  // mid-flow is an accepted trade-off for now, same as OnboardingWizard.jsx.
   function handlePickCategory(cat) {
     setActiveCategory(cat);
     setView("subcategory");
-    window.history.pushState({ view: "subcategory" }, "");
   }
 
   function handleBackFromSubcategory() {
-    window.history.back();
+    setView("chat");
   }
 
   function handlePickSubcategory(sub) {
     setActiveSubcategory(sub);
     setView("question");
-    window.history.pushState({ view: "question" }, "");
   }
 
   function handleBackFromQuestions() {
-    window.history.back();
+    setView("subcategory");
   }
 
   async function requestAnswer(questionText) {

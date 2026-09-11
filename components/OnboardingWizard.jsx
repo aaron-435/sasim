@@ -245,28 +245,22 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runSajuCalculation, onComplete, t]);
 
-  // Hardware/gesture back button fix (2026-09-04 real-device report): this
-  // is a client-only SPA with no per-step URL, so without this the phone's
-  // back button/gesture had nothing to "go back" to and just exited the
-  // whole site from any step. Every forward step pushes a history entry;
-  // going back — via the in-app "이전" button OR the phone's own back
-  // button/gesture — both route through history.back()/popstate, so
-  // they're indistinguishable and neither one exits the page early.
-  useEffect(() => {
-    window.history.replaceState({ stepIndex: 0 }, "");
-    const onPopState = (e) => setStepIndex(e.state?.stepIndex ?? 0);
-    window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
-  }, []);
-
-  // Not a setState-updater side effect on purpose — React 18 Strict Mode
-  // double-invokes updater functions in dev, which would double-push here.
-  const goNext = () => {
-    const next = Math.min(stepIndex + 1, STEP_IDS.length - 1);
-    window.history.pushState({ stepIndex: next }, "");
-    setStepIndex(next);
-  };
-  const goBack = () => window.history.back();
+  // 2026-09-04 fix attempt (REVERTED 2026-09-11): tried routing the in-app
+  // "이전" button and the phone's hardware back gesture through the same
+  // window.history.pushState()/back()/popstate machinery, so hardware back
+  // wouldn't just exit the whole site from mid-flow. Live testing found
+  // this actively broke the in-app "이전" button instead: manually-pushed
+  // history entries aren't recognized by Next.js App Router's own popstate
+  // listener, so ANY popstate (button click or hardware gesture) made Next
+  // fall back to a full hard reload of "/" — wiping all onboarding state
+  // and dropping the user on the intro screen no matter which step they
+  // were on. That's a worse regression than the original problem. Back to
+  // plain in-memory step state; hardware back exiting mid-flow is an
+  // accepted trade-off until there's a fix that's compatible with how App
+  // Router owns browser history (e.g. driving it through next/navigation
+  // instead of raw window.history).
+  const goNext = () => setStepIndex((i) => Math.min(i + 1, STEP_IDS.length - 1));
+  const goBack = () => setStepIndex((i) => Math.max(i - 1, 0));
 
   const canProceed = {
     nickname: nickname.trim().length > 0,
