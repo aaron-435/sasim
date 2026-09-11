@@ -201,6 +201,27 @@ const INTENSITY_PHRASE: Record<IntensityTier, string> = {
   "매우 강함": "매우",
 };
 
+// Korean subject/topic particle selection based on batchim (final consonant)
+// — real quiz results were shipping literal "감정 유연형이(가)" placeholder
+// text instead of picking 이/가 or 은/는, because the dimension-label
+// templates below used to just write both options out. Standard Hangul
+// syllable-block math: a syllable's Unicode code point minus 0xAC00, mod 28,
+// is 0 exactly when the syllable has no final consonant.
+function hasBatchim(word: string): boolean {
+  const lastChar = word.trim().slice(-1);
+  const code = lastChar.charCodeAt(0);
+  if (code < 0xac00 || code > 0xd7a3) return false; // not a Hangul syllable block (e.g. ends in a letter/number)
+  return (code - 0xac00) % 28 !== 0;
+}
+
+function withSubjectParticle(word: string): string {
+  return `${word}${hasBatchim(word) ? "이" : "가"}`;
+}
+
+function withTopicParticle(word: string): string {
+  return `${word}${hasBatchim(word) ? "은" : "는"}`;
+}
+
 export interface DimensionLabelMap {
   // e.g. { anxiety: { high: "불안", low: "안정적인 마음" }, avoidance: { high: "회피", low: "개방적인 태도" } }
   [dimension: string]: { high: string; low: string };
@@ -226,16 +247,16 @@ export function generateNuancedSummary(
     const intensityWord = INTENSITY_PHRASE[r.intensity];
 
     if (r.intensity === "약함") {
-      return `${sideLabel}은(는) ${intensityWord} 있는 편이지만 뚜렷하지는 않고`;
+      return `${withTopicParticle(sideLabel)} ${intensityWord} 있는 편이지만 뚜렷하지는 않고`;
     }
     if (r.intensity === "보통") {
-      return `${sideLabel}이(가) ${intensityWord} 나타나고`;
+      return `${withSubjectParticle(sideLabel)} ${intensityWord} 나타나고`;
     }
     if (r.intensity === "강함") {
-      return `${sideLabel}이(가) ${intensityWord} 뚜렷하고`;
+      return `${withSubjectParticle(sideLabel)} ${intensityWord} 뚜렷하고`;
     }
     // 매우 강함
-    return `${sideLabel}이(가) 거의 극단적으로 나타나고`;
+    return `${withSubjectParticle(sideLabel)} 거의 극단적으로 나타나고`;
   }).filter(Boolean);
 
   if (clauses.length === 0) return "";
@@ -251,7 +272,7 @@ export function generateNuancedSummary(
  *   anxiety: { high: "불안", low: "정서적 안정감" },
  *   avoidance: { high: "회피 성향", low: "개방적인 태도" },
  * });
- * // → "불안은 약간 있는 편이지만 뚜렷하지는 않고, 개방적인 태도이(가) 거의
+ * // → "불안은 약간 있는 편이지만 뚜렷하지는 않고, 개방적인 태도가 거의
  * //    극단적으로 나타나고요."
  * // (anxiety=24점→약함, avoidance=3점→매우 강함이지만 low방향이라 "개방적 태도"로 표현)
  */
