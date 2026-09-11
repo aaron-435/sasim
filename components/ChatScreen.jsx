@@ -1,9 +1,15 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Sparkles, Send, ShieldCheck } from "lucide-react";
+import { Sparkles, Send, ShieldCheck, Clock } from "lucide-react";
 import ErrorNotice from "./ErrorNotice";
 import { useStrings } from "@/lib/i18n";
+import { TOTAL_TURNS, TIME_LIMIT_MINUTES } from "@/lib/chatPrompts";
+
+// Shows the "충분히 상담했어요" early-finish button once the user has been
+// chatting this long — well before TIME_LIMIT_MINUTES, so it reads as an
+// offer, not a warning that time is running out.
+const EARLY_FINISH_SECONDS = 7 * 60;
 
 /**
  * ChatScreen — messenger-style version
@@ -28,15 +34,15 @@ import { useStrings } from "@/lib/i18n";
  * ------------------------------------------------------------------
  */
 
-const TOTAL_TURNS = 7;
-
 export default function ChatScreen({ chatContext, sessionId, onComplete }) {
   const t = useStrings();
   const [messages, setMessages] = useState([]);
-  const [turn, setTurn] = useState(0); // 0 = opener not back yet; 1-7 = completed AI turns
+  const [turn, setTurn] = useState(0); // 0 = opener not back yet; counts up as AI turns complete
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [errorText, setErrorText] = useState(null);
+  const [done, setDone] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
   const scrollRef = useRef(null);
   const sessionStartedAt = useRef(Date.now()).current;
   const doneRef = useRef(false);
@@ -54,6 +60,15 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, isTyping, errorText]);
+
+  // Drives the header countdown. Runs off wall-clock time (matches the
+  // server's own elapsedMinutes calc) rather than turn count, so it keeps
+  // ticking correctly regardless of how long the user takes to reply.
+  useEffect(() => {
+    if (done) return;
+    const id = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(id);
+  }, [done]);
 
   const revealLines = useCallback(async (lines) => {
     for (const line of lines) {
@@ -110,8 +125,13 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
         turnHistoryRef.current = [...apiHistory, { role: "assistant", content: lines.join(" ") }];
         setTurn(nextTurn);
 
-        if (nextTurn >= TOTAL_TURNS && json.extract) {
+        // json.extract is the authoritative "conversation is over" signal —
+        // it can arrive before nextTurn reaches TOTAL_TURNS if the user ran
+        // past the time limit (see isFinalTurn in lib/chatPrompts.ts), so we
+        // don't gate this on nextTurn at all.
+        if (json.extract) {
           doneRef.current = true;
+          setDone(true);
           window.setTimeout(() => onComplete?.(json.extract), 1200);
         }
       } catch {
@@ -146,15 +166,31 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
     requestNextTurn(turn + 1, turnHistoryRef.current);
   }
 
-  const doneMax = turn >= TOTAL_TURNS;
-  const showTextInput = !isTyping && !doneMax && !errorText;
+  // Lets the user end the free session early instead of grinding through
+  // every remaining turn — sends TOTAL_TURNS directly so the server treats
+  // it exactly like naturally reaching the last turn (closing summary +
+  // report extraction), whatever turn the user actually stopped at.
+  function handleFinishEarly() {
+    if (isTyping || done) return;
+    requestNextTurn(TOTAL_TURNS, turnHistoryRef.current);
+  }
+
+  const elapsedSeconds = Math.max(0, Math.floor((now - sessionStartedAt) / 1000));
+  const remainingSeconds = Math.max(0, TIME_LIMIT_MINUTES * 60 - elapsedSeconds);
+  const timeUp = remainingSeconds <= 0;
+  const countdownLabel = timeUp
+    ? t.chat.timeUpLabel
+    : `${String(Math.floor(remainingSeconds / 60)).padStart(2, "0")}:${String(remainingSeconds % 60).padStart(2, "0")}`;
+  const canFinishEarly = !done && !isTyping && !errorText && elapsedSeconds >= EARLY_FINISH_SECONDS;
+  const showTextInput = !isTyping && !done && !errorText;
 
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#08080C", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600&family=Manrope:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600&family=Manrope:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
         .ch-root, .ch-root * { box-sizing: border-box; font-family: 'Manrope', 'Noto Sans KR', sans-serif; }
         .ch-serif { font-family: 'Cormorant Garamond', 'Noto Sans KR', serif; }
+        .ch-mono { font-family: 'JetBrains Mono', monospace; }
         .ch-bubble-bot { background: rgba(255,255,255,0.05); border: 1px solid #2A2833; color: #EDE7DA; }
         .ch-bubble-user { background: #C9A24B; color: #100F16; }
         .ch-fade { animation: chFade 0.28s ease both; }
@@ -167,11 +203,19 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
       ` }} />
 
       <div className="ch-root" style={{ width: "100%", maxWidth: "460px", display: "flex", flexDirection: "column", height: "100vh" }}>
-        <div style={{ padding: "18px 20px 12px", borderBottom: "1px solid #1C1B24", display: "flex", alignItems: "center", gap: "8px" }}>
-          <Sparkles size={14} color="#C9A24B" />
-          <span style={{ fontSize: "12px", letterSpacing: "0.08em", color: "#C9A24B", textTransform: "uppercase" }}>
-            {t.chat.headerLabel}
-          </span>
+        <div style={{ padding: "18px 20px 12px", borderBottom: "1px solid #1C1B24", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Sparkles size={14} color="#C9A24B" />
+            <span style={{ fontSize: "12px", letterSpacing: "0.08em", color: "#C9A24B", textTransform: "uppercase" }}>
+              {t.chat.headerLabel}
+            </span>
+          </div>
+          {!done && (
+            <div className="ch-mono" style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "12px", color: timeUp ? "#847E90" : remainingSeconds <= 60 ? "#CB6249" : "#847E90" }}>
+              <Clock size={12} strokeWidth={2} />
+              {countdownLabel}
+            </div>
+          )}
         </div>
 
         <div ref={scrollRef} style={{ flex: 1, overflowY: "auto", padding: "18px 18px 8px" }}>
@@ -202,7 +246,7 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
             </div>
           )}
 
-          {doneMax && (
+          {done && (
             <div className="ch-fade" style={{ textAlign: "center", marginTop: "20px" }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#847E90", background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "6px 12px" }}>
                 <ShieldCheck size={12} /> {t.chat.doneBadge}
@@ -210,6 +254,18 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
             </div>
           )}
         </div>
+
+        {canFinishEarly && (
+          <div className="ch-fade" style={{ padding: "0 16px 10px", display: "flex", justifyContent: "center" }}>
+            <button
+              type="button"
+              onClick={handleFinishEarly}
+              style={{ display: "flex", alignItems: "center", gap: "6px", background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "9px 18px", color: "#C7C3D1", fontSize: "13px", cursor: "pointer" }}
+            >
+              <ShieldCheck size={13} color="#C9A24B" /> {t.chat.finishEarlyButton}
+            </button>
+          </div>
+        )}
 
         {showTextInput && (
           <div className="ch-fade" style={{ padding: "12px 16px 20px", borderTop: "1px solid #1C1B24", display: "flex", gap: "8px" }}>

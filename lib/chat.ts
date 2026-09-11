@@ -20,12 +20,20 @@
 
 import OpenAI from "openai";
 import { buildChatSystemPrompt, buildExtractionPrompt, TOTAL_TURNS, type ChatSessionContext } from "./chatPrompts";
+import { logLlmUsage } from "./llmUsage";
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!, // set in .env.local, never exposed to client
 });
 
-const CHAT_MODEL = "gpt-4o";
+// 2026-09-07: switched from gpt-4o to gpt-5.4-mini — ~1/3 the price, newer
+// generation. Verified against an 11-case safety-protocol matrix (6 crisis
+// phrasings of varying directness + 5 Korean hyperbole cases like "배고파
+// 죽겠다" that must NOT trigger it): gpt-5.4-mini scored 100% recall / 0%
+// false-positive, actually outperforming gpt-4o (67% recall on the same
+// set — it missed a method-mention case and dropped the mandatory hotline
+// numbers on another). Re-run that matrix before ever changing this again.
+const CHAT_MODEL = "gpt-5.4-mini";
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -49,11 +57,41 @@ export interface ChatReply {
   lines: string[];
 }
 
+// A line counts as "asking a question" if it ends in ? or in a no-"?"
+// curiosity phrasing like "~인지 궁금해요." — both showed up as the second
+// half of a stacked pair in real transcripts (see chatPrompts.ts rule 4's
+// docstring for examples).
+function isQuestionLine(line: string): boolean {
+  const trimmed = line.trim();
+  return /[?？]\s*$/.test(trimmed) || /궁금(해요|하네요|합니다)\.?\s*$/.test(trimmed);
+}
+
+/**
+ * Deterministic backstop for chatPrompts.ts rule 4 ("one question per
+ * reply"). Prose instructions plus negative examples measurably failed to
+ * stop this on their own — gpt-5.4-mini kept stacking a second, unrelated
+ * question after the first turn's worth of feedback, even reproducing an
+ * example we'd just told it not to write. Rather than keep tuning the
+ * prompt, enforce it in code: keep only the last question-like line and
+ * drop the earlier one(s), which in every observed violation were pure
+ * follow-up questions with no reflection content worth preserving.
+ */
+function enforceOneQuestionPerReply(lines: string[]): string[] {
+  const questionIndices = lines.reduce<number[]>((acc, line, i) => {
+    if (isQuestionLine(line)) acc.push(i);
+    return acc;
+  }, []);
+  if (questionIndices.length <= 1) return lines;
+  const dropIndices = new Set(questionIndices.slice(0, -1));
+  return lines.filter((_, i) => !dropIndices.has(i));
+}
+
 export async function getChatReply(params: {
   turnNumber: number;
   history: ChatMessage[];
   context: ChatSessionContext;
   sessionStartedAt: number;
+  sessionId?: string;
 }): Promise<ChatReply> {
   const elapsedMinutes = Math.floor((Date.now() - params.sessionStartedAt) / 60000);
   const systemPrompt = buildChatSystemPrompt(params.turnNumber, params.context, elapsedMinutes);
@@ -65,16 +103,27 @@ export async function getChatReply(params: {
     response_format: { type: "json_object" },
   });
 
+  if (completion.usage) {
+    await logLlmUsage({
+      sessionId: params.sessionId,
+      endpoint: "chat",
+      model: CHAT_MODEL,
+      promptTokens: completion.usage.prompt_tokens,
+      completionTokens: completion.usage.completion_tokens,
+    });
+  }
+
   const content = completion.choices[0]?.message?.content?.trim();
   if (!content) throw new Error("OpenAI가 빈 응답을 반환했습니다.");
 
   const parsed = JSON.parse(content);
-  const lines = Array.isArray(parsed.lines) ? parsed.lines.map((l: unknown) => String(l)).filter(Boolean) : [];
-  if (lines.length === 0) throw new Error("OpenAI 응답에 lines가 없습니다.");
+  const rawLines = Array.isArray(parsed.lines) ? parsed.lines.map((l: unknown) => String(l)).filter(Boolean) : [];
+  if (rawLines.length === 0) throw new Error("OpenAI 응답에 lines가 없습니다.");
+  const lines = enforceOneQuestionPerReply(rawLines);
   return { lines };
 }
 
-export async function extractChatSummary(transcript: ChatMessage[], context: ChatSessionContext): Promise<ChatExtract> {
+export async function extractChatSummary(transcript: ChatMessage[], context: ChatSessionContext, sessionId?: string): Promise<ChatExtract> {
   const { system, user } = buildExtractionPrompt(transcript, context);
 
   const completion = await client.chat.completions.create({
@@ -86,6 +135,16 @@ export async function extractChatSummary(transcript: ChatMessage[], context: Cha
       { role: "user", content: user },
     ],
   });
+
+  if (completion.usage) {
+    await logLlmUsage({
+      sessionId,
+      endpoint: "chat_extract",
+      model: CHAT_MODEL,
+      promptTokens: completion.usage.prompt_tokens,
+      completionTokens: completion.usage.completion_tokens,
+    });
+  }
 
   const raw = completion.choices[0]?.message?.content;
   if (!raw) throw new Error("OpenAI가 빈 추출 응답을 반환했습니다.");

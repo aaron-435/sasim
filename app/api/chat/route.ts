@@ -20,8 +20,9 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { getChatReply, extractChatSummary, type ChatMessage } from "@/lib/chat";
 import type { ChatSessionContext } from "@/lib/chatPrompts";
-import { TOTAL_TURNS } from "@/lib/chatPrompts";
+import { isFinalTurn } from "@/lib/chatPrompts";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { rateLimitOrResponse } from "@/lib/rateLimit";
 
 interface ChatRequestBody {
   turnNumber?: number;
@@ -42,6 +43,9 @@ async function saveChatSession(sessionId: string | undefined, transcript: ChatMe
 }
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimitOrResponse(req, "chat", 60, 10 * 60 * 1000, "요청이 많아 잠시 후 다시 시도해주세요.");
+  if (limited) return limited;
+
   let body: ChatRequestBody;
   try {
     body = await req.json();
@@ -56,18 +60,25 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const resolvedStartedAt = sessionStartedAt ?? Date.now();
     const { lines } = await getChatReply({
       turnNumber,
       history,
       context,
-      sessionStartedAt: sessionStartedAt ?? Date.now(),
+      sessionStartedAt: resolvedStartedAt,
+      sessionId,
     });
 
-    if (turnNumber >= TOTAL_TURNS) {
+    // A slow typer who blows past the time limit gets the closing message on
+    // their *next* reply (see isFinalTurn's docstring) — so this must check
+    // elapsed time too, not just turnNumber, or the model would say goodbye
+    // while the route keeps waiting for turnNumber to reach TOTAL_TURNS.
+    const elapsedMinutes = Math.floor((Date.now() - resolvedStartedAt) / 60000);
+    if (isFinalTurn(turnNumber, elapsedMinutes)) {
       // 추출 프롬프트는 한 턴 = 한 메시지 단위로 트랜스크립트를 읽으므로,
       // 화면에 여러 버블로 나뉘어 보이는 lines를 다시 한 줄로 합쳐서 전달한다.
       const fullTranscript: ChatMessage[] = [...history, { role: "assistant", content: lines.join(" ") }];
-      const extract = await extractChatSummary(fullTranscript, context);
+      const extract = await extractChatSummary(fullTranscript, context, sessionId);
       await saveChatSession(sessionId, fullTranscript, extract);
       return NextResponse.json({ lines, extract });
     }
