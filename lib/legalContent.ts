@@ -308,8 +308,291 @@ const termsKo: LegalDocument = {
   ],
 };
 
+// 2026-09-10: English translation added — required for App Store/Google
+// Play submission regardless of when the broader UI i18n pass happens
+// (see lib/i18n/README.md's sequencing note). This is a plain translation
+// of privacyKo/termsKo section-for-section, not a rewrite — keep both in
+// sync if either changes. Like the Korean original, this is still a beta
+// draft pending legal review, not a lawyer-reviewed final text.
+const privacyEn: LegalDocument = {
+  title: "Privacy Policy",
+  updatedAt: "August 31, 2026",
+  sections: [
+    {
+      body: [
+        {
+          type: "p",
+          text: "“Fatesaid” (the “Service”) treats your personal information with care and complies with applicable data protection laws. This policy explains what personal information the Service collects and how it is used, stored, and deleted.",
+        },
+        {
+          type: "p",
+          style: "highlight",
+          text: "The Service is currently in beta and has not yet completed formal business registration. The operator information in this policy will be updated once that registration is finalized.",
+        },
+      ],
+    },
+    {
+      heading: "1. Information We Collect",
+      body: [
+        { type: "p", text: "To calculate your saju chart, score your personality assessment, and generate AI counseling responses, the Service collects the following information." },
+        {
+          type: "list",
+          items: [
+            "**Required input**: date of birth, gender, birth city, area of interest (romance & attachment / career & burnout)",
+            "**Optional input**: time of birth (can be marked as unknown)",
+            "**Assessment responses**: your choice/slider answers to a 30-question test",
+            "**AI counseling conversation content**: text you write yourself while chatting with the bot",
+            "**Anonymous session identifier**: a value randomly generated on your device to group the information above into one usage flow without requiring login (cannot identify you personally)",
+            "**Automatically collected information**: access logs, IP address, device/browser information (for fraud prevention and troubleshooting)",
+          ],
+        },
+        { type: "p", text: "Because the Service requires no signup, we do not collect your name, email address, or password." },
+      ],
+    },
+    {
+      heading: "2. Purpose of Collection and Use",
+      body: [
+        {
+          type: "list",
+          items: [
+            "Calculating your saju chart and analyzing your Five Elements distribution",
+            "Scoring your assessment and analyzing your personality type",
+            "Generating AI chatbot counseling responses",
+            "Producing a report that combines your saju, assessment, and counseling content",
+            "Preventing fraudulent use of the Service, and identifying and fixing errors",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "3. Retention Period",
+      body: [
+        {
+          type: "p",
+          text: "The Service stores the information in Section 1 together with your **anonymous session identifier** in its database. This identifier is not linked to information that could directly identify you, such as your name or email. The current screens do not offer a way to reload a past result — the data is retained for service quality improvement and to prepare future features (such as account linking).",
+        },
+        {
+          type: "p",
+          text: "Stored information is retained for **up to one year from the date of collection**, after which it is deleted without delay. If you would like your data deleted sooner, contact us using the details in Section 9 and we will delete it immediately. If a login feature is added in the future, we will separately notify you and obtain consent before linking any existing session data to an account.",
+        },
+      ],
+    },
+    {
+      heading: "4. Outsourced Processing and Overseas Transfer",
+      body: [
+        { type: "p", text: "The Service outsources personal information processing to the following external providers." },
+        {
+          type: "list",
+          items: [
+            "**OpenAI, L.L.C. (United States)** — to generate AI counseling responses, the text you enter in the chatbot and the minimum context needed for counseling (a summary of your assessment result and Five Elements distribution) are transmitted in real time over the network to servers located in the United States at the time of each counseling exchange. Retention follows OpenAI's own API data handling policy; see OpenAI's privacy policy for details.",
+            "**SAZU API provider** — to calculate your saju chart and Five Elements distribution, your date of birth, time of birth, gender, and birth city are transmitted and processed at the time of the calculation request.",
+            "**Supabase, Inc. (United States)** — so that you can view your results again on a return visit, the information in Section 1 (including your anonymous session identifier) is stored on database servers located in the United States. Retention follows Section 3.",
+          ],
+        },
+        { type: "p", text: "Other than the providers listed above, the Service does not share your personal information with any third party." },
+      ],
+    },
+    {
+      heading: "5. Personal Information of Children Under 14",
+      body: [
+        {
+          type: "p",
+          text: "This Service is available only to users **14 years of age or older**. The Service does not knowingly collect personal information from children under 14, and will stop using any information found to belong to a user under that age.",
+        },
+      ],
+    },
+    {
+      heading: "6. Your Rights and How to Exercise Them",
+      body: [
+        {
+          type: "p",
+          text: "You may request to view, correct, or delete the information stored under your session. Because the Service has no login system, we may ask when your session was created or for part of the information you entered, in order to confirm that you are the actual user of that session. Please direct such requests to the contact in Section 9.",
+        },
+      ],
+    },
+    {
+      heading: "7. Security Measures",
+      body: [
+        {
+          type: "list",
+          items: [
+            "Encryption (HTTPS) of the communication channel between you and our servers",
+            "Credentials such as OPENAI_API_KEY and SAZU_API_KEY are kept only as server-side environment variables and are never exposed to the client",
+            "Access controls and security policies of the underlying infrastructure provider (Vercel)",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "8. Cookies and Other Automatic Collection Tools",
+      body: [
+        { type: "p", text: "The Service does not currently use separate analytics or advertising cookies. If analytics tools are introduced in the future, we will announce this in advance through this policy." },
+      ],
+    },
+    {
+      heading: "9. Personal Information Protection Officer",
+      body: [
+        { type: "p", text: "For questions about personal information, please contact us at the address below." },
+        { type: "contact", label: "Email", email: "435deed@gmail.com" },
+        { type: "p", style: "muted", text: "This is a temporary operational contact. It will be updated once business registration is complete and a formal Personal Information Protection Officer is designated." },
+      ],
+    },
+    {
+      heading: "10. Remedies for Rights Infringement",
+      body: [
+        { type: "p", text: "If you need to report or seek advice about a personal information infringement, you may contact the following (Korean government) bodies." },
+        {
+          type: "list",
+          items: [
+            "Personal Information Protection Commission (privacy.go.kr / 182, toll-free within Korea)",
+            "Personal Information Infringement Report Center (privacy.kisa.or.kr / 118, toll-free within Korea)",
+            "Supreme Prosecutors' Office Cyber Crime Investigation Division (spo.go.kr / 1301, toll-free within Korea)",
+            "National Police Agency Cyber Investigation Bureau (ecrm.police.go.kr / 182, toll-free within Korea)",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "11. Notification Obligation",
+      body: [
+        { type: "p", text: "If this policy changes, we will announce it in advance through the Service. This policy is effective as of August 31, 2026." },
+      ],
+    },
+    {
+      body: [
+        { type: "p", style: "muted", text: "This policy is a draft for the Service's beta operation and will be reviewed by legal counsel before the Service's formal launch." },
+      ],
+    },
+  ],
+};
+
+const termsEn: LegalDocument = {
+  title: "Terms of Service",
+  updatedAt: "August 30, 2026",
+  sections: [
+    {
+      heading: "Article 1 (Purpose)",
+      body: [
+        { type: "p", text: "These Terms govern the rights, obligations, and responsibilities between the operator and users of the saju analysis, personality assessment, AI counseling, and report services provided by “Fatesaid” (the “Service”)." },
+      ],
+    },
+    {
+      heading: "Article 2 (Definitions)",
+      body: [
+        {
+          type: "list",
+          items: [
+            "“Service” means the web service that provides saju calculation, personality assessments, AI chatbot counseling, and an integrated report.",
+            "“User” means a person who uses the Service under these Terms.",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "Article 3 (Posting and Amendment of Terms)",
+      body: [
+        { type: "p", text: "The operator posts these Terms on the Service so that users can easily view them. The Terms may be amended within the scope permitted by applicable law, and any amendment will be announced in advance through the Service." },
+      ],
+    },
+    {
+      heading: "Article 4 (Description of the Service)",
+      body: [
+        { type: "p", text: "The Service is currently provided as a **free beta** and includes the following features." },
+        {
+          type: "list",
+          items: [
+            "Saju chart and Five Elements distribution calculation based on your date of birth",
+            "Scoring of a 30-question personality assessment and analysis of your type",
+            "Conversational counseling with an AI chatbot",
+            "A report that integrates the above",
+          ],
+        },
+        {
+          type: "p",
+          text: "As a beta service, features may change, be added, or be discontinued without prior notice. The Service requires no signup; the information and report content you enter are stored on our servers together with an anonymous session identifier. However, the current screens do not offer a way to reload a previous report — refreshing the page starts the flow over from the beginning. See the Privacy Policy for our retention and deletion practices.",
+        },
+      ],
+    },
+    {
+      heading: "Article 5 (Usage Restriction)",
+      body: [
+        {
+          type: "p",
+          text: "This Service is available only to users **14 years of age or older**. Users under 14 may not use the Service. The operator does not separately verify that a user is 14 or older, so parental guidance is needed to keep users under 14 from using the Service.",
+        },
+      ],
+    },
+    {
+      heading: "Article 6 (User Obligations)",
+      body: [
+        { type: "p", text: "Users must not engage in any of the following while using the Service." },
+        {
+          type: "list",
+          items: [
+            "Impersonating another person or entering false information",
+            "Interfering with the normal operation of the Service (excessive repeated requests, automated access, etc.)",
+            "Redistributing information obtained through the Service for commercial purposes without the operator's consent",
+            "Repeatedly making inappropriate requests to the AI chatbot (attempting to override its system instructions, requests unrelated to the Service's purpose, etc.)",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "Article 7 (Important Notice About Service Content — This Is Not a Diagnosis)",
+      headingColor: "#C9A24B",
+      body: [
+        {
+          type: "p",
+          text: "The saju readings, assessment results, AI counseling responses, and reports provided by the Service are **reference material intended to support self-understanding**. They are not a medical or psychological diagnosis and do not substitute for professional mental health counseling or treatment. AI-generated responses may be inaccurate or may not reflect your actual circumstances.",
+        },
+        {
+          type: "p",
+          text: "If you are struggling with a mental health concern, please seek help from a qualified medical or counseling professional. If you are in crisis, a directory of local, 24/7 crisis lines by country is available at findahelpline.com.",
+        },
+      ],
+    },
+    {
+      heading: "Article 8 (Intellectual Property)",
+      body: [
+        { type: "p", text: "The copyright in the text, design, and logic provided by the Service belongs to the operator. Users may not reproduce, distribute, or commercially exploit this content without the operator's prior consent." },
+      ],
+    },
+    {
+      heading: "Article 9 (Disclaimer)",
+      body: [
+        {
+          type: "list",
+          items: [
+            "Except as otherwise required by applicable law, the operator is not liable for damages arising from use of the Service, which is provided free of charge.",
+            "The operator does not warrant the accuracy or completeness of AI-generated responses and is not liable for outcomes resulting from reliance on them.",
+            "The operator is not liable for service interruptions caused by events beyond its control, including natural disasters or outages at service providers (SAZU API, OpenAI, etc.).",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "Article 10 (Governing Law and Jurisdiction)",
+      body: [
+        { type: "p", text: "These Terms are governed by the laws of the Republic of Korea. Any dispute arising in connection with the Service will be resolved according to the procedures set out by applicable law." },
+      ],
+    },
+    {
+      heading: "Addendum",
+      body: [
+        { type: "p", text: "These Terms take effect on August 30, 2026." },
+      ],
+    },
+    {
+      body: [
+        { type: "p", style: "muted", text: "These Terms are a draft for the Service's beta operation and will be reviewed by legal counsel before the Service's formal launch." },
+      ],
+    },
+  ],
+};
+
 export const LEGAL_CONTENT = {
   ko: { privacy: privacyKo, terms: termsKo },
+  en: { privacy: privacyEn, terms: termsEn },
 } as const;
 
 export type LegalLocale = keyof typeof LEGAL_CONTENT;
