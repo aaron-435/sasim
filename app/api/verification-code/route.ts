@@ -3,25 +3,23 @@
  * ------------------------------------------------------------------
  * Web→app handoff for the "2 free questions on web, install the app
  * for more" funnel (components/QAChat.jsx). Generates a short numeric
- * code tied to the current session, so a future native app can redeem
- * it (see GET below) and restore the birth data already collected on
- * web instead of asking the user to re-enter everything — this is the
- * low-tech stand-in for deferred deep linking (Branch.io/AppsFlyer)
- * decided against for now, see the monetization-model memory.
- *
- * NOTE: there is no native app yet to call the GET redemption endpoint
- * below — it's built now so the web side has something real to point
- * at (`sessions.verify_code`), and is ready to wire up once app
- * development starts. Until then this is dead code from the app's
- * side, but the code-generation half is fully live.
+ * code tied to the current session, redeemed by the native app
+ * (mobile/screens/VerifyCodeScreen.tsx calls the GET side) to restore
+ * the birth data already collected on web instead of asking the user
+ * to re-enter everything — this is the low-tech stand-in for deferred
+ * deep linking (Branch.io/AppsFlyer) decided against for now, see the
+ * monetization-model memory.
  *
  * POST body:  { sessionId }
  * POST response: { code }  or  { error } with a non-200 status
  *
  * GET  ?code=XXXXXX
- * GET  response: { nickname, track, sajuResult: {...} } or 404 if the
- *   code is unknown/already used. Marks the code used on successful
- *   redemption (one-time use) so it can't be replayed.
+ * GET  response: { nickname, track, sajuResult: {...} }, or a non-200
+ *   status: 404 if the code is unknown/already used, 410 if it's a
+ *   real code but older than 24h (verify_code_created_at — added
+ *   2026-09-12, codes had no expiry at all before that). Marks the
+ *   code used on successful redemption (one-time use) so it can't be
+ *   replayed, same as an expired one being cleared on the way out.
  * ------------------------------------------------------------------
  */
 
@@ -55,7 +53,10 @@ export async function POST(req: NextRequest) {
     // 드물게 코드가 충돌하면(6자리 유니크 제약) 몇 번 다시 시도한다.
     for (let attempt = 0; attempt < 5; attempt++) {
       const code = generateCode();
-      const { error } = await supabaseAdmin.from("sessions").update({ verify_code: code }).eq("id", sessionId);
+      const { error } = await supabaseAdmin
+        .from("sessions")
+        .update({ verify_code: code, verify_code_created_at: new Date().toISOString() })
+        .eq("id", sessionId);
       if (!error) return NextResponse.json({ code });
       // unique 제약 위반이 아니면 바로 실패 처리
       if (!String(error.message).toLowerCase().includes("duplicate")) {
@@ -85,12 +86,22 @@ export async function GET(req: NextRequest) {
     const supabaseAdmin = getSupabaseAdmin();
     const { data: session, error: sessionErr } = await supabaseAdmin
       .from("sessions")
-      .select("id, nickname, track")
+      .select("id, nickname, track, verify_code_created_at")
       .eq("verify_code", code)
       .maybeSingle();
     if (sessionErr) throw sessionErr;
     if (!session) {
       return NextResponse.json({ error: "유효하지 않거나 이미 사용된 코드입니다." }, { status: 404 });
+    }
+
+    // 2026-09-12: codes previously had no expiration at all. 24h from when the
+    // code was (re)generated — not the session row's own created_at, which can
+    // predate the code by days if the session sat around before a code was
+    // ever issued on it.
+    const codeAgeMs = session.verify_code_created_at ? Date.now() - new Date(session.verify_code_created_at).getTime() : Infinity;
+    if (codeAgeMs > 24 * 60 * 60 * 1000) {
+      await supabaseAdmin.from("sessions").update({ verify_code: null }).eq("id", session.id);
+      return NextResponse.json({ error: "코드가 만료되었습니다. 웹에서 새 코드를 발급받아주세요." }, { status: 410 });
     }
 
     const { data: sajuRow, error: sajuErr } = await supabaseAdmin

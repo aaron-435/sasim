@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { useFonts, CormorantGaramond_500Medium } from "@expo-google-fonts/cormorant-garamond";
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from "@expo-google-fonts/manrope";
 import { useState } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import ChatScreen, { type ChatExtract } from "./screens/ChatScreen";
 import CityScreen, { type SajuResult } from "./screens/CityScreen";
 import DobScreen from "./screens/DobScreen";
@@ -68,7 +69,7 @@ export default function App() {
   if (!fontsLoaded) return null;
 
   return (
-    <>
+    <SafeAreaProvider>
       <StatusBar style="light" />
       {step === "intro" && <IntroScreen onNext={() => setStep("verifyCode")} />}
 
@@ -223,6 +224,6 @@ export default function App() {
           onBack={() => setStep("home")}
         />
       )}
-    </>
+    </SafeAreaProvider>
   );
 }

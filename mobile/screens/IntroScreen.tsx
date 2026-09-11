@@ -1,6 +1,7 @@
 import { Sparkles } from "lucide-react-native";
 import { useEffect, useRef } from "react";
-import { Animated, Easing, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Animated, Easing, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import AuraNextButton from "../components/AuraNextButton";
 import { COLORS } from "../theme/colors";
 

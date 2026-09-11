@@ -11,6 +11,7 @@ create table if not exists sessions (
   track text,
   nickname text,
   verify_code text unique,
+  verify_code_created_at timestamptz,
   created_at timestamptz not null default now()
 );
 
@@ -24,6 +25,15 @@ create table if not exists sessions (
 -- this once by hand if `sessions` predates 2026-09-04:
 --   alter table sessions add column if not exists nickname text;
 --   alter table sessions add column if not exists verify_code text unique;
+--
+-- 2026-09-12: verify_code_created_at added for a 24h code expiry (the
+-- code previously had no expiration at all — see /api/verification-code's
+-- GET handler). This tracks when the CODE was (re)generated, separately
+-- from the session row's own `created_at` (a session can sit around for
+-- days before a code is ever generated on it, so reusing `created_at`
+-- for the expiry check would be wrong). Run by hand if `sessions` predates
+-- this date:
+--   alter table sessions add column if not exists verify_code_created_at timestamptz;
 
 create index if not exists idx_sessions_verify_code on sessions(verify_code);
 

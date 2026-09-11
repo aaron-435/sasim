@@ -1,5 +1,6 @@
 import { Bot, Brain, FileText, HelpCircle, Sparkles } from "lucide-react-native";
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ELEMENT_LABELS_KO } from "../lib/elements";
 import { COLORS } from "../theme/colors";
 

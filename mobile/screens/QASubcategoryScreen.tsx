@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react-native";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "../theme/colors";
 
 type Subcategory = { id: string; name_ko: string; questions: { id: string; text_ko: string }[] };

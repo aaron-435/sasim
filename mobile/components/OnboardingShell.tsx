@@ -1,5 +1,6 @@
 import { ArrowLeft } from "lucide-react-native";
-import { KeyboardAvoidingView, Platform, Pressable, SafeAreaView, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "../theme/colors";
 
 const TOTAL_STEPS = 5; // nickname, gender, dob, tob, city — matches components/OnboardingWizard.jsx's PROGRESS_STEP_IDS
