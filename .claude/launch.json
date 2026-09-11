@@ -7,6 +7,12 @@
       "runtimeArgs": ["run", "dev"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "mobile-web",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd mobile && npx expo start --web --port 8082"],
+      "port": 8082
     }
   ]
 }
