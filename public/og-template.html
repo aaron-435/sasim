@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Fatesaid OG image template</title>
+<!--
+  og-template.html
+  ------------------------------------------------------------------
+  Design source for the Open Graph / KakaoTalk / Twitter share preview
+  image. NOT itself served as og:image (Next.js metadata needs a raster
+  file, and this repo has no HTML-to-PNG pipeline set up) — the artwork
+  below is a fixed 1200x630 box pinned to the top-left corner of the
+  page (deliberately NOT viewport-centered, so it renders pixel-correct
+  regardless of the actual browser window size). Open this file, then
+  screenshot/crop exactly the top-left 1200x630 region and save the
+  result as public/og-image.png. app/layout.tsx already points its
+  openGraph/twitter metadata at that path, so once the PNG exists, no
+  further code change is needed.
+  ------------------------------------------------------------------
+-->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;600&display=swap">
+<style>
+  html,body{margin:0;padding:0;background:#000;}
+  .canvas{
+    position:absolute;top:0;left:0;width:1200px;height:630px;overflow:hidden;
+    background:#08080C;
+    background-image:radial-gradient(circle at 50% 8%, rgba(201,162,75,0.16), transparent 55%);
+    font-family:'Manrope',sans-serif;
+  }
+  .card{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+    width:100%;
+  }
+  .eyebrow{
+    font-size:16px;letter-spacing:0.32em;text-transform:uppercase;
+    color:#C9A24B;margin-bottom:28px;font-weight:600;
+  }
+  .wordmark{
+    font-family:'Cormorant Garamond',serif;font-weight:600;
+    font-size:118px;color:#EDE7DA;line-height:1;margin:0 0 22px;
+    letter-spacing:0.01em;
+  }
+  .tagline{
+    font-size:22px;color:#9C97A6;margin:0 0 40px;font-weight:400;
+  }
+  .dots{display:flex;gap:16px;justify-content:center;}
+  .dot{width:16px;height:16px;border-radius:50%;}
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="card">
+      <div class="eyebrow">Saju &times; Psychology &times; AI</div>
+      <div class="wordmark">Fatesaid</div>
+      <div class="tagline">Your birth chart, decoded by AI</div>
+      <div class="dots">
+        <div class="dot" style="background:#4E8368"></div>
+        <div class="dot" style="background:#C1503B"></div>
+        <div class="dot" style="background:#B98A4E"></div>
+        <div class="dot" style="background:#C7CAD1"></div>
+        <div class="dot" style="background:#3E6EA0"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
