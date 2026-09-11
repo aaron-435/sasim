@@ -11,6 +11,12 @@ import { TOTAL_TURNS, TIME_LIMIT_MINUTES } from "@/lib/chatPrompts";
 // offer, not a warning that time is running out.
 const EARLY_FINISH_SECONDS = 7 * 60;
 
+// t.chat.introLines (ground-rules message before the first-ever chat) is
+// shown once per browser, not once per session — gated on this localStorage
+// flag rather than component/session state so it doesn't reappear on every
+// new module's chat.
+const CHAT_INTRO_SEEN_KEY = "fatesaid_chat_intro_seen_v1";
+
 /**
  * ChatScreen — messenger-style version
  * ------------------------------------------------------------------
@@ -148,7 +154,22 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
   useEffect(() => {
     if (openerFiredRef.current) return;
     openerFiredRef.current = true;
-    requestNextTurn(1, []);
+    (async () => {
+      let seenIntro = true;
+      try {
+        seenIntro = window.localStorage.getItem(CHAT_INTRO_SEEN_KEY) === "1";
+      } catch {
+        seenIntro = true; // localStorage 접근 불가(프라이빗 모드 등) — 안내 멘트는 건너뛰고 진행
+      }
+      if (!seenIntro) {
+        await revealLines(t.chat.introLines);
+        if (!mountedRef.current) return;
+        try {
+          window.localStorage.setItem(CHAT_INTRO_SEEN_KEY, "1");
+        } catch {}
+      }
+      requestNextTurn(1, []);
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
