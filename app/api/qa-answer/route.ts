@@ -6,9 +6,10 @@
  * server-side only, same as /api/chat.
  *
  * Request body:
- *   { nickname, question, sajuResult }
+ *   { nickname, question, sajuResult, sessionId }
  *   sajuResult is whatever /api/saju already returned to the client —
- *   passed straight through, not re-fetched.
+ *   passed straight through, not re-fetched. sessionId is optional,
+ *   used only to attribute LLM cost logging (see lib/llmUsage.ts).
  *
  * Response body:
  *   { lines: string[] }  or  { error: string } with a non-200 status
@@ -18,6 +19,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { getQAAnswer } from "@/lib/qaChat";
+import { rateLimitOrResponse } from "@/lib/rateLimit";
 
 interface QAAnswerRequestBody {
   nickname?: string;
@@ -29,9 +31,13 @@ interface QAAnswerRequestBody {
     decadeFortune?: unknown;
     summary?: unknown;
   };
+  sessionId?: string;
 }
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimitOrResponse(req, "qa-answer", 20, 10 * 60 * 1000, "요청이 많아 잠시 후 다시 시도해주세요.");
+  if (limited) return limited;
+
   let body: QAAnswerRequestBody;
   try {
     body = await req.json();
@@ -39,18 +45,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { nickname, question, sajuResult } = body ?? {};
+  const { nickname, question, sajuResult, sessionId } = body ?? {};
 
   if (!question || !sajuResult) {
     return NextResponse.json({ error: "question, sajuResult는 필수입니다." }, { status: 400 });
   }
 
   try {
-    const { lines } = await getQAAnswer({
-      nickname: nickname?.trim() || "회원",
-      question,
-      sajuResult,
-    });
+    const { lines } = await getQAAnswer(
+      {
+        nickname: nickname?.trim() || "회원",
+        question,
+        sajuResult,
+      },
+      sessionId
+    );
     return NextResponse.json({ lines });
   } catch (err) {
     if (err instanceof OpenAI.APIError) {

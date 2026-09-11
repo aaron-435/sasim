@@ -25,6 +25,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { calculateSaju, SazuApiError } from "@/lib/sazu";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { rateLimitOrResponse } from "@/lib/rateLimit";
 
 interface SajuRequestBody {
   birthYear?: number;
@@ -75,6 +76,9 @@ async function saveSajuResult(sessionId: string | undefined, track: string | und
 }
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimitOrResponse(req, "saju", 20, 10 * 60 * 1000, "요청이 많아 잠시 후 다시 시도해주세요.");
+  if (limited) return limited;
+
   let body: SajuRequestBody;
   try {
     body = await req.json();

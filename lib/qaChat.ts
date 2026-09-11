@@ -11,14 +11,19 @@
 
 import OpenAI from "openai";
 import { buildQASystemPrompt, type QAContext } from "./qaPrompts";
+import { logLlmUsage } from "./llmUsage";
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!, // set in .env.local, never exposed to client
 });
 
-const QA_MODEL = "gpt-4o";
+// 2026-09-10: switched from gpt-4o to gpt-5.4-mini to match lib/chat.ts —
+// same model already verified (safety-matrix test, see lib/chat.ts) to
+// perform at least as well for a lighter cost, no reason for this
+// endpoint to still pay gpt-4o pricing.
+const QA_MODEL = "gpt-5.4-mini";
 
-export async function getQAAnswer(ctx: QAContext): Promise<{ lines: string[] }> {
+export async function getQAAnswer(ctx: QAContext, sessionId?: string): Promise<{ lines: string[] }> {
   const systemPrompt = buildQASystemPrompt(ctx);
 
   const completion = await client.chat.completions.create({
@@ -27,6 +32,16 @@ export async function getQAAnswer(ctx: QAContext): Promise<{ lines: string[] }> 
     messages: [{ role: "system", content: systemPrompt }],
     response_format: { type: "json_object" },
   });
+
+  if (completion.usage) {
+    await logLlmUsage({
+      sessionId,
+      endpoint: "qa",
+      model: QA_MODEL,
+      promptTokens: completion.usage.prompt_tokens,
+      completionTokens: completion.usage.completion_tokens,
+    });
+  }
 
   const content = completion.choices[0]?.message?.content?.trim();
   if (!content) throw new Error("OpenAI가 빈 응답을 반환했습니다.");

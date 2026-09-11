@@ -27,6 +27,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { rateLimitOrResponse } from "@/lib/rateLimit";
 
 function generateCode(): string {
   // 6-digit numeric, easy to type on a phone keyboard after installing the app.
@@ -34,6 +35,9 @@ function generateCode(): string {
 }
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimitOrResponse(req, "verify-code-post", 10, 10 * 60 * 1000, "요청이 많아 잠시 후 다시 시도해주세요.");
+  if (limited) return limited;
+
   let body: { sessionId?: string };
   try {
     body = await req.json();
@@ -66,6 +70,12 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  // Codes are 6 numeric digits (900,000 possible values) and redemption
+  // returns PII (birth date, city, nickname) — without a limit here,
+  // brute-forcing every code from one IP would be entirely feasible.
+  const limited = rateLimitOrResponse(req, "verify-code-get", 20, 10 * 60 * 1000, "요청이 많아 잠시 후 다시 시도해주세요.");
+  if (limited) return limited;
+
   const code = req.nextUrl.searchParams.get("code");
   if (!code) {
     return NextResponse.json({ error: "code는 필수입니다." }, { status: 400 });

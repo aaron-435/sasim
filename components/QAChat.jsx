@@ -7,6 +7,7 @@ import QASubcategoryPage from "./QASubcategoryPage";
 import QAQuestionPage from "./QAQuestionPage";
 import questionBank from "@/lib/questionBank.json";
 import { useStrings } from "@/lib/i18n";
+import { trackQaQuestionAsked, trackQaInstallPitchShown } from "@/lib/analytics";
 
 /**
  * QAChat — Yodha-inspired question-bank chat, replacing moduleSelect as
@@ -149,7 +150,7 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
       const res = await fetch("/api/qa-answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nickname, question: questionText, sajuResult }),
+        body: JSON.stringify({ nickname, question: questionText, sajuResult, sessionId }),
       });
       const json = await res.json();
       if (!mountedRef.current) return;
@@ -164,6 +165,7 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
       }
 
       setMessages((m) => m.slice(0, -1));
+      trackQaQuestionAsked();
       for (const line of json.lines) {
         await wait(500);
         if (!mountedRef.current) return;
@@ -181,6 +183,7 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
         setBusy(false);
       } else {
         pushBot(t.qa.installPitch);
+        trackQaInstallPitchShown();
         await generateAndShowCode();
       }
     } catch {
@@ -331,14 +334,16 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
                     <span className="qa-mono" style={{ fontSize: "20px", fontWeight: 700, color: "#C9A24B", letterSpacing: "0.1em" }}>{verifyCode}</span>
                     {copied ? <Check size={15} color="#C9A24B" /> : <Copy size={15} color="#C9A24B" />}
                   </button>
-                  {/* TODO: replace href="#" with the real App Store / Play Store link once the app ships */}
-                  <a href="#" style={{
+                  {/* 앱스토어 링크가 실제로 생기면 이 배지를 클릭 가능한 <a> 버튼으로 교체할 것 —
+                      그 전까지는 존재하지 않는 링크를 가리키는 가짜 CTA를 보여주지 않는다. */}
+                  <div style={{
                     display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px",
-                    width: "100%", padding: "14px", borderRadius: "12px", background: "#C9A24B", color: "#100F16",
-                    fontSize: "14px", fontWeight: 700, textDecoration: "none",
+                    width: "100%", padding: "14px", borderRadius: "12px",
+                    background: "rgba(255,255,255,0.03)", border: "1px dashed #2A2833", color: "#8B879A",
+                    fontSize: "13.5px", fontWeight: 600,
                   }}>
-                    {t.qa.appStoreButton}
-                  </a>
+                    {t.qa.appComingSoonLabel}
+                  </div>
                 </div>
               )}
             </div>
