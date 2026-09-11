@@ -64,9 +64,36 @@ create table if not exists chat_sessions (
   created_at timestamptz not null default now()
 );
 
+-- 2026-09-09: GPT로 생성한 유료 리포트 본문 (see lib/report.ts). 기존에 이미
+-- 배포된 DB에는 이 테이블이 없으므로, 아래 create table을 SQL Editor에서
+-- 한 번 직접 실행해야 한다 (다른 alter table 마이그레이션들과 동일한 이유).
+create table if not exists report_results (
+  id uuid primary key default gen_random_uuid(),
+  session_id uuid not null references sessions(id) on delete cascade,
+  content jsonb,
+  created_at timestamptz not null default now()
+);
+
+-- 2026-09-10: LLM 호출(챗봇/QA/리포트) 토큰·비용 로그 — 실사용 트래픽 기준
+-- GPT 비용을 추적하기 위함. 기존에 이미 배포된 DB에는 이 테이블이 없으므로,
+-- 아래 create table을 SQL Editor에서 한 번 직접 실행해야 한다.
+create table if not exists llm_usage_log (
+  id uuid primary key default gen_random_uuid(),
+  session_id uuid references sessions(id) on delete cascade,
+  endpoint text not null,
+  model text not null,
+  prompt_tokens int not null,
+  completion_tokens int not null,
+  cost_usd numeric(10, 6),
+  created_at timestamptz not null default now()
+);
+
 create index if not exists idx_saju_results_session on saju_results(session_id);
 create index if not exists idx_quiz_results_session on quiz_results(session_id);
 create index if not exists idx_chat_sessions_session on chat_sessions(session_id);
+create index if not exists idx_report_results_session on report_results(session_id);
+create index if not exists idx_llm_usage_log_session on llm_usage_log(session_id);
+create index if not exists idx_llm_usage_log_created_at on llm_usage_log(created_at);
 
 -- RLS(Row Level Security) 켜두기 — 서버(service_role 키)에서만 쓰고
 -- 클라이언트에서 직접 DB를 건드리지 않을 것이므로, 기본적으로 전부 막아둔다.
@@ -74,6 +101,8 @@ alter table sessions enable row level security;
 alter table saju_results enable row level security;
 alter table quiz_results enable row level security;
 alter table chat_sessions enable row level security;
+alter table report_results enable row level security;
+alter table llm_usage_log enable row level security;
 
 -- service_role은 RLS를 우회하지만, 테이블 자체에 대한 GRANT는 별개다.
 -- "Automatically expose new tables"를 꺼둔 상태에서 SQL Editor로 테이블을

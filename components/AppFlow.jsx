@@ -9,6 +9,7 @@ import ChatScreen from "./ChatScreen";
 import ReportScreen from "./ReportScreen";
 import { findTopAnswers } from "@/lib/quizProfile";
 import { getModuleById } from "@/lib/modules";
+import { trackOnboardingComplete, trackQuizComplete, trackChatComplete } from "@/lib/analytics";
 
 /**
  * AppFlow — full pipeline
@@ -21,11 +22,19 @@ import { getModuleById } from "@/lib/modules";
  *
  * moduleSelect/quiz/chat/report is the OTHER monetization line (ingan.ai-
  * style individual deep-report purchase) from the benchmarking-proposal
- * hybrid model — it isn't gone, QAChat just now sits in front of it as
- * the immediate post-onboarding screen (the Yodha-style subscription
- * Q&A line). Nothing currently navigates from QAChat into moduleSelect;
- * that link (e.g. "심리테스트 해보기" after a Q&A answer) is a natural
- * next step once this is live, not built yet.
+ * hybrid model — it isn't gone, and it isn't a "not built yet" gap either.
+ * DECIDED 2026-09-11: this line is native-app-only. Web's whole job is the
+ * Q&A lead-gen funnel (see components/QAChat.jsx) ending in a web→app
+ * handoff (verification code); the deep-test/report line lives in this
+ * same codebase because its screens/logic will be ported into the native
+ * app once that build starts (see the launch roadmap's Phase 2), not
+ * because it's meant to become reachable from the web flow. So: nothing
+ * SHOULD navigate from QAChat into moduleSelect on web — don't wire that
+ * link. Once inside the real app, Q&A / the deep-test line / the chatbot
+ * are meant to be independently reachable features (a hub), not a forced
+ * chain — that's app-side navigation work, not applicable here.
+ * moduleSelect stays reachable only as a manual test harness (see
+ * ModuleSelect.jsx) for exercising this line during development.
  *
  * Saju x psych-test combination (2026-08-28 redesign): oheng data comes
  * straight from SAZU (sajuResult.elements) — the quiz no longer infers
@@ -34,12 +43,13 @@ import { getModuleById } from "@/lib/modules";
  * chatbot directly; the chatbot is where the two get narratively
  * connected (see lib/chatPrompts.ts).
  *
- * Report renders the Module 3 (번아웃) sample narrative copy regardless
- * of which module/track was actually run, since writing full narrative
- * copy per module × outcome is a separate content task, not a wiring
- * task. Real saju elements, the real psych-test diagnosis (whichever
- * module ran), AND the chat's integrated_summary (saju + quiz +
- * conversation synthesis) ARE passed through and rendered with real data.
+ * Report's narrative body (opening scene, case study, saju write-up,
+ * strengths/weaknesses, etc.) is generated per-request by POST /api/report
+ * (see lib/reportPrompts.ts) so it's actually specific to whichever
+ * module/track ran, instead of always showing the old hardcoded Module 3
+ * (번아웃) sample copy. Real saju elements, the real psych-test diagnosis
+ * (whichever module ran), and the chat's integrated_summary (saju + quiz +
+ * conversation synthesis) are passed in as context for that generation.
  * ------------------------------------------------------------------
  */
 
@@ -61,6 +71,7 @@ export default function AppFlow() {
     setSajuResult(sajuResult);
     setNickname(birthInput?.nickname ?? "");
     setTrack(track);
+    trackOnboardingComplete(track);
     setStep("qaChat");
   };
 
@@ -85,17 +96,22 @@ export default function AppFlow() {
       psychTestSummary: nuancedSummary ?? "",
       headlineAnswer,
     });
+    trackQuizComplete(moduleId);
     setStep("chat");
   };
 
   const handleChatComplete = (extract) => {
     setChatExtract(extract);
+    trackChatComplete();
     setStep("report");
   };
 
   if (step === "report") {
     return (
       <ReportScreen
+        nickname={nickname}
+        track={track}
+        sessionId={sessionId}
         elements={sajuResult?.elements}
         chatExtract={chatExtract}
         psychTestDiagnosis={psychTestDiagnosis}
