@@ -1,7 +1,8 @@
 import { StatusBar } from "expo-status-bar";
 import { useFonts, CormorantGaramond_500Medium } from "@expo-google-fonts/cormorant-garamond";
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from "@expo-google-fonts/manrope";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { BackHandler } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import ChatScreen, { type ChatExtract } from "./screens/ChatScreen";
 import CityScreen, { type SajuResult } from "./screens/CityScreen";
@@ -65,6 +66,51 @@ export default function App() {
   const [moduleId, setModuleId] = useState<string | null>(null);
   const [quizDiagnosis, setQuizDiagnosis] = useState<QuizDiagnosis | null>(null);
   const [chatExtract, setChatExtract] = useState<ChatExtract | null>(null);
+
+  // Android hardware back button — a plain BackHandler listener, unrelated to the
+  // window.history/popstate approach that broke web's "이전" button (see
+  // [[project-fatesaid-history-api-bug]]; that was a browser-history/App-Router
+  // conflict specific to web, this is RN's own native key event, no such conflict
+  // exists here). Steps back through the same transitions each screen's own onBack
+  // prop already uses; "intro" and "home" are treated as roots (default Android
+  // behavior — exit the app — applies there, same as a back gesture on any app's
+  // top-level screen).
+  useEffect(() => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      switch (step) {
+        case "verifyCode":
+          setStep("intro");
+          return true;
+        case "nickname":
+          setStep("verifyCode");
+          return true;
+        case "gender":
+          setStep("nickname");
+          return true;
+        case "dob":
+          setStep("gender");
+          return true;
+        case "tob":
+          setStep("dob");
+          return true;
+        case "city":
+          setStep("tob");
+          return true;
+        case "qa":
+        case "moduleSelect":
+        case "chat":
+        case "report":
+          setStep("home");
+          return true;
+        case "quiz":
+          setStep("moduleSelect");
+          return true;
+        default:
+          return false; // "intro" / "home" — let Android's default back (exit app) happen
+      }
+    });
+    return () => sub.remove();
+  }, [step]);
 
   if (!fontsLoaded) return null;
 

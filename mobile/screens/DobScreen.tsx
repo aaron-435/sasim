@@ -2,6 +2,7 @@ import { useMemo, useRef } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
+import { calculateAge, MIN_AGE } from "../lib/age";
 import { COLORS } from "../theme/colors";
 import { getZodiac, toISODateString, ZODIAC_LABELS_KO } from "../lib/zodiac";
 
@@ -28,8 +29,10 @@ export default function DobScreen({
   const dayRef = useRef<TextInput>(null);
 
   const iso = toISODateString(year, month, day);
-  const canProceed = iso !== "";
-  const zodiac = useMemo(() => (canProceed ? getZodiac(Number(month), Number(day)) : null), [canProceed, month, day]);
+  const age = useMemo(() => calculateAge(iso), [iso]);
+  const isTooYoung = age !== null && age < MIN_AGE;
+  const canProceed = iso !== "" && !isTooYoung;
+  const zodiac = useMemo(() => (iso !== "" ? getZodiac(Number(month), Number(day)) : null), [iso, month, day]);
 
   function digitsOnly(v: string) {
     return v.replace(/[^0-9]/g, "");
@@ -88,6 +91,8 @@ export default function DobScreen({
             <Text style={styles.zodiacLabel}>{ZODIAC_LABELS_KO[zodiac.nameKey]}</Text>
           </View>
         )}
+
+        {isTooYoung && <Text style={styles.ageWarning}>죄송하지만 만 {MIN_AGE}세 이상만 이용할 수 있어요.</Text>}
       </View>
 
       <View style={styles.middle}>
@@ -157,6 +162,12 @@ const styles = StyleSheet.create({
     fontFamily: "Manrope_500Medium",
     fontSize: 14,
     color: COLORS.headline,
+  },
+  ageWarning: {
+    fontFamily: "Manrope_400Regular",
+    fontSize: 12.5,
+    color: "#CB6249",
+    marginTop: 14,
   },
   middle: {
     flex: 1,

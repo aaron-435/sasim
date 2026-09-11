@@ -1,9 +1,13 @@
 import { Sparkles } from "lucide-react-native";
 import { useEffect, useRef } from "react";
-import { Animated, Easing, StyleSheet, Text, View } from "react-native";
+import { Animated, Easing, Linking, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AuraNextButton from "../components/AuraNextButton";
+import { API_BASE_URL } from "../config";
 import { COLORS } from "../theme/colors";
+
+const TERMS_URL = `${API_BASE_URL}/terms`;
+const PRIVACY_URL = `${API_BASE_URL}/privacy`;
 
 export default function IntroScreen({ onNext }: { onNext: () => void }) {
   const contentAnim = useRef(new Animated.Value(0)).current;
@@ -53,7 +57,15 @@ export default function IntroScreen({ onNext }: { onNext: () => void }) {
 
       <Text style={styles.footer}>
         무료 10분 리딩 · 신용카드 불필요{"\n"}
-        만 14세 이상만 이용할 수 있어요 · 이용약관 및 개인정보처리방침에 동의합니다
+        만 14세 이상만 이용할 수 있어요 ·{" "}
+        <Text style={styles.footerLink} onPress={() => Linking.openURL(TERMS_URL)}>
+          이용약관
+        </Text>{" "}
+        및{" "}
+        <Text style={styles.footerLink} onPress={() => Linking.openURL(PRIVACY_URL)}>
+          개인정보처리방침
+        </Text>
+        에 동의합니다
       </Text>
     </SafeAreaView>
   );
@@ -119,5 +131,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingHorizontal: 24,
     paddingBottom: 24,
+  },
+  footerLink: {
+    textDecorationLine: "underline",
+    color: COLORS.footer,
   },
 });
