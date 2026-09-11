@@ -147,6 +147,13 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
   const citySearchSeq = useRef(0);
+  // Auto-advance focus once a field is full (YYYY→MM→DD, 시→분) — without
+  // this, typing the date continuously (the natural way to fill a date
+  // field) silently loses every keystroke typed after YYYY hits 4 digits,
+  // since focus never leaves that field.
+  const dobMonthRef = useRef(null);
+  const dobDayRef = useRef(null);
+  const minuteRef = useRef(null);
 
   const dob = useMemo(() => toISODateString(dobYear, dobMonth, dobDay), [dobYear, dobMonth, dobDay]);
   const parsedDate = useMemo(() => {
@@ -404,21 +411,28 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
                   <Calendar size={17} strokeWidth={1.75} className="ob-field-icon" />
                   <input type="text" inputMode="numeric" className="ob-input ob-mono" autoFocus
                     placeholder={t.onboarding.yearPlaceholder} value={dobYear} maxLength={4}
-                    onChange={(e) => setDobYear(e.target.value.replace(/[^0-9]/g, ""))}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/[^0-9]/g, "");
+                      setDobYear(v);
+                      if (v.length === 4) dobMonthRef.current?.focus();
+                    }}
                     onKeyDown={handleEnter}
                     style={{ textAlign: "center", paddingLeft: "38px", paddingRight: "6px" }} />
                 </div>
                 <span className="ob-mono" style={{ color: "#847E90", fontSize: "18px" }}>.</span>
-                <input type="text" inputMode="numeric" className="ob-input ob-mono"
+                <input ref={dobMonthRef} type="text" inputMode="numeric" className="ob-input ob-mono"
                   placeholder={t.onboarding.monthPlaceholder} value={dobMonth} maxLength={2}
                   onChange={(e) => {
                     const v = e.target.value.replace(/[^0-9]/g, "");
-                    if (v === "" || (Number(v) >= 1 && Number(v) <= 12) || v.length < 2) setDobMonth(v);
+                    if (v === "" || (Number(v) >= 1 && Number(v) <= 12) || v.length < 2) {
+                      setDobMonth(v);
+                      if (v.length === 2) dobDayRef.current?.focus();
+                    }
                   }}
                   onKeyDown={handleEnter}
                   style={{ flex: 0.85, textAlign: "center", paddingLeft: "10px", paddingRight: "10px" }} />
                 <span className="ob-mono" style={{ color: "#847E90", fontSize: "18px" }}>.</span>
-                <input type="text" inputMode="numeric" className="ob-input ob-mono"
+                <input ref={dobDayRef} type="text" inputMode="numeric" className="ob-input ob-mono"
                   placeholder={t.onboarding.dayPlaceholder} value={dobDay} maxLength={2}
                   onChange={(e) => {
                     const v = e.target.value.replace(/[^0-9]/g, "");
@@ -461,13 +475,16 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
                     value={hour12} maxLength={2}
                     onChange={(e) => {
                       const v = e.target.value.replace(/[^0-9]/g, "");
-                      if (v === "" || (Number(v) >= 1 && Number(v) <= 12) || v.length < 2) setHour12(v);
+                      if (v === "" || (Number(v) >= 1 && Number(v) <= 12) || v.length < 2) {
+                        setHour12(v);
+                        if (v.length === 2) minuteRef.current?.focus();
+                      }
                     }}
                     onKeyDown={handleEnter}
                     style={{ textAlign: "center", paddingLeft: "42px", cursor: timeUnknown ? "not-allowed" : "text" }} />
                 </div>
                 <span className="ob-mono" style={{ color: "#847E90", fontSize: "18px" }}>:</span>
-                <input type="text" inputMode="numeric" className="ob-input ob-mono" disabled={timeUnknown}
+                <input ref={minuteRef} type="text" inputMode="numeric" className="ob-input ob-mono" disabled={timeUnknown}
                   placeholder={t.onboarding.minutePlaceholder} value={minuteInput} maxLength={2}
                   onChange={(e) => {
                     const v = e.target.value.replace(/[^0-9]/g, "");
