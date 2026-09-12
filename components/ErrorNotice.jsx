@@ -36,8 +36,8 @@ export default function ErrorNotice({ kind = "server", message, onRetry }) {
       <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
         <Icon size={17} strokeWidth={1.75} color="#CB6249" style={{ flexShrink: 0, marginTop: "2px" }} />
         <div>
-          <p style={{ margin: 0, fontSize: "13.5px", fontWeight: 700, color: "#EDE7DA" }}>{title}</p>
-          <p style={{ margin: "3px 0 0", fontSize: "13px", color: "#C7C3D1", lineHeight: 1.55 }}>{message}</p>
+          <p style={{ margin: 0, fontSize: "13.5px", fontWeight: 700, color: "#D9C9A3" }}>{title}</p>
+          <p style={{ margin: "3px 0 0", fontSize: "13px", color: "#C4BCA0", lineHeight: 1.55 }}>{message}</p>
         </div>
       </div>
       {onRetry && (
@@ -46,8 +46,8 @@ export default function ErrorNotice({ kind = "server", message, onRetry }) {
           onClick={onRetry}
           style={{
             alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: "6px",
-            background: "rgba(255,255,255,0.05)", border: "1px solid #2A2833", borderRadius: "999px",
-            padding: "9px 15px", color: "#EDE7DA", fontSize: "12.5px", fontWeight: 600, cursor: "pointer",
+            background: "rgba(255,255,255,0.05)", border: "1px solid #26332B", borderRadius: "999px",
+            padding: "9px 15px", color: "#D9C9A3", fontSize: "12.5px", fontWeight: 600, cursor: "pointer",
             minHeight: "36px",
           }}
         >

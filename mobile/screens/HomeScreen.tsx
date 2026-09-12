@@ -1,6 +1,7 @@
 import { Bot, Brain, FileText, HelpCircle, Sparkles } from "lucide-react-native";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import PatternBackground from "../components/PatternBackground";
 import { ELEMENT_LABELS_KO } from "../lib/elements";
 import { COLORS } from "../theme/colors";
 
@@ -36,42 +37,44 @@ export default function HomeScreen({
 }) {
   const handlers: Record<string, () => void> = { qa: onOpenQA, quiz: onOpenQuiz };
   return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <View style={styles.brandRow}>
-          <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-          <Text style={styles.brandLabel}>FATESAID</Text>
-        </View>
-        <Text style={styles.greeting}>안녕하세요, {nickname}님</Text>
-        {dominantElement && (
-          <View style={styles.elementBadge}>
-            <Text style={styles.elementBadgeText}>오행 · {ELEMENT_LABELS_KO[dominantElement] ?? dominantElement}</Text>
+    <PatternBackground>
+      <SafeAreaView style={styles.root}>
+        <View style={styles.header}>
+          <View style={styles.brandRow}>
+            <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
+            <Text style={styles.brandLabel}>FATESAID</Text>
           </View>
-        )}
-      </View>
+          <Text style={styles.greeting}>안녕하세요, {nickname}님</Text>
+          {dominantElement && (
+            <View style={styles.elementBadge}>
+              <Text style={styles.elementBadgeText}>오행 · {ELEMENT_LABELS_KO[dominantElement] ?? dominantElement}</Text>
+            </View>
+          )}
+        </View>
 
-      <View style={styles.grid}>
-        {FEATURES.map(({ key, icon: Icon, label, ready }) => (
-          <Pressable
-            key={key}
-            disabled={!ready}
-            onPress={ready ? handlers[key] : undefined}
-            style={({ pressed }) => [styles.card, ready && styles.cardReady, ready && pressed && styles.cardPressed]}
-          >
-            <Icon size={22} strokeWidth={1.75} color={ready ? COLORS.gold : COLORS.subheadline} />
-            <Text style={[styles.cardLabel, ready && styles.cardLabelReady]}>{label}</Text>
-            {!ready && <Text style={styles.cardBadge}>준비 중</Text>}
-          </Pressable>
-        ))}
-      </View>
-    </SafeAreaView>
+        <View style={styles.grid}>
+          {FEATURES.map(({ key, icon: Icon, label, ready }) => (
+            <Pressable
+              key={key}
+              disabled={!ready}
+              onPress={ready ? handlers[key] : undefined}
+              style={({ pressed }) => [styles.card, ready && styles.cardReady, ready && pressed && styles.cardPressed]}
+            >
+              <Icon size={22} strokeWidth={1.75} color={ready ? COLORS.gold : COLORS.subheadline} />
+              <Text style={[styles.cardLabel, ready && styles.cardLabelReady]}>{label}</Text>
+              {!ready && <Text style={styles.cardBadge}>준비 중</Text>}
+            </Pressable>
+          ))}
+        </View>
+      </SafeAreaView>
+    </PatternBackground>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: "transparent",
     paddingHorizontal: 24,
   },
   header: {
@@ -99,9 +102,9 @@ const styles = StyleSheet.create({
   elementBadge: {
     alignSelf: "flex-start",
     marginTop: 12,
-    backgroundColor: "rgba(201,162,75,0.12)",
+    backgroundColor: "rgba(111,169,139,0.12)",
     borderWidth: 1,
-    borderColor: "rgba(201,162,75,0.35)",
+    borderColor: "rgba(111,169,139,0.35)",
     borderRadius: 999,
     paddingVertical: 6,
     paddingHorizontal: 14,
@@ -130,8 +133,8 @@ const styles = StyleSheet.create({
   },
   cardReady: {
     borderStyle: "solid",
-    borderColor: "rgba(201,162,75,0.35)",
-    backgroundColor: "rgba(201,162,75,0.08)",
+    borderColor: "rgba(111,169,139,0.35)",
+    backgroundColor: "rgba(111,169,139,0.08)",
   },
   cardPressed: {
     opacity: 0.8,

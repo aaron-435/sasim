@@ -257,7 +257,7 @@ const termsKo: LegalDocument = {
     },
     {
       heading: "제7조 (서비스 내용에 대한 중요 안내 — 진단이 아닙니다)",
-      headingColor: "#C9A24B",
+      headingColor: "#6FA98B",
       body: [
         {
           type: "p",
@@ -539,7 +539,7 @@ const termsEn: LegalDocument = {
     },
     {
       heading: "Article 7 (Important Notice About Service Content — This Is Not a Diagnosis)",
-      headingColor: "#C9A24B",
+      headingColor: "#6FA98B",
       body: [
         {
           type: "p",

@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   caseBox: {
-    backgroundColor: "rgba(201,162,75,0.05)",
+    backgroundColor: "rgba(111,169,139,0.05)",
     borderWidth: 1,
     borderColor: COLORS.border,
     borderRadius: 10,
@@ -708,9 +708,9 @@ const styles = StyleSheet.create({
   },
   paywallCard: {
     alignItems: "center",
-    backgroundColor: "rgba(201,162,75,0.06)",
+    backgroundColor: "rgba(111,169,139,0.06)",
     borderWidth: 1,
-    borderColor: "rgba(201,162,75,0.3)",
+    borderColor: "rgba(111,169,139,0.3)",
     borderRadius: 16,
     padding: 26,
     gap: 10,

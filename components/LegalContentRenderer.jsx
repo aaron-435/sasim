@@ -17,8 +17,8 @@ function renderInline(text) {
 }
 
 const styleFor = {
-  highlight: { background: "rgba(201,162,75,0.06)", border: "1px solid rgba(201,162,75,0.25)", borderRadius: "10px", padding: "14px 16px", color: "#C7C3D1" },
-  muted: { color: "#847E90", fontSize: "12.5px" },
+  highlight: { background: "rgba(111,169,139,0.06)", border: "1px solid rgba(111,169,139,0.25)", borderRadius: "10px", padding: "14px 16px", color: "#C4BCA0" },
+  muted: { color: "#756B54", fontSize: "12.5px" },
 };
 
 export default function LegalContentRenderer({ doc }) {

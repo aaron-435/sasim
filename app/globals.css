@@ -18,6 +18,12 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  /* Default line-breaking splits Korean text between any two characters, which is
+     how "말했습니다." was breaking into "말했습니" / "다." mid-word — keep-all only
+     breaks at real spaces (Latin/Spanish text already breaks at spaces, so this is a
+     no-op for them) so wrapped headlines and body copy never orphan a word fragment. */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 @layer utilities {

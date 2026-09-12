@@ -21,7 +21,7 @@ const ELEMENTS = [
   { key: "wood", color: "#4E8368" },
   { key: "fire", color: "#CB6249" },
   { key: "earth", color: "#B98A4E" },
-  { key: "metal", color: "#C7C3D1" },
+  { key: "metal", color: "#C4BCA0" },
   { key: "water", color: "#3E6EA0" },
 ];
 
@@ -40,8 +40,8 @@ export default function LoadingReveal({ messages }) {
       role="status"
       aria-live="polite"
       style={{
-        position: "fixed", inset: 0, zIndex: 50, background: "#08080C",
-        backgroundImage: "radial-gradient(circle at 50% -10%, rgba(201,162,75,0.12), transparent 55%)",
+        position: "fixed", inset: 0, zIndex: 50, background: "#122019",
+        backgroundImage: "radial-gradient(circle at 50% -10%, rgba(111,169,139,0.12), transparent 55%)",
         display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
         padding: "24px",
       }}
@@ -69,7 +69,7 @@ export default function LoadingReveal({ messages }) {
         className="lr-msg"
         style={{
           fontFamily: "'Cormorant Garamond','Noto Serif KR',serif", fontWeight: 500,
-          fontSize: "18px", color: "#EDE7DA", textAlign: "center", margin: 0, minHeight: "28px",
+          fontSize: "18px", color: "#D9C9A3", textAlign: "center", margin: 0, minHeight: "28px",
         }}
       >
         {activeMessages[step]}

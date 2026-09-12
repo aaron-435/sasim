@@ -365,9 +365,9 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 20,
     padding: 26,
-    backgroundColor: "rgba(201,162,75,0.08)",
+    backgroundColor: "rgba(111,169,139,0.08)",
     borderWidth: 1,
-    borderColor: "rgba(201,162,75,0.28)",
+    borderColor: "rgba(111,169,139,0.28)",
   },
   elementChip: {
     flexDirection: "row",
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: "rgba(201,162,75,0.18)",
+    borderTopColor: "rgba(111,169,139,0.18)",
   },
   resultModuleTitle: {
     fontFamily: "Manrope_400Regular",

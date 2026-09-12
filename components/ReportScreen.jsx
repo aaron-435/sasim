@@ -106,7 +106,7 @@ export default function ReportScreen({ nickname = "OOO", track = "romance", elem
 
   if (errorText) {
     return (
-      <div style={{ minHeight: "100vh", width: "100%", background: "#08080C", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+      <div style={{ minHeight: "100vh", width: "100%", background: "#122019", display: "flex", alignItems: "center", justifyContent: "center", padding: "24px" }}>
         <div style={{ width: "100%", maxWidth: "420px" }}>
           <ErrorNotice kind={errorText.kind} message={errorText.message} onRetry={fetchReport} />
         </div>
@@ -125,46 +125,46 @@ export default function ReportScreen({ nickname = "OOO", track = "romance", elem
   const dominantKey = sortedElements[0];
 
   return (
-    <div style={{ minHeight: "100vh", width: "100%", background: "#08080C", display: "flex", justifyContent: "center" }}>
+    <div style={{ minHeight: "100vh", width: "100%", background: "#122019", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
         .rp-root, .rp-root * { box-sizing: border-box; font-family: 'Manrope', 'Noto Sans KR', sans-serif; }
         .rp-serif { font-family: 'Cormorant Garamond', 'Noto Sans KR', serif; }
-        .rp-section { padding: 34px 22px; border-bottom: 1px solid #17161D; }
-        .rp-num { font-size: 11px; color: #C9A24B; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 4px; }
-        .rp-h1 { font-family: 'Cormorant Garamond','Noto Sans KR',serif; font-size: 22px; color: #EDE7DA; margin: 0 0 14px; line-height: 1.4; }
-        .rp-h2 { font-size: 13px; color: #C9A24B; margin: 18px 0 6px; font-weight: 700; }
-        .rp-body { font-size: 14px; line-height: 1.85; color: #C7C3D1; margin: 0 0 12px; }
-        .rp-quote { font-family: 'Cormorant Garamond','Noto Sans KR',serif; font-size: 15px; line-height: 1.8; color: #EDE7DA;
-          border-left: 2px solid #C9A24B; padding-left: 14px; margin: 14px 0; }
-        .rp-case { background: rgba(201,162,75,0.05); border: 1px solid #2A2833; border-radius: 8px; padding: 16px; margin: 14px 0; }
-        .rp-case-tag { font-size: 10px; color: #C9A24B; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 8px; }
-        .rp-case p { font-size: 13px; color: #B7B2C0; line-height: 1.75; margin: 0 0 8px; }
+        .rp-section { padding: 34px 22px; border-bottom: 1px solid #1C2A22; }
+        .rp-num { font-size: 11px; color: #6FA98B; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 4px; }
+        .rp-h1 { font-family: 'Cormorant Garamond','Noto Sans KR',serif; font-size: 22px; color: #D9C9A3; margin: 0 0 14px; line-height: 1.4; }
+        .rp-h2 { font-size: 13px; color: #6FA98B; margin: 18px 0 6px; font-weight: 700; }
+        .rp-body { font-size: 14px; line-height: 1.85; color: #C4BCA0; margin: 0 0 12px; }
+        .rp-quote { font-family: 'Cormorant Garamond','Noto Sans KR',serif; font-size: 15px; line-height: 1.8; color: #D9C9A3;
+          border-left: 2px solid #6FA98B; padding-left: 14px; margin: 14px 0; }
+        .rp-case { background: rgba(111,169,139,0.05); border: 1px solid #26332B; border-radius: 8px; padding: 16px; margin: 14px 0; }
+        .rp-case-tag { font-size: 10px; color: #6FA98B; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 8px; }
+        .rp-case p { font-size: 13px; color: #B8AE94; line-height: 1.75; margin: 0 0 8px; }
         .rp-breather { border-top: 1px solid #4E8368; border-bottom: 1px solid #4E8368; padding: 16px 2px; margin: 16px 0; }
-        .rp-takeaway { background: #14131A; border: 1px solid #2A2833; padding: 12px 14px; margin-top: 10px; border-radius: 6px; font-size: 12.5px; color: #C7C3D1; }
-        .rp-takeaway b { color: #C9A24B; }
-        .rp-bullet-title { font-weight: 700; color: #EDE7DA; font-size: 13.5px; margin: 12px 0 3px; }
-        .rp-bullet-title::before { content: "· "; color: #C9A24B; }
-        .rp-bullet-body { font-size: 13px; color: #B7B2C0; line-height: 1.7; margin: 0 0 4px 14px; }
+        .rp-takeaway { background: #14221A; border: 1px solid #26332B; padding: 12px 14px; margin-top: 10px; border-radius: 6px; font-size: 12.5px; color: #C4BCA0; }
+        .rp-takeaway b { color: #6FA98B; }
+        .rp-bullet-title { font-weight: 700; color: #D9C9A3; font-size: 13.5px; margin: 12px 0 3px; }
+        .rp-bullet-title::before { content: "· "; color: #6FA98B; }
+        .rp-bullet-body { font-size: 13px; color: #B8AE94; line-height: 1.7; margin: 0 0 4px 14px; }
         .rp-fitgood, .rp-fitbad { padding: 12px 14px; border-radius: 6px; margin-bottom: 8px; font-size: 12.5px; line-height: 1.7; }
-        .rp-fitgood { background: rgba(78,131,104,0.1); border-left: 3px solid #4E8368; color: #C7C3D1; }
-        .rp-fitbad { background: rgba(193,80,59,0.1); border-left: 3px solid #C1503B; color: #C7C3D1; }
+        .rp-fitgood { background: rgba(78,131,104,0.1); border-left: 3px solid #4E8368; color: #C4BCA0; }
+        .rp-fitbad { background: rgba(193,80,59,0.1); border-left: 3px solid #C1503B; color: #C4BCA0; }
         .rp-fit-label { display: block; font-weight: 700; font-size: 11px; margin-bottom: 4px; }
-        .rp-bar-track { height: 7px; background: #1C1B24; border-radius: 999px; overflow: hidden; margin-top: 4px; }
+        .rp-bar-track { height: 7px; background: #1C2A22; border-radius: 999px; overflow: hidden; margin-top: 4px; }
         .rp-bar-fill { height: 100%; border-radius: 999px; }
         .rp-chatquote { background: rgba(62,110,160,0.08); border: 1px solid rgba(62,110,160,0.35); border-radius: 8px; padding: 16px; margin: 14px 0; }
       ` }} />
 
       <div className="rp-root" style={{ width: "100%", maxWidth: "460px" }}>
-        <div style={{ padding: "48px 24px 40px", textAlign: "center", borderBottom: "1px solid #17161D" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "10.5px", letterSpacing: "0.14em", color: "#C9A24B", textTransform: "uppercase", marginBottom: "18px" }}>
+        <div style={{ padding: "48px 24px 40px", textAlign: "center", borderBottom: "1px solid #1C2A22" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "10.5px", letterSpacing: "0.14em", color: "#6FA98B", textTransform: "uppercase", marginBottom: "18px" }}>
             <Sparkles size={12} /> Fatesaid
           </div>
-          <h1 className="rp-serif" style={{ fontSize: "26px", color: "#EDE7DA", lineHeight: 1.5, margin: "0 0 10px" }}>
+          <h1 className="rp-serif" style={{ fontSize: "26px", color: "#D9C9A3", lineHeight: 1.5, margin: "0 0 10px" }}>
             {content.title_line1}<br />{content.title_line2}
           </h1>
-          <p style={{ fontSize: "12.5px", color: "#8B879A", margin: "0 0 26px" }}>{content.subtitle}</p>
-          <p className="rp-serif" style={{ fontSize: "15px", color: "#EDE7DA", margin: 0 }}>{nickname} 님</p>
+          <p style={{ fontSize: "12.5px", color: "#7C8A82", margin: "0 0 26px" }}>{content.subtitle}</p>
+          <p className="rp-serif" style={{ fontSize: "15px", color: "#D9C9A3", margin: 0 }}>{nickname} 님</p>
         </div>
 
         <div className="rp-section">
@@ -187,12 +187,12 @@ export default function ReportScreen({ nickname = "OOO", track = "romance", elem
         {psychTestDiagnosis && (
           <div className="rp-section">
             <div className="rp-num">{nextNum()}</div>
-            <h1 className="rp-h1">{psychTestDiagnosis.typeInfo?.title} <span style={{ fontSize: "11px", color: "#847E90" }}>{psychTestDiagnosis.moduleTitle ?? "심리테스트"} 분석</span></h1>
+            <h1 className="rp-h1">{psychTestDiagnosis.typeInfo?.title} <span style={{ fontSize: "11px", color: "#756B54" }}>{psychTestDiagnosis.moduleTitle ?? "심리테스트"} 분석</span></h1>
             <p className="rp-body">{psychTestDiagnosis.typeInfo?.hook}</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", margin: "16px 0" }}>
               {psychTestDiagnosis.dimensionResults?.map((r, i) => (
                 <div key={r.dimension}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11.5px", color: "#9C97A6", marginBottom: "3px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11.5px", color: "#9C9277", marginBottom: "3px" }}>
                     <span>{psychTestDiagnosis.dimensionShortNames?.[r.dimension] ?? r.dimension}</span>
                     <span>{Math.round(r.percentOfMax)}% · {r.intensity}</span>
                   </div>
@@ -208,13 +208,13 @@ export default function ReportScreen({ nickname = "OOO", track = "romance", elem
 
         <div className="rp-section">
           <div className="rp-num">{nextNum()}</div>
-          <h1 className="rp-h1">무엇이 이 패턴을 만들었나 <span style={{ fontSize: "11px", color: "#847E90" }}>사주 원국 분석</span></h1>
+          <h1 className="rp-h1">무엇이 이 패턴을 만들었나 <span style={{ fontSize: "11px", color: "#756B54" }}>사주 원국 분석</span></h1>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "16px" }}>
             {Object.entries(resolvedElements).map(([key, val]) => {
               const label = t.common.elementLabels[key];
               return (
                 <div key={key}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11.5px", color: "#9C97A6", marginBottom: "3px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11.5px", color: "#9C9277", marginBottom: "3px" }}>
                     <span>{label}{key === dominantKey ? " ·" : ""}</span><span>{val}%</span>
                   </div>
                   <div className="rp-bar-track"><div className="rp-bar-fill" style={{ width: `${val}%`, background: ELEMENT_COLOR[key] }} /></div>
@@ -239,7 +239,7 @@ export default function ReportScreen({ nickname = "OOO", track = "romance", elem
                 <BookOpen size={13} color="#7FA8D6" />
                 <span style={{ fontSize: "10.5px", color: "#7FA8D6", letterSpacing: "0.06em", fontWeight: 700 }}>상담 중 나온 이야기</span>
               </div>
-              <p className="rp-serif" style={{ fontSize: "14.5px", color: "#EDE7DA", lineHeight: 1.75, margin: 0 }}>
+              <p className="rp-serif" style={{ fontSize: "14.5px", color: "#D9C9A3", lineHeight: 1.75, margin: 0 }}>
                 &quot;{chatExtract.summary_quote || chatExtract.trigger_point}&quot;
               </p>
             </div>
@@ -326,10 +326,10 @@ export default function ReportScreen({ nickname = "OOO", track = "romance", elem
           <div className="rp-num">{nextNum()}</div>
           <h1 className="rp-h1">{content.closing_title}</h1>
           <p className="rp-body">{content.closing_body}</p>
-          <p style={{ fontSize: "11px", color: "#847E90", lineHeight: 1.6, marginTop: "22px", borderTop: "1px solid #1C1B24", paddingTop: "14px" }}>
+          <p style={{ fontSize: "11px", color: "#756B54", lineHeight: 1.6, marginTop: "22px", borderTop: "1px solid #1C2A22", paddingTop: "14px" }}>
             {t.report.generatedNote}
           </p>
-          <p style={{ fontSize: "11px", color: "#847E90", lineHeight: 1.6, marginTop: "8px" }}>
+          <p style={{ fontSize: "11px", color: "#756B54", lineHeight: 1.6, marginTop: "8px" }}>
             {t.report.disclaimer}
           </p>
         </div>

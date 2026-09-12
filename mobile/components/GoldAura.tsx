@@ -34,7 +34,7 @@ export default function GoldAura({ size = 260, children }: { size?: number; chil
         pointerEvents="none"
         style={[
           styles.ring,
-          { width: size, height: size, borderRadius: size / 2, backgroundColor: "rgba(201,162,75,0.06)" },
+          { width: size, height: size, borderRadius: size / 2, backgroundColor: "rgba(111,169,139,0.06)" },
           { transform: [{ scale: outerScale }], opacity: outerOpacity },
         ]}
       />
@@ -42,7 +42,7 @@ export default function GoldAura({ size = 260, children }: { size?: number; chil
         pointerEvents="none"
         style={[
           styles.ring,
-          { width: size * 0.7, height: size * 0.7, borderRadius: (size * 0.7) / 2, backgroundColor: "rgba(201,162,75,0.09)" },
+          { width: size * 0.7, height: size * 0.7, borderRadius: (size * 0.7) / 2, backgroundColor: "rgba(111,169,139,0.09)" },
           { transform: [{ scale: midScale }] },
         ]}
       />

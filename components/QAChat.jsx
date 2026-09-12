@@ -248,13 +248,13 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
   const done = answeredCount >= FREE_QUESTIONS && !busy;
 
   return (
-    <div style={{ minHeight: "100vh", width: "100%", background: "#08080C", display: "flex", justifyContent: "center" }}>
+    <div style={{ minHeight: "100vh", width: "100%", background: "#122019", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600&family=Manrope:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
         .qa-root, .qa-root * { box-sizing: border-box; font-family: 'Manrope', 'Noto Sans KR', sans-serif; }
         .qa-mono { font-family: 'JetBrains Mono', monospace; }
-        .qa-bubble-bot { background: rgba(255,255,255,0.05); border: 1px solid #2A2833; color: #EDE7DA; }
-        .qa-bubble-user { background: #C9A24B; color: #100F16; }
+        .qa-bubble-bot { background: rgba(255,255,255,0.05); border: 1px solid #26332B; color: #D9C9A3; }
+        .qa-bubble-user { background: #6FA98B; color: #0F1A15; }
         .qa-fade { animation: qaFade 0.28s ease both; }
         @keyframes qaFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         .qa-dot { animation: qaBlink 1.2s infinite ease-in-out; }
@@ -262,19 +262,19 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
         .qa-dot:nth-child(3) { animation-delay: 0.3s; }
         @keyframes qaBlink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
         .qa-option-btn {
-          width: 100%; text-align: left; background: rgba(255,255,255,0.03); border: 1px solid #2A2833;
-          border-radius: 10px; padding: 12px 14px; color: #EDE7DA; font-size: 14px; cursor: pointer;
+          width: 100%; text-align: left; background: rgba(255,255,255,0.03); border: 1px solid #26332B;
+          border-radius: 10px; padding: 12px 14px; color: #D9C9A3; font-size: 14px; cursor: pointer;
           transition: border-color 0.15s ease, background 0.15s ease; margin-bottom: 8px;
         }
         .qa-option-btn:last-child { margin-bottom: 0; }
-        .qa-option-btn:hover { border-color: #C9A24B; background: rgba(201,162,75,0.06); }
-        .qa-root button:focus-visible, .qa-root input:focus-visible { outline: 2px solid #C9A24B; outline-offset: 2px; }
+        .qa-option-btn:hover { border-color: #6FA98B; background: rgba(111,169,139,0.06); }
+        .qa-root button:focus-visible, .qa-root input:focus-visible { outline: 2px solid #6FA98B; outline-offset: 2px; }
       ` }} />
 
       <div className="qa-root" style={{ width: "100%", maxWidth: "460px", display: "flex", flexDirection: "column", height: "100vh" }}>
-        <div style={{ padding: "18px 20px 12px", borderBottom: "1px solid #1C1B24", display: "flex", alignItems: "center", gap: "8px" }}>
-          <Sparkles size={14} color="#C9A24B" />
-          <span style={{ fontSize: "12px", letterSpacing: "0.08em", color: "#C9A24B", textTransform: "uppercase" }}>
+        <div style={{ padding: "18px 20px 12px", borderBottom: "1px solid #1C2A22", display: "flex", alignItems: "center", gap: "8px" }}>
+          <Sparkles size={14} color="#6FA98B" />
+          <span style={{ fontSize: "12px", letterSpacing: "0.08em", color: "#6FA98B", textTransform: "uppercase" }}>
             {t.qa.headerLabel}
           </span>
         </div>
@@ -309,9 +309,9 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
           {busy && !errorText && (
             <div className="qa-fade" style={{ display: "flex", justifyContent: "flex-start", marginBottom: "10px" }}>
               <div className="qa-bubble-bot" style={{ padding: "14px 16px", borderRadius: "16px 16px 16px 4px", display: "flex", gap: "4px" }}>
-                <span className="qa-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9C97A6", display: "inline-block" }} />
-                <span className="qa-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9C97A6", display: "inline-block" }} />
-                <span className="qa-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9C97A6", display: "inline-block" }} />
+                <span className="qa-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9C9277", display: "inline-block" }} />
+                <span className="qa-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9C9277", display: "inline-block" }} />
+                <span className="qa-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9C9277", display: "inline-block" }} />
               </div>
             </div>
           )}
@@ -324,22 +324,22 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
 
           {done && (
             <div className="qa-fade" style={{ textAlign: "center", marginTop: "16px" }}>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#847E90", background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "6px 12px", marginBottom: "12px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#756B54", background: "rgba(255,255,255,0.03)", border: "1px solid #26332B", borderRadius: "999px", padding: "6px 12px", marginBottom: "12px" }}>
                 <ShieldCheck size={12} /> {t.qa.doneBadge}
               </div>
               {verifyCode && (
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "center" }}>
                   <button type="button" onClick={() => handleCopyCode(verifyCode)}
-                    style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(201,162,75,0.1)", border: "1px solid rgba(201,162,75,0.4)", borderRadius: "10px", padding: "10px 16px", cursor: "pointer" }}>
-                    <span className="qa-mono" style={{ fontSize: "20px", fontWeight: 700, color: "#C9A24B", letterSpacing: "0.1em" }}>{verifyCode}</span>
-                    {copied ? <Check size={15} color="#C9A24B" /> : <Copy size={15} color="#C9A24B" />}
+                    style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(111,169,139,0.1)", border: "1px solid rgba(111,169,139,0.4)", borderRadius: "10px", padding: "10px 16px", cursor: "pointer" }}>
+                    <span className="qa-mono" style={{ fontSize: "20px", fontWeight: 700, color: "#6FA98B", letterSpacing: "0.1em" }}>{verifyCode}</span>
+                    {copied ? <Check size={15} color="#6FA98B" /> : <Copy size={15} color="#6FA98B" />}
                   </button>
                   {/* 앱스토어 링크가 실제로 생기면 이 배지를 클릭 가능한 <a> 버튼으로 교체할 것 —
                       그 전까지는 존재하지 않는 링크를 가리키는 가짜 CTA를 보여주지 않는다. */}
                   <div style={{
                     display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px",
                     width: "100%", padding: "14px", borderRadius: "12px",
-                    background: "rgba(255,255,255,0.03)", border: "1px dashed #2A2833", color: "#8B879A",
+                    background: "rgba(255,255,255,0.03)", border: "1px dashed #26332B", color: "#7C8A82",
                     fontSize: "13.5px", fontWeight: 600,
                   }}>
                     {t.qa.appComingSoonLabel}

@@ -279,8 +279,8 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
   return (
     <div
       style={{
-        minHeight: "100vh", width: "100%", background: "#08080C",
-        backgroundImage: "radial-gradient(circle at 50% -10%, rgba(201,162,75,0.10), transparent 55%)",
+        minHeight: "100vh", width: "100%", background: "#122019",
+        backgroundImage: "radial-gradient(circle at 50% -10%, rgba(111,169,139,0.10), transparent 55%)",
         display: "flex", justifyContent: "center",
       }}
     >
@@ -290,19 +290,19 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
         .ob-serif { font-family: 'Cormorant Garamond', 'Noto Sans KR', serif; }
         .ob-mono { font-family: 'JetBrains Mono', monospace; }
         .ob-input {
-          width: 100%; background: rgba(255,255,255,0.03); border: 1px solid #2A2833; border-radius: 10px;
-          color: #EDE7DA; padding: 13px 14px 13px 42px; font-size: 16px; outline: none;
+          width: 100%; background: rgba(255,255,255,0.03); border: 1px solid #26332B; border-radius: 10px;
+          color: #D9C9A3; padding: 13px 14px 13px 42px; font-size: 16px; outline: none;
           transition: border-color 0.2s ease, background 0.2s ease; -webkit-appearance: none; appearance: none;
         }
-        .ob-input::placeholder { color: #847E90; }
-        .ob-input:focus { border-color: #C9A24B; background: rgba(201,162,75,0.05); }
-        .ob-field-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #8B879A; pointer-events: none; }
+        .ob-input::placeholder { color: #756B54; }
+        .ob-input:focus { border-color: #6FA98B; background: rgba(111,169,139,0.05); }
+        .ob-field-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #7C8A82; pointer-events: none; }
         .ob-gender-btn { flex: 1; padding: 15px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; min-height: 52px; }
         .ob-fade-in { animation: obFade 0.32s ease both; }
         @keyframes obFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        .ob-root button:focus-visible, .ob-root input:focus-visible, .ob-root a:focus-visible { outline: 2px solid #C9A24B; outline-offset: 2px; }
+        .ob-root button:focus-visible, .ob-root input:focus-visible, .ob-root a:focus-visible { outline: 2px solid #6FA98B; outline-offset: 2px; }
         .ob-cta { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; }
-        .ob-back { background: none; border: none; color: #8B879A; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 8px; margin: -8px 0 0 -8px; font-size: 13px; }
+        .ob-back { background: none; border: none; color: #7C8A82; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 8px; margin: -8px 0 0 -8px; font-size: 13px; }
       ` }} />
 
       <div className="ob-root" style={{ width: "100%", maxWidth: "460px", padding: "40px 22px 64px", display: "flex", flexDirection: "column" }}>
@@ -312,7 +312,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
               <button type="button" className="ob-back" onClick={goBack} aria-label={t.onboarding.backButton}>
                 <ArrowLeft size={16} strokeWidth={2} /> {t.onboarding.backButton}
               </button>
-              <span className="ob-mono" style={{ fontSize: "11px", color: "#6B6775", letterSpacing: "0.08em" }}>
+              <span className="ob-mono" style={{ fontSize: "11px", color: "#6E7A72", letterSpacing: "0.08em" }}>
                 {t.onboarding.stepOf(PROGRESS_STEP_IDS.indexOf(stepId) + 1, PROGRESS_STEP_IDS.length)}
               </span>
             </div>
@@ -320,7 +320,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
               {PROGRESS_STEP_IDS.map((id, i) => (
                 <div key={id} style={{
                   flex: 1, height: "3px", borderRadius: "2px",
-                  background: i <= PROGRESS_STEP_IDS.indexOf(stepId) ? "#C9A24B" : "#201F28",
+                  background: i <= PROGRESS_STEP_IDS.indexOf(stepId) ? "#6FA98B" : "#26332B",
                   transition: "background 0.25s ease",
                 }} />
               ))}
@@ -331,14 +331,14 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
         {stepId === "intro" && (
           <div className="ob-fade-in" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
             <div style={{ textAlign: "center", marginTop: "12vh" }}>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", letterSpacing: "0.16em", color: "#C9A24B", textTransform: "uppercase", marginBottom: "16px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", letterSpacing: "0.16em", color: "#6FA98B", textTransform: "uppercase", marginBottom: "16px" }}>
                 <Sparkles size={12} strokeWidth={1.75} />
                 {t.common.brand}
               </div>
-              <h1 className="ob-serif" style={{ fontSize: "34px", fontWeight: 500, color: "#EDE7DA", margin: 0, lineHeight: 1.25 }}>
+              <h1 className="ob-serif" style={{ fontSize: "28px", fontWeight: 500, color: "#D9C9A3", margin: 0, lineHeight: 1.3 }}>
                 {t.onboarding.headlineLine1}<br />{t.onboarding.headlineLine2}
               </h1>
-              <p style={{ fontSize: "14.5px", color: "#9C97A6", margin: "16px 0 0", lineHeight: 1.65 }}>
+              <p style={{ fontSize: "14.5px", color: "#9C9277", margin: "16px 0 0", lineHeight: 1.65 }}>
                 {t.onboarding.subheadline}
               </p>
             </div>
@@ -346,17 +346,17 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
             <div style={{ height: "20vh" }} />
 
             <button type="button" className="ob-cta" onClick={goNext}
-              style={{ background: "#C9A24B", color: "#100F16" }}>
+              style={{ background: "#6FA98B", color: "#0F1A15" }}>
               {t.onboarding.introStartButton} <ArrowRight size={17} strokeWidth={2.25} />
             </button>
 
-            <p style={{ textAlign: "center", fontSize: "11px", color: "#847E90", marginTop: "14px", lineHeight: 1.7 }}>
+            <p style={{ textAlign: "center", fontSize: "11px", color: "#756B54", marginTop: "14px", lineHeight: 1.7 }}>
               {t.onboarding.freeNote}
               <br />
               {t.onboarding.ageNoticePrefix}{" "}
-              <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#847E90", textDecoration: "underline" }}>{t.onboarding.termsLinkLabel}</a>
+              <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#756B54", textDecoration: "underline" }}>{t.onboarding.termsLinkLabel}</a>
               {" "}{t.onboarding.ageNoticeAnd}{" "}
-              <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#847E90", textDecoration: "underline" }}>{t.onboarding.privacyLinkLabel}</a>
+              <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#756B54", textDecoration: "underline" }}>{t.onboarding.privacyLinkLabel}</a>
               {t.onboarding.ageNoticeSuffix}
             </p>
           </div>
@@ -365,8 +365,8 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
         {stepId === "nickname" && (
           <div className="ob-fade-in" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
             <div style={{ marginTop: "6vh" }}>
-              <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#EDE7DA", margin: 0 }}>{t.onboarding.labelNickname}</h2>
-              <p style={{ fontSize: "13.5px", color: "#9C97A6", margin: "10px 0 24px" }}>{t.onboarding.nicknameSubtext}</p>
+              <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#D9C9A3", margin: 0 }}>{t.onboarding.labelNickname}</h2>
+              <p style={{ fontSize: "13.5px", color: "#9C9277", margin: "10px 0 24px" }}>{t.onboarding.nicknameSubtext}</p>
               <input type="text" className="ob-input" style={{ paddingLeft: "16px" }} autoFocus
                 placeholder={t.onboarding.nicknamePlaceholder} value={nickname}
                 onChange={(e) => setNickname(e.target.value)} onKeyDown={handleEnter} maxLength={20} />
@@ -379,14 +379,14 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
         {stepId === "gender" && (
           <div className="ob-fade-in" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
             <div style={{ marginTop: "6vh" }}>
-              <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#EDE7DA", margin: 0 }}>{t.onboarding.labelGender}</h2>
+              <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#D9C9A3", margin: 0 }}>{t.onboarding.labelGender}</h2>
               <div style={{ display: "flex", gap: "10px", marginTop: "24px" }}>
                 <button type="button" className="ob-gender-btn" onClick={() => setIsFemale(false)}
-                  style={{ background: isFemale === false ? "rgba(201,162,75,0.12)" : "rgba(255,255,255,0.03)", color: isFemale === false ? "#C9A24B" : "#8B879A", border: isFemale === false ? "1px solid rgba(201,162,75,0.4)" : "1px solid #2A2833" }}>
+                  style={{ background: isFemale === false ? "rgba(111,169,139,0.12)" : "rgba(255,255,255,0.03)", color: isFemale === false ? "#6FA98B" : "#7C8A82", border: isFemale === false ? "1px solid rgba(111,169,139,0.4)" : "1px solid #26332B" }}>
                   {t.onboarding.male}
                 </button>
                 <button type="button" className="ob-gender-btn" onClick={() => setIsFemale(true)}
-                  style={{ background: isFemale === true ? "rgba(201,162,75,0.12)" : "rgba(255,255,255,0.03)", color: isFemale === true ? "#C9A24B" : "#8B879A", border: isFemale === true ? "1px solid rgba(201,162,75,0.4)" : "1px solid #2A2833" }}>
+                  style={{ background: isFemale === true ? "rgba(111,169,139,0.12)" : "rgba(255,255,255,0.03)", color: isFemale === true ? "#6FA98B" : "#7C8A82", border: isFemale === true ? "1px solid rgba(111,169,139,0.4)" : "1px solid #26332B" }}>
                   {t.onboarding.female}
                 </button>
               </div>
@@ -399,7 +399,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
         {stepId === "dob" && (
           <div className="ob-fade-in" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
             <div style={{ marginTop: "6vh" }}>
-              <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#EDE7DA", margin: 0 }}>{t.onboarding.labelDob}</h2>
+              <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#D9C9A3", margin: 0 }}>{t.onboarding.labelDob}</h2>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "24px" }}>
                 <div style={{ position: "relative", flex: 2.3 }}>
                   <Calendar size={17} strokeWidth={1.75} className="ob-field-icon" />
@@ -413,7 +413,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
                     onKeyDown={handleEnter}
                     style={{ textAlign: "center", paddingLeft: "38px", paddingRight: "6px" }} />
                 </div>
-                <span className="ob-mono" style={{ color: "#847E90", fontSize: "18px" }}>.</span>
+                <span className="ob-mono" style={{ color: "#756B54", fontSize: "18px" }}>.</span>
                 <input ref={dobMonthRef} type="text" inputMode="numeric" className="ob-input ob-mono"
                   placeholder={t.onboarding.monthPlaceholder} value={dobMonth} maxLength={2}
                   onChange={(e) => {
@@ -425,7 +425,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
                   }}
                   onKeyDown={handleEnter}
                   style={{ flex: 0.85, textAlign: "center", paddingLeft: "10px", paddingRight: "10px" }} />
-                <span className="ob-mono" style={{ color: "#847E90", fontSize: "18px" }}>.</span>
+                <span className="ob-mono" style={{ color: "#756B54", fontSize: "18px" }}>.</span>
                 <input ref={dobDayRef} type="text" inputMode="numeric" className="ob-input ob-mono"
                   placeholder={t.onboarding.dayPlaceholder} value={dobDay} maxLength={2}
                   onChange={(e) => {
@@ -436,9 +436,9 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
                   style={{ flex: 0.85, textAlign: "center", paddingLeft: "10px", paddingRight: "10px" }} />
               </div>
               {zodiac && (
-                <div className="ob-fade-in" style={{ marginTop: "16px", display: "flex", alignItems: "center", gap: "12px", background: "rgba(201,162,75,0.06)", border: "1px solid rgba(201,162,75,0.25)", borderRadius: "12px", padding: "13px 16px" }}>
-                  <span className="ob-serif" style={{ fontSize: "26px", color: "#C9A24B", lineHeight: 1 }}>{zodiac.symbol}</span>
-                  <p style={{ fontSize: "13px", color: "#EDE7DA", margin: 0, fontWeight: 600 }}>{t.onboarding.zodiac[zodiac.nameKey]}</p>
+                <div className="ob-fade-in" style={{ marginTop: "16px", display: "flex", alignItems: "center", gap: "12px", background: "rgba(111,169,139,0.06)", border: "1px solid rgba(111,169,139,0.25)", borderRadius: "12px", padding: "13px 16px" }}>
+                  <span className="ob-serif" style={{ fontSize: "26px", color: "#6FA98B", lineHeight: 1 }}>{zodiac.symbol}</span>
+                  <p style={{ fontSize: "13px", color: "#D9C9A3", margin: 0, fontWeight: 600 }}>{t.onboarding.zodiac[zodiac.nameKey]}</p>
                 </div>
               )}
             </div>
@@ -451,12 +451,12 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
           <div className="ob-fade-in" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
             <div style={{ marginTop: "6vh" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#EDE7DA", margin: 0 }}>{t.onboarding.labelTob}</h2>
+                <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#D9C9A3", margin: 0 }}>{t.onboarding.labelTob}</h2>
                 <button type="button" onClick={() => {
                   setTimeUnknown((v) => !v);
                   if (!timeUnknown) { setHour12(""); setMinuteInput(""); setPeriod(null); }
                 }}
-                  style={{ background: "none", border: "none", color: timeUnknown ? "#C9A24B" : "#847E90", fontSize: "12.5px", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px", padding: "6px 4px" }}>
+                  style={{ background: "none", border: "none", color: timeUnknown ? "#6FA98B" : "#756B54", fontSize: "12.5px", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px", padding: "6px 4px" }}>
                   <HelpCircle size={13} strokeWidth={1.75} /> {t.onboarding.unknownTime}
                 </button>
               </div>
@@ -477,7 +477,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
                     onKeyDown={handleEnter}
                     style={{ textAlign: "center", paddingLeft: "42px", cursor: timeUnknown ? "not-allowed" : "text" }} />
                 </div>
-                <span className="ob-mono" style={{ color: "#847E90", fontSize: "18px" }}>:</span>
+                <span className="ob-mono" style={{ color: "#756B54", fontSize: "18px" }}>:</span>
                 <input ref={minuteRef} type="text" inputMode="numeric" className="ob-input ob-mono" disabled={timeUnknown}
                   placeholder={t.onboarding.minutePlaceholder} value={minuteInput} maxLength={2}
                   onChange={(e) => {
@@ -490,11 +490,11 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
 
               <div style={{ display: "flex", gap: "10px", marginTop: "12px", opacity: timeUnknown ? 0.35 : 1 }}>
                 <button type="button" className="ob-gender-btn" disabled={timeUnknown} onClick={() => setPeriod("AM")}
-                  style={{ background: period === "AM" ? "rgba(201,162,75,0.12)" : "rgba(255,255,255,0.03)", color: period === "AM" ? "#C9A24B" : "#8B879A", border: period === "AM" ? "1px solid rgba(201,162,75,0.4)" : "1px solid #2A2833", cursor: timeUnknown ? "not-allowed" : "pointer" }}>
+                  style={{ background: period === "AM" ? "rgba(111,169,139,0.12)" : "rgba(255,255,255,0.03)", color: period === "AM" ? "#6FA98B" : "#7C8A82", border: period === "AM" ? "1px solid rgba(111,169,139,0.4)" : "1px solid #26332B", cursor: timeUnknown ? "not-allowed" : "pointer" }}>
                   {t.onboarding.periodAM}
                 </button>
                 <button type="button" className="ob-gender-btn" disabled={timeUnknown} onClick={() => setPeriod("PM")}
-                  style={{ background: period === "PM" ? "rgba(201,162,75,0.12)" : "rgba(255,255,255,0.03)", color: period === "PM" ? "#C9A24B" : "#8B879A", border: period === "PM" ? "1px solid rgba(201,162,75,0.4)" : "1px solid #2A2833", cursor: timeUnknown ? "not-allowed" : "pointer" }}>
+                  style={{ background: period === "PM" ? "rgba(111,169,139,0.12)" : "rgba(255,255,255,0.03)", color: period === "PM" ? "#6FA98B" : "#7C8A82", border: period === "PM" ? "1px solid rgba(111,169,139,0.4)" : "1px solid #26332B", cursor: timeUnknown ? "not-allowed" : "pointer" }}>
                   {t.onboarding.periodPM}
                 </button>
               </div>
@@ -507,7 +507,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
         {stepId === "city" && (
           <div className="ob-fade-in" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
             <div style={{ marginTop: "6vh", position: "relative" }}>
-              <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#EDE7DA", margin: 0 }}>{t.onboarding.labelCity}</h2>
+              <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#D9C9A3", margin: 0 }}>{t.onboarding.labelCity}</h2>
               <div style={{ position: "relative", marginTop: "24px" }}>
                 <MapPin size={17} strokeWidth={1.75} className="ob-field-icon" />
                 <input type="text" className="ob-input" autoFocus placeholder={t.onboarding.cityPlaceholder} value={cityInput}
@@ -516,17 +516,17 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
                   onBlur={() => setTimeout(() => setCityFocused(false), 120)} />
               </div>
               {cityFocused && (citySearching || cityResults.length > 0) && (
-                <div className="ob-fade-in" style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, background: "#131219", border: "1px solid #2A2833", borderRadius: "10px", overflow: "hidden", zIndex: 10, maxHeight: "260px", overflowY: "auto" }}>
+                <div className="ob-fade-in" style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, background: "#14221A", border: "1px solid #26332B", borderRadius: "10px", overflow: "hidden", zIndex: 10, maxHeight: "260px", overflowY: "auto" }}>
                   {citySearching && cityResults.length === 0 ? (
-                    <div style={{ padding: "12px 14px", fontSize: "13px", color: "#847E90" }}>{t.onboarding.citySearching}</div>
+                    <div style={{ padding: "12px 14px", fontSize: "13px", color: "#756B54" }}>{t.onboarding.citySearching}</div>
                   ) : (
                     cityResults.map((c) => (
                       <div key={c.id} onMouseDown={() => { setSelectedCity(c); setCityInput(`${c.cityDisplay}, ${c.countryDisplay}`); setCityFocused(false); }}
-                        style={{ padding: "11px 14px", fontSize: "14px", color: "#C7C3D1", cursor: "pointer", display: "flex", justifyContent: "space-between" }}
+                        style={{ padding: "11px 14px", fontSize: "14px", color: "#C4BCA0", cursor: "pointer", display: "flex", justifyContent: "space-between" }}
                         onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.04)")}
                         onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
                         <span>{c.cityDisplay}</span>
-                        <span style={{ color: "#847E90", fontSize: "12px" }}>{c.countryDisplay}</span>
+                        <span style={{ color: "#756B54", fontSize: "12px" }}>{c.countryDisplay}</span>
                       </div>
                     ))
                   )}
@@ -542,7 +542,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
 
             <div style={{ height: "18vh" }} />
             <button type="button" disabled={!canProceed} className="ob-cta" onClick={handleSubmit}
-              style={{ background: canProceed ? "#C9A24B" : "rgba(255,255,255,0.06)", color: canProceed ? "#100F16" : "#6B6775", cursor: canProceed ? "pointer" : "not-allowed" }}>
+              style={{ background: canProceed ? "#6FA98B" : "rgba(255,255,255,0.06)", color: canProceed ? "#0F1A15" : "#6E7A72", cursor: canProceed ? "pointer" : "not-allowed" }}>
               {t.onboarding.submitButton} <ArrowRight size={17} strokeWidth={2.25} />
             </button>
           </div>
@@ -555,7 +555,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
 function NextButton({ disabled, onClick, label }) {
   return (
     <button type="button" disabled={disabled} className="ob-cta" onClick={onClick}
-      style={{ background: disabled ? "rgba(255,255,255,0.06)" : "#C9A24B", color: disabled ? "#6B6775" : "#100F16", cursor: disabled ? "not-allowed" : "pointer" }}>
+      style={{ background: disabled ? "rgba(255,255,255,0.06)" : "#6FA98B", color: disabled ? "#6E7A72" : "#0F1A15", cursor: disabled ? "not-allowed" : "pointer" }}>
       {label} <ArrowRight size={17} strokeWidth={2.25} />
     </button>
   );

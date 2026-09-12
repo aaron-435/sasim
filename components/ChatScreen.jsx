@@ -206,33 +206,33 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
   const showTextInput = !isTyping && !done && !errorText;
 
   return (
-    <div style={{ minHeight: "100vh", width: "100%", background: "#08080C", display: "flex", justifyContent: "center" }}>
+    <div style={{ minHeight: "100vh", width: "100%", background: "#122019", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600&family=Manrope:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
         .ch-root, .ch-root * { box-sizing: border-box; font-family: 'Manrope', 'Noto Sans KR', sans-serif; }
         .ch-serif { font-family: 'Cormorant Garamond', 'Noto Sans KR', serif; }
         .ch-mono { font-family: 'JetBrains Mono', monospace; }
-        .ch-bubble-bot { background: rgba(255,255,255,0.05); border: 1px solid #2A2833; color: #EDE7DA; }
-        .ch-bubble-user { background: #C9A24B; color: #100F16; }
+        .ch-bubble-bot { background: rgba(255,255,255,0.05); border: 1px solid #26332B; color: #D9C9A3; }
+        .ch-bubble-user { background: #6FA98B; color: #0F1A15; }
         .ch-fade { animation: chFade 0.28s ease both; }
         @keyframes chFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         .ch-dot { animation: chBlink 1.2s infinite ease-in-out; }
         .ch-dot:nth-child(2) { animation-delay: 0.15s; }
         .ch-dot:nth-child(3) { animation-delay: 0.3s; }
         @keyframes chBlink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
-        .ch-root button:focus-visible, .ch-root input:focus-visible { outline: 2px solid #C9A24B; outline-offset: 2px; }
+        .ch-root button:focus-visible, .ch-root input:focus-visible { outline: 2px solid #6FA98B; outline-offset: 2px; }
       ` }} />
 
       <div className="ch-root" style={{ width: "100%", maxWidth: "460px", display: "flex", flexDirection: "column", height: "100vh" }}>
-        <div style={{ padding: "18px 20px 12px", borderBottom: "1px solid #1C1B24", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+        <div style={{ padding: "18px 20px 12px", borderBottom: "1px solid #1C2A22", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Sparkles size={14} color="#C9A24B" />
-            <span style={{ fontSize: "12px", letterSpacing: "0.08em", color: "#C9A24B", textTransform: "uppercase" }}>
+            <Sparkles size={14} color="#6FA98B" />
+            <span style={{ fontSize: "12px", letterSpacing: "0.08em", color: "#6FA98B", textTransform: "uppercase" }}>
               {t.chat.headerLabel}
             </span>
           </div>
           {!done && (
-            <div className="ch-mono" style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "12px", color: timeUp ? "#847E90" : remainingSeconds <= 60 ? "#CB6249" : "#847E90" }}>
+            <div className="ch-mono" style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "12px", color: timeUp ? "#756B54" : remainingSeconds <= 60 ? "#CB6249" : "#756B54" }}>
               <Clock size={12} strokeWidth={2} />
               {countdownLabel}
             </div>
@@ -254,9 +254,9 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
           {isTyping && (
             <div className="ch-fade" style={{ display: "flex", justifyContent: "flex-start", marginBottom: "10px" }}>
               <div className="ch-bubble-bot" style={{ padding: "14px 16px", borderRadius: "16px 16px 16px 4px", display: "flex", gap: "4px" }}>
-                <span className="ch-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9C97A6", display: "inline-block" }} />
-                <span className="ch-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9C97A6", display: "inline-block" }} />
-                <span className="ch-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9C97A6", display: "inline-block" }} />
+                <span className="ch-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9C9277", display: "inline-block" }} />
+                <span className="ch-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9C9277", display: "inline-block" }} />
+                <span className="ch-dot" style={{ width: 5, height: 5, borderRadius: "50%", background: "#9C9277", display: "inline-block" }} />
               </div>
             </div>
           )}
@@ -269,7 +269,7 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
 
           {done && (
             <div className="ch-fade" style={{ textAlign: "center", marginTop: "20px" }}>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#847E90", background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "6px 12px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#756B54", background: "rgba(255,255,255,0.03)", border: "1px solid #26332B", borderRadius: "999px", padding: "6px 12px" }}>
                 <ShieldCheck size={12} /> {t.chat.doneBadge}
               </div>
             </div>
@@ -281,25 +281,25 @@ export default function ChatScreen({ chatContext, sessionId, onComplete }) {
             <button
               type="button"
               onClick={handleFinishEarly}
-              style={{ display: "flex", alignItems: "center", gap: "6px", background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "9px 18px", color: "#C7C3D1", fontSize: "13px", cursor: "pointer" }}
+              style={{ display: "flex", alignItems: "center", gap: "6px", background: "rgba(255,255,255,0.03)", border: "1px solid #26332B", borderRadius: "999px", padding: "9px 18px", color: "#C4BCA0", fontSize: "13px", cursor: "pointer" }}
             >
-              <ShieldCheck size={13} color="#C9A24B" /> {t.chat.finishEarlyButton}
+              <ShieldCheck size={13} color="#6FA98B" /> {t.chat.finishEarlyButton}
             </button>
           </div>
         )}
 
         {showTextInput && (
-          <div className="ch-fade" style={{ padding: "12px 16px 20px", borderTop: "1px solid #1C1B24", display: "flex", gap: "8px" }}>
+          <div className="ch-fade" style={{ padding: "12px 16px 20px", borderTop: "1px solid #1C2A22", display: "flex", gap: "8px" }}>
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
               placeholder={t.chat.inputPlaceholder}
-              style={{ flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "12px 16px", color: "#EDE7DA", fontSize: "16px", outline: "none" }}
+              style={{ flex: 1, background: "rgba(255,255,255,0.03)", border: "1px solid #26332B", borderRadius: "999px", padding: "12px 16px", color: "#D9C9A3", fontSize: "16px", outline: "none" }}
             />
-            <button onClick={handleSend} aria-label={t.chat.sendAriaLabel} style={{ width: "44px", height: "44px", borderRadius: "50%", background: "#C9A24B", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
-              <Send size={16} color="#100F16" />
+            <button onClick={handleSend} aria-label={t.chat.sendAriaLabel} style={{ width: "44px", height: "44px", borderRadius: "50%", background: "#6FA98B", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+              <Send size={16} color="#0F1A15" />
             </button>
           </div>
         )}

@@ -159,8 +159,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   periodButtonActive: {
-    backgroundColor: "rgba(201,162,75,0.12)",
-    borderColor: "rgba(201,162,75,0.4)",
+    backgroundColor: "rgba(111,169,139,0.12)",
+    borderColor: "rgba(111,169,139,0.4)",
   },
   periodLabel: {
     fontFamily: "Manrope_600SemiBold",

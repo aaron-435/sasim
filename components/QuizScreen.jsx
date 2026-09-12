@@ -10,7 +10,7 @@ const ELEMENT_COLORS = {
   wood: "#4E8368",
   fire: "#CB6249",
   earth: "#B98A4E",
-  metal: "#C7C3D1",
+  metal: "#C4BCA0",
   water: "#3E6EA0",
 };
 
@@ -149,44 +149,44 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
   }, [diagnosis, moduleDef, answers, elements, dominantElement, track, sessionId, onComplete]);
 
   return (
-    <div style={{ minHeight: "100vh", width: "100%", background: "#08080C", backgroundImage: "radial-gradient(circle at 50% -10%, rgba(201,162,75,0.10), transparent 55%)", display: "flex", justifyContent: "center" }}>
+    <div style={{ minHeight: "100vh", width: "100%", background: "#122019", backgroundImage: "radial-gradient(circle at 50% -10%, rgba(111,169,139,0.10), transparent 55%)", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
         .qz-root, .qz-root * { box-sizing: border-box; font-family: 'Manrope', 'Noto Sans KR', sans-serif; }
         .qz-serif { font-family: 'Cormorant Garamond', 'Noto Sans KR', serif; }
         .qz-fade { animation: qzFade 0.32s ease both; }
         @keyframes qzFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        .qz-option { width: 100%; text-align: left; background: rgba(255,255,255,0.03); border: 1px solid #2A2833; border-radius: 12px; padding: 16px 18px; color: #EDE7DA; font-size: 15px; cursor: pointer; transition: border-color 0.18s ease, background 0.18s ease; }
-        .qz-option:hover { border-color: #C9A24B; background: rgba(201,162,75,0.05); }
-        .qz-bar-track { height: 8px; background: #1C1B24; border-radius: 999px; overflow: hidden; }
+        .qz-option { width: 100%; text-align: left; background: rgba(255,255,255,0.03); border: 1px solid #26332B; border-radius: 12px; padding: 16px 18px; color: #D9C9A3; font-size: 15px; cursor: pointer; transition: border-color 0.18s ease, background 0.18s ease; }
+        .qz-option:hover { border-color: #6FA98B; background: rgba(111,169,139,0.05); }
+        .qz-bar-track { height: 8px; background: #1C2A22; border-radius: 999px; overflow: hidden; }
         .qz-bar-fill { height: 100%; border-radius: 999px; transition: width 0.6s ease; }
-        .qz-slider { width: 100%; accent-color: #C9A24B; height: 6px; }
-        .qz-slider-btn { width: 100%; margin-top: 18px; padding: 14px; border-radius: 12px; border: none; background: #C9A24B; color: #100F16; font-size: 14px; font-weight: 700; cursor: pointer; min-height: 48px; }
-        .qz-root button:focus-visible, .qz-root input:focus-visible { outline: 2px solid #C9A24B; outline-offset: 2px; }
+        .qz-slider { width: 100%; accent-color: #6FA98B; height: 6px; }
+        .qz-slider-btn { width: 100%; margin-top: 18px; padding: 14px; border-radius: 12px; border: none; background: #6FA98B; color: #0F1A15; font-size: 14px; font-weight: 700; cursor: pointer; min-height: 48px; }
+        .qz-root button:focus-visible, .qz-root input:focus-visible { outline: 2px solid #6FA98B; outline-offset: 2px; }
       ` }} />
 
       <div className="qz-root" style={{ width: "100%", maxWidth: "460px", padding: "40px 22px 64px" }}>
         {isSandboxSample && (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontSize: "11px", color: "#8B879A", background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "999px", padding: "6px 12px", marginBottom: "18px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontSize: "11px", color: "#7C8A82", background: "rgba(255,255,255,0.03)", border: "1px solid #26332B", borderRadius: "999px", padding: "6px 12px", marginBottom: "18px" }}>
             <ShieldCheck size={12} strokeWidth={1.75} />
             {t.quiz.devModeBadge}
           </div>
         )}
 
         <div style={{ marginBottom: "28px" }}>
-          <div style={{ height: "3px", background: "#1C1B24", borderRadius: "999px", overflow: "hidden" }}>
-            <div style={{ height: "100%", width: `${Math.min(progress * 100, 100)}%`, background: "#C9A24B", borderRadius: "999px", transition: "width 0.35s ease" }} />
+          <div style={{ height: "3px", background: "#1C2A22", borderRadius: "999px", overflow: "hidden" }}>
+            <div style={{ height: "100%", width: `${Math.min(progress * 100, 100)}%`, background: "#6FA98B", borderRadius: "999px", transition: "width 0.35s ease" }} />
           </div>
-          <p style={{ fontSize: "11px", color: "#847E90", marginTop: "8px", textAlign: "right" }}>{t.quiz.progressLabel(done ? questions.length : index + 1, questions.length)}</p>
+          <p style={{ fontSize: "11px", color: "#756B54", marginTop: "8px", textAlign: "right" }}>{t.quiz.progressLabel(done ? questions.length : index + 1, questions.length)}</p>
         </div>
 
         {!done && current && (
           <div key={current.id} className="qz-fade">
-            <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", letterSpacing: "0.14em", color: "#C9A24B", textTransform: "uppercase", marginBottom: "14px" }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", letterSpacing: "0.14em", color: "#6FA98B", textTransform: "uppercase", marginBottom: "14px" }}>
               <Sparkles size={12} strokeWidth={1.75} />
               {moduleDef.title}
             </div>
-            <h2 className="qz-serif" style={{ fontSize: "24px", fontWeight: 500, color: "#EDE7DA", margin: "0 0 22px", lineHeight: 1.4 }}>{current.prompt}</h2>
+            <h2 className="qz-serif" style={{ fontSize: "24px", fontWeight: 500, color: "#D9C9A3", margin: "0 0 22px", lineHeight: 1.4 }}>{current.prompt}</h2>
 
             {current.format === "choice" ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -196,7 +196,7 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
               </div>
             ) : (
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#9C97A6", marginBottom: "10px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#9C9277", marginBottom: "10px" }}>
                   <span>{current.options.minLabel}</span>
                   <span>{current.options.maxLabel}</span>
                 </div>
@@ -209,7 +209,7 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
                   className="qz-slider"
                   disabled={transitioning}
                 />
-                <p className="qz-serif" style={{ textAlign: "center", fontSize: "28px", color: "#C9A24B", margin: "10px 0 0" }}>{sliderValue}</p>
+                <p className="qz-serif" style={{ textAlign: "center", fontSize: "28px", color: "#6FA98B", margin: "10px 0 0" }}>{sliderValue}</p>
                 <button type="button" className="qz-slider-btn" onClick={handleSliderSubmit} disabled={transitioning}>{t.quiz.nextButton}</button>
               </div>
             )}
@@ -218,7 +218,7 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
 
         {done && diagnosis && (
           <div className="qz-fade" style={{ textAlign: "center", paddingTop: "32px" }}>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", letterSpacing: "0.14em", color: "#C9A24B", textTransform: "uppercase", marginBottom: "18px" }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", letterSpacing: "0.14em", color: "#6FA98B", textTransform: "uppercase", marginBottom: "18px" }}>
               <Sparkles size={12} strokeWidth={1.75} />
               {t.quiz.doneHeader}
             </div>
@@ -227,39 +227,39 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
                세부 진단(축별 강도, 대화 연동 분석)은 리포트에서만 공개한다. */}
             <div style={{
               position: "relative", textAlign: "left", borderRadius: "20px", padding: "30px 26px",
-              background: "linear-gradient(165deg, rgba(201,162,75,0.10), rgba(255,255,255,0.02))",
-              border: "1px solid rgba(201,162,75,0.28)", overflow: "hidden",
+              background: "linear-gradient(165deg, rgba(111,169,139,0.10), rgba(255,255,255,0.02))",
+              border: "1px solid rgba(111,169,139,0.28)", overflow: "hidden",
             }}>
-              <div style={{ position: "absolute", top: "-40%", right: "-25%", width: "70%", height: "140%", background: "radial-gradient(circle, rgba(201,162,75,0.14), transparent 65%)", pointerEvents: "none" }} />
+              <div style={{ position: "absolute", top: "-40%", right: "-25%", width: "70%", height: "140%", background: "radial-gradient(circle, rgba(111,169,139,0.14), transparent 65%)", pointerEvents: "none" }} />
 
               {dominantElement && ELEMENT_COLORS[dominantElement] && (
-                <div style={{ display: "inline-flex", alignItems: "center", gap: "7px", background: "rgba(255,255,255,0.05)", border: "1px solid #2A2833", borderRadius: "999px", padding: "6px 13px", marginBottom: "18px" }}>
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "7px", background: "rgba(255,255,255,0.05)", border: "1px solid #26332B", borderRadius: "999px", padding: "6px 13px", marginBottom: "18px" }}>
                   <span style={{ width: 7, height: 7, borderRadius: "50%", background: ELEMENT_COLORS[dominantElement], flexShrink: 0 }} />
-                  <span style={{ fontSize: "12px", color: "#C7C3D1", fontWeight: 600 }}>{t.quiz.dominantElementPrefix} · {t.common.elementLabels[dominantElement]}</span>
+                  <span style={{ fontSize: "12px", color: "#C4BCA0", fontWeight: 600 }}>{t.quiz.dominantElementPrefix} · {t.common.elementLabels[dominantElement]}</span>
                 </div>
               )}
 
-              <h2 className="qz-serif" style={{ fontSize: "30px", fontWeight: 600, color: "#EDE7DA", margin: "0 0 10px", lineHeight: 1.3 }}>
+              <h2 className="qz-serif" style={{ fontSize: "30px", fontWeight: 600, color: "#D9C9A3", margin: "0 0 10px", lineHeight: 1.3 }}>
                 {diagnosis.typeInfo.title}
               </h2>
-              <p style={{ fontSize: "13.5px", color: "#C7C3D1", lineHeight: 1.7, margin: "0 0 20px" }}>
+              <p style={{ fontSize: "13.5px", color: "#C4BCA0", lineHeight: 1.7, margin: "0 0 20px" }}>
                 {diagnosis.typeInfo.hook}
               </p>
 
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "16px", borderTop: "1px solid rgba(201,162,75,0.18)" }}>
-                <span style={{ fontSize: "11px", color: "#847E90" }}>{moduleDef.title}</span>
-                <span className="qz-serif" style={{ fontSize: "13px", color: "#C9A24B" }}>Fatesaid</span>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "16px", borderTop: "1px solid rgba(111,169,139,0.18)" }}>
+                <span style={{ fontSize: "11px", color: "#756B54" }}>{moduleDef.title}</span>
+                <span className="qz-serif" style={{ fontSize: "13px", color: "#6FA98B" }}>Fatesaid</span>
               </div>
             </div>
 
-            <p style={{ fontSize: "12.5px", color: "#847E90", margin: "16px 0 22px", lineHeight: 1.65 }}>
+            <p style={{ fontSize: "12.5px", color: "#756B54", margin: "16px 0 22px", lineHeight: 1.65 }}>
               {t.quiz.moreDetail}
             </p>
 
             <button
               type="button"
               onClick={handleShare}
-              style={{ width: "100%", padding: "14px", borderRadius: "12px", border: "1px solid #2A2833", background: "rgba(255,255,255,0.03)", color: "#EDE7DA", fontSize: "13.5px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "7px", minHeight: "48px", marginBottom: "10px" }}
+              style={{ width: "100%", padding: "14px", borderRadius: "12px", border: "1px solid #26332B", background: "rgba(255,255,255,0.03)", color: "#D9C9A3", fontSize: "13.5px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "7px", minHeight: "48px", marginBottom: "10px" }}
             >
               <Share2 size={15} strokeWidth={2} /> {shareCopied ? t.quiz.shareCopied : t.quiz.shareButton}
             </button>
@@ -267,11 +267,11 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
             <button
               type="button"
               onClick={handleContinueToChat}
-              style={{ width: "100%", padding: "16px", borderRadius: "12px", border: "none", background: "#C9A24B", color: "#100F16", fontSize: "15px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "52px" }}
+              style={{ width: "100%", padding: "16px", borderRadius: "12px", border: "none", background: "#6FA98B", color: "#0F1A15", fontSize: "15px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", minHeight: "52px" }}
             >
               {t.quiz.continueToChatButton} <ArrowRight size={17} strokeWidth={2.25} />
             </button>
-            <button type="button" onClick={handleRestart} style={{ marginTop: "14px", background: "none", border: "none", color: "#847E90", fontSize: "12px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "5px", padding: "6px" }}>
+            <button type="button" onClick={handleRestart} style={{ marginTop: "14px", background: "none", border: "none", color: "#756B54", fontSize: "12px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "5px", padding: "6px" }}>
               <RotateCcw size={12} strokeWidth={1.75} /> {t.quiz.restartButton}
             </button>
           </div>

@@ -17,19 +17,19 @@ import { ArrowLeft, FlaskConical, AlertTriangle } from "lucide-react";
  */
 
 const ELEMENT_LABEL = { wood: "목(木)", fire: "화(火)", earth: "토(土)", metal: "금(金)", water: "수(水)" };
-const ELEMENT_COLOR = { wood: "#6FA85C", fire: "#D6714F", earth: "#C9A24B", metal: "#B9B4C4", water: "#5B8FC7" };
+const ELEMENT_COLOR = { wood: "#6FA85C", fire: "#D6714F", earth: "#6FA98B", metal: "#B8AE94", water: "#5B8FC7" };
 
 function Pillar({ label, pillar }) {
   return (
-    <div style={{ flex: 1, textAlign: "center", background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "10px", padding: "14px 8px" }}>
-      <div style={{ fontSize: "11px", color: "#8B879A", marginBottom: "8px" }}>{label}</div>
+    <div style={{ flex: 1, textAlign: "center", background: "rgba(255,255,255,0.03)", border: "1px solid #26332B", borderRadius: "10px", padding: "14px 8px" }}>
+      <div style={{ fontSize: "11px", color: "#7C8A82", marginBottom: "8px" }}>{label}</div>
       {pillar ? (
         <>
-          <div className="ob-serif" style={{ fontSize: "24px", color: "#EDE7DA", fontWeight: 600, marginBottom: "4px" }}>{pillar.full}</div>
-          <div style={{ fontSize: "11px", color: "#847E90" }}>{pillar.skyFull} / {pillar.earthFull}</div>
+          <div className="ob-serif" style={{ fontSize: "24px", color: "#D9C9A3", fontWeight: 600, marginBottom: "4px" }}>{pillar.full}</div>
+          <div style={{ fontSize: "11px", color: "#756B54" }}>{pillar.skyFull} / {pillar.earthFull}</div>
         </>
       ) : (
-        <div style={{ fontSize: "13px", color: "#4A4854", marginTop: "10px" }}>모름</div>
+        <div style={{ fontSize: "13px", color: "#3D4A42", marginTop: "10px" }}>모름</div>
       )}
     </div>
   );
@@ -40,7 +40,7 @@ export default function SajuTestResult({ birthInput, sajuResult, onBack }) {
   const { elements, dominantElement, fourPillars, decadeFortune, summary, isSandboxSample, resolvedLocation } = sajuResult;
 
   return (
-    <div style={{ minHeight: "100vh", width: "100%", background: "#08080C", display: "flex", justifyContent: "center" }}>
+    <div style={{ minHeight: "100vh", width: "100%", background: "#122019", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Manrope:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
         .stg-root, .stg-root * { box-sizing: border-box; font-family: 'Manrope', 'Noto Sans KR', sans-serif; }
@@ -49,15 +49,15 @@ export default function SajuTestResult({ birthInput, sajuResult, onBack }) {
       `}} />
       <div className="stg-root" style={{ width: "100%", maxWidth: "560px", padding: "28px 20px 64px" }}>
         <button type="button" onClick={onBack}
-          style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", color: "#8B879A", fontSize: "13px", cursor: "pointer", padding: "6px 0", marginBottom: "16px" }}>
+          style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", color: "#7C8A82", fontSize: "13px", cursor: "pointer", padding: "6px 0", marginBottom: "16px" }}>
           <ArrowLeft size={15} strokeWidth={2} /> 입력 화면으로
         </button>
 
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-          <FlaskConical size={16} strokeWidth={1.75} color="#C9A24B" />
-          <span style={{ fontSize: "11px", letterSpacing: "0.12em", color: "#C9A24B", textTransform: "uppercase" }}>QA / 사주 테스트</span>
+          <FlaskConical size={16} strokeWidth={1.75} color="#6FA98B" />
+          <span style={{ fontSize: "11px", letterSpacing: "0.12em", color: "#6FA98B", textTransform: "uppercase" }}>QA / 사주 테스트</span>
         </div>
-        <h1 className="ob-serif" style={{ fontSize: "24px", color: "#EDE7DA", margin: "4px 0 18px", fontWeight: 600 }}>
+        <h1 className="ob-serif" style={{ fontSize: "24px", color: "#D9C9A3", margin: "4px 0 18px", fontWeight: 600 }}>
           계산 결과 전체 보기
         </h1>
 
@@ -98,7 +98,7 @@ export default function SajuTestResult({ birthInput, sajuResult, onBack }) {
         <Section title="오행 분포">
           {elements && Object.entries(elements).map(([key, pct]) => (
             <div key={key} style={{ marginBottom: "8px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12.5px", color: "#C7C3D1", marginBottom: "3px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12.5px", color: "#C4BCA0", marginBottom: "3px" }}>
                 <span>{ELEMENT_LABEL[key]}</span>
                 <span className="ob-mono">{pct}%</span>
               </div>
@@ -125,8 +125,8 @@ export default function SajuTestResult({ birthInput, sajuResult, onBack }) {
           <Section title={`대운 (${decadeFortune.direction}, ${decadeFortune.startAge}세부터)`}>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
               {decadeFortune.list?.map((d) => (
-                <div key={d.index} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid #2A2833", borderRadius: "8px", padding: "6px 10px", fontSize: "12px", color: "#C7C3D1", textAlign: "center" }}>
-                  <div className="ob-mono" style={{ color: "#847E90", fontSize: "10.5px" }}>{d.startAge}세~</div>
+                <div key={d.index} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid #26332B", borderRadius: "8px", padding: "6px 10px", fontSize: "12px", color: "#C4BCA0", textAlign: "center" }}>
+                  <div className="ob-mono" style={{ color: "#756B54", fontSize: "10.5px" }}>{d.startAge}세~</div>
                   <div style={{ fontWeight: 600 }}>{d.full}</div>
                 </div>
               ))}
@@ -134,7 +134,7 @@ export default function SajuTestResult({ birthInput, sajuResult, onBack }) {
           </Section>
         )}
 
-        <p style={{ textAlign: "center", fontSize: "11px", color: "#4A4854", marginTop: "20px" }}>
+        <p style={{ textAlign: "center", fontSize: "11px", color: "#3D4A42", marginTop: "20px" }}>
           이 화면은 QA 전용입니다. 실제 사용자에게는 노출되지 않습니다.
         </p>
       </div>
@@ -145,7 +145,7 @@ export default function SajuTestResult({ birthInput, sajuResult, onBack }) {
 function Section({ title, children }) {
   return (
     <div style={{ marginBottom: "20px" }}>
-      <div style={{ fontSize: "11px", color: "#8B879A", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "10px" }}>{title}</div>
+      <div style={{ fontSize: "11px", color: "#7C8A82", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "10px" }}>{title}</div>
       {children}
     </div>
   );
@@ -153,9 +153,9 @@ function Section({ title, children }) {
 
 function Row({ label, value }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #1C1B23", fontSize: "13px" }}>
-      <span style={{ color: "#847E90" }}>{label}</span>
-      <span style={{ color: "#EDE7DA", fontWeight: 500, textAlign: "right" }}>{value}</span>
+    <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #1C2A22", fontSize: "13px" }}>
+      <span style={{ color: "#756B54" }}>{label}</span>
+      <span style={{ color: "#D9C9A3", fontWeight: 500, textAlign: "right" }}>{value}</span>
     </div>
   );
 }
