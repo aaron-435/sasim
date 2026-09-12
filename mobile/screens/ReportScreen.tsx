@@ -318,7 +318,7 @@ export default function ReportScreen({
 
             <Section num={nextNum()} title={content.closing_title} noBorder>
               <Body>{content.closing_body}</Body>
-              <Text style={styles.disclaimer}>이 리포트는 AI가 생성한 콘텐츠이며, 전문적인 심리 상담이나 의학적 진단을 대체하지 않습니다.</Text>
+              <Text style={styles.disclaimer}>이 리포트는 자체 구축한 만세력 엔진의 정밀 사주 계산을 바탕으로 AI가 해석·작성한 콘텐츠이며, 전문적인 심리 상담이나 의학적 진단을 대체하지 않습니다.</Text>
               <Text style={styles.disclaimer}>재미와 자기 이해를 위한 참고 자료로 봐주세요.</Text>
             </Section>
           </>
