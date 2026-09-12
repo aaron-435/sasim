@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react-native";
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import PatternBackground from "./PatternBackground";
 import { COLORS } from "../theme/colors";
 
 const TOTAL_STEPS = 5; // nickname, gender, dob, tob, city — matches components/OnboardingWizard.jsx's PROGRESS_STEP_IDS
@@ -15,30 +16,32 @@ export default function OnboardingShell({
   children: React.ReactNode;
 }) {
   return (
-    <SafeAreaView style={styles.root}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <View style={styles.header}>
-          <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
-            <ArrowLeft size={20} strokeWidth={2} color={COLORS.subheadline} />
-          </Pressable>
-          {stepIndex !== undefined && (
-            <View style={styles.progressRow}>
-              {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-                <View key={i} style={[styles.progressSegment, i <= stepIndex && styles.progressSegmentActive]} />
-              ))}
-            </View>
-          )}
-        </View>
-        <View style={styles.body}>{children}</View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    <PatternBackground>
+      <SafeAreaView style={styles.root}>
+        <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+          <View style={styles.header}>
+            <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+              <ArrowLeft size={20} strokeWidth={2} color={COLORS.subheadline} />
+            </Pressable>
+            {stepIndex !== undefined && (
+              <View style={styles.progressRow}>
+                {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+                  <View key={i} style={[styles.progressSegment, i <= stepIndex && styles.progressSegmentActive]} />
+                ))}
+              </View>
+            )}
+          </View>
+          <View style={styles.body}>{children}</View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </PatternBackground>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: "transparent",
   },
   flex: {
     flex: 1,
@@ -61,7 +64,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 3,
     borderRadius: 2,
-    backgroundColor: "#201F28",
+    backgroundColor: COLORS.border,
   },
   progressSegmentActive: {
     backgroundColor: COLORS.gold,

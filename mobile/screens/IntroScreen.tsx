@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { Animated, Easing, Linking, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AuraNextButton from "../components/AuraNextButton";
+import PatternBackground from "../components/PatternBackground";
 import { API_BASE_URL } from "../config";
 import { COLORS } from "../theme/colors";
 
@@ -30,51 +31,53 @@ export default function IntroScreen({ onNext }: { onNext: () => void }) {
   };
 
   return (
-    <SafeAreaView style={styles.root}>
-      <Animated.View style={[styles.content, contentStyle]}>
-        <View style={styles.brandRow}>
-          <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-          <Text style={styles.brandLabel}>FATESAID</Text>
-        </View>
-        <Text style={styles.headline}>
-          운명은 이미 말했습니다.{"\n"}이제 당신이 답할 차례입니다.
-        </Text>
-        <Text style={styles.subheadline}>운명을 바꾸고 싶나요? 사주를 분석하고 지금 시작하세요.</Text>
-      </Animated.View>
-
-      {/* Absolutely centered on the FULL screen, independent of how much space the
-          headline/footer take up — keeps the rings and button sharing one exact
-          center point instead of drifting toward whichever side has less content.
-          No pointerEvents override here — see GoldAura.tsx's note on why "box-none"
-          broke the button's touches under react-native-web. */}
-      <View style={styles.centerLayer}>
-        <Animated.View style={ctaStyle}>
-          <AuraNextButton onPress={onNext} size={260} />
+    <PatternBackground>
+      <SafeAreaView style={styles.root}>
+        <Animated.View style={[styles.content, contentStyle]}>
+          <View style={styles.brandRow}>
+            <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
+            <Text style={styles.brandLabel}>FATESAID</Text>
+          </View>
+          <Text style={styles.headline}>
+            운명은 이미 말했습니다.{"\n"}이제 당신이 답할 차례입니다.
+          </Text>
+          <Text style={styles.subheadline}>운명을 바꾸고 싶나요? 사주를 분석하고 지금 시작하세요.</Text>
         </Animated.View>
-      </View>
 
-      <View style={{ flex: 1 }} />
+        {/* Absolutely centered on the FULL screen, independent of how much space the
+            headline/footer take up — keeps the rings and button sharing one exact
+            center point instead of drifting toward whichever side has less content.
+            No pointerEvents override here — see GoldAura.tsx's note on why "box-none"
+            broke the button's touches under react-native-web. */}
+        <View style={styles.centerLayer}>
+          <Animated.View style={ctaStyle}>
+            <AuraNextButton onPress={onNext} size={260} />
+          </Animated.View>
+        </View>
 
-      <Text style={styles.footer}>
-        무료 10분 리딩 · 신용카드 불필요{"\n"}
-        만 14세 이상만 이용할 수 있어요 ·{" "}
-        <Text style={styles.footerLink} onPress={() => Linking.openURL(TERMS_URL)}>
-          이용약관
-        </Text>{" "}
-        및{" "}
-        <Text style={styles.footerLink} onPress={() => Linking.openURL(PRIVACY_URL)}>
-          개인정보처리방침
+        <View style={{ flex: 1 }} />
+
+        <Text style={styles.footer}>
+          무료 10분 리딩 · 신용카드 불필요{"\n"}
+          만 14세 이상만 이용할 수 있어요 ·{" "}
+          <Text style={styles.footerLink} onPress={() => Linking.openURL(TERMS_URL)}>
+            이용약관
+          </Text>{" "}
+          및{" "}
+          <Text style={styles.footerLink} onPress={() => Linking.openURL(PRIVACY_URL)}>
+            개인정보처리방침
+          </Text>
+          에 동의합니다
         </Text>
-        에 동의합니다
-      </Text>
-    </SafeAreaView>
+      </SafeAreaView>
+    </PatternBackground>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: "transparent",
   },
   content: {
     alignItems: "center",
