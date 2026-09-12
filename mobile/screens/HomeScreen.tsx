@@ -1,4 +1,4 @@
-import { ArrowRight, Bot, Brain, FileText, HelpCircle, MessageCircleQuestion, Sparkles } from "lucide-react-native";
+import { ArrowRight, Bot, Brain, FileText, HelpCircle, Lock, MessageCircleQuestion, Sparkles } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,10 +16,10 @@ import { COLORS } from "../theme/colors";
 // lib/i18n/ko.ts's qa.appComingSoonLabel) — "ready" here means "has a real entry
 // point from Home", not "the screen exists".
 const FEATURES = [
-  { key: "qa", icon: HelpCircle, label: "사주 Q&A", ready: true },
-  { key: "quiz", icon: Brain, label: "심리테스트", ready: true },
-  { key: "chat", icon: Bot, label: "AI 상담", ready: false },
-  { key: "report", icon: FileText, label: "심층 리포트", ready: false },
+  { key: "qa", icon: HelpCircle, label: "사주 Q&A", description: "궁금한 순간, 지금 바로 물어보세요", ready: true },
+  { key: "quiz", icon: Brain, label: "심리테스트", description: "나를 이해하는 첫걸음", ready: true },
+  { key: "chat", icon: Bot, label: "AI 상담", description: "심리테스트 완료 후 이용 가능", ready: false },
+  { key: "report", icon: FileText, label: "심층 리포트", description: "심리테스트 완료 후 이용 가능", ready: false },
 ] as const;
 
 // The one home screen reached from either onboarding path: finishing the full
@@ -93,18 +93,45 @@ export default function HomeScreen({
           </View>
 
           <View style={styles.section}>
+            <Text style={styles.sectionLabel}>사주, 어떻게 활용하면 좋을까요</Text>
+            <View style={styles.explainCard}>
+              <Text style={styles.explainHeading}>사주명리학이란?</Text>
+              <Text style={styles.explainBody}>
+                사주(四柱)는 태어난 연·월·일·시 네 기둥에 담긴 기운을 오행(목·화·토·금·수)으로 풀어, 타고난 성향과 삶의 흐름을 해석하는
+                동양의 전통 학문이에요. 정해진 운명을 점치기보다는, 나를 이루는 균형을 이해하고 스스로를 더 잘 알아가기 위한 도구로 보면
+                가장 잘 어울려요.
+              </Text>
+              <Text style={styles.explainHeading}>이렇게 활용해보세요</Text>
+              <Text style={styles.explainBody}>
+                먼저 사주 Q&A에서 지금 가장 궁금한 질문 하나를 편하게 물어보세요. 그다음 심리테스트로 나의 성향과 패턴을 진단해보면,
+                오행 데이터와 심리 데이터가 함께 맞물리면서 훨씬 입체적인 이해가 가능해져요. 심리테스트를 마치면 AI 상담으로 자연스럽게
+                이어지고, 상담이 끝나면 지금까지의 답변을 모두 엮은 나만의 심층 리포트를 받아볼 수 있어요.
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.section}>
             <Text style={styles.sectionLabel}>무엇을 해볼까요</Text>
-            <View style={styles.grid}>
-              {FEATURES.map(({ key, icon: Icon, label, ready }) => (
+            <View style={styles.featureList}>
+              {FEATURES.map(({ key, icon: Icon, label, description, ready }) => (
                 <Pressable
                   key={key}
                   disabled={!ready}
                   onPress={ready ? handlers[key] : undefined}
-                  style={({ pressed }) => [styles.card, ready && styles.cardReady, ready && pressed && styles.cardPressed]}
+                  style={({ pressed }) => [styles.row, ready && styles.rowReady, ready && pressed && styles.rowPressed]}
                 >
-                  <Icon size={22} strokeWidth={1.75} color={ready ? COLORS.gold : COLORS.subheadline} />
-                  <Text style={[styles.cardLabel, ready && styles.cardLabelReady]}>{label}</Text>
-                  {!ready && <Text style={styles.cardBadge}>심리테스트 완료 후 이용 가능</Text>}
+                  <View style={[styles.rowIconWrap, ready && styles.rowIconWrapReady]}>
+                    <Icon size={20} strokeWidth={1.75} color={ready ? COLORS.ctaText : COLORS.subheadline} />
+                  </View>
+                  <View style={styles.rowTextWrap}>
+                    <Text style={[styles.rowLabel, ready && styles.rowLabelReady]}>{label}</Text>
+                    <Text style={[styles.rowDescription, ready && styles.rowDescriptionReady]}>{description}</Text>
+                  </View>
+                  {ready ? (
+                    <ArrowRight size={18} strokeWidth={2} color={COLORS.ctaText} />
+                  ) : (
+                    <Lock size={15} strokeWidth={1.75} color={COLORS.subheadline} />
+                  )}
                 </Pressable>
               ))}
             </View>
@@ -252,49 +279,82 @@ const styles = StyleSheet.create({
   insightText: {
     fontFamily: "CormorantGaramond_500Medium",
     fontSize: 17,
-    lineHeight: 24,
+    lineHeight: 25,
     color: COLORS.headline,
   },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
+  explainCard: {
+    backgroundColor: COLORS.inputBg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 14,
+    padding: 18,
+    gap: 8,
   },
-  card: {
-    width: "47%",
-    minHeight: 132,
+  explainHeading: {
+    fontFamily: "Manrope_600SemiBold",
+    fontSize: 13.5,
+    color: COLORS.headline,
+    marginTop: 8,
+  },
+  explainBody: {
+    fontFamily: "Manrope_400Regular",
+    fontSize: 13,
+    lineHeight: 21,
+    color: COLORS.subheadline,
+  },
+  featureList: {
+    gap: 10,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
     borderRadius: 14,
     borderWidth: 1,
     borderStyle: "dashed",
     borderColor: COLORS.border,
     backgroundColor: COLORS.inputBg,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+  },
+  rowReady: {
+    borderStyle: "solid",
+    borderColor: COLORS.gold,
+    backgroundColor: COLORS.gold,
+  },
+  rowPressed: {
+    opacity: 0.85,
+  },
+  rowIconWrap: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 16,
+    backgroundColor: "rgba(255,255,255,0.04)",
   },
-  cardReady: {
-    borderStyle: "solid",
-    borderColor: "rgba(111,169,139,0.35)",
-    backgroundColor: "rgba(111,169,139,0.08)",
+  rowIconWrapReady: {
+    backgroundColor: "rgba(15,26,21,0.14)",
   },
-  cardPressed: {
-    opacity: 0.8,
+  rowTextWrap: {
+    flex: 1,
+    gap: 2,
   },
-  cardLabel: {
+  rowLabel: {
     fontFamily: "Manrope_600SemiBold",
-    fontSize: 14,
+    fontSize: 15,
     color: COLORS.headline,
   },
-  cardLabelReady: {
-    color: COLORS.gold,
+  rowLabelReady: {
+    color: COLORS.ctaText,
   },
-  cardBadge: {
+  rowDescription: {
     fontFamily: "Manrope_400Regular",
-    fontSize: 10.5,
+    fontSize: 12,
     color: COLORS.footer,
-    textAlign: "center",
+  },
+  rowDescriptionReady: {
+    color: "rgba(15,26,21,0.72)",
   },
   recapCard: {
     flexDirection: "row",
