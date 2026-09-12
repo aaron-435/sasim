@@ -210,6 +210,7 @@ export default function App() {
         <HomeScreen
           nickname={homeData.nickname}
           dominantElement={homeData.sajuResult.dominantElement}
+          elements={homeData.sajuResult.elements}
           onOpenQA={() => setStep("qa")}
           onOpenQuiz={() => setStep("moduleSelect")}
         />

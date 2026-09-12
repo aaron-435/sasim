@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import questionBank from "../data/questionBank.json";
 import { API_BASE_URL } from "../config";
 import { getDailyLimit, getUsageToday, incrementUsageToday, PAID_DAILY_LIMIT, SUBSCRIPTION_PRICE_LABEL } from "../lib/qaQuota";
+import { saveLastQuestion } from "../lib/qaHistory";
 import type { NormalizedSajuResult } from "../lib/saju";
 import { COLORS } from "../theme/colors";
 import QAQuestionScreen from "./QAQuestionScreen";
@@ -122,6 +123,7 @@ export default function QAScreen({
         if (!mountedRef.current) return;
         pushBot(line);
       }
+      saveLastQuestion(questionText, json.lines as string[]);
 
       const usageAfter = await incrementUsageToday();
       await wait(700);
