@@ -159,8 +159,21 @@ const ABSOLUTE_RULES_BODY = `
 공감 표현과 질문을 같은 줄에 억지로 몰아넣지 말고 자연스러운 호흡으로 나눈다.
 `.trim();
 
+// 2026-09-13 fix — live ES testing caught the model copying a quoted Korean
+// example sentence from rule 10 verbatim into an otherwise-fluent Spanish
+// reply (it correctly paraphrases most Korean examples into the target
+// language, but a full literal sentence in quotes is a known LLM failure
+// mode: it reads as "the text to use" rather than "an illustration of the
+// idea"). This guard makes the distinction explicit for every quoted
+// example in ABSOLUTE_RULES_BODY, not just the one that broke — anywhere a
+// Korean sentence is quoted as a style example, the model must still write
+// its own version in the response's actual language.
 function buildAbsoluteRules(locale: Locale): string {
-  return `## 절대 규칙 (우선순위 순서, 반드시 전부 지킬 것)\n\n${SAFETY_PROTOCOL[locale]}\n\n${ABSOLUTE_RULES_BODY}`;
+  const guard =
+    locale === "ko"
+      ? ""
+      : `\n\n### 0.5. 예시 문장 처리 안내\n아래 규칙들 안에 큰따옴표로 인용된 한국어 문장(대화 예시, 멘트 예시 등)은 전부 스타일과 의도를 보여주기 위한 참고용일 뿐이다. 실제 응답에 그 한국어 문장을 그대로 복사하면 절대 안 된다 — 같은 의도를 지금 응답에 쓰이는 언어로 자연스럽게 새로 작성하라.`;
+  return `## 절대 규칙 (우선순위 순서, 반드시 전부 지킬 것)\n\n${SAFETY_PROTOCOL[locale]}${guard}\n\n${ABSOLUTE_RULES_BODY}`;
 }
 
 const LINES_ARRAY_DESCRIPTION = { en: `the "lines" array`, es: `array "lines"` };
@@ -184,7 +197,7 @@ const PHASE_INSTRUCTIONS: Record<number, string> = {
   7: `지금은 7번째 응답입니다 (대처 방식/Coping). 지금까지 이런 감정이나 상황을 스스로 어떻게 다뤄왔는지 — 참고 넘기는지, 다른 일에 몰두해서 잊으려 하는지, 누군가에게 털어놓는지 — 실제 대처 방식을 여는 질문으로 물으세요.`,
   8: `지금은 8번째 응답입니다 (관계/시선/Relational). 주변 사람들이 이 상황을 어떻게 보는 것 같은지, 혹은 누구한테 제일 티 내기 싫은지 여는 질문으로 물으세요.`,
   9: `지금은 9번째 응답입니다 (원하는 변화/Desired Change). 이 상황이나 감정이 지금과 다르게 흘러간다면 어떤 모습이길 바라는지, 이상적으로 어떻게 되고 싶은지 여는 질문으로 물으세요.`,
-  10: `지금은 10번째(마지막) 응답입니다 (요약+종료). 지금까지 나온 이야기(사건·감정·반복패턴·대처방식·이유 등)를 하나로 엮어 짧게 요약하고 "~라는 얘기죠?" 형태로 확인받으세요. 확인 후에는 절대 조언하지 말고 "잠시만요, 사주랑 심리테스트 결과랑 같이 볼게요" 같은 멘트로 마무리하세요. 이 응답이 대화의 마지막입니다 — 다음 응답은 만들지 마세요.`,
+  10: `지금은 10번째(마지막) 응답입니다 (요약+종료). 지금까지 나온 이야기(사건·감정·반복패턴·대처방식·이유 등)를 하나로 엮어 짧게 요약하고 "~라는 얘기죠?" 형태로 확인받으세요. 확인 후에는 절대 조언하지 말고, 잠시 기다려 달라는 짧은 안내와 함께 사주·심리테스트 결과를 종합해서 살펴보겠다는 취지의 문장으로 마무리하세요 — 그 문장은 반드시 지금 응답에 쓰이는 언어로 직접 새로 작성할 것(정해진 문구를 그대로 베끼지 말 것). 이 응답이 대화의 마지막입니다 — 다음 응답은 만들지 마세요.`,
 };
 
 // Exported so ChatScreen.jsx can show a matching countdown instead of
