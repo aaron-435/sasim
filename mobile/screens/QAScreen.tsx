@@ -111,7 +111,7 @@ export default function QAScreen({
       const res = await fetch(`${API_BASE_URL}/api/qa-answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nickname, question: questionText, sajuResult, sessionId, locale }),
+        body: JSON.stringify({ nickname, question: questionText, sajuResult, sessionId, locale, platform: "mobile" }),
       });
       const json = await res.json();
       if (!mountedRef.current) return;

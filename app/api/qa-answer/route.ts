@@ -6,13 +6,20 @@
  * server-side only, same as /api/chat.
  *
  * Request body:
- *   { nickname, question, sajuResult, sessionId }
+ *   { nickname, question, sajuResult, sessionId, locale, platform }
  *   sajuResult is whatever /api/saju already returned to the client —
- *   passed straight through, not re-fetched. sessionId is optional,
- *   used only to attribute LLM cost logging (see lib/llmUsage.ts).
+ *   passed straight through, not re-fetched. sessionId is now required
+ *   (was optional until 2026-09-13) — see lib/qaQuota.ts for why: it's
+ *   both the LLM cost-log attribution key AND the only way to enforce
+ *   the free-question cap server-side, so a request without one would
+ *   otherwise get an uncounted, unlimited free answer. `platform`
+ *   ("web" | "mobile", defaults to the stricter "web" policy if
+ *   missing/unrecognized) picks which free-tier policy applies — see
+ *   lib/qaQuota.ts.
  *
  * Response body:
  *   { lines: string[] }  or  { error: string } with a non-200 status
+ *   (403 specifically means the free-question cap was hit)
  * ------------------------------------------------------------------
  */
 
@@ -21,6 +28,7 @@ import OpenAI from "openai";
 import { getQAAnswer } from "@/lib/qaChat";
 import type { Locale } from "@/lib/i18n/types";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
+import { isQaQuotaExceeded, type QaPlatform } from "@/lib/qaQuota";
 
 interface QAAnswerRequestBody {
   nickname?: string;
@@ -35,6 +43,8 @@ interface QAAnswerRequestBody {
   sessionId?: string;
   /** Defaults to "ko" when absent — only the native app sends this today. */
   locale?: Locale;
+  /** Defaults to the stricter "web" policy when absent/unrecognized. */
+  platform?: QaPlatform;
 }
 
 export async function POST(req: NextRequest) {
@@ -48,10 +58,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { nickname, question, sajuResult, sessionId, locale } = body ?? {};
+  const { nickname, question, sajuResult, sessionId, locale, platform } = body ?? {};
 
   if (!question || !sajuResult) {
     return NextResponse.json({ error: "question, sajuResult는 필수입니다." }, { status: 400 });
+  }
+  if (!sessionId) {
+    return NextResponse.json({ error: "sessionId는 필수입니다." }, { status: 400 });
+  }
+
+  const resolvedPlatform: QaPlatform = platform === "mobile" ? "mobile" : "web";
+  if (await isQaQuotaExceeded(sessionId, resolvedPlatform)) {
+    return NextResponse.json({ error: "무료 질문 한도를 모두 사용했어요." }, { status: 403 });
   }
 
   try {
