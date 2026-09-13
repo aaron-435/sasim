@@ -62,7 +62,7 @@ export const ko = {
     headlineLine1: "운명은 이미 말했습니다.",
     headlineLine2: "이제 당신이 답할 차례입니다.",
     subheadline: "운명을 바꾸고 싶나요? 사주를 분석하고 지금 시작하세요.",
-    freeNote: "무료 10분 리딩 · 신용카드 불필요",
+    freeNote: "무료 20분 리딩 · 신용카드 불필요",
     ageNoticePrefix: "만 14세 이상만 이용할 수 있어요 ·",
     ageNoticeAnd: "및",
     ageNoticeSuffix: "에 동의합니다",

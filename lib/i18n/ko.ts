@@ -70,7 +70,7 @@ export const ko = {
     cityPlaceholder: "도시 이름을 입력하세요",
     citySearching: "검색 중...",
     submitButton: "사주 확인하러 가기",
-    freeNote: "무료 10분 리딩 · 신용카드 불필요",
+    freeNote: "무료 20분 리딩 · 신용카드 불필요",
     ageNoticePrefix: "만 14세 이상만 이용할 수 있으며, 계속 진행 시",
     ageNoticeAnd: "및",
     ageNoticeSuffix: "에 동의하는 것으로 간주됩니다.",

@@ -59,7 +59,7 @@ export const es: typeof ko = {
     cityPlaceholder: "Ingresa el nombre de una ciudad",
     citySearching: "Buscando...",
     submitButton: "Ver Mi Saju",
-    freeNote: "Lectura gratis de 10 minutos · Sin tarjeta de crédito",
+    freeNote: "Lectura gratis de 20 minutos · Sin tarjeta de crédito",
     ageNoticePrefix: "Debes tener 14 años o más para usar la app. Al continuar, aceptas los",
     ageNoticeAnd: "y",
     ageNoticeSuffix: ".",
