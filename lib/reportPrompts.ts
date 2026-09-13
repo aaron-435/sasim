@@ -24,15 +24,7 @@
 import type { ElementKey } from "./sajuScore";
 import type { ChatExtract } from "./chat";
 import type { Locale } from "./i18n/types";
-import { FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
-
-const ELEMENT_LABEL: Record<ElementKey, string> = {
-  wood: "목(木)",
-  fire: "화(火)",
-  earth: "토(土)",
-  metal: "금(金)",
-  water: "수(水)",
-};
+import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 
 const ELEMENT_HANJA: Record<ElementKey, string> = {
   wood: "목", fire: "화", earth: "토", metal: "금", water: "수",
@@ -45,6 +37,19 @@ const GENERATES: Record<ElementKey, ElementKey> = {
 
 function generatorOf(key: ElementKey): ElementKey {
   return (Object.keys(GENERATES) as ElementKey[]).find((k) => GENERATES[k] === key)!;
+}
+
+/** Names which element generates `weakKey`, in a form the model can use
+ * directly without translating anything itself. ko keeps the compact hanja
+ * form ("금생수") matching existing Korean convention; en/es spell out both
+ * element names using the exact same words as ELEMENT_LABEL (and therefore
+ * the same words already on screen in the element bars), removing any
+ * chance the model picks a different translation for the relationship than
+ * it did a few lines earlier for the bare element names. */
+function buildGeneratorRelationLabel(locale: Locale, weakKey: ElementKey): string {
+  const generatorKey = generatorOf(weakKey);
+  if (locale === "ko") return `${ELEMENT_HANJA[generatorKey]}생${ELEMENT_HANJA[weakKey]}`;
+  return `${ELEMENT_LABEL[locale][generatorKey]} → ${ELEMENT_LABEL[locale][weakKey]}`;
 }
 
 export interface ReportDimensionResult {
@@ -130,7 +135,7 @@ const OUTPUT_SCHEMA = `
 export function buildReportPrompt(context: ReportContext): string {
   const locale: Locale = context.locale ?? "ko";
   const elementsLine = (Object.keys(context.elements) as ElementKey[])
-    .map((k) => `${ELEMENT_LABEL[k]} ${Math.round(context.elements[k])}%`)
+    .map((k) => `${ELEMENT_LABEL[locale][k]} ${Math.round(context.elements[k])}%`)
     .join(", ");
 
   const sortedElements = (Object.keys(context.elements) as ElementKey[]).sort(
@@ -138,7 +143,7 @@ export function buildReportPrompt(context: ReportContext): string {
   );
   const dominantKey = sortedElements[0];
   const weakKey = sortedElements[sortedElements.length - 1];
-  const weakGeneratorRelation = `${ELEMENT_HANJA[generatorOf(weakKey)]}생${ELEMENT_HANJA[weakKey]}`;
+  const weakGeneratorRelation = buildGeneratorRelationLabel(locale, weakKey);
 
   const dimensionLines = context.dimensionResults
     .map((r) => `${context.dimensionShortNames[r.dimension] ?? r.dimension}: ${r.direction === "high" ? "높음" : "낮음"} (${Math.round(r.percentOfMax)}%, ${r.intensity})`)
@@ -190,8 +195,8 @@ ${STYLE_EXCERPT}
 - 닉네임: ${context.nickname}
 - track: ${context.track}
 - 사주 오행 분포: ${elementsLine}
-- 우세 원소: ${ELEMENT_LABEL[dominantKey]} / 약한 원소: ${ELEMENT_LABEL[weakKey]}
-- 약한 원소(${ELEMENT_LABEL[weakKey]})를 채워주는 유일한 상생 관계: ${weakGeneratorRelation} — saju_weak_body에서 이것만 쓸 것
+- 우세 원소: ${ELEMENT_LABEL[locale][dominantKey]} / 약한 원소: ${ELEMENT_LABEL[locale][weakKey]}
+- 약한 원소(${ELEMENT_LABEL[locale][weakKey]})를 채워주는 유일한 상생 관계: ${weakGeneratorRelation} — saju_weak_body에서 이것만 쓸 것
 - 심리테스트 모듈: ${context.moduleTitle}
 - 심리테스트 유형: ${context.psychTestTypeTitle} — ${context.psychTestTypeHook}
 - 심리테스트 세부 축: ${dimensionLines}

@@ -23,12 +23,32 @@
  */
 
 import type { Locale } from "./i18n/types";
+import type { ElementKey } from "./sajuScore";
 
 /** Used anywhere a prompt says "write field X in <language>". */
 export const FIELD_LANGUAGE_NAME: Record<Locale, string> = {
   ko: "한국어",
   en: "영어(English)",
   es: "스페인어(español)",
+};
+
+/**
+ * 2026-09-13 fix — chatPrompts.ts and reportPrompts.ts used to hand the
+ * model only the Korean+hanja element name ("금(金)") regardless of locale,
+ * meaning an EN/ES generation had to re-derive its own translation from
+ * scratch every single call — with no guarantee it picked the same word
+ * twice in one report, let alone the same word the UI's own element bars
+ * already show (mobile/lib/i18n/{en,es}.ts's common.elementLabels). A real
+ * user with zero saju background has no way to tell "Metal" and "Gold"
+ * apart as the same concept if the AI prose uses one and the bar chart
+ * above it uses the other. This map is the EXACT wording from those UI
+ * dictionaries, so prompt data and rendered UI always agree — ko keeps the
+ * hanja notation since mobile's own ko.ts dictionary does too.
+ */
+export const ELEMENT_LABEL: Record<Locale, Record<ElementKey, string>> = {
+  ko: { wood: "목(木)", fire: "화(火)", earth: "토(土)", metal: "금(金)", water: "수(水)" },
+  en: { wood: "Wood", fire: "Fire", earth: "Earth", metal: "Metal", water: "Water" },
+  es: { wood: "Madera", fire: "Fuego", earth: "Tierra", metal: "Metal", water: "Agua" },
 };
 
 /**

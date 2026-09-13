@@ -32,7 +32,7 @@
 
 import type { ElementKey } from "./sajuScore";
 import type { Locale } from "./i18n/types";
-import { CRISIS_RESOURCES, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
+import { CRISIS_RESOURCES, ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 
 export type Track = "romance" | "career";
 
@@ -56,14 +56,6 @@ export interface ChatSessionContext {
    * yet, see lib/i18n/index.ts) never sends this; only the native app does. */
   locale?: Locale;
 }
-
-const ELEMENT_LABEL: Record<ElementKey, string> = {
-  wood: "목(木)",
-  fire: "화(火)",
-  earth: "토(土)",
-  metal: "금(金)",
-  water: "수(水)",
-};
 
 // 2026-09-07: 7 → 10턴으로 확장. 실사용자 기준 7턴은 타이핑 속도에 따라
 // 체감 대화 시간이 10분에 한참 못 미치는 경우가 많았음 — 신체반응/충동,
@@ -269,7 +261,7 @@ export function buildChatSystemPrompt(
     : "- quizAnswer: (없음)";
 
   const elementsLine = (Object.keys(context.sajuElements) as ElementKey[])
-    .map((k) => `${ELEMENT_LABEL[k]} ${Math.round(context.sajuElements[k])}%`)
+    .map((k) => `${ELEMENT_LABEL[locale][k]} ${Math.round(context.sajuElements[k])}%`)
     .join(", ");
 
   return `
@@ -284,7 +276,7 @@ ${phaseInstruction}
 ${timeNotice ? `\n${timeNotice}` : ""}
 
 ## 이번 세션 입력값
-- 사주 오행 분포: ${elementsLine} (우세 원소: ${ELEMENT_LABEL[context.dominantSajuElement]})
+- 사주 오행 분포: ${elementsLine} (우세 원소: ${ELEMENT_LABEL[locale][context.dominantSajuElement]})
 - 심리테스트 결과: ${context.psychTestType}
 - 심리테스트 서술: ${context.psychTestSummary || "(없음)"}
 ${quizAnswerLine}
@@ -322,7 +314,7 @@ export function buildExtractionPrompt(
 ): { system: string; user: string } {
   const locale: Locale = context.locale ?? "ko";
   const elementsLine = (Object.keys(context.sajuElements) as ElementKey[])
-    .map((k) => `${ELEMENT_LABEL[k]} ${Math.round(context.sajuElements[k])}%`)
+    .map((k) => `${ELEMENT_LABEL[locale][k]} ${Math.round(context.sajuElements[k])}%`)
     .join(", ");
 
   const system = `
@@ -347,7 +339,7 @@ export function buildExtractionPrompt(
 }
 
 ## 배경 데이터
-- 사주 오행 분포: ${elementsLine} (우세 원소: ${ELEMENT_LABEL[context.dominantSajuElement]})
+- 사주 오행 분포: ${elementsLine} (우세 원소: ${ELEMENT_LABEL[locale][context.dominantSajuElement]})
 - 심리테스트 결과: ${context.psychTestType}
 - 심리테스트 서술: ${context.psychTestSummary || "(없음)"}
 `.trim();
