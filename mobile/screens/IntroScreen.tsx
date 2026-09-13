@@ -6,14 +6,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AuraNextButton from "../components/AuraNextButton";
 import PatternBackground from "../components/PatternBackground";
 import { API_BASE_URL } from "../config";
-import { useStrings } from "../lib/i18n";
+import { useStrings, useLocale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
-
-const TERMS_URL = `${API_BASE_URL}/terms`;
-const PRIVACY_URL = `${API_BASE_URL}/privacy`;
 
 export default function IntroScreen({ onNext }: { onNext: () => void }) {
   const strings = useStrings();
+  const { locale } = useLocale();
+  // 2026-09-13: web's /terms and /privacy now read this — without it, a
+  // non-Korean app user tapping these footer links got a Korean-only page
+  // even though the content is fully translated (see lib/legalContent.ts).
+  const termsUrl = `${API_BASE_URL}/terms?lang=${locale}`;
+  const privacyUrl = `${API_BASE_URL}/privacy?lang=${locale}`;
   const contentAnim = useRef(new Animated.Value(0)).current;
   const ctaAnim = useRef(new Animated.Value(0)).current;
 
@@ -66,11 +69,11 @@ export default function IntroScreen({ onNext }: { onNext: () => void }) {
           {strings.intro.freeNote}
           {"\n"}
           {strings.intro.ageNoticePrefix}{" "}
-          <Text style={styles.footerLink} onPress={() => Linking.openURL(TERMS_URL)}>
+          <Text style={styles.footerLink} onPress={() => Linking.openURL(termsUrl)}>
             {strings.intro.termsLinkLabel}
           </Text>{" "}
           {strings.intro.ageNoticeAnd}{" "}
-          <Text style={styles.footerLink} onPress={() => Linking.openURL(PRIVACY_URL)}>
+          <Text style={styles.footerLink} onPress={() => Linking.openURL(privacyUrl)}>
             {strings.intro.privacyLinkLabel}
           </Text>
           {strings.intro.ageNoticeSuffix}
