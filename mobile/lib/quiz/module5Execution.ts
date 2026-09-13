@@ -8,7 +8,7 @@
  */
 
 import type { Locale } from "../i18n/types";
-import type { ModuleQuestion } from "./quizProfile";
+import type { ModuleQuestion, QuestionTextOverride } from "./quizProfile";
 
 export const MODULE5_QUESTIONS: ModuleQuestion[] = [
   // ---- 완벽주의 (Perfectionism) — P1-P10 ----
@@ -96,6 +96,75 @@ export const MODULE5_QUESTIONS: ModuleQuestion[] = [
     { label: "때가 되면 자연스럽게 정해질 거라 믿는다", score: 0 }, { label: "고민하며 차근차근 정한다", score: 1 },
     { label: "오랫동안 정하지 못하고 미룬다", score: 2 }, { label: "결정 자체가 두려워서 회피하게 된다", score: 3 } ] },
 ];
+
+// Display-text-only translations of MODULE5_QUESTIONS above — see MODULE1's
+// equivalent comment in module1Attachment.ts for why id/dimension/format/
+// score aren't duplicated per locale.
+export const MODULE5_QUESTIONS_EN: Record<string, QuestionTextOverride> = {
+  P1: { prompt: "How much do you put off even starting when you're not sure it'll be perfect?", minLabel: "I never put it off", maxLabel: "I always put it off without certainty" },
+  P2: { prompt: "When you're not confident about the result?", optionLabels: ["I just try it and revise as I go", "I refine it along the way", "I wait until I have a perfect plan", "I can't even start without certainty"] },
+  P3: { prompt: "Right up until you submit or present?", optionLabels: ["I wrap up with time to spare", "I polish it a bit at the last minute", "I keep fixing it and end up rushed by the deadline", "I can't let go of it until the very end because it's never good enough"] },
+  P4: { prompt: "If I'm not confident I can do it perfectly, I'd rather not start at all.", optionLabels: ["Not at all true", "Very true"] },
+  P5: { prompt: "When you have to show someone unfinished work?", optionLabels: ["I show it comfortably", "It's a bit uncomfortable, but I show it", "The weak spots keep bothering me", "I'd rather hide it than show it"] },
+  P6: { prompt: "When making a plan?", optionLabels: ["I sketch it roughly and get moving right away", "I make it reasonably detailed", "I only move once I've considered every variable", "I can't move at all unless the plan is perfect"] },
+  P7: { prompt: "For tasks where you might make a mistake?", optionLabels: ["I just go ahead and try", "I proceed carefully", "I review it several times before proceeding", "I put it off unless I'm certain I won't make a mistake"] },
+  P8: { prompt: "If the deadline is approaching but you're not happy with the result?", optionLabels: ["I meet the deadline as is", "I polish it a little more before submitting", "I fix it even if it means slightly missing the deadline", "I finish it perfectly no matter how late it makes me"] },
+  P9: { prompt: "How easily do you reach the point of \"this is good enough\"?", optionLabels: ["I'm satisfied fairly easily", "I'm satisfied at a reasonable point", "It's hard for me to feel satisfied", "I always feel it's lacking, so I can't let go"] },
+  P10: { prompt: "When facing a new challenge?", optionLabels: ["I just dive in", "I prepare and then start", "I put it off until I'm perfectly prepared", "I think it's better not to do it than to fail"] },
+  T1: { prompt: "When something you don't want to do comes up?", optionLabels: ["I take care of it right away", "I put it off, but eventually get to it", "I push it back as far as possible", "I don't touch it until it's unavoidable"] },
+  T2: { prompt: "How often do you only get started right before the deadline?", minLabel: "Never (I always start early)", maxLabel: "Almost always start right before the deadline" },
+  T3: { prompt: "Right before something you don't want to do?", optionLabels: ["I want to get it done quickly so I can relax", "It's a burden, but I start", "I end up doing other things first", "I end up doing distractions like cleaning or organizing first"] },
+  T4: { prompt: "Something I don't want to do only gets my hands moving once the deadline is right on top of me.", optionLabels: ["Not at all true", "Very true"] },
+  T5: { prompt: "When you look at your to-do list?", optionLabels: ["I handle it by priority", "I get through most of it", "I do the easy ones first and put off the hard ones", "Just looking at it makes me not want to do it, so I close it"] },
+  T6: { prompt: "When something you've been putting off crosses your mind?", optionLabels: ["I go take care of it right away", "I think 'I'll do it in a bit'", "I try hard not to think about it", "I keep avoiding it even though it makes me anxious"] },
+  T7: { prompt: "How much do you have things you repeatedly put off?", optionLabels: ["Almost none", "A few", "Quite a few", "I'm always putting off the same things"] },
+  T8: { prompt: "When you're rushed by the deadline after procrastinating?", optionLabels: ["I regret not doing it earlier and make sure not to next time", "I regret it, but do it again anyway", "This pattern already feels familiar", "I feel bad about myself for doing this every time and never fixing it"] },
+  T9: { prompt: "How do you feel right before starting a task?", optionLabels: ["I start with a light heart", "I start carrying some pressure", "Just starting feels like a huge mountain", "Just thinking about it makes me want to avoid it"] },
+  T10: { prompt: "When the things you've put off start piling up?", optionLabels: ["I sort through them one by one", "I get anxious, but handle it", "I feel overwhelmed and end up doing even less", "I just ignore it completely"] },
+  D1: { prompt: "When there are several options?", optionLabels: ["I quickly pick one", "I think it over a little, then pick", "I compare for a long while before picking", "I can't decide at all and leave it to someone else"] },
+  D2: { prompt: "How tangled does your mind get when you have to make a decision?", minLabel: "Not tangled at all", maxLabel: "Extremely tangled (thoughts get all jumbled up)" },
+  D3: { prompt: "When you look at a menu?", optionLabels: ["I decide right away", "I think a bit, then decide", "I stare at it for a long while", "I end up asking the person next to me to choose for me"] },
+  D4: { prompt: "Even for a trivial decision, I only feel at ease once I've considered every possible outcome in my head.", optionLabels: ["Not at all true", "Very true"] },
+  D5: { prompt: "After you've made a decision?", optionLabels: ["I don't think about it anymore", "I look back on it occasionally", "I often wonder if another choice would've been better", "I keep regretting it and dwelling on it"] },
+  D6: { prompt: "When facing an important decision?", optionLabels: ["I judge and decide for myself", "I ask people around me and decide", "I want to push the decision onto someone else", "I desperately wish someone would just decide for me"] },
+  D7: { prompt: "When looking things up?", optionLabels: ["I organize what I have and decide at a reasonable point", "I look a bit more before deciding", "I end up endlessly looking for more", "There's so much information that I can't decide at all"] },
+  D8: { prompt: "When you put off a decision?", optionLabels: ["It's nice to have the breathing room", "It's fine", "It actually makes me more anxious", "The options themselves become a source of stress"] },
+  D9: { prompt: "How often does the thought \"what if I make the wrong choice\" come up?", optionLabels: ["Almost never", "Sometimes", "Every time I have to decide", "Sometimes that thought stops me from deciding at all"] },
+  D10: { prompt: "When facing a big life decision (career, moving, etc.)?", optionLabels: ["I trust it'll naturally sort itself out when the time comes", "I think it through carefully, step by step", "I put it off for a long time without deciding", "The decision itself scares me, so I avoid it"] },
+};
+
+export const MODULE5_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
+  P1: { prompt: "¿Cuánto pospones incluso empezar cuando no estás seguro/a de que saldrá perfecto?", minLabel: "Nunca lo pospongo", maxLabel: "Siempre lo pospongo sin estar seguro/a" },
+  P2: { prompt: "Cuando no tienes confianza en el resultado?", optionLabels: ["Simplemente lo intento y voy corrigiendo", "Lo voy puliendo sobre la marcha", "Espero hasta tener un plan perfecto", "No puedo ni empezar sin estar seguro/a"] },
+  P3: { prompt: "¿Hasta el último momento antes de entregar o presentar?", optionLabels: ["Termino con tiempo de sobra", "Lo pulo un poco a último momento", "Sigo corrigiendo y termino apurado/a por la fecha límite", "No puedo soltarlo hasta el final porque nunca es suficientemente bueno"] },
+  P4: { prompt: "Si no tengo la seguridad de hacerlo perfecto, prefiero no empezar en absoluto.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  P5: { prompt: "Cuando tienes que mostrarle a alguien un trabajo sin terminar?", optionLabels: ["Lo muestro con tranquilidad", "Es algo incómodo, pero lo muestro", "Los puntos débiles no dejan de inquietarme", "Prefiero esconderlo antes que mostrarlo"] },
+  P6: { prompt: "Al hacer un plan?", optionLabels: ["Lo esbozo a grandes rasgos y me pongo en marcha enseguida", "Lo hago razonablemente detallado", "Solo me muevo después de considerar cada variable", "No puedo moverme a menos que el plan sea perfecto"] },
+  P7: { prompt: "Para tareas donde podrías cometer un error?", optionLabels: ["Simplemente lo intento", "Lo hago con cuidado", "Lo reviso varias veces antes de continuar", "Lo postergo a menos que esté seguro/a de no equivocarme"] },
+  P8: { prompt: "Si se acerca la fecha límite pero no estás conforme con el resultado?", optionLabels: ["Cumplo con la fecha límite tal como está", "Lo pulo un poco más antes de entregarlo", "Lo corrijo aunque me pase un poco de la fecha límite", "Lo termino perfecto sin importar cuán tarde sea"] },
+  P9: { prompt: "¿Qué tan fácil te resulta llegar al punto de \"esto ya es suficiente\"?", optionLabels: ["Me satisfago con bastante facilidad", "Me satisfago en un punto razonable", "Me cuesta sentirme satisfecho/a", "Siempre siento que falta algo, así que no puedo soltarlo"] },
+  P10: { prompt: "Frente a un nuevo desafío?", optionLabels: ["Simplemente me lanzo", "Me preparo y luego empiezo", "Lo pospongo hasta estar perfectamente preparado/a", "Pienso que es mejor no hacerlo que fracasar"] },
+  T1: { prompt: "Cuando surge algo que no quieres hacer?", optionLabels: ["Lo resuelvo de inmediato", "Lo pospongo, pero al final lo hago", "Lo postergo lo más posible", "No lo toco hasta que ya no hay opción"] },
+  T2: { prompt: "¿Con qué frecuencia solo empiezas justo antes de la fecha límite?", minLabel: "Nunca (siempre empiezo temprano)", maxLabel: "Casi siempre empiezo justo antes de la fecha límite" },
+  T3: { prompt: "Justo antes de algo que no quieres hacer?", optionLabels: ["Quiero terminarlo rápido para sentirme aliviado/a", "Es una carga, pero empiezo", "Termino haciendo otras cosas primero", "Termino haciendo distracciones como limpiar u ordenar primero"] },
+  T4: { prompt: "Algo que no quiero hacer solo logra que mis manos se muevan cuando la fecha límite ya está encima.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  T5: { prompt: "Cuando miras tu lista de pendientes?", optionLabels: ["La resuelvo según prioridad", "Resuelvo la mayor parte", "Hago primero lo fácil y postergo lo difícil", "Solo con verla ya no tengo ganas de hacerla, así que la cierro"] },
+  T6: { prompt: "Cuando te viene a la mente algo que has estado postergando?", optionLabels: ["Voy a resolverlo de inmediato", "Pienso \"lo hago en un rato\"", "Trato de no pensar en eso", "Sigo evitándolo aunque me dé ansiedad"] },
+  T7: { prompt: "¿Cuánto tienes cosas que postergas una y otra vez?", optionLabels: ["Casi ninguna", "Algunas", "Bastantes", "Siempre estoy postergando las mismas cosas"] },
+  T8: { prompt: "Cuando te apura la fecha límite después de haber postergado?", optionLabels: ["Me arrepiento de no haberlo hecho antes y me aseguro de no repetirlo", "Me arrepiento, pero lo vuelvo a hacer de todos modos", "Este patrón ya me resulta familiar", "Me siento mal conmigo mismo/a por hacer esto siempre y no poder corregirlo"] },
+  T9: { prompt: "¿Cómo te sientes justo antes de empezar una tarea?", optionLabels: ["Empiezo con el ánimo ligero", "Empiezo cargando cierta presión", "Solo empezar se siente como una montaña enorme", "Solo de pensarlo ya quiero evitarlo"] },
+  T10: { prompt: "Cuando las cosas que has postergado empiezan a acumularse?", optionLabels: ["Las ordeno una por una", "Me da ansiedad, pero las resuelvo", "Me siento abrumado/a y termino haciendo aún menos", "Simplemente las ignoro por completo"] },
+  D1: { prompt: "Cuando hay varias opciones?", optionLabels: ["Elijo una rápidamente", "Lo pienso un poco y elijo", "Comparo durante un buen rato antes de elegir", "No logro decidir y se lo dejo a alguien más"] },
+  D2: { prompt: "¿Qué tan enredada se pone tu mente cuando tienes que tomar una decisión?", minLabel: "Nada enredada", maxLabel: "Extremadamente enredada (los pensamientos se mezclan)" },
+  D3: { prompt: "Cuando miras un menú?", optionLabels: ["Decido de inmediato", "Lo pienso un poco y decido", "Lo miro durante un buen rato", "Termino pidiéndole a la persona de al lado que elija por mí"] },
+  D4: { prompt: "Incluso para una decisión sin importancia, solo me siento tranquilo/a después de considerar en mi mente todos los resultados posibles.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  D5: { prompt: "Después de tomar una decisión?", optionLabels: ["Ya no lo pienso más", "A veces lo repaso", "Seguido pienso si otra opción habría sido mejor", "Sigo arrepintiéndome y dándole vueltas"] },
+  D6: { prompt: "Frente a una decisión importante?", optionLabels: ["Juzgo y decido por mí mismo/a", "Le pregunto a la gente cercana y decido", "Quiero pasarle la decisión a alguien más", "Deseo desesperadamente que alguien decida por mí"] },
+  D7: { prompt: "Al buscar información?", optionLabels: ["Organizo lo que tengo y decido en un punto razonable", "Busco un poco más antes de decidir", "Termino buscando sin parar", "Hay tanta información que no logro decidir"] },
+  D8: { prompt: "Cuando pospones una decisión?", optionLabels: ["Se siente bien tener ese respiro", "Está bien", "En realidad me da más ansiedad", "Las propias opciones se vuelven una fuente de estrés"] },
+  D9: { prompt: "¿Con qué frecuencia te viene el pensamiento \"qué pasa si elijo mal\"?", optionLabels: ["Casi nunca", "A veces", "Cada vez que tengo que decidir", "A veces ese pensamiento me impide decidir del todo"] },
+  D10: { prompt: "Frente a una gran decisión de vida (carrera, mudanza, etc.)?", optionLabels: ["Confío en que se resolverá naturalmente cuando llegue el momento", "Lo pienso con cuidado, paso a paso", "Lo postergo por mucho tiempo sin decidir", "La decisión en sí me da miedo, así que la evito"] },
+};
 
 export const MODULE5_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   perfectionism: 10,
