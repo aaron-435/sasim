@@ -478,6 +478,7 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 24,
     lineHeight: 34,
     color: COLORS.headline,
@@ -493,6 +494,7 @@ const styles = StyleSheet.create({
   },
   heroNickname: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 15,
     color: COLORS.headline,
   },
@@ -514,6 +516,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 20,
     lineHeight: 28,
     color: COLORS.headline,
@@ -607,12 +610,14 @@ const styles = StyleSheet.create({
   },
   chatQuoteText: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 15,
     lineHeight: 24,
     color: COLORS.headline,
   },
   quote: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 15,
     lineHeight: 26,
     color: COLORS.headline,
@@ -636,6 +641,7 @@ const styles = StyleSheet.create({
   },
   breatherTitle: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 16,
     color: COLORS.headline,
     marginBottom: 8,
@@ -718,6 +724,7 @@ const styles = StyleSheet.create({
   },
   paywallTitle: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 19,
     color: COLORS.headline,
     textAlign: "center",

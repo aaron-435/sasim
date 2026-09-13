@@ -263,6 +263,7 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 26,
     color: COLORS.headline,
   },
@@ -347,6 +348,7 @@ const styles = StyleSheet.create({
   },
   insightText: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 17,
     lineHeight: 25,
     color: COLORS.headline,

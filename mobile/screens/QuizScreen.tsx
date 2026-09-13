@@ -293,6 +293,7 @@ const styles = StyleSheet.create({
   },
   prompt: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 22,
     lineHeight: 30,
     color: COLORS.headline,
@@ -326,6 +327,7 @@ const styles = StyleSheet.create({
   },
   sliderValue: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 28,
     color: COLORS.gold,
     textAlign: "center",
@@ -395,6 +397,7 @@ const styles = StyleSheet.create({
   },
   resultTitle: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 28,
     color: COLORS.headline,
     marginBottom: 10,
@@ -421,6 +424,7 @@ const styles = StyleSheet.create({
   },
   resultBrand: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 13,
     color: COLORS.gold,
   },

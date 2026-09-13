@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
   },
   headline: {
     fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
     fontSize: 32,
     lineHeight: 40,
     color: COLORS.headline,
