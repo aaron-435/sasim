@@ -26,6 +26,19 @@ const DIMENSION_BAR_COLORS = ["#C1503B", "#3E6EA0", "#B98A4E", "#4E8368", "#8B6B
 const DEFAULT_ELEMENTS: Record<string, number> = { fire: 20, earth: 20, wood: 20, metal: 20, water: 20 };
 const PAPER_BG = "#EFE7D8";
 
+/** Breaks generated body copy at sentence/clause boundaries (마침표, 쉼표) instead of
+ * leaving RN's own line-wrap to land wherever the container width happens to cut —
+ * one clause per line reads as deliberate short beats instead of one dense wrapped
+ * block. A clause that's still too long for one line keeps wrapping normally within
+ * itself. No space follows the "." in a decimal (e.g. "14.99"), so numbers are safe. */
+function sentenceLines(text: string): string {
+  return text
+    .split(/(?<=[.,!?])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .join("\n");
+}
+
 type ElementReading = { heading: string; body: string };
 
 type ReportContent = {
@@ -467,7 +480,7 @@ function NarrativePage({ body, caption }: { body: string; caption: string }) {
   return (
     <PageShell>
       <View style={pageStyles.narrativeMid}>
-        <Text style={pageStyles.narrativeBody}>{body}</Text>
+        <Text style={pageStyles.narrativeBody}>{sentenceLines(body)}</Text>
       </View>
       <Text style={pageStyles.narrativeCaption}>{caption}</Text>
     </PageShell>
@@ -478,7 +491,7 @@ function CaseStudyPage({ tag, body }: { tag?: string; body: string }) {
   return (
     <PageShell>
       {tag && <Text style={pageStyles.caseTag}>{tag}</Text>}
-      <Text style={pageStyles.caseBody}>{body}</Text>
+      <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
     </PageShell>
   );
 }
@@ -504,7 +517,7 @@ function QuizAnalysisPage({
     <PageShell>
       <Text style={pageStyles.dataTitle}>{title}</Text>
       <Text style={pageStyles.dataSubtitle}>{subtitle}</Text>
-      {hook && <Text style={pageStyles.caseBody}>{hook}</Text>}
+      {hook && <Text style={pageStyles.caseBody}>{sentenceLines(hook)}</Text>}
       <View style={pageStyles.bars}>
         {dimensionResults?.map((r, i) => (
           <View key={r.dimension} style={pageStyles.barRow}>
@@ -520,7 +533,7 @@ function QuizAnalysisPage({
           </View>
         ))}
       </View>
-      {!!nuancedSummary && <Text style={pageStyles.dataNote}>{nuancedSummary}</Text>}
+      {!!nuancedSummary && <Text style={pageStyles.dataNote}>{sentenceLines(nuancedSummary)}</Text>}
     </PageShell>
   );
 }
@@ -556,7 +569,7 @@ function ElementReadingPage({ pct, reading }: { pct: number; reading: ElementRea
       <View style={pageStyles.elemMid}>
         <Text style={pageStyles.elemNum}>{Math.round(pct)}%</Text>
         <Text style={pageStyles.elemHeading}>{reading.heading}</Text>
-        <Text style={pageStyles.caseBody}>{reading.body}</Text>
+        <Text style={pageStyles.caseBody}>{sentenceLines(reading.body)}</Text>
       </View>
     </PageShell>
   );
@@ -567,7 +580,7 @@ function ForecastPage({ heading, body, note }: { heading: string; body: string; 
     <PageShell>
       <View style={pageStyles.elemMid}>
         <Text style={pageStyles.elemHeading}>{heading}</Text>
-        <Text style={pageStyles.caseBody}>{body}</Text>
+        <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
       </View>
       <Text style={pageStyles.narrativeCaption}>{note}</Text>
     </PageShell>
@@ -577,7 +590,7 @@ function ForecastPage({ heading, body, note }: { heading: string; body: string; 
 function ChatStoryPage({ chatExtract, strings }: { chatExtract: ChatExtract; strings: Dictionary }) {
   return (
     <PageShell>
-      <Text style={pageStyles.caseBody}>{strings.report.chatStoryIntro}</Text>
+      <Text style={pageStyles.caseBody}>{sentenceLines(strings.report.chatStoryIntro)}</Text>
       <View style={pageStyles.chatQuoteBox}>
         <View style={pageStyles.chatQuoteHeader}>
           <BookOpen size={13} strokeWidth={2} color="#7FA8D6" />
@@ -585,7 +598,7 @@ function ChatStoryPage({ chatExtract, strings }: { chatExtract: ChatExtract; str
         </View>
         <Text style={pageStyles.chatQuoteText}>&quot;{String(chatExtract.summary_quote || chatExtract.trigger_point || "")}&quot;</Text>
       </View>
-      {!!chatExtract.integrated_summary && <Text style={pageStyles.caseBody}>{String(chatExtract.integrated_summary)}</Text>}
+      {!!chatExtract.integrated_summary && <Text style={pageStyles.caseBody}>{sentenceLines(String(chatExtract.integrated_summary))}</Text>}
     </PageShell>
   );
 }
@@ -594,7 +607,7 @@ function QuotePage({ quote }: { quote: string }) {
   return (
     <PageShell>
       <View style={pageStyles.quoteMid}>
-        <Text style={pageStyles.pullQuote}>{quote}</Text>
+        <Text style={pageStyles.pullQuote}>{sentenceLines(quote)}</Text>
       </View>
     </PageShell>
   );
@@ -619,11 +632,11 @@ function BreatherPage({
         <Text style={pageStyles.breatherLabelText}>{label}</Text>
       </View>
       <Text style={pageStyles.breatherTitle}>{heading}</Text>
-      <Text style={pageStyles.caseBody}>{body}</Text>
+      <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
       <View style={pageStyles.takeawayBox}>
         <Text style={pageStyles.takeawayText}>
           <Text style={pageStyles.takeawayBold}>{takeawayLabel} </Text>
-          {takeaway}
+          {sentenceLines(takeaway)}
         </Text>
       </View>
     </PageShell>
@@ -637,7 +650,7 @@ function CardPage({ kind, indexLabel, title, body }: { kind: "jade" | "warm" | "
       <Text style={[pageStyles.cardIndex, { color }]}>{indexLabel}</Text>
       <View style={pageStyles.cardMid}>
         <Text style={pageStyles.cardTitle}>{title}</Text>
-        <Text style={pageStyles.cardBody}>{body}</Text>
+        <Text style={pageStyles.cardBody}>{sentenceLines(body)}</Text>
       </View>
     </PageShell>
   );
@@ -649,7 +662,7 @@ function FitPage({ kind, label, body }: { kind: "good" | "bad"; label: string; b
     <PageShell>
       <View style={pageStyles.elemMid}>
         <Text style={[pageStyles.fitLabel, { color }]}>{label}</Text>
-        <Text style={pageStyles.caseBody}>{body}</Text>
+        <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
       </View>
     </PageShell>
   );
@@ -660,7 +673,7 @@ function MindsetPage({ label, body }: { label: string; body: string }) {
     <PageShell>
       <Eyebrow>{label}</Eyebrow>
       <View style={pageStyles.elemMid}>
-        <Text style={pageStyles.caseBody}>{body}</Text>
+        <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
       </View>
     </PageShell>
   );
@@ -671,7 +684,7 @@ function ClosingPage({ title, body, disclaimer1, disclaimer2 }: { title: string;
     <PageShell>
       <View style={pageStyles.elemMid}>
         <Text style={pageStyles.closingTitle}>{title}</Text>
-        <Text style={pageStyles.caseBody}>{body}</Text>
+        <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
       </View>
       <View style={pageStyles.closingBrand}>
         <View style={pageStyles.brandRow}>
