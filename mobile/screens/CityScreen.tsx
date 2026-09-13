@@ -4,7 +4,7 @@ import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { API_BASE_URL } from "../config";
-import { useStrings } from "../lib/i18n";
+import { useLocale, useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 
 type CityResult = { id: string; cityDisplay: string; countryDisplay: string };
@@ -36,6 +36,7 @@ export default function CityScreen({
   onBack: () => void;
 }) {
   const strings = useStrings();
+  const { locale } = useLocale();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<CityResult[]>([]);
   const [selected, setSelected] = useState<CityResult | null>(null);
@@ -55,7 +56,7 @@ export default function CityScreen({
     setSearching(true);
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/cities/search?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`${API_BASE_URL}/api/cities/search?q=${encodeURIComponent(query)}&locale=${locale}`);
         const json = await res.json();
         if (searchSeq.current === seq) setResults(json.results ?? []);
       } catch {
@@ -66,7 +67,7 @@ export default function CityScreen({
     }, 300);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  }, [query, locale]);
 
   function handlePick(city: CityResult) {
     setSelected(city);
