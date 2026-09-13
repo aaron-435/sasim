@@ -199,7 +199,7 @@ export const ko = {
   },
 
   qa: {
-    headerLabel: "사주 Q&A",
+    headerLabel: "사주 Q&A · AI 답변",
     subscriptionPriceLabel: "월 $19",
     defaultNickname: "회원",
     greeting1: (nickname: string) => `안녕하세요, ${nickname}님!`,

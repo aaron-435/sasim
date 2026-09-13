@@ -176,7 +176,7 @@ export const en: typeof ko = {
   },
 
   qa: {
-    headerLabel: "Saju Q&A",
+    headerLabel: "Saju Q&A · AI Answer",
     subscriptionPriceLabel: "$19/month",
     defaultNickname: "there",
     greeting1: (nickname: string) => `Hi, ${nickname}!`,
