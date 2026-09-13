@@ -33,7 +33,7 @@ type HistoryEntry = { role: "user" | "assistant"; content: string };
 
 export type ChatExtract = Record<string, unknown>;
 
-// Ported from components/ChatScreen.jsx (messenger style, 10-turn counseling chat after
+// Ported from components/ChatScreen.jsx (messenger style, 20-turn counseling chat after
 // a quiz module). The opener (turn 1) fires automatically on mount, same as web.
 export default function ChatScreen({
   nickname,

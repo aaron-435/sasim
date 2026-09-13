@@ -278,7 +278,8 @@ export const ko = {
     paywallTitle: "여기부터는 심층 리포트예요",
     paywallBody: "대화 인용 분석, 사주×심리 교차분석, 강점·약점, 맞는 환경, 행동 지침까지 — 이 리포트의 핵심 조언이 이어집니다.",
     paywallPriceSuffix: "에 전체 보기",
-    paywallBundle: (remaining: number, price: string) => `남은 ${remaining}개 리포트를 한번에 보면 ${price} (25% 할인)`,
+    paywallBundle: (remaining: number, price: string, discountPercent: number) =>
+      `남은 ${remaining}개 리포트를 한번에 보면 ${price} (${discountPercent}% 할인)`,
     paywallComingSoon: "결제 기능은 준비 중이에요",
   },
 };

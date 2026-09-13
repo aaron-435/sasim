@@ -33,7 +33,8 @@ function wait(ms: number) {
 //     app (see project_fatesaid_web_app_handoff memory). That funnel doesn't make
 //     sense once you're already inside the native app.
 //  2. 2026-09-11: replaced with a daily quota instead — 1 free question/day, 10/day
-//     for a SUBSCRIPTION_PRICE_LABEL subscriber. 2026-09-14: the paid side became a real,
+//     for a paid subscriber (see strings.qa.subscriptionPriceLabel for the price shown
+//     in the UI). 2026-09-14: the paid side became a real,
 //     working purchase flow (see handleSubscribe/handleRestore below and lib/purchases.ts)
 //     once a real App Store subscription product existed behind it.
 export default function QAScreen({

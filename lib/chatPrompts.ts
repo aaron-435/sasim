@@ -268,7 +268,7 @@ lines는 2~4개의 짧은 메신저 메시지 배열이다. 각 항목은 마크
  * naturally reaches TOTAL_TURNS. Used both to pick the prompt's phase
  * instruction and (in app/api/chat/route.ts) to decide whether to run the
  * extraction call — those two decisions must never disagree, or the model
- * ends the conversation while the route keeps waiting for turn 10.
+ * ends the conversation while the route keeps waiting for turn TOTAL_TURNS.
  */
 export function isFinalTurn(turnNumber: number, elapsedMinutes: number): boolean {
   return elapsedMinutes >= TIME_LIMIT_MINUTES || turnNumber >= TOTAL_TURNS;
@@ -339,7 +339,7 @@ export interface ExtractionMessage {
 }
 
 /**
- * Builds the (system, user) pair for the turn-7-completion JSON extraction call.
+ * Builds the (system, user) pair for the final-turn JSON extraction call.
  *
  * Design notes (2026-08-28 revision, per user feedback):
  *   - summary_quote is NOT a verbatim copy of any single chat line anymore (an

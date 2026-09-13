@@ -255,7 +255,8 @@ export const es: typeof ko = {
     paywallTitle: "Aquí continúa el informe detallado",
     paywallBody: "Análisis de citas de tu chat, análisis cruzado de saju y psicología, fortalezas y debilidades, entornos que encajan contigo y guías de comportamiento — el consejo central del informe continúa abajo.",
     paywallPriceSuffix: " para ver el informe completo",
-    paywallBundle: (remaining: number, price: string) => `Ve tus ${remaining} informes restantes juntos por ${price} (25% de descuento)`,
+    paywallBundle: (remaining: number, price: string, discountPercent: number) =>
+      `Ve tus ${remaining} informes restantes juntos por ${price} (${discountPercent}% de descuento)`,
     paywallComingSoon: "Los pagos estarán disponibles pronto",
   },
 };

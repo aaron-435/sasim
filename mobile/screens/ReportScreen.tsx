@@ -7,7 +7,7 @@ import { API_BASE_URL } from "../config";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
 import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
-import { formatUsd, REPORT_PRICE, remainingBundlePrice, TOTAL_MODULES } from "../lib/reportPricing";
+import { BUNDLE_DISCOUNT, formatUsd, REPORT_PRICE, remainingBundlePrice, TOTAL_MODULES } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
 import type { ChatExtract } from "./ChatScreen";
 import type { QuizDiagnosis } from "./QuizScreen";
@@ -855,7 +855,9 @@ function PaywallPage({ ownedCount, strings }: { ownedCount: number; strings: Dic
             {strings.report.paywallPriceSuffix}
           </Text>
           {ownedCount > 0 && (
-            <Text style={pageStyles.paywallBundle}>{strings.report.paywallBundle(remainingCount, formatUsd(remainingBundlePrice(ownedCount)))}</Text>
+            <Text style={pageStyles.paywallBundle}>
+              {strings.report.paywallBundle(remainingCount, formatUsd(remainingBundlePrice(ownedCount)), Math.round(BUNDLE_DISCOUNT * 100))}
+            </Text>
           )}
           <Text style={pageStyles.paywallComingSoon}>{strings.report.paywallComingSoon}</Text>
         </View>

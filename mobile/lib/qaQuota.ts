@@ -16,7 +16,6 @@ import { hasQaProEntitlement } from "./purchases";
 // becomes a real problem.
 export const FREE_DAILY_LIMIT = 1;
 export const PAID_DAILY_LIMIT = 10;
-export const SUBSCRIPTION_PRICE_LABEL = "월 $19.99";
 
 const STORAGE_PREFIX = "fatesaid_qa_usage_";
 
