@@ -6,6 +6,7 @@ import { BackHandler } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import ChatScreen, { type ChatExtract } from "./screens/ChatScreen";
 import CityScreen, { type SajuResult } from "./screens/CityScreen";
+import CompatibilityScreen from "./screens/CompatibilityScreen";
 import DobScreen from "./screens/DobScreen";
 import GenderScreen from "./screens/GenderScreen";
 import HomeScreen from "./screens/HomeScreen";
@@ -17,9 +18,11 @@ import QAScreen from "./screens/QAScreen";
 import QuizScreen, { type QuizDiagnosis } from "./screens/QuizScreen";
 import ReportScreen from "./screens/ReportScreen";
 import TobScreen from "./screens/TobScreen";
+import TypeScreen from "./screens/TypeScreen";
 import VerifyCodeScreen, { type VerifiedData } from "./screens/VerifyCodeScreen";
+import { scheduleDecadeTransitionNotification } from "./lib/decadeNotification";
 import { dominantElementFrom } from "./lib/elements";
-import { LocaleProvider, useLocale } from "./lib/i18n";
+import { LocaleProvider, useLocale, useStrings } from "./lib/i18n";
 import { configurePurchases } from "./lib/purchases";
 import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/saju";
 
@@ -33,7 +36,7 @@ import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/
 // pipeline — chained, not independently reachable from Home, since chat needs a quiz
 // diagnosis and report needs both quiz+chat context — same dependency web's
 // components/AppFlow.jsx has).
-type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report";
+type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
@@ -67,6 +70,7 @@ function AppContent() {
     Manrope_700Bold,
   });
   const { ready: localeReady, hasStoredLocale } = useLocale();
+  const strings = useStrings();
 
   // Stays null until the persisted locale check resolves, so the very first render
   // already lands on the right starting screen — LanguageScreen for a first launch,
@@ -93,6 +97,22 @@ function AppContent() {
       setStep(hasStoredLocale ? "intro" : "language");
     }
   }, [localeReady, hasStoredLocale, step]);
+
+  // (Re)schedules the one local "your decade fortune is about to shift" heads-up
+  // whenever a saju reading becomes available (fresh onboarding or a verify-code
+  // restore) — see lib/decadeNotification.ts for why this needs no push server.
+  useEffect(() => {
+    if (!homeData) return;
+    scheduleDecadeTransitionNotification(
+      strings,
+      homeData.sajuResult.decadeFortune,
+      homeData.sajuResult.currentAge,
+      homeData.sajuResult.birthYear,
+      homeData.sajuResult.birthMonth,
+      homeData.sajuResult.birthDay
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeData]);
 
   // Android hardware back button — a plain BackHandler listener, unrelated to the
   // window.history/popstate approach that broke web's "이전" button (see
@@ -228,6 +248,10 @@ function AppContent() {
                 fourPillars: result.fourPillars,
                 decadeFortune: result.decadeFortune,
                 currentAge: result.currentAge,
+                sajuType: result.sajuType ?? null,
+                birthYear: result.birthYear,
+                birthMonth: result.birthMonth,
+                birthDay: result.birthDay,
               },
             });
             setStep("home");
@@ -241,8 +265,27 @@ function AppContent() {
           nickname={homeData.nickname}
           dominantElement={homeData.sajuResult.dominantElement}
           elements={homeData.sajuResult.elements}
+          sajuType={homeData.sajuResult.sajuType ?? null}
           onOpenQA={() => setStep("qa")}
           onOpenQuiz={() => setStep("moduleSelect")}
+          onOpenType={() => setStep("type")}
+          onOpenCompatibility={() => setStep("compatibility")}
+        />
+      )}
+
+      {step === "type" && homeData?.sajuResult.sajuType && (
+        <TypeScreen
+          nickname={homeData.nickname}
+          sajuType={homeData.sajuResult.sajuType}
+          onBack={() => setStep("home")}
+        />
+      )}
+
+      {step === "compatibility" && homeData && (
+        <CompatibilityScreen
+          selfNickname={homeData.nickname}
+          selfDayMasterChar={(homeData.sajuResult.summary as { dayMaster?: { char?: string } } | undefined)?.dayMaster?.char ?? null}
+          onBack={() => setStep("home")}
         />
       )}
 

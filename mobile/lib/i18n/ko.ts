@@ -138,8 +138,46 @@ export const ko = {
     featureChatDescription: "심리테스트 완료 후 이용 가능",
     featureReportLabel: "심층 리포트",
     featureReportDescription: "심리테스트 완료 후 이용 가능",
+    featureCompatLabel: "궁합",
+    featureCompatDescription: "그 사람과 나, 어떤 흐름일까요",
     recentQuestionLabel: "최근 질문",
     recentQuestionEmpty: "아직 질문한 기록이 없어요 · 첫 질문 물어보기",
+    typeBadgeTap: "탭해서 자세히 보기",
+  },
+
+  sajuType: {
+    title: "나의 사주 유형",
+    archetypeLabel: "타고난 나",
+    modeLabel: "지금 나를 이끄는 기운",
+    shareButton: "결과 공유하기",
+    shareMessage: (nickname: string, typeName: string) =>
+      `${nickname}님의 사주 유형은 "${typeName}" — Fatesaid에서 확인해보세요.`,
+  },
+
+  decadeNotification: {
+    title: "새로운 대운이 다가오고 있어요",
+    body: (pillarLabel: string) => `일주일 뒤, 당신의 대운이 ${pillarLabel}(으)로 바뀝니다. Fatesaid에서 어떤 흐름인지 확인해보세요.`,
+  },
+
+  compatibility: {
+    heading: "궁합",
+    subtitle: "상대방의 생년월일을 입력하면 두 사람의 사주 흐름을 비교해드려요.",
+    nameLabel: "상대방 이름 (또는 애칭)",
+    namePlaceholder: "예: 지수",
+    dobHeading: "상대방 생년월일",
+    timeHeading: "상대방 태어난 시간 (선택)",
+    cityHeading: "상대방 출생 도시 (선택)",
+    cityPlaceholder: "모르면 비워두셔도 괜찮아요",
+    submitButton: "궁합 보기",
+    tryAgainButton: "다른 사람과 다시 보기",
+    shareButton: "결과 공유하기",
+    errorMissing: "상대방 생년월일과 성별을 입력해주세요.",
+    errorDefault: "궁합 계산에 실패했습니다.",
+    errorNetwork: "네트워크 오류로 궁합 계산에 실패했습니다.",
+    scoreLabel: "궁합 포인트",
+    otherTypeLabel: (name: string, typeName: string) => `${name}님의 유형 · ${typeName}`,
+    shareMessage: (selfName: string, otherName: string, score: number) =>
+      `${selfName} × ${otherName} 궁합 포인트 ${score}점 — Fatesaid에서 확인해보세요.`,
   },
 
   dailyInsight: {

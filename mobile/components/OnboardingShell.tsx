@@ -3,15 +3,16 @@ import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "rea
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "./PatternBackground";
 import { COLORS } from "../theme/colors";
+import { ONBOARDING_STEP_IDS } from "../lib/onboardingSteps";
 
-const TOTAL_STEPS = 5; // nickname, gender, dob, tob, city — matches components/OnboardingWizard.jsx's PROGRESS_STEP_IDS
+const TOTAL_STEPS = ONBOARDING_STEP_IDS.length;
 
 export default function OnboardingShell({
   stepIndex,
   onBack,
   children,
 }: {
-  stepIndex?: number; // 0-based index into the 5 progress steps; omit to hide the bar (e.g. the verify-code screen, which sits before step 1)
+  stepIndex?: number; // 0-based index into ONBOARDING_STEP_IDS; omit to hide the bar (e.g. the verify-code screen, which sits before step 1)
   onBack: () => void;
   children: React.ReactNode;
 }) {

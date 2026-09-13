@@ -1,13 +1,15 @@
-import { ArrowRight, Bot, Brain, FileText, HelpCircle, Lock, MessageCircleQuestion, Sparkles } from "lucide-react-native";
+import { ArrowRight, Bot, Brain, FileText, HelpCircle, Lock, MessageCircleQuestion, Sparkles, Users } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "../components/PatternBackground";
 import { ELEMENT_COLORS, ELEMENT_ORDER } from "../lib/elements";
-import { useStrings } from "../lib/i18n";
+import { useLocale, useStrings } from "../lib/i18n";
 import { getDailyInsight } from "../lib/i18n/dailyInsight";
 import { getLastQuestion, type LastQuestion } from "../lib/qaHistory";
+import type { SajuType } from "../lib/sajuType";
+import { formatSajuTypeName } from "../lib/sajuTypeContent";
 import { COLORS } from "../theme/colors";
 
 // "AI 상담" and "심층 리포트" stay non-interactive even though ChatScreen/ReportScreen
@@ -21,6 +23,7 @@ import { COLORS } from "../theme/colors";
 const FEATURE_META = [
   { key: "qa", icon: HelpCircle, ready: true },
   { key: "quiz", icon: Brain, ready: true },
+  { key: "compat", icon: Users, ready: true },
   { key: "chat", icon: Bot, ready: false },
   { key: "report", icon: FileText, ready: false },
 ] as const;
@@ -36,23 +39,31 @@ export default function HomeScreen({
   nickname,
   dominantElement,
   elements,
+  sajuType,
   onOpenQA,
   onOpenQuiz,
+  onOpenType,
+  onOpenCompatibility,
 }: {
   nickname: string;
   dominantElement: string | null;
   elements: Record<string, number> | null;
+  sajuType: SajuType | null;
   onOpenQA: () => void;
   onOpenQuiz: () => void;
+  onOpenType: () => void;
+  onOpenCompatibility: () => void;
 }) {
   const strings = useStrings();
+  const { locale } = useLocale();
   const FEATURES = [
     { ...FEATURE_META[0], label: strings.home.featureQaLabel, description: strings.home.featureQaDescription },
     { ...FEATURE_META[1], label: strings.home.featureQuizLabel, description: strings.home.featureQuizDescription },
-    { ...FEATURE_META[2], label: strings.home.featureChatLabel, description: strings.home.featureChatDescription },
-    { ...FEATURE_META[3], label: strings.home.featureReportLabel, description: strings.home.featureReportDescription },
+    { ...FEATURE_META[2], label: strings.home.featureCompatLabel, description: strings.home.featureCompatDescription },
+    { ...FEATURE_META[3], label: strings.home.featureChatLabel, description: strings.home.featureChatDescription },
+    { ...FEATURE_META[4], label: strings.home.featureReportLabel, description: strings.home.featureReportDescription },
   ];
-  const handlers: Record<string, () => void> = { qa: onOpenQA, quiz: onOpenQuiz };
+  const handlers: Record<string, () => void> = { qa: onOpenQA, quiz: onOpenQuiz, compat: onOpenCompatibility };
   const [lastQuestion, setLastQuestion] = useState<LastQuestion | null | undefined>(undefined);
 
   useEffect(() => {
@@ -111,13 +122,21 @@ export default function HomeScreen({
               <Text style={styles.brandLabel}>FATESAID</Text>
             </View>
             <Text style={styles.greeting}>{strings.home.greeting(nickname)}</Text>
-            {dominantElement && (
-              <View style={styles.elementBadge}>
-                <Text style={styles.elementBadgeText}>
-                  {strings.home.elementBadgePrefix} {strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement}
-                </Text>
-              </View>
-            )}
+            <View style={styles.badgeRow}>
+              {dominantElement && (
+                <View style={styles.elementBadge}>
+                  <Text style={styles.elementBadgeText}>
+                    {strings.home.elementBadgePrefix} {strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement}
+                  </Text>
+                </View>
+              )}
+              {sajuType && (
+                <Pressable style={styles.typeBadge} onPress={onOpenType}>
+                  <Text style={styles.typeBadgeText}>{formatSajuTypeName(locale, sajuType)}</Text>
+                </Pressable>
+              )}
+            </View>
+            {sajuType && <Text style={styles.typeBadgeTap}>{strings.home.typeBadgeTap}</Text>}
           </Animated.View>
 
           {elements && (
@@ -270,9 +289,14 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: COLORS.headline,
   },
+  badgeRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 12,
+  },
   elementBadge: {
     alignSelf: "flex-start",
-    marginTop: 12,
     backgroundColor: "rgba(111,169,139,0.12)",
     borderWidth: 1,
     borderColor: "rgba(111,169,139,0.35)",
@@ -284,6 +308,24 @@ const styles = StyleSheet.create({
     fontFamily: "Manrope_600SemiBold",
     fontSize: 12.5,
     color: COLORS.gold,
+  },
+  typeBadge: {
+    alignSelf: "flex-start",
+    backgroundColor: COLORS.gold,
+    borderRadius: 999,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+  },
+  typeBadgeText: {
+    fontFamily: "Manrope_600SemiBold",
+    fontSize: 12.5,
+    color: COLORS.ctaText,
+  },
+  typeBadgeTap: {
+    fontFamily: "Manrope_400Regular",
+    fontSize: 11,
+    color: COLORS.footer,
+    marginTop: 6,
   },
   section: {
     marginBottom: 28,

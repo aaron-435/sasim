@@ -26,6 +26,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
+import { classifySajuType } from "@/lib/sajuType";
 
 function generateCode(): string {
   // 6-digit numeric, easy to type on a phone keyboard after installing the app.
@@ -116,10 +117,13 @@ export async function GET(req: NextRequest) {
     // 1회용 — 리텀 성공 즉시 코드를 비워서 재사용을 막는다.
     await supabaseAdmin.from("sessions").update({ verify_code: null }).eq("id", session.id);
 
+    const dayMasterChar = (sajuRow?.summary as { dayMaster?: { char?: string } } | undefined)?.dayMaster?.char;
+    const sajuType = dayMasterChar && sajuRow?.elements ? classifySajuType(dayMasterChar, sajuRow.elements) : null;
+
     return NextResponse.json({
       nickname: session.nickname,
       track: session.track,
-      sajuResult: sajuRow,
+      sajuResult: sajuRow ? { ...sajuRow, saju_type: sajuType } : sajuRow,
     });
   } catch (err) {
     console.error("[api/verification-code] GET failed", err);

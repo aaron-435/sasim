@@ -4,6 +4,7 @@ import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { useStrings } from "../lib/i18n";
+import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 
 const MAX_LENGTH = 20;
@@ -24,7 +25,7 @@ export default function NicknameScreen({
   const canProceed = value.trim().length > 0;
 
   return (
-    <OnboardingShell stepIndex={0} onBack={onBack}>
+    <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.nickname} onBack={onBack}>
       <View style={styles.top}>
         <Text style={styles.heading}>{strings.nickname.heading}</Text>
         <Text style={styles.subtext}>{strings.nickname.subtext}</Text>

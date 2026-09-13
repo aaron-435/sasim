@@ -115,8 +115,46 @@ export const es: typeof ko = {
     featureChatDescription: "Disponible al terminar el test psicológico",
     featureReportLabel: "Informe Detallado",
     featureReportDescription: "Disponible al terminar el test psicológico",
+    featureCompatLabel: "Compatibilidad",
+    featureCompatDescription: "Descubre cómo fluyen tu carta y la de otra persona",
     recentQuestionLabel: "Pregunta Reciente",
     recentQuestionEmpty: "Aún no has preguntado nada · Haz tu primera pregunta",
+    typeBadgeTap: "Toca para ver más",
+  },
+
+  sajuType: {
+    title: "Tu Tipo de Saju",
+    archetypeLabel: "Quién eres de nacimiento",
+    modeLabel: "Qué te impulsa ahora mismo",
+    shareButton: "Compartir resultado",
+    shareMessage: (nickname: string, typeName: string) =>
+      `El tipo de saju de ${nickname} es "${typeName}" — descubre el tuyo en Fatesaid.`,
+  },
+
+  decadeNotification: {
+    title: "Se acerca una nueva década de fortuna",
+    body: (pillarLabel: string) => `En una semana, tu década de fortuna cambia a ${pillarLabel}. Descubre qué significa en Fatesaid.`,
+  },
+
+  compatibility: {
+    heading: "Compatibilidad",
+    subtitle: "Ingresa la fecha de nacimiento de la otra persona para comparar cómo fluyen sus dos cartas.",
+    nameLabel: "Su nombre (o apodo)",
+    namePlaceholder: "ej. Jamie",
+    dobHeading: "Su fecha de nacimiento",
+    timeHeading: "Su hora de nacimiento (opcional)",
+    cityHeading: "Su ciudad de nacimiento (opcional)",
+    cityPlaceholder: "Déjalo en blanco si no lo sabes",
+    submitButton: "Ver compatibilidad",
+    tryAgainButton: "Probar con otra persona",
+    shareButton: "Compartir resultado",
+    errorMissing: "Ingresa su fecha de nacimiento y género.",
+    errorDefault: "No se pudo calcular la compatibilidad.",
+    errorNetwork: "Un error de red impidió el cálculo.",
+    scoreLabel: "Puntos de compatibilidad",
+    otherTypeLabel: (name: string, typeName: string) => `Tipo de ${name} · ${typeName}`,
+    shareMessage: (selfName: string, otherName: string, score: number) =>
+      `${selfName} × ${otherName} compatibilidad: ${score} puntos — descubre la tuya en Fatesaid.`,
   },
 
   dailyInsight: {

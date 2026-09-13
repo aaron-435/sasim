@@ -5,6 +5,7 @@ import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { calculateAge, MIN_AGE } from "../lib/age";
 import { useStrings } from "../lib/i18n";
+import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { getZodiac, toISODateString } from "../lib/zodiac";
 
@@ -42,7 +43,7 @@ export default function DobScreen({
   }
 
   return (
-    <OnboardingShell stepIndex={2} onBack={onBack}>
+    <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.dob} onBack={onBack}>
       <View style={styles.top}>
         <Text style={styles.heading}>{strings.dob.heading}</Text>
         <View style={styles.row}>

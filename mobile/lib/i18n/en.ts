@@ -115,8 +115,46 @@ export const en: typeof ko = {
     featureChatDescription: "Available after finishing the psych test",
     featureReportLabel: "In-Depth Report",
     featureReportDescription: "Available after finishing the psych test",
+    featureCompatLabel: "Compatibility",
+    featureCompatDescription: "See how you and someone else flow together",
     recentQuestionLabel: "Recent Question",
     recentQuestionEmpty: "No questions yet · Ask your first one",
+    typeBadgeTap: "Tap to see more",
+  },
+
+  sajuType: {
+    title: "Your Saju Type",
+    archetypeLabel: "Who you're born as",
+    modeLabel: "What's driving you right now",
+    shareButton: "Share result",
+    shareMessage: (nickname: string, typeName: string) =>
+      `${nickname}'s saju type is "${typeName}" — check yours on Fatesaid.`,
+  },
+
+  decadeNotification: {
+    title: "A new decade fortune is approaching",
+    body: (pillarLabel: string) => `In one week, your decade fortune shifts to ${pillarLabel}. See what that means on Fatesaid.`,
+  },
+
+  compatibility: {
+    heading: "Compatibility",
+    subtitle: "Enter the other person's birth date to compare how your two charts flow together.",
+    nameLabel: "Their name (or nickname)",
+    namePlaceholder: "e.g. Jamie",
+    dobHeading: "Their birth date",
+    timeHeading: "Their birth time (optional)",
+    cityHeading: "Their birth city (optional)",
+    cityPlaceholder: "Leave blank if you don't know",
+    submitButton: "See compatibility",
+    tryAgainButton: "Try someone else",
+    shareButton: "Share result",
+    errorMissing: "Please enter their birth date and gender.",
+    errorDefault: "Failed to calculate compatibility.",
+    errorNetwork: "A network error prevented the calculation.",
+    scoreLabel: "Compatibility points",
+    otherTypeLabel: (name: string, typeName: string) => `${name}'s type · ${typeName}`,
+    shareMessage: (selfName: string, otherName: string, score: number) =>
+      `${selfName} × ${otherName} compatibility: ${score} points — check yours on Fatesaid.`,
   },
 
   dailyInsight: {

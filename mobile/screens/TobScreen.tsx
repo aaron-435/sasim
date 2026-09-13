@@ -4,6 +4,7 @@ import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { useStrings } from "../lib/i18n";
+import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { to24HourString } from "../lib/zodiac";
 
@@ -40,7 +41,7 @@ export default function TobScreen({
   }
 
   return (
-    <OnboardingShell stepIndex={3} onBack={onBack}>
+    <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.tob} onBack={onBack}>
       <View style={styles.top}>
         <View style={styles.headerRow}>
           <Text style={styles.heading}>{strings.tob.heading}</Text>

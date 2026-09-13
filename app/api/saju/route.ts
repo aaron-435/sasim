@@ -26,6 +26,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { calculateSaju, SazuApiError } from "@/lib/sazu";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
+import { classifySajuType } from "@/lib/sajuType";
 
 interface SajuRequestBody {
   birthYear?: number;
@@ -110,6 +111,9 @@ export async function POST(req: NextRequest) {
 
     await saveSajuResult(sessionId, track, body, result);
 
+    const dayMasterChar = (result.summary as { dayMaster?: { char?: string } } | undefined)?.dayMaster?.char;
+    const sajuType = dayMasterChar ? classifySajuType(dayMasterChar, result.elements) : null;
+
     return NextResponse.json({
       elements: result.elements,
       dominantElement: result.dominantElement,
@@ -120,6 +124,7 @@ export async function POST(req: NextRequest) {
       timezoneNote: result.timezoneNote,
       isSandboxSample: result.isSandboxSample,
       resolvedLocation: result.resolvedLocation,
+      sajuType,
     });
   } catch (err) {
     if (err instanceof SazuApiError) {

@@ -25,7 +25,9 @@
     },
     "plugins": [
       "expo-font",
-      "expo-dev-client"
+      "expo-dev-client",
+      "expo-sharing",
+      "expo-notifications"
     ]
   }
 }

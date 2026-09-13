@@ -5,6 +5,8 @@ import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
+import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
+import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
 
 type CityResult = { id: string; cityDisplay: string; countryDisplay: string };
@@ -15,6 +17,10 @@ export type SajuResult = {
   fourPillars: unknown;
   decadeFortune: unknown;
   currentAge: number;
+  sajuType: SajuType | null;
+  birthYear: number;
+  birthMonth: number;
+  birthDay: number;
 };
 
 export default function CityScreen({
@@ -101,7 +107,7 @@ export default function CityScreen({
         setError(json.error || strings.city.errorDefault);
         return;
       }
-      onSubmitted(json);
+      onSubmitted({ ...json, birthYear: birthPayload.birthYear, birthMonth: birthPayload.birthMonth, birthDay: birthPayload.birthDay });
     } catch {
       setError(strings.city.errorNetwork);
     } finally {
@@ -110,7 +116,7 @@ export default function CityScreen({
   }
 
   return (
-    <OnboardingShell stepIndex={4} onBack={onBack}>
+    <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.city} onBack={onBack}>
       <View style={styles.top}>
         <Text style={styles.heading}>{strings.city.heading}</Text>
         <TextInput
