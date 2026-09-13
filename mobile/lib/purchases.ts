@@ -8,7 +8,11 @@ import { REVENUECAT_API_KEY } from "../config";
  * RevenueCat SDK wrapper, added 2026-09-13 once the RevenueCat project
  * ("fatesaid") and its first entitlement existed. Only the Q&A
  * subscription is wired here — QA_PRO_ENTITLEMENT_ID must match
- * whatever the RevenueCat dashboard's entitlement is actually named.
+ * whatever the RevenueCat dashboard's entitlement is actually named
+ * (it's "qa_premium" there, not "qa_pro" — the dashboard's setup wizard
+ * ended up naming it differently than intended; fixing the code to
+ * match the dashboard rather than the other way around, since
+ * entitlement identifiers aren't renameable after creation).
  *
  * Report unlocks (11 separate one-time-purchase products, one per
  * module) are NOT covered here — those products don't exist in
@@ -26,7 +30,7 @@ import { REVENUECAT_API_KEY } from "../config";
  * ------------------------------------------------------------------
  */
 
-export const QA_PRO_ENTITLEMENT_ID = "qa_pro";
+export const QA_PRO_ENTITLEMENT_ID = "qa_premium";
 
 let configured = false;
 
