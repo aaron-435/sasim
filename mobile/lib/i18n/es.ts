@@ -173,6 +173,8 @@ export const es: typeof ko = {
     errorNetwork: "Un error de red impidió obtener una respuesta del chatbot.",
     timeUpLabel: "Terminando",
     finishEarlyButton: "Ya compartí suficiente",
+    checkpointContinueButton: "Quiero seguir hablando",
+    checkpointFinishButton: "Terminemos aquí",
   },
 
   qa: {

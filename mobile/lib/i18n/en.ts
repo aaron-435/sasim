@@ -173,6 +173,8 @@ export const en: typeof ko = {
     errorNetwork: "A network error kept us from getting a chatbot response.",
     timeUpLabel: "Wrapping up",
     finishEarlyButton: "I've shared enough",
+    checkpointContinueButton: "I'd like to keep going",
+    checkpointFinishButton: "Let's wrap up here",
   },
 
   qa: {

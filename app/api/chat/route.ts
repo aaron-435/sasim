@@ -1,17 +1,17 @@
 /**
  * app/api/chat/route.ts
  * ------------------------------------------------------------------
- * Route Handler the ChatScreen calls once per bot turn (1-7), including
- * turn 1 (fired automatically on mount, before any user message — see
- * lib/chatPrompts.ts's opener instruction). Keeps OPENAI_API_KEY
- * server-side only.
+ * Route Handler the ChatScreen calls once per bot turn (1-TOTAL_TURNS, see
+ * lib/chatPrompts.ts), including turn 1 (fired automatically on mount,
+ * before any user message — see lib/chatPrompts.ts's opener instruction).
+ * Keeps OPENAI_API_KEY server-side only.
  *
  * Request body:
  *   { turnNumber, sessionStartedAt, context: ChatSessionContext, history: ChatMessage[] }
  *
  * Response body:
  *   { lines: string[] }
- *   { lines, extract: ChatExtract }  — only when turnNumber >= 7
+ *   { lines, extract: ChatExtract }  — only when isFinalTurn() is true (turnNumber >= TOTAL_TURNS, or the client jumped straight there via the CHECKPOINT_TURN early-finish path)
  *   or { error: string } with a non-200 status
  * ------------------------------------------------------------------
  */

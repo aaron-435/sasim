@@ -19,11 +19,13 @@ import { findTopAnswers } from "../lib/quiz/quizProfile";
 import type { QuizDiagnosis } from "./QuizScreen";
 import { COLORS } from "../theme/colors";
 
-// TOTAL_TURNS/TIME_LIMIT_MINUTES mirror lib/chatPrompts.ts's exports (web's server-side
-// prompt builder) — that file isn't ported here since prompt building stays server-side;
-// these two numbers are the only pieces the client needs, for the countdown display.
-const TOTAL_TURNS = 10;
-const TIME_LIMIT_MINUTES = 15;
+// TOTAL_TURNS/TIME_LIMIT_MINUTES/CHECKPOINT_TURN mirror lib/chatPrompts.ts's exports
+// (web's server-side prompt builder) — that file isn't ported here since prompt building
+// stays server-side; these are the only pieces the client needs, for the countdown display
+// and for knowing which turn to show the continue/wrap-up choice after.
+const TOTAL_TURNS = 20;
+const TIME_LIMIT_MINUTES = 20;
+const CHECKPOINT_TURN = 10;
 const EARLY_FINISH_SECONDS = 7 * 60;
 
 type Message = { role: "bot" | "user"; text: string };
@@ -54,6 +56,7 @@ export default function ChatScreen({
   const [isTyping, setIsTyping] = useState(false);
   const [errorText, setErrorText] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [checkpointDismissed, setCheckpointDismissed] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   const scrollRef = useRef<ScrollView>(null);
   const sessionStartedAt = useRef(Date.now()).current;
@@ -176,14 +179,30 @@ export default function ChatScreen({
     requestNextTurn(TOTAL_TURNS, turnHistoryRef.current);
   }
 
+  // The mid-conversation checkpoint (see lib/chatPrompts.ts's CHECKPOINT_TURN doc comment)
+  // — right after that turn's reply, offer an explicit choice instead of the normal text
+  // input. "마무리" reuses the exact same requestNextTurn(TOTAL_TURNS, ...) path as the
+  // pre-existing "다 얘기했어요" button, jumping straight to the closing turn. "계속" just
+  // dismisses the choice so the normal input reappears — checkpointDismissed only ever
+  // needs to flip true once, since CHECKPOINT_TURN is a single fixed turn number.
+  function handleContinueAtCheckpoint() {
+    setCheckpointDismissed(true);
+  }
+
+  function handleWrapUpAtCheckpoint() {
+    if (isTyping || done) return;
+    requestNextTurn(TOTAL_TURNS, turnHistoryRef.current);
+  }
+
   const elapsedSeconds = Math.max(0, Math.floor((now - sessionStartedAt) / 1000));
   const remainingSeconds = Math.max(0, TIME_LIMIT_MINUTES * 60 - elapsedSeconds);
   const timeUp = remainingSeconds <= 0;
   const countdownLabel = timeUp
     ? strings.chat.timeUpLabel
     : `${String(Math.floor(remainingSeconds / 60)).padStart(2, "0")}:${String(remainingSeconds % 60).padStart(2, "0")}`;
-  const canFinishEarly = !done && !isTyping && !errorText && elapsedSeconds >= EARLY_FINISH_SECONDS;
-  const showTextInput = !isTyping && !done && !errorText;
+  const showCheckpoint = turn === CHECKPOINT_TURN && !checkpointDismissed && !done && !isTyping && !errorText;
+  const canFinishEarly = !done && !isTyping && !errorText && !showCheckpoint && elapsedSeconds >= EARLY_FINISH_SECONDS;
+  const showTextInput = !isTyping && !done && !errorText && !showCheckpoint;
 
   return (
     <SafeAreaView style={styles.root}>
@@ -229,6 +248,17 @@ export default function ChatScreen({
             </View>
           )}
         </ScrollView>
+
+        {showCheckpoint && (
+          <View style={styles.checkpointRow}>
+            <Pressable style={styles.checkpointButtonSecondary} onPress={handleWrapUpAtCheckpoint}>
+              <Text style={styles.checkpointButtonSecondaryLabel}>{strings.chat.checkpointFinishButton}</Text>
+            </Pressable>
+            <Pressable style={styles.checkpointButtonPrimary} onPress={handleContinueAtCheckpoint}>
+              <Text style={styles.checkpointButtonPrimaryLabel}>{strings.chat.checkpointContinueButton}</Text>
+            </Pressable>
+          </View>
+        )}
 
         {canFinishEarly && (
           <View style={styles.finishRow}>
@@ -433,6 +463,43 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingBottom: 10,
+  },
+  checkpointRow: {
+    flexDirection: "row",
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 20,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+  },
+  checkpointButtonPrimary: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: COLORS.gold,
+    borderRadius: 999,
+    paddingVertical: 13,
+  },
+  checkpointButtonPrimaryLabel: {
+    fontFamily: "Manrope_600SemiBold",
+    fontSize: 13.5,
+    color: COLORS.ctaText,
+  },
+  checkpointButtonSecondary: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.03)",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 999,
+    paddingVertical: 13,
+  },
+  checkpointButtonSecondaryLabel: {
+    fontFamily: "Manrope_500Medium",
+    fontSize: 13.5,
+    color: "#C7C3D1",
   },
   finishButton: {
     flexDirection: "row",
