@@ -526,6 +526,7 @@ function QuizAnalysisPage({
 }
 
 function OhengBarsPage({ title, elements, dominantKey }: { title: string; elements: Record<string, number>; dominantKey: string }) {
+  const strings = useStrings();
   return (
     <PageShell>
       <Text style={pageStyles.dataTitle}>{title}</Text>
@@ -534,7 +535,7 @@ function OhengBarsPage({ title, elements, dominantKey }: { title: string; elemen
           <View key={key} style={pageStyles.barRow}>
             <View style={pageStyles.barLabelRow}>
               <Text style={pageStyles.barLabel}>
-                {key}
+                {strings.common.elementLabels[key]}
                 {key === dominantKey ? " ·" : ""}
               </Text>
               <Text style={pageStyles.barLabel}>{Math.round(elements[key] ?? 0)}%</Text>
