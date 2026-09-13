@@ -122,6 +122,16 @@ export function localizeQuestions(
 
 export type IntensityTier = "약함" | "보통" | "강함" | "매우 강함";
 
+/** Display label for an IntensityTier, per locale — IntensityTier's own values
+ * stay Korean internally (they're used as object keys throughout this file),
+ * but any UI that shows a tier directly (e.g. ReportScreen's dimension bars)
+ * needs to render it in the user's locale instead of the raw Korean value. */
+export const INTENSITY_LABEL: Record<Locale, Record<IntensityTier, string>> = {
+  ko: { "약함": "약함", "보통": "보통", "강함": "강함", "매우 강함": "매우 강함" },
+  en: { "약함": "Weak", "보통": "Moderate", "강함": "Strong", "매우 강함": "Very Strong" },
+  es: { "약함": "Débil", "보통": "Moderado", "강함": "Fuerte", "매우 강함": "Muy Fuerte" },
+};
+
 export interface DimensionResult {
   dimension: string;
   rawScore: number;

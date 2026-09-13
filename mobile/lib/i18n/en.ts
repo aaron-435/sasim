@@ -225,7 +225,7 @@ export const en: typeof ko = {
     disclaimer2: "Please treat it as a reference for fun and self-understanding.",
     paywallTitle: "The in-depth report continues here",
     paywallBody: "Chat-quote analysis, saju × psychology cross-analysis, strengths and weaknesses, environments that fit you, and behavior guides — the report's core advice continues below.",
-    paywallPriceSuffix: "to unlock the full report",
+    paywallPriceSuffix: " to unlock the full report",
     paywallBundle: (remaining: number, price: string) => `See your remaining ${remaining} reports together for ${price} (25% off)`,
     paywallComingSoon: "Payments are coming soon",
   },

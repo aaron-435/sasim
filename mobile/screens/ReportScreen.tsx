@@ -5,6 +5,7 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
+import { INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
 import { formatUsd, REPORT_PRICE, remainingBundlePrice, TOTAL_MODULES } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
@@ -215,7 +216,7 @@ export default function ReportScreen({
                 <View style={styles.barLabelRow}>
                   <Text style={styles.barLabel}>{quizDiagnosis.dimensionShortNames?.[r.dimension] ?? r.dimension}</Text>
                   <Text style={styles.barLabel}>
-                    {Math.round(r.percentOfMax)}% · {r.intensity}
+                    {Math.round(r.percentOfMax)}% · {INTENSITY_LABEL[locale]?.[r.intensity] ?? r.intensity}
                   </Text>
                 </View>
                 <View style={styles.barTrack}>
