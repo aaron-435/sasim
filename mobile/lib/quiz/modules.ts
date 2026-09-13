@@ -59,6 +59,14 @@ import { localizeQuestions, type ModuleQuestion, type QuestionTextOverride } fro
 
 export interface ModuleDefinition {
   id: string;
+  /** Which of buildReportPrompt()'s/buildChatSystemPrompt()'s two broad case-study framings
+   * (관계·연애 vs 일·커리어) fits this module's actual subject best. There's no dedicated
+   * track-picker screen in onboarding (see mobile/screens/CityScreen.tsx's own note — that
+   * toggle was deferred, same as web's components/OnboardingWizard.jsx), so this is the
+   * real signal ChatScreen/ReportScreen use instead of a hardcoded guess. A crude binary
+   * for an 11-module app, but strictly better than always defaulting to "romance"
+   * regardless of what the user actually picked. */
+  track: "romance" | "career";
   title: Record<Locale, string>;
   subtitle: Record<Locale, string>;
   /** Korean question bank — the single source of truth for id/dimension/format/score. */
@@ -75,6 +83,7 @@ export interface ModuleDefinition {
 export const MODULES: ModuleDefinition[] = [
   {
     id: "module1",
+    track: "romance",
     title: { ko: "모듈 1 · 연애 & 애착", en: "Module 1 · Love & Attachment", es: "Módulo 1 · Amor y Apego" },
     subtitle: { ko: "불안/회피 애착 성향", en: "Anxious/Avoidant Attachment Tendencies", es: "Tendencias de Apego Ansioso/Evitativo" },
     questions: MODULE1_QUESTIONS,
@@ -90,6 +99,7 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module2",
+    track: "career",
     title: { ko: "모듈 2 · 돈", en: "Module 2 · Money", es: "Módulo 2 · Dinero" },
     subtitle: { ko: "결핍공포 / 과시욕 / 회피", en: "Scarcity Fear / Ostentation / Avoidance", es: "Miedo a la Carencia / Ostentación / Evitación" },
     questions: MODULE2_QUESTIONS,
@@ -105,6 +115,7 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module3",
+    track: "career",
     title: { ko: "모듈 3 · 번아웃", en: "Module 3 · Burnout", es: "Módulo 3 · Burnout" },
     subtitle: { ko: "소진 / 냉소 / 효능감저하", en: "Exhaustion / Cynicism / Reduced Efficacy", es: "Agotamiento / Cinismo / Baja Eficacia" },
     questions: MODULE3_QUESTIONS,
@@ -120,6 +131,7 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module4",
+    track: "career",
     title: { ko: "모듈 4 · 가면", en: "Module 4 · The Mask", es: "Módulo 4 · La Máscara" },
     subtitle: { ko: "이미지관리 / 은폐 / 관계피로", en: "Image Management / Concealment / Social Fatigue", es: "Gestión de Imagen / Ocultamiento / Fatiga Social" },
     questions: MODULE4_QUESTIONS,
@@ -135,6 +147,7 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module5",
+    track: "career",
     title: { ko: "모듈 5 · 실행력", en: "Module 5 · Follow-Through", es: "Módulo 5 · Capacidad de Ejecución" },
     subtitle: { ko: "완벽주의 / 회피 / 선택마비", en: "Perfectionism / Avoidance / Decision Paralysis", es: "Perfeccionismo / Evitación / Parálisis de Decisión" },
     questions: MODULE5_QUESTIONS,
@@ -150,6 +163,7 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module6",
+    track: "career",
     title: { ko: "모듈 6 · 분노", en: "Module 6 · Anger", es: "Módulo 6 · Ira" },
     subtitle: { ko: "억압 / 폭발 / 반추", en: "Suppression / Explosion / Rumination", es: "Supresión / Explosión / Rumiación" },
     questions: MODULE6_QUESTIONS,
@@ -165,6 +179,7 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module7",
+    track: "career",
     title: { ko: "모듈 7 · 예민함", en: "Module 7 · Sensitivity", es: "Módulo 7 · Sensibilidad" },
     subtitle: { ko: "자극과부하 / 심미적민감성 / 낮은감각역치", en: "Overstimulation / Aesthetic Sensitivity / Low Sensory Threshold", es: "Sobreestimulación / Sensibilidad Estética / Umbral Sensorial Bajo" },
     questions: MODULE7_QUESTIONS,
@@ -180,6 +195,7 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module8",
+    track: "career",
     title: { ko: "모듈 8 · 수면", en: "Module 8 · Sleep", es: "Módulo 8 · Sueño" },
     subtitle: { ko: "인지적각성 / 신체적각성 / 무의식누수", en: "Cognitive Arousal / Somatic Arousal / Subconscious Leak", es: "Activación Cognitiva / Activación Corporal / Fuga Subconsciente" },
     questions: MODULE8_QUESTIONS,
@@ -195,6 +211,7 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module9",
+    track: "romance",
     title: { ko: "모듈 9 · 원가족", en: "Module 9 · Family of Origin", es: "Módulo 9 · Familia de Origen" },
     subtitle: { ko: "정서적얽힘 / 정서적단절 / 역할부담", en: "Enmeshment / Emotional Cutoff / Parentification", es: "Enmarañamiento / Corte Emocional / Parentalización" },
     questions: MODULE9_QUESTIONS,
@@ -210,6 +227,7 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module10",
+    track: "career",
     title: { ko: "모듈 10 · 몰입", en: "Module 10 · Focus", es: "Módulo 10 · Concentración" },
     subtitle: { ko: "산만함 / 과집중 / 충동성", en: "Distractibility / Hyperfocus / Impulsivity", es: "Distractibilidad / Hiperconcentración / Impulsividad" },
     questions: MODULE10_QUESTIONS,
@@ -225,6 +243,7 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module11",
+    track: "career",
     title: { ko: "모듈 11 · 본능", en: "Module 11 · Instinct", es: "Módulo 11 · Instinto" },
     subtitle: { ko: "표현억제 / 즉흥성억제 / 확신부족", en: "Expression Suppression / Suppressed Spontaneity / Lack of Confidence", es: "Supresión de la Expresión / Espontaneidad Reprimida / Falta de Confianza" },
     questions: MODULE11_QUESTIONS,

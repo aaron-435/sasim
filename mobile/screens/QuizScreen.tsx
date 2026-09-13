@@ -30,6 +30,9 @@ const ELEMENT_COLORS: Record<string, string> = {
 export type QuizDiagnosis = {
   moduleId: string;
   moduleTitle: string;
+  /** From this module's ModuleDefinition.track (see lib/quiz/modules.ts) — replaces an
+   * earlier hardcoded "romance" that ChatScreen/ReportScreen sent regardless of module. */
+  track: "romance" | "career";
   answers: QuizAnswerRecord[];
   dimensionResults: DimensionResult[];
   classification: ProfileClassification;
@@ -118,6 +121,7 @@ export default function QuizScreen({
     return {
       moduleId: moduleDef.id,
       moduleTitle,
+      track: moduleDef.track,
       answers,
       dimensionResults,
       classification,

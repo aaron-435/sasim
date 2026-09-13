@@ -111,7 +111,7 @@ export default function ChatScreen({
             turnNumber: nextTurn,
             sessionStartedAt,
             context: {
-              track: "romance",
+              track: quizDiagnosis.track,
               sajuElements: quizDiagnosis.elements ?? { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 },
               dominantSajuElement: quizDiagnosis.dominantElement ?? "wood",
               psychTestType: quizDiagnosis.typeInfo?.title ?? "",

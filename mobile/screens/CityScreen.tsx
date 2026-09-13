@@ -89,7 +89,11 @@ export default function CityScreen({
           birthCity: selected.cityDisplay,
           birthCityId: selected.id,
           isLunar: false,
-          track: "romance",
+          // No track here — this step runs before the user has picked a psych module
+          // (see mobile/lib/quiz/modules.ts's ModuleDefinition.track), so it's genuinely
+          // unknown yet. /api/saju's track is optional and only used for a best-effort
+          // session-row save (see app/api/saju/route.ts) — sending nothing is more honest
+          // than a hardcoded guess, and doesn't affect the saju calculation itself.
         }),
       });
       const json = await res.json();

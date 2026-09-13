@@ -150,7 +150,7 @@ export default function ReportScreen({
           sessionId,
           context: {
             nickname,
-            track: "romance",
+            track: quizDiagnosis.track,
             elements: resolvedElements,
             decadeFortune,
             currentAge,
