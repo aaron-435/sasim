@@ -9,7 +9,7 @@
  */
 
 import type { Locale } from "../i18n/types";
-import type { ModuleQuestion } from "./quizProfile";
+import type { ModuleQuestion, QuestionTextOverride } from "./quizProfile";
 
 export const MODULE11_QUESTIONS: ModuleQuestion[] = [
   // ---- 표현억제 (Expression Suppression) — E1-E10 ----
@@ -100,6 +100,75 @@ export const MODULE11_QUESTIONS: ModuleQuestion[] = [
     { label: "매력 있다고 느낀다", score: 0 }, { label: "괜찮다고 느낀다", score: 1 },
     { label: "부족하다고 느낄 때가 많다", score: 2 }, { label: "매력을 잘 못 느낀다", score: 3 } ] },
 ];
+
+// Display-text-only translations of MODULE11_QUESTIONS above — see MODULE1's
+// equivalent comment in module1Attachment.ts for why id/dimension/format/
+// score aren't duplicated per locale.
+export const MODULE11_QUESTIONS_EN: Record<string, QuestionTextOverride> = {
+  E1: { prompt: "How hard is it for you to express yourself freely in front of people?", minLabel: "Not hard at all", maxLabel: "Very hard" },
+  E2: { prompt: "When someone compliments you as attractive?", optionLabels: ["I take it in naturally", "I take it in happily", "It's awkward, so I brush it off", "I deny it or dodge it"] },
+  E3: { prompt: "When you're the center of attention?", optionLabels: ["I enjoy it", "I don't think much of it", "I become self-conscious", "It's uncomfortable and I shrink back"] },
+  E4: { prompt: "In a setting where you're expected to dance or move freely?", optionLabels: ["I have a great time with it", "I enjoy it reasonably", "I'm cautious and watch how others react", "I want to avoid it as much as possible"] },
+  E5: { prompt: "When expressing interest in someone you like?", optionLabels: ["I express it naturally", "I express it carefully", "It's quite hard to express", "I mostly end up hiding it"] },
+  E6: { prompt: "When it comes to trying a bold outfit or style?", optionLabels: ["I try it freely", "I try it to some degree", "I end up worrying what others think", "I can't do it because I'm afraid of others' eyes"] },
+  E7: { prompt: "How comfortable are you laughing or making sounds spontaneously?", optionLabels: ["Completely uninhibited", "Mostly comfortable", "I become self-conscious", "I try to hold it back as much as possible"] },
+  E8: { prompt: "When you imagine yourself radiating charm?", optionLabels: ["I imagine it naturally", "I imagine it occasionally", "It feels awkward and unfamiliar", "Even imagining it is embarrassing"] },
+  E9: { prompt: "What's your first impression like in front of someone new?", optionLabels: ["I show myself exactly as I am", "I show myself a bit cautiously", "I show a heavily restrained version of myself", "I try my best to just seem inoffensive"] },
+  E10: { prompt: "How do you feel about your own charm points?", optionLabels: ["I know them well and feel confident", "I know them to some degree", "I'm not really sure", "I wonder if I even have any"] },
+  V1: { prompt: "How suppressed is your ability to freely express emotion through your body (laughter, gestures, etc.)?", minLabel: "Not suppressed at all (I express freely)", maxLabel: "Very suppressed" },
+  V2: { prompt: "When exciting music comes on?", optionLabels: ["My body moves on its own", "I tend to get into the rhythm", "I enjoy it only internally", "I end up staying still"] },
+  V3: { prompt: "When you get a spontaneous invitation (a sudden trip out, etc.)?", optionLabels: ["I say yes right away", "I go along after thinking it over", "It feels like a burden without a plan", "I mostly avoid spontaneous things"] },
+  V4: { prompt: "When an emotion overwhelms you?", optionLabels: ["It comes out naturally through my body", "It shows to some degree", "I make an effort to hold it in", "I suppress it without a trace"] },
+  V5: { prompt: "What's your laugh or way of expressing yourself like?", optionLabels: ["Big and free", "Reasonably natural", "On the cautious side", "Heavily restrained"] },
+  V6: { prompt: "How do you approach unfamiliar activities (a spontaneous trip, a new hobby, etc.)?", optionLabels: ["I dive in actively", "I try it if I'm interested", "I need time to get used to it", "I only stick to what I'm familiar with"] },
+  V7: { prompt: "How much freedom do you feel through physical activities (exercise, dance, etc.)?", optionLabels: ["A lot", "Some", "Not much", "I actually feel more tense"] },
+  V8: { prompt: "How comfortable are you saying or acting on a sudden thought right away?", optionLabels: ["Completely uninhibited", "Mostly comfortable", "I end up hesitating", "I almost can't do it"] },
+  V9: { prompt: "How would you describe your energy level?", optionLabels: ["Overflowing with liveliness", "Fairly energetic", "On the calm side", "I don't show my energy much"] },
+  V10: { prompt: "How many moments in your day do you feel fully, freely \"yourself\"?", optionLabels: ["Many", "Some", "Rare", "I feel like I have almost none"] },
+  S1: { prompt: "How much do you feel you lack confidence in your own appeal?", minLabel: "Not lacking at all (I feel confident)", maxLabel: "Severely lacking" },
+  S2: { prompt: "When you see yourself in the mirror?", optionLabels: ["I'm satisfied", "Generally fine", "I notice the flaws first", "I have trouble feeling confident"] },
+  S3: { prompt: "When you don't get a reaction from others (interest, attraction, etc.)?", optionLabels: ["I feel it has nothing to do with my appeal", "I don't think much of it", "I start to doubt myself", "I start to wonder if I'm just not attractive"] },
+  S4: { prompt: "When you see an attractive person?", optionLabels: ["It's inspiring, and I feel good about it", "I think they look great", "I end up comparing myself to them", "I feel small and withdrawn"] },
+  S5: { prompt: "When someone shows interest in you?", optionLabels: ["I accept it naturally", "I accept it happily", "I doubt it or find it puzzling", "I can't believe it and end up denying it"] },
+  S6: { prompt: "If you had to describe your own appeal?", optionLabels: ["I can say it easily", "I can say it to some degree", "It's embarrassing and hard", "I almost can't do it"] },
+  S7: { prompt: "How confident are you in your appeal within dating or relationships?", optionLabels: ["Very solid", "Fairly confident", "It often wavers", "Almost no confidence"] },
+  S8: { prompt: "When you look at a selfie or a photo of yourself?", optionLabels: ["I'm satisfied with it", "I take it in stride", "I look for flaws first", "I have trouble looking at it"] },
+  S9: { prompt: "When someone calls you attractive, what do you think inside?", optionLabels: ["I feel that it's true", "I'm grateful, but wonder if it's really so", "I can't quite believe it", "I think they're just being polite"] },
+  S10: { prompt: "How do you feel about yourself just as you are?", optionLabels: ["I feel I have real appeal", "I feel fine about myself", "I often feel I'm lacking", "I struggle to feel any appeal in myself"] },
+};
+
+export const MODULE11_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
+  E1: { prompt: "¿Qué tan difícil te resulta expresarte libremente frente a la gente?", minLabel: "Nada difícil", maxLabel: "Muy difícil" },
+  E2: { prompt: "Cuando alguien te dice que eres atractivo/a?", optionLabels: ["Lo tomo con naturalidad", "Lo tomo con alegría", "Se siente incómodo, así que lo dejo pasar", "Lo niego o lo esquivo"] },
+  E3: { prompt: "Cuando eres el centro de atención?", optionLabels: ["Lo disfruto", "No le doy mayor importancia", "Me pongo consciente de mí mismo/a", "Se siente incómodo y me repliego"] },
+  E4: { prompt: "¿En una situación donde se espera que bailes o te muevas libremente?", optionLabels: ["Lo disfruto muchísimo", "Lo disfruto de forma razonable", "Soy cauteloso/a y observo cómo reaccionan los demás", "Quiero evitarlo lo más posible"] },
+  E5: { prompt: "Cuando expresas interés por alguien que te gusta?", optionLabels: ["Lo expreso con naturalidad", "Lo expreso con cautela", "Se me hace bastante difícil expresarlo", "Termino ocultándolo en su mayoría"] },
+  E6: { prompt: "¿Qué tan libre te sientes de probar un atuendo o estilo atrevido?", optionLabels: ["Lo pruebo con libertad", "Lo pruebo hasta cierto punto", "Termino preocupándome por lo que piensen los demás", "No puedo hacerlo por miedo a las miradas ajenas"] },
+  E7: { prompt: "¿Qué tan cómodo/a te sientes riendo o haciendo sonidos de forma espontánea?", optionLabels: ["Sin ninguna inhibición", "En general cómodo/a", "Me pongo consciente de mí mismo/a", "Trato de contenerme lo más posible"] },
+  E8: { prompt: "Cuando te imaginas irradiando encanto?", optionLabels: ["Lo imagino con naturalidad", "Lo imagino de vez en cuando", "Se siente incómodo y ajeno", "Hasta imaginarlo me da vergüenza"] },
+  E9: { prompt: "¿Cómo es tu primera impresión frente a alguien nuevo?", optionLabels: ["Me muestro exactamente como soy", "Me muestro con algo de cautela", "Muestro una versión muy contenida de mí mismo/a", "Trato solo de parecer inofensivo/a"] },
+  E10: { prompt: "¿Cómo te sientes respecto a tus propios puntos fuertes de atractivo?", optionLabels: ["Los conozco bien y me siento seguro/a", "Los conozco hasta cierto punto", "La verdad no estoy seguro/a", "Me pregunto si de verdad tengo alguno"] },
+  V1: { prompt: "¿Qué tan reprimida está tu capacidad de expresar emociones libremente con el cuerpo (risas, gestos, etc.)?", minLabel: "Nada reprimida (me expreso libremente)", maxLabel: "Muy reprimida" },
+  V2: { prompt: "Cuando suena música animada?", optionLabels: ["Mi cuerpo se mueve solo", "Tiendo a seguir el ritmo", "Lo disfruto solo por dentro", "Termino quedándome quieto/a"] },
+  V3: { prompt: "Cuando recibes una invitación espontánea (una salida repentina, etc.)?", optionLabels: ["Digo que sí de inmediato", "Voy después de pensarlo", "Se siente pesado sin un plan", "Evito casi siempre lo espontáneo"] },
+  V4: { prompt: "Cuando una emoción te desborda?", optionLabels: ["Sale naturalmente a través de mi cuerpo", "Se nota hasta cierto punto", "Hago un esfuerzo por contenerla", "La reprimo sin que se note"] },
+  V5: { prompt: "¿Cómo es tu risa o tu forma de expresarte?", optionLabels: ["Grande y libre", "Razonablemente natural", "Más bien cautelosa", "Muy contenida"] },
+  V6: { prompt: "¿Cómo te acercas a actividades poco familiares (un viaje espontáneo, un pasatiempo nuevo, etc.)?", optionLabels: ["Me lanzo activamente", "Lo intento si me interesa", "Necesito tiempo para acostumbrarme", "Solo me quedo con lo que ya conozco"] },
+  V7: { prompt: "¿Cuánta libertad sientes a través de actividades físicas (ejercicio, baile, etc.)?", optionLabels: ["Mucha", "Algo", "No mucha", "En realidad me siento más tenso/a"] },
+  V8: { prompt: "¿Qué tan cómodo/a te sientes diciendo o actuando de inmediato sobre un pensamiento repentino?", optionLabels: ["Sin ninguna inhibición", "En general cómodo/a", "Termino dudando", "Casi no puedo hacerlo"] },
+  V9: { prompt: "¿Cómo describirías tu nivel de energía?", optionLabels: ["Desbordante de vitalidad", "Bastante enérgico/a", "Más bien tranquilo/a", "No muestro mucho mi energía"] },
+  V10: { prompt: "¿Cuántos momentos de tu día sientes que eres plena y libremente \"tú mismo/a\"?", optionLabels: ["Muchos", "Algunos", "Pocos", "Siento que casi no tengo ninguno"] },
+  S1: { prompt: "¿Cuánto sientes que te falta confianza en tu propio atractivo?", minLabel: "Nada de falta (me siento seguro/a)", maxLabel: "Falta severa" },
+  S2: { prompt: "Cuando te ves en el espejo?", optionLabels: ["Estoy satisfecho/a", "En general está bien", "Noto primero los defectos", "Me cuesta sentirme seguro/a"] },
+  S3: { prompt: "Cuando no recibes reacción de los demás (interés, atracción, etc.)?", optionLabels: ["Siento que no tiene nada que ver con mi atractivo", "No le doy mayor importancia", "Empiezo a dudar de mí mismo/a", "Empiezo a preguntarme si simplemente no soy atractivo/a"] },
+  S4: { prompt: "Cuando ves a una persona atractiva?", optionLabels: ["Me inspira y me siento bien", "Pienso que se ve genial", "Termino comparándome con ella", "Me siento pequeño/a y retraído/a"] },
+  S5: { prompt: "Cuando alguien muestra interés en ti?", optionLabels: ["Lo acepto con naturalidad", "Lo acepto con alegría", "Lo dudo o me parece extraño", "No puedo creerlo y termino negándolo"] },
+  S6: { prompt: "Si tuvieras que describir tu propio atractivo?", optionLabels: ["Puedo decirlo fácilmente", "Puedo decirlo hasta cierto punto", "Se siente vergonzoso y difícil", "Casi no puedo hacerlo"] },
+  S7: { prompt: "¿Qué tan seguro/a te sientes de tu atractivo en el amor o las relaciones?", optionLabels: ["Muy firme", "Bastante seguro/a", "Seguido se tambalea", "Casi ninguna confianza"] },
+  S8: { prompt: "Cuando ves una selfie o una foto tuya?", optionLabels: ["Estoy satisfecho/a con ella", "La veo con calma", "Busco primero los defectos", "Me cuesta verla"] },
+  S9: { prompt: "Cuando alguien te dice que eres atractivo/a, ¿qué piensas por dentro?", optionLabels: ["Siento que es cierto", "Se lo agradezco, pero me pregunto si será verdad", "No logro creerlo", "Pienso que solo lo dice por cortesía"] },
+  S10: { prompt: "¿Cómo te sientes respecto a ti mismo/a tal como eres?", optionLabels: ["Siento que tengo verdadero atractivo", "Me siento bien conmigo mismo/a", "Muchas veces siento que me falta algo", "Me cuesta sentir algún atractivo en mí"] },
+};
 
 export const MODULE11_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   expressionSuppression: 10,

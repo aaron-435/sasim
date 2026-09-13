@@ -9,7 +9,7 @@
  */
 
 import type { Locale } from "../i18n/types";
-import type { ModuleQuestion } from "./quizProfile";
+import type { ModuleQuestion, QuestionTextOverride } from "./quizProfile";
 
 export const MODULE10_QUESTIONS: ModuleQuestion[] = [
   // ---- 산만함 (Distractibility) — D1-D10 ----
@@ -98,6 +98,75 @@ export const MODULE10_QUESTIONS: ModuleQuestion[] = [
     { label: "한 박자 쉬고 행동한다", score: 0 }, { label: "조금 자제한다", score: 1 },
     { label: "거의 바로 행동으로 나온다", score: 2 }, { label: "생각할 틈도 없이 행동한다", score: 3 } ] },
 ];
+
+// Display-text-only translations of MODULE10_QUESTIONS above — see MODULE1's
+// equivalent comment in module1Attachment.ts for why id/dimension/format/
+// score aren't duplicated per locale.
+export const MODULE10_QUESTIONS_EN: Record<string, QuestionTextOverride> = {
+  D1: { prompt: "While working on something?", optionLabels: ["I stay focused and finish it", "I get a stray thought occasionally", "Other things often catch my eye", "I'm quickly doing something else"] },
+  D2: { prompt: "Even in the middle of one task, another visible stimulus (a notification, a sound, etc.) instantly grabs my attention.", optionLabels: ["Not at all true", "Very true"] },
+  D3: { prompt: "During a conversation?", optionLabels: ["I listen with full focus throughout", "I stay mostly focused", "My mind wanders partway through", "I often have to ask again about parts I missed"] },
+  D4: { prompt: "How does your desk or workspace stay?", optionLabels: ["It stays organized", "I tidy it up reasonably", "It gets messy quickly", "I leave several things out and can't clean up"] },
+  D5: { prompt: "Before finishing one task, if something else interesting comes up, I immediately switch over to it.", optionLabels: ["Not at all true", "Very true"] },
+  D6: { prompt: "When doing something boring?", optionLabels: ["I push through and finish it", "I get through it by enduring it", "My mind keeps wandering", "I just can't focus at all"] },
+  D7: { prompt: "How well do you remember where you put things (keys, your wallet, etc.)?", optionLabels: ["I almost never forget", "I get confused sometimes", "I often can't find them", "I'm searching for them every time"] },
+  D8: { prompt: "When I have several windows open and keep switching between them, there are times I forget what I was originally trying to do.", optionLabels: ["Not at all true", "Very true"] },
+  D9: { prompt: "Even when you make a plan?", optionLabels: ["I follow through with it exactly", "I mostly follow it", "It falls apart quickly", "I often forget the plan itself"] },
+  D10: { prompt: "How often do thoughts unrelated to what you're doing pop up?", optionLabels: ["Almost never", "Occasionally", "They often intrude", "They keep coming up nonstop and get in the way"] },
+  H1: { prompt: "When doing something you're interested in?", optionLabels: ["I get reasonably absorbed", "I focus quite a bit", "I lose track of time", "I get so absorbed I don't notice anything around me"] },
+  H2: { prompt: "When I get absorbed in something I love, there are times I forget to eat.", optionLabels: ["Not at all true", "Very true"] },
+  H3: { prompt: "When you come out of a state of deep focus?", optionLabels: ["The transition feels natural", "It takes a bit of time", "It takes time to get my bearings back", "Someone has to call my name for me to snap out of it"] },
+  H4: { prompt: "When digging into a topic you find interesting?", optionLabels: ["I stop at a reasonable point", "I look into it fairly deeply", "There are times I stay up all night on it", "I get so absorbed I forget other things I need to do"] },
+  H5: { prompt: "Once something hooks me, I completely put other important things on the back burner.", optionLabels: ["Not at all true", "Very true"] },
+  H6: { prompt: "When someone talks to you while you're deeply focused?", optionLabels: ["I respond right away", "I respond a bit late", "I often don't hear it", "I completely don't hear it"] },
+  H7: { prompt: "Without a time-management app or alarm?", optionLabels: ["I keep good track of time on my own", "I mostly keep track", "I lose track of time when I'm absorbed", "Hours slip by before I notice"] },
+  H8: { prompt: "After finishing something you were deeply absorbed in?", optionLabels: ["I switch to something else without trouble", "There's a bit of a lingering feeling", "I feel dazed for a while", "I feel completely drained"] },
+  H9: { prompt: "For tasks you've lost interest in?", optionLabels: ["I still finish them", "I finish them to some degree", "I have trouble getting to them", "I pretty much abandon them"] },
+  H10: { prompt: "How different are you when absorbed versus not absorbed?", optionLabels: ["Not much different", "A bit different", "Like a fairly different person", "Like two completely opposite extremes"] },
+  I1: { prompt: "When you feel like doing something?", optionLabels: ["I make a plan first", "I think it over briefly, then start", "I start right away", "I act the moment I think of it"] },
+  I2: { prompt: "Rather than thinking before I speak, the words often come out first.", optionLabels: ["Not at all true", "Very true"] },
+  I3: { prompt: "How many things have you started (hobbies, projects, etc.) but not finished?", optionLabels: ["Almost none", "One or two", "Quite a few", "I've barely finished anything I started"] },
+  I4: { prompt: "How often do you make impulse purchases?", optionLabels: ["Almost never", "Occasionally", "Often", "I often regret it later"] },
+  I5: { prompt: "Having to wait in line or wait for something is unusually hard for me to bear.", optionLabels: ["Not at all true", "Very true"] },
+  I6: { prompt: "How well do you keep a regular routine (exercise, habits, etc.)?", optionLabels: ["I keep it up consistently", "I mostly keep it up", "It quickly fizzles out", "I give up on it within days"] },
+  I7: { prompt: "How strong is your urge to interrupt during a conversation?", optionLabels: ["Almost none", "Occasionally", "Often", "I often interrupt because it's hard to resist"] },
+  I8: { prompt: "How often do you act without anticipating the consequences?", optionLabels: ["Almost never", "Occasionally", "Fairly often", "Often enough that it surprises even me"] },
+  I9: { prompt: "Starting something new appeals to me more than sticking with one thing until it's done.", optionLabels: ["Not at all true", "Very true"] },
+  I10: { prompt: "When a strong emotion suddenly hits, how do you act?", optionLabels: ["I pause a beat before acting", "I hold back a little", "It almost immediately turns into action", "I act without even a moment to think"] },
+};
+
+export const MODULE10_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
+  D1: { prompt: "Mientras trabajas en algo?", optionLabels: ["Me mantengo enfocado/a y lo termino", "A veces se me va la mente", "Seguido otras cosas llaman mi atención", "Rápido ya estoy haciendo otra cosa"] },
+  D2: { prompt: "Incluso en medio de una tarea, otro estímulo visible (una notificación, un sonido, etc.) me distrae al instante.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  D3: { prompt: "Durante una conversación?", optionLabels: ["Escucho con total atención todo el tiempo", "Me mantengo mayormente enfocado/a", "Se me va la mente a la mitad", "Seguido tengo que volver a preguntar lo que me perdí"] },
+  D4: { prompt: "¿Cómo se mantiene tu escritorio o espacio de trabajo?", optionLabels: ["Se mantiene organizado", "Lo ordeno razonablemente", "Se desordena rápido", "Dejo varias cosas a medias y no puedo ordenar"] },
+  D5: { prompt: "Antes de terminar una tarea, si surge algo más interesante, cambio de inmediato hacia eso.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  D6: { prompt: "Cuando haces algo aburrido?", optionLabels: ["Me aguanto y lo termino", "Lo resisto y lo hago", "Se me va la mente seguido", "Simplemente no logro concentrarme"] },
+  D7: { prompt: "¿Qué tan bien recuerdas dónde dejaste las cosas (llaves, billetera, etc.)?", optionLabels: ["Casi nunca se me olvida", "A veces me confundo", "Seguido no las encuentro", "Las busco cada vez"] },
+  D8: { prompt: "Cuando tengo varias ventanas abiertas y voy cambiando entre ellas, a veces olvido qué era lo que quería hacer originalmente.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  D9: { prompt: "¿Incluso cuando haces un plan?", optionLabels: ["Lo sigo tal como lo hice", "Lo sigo en su mayoría", "Se desarma rápido", "Muchas veces olvido el plan en sí"] },
+  D10: { prompt: "¿Con qué frecuencia te vienen pensamientos que no tienen que ver con lo que estás haciendo?", optionLabels: ["Casi nunca", "De vez en cuando", "Se meten seguido", "Aparecen sin parar y me estorban"] },
+  H1: { prompt: "Cuando haces algo que te interesa?", optionLabels: ["Me absorbo razonablemente", "Me concentro bastante", "Pierdo la noción del tiempo", "Me absorbo tanto que no noto nada a mi alrededor"] },
+  H2: { prompt: "Cuando me absorbo en algo que me encanta, a veces se me olvida comer.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  H3: { prompt: "Cuando sales de un estado de concentración profunda?", optionLabels: ["La transición se siente natural", "Toma algo de tiempo", "Me toma tiempo volver a ubicarme", "Alguien tiene que llamarme para que reaccione"] },
+  H4: { prompt: "Cuando profundizas en un tema que te interesa?", optionLabels: ["Me detengo en un punto razonable", "Lo investigo bastante a fondo", "A veces me quedo despierto/a toda la noche con eso", "Me absorbo tanto que olvido otras cosas que tengo que hacer"] },
+  H5: { prompt: "Una vez que algo me atrapa, dejo por completo otras cosas importantes en segundo plano.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  H6: { prompt: "Cuando alguien te habla mientras estás profundamente concentrado/a?", optionLabels: ["Respondo de inmediato", "Respondo un poco tarde", "Muchas veces no lo escucho", "No lo escucho en absoluto"] },
+  H7: { prompt: "¿Sin una app de gestión del tiempo o una alarma?", optionLabels: ["Controlo bien el tiempo por mi cuenta", "En general lo controlo", "Pierdo la noción del tiempo cuando me absorbo", "Pasan horas sin que me dé cuenta"] },
+  H8: { prompt: "Después de terminar algo en lo que estabas profundamente absorto/a?", optionLabels: ["Cambio a otra cosa sin problema", "Queda algo de sensación residual", "Me siento aturdido/a por un rato", "Me siento completamente agotado/a"] },
+  H9: { prompt: "Para tareas que ya perdieron tu interés?", optionLabels: ["Aun así las termino", "Las termino hasta cierto punto", "Me cuesta retomarlas", "Prácticamente las abandono"] },
+  H10: { prompt: "¿Qué tan diferente eres cuando estás absorto/a comparado con cuando no lo estás?", optionLabels: ["No muy diferente", "Un poco diferente", "Como una persona bastante distinta", "Como dos extremos completamente opuestos"] },
+  I1: { prompt: "Cuando tienes ganas de hacer algo?", optionLabels: ["Primero hago un plan", "Lo pienso brevemente y empiezo", "Empiezo de inmediato", "Actúo en el momento en que lo pienso"] },
+  I2: { prompt: "En vez de pensar antes de hablar, muchas veces las palabras se me salen primero.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  I3: { prompt: "¿Cuántas cosas has empezado (pasatiempos, proyectos, etc.) sin terminar?", optionLabels: ["Casi ninguna", "Una o dos", "Bastantes", "Casi no he terminado nada de lo que empecé"] },
+  I4: { prompt: "¿Con qué frecuencia haces compras impulsivas?", optionLabels: ["Casi nunca", "De vez en cuando", "Seguido", "Muchas veces me arrepiento después"] },
+  I5: { prompt: "Tener que hacer fila o esperar algo me resulta especialmente difícil de soportar.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  I6: { prompt: "¿Qué tan bien mantienes una rutina regular (ejercicio, hábitos, etc.)?", optionLabels: ["La mantengo de forma constante", "La mantengo en su mayoría", "Se desvanece rápido", "La abandono a los pocos días"] },
+  I7: { prompt: "¿Qué tan fuerte es tu impulso de interrumpir durante una conversación?", optionLabels: ["Casi ninguno", "De vez en cuando", "Seguido", "Interrumpo seguido porque me cuesta resistirme"] },
+  I8: { prompt: "¿Con qué frecuencia actúas sin anticipar las consecuencias?", optionLabels: ["Casi nunca", "De vez en cuando", "Bastante seguido", "Con la frecuencia suficiente para sorprenderme a mí mismo/a"] },
+  I9: { prompt: "Empezar algo nuevo me atrae más que quedarme con una sola cosa hasta terminarla.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  I10: { prompt: "Cuando una emoción fuerte te sube de repente, ¿cómo actúas?", optionLabels: ["Me tomo un momento antes de actuar", "Me contengo un poco", "Casi de inmediato se convierte en acción", "Actúo sin siquiera un momento para pensar"] },
+};
 
 export const MODULE10_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   distractibility: 10,

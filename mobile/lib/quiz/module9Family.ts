@@ -9,7 +9,7 @@
  */
 
 import type { Locale } from "../i18n/types";
-import type { ModuleQuestion } from "./quizProfile";
+import type { ModuleQuestion, QuestionTextOverride } from "./quizProfile";
 
 export const MODULE9_QUESTIONS: ModuleQuestion[] = [
   // ---- 정서적얽힘 (Enmeshment) — EM1-EM10 ----
@@ -100,6 +100,75 @@ export const MODULE9_QUESTIONS: ModuleQuestion[] = [
     { label: "충분히 아이답게 지냈다고 느낀다", score: 0 }, { label: "대체로 그랬다고 느낀다", score: 1 },
     { label: "조금 일찍 철이 든 것 같다", score: 2 }, { label: "아이였던 시간이 짧았다고 느낀다", score: 3 } ] },
 ];
+
+// Display-text-only translations of MODULE9_QUESTIONS above — see MODULE1's
+// equivalent comment in module1Attachment.ts for why id/dimension/format/
+// score aren't duplicated per locale.
+export const MODULE9_QUESTIONS_EN: Record<string, QuestionTextOverride> = {
+  EM1: { prompt: "How much does your mood sink when someone in your family is in a bad mood?", minLabel: "No effect at all", maxLabel: "It transfers almost exactly" },
+  EM2: { prompt: "When your parents are struggling?", optionLabels: ["I keep it separate from my own life", "It concerns me, but I keep living my life", "My own mood gets strongly affected too", "I feel a responsibility to fix it for them"] },
+  EM3: { prompt: "When there's a conflict with family?", optionLabels: ["I let each person deal with their own part", "It bothers me, but it passes", "It stays on my mind for a long time", "It feels like it's my fault"] },
+  EM4: { prompt: "How much do your parents' expectations or wishes matter to you?", optionLabels: ["I just take note of them", "I consider them to some degree", "They heavily influence my choices", "They've become almost the standard I live by"] },
+  EM5: { prompt: "After a family gathering or phone call?", optionLabels: ["It wraps up lightly", "No lingering effect", "My mood is affected for a while", "I need time to settle my emotions"] },
+  EM6: { prompt: "How do you feel your successes or failures affect your family?", optionLabels: ["I feel they're my own personal matter", "I feel there's some effect on them", "It feels like the whole family's business", "I'm always anxious about disappointing my family"] },
+  EM7: { prompt: "When making an independent decision (career, dating, etc.)?", optionLabels: ["I decide entirely by my own will", "I take it into account, but decide for myself", "I think about my family's reaction first", "I give up on it if my family objects"] },
+  EM8: { prompt: "How do your emotional state and your parents' emotional state relate?", optionLabels: ["They flow independently of each other", "They influence each other to some degree", "They often rise and fall together", "They move in almost the same rhythm"] },
+  EM9: { prompt: "Even when you feel hurt by family?", optionLabels: ["I say so comfortably", "I say so to a reasonable degree", "I hold back because I feel guilty for no reason", "I hold it in, wondering if I'm just being too sensitive"] },
+  EM10: { prompt: "How easily can you think of \"me\" and \"my family\" as separate?", optionLabels: ["Easily separated", "Mostly separated", "Sometimes it gets confusing", "It's unclear where I end and my family begins"] },
+  CO1: { prompt: "How hard is it for you to have deep conversations with your family?", minLabel: "Not hard at all", maxLabel: "Very hard" },
+  CO2: { prompt: "When telling your family how you've been lately?", optionLabels: ["I tell them everything honestly", "I tell them most of it", "I only briefly mention what's necessary", "It's almost all surface-level talk"] },
+  CO3: { prompt: "When it comes to family events or gatherings?", optionLabels: ["I take part actively", "I do take part", "I try to cut back when I can", "I want to avoid it even if I have to make excuses"] },
+  CO4: { prompt: "When something's hard, do you tell your family?", optionLabels: ["They're the first ones I tell", "I tell them to some degree", "I hardly tell them", "I keep my family from finding out until the very end"] },
+  CO5: { prompt: "What do you usually talk about with your parents?", optionLabels: ["A wide range of deep topics", "Mostly everyday things", "Limited to checking in", "Almost just formal conversation"] },
+  CO6: { prompt: "How do you feel about being physically distant from your family?", optionLabels: ["Not applicable, or I stay close with them", "I think it's a natural change", "It actually feels like a relief", "I've deliberately kept some distance"] },
+  CO7: { prompt: "How much do you feel your family really knows about you?", optionLabels: ["They know me well", "They know me to some degree", "They only know the surface", "They barely know the real me"] },
+  CO8: { prompt: "Right before a holiday or contact with family?", optionLabels: ["I feel glad and look forward to it", "I take it in stride", "There's a bit of pressure", "I strongly want to avoid it"] },
+  CO9: { prompt: "In one word, how do you feel about your family?", optionLabels: ["Warmth", "Neutral", "Distance", "Obligation"] },
+  CO10: { prompt: "How has your relationship with family changed since becoming an adult?", optionLabels: ["It's gotten closer", "It's stayed about the same", "It's gradually grown more distant", "It's become a relationship with only minimal contact"] },
+  PA1: { prompt: "How much did you take on chores or looking after siblings from a young age?", minLabel: "Never had that kind of role", maxLabel: "Always had that kind of role" },
+  PA2: { prompt: "As a child, were you...?", optionLabels: ["As carefree as any other kid", "Similar to other kids", "More mature than my peers, early on", "Having to act like an adult from a young age"] },
+  PA3: { prompt: "What was your role in the family, mainly?", optionLabels: ["The one being taken care of", "It was naturally shared", "I often took on the caretaking role", "I had to be the one leading the family"] },
+  PA4: { prompt: "How aware were you of your parents' emotions (worry, stress, etc.)?", optionLabels: ["Unaware or indifferent", "Aware to some degree", "I often had to keep an eye on it", "I often had to be the one to soothe them"] },
+  PA5: { prompt: "Even now, when a family problem comes up?", optionLabels: ["Everyone handles their own part", "I help if it's needed", "It feels like I have to step in and solve it", "I always feel the burden that I have to take responsibility"] },
+  PA6: { prompt: "As a child, what took priority over your own feelings?", optionLabels: ["Nothing in particular", "Sometimes, something did", "The family's mood came first", "My feelings were always secondary"] },
+  PA7: { prompt: "In your current relationships (dating, friendships, etc.), are you...?", optionLabels: ["We take care of each other about equally", "We give and take about the same", "I tend to take care of them more", "I always feel like I have to be the one looking after them"] },
+  PA8: { prompt: "Even when it's okay for you to rest?", optionLabels: ["I rest comfortably", "I rest to some degree", "There's an anxious feeling that I should be doing something", "I feel guilty for resting"] },
+  PA9: { prompt: "How often do you feel \"things won't work without me\"?", optionLabels: ["Almost never", "Occasionally", "Often", "I always feel this way in relationships or work"] },
+  PA10: { prompt: "Looking back on your childhood?", optionLabels: ["I feel I got to be a kid fully", "I feel that was mostly true", "I feel I grew up a bit too fast", "I feel my time being a child was short"] },
+};
+
+export const MODULE9_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
+  EM1: { prompt: "¿Cuánto se hunde tu ánimo cuando alguien de tu familia está de mal humor?", minLabel: "Ningún efecto", maxLabel: "Se transfiere casi por completo" },
+  EM2: { prompt: "Cuando tus padres están pasando por algo difícil?", optionLabels: ["Lo separo de mi propia vida", "Me preocupa, pero sigo con mi vida", "Mi propio ánimo también se ve muy afectado", "Siento la responsabilidad de resolverlo por ellos"] },
+  EM3: { prompt: "Cuando hay un conflicto familiar?", optionLabels: ["Dejo que cada quien resuelva lo suyo", "Me molesta, pero se me pasa", "Se me queda en la mente por mucho tiempo", "Siento que es mi culpa"] },
+  EM4: { prompt: "¿Cuánto influyen las expectativas o deseos de tus padres en ti?", optionLabels: ["Solo los tomo en cuenta", "Los considero hasta cierto punto", "Influyen mucho en mis decisiones", "Se han vuelto casi el estándar por el que vivo"] },
+  EM5: { prompt: "Después de una reunión familiar o una llamada?", optionLabels: ["Termina de forma ligera", "No queda ningún efecto", "Mi ánimo se ve afectado por un rato", "Necesito tiempo para calmar mis emociones"] },
+  EM6: { prompt: "¿Cómo sientes que tus éxitos o fracasos afectan a tu familia?", optionLabels: ["Siento que son asunto mío", "Siento que tienen algo de efecto en ellos", "Se siente como un asunto de toda la familia", "Siempre me preocupa decepcionar a mi familia"] },
+  EM7: { prompt: "Al tomar una decisión independiente (carrera, pareja, etc.)?", optionLabels: ["Decido completamente por mi propia voluntad", "Lo tomo en cuenta, pero decido yo", "Pienso primero en la reacción de mi familia", "Me rindo si mi familia se opone"] },
+  EM8: { prompt: "¿Cómo se relacionan tu estado emocional y el de tus padres?", optionLabels: ["Fluyen de forma independiente", "Se influyen mutuamente hasta cierto punto", "Suben y bajan juntos seguido", "Se mueven casi con el mismo ritmo"] },
+  EM9: { prompt: "¿Incluso cuando te sientes dolido/a por tu familia?", optionLabels: ["Lo digo con comodidad", "Lo digo de forma razonable", "Me contengo porque me siento culpable sin razón", "Me lo trago, pensando si seré demasiado sensible"] },
+  EM10: { prompt: "¿Qué tan fácil te resulta pensar en \"yo\" y \"mi familia\" como cosas separadas?", optionLabels: ["Se separan con facilidad", "En general se separan", "A veces se me confunde", "No queda claro dónde termino yo y dónde empieza mi familia"] },
+  CO1: { prompt: "¿Qué tan difícil te resulta tener conversaciones profundas con tu familia?", minLabel: "Nada difícil", maxLabel: "Muy difícil" },
+  CO2: { prompt: "Cuando le cuentas a tu familia cómo has estado últimamente?", optionLabels: ["Les cuento todo con honestidad", "Les cuento la mayor parte", "Solo menciono brevemente lo necesario", "Es casi todo conversación superficial"] },
+  CO3: { prompt: "¿Qué tan involucrado/a estás con eventos o reuniones familiares?", optionLabels: ["Participo activamente", "Sí participo", "Trato de reducirlo cuando puedo", "Quiero evitarlo aunque tenga que inventar excusas"] },
+  CO4: { prompt: "Cuando algo es difícil, ¿se lo cuentas a tu familia?", optionLabels: ["Son los primeros a quienes se lo cuento", "Se lo cuento hasta cierto punto", "Casi no se lo cuento", "Evito que mi familia se entere hasta el final"] },
+  CO5: { prompt: "¿De qué sueles hablar con tus padres?", optionLabels: ["De una amplia variedad de temas profundos", "Mayormente de cosas cotidianas", "Limitado a saber cómo están", "Casi solo conversación formal"] },
+  CO6: { prompt: "¿Cómo te sientes respecto a estar físicamente lejos de tu familia?", optionLabels: ["No aplica, o me mantengo cerca de ellos", "Creo que es un cambio natural", "En realidad se siente como un alivio", "Deliberadamente he mantenido cierta distancia"] },
+  CO7: { prompt: "¿Cuánto sientes que tu familia realmente te conoce?", optionLabels: ["Me conocen bien", "Me conocen hasta cierto punto", "Solo conocen la superficie", "Apenas conocen a la persona real que soy"] },
+  CO8: { prompt: "Justo antes de una festividad o de tener contacto con tu familia?", optionLabels: ["Me alegra y lo espero con ganas", "Lo tomo con calma", "Hay algo de presión", "Tengo muchas ganas de evitarlo"] },
+  CO9: { prompt: "En una palabra, ¿cómo describirías lo que sientes por tu familia?", optionLabels: ["Calidez", "Neutralidad", "Distancia", "Obligación"] },
+  CO10: { prompt: "¿Cómo ha cambiado tu relación con tu familia desde que eres adulto/a?", optionLabels: ["Se ha vuelto más cercana", "Se ha mantenido más o menos igual", "Se ha ido distanciando poco a poco", "Se ha vuelto una relación de contacto mínimo"] },
+  PA1: { prompt: "¿Cuánto asumiste tareas del hogar o el cuidado de tus hermanos desde pequeño/a?", minLabel: "Nunca tuve ese tipo de rol", maxLabel: "Siempre tuve ese tipo de rol" },
+  PA2: { prompt: "De niño/a, ¿eras...?", optionLabels: ["Tan despreocupado/a como cualquier otro niño", "Similar a los demás niños", "Más maduro/a que mis compañeros, desde temprano", "Tenía que actuar como un adulto desde pequeño/a"] },
+  PA3: { prompt: "¿Cuál era tu rol en la familia, principalmente?", optionLabels: ["El que recibía los cuidados", "Se repartía de forma natural", "Seguido asumía el rol de cuidar a otros", "Tenía que ser quien liderara a la familia"] },
+  PA4: { prompt: "¿Qué tan consciente eras de las emociones de tus padres (preocupación, estrés, etc.)?", optionLabels: ["No me daba cuenta o no me importaba", "Era consciente hasta cierto punto", "Seguido tenía que estar pendiente", "Muchas veces tenía que ser quien los consolara"] },
+  PA5: { prompt: "¿Incluso ahora, cuando surge un problema familiar?", optionLabels: ["Cada quien resuelve lo suyo", "Ayudo si es necesario", "Siento que tengo que intervenir y resolverlo", "Siempre siento la carga de que debo hacerme responsable"] },
+  PA6: { prompt: "De niño/a, ¿qué tenía prioridad sobre tus propios sentimientos?", optionLabels: ["Nada en particular", "A veces, algo sí", "El ambiente familiar iba primero", "Mis sentimientos siempre quedaban en segundo plano"] },
+  PA7: { prompt: "En tus relaciones actuales (pareja, amistades, etc.), ¿eres...?", optionLabels: ["Nos cuidamos mutuamente de forma equilibrada", "Damos y recibimos de forma similar", "Tiendo a cuidar más yo", "Siempre siento que tengo que ser quien cuide a la otra persona"] },
+  PA8: { prompt: "¿Incluso cuando está bien que descanses?", optionLabels: ["Descanso con comodidad", "Descanso hasta cierto punto", "Hay una ansiedad de que debería estar haciendo algo", "Siento culpa por descansar"] },
+  PA9: { prompt: "¿Con qué frecuencia sientes que \"las cosas no funcionarán sin mí\"?", optionLabels: ["Casi nunca", "De vez en cuando", "Seguido", "Siempre siento esto en mis relaciones o en el trabajo"] },
+  PA10: { prompt: "Al mirar hacia atrás en tu infancia?", optionLabels: ["Siento que fui niño/a plenamente", "Siento que en general fue así", "Siento que maduré un poco antes de tiempo", "Siento que mi tiempo de ser niño/a fue corto"] },
+};
 
 export const MODULE9_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   enmeshment: 10,
