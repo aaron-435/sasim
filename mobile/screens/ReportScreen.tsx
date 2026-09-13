@@ -751,7 +751,7 @@ const pageStyles = StyleSheet.create({
   pageFoot: { marginTop: "auto", flexDirection: "row", justifyContent: "space-between" },
   pageFootText: { fontFamily: "Manrope_600SemiBold", fontSize: 9.5, letterSpacing: 1.5, color: COLORS.footer, textTransform: "uppercase" },
 
-  coverMid: { flex: 1, justifyContent: "center" },
+  coverMid: { flex: 1, justifyContent: "flex-start", paddingTop: "18%" },
   coverTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 27, lineHeight: 36, color: COLORS.headline, marginBottom: 4 },
   coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: 16 },
   coverSub: { fontFamily: "Manrope_500Medium", fontSize: 13, color: COLORS.headline },
@@ -765,7 +765,7 @@ const pageStyles = StyleSheet.create({
   tocDots: { flex: 1, borderBottomWidth: 1, borderBottomColor: "#B7A97D", borderStyle: "dotted", marginBottom: 3 },
   tocPage: { fontFamily: "Manrope_600SemiBold", fontSize: 11.5, color: "#5C5237" },
 
-  narrativeMid: { flex: 1, justifyContent: "center" },
+  narrativeMid: { flex: 1, justifyContent: "flex-start", paddingTop: "16%" },
   narrativeBody: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 19, lineHeight: 31, color: COLORS.headline },
   narrativeCaption: { fontFamily: "Manrope_400Regular", fontSize: 11, lineHeight: 18, color: COLORS.footer, marginTop: 16 },
 
@@ -797,11 +797,11 @@ const pageStyles = StyleSheet.create({
   barTrack: { height: 8, backgroundColor: "#1C1B24", borderRadius: 999, overflow: "hidden" },
   barFill: { height: "100%", borderRadius: 999 },
 
-  elemMid: { flex: 1, justifyContent: "center" },
+  elemMid: { flex: 1, justifyContent: "flex-start", paddingTop: "16%" },
   elemNum: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 56, lineHeight: 60, color: COLORS.gold, marginBottom: 6 },
   elemHeading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 21, lineHeight: 28, color: COLORS.headline, marginBottom: 4 },
 
-  quoteMid: { flex: 1, justifyContent: "center" },
+  quoteMid: { flex: 1, justifyContent: "flex-start", paddingTop: "22%" },
   pullQuote: {
     fontFamily: "CormorantGaramond_500Medium",
     fontStyle: "italic",
@@ -837,7 +837,7 @@ const pageStyles = StyleSheet.create({
   takeawayBold: { fontFamily: "Manrope_700Bold", color: COLORS.gold },
 
   cardIndex: { fontFamily: "Manrope_700Bold", fontSize: 10.5, letterSpacing: 1.5, textTransform: "uppercase", marginTop: 20 },
-  cardMid: { flex: 1, justifyContent: "center" },
+  cardMid: { flex: 1, justifyContent: "flex-start", paddingTop: "20%" },
   cardTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 30, color: COLORS.headline, marginBottom: 14 },
   cardBody: { fontFamily: "Manrope_400Regular", fontSize: 14, lineHeight: 23, color: "#C7C3D1" },
 
