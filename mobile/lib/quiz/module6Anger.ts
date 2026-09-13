@@ -8,6 +8,7 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "../i18n/types";
 import type { ModuleQuestion } from "./quizProfile";
 
 export const MODULE6_QUESTIONS: ModuleQuestion[] = [
@@ -103,19 +104,53 @@ export const MODULE6_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   rumination: 10,
 };
 
-export const MODULE6_DIMENSION_LABELS: Record<string, { high: string; low: string }> = {
-  suppression: { high: "억압", low: "자연스러운 표현" },
-  explosion: { high: "폭발", low: "차분한 절제" },
-  rumination: { high: "반추", low: "빠른 회복" },
+export const MODULE6_DIMENSION_LABELS: Record<Locale, Record<string, { high: string; low: string }>> = {
+  ko: {
+    suppression: { high: "억압", low: "자연스러운 표현" },
+    explosion: { high: "폭발", low: "차분한 절제" },
+    rumination: { high: "반추", low: "빠른 회복" },
+  },
+  en: {
+    suppression: { high: "Suppression", low: "Natural Expression" },
+    explosion: { high: "Explosion", low: "Calm Restraint" },
+    rumination: { high: "Rumination", low: "Quick Recovery" },
+  },
+  es: {
+    suppression: { high: "Supresión", low: "Expresión Natural" },
+    explosion: { high: "Explosión", low: "Calma y Control" },
+    rumination: { high: "Rumiación", low: "Recuperación Rápida" },
+  },
 };
 
-export const MODULE6_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
-  baseline: { title: "감정 유연형", hook: "화를 억누르지도, 터뜨리지도, 오래 곱씹지도 않는 비교적 안정된 분노 조절 상태입니다." },
-  suppression: { title: "억압형", hook: "화가 나도 겉으로 잘 드러내지 않고 삼키는 데 익숙하지만, 그만큼 안에는 쌓여갑니다." },
-  explosion: { title: "폭발형", hook: "화가 나면 순간적으로 통제가 어려울 만큼 확 터지는 편입니다." },
-  rumination: { title: "반추형", hook: "화는 크게 표출되지 않지만, 지나간 뒤에도 오래도록 곱씹으며 놓지 못합니다." },
-  "suppression+explosion": { title: "참다가 터짐형", hook: "평소엔 웬만하면 삼키다가, 어느 순간 쌓인 게 걷잡을 수 없이 한꺼번에 터지는 패턴입니다." },
-  "suppression+rumination": { title: "억눌린 채 곱씹는형", hook: "겉으로 표현은 안 하지만, 마음속에서는 그 감정을 계속 재생하고 있습니다." },
-  "explosion+rumination": { title: "폭발 후 자책형", hook: "순간적으로 강하게 터진 후에도 그 여운과 후회가 오래 남습니다." },
-  "suppression+explosion+rumination": { title: "감정 과부하형", hook: "억누르다 터지고, 터진 뒤로도 오래 곱씹는 — 분노 조절의 세 축이 모두 무겁게 걸려있는 상태입니다." },
+export const MODULE6_TYPE_NAMES: Record<Locale, Record<string, { title: string; hook: string }>> = {
+  ko: {
+    baseline: { title: "감정 유연형", hook: "화를 억누르지도, 터뜨리지도, 오래 곱씹지도 않는 비교적 안정된 분노 조절 상태입니다." },
+    suppression: { title: "억압형", hook: "화가 나도 겉으로 잘 드러내지 않고 삼키는 데 익숙하지만, 그만큼 안에는 쌓여갑니다." },
+    explosion: { title: "폭발형", hook: "화가 나면 순간적으로 통제가 어려울 만큼 확 터지는 편입니다." },
+    rumination: { title: "반추형", hook: "화는 크게 표출되지 않지만, 지나간 뒤에도 오래도록 곱씹으며 놓지 못합니다." },
+    "suppression+explosion": { title: "참다가 터짐형", hook: "평소엔 웬만하면 삼키다가, 어느 순간 쌓인 게 걷잡을 수 없이 한꺼번에 터지는 패턴입니다." },
+    "suppression+rumination": { title: "억눌린 채 곱씹는형", hook: "겉으로 표현은 안 하지만, 마음속에서는 그 감정을 계속 재생하고 있습니다." },
+    "explosion+rumination": { title: "폭발 후 자책형", hook: "순간적으로 강하게 터진 후에도 그 여운과 후회가 오래 남습니다." },
+    "suppression+explosion+rumination": { title: "감정 과부하형", hook: "억누르다 터지고, 터진 뒤로도 오래 곱씹는 — 분노 조절의 세 축이 모두 무겁게 걸려있는 상태입니다." },
+  },
+  en: {
+    baseline: { title: "Emotionally Flexible", hook: "You neither bottle up anger, nor let it burst out, nor dwell on it for long — a relatively stable pattern of anger regulation." },
+    suppression: { title: "Suppressed Type", hook: "Even when you're angry, you're used to swallowing it rather than showing it — but it keeps building up underneath." },
+    explosion: { title: "Explosive Type", hook: "When anger hits, it tends to burst out fast enough that it's hard to control in the moment." },
+    rumination: { title: "Ruminating Type", hook: "Your anger doesn't show much on the outside, but you keep replaying it long after, unable to let it go." },
+    "suppression+explosion": { title: "Bottle-Then-Burst", hook: "You usually swallow it down, until at some point it all spills out at once, hard to contain." },
+    "suppression+rumination": { title: "Suppressed and Stewing", hook: "You don't show it outwardly, but inside you keep replaying the feeling over and over." },
+    "explosion+rumination": { title: "Explode-Then-Regret", hook: "Even after a strong outburst, the aftershock and regret linger for a long time." },
+    "suppression+explosion+rumination": { title: "Emotional Overload", hook: "Bottling up, bursting out, and dwelling on it afterward — all three axes of anger regulation are weighing on you heavily." },
+  },
+  es: {
+    baseline: { title: "Flexible Emocionalmente", hook: "No te guardas la rabia, no la dejas estallar, ni te quedas mucho tiempo rumiándola — un patrón relativamente estable de manejo de la ira." },
+    suppression: { title: "Tipo Supresor", hook: "Incluso cuando te enojas, sueles tragártelo en vez de mostrarlo — pero se va acumulando por debajo." },
+    explosion: { title: "Tipo Explosivo", hook: "Cuando llega la ira, tiende a estallar tan rápido que es difícil controlarla en el momento." },
+    rumination: { title: "Tipo Rumiante", hook: "Tu enojo no se ve mucho por fuera, pero lo sigues repasando mucho después, sin poder soltarlo." },
+    "suppression+explosion": { title: "Se Guarda y Luego Estalla", hook: "Normalmente te lo tragas, hasta que en algún momento todo sale de golpe, difícil de contener." },
+    "suppression+rumination": { title: "Suprimido y Rumiando", hook: "No lo muestras hacia fuera, pero por dentro sigues repitiendo ese sentimiento una y otra vez." },
+    "explosion+rumination": { title: "Estalla y Luego se Arrepiente", hook: "Incluso después de un arranque fuerte, el eco y el arrepentimiento se quedan mucho tiempo." },
+    "suppression+explosion+rumination": { title: "Sobrecarga Emocional", hook: "Guardarlo, que estalle y seguir rumiándolo después — los tres ejes del manejo de la ira te están pesando con fuerza." },
+  },
 };

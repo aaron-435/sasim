@@ -8,6 +8,7 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "../i18n/types";
 import type { ModuleQuestion } from "./quizProfile";
 
 export const MODULE11_QUESTIONS: ModuleQuestion[] = [
@@ -106,19 +107,53 @@ export const MODULE11_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   confidenceLack: 10,
 };
 
-export const MODULE11_DIMENSION_LABELS: Record<string, { high: string; low: string }> = {
-  expressionSuppression: { high: "표현억제", low: "자연스러운 표현" },
-  spontaneitySuppression: { high: "즉흥성억제", low: "자유로운 생동감" },
-  confidenceLack: { high: "확신부족", low: "매력에 대한 확신" },
+export const MODULE11_DIMENSION_LABELS: Record<Locale, Record<string, { high: string; low: string }>> = {
+  ko: {
+    expressionSuppression: { high: "표현억제", low: "자연스러운 표현" },
+    spontaneitySuppression: { high: "즉흥성억제", low: "자유로운 생동감" },
+    confidenceLack: { high: "확신부족", low: "매력에 대한 확신" },
+  },
+  en: {
+    expressionSuppression: { high: "Expression Suppression", low: "Natural Expression" },
+    spontaneitySuppression: { high: "Suppressed Spontaneity", low: "Free-Flowing Liveliness" },
+    confidenceLack: { high: "Lack of Confidence", low: "Confidence in Your Appeal" },
+  },
+  es: {
+    expressionSuppression: { high: "Supresión de la Expresión", low: "Expresión Natural" },
+    spontaneitySuppression: { high: "Espontaneidad Reprimida", low: "Vitalidad Libre" },
+    confidenceLack: { high: "Falta de Confianza", low: "Confianza en tu Atractivo" },
+  },
 };
 
-export const MODULE11_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
-  baseline: { title: "자연스러운 표현형", hook: "나를 드러내는 데 있어 억제도, 확신 부족도 뚜렷하지 않은 비교적 자유로운 상태입니다." },
-  expressionSuppression: { title: "표현억제형", hook: "사람들 앞에서 나를 자유롭게 드러내는 게 유독 어렵게 느껴집니다." },
-  spontaneitySuppression: { title: "즉흥성억제형", hook: "몸으로 감정을 표현하거나 즉흥적으로 움직이는 게 많이 억제되어 있습니다." },
-  confidenceLack: { title: "확신부족형", hook: "스스로의 매력에 대한 확신이 부족해, 좋은 반응을 받아도 잘 믿지 못합니다." },
-  "expressionSuppression+spontaneitySuppression": { title: "억눌린 생동감형", hook: "표현도 즉흥성도 함께 억제되어 있어, 자기다운 생동감을 드러낼 틈이 적습니다." },
-  "expressionSuppression+confidenceLack": { title: "위축된 자기표현형", hook: "나를 드러내는 것도 어렵고, 스스로에 대한 확신도 부족해 이중으로 위축되어 있습니다." },
-  "spontaneitySuppression+confidenceLack": { title: "조심스러운 확신부족형", hook: "즉흥적인 생동감은 억눌려 있고, 스스로의 매력에 대한 믿음도 흔들립니다." },
-  "expressionSuppression+spontaneitySuppression+confidenceLack": { title: "억눌린 본능형", hook: "표현, 즉흥성, 자기확신 세 가지 모두가 억제된, 나다움을 드러내기 어려운 상태입니다." },
+export const MODULE11_TYPE_NAMES: Record<Locale, Record<string, { title: string; hook: string }>> = {
+  ko: {
+    baseline: { title: "자연스러운 표현형", hook: "나를 드러내는 데 있어 억제도, 확신 부족도 뚜렷하지 않은 비교적 자유로운 상태입니다." },
+    expressionSuppression: { title: "표현억제형", hook: "사람들 앞에서 나를 자유롭게 드러내는 게 유독 어렵게 느껴집니다." },
+    spontaneitySuppression: { title: "즉흥성억제형", hook: "몸으로 감정을 표현하거나 즉흥적으로 움직이는 게 많이 억제되어 있습니다." },
+    confidenceLack: { title: "확신부족형", hook: "스스로의 매력에 대한 확신이 부족해, 좋은 반응을 받아도 잘 믿지 못합니다." },
+    "expressionSuppression+spontaneitySuppression": { title: "억눌린 생동감형", hook: "표현도 즉흥성도 함께 억제되어 있어, 자기다운 생동감을 드러낼 틈이 적습니다." },
+    "expressionSuppression+confidenceLack": { title: "위축된 자기표현형", hook: "나를 드러내는 것도 어렵고, 스스로에 대한 확신도 부족해 이중으로 위축되어 있습니다." },
+    "spontaneitySuppression+confidenceLack": { title: "조심스러운 확신부족형", hook: "즉흥적인 생동감은 억눌려 있고, 스스로의 매력에 대한 믿음도 흔들립니다." },
+    "expressionSuppression+spontaneitySuppression+confidenceLack": { title: "억눌린 본능형", hook: "표현, 즉흥성, 자기확신 세 가지 모두가 억제된, 나다움을 드러내기 어려운 상태입니다." },
+  },
+  en: {
+    baseline: { title: "Naturally Expressive", hook: "Neither suppression nor a lack of confidence stands out clearly when it comes to showing who you are — a relatively free state." },
+    expressionSuppression: { title: "Expression-Suppressed Type", hook: "Showing yourself freely in front of others feels especially hard." },
+    spontaneitySuppression: { title: "Spontaneity-Suppressed Type", hook: "Expressing emotion through your body or moving on impulse is strongly held back." },
+    confidenceLack: { title: "Confidence-Lacking Type", hook: "You lack confidence in your own appeal, so even good reactions are hard to fully believe." },
+    "expressionSuppression+spontaneitySuppression": { title: "Stifled Liveliness", hook: "Both expression and spontaneity are suppressed together, leaving little room for your natural liveliness to show." },
+    "expressionSuppression+confidenceLack": { title: "Withdrawn Self-Expression", hook: "Showing yourself is hard, and you lack confidence in yourself too — doubly withdrawn." },
+    "spontaneitySuppression+confidenceLack": { title: "Cautious and Unsure", hook: "Your spontaneous liveliness is held back, and your belief in your own appeal wavers too." },
+    "expressionSuppression+spontaneitySuppression+confidenceLack": { title: "Suppressed Instinct", hook: "Expression, spontaneity, and self-confidence are all suppressed — a state where it's hard to show who you really are." },
+  },
+  es: {
+    baseline: { title: "Expresión Natural", hook: "Ni la supresión ni la falta de confianza destacan con claridad a la hora de mostrar quién eres — un estado relativamente libre." },
+    expressionSuppression: { title: "Tipo Expresión Suprimida", hook: "Mostrarte libremente frente a los demás se siente especialmente difícil." },
+    spontaneitySuppression: { title: "Tipo Espontaneidad Reprimida", hook: "Expresar emociones con el cuerpo o moverte por impulso está fuertemente contenido." },
+    confidenceLack: { title: "Tipo Falta de Confianza", hook: "Te falta confianza en tu propio atractivo, así que incluso las buenas reacciones cuestan creerlas del todo." },
+    "expressionSuppression+spontaneitySuppression": { title: "Vitalidad Reprimida", hook: "La expresión y la espontaneidad están reprimidas juntas, dejando poco espacio para que tu vitalidad natural se muestre." },
+    "expressionSuppression+confidenceLack": { title: "Autoexpresión Retraída", hook: "Mostrarte es difícil, y además te falta confianza en ti mismo — doblemente retraído." },
+    "spontaneitySuppression+confidenceLack": { title: "Cauteloso e Inseguro", hook: "Tu vitalidad espontánea está contenida, y tu confianza en tu propio atractivo también se tambalea." },
+    "expressionSuppression+spontaneitySuppression+confidenceLack": { title: "Instinto Reprimido", hook: "Expresión, espontaneidad y autoconfianza están los tres reprimidos — un estado donde es difícil mostrar quién realmente eres." },
+  },
 };

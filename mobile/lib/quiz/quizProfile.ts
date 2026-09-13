@@ -16,6 +16,8 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "../i18n/types";
+
 export interface QuizAnswerRecord {
   qId: string;
   prompt: string; // the question text
@@ -227,19 +229,56 @@ export interface DimensionLabelMap {
   [dimension: string]: { high: string; low: string };
 }
 
+// Non-Korean clause templates for generateNuancedSummary — EN/ES have no
+// batchim-driven particle system, so each locale just gets a fixed sentence
+// frame per intensity tier instead of a withSubjectParticle/withTopicParticle
+// equivalent.
+const CLAUSE_TEMPLATE: Record<"en" | "es", Record<IntensityTier, (label: string) => string>> = {
+  en: {
+    "약함": (label) => `${label} shows up a little, though not clearly`,
+    "보통": (label) => `${label} appears to a moderate degree`,
+    "강함": (label) => `${label} comes through fairly strongly`,
+    "매우 강함": (label) => `${label} shows up at an almost extreme level`,
+  },
+  es: {
+    "약함": (label) => `${label} aparece un poco, aunque no de forma clara`,
+    "보통": (label) => `${label} se nota de forma moderada`,
+    "강함": (label) => `${label} se manifiesta con bastante claridad`,
+    "매우 강함": (label) => `${label} aparece de forma casi extrema`,
+  },
+};
+
 /**
  * Builds a hedged, nuanced sentence from dimension results instead of
  * forcing a rigid 4-box label — matches the requested style:
  *   "불안은 약간 높지만 회피형처럼 보이지는 않는 편입니다."
  *
- * Logic: dimensions with intensity "약함"/"보통" get hedged phrasing
+ * Korean logic: dimensions with intensity "약함"/"보통" get hedged phrasing
  * ("~한 편", "~인 것 같은"); dimensions with "강함"/"매우 강함" get
- * assertive phrasing ("~이 뚜렷합니다", "~가 거의 없으시네요").
+ * assertive phrasing ("~이 뚜렷합니다", "~가 거의 없으시네요"), with 이/가
+ * vs 은/는 chosen by hasBatchim(). EN/ES have no such particle system, so
+ * they use a fixed sentence frame per intensity tier instead (see
+ * CLAUSE_TEMPLATE) — `labels` must already be pre-translated into that locale.
  */
 export function generateNuancedSummary(
   results: DimensionResult[],
-  labels: DimensionLabelMap
+  labels: DimensionLabelMap,
+  locale: Locale = "ko"
 ): string {
+  if (locale !== "ko") {
+    const template = CLAUSE_TEMPLATE[locale];
+    const clauses = results
+      .map((r) => {
+        const label = labels[r.dimension];
+        if (!label) return "";
+        const sideLabel = r.direction === "high" ? label.high : label.low;
+        return template[r.intensity](sideLabel);
+      })
+      .filter(Boolean);
+    if (clauses.length === 0) return "";
+    return clauses.join(", ") + ".";
+  }
+
   const clauses = results.map((r) => {
     const label = labels[r.dimension];
     if (!label) return "";

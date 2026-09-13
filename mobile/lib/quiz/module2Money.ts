@@ -7,6 +7,7 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "../i18n/types";
 import type { ModuleQuestion } from "./quizProfile";
 
 export const MODULE2_QUESTIONS: ModuleQuestion[] = [
@@ -105,19 +106,53 @@ export const MODULE2_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   avoidance: 10,
 };
 
-export const MODULE2_DIMENSION_LABELS: Record<string, { high: string; low: string }> = {
-  scarcity: { high: "결핍공포", low: "경제적 안정감" },
-  ostentation: { high: "과시욕", low: "내적 기준" },
-  avoidance: { high: "회피", low: "돈 문제 직면 능력" },
+export const MODULE2_DIMENSION_LABELS: Record<Locale, Record<string, { high: string; low: string }>> = {
+  ko: {
+    scarcity: { high: "결핍공포", low: "경제적 안정감" },
+    ostentation: { high: "과시욕", low: "내적 기준" },
+    avoidance: { high: "회피", low: "돈 문제 직면 능력" },
+  },
+  en: {
+    scarcity: { high: "Scarcity Fear", low: "Financial Security" },
+    ostentation: { high: "Ostentation", low: "Internal Standards" },
+    avoidance: { high: "Avoidance", low: "Facing Money Head-On" },
+  },
+  es: {
+    scarcity: { high: "Miedo a la Carencia", low: "Seguridad Financiera" },
+    ostentation: { high: "Ostentación", low: "Criterio Propio" },
+    avoidance: { high: "Evitación", low: "Capacidad de Afrontar el Dinero" },
+  },
 };
 
-export const MODULE2_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
-  baseline: { title: "균형형", hook: "돈에 대해 비교적 안정적이고 균형 잡힌 태도를 갖고 있습니다." },
-  scarcity: { title: "결핍공포형", hook: "충분히 있어도 늘 부족하다고 느끼며, 돈이 사라질 것에 대한 불안이 큽니다." },
-  ostentation: { title: "과시형", hook: "돈을 자기 가치를 증명하는 수단으로 여기고, 남에게 보이는 모습에 민감합니다." },
-  avoidance: { title: "회피형", hook: "돈 문제를 마주하는 것 자체가 부담스러워 확인과 처리를 계속 미룹니다." },
-  "scarcity+ostentation": { title: "불안한 과시형", hook: "부족함에 대한 불안을 과시적 소비로 덮으려는 패턴입니다." },
-  "scarcity+avoidance": { title: "불안 회피형", hook: "돈에 대한 불안이 크지만, 그 불안을 마주하기보다 회피하는 쪽을 택합니다." },
-  "ostentation+avoidance": { title: "겉과 속이 다른 형", hook: "보여지는 모습에는 신경 쓰지만, 실제 재정 관리는 회피하는 패턴입니다." },
-  "scarcity+ostentation+avoidance": { title: "복합형", hook: "결핍에 대한 불안, 과시 욕구, 회피가 모두 강하게 얽혀 있는 패턴입니다." },
+export const MODULE2_TYPE_NAMES: Record<Locale, Record<string, { title: string; hook: string }>> = {
+  ko: {
+    baseline: { title: "균형형", hook: "돈에 대해 비교적 안정적이고 균형 잡힌 태도를 갖고 있습니다." },
+    scarcity: { title: "결핍공포형", hook: "충분히 있어도 늘 부족하다고 느끼며, 돈이 사라질 것에 대한 불안이 큽니다." },
+    ostentation: { title: "과시형", hook: "돈을 자기 가치를 증명하는 수단으로 여기고, 남에게 보이는 모습에 민감합니다." },
+    avoidance: { title: "회피형", hook: "돈 문제를 마주하는 것 자체가 부담스러워 확인과 처리를 계속 미룹니다." },
+    "scarcity+ostentation": { title: "불안한 과시형", hook: "부족함에 대한 불안을 과시적 소비로 덮으려는 패턴입니다." },
+    "scarcity+avoidance": { title: "불안 회피형", hook: "돈에 대한 불안이 크지만, 그 불안을 마주하기보다 회피하는 쪽을 택합니다." },
+    "ostentation+avoidance": { title: "겉과 속이 다른 형", hook: "보여지는 모습에는 신경 쓰지만, 실제 재정 관리는 회피하는 패턴입니다." },
+    "scarcity+ostentation+avoidance": { title: "복합형", hook: "결핍에 대한 불안, 과시 욕구, 회피가 모두 강하게 얽혀 있는 패턴입니다." },
+  },
+  en: {
+    baseline: { title: "Balanced", hook: "You have a relatively stable, balanced attitude toward money." },
+    scarcity: { title: "Scarcity-Fear Type", hook: "No matter how much you have, it never feels like enough — you carry real anxiety about money disappearing." },
+    ostentation: { title: "Ostentatious Type", hook: "You treat money as proof of your worth, and you're sensitive to how you look to others." },
+    avoidance: { title: "Avoidant Type", hook: "Facing money matters head-on feels like too much, so you keep putting off checking and dealing with them." },
+    "scarcity+ostentation": { title: "Anxious Show-Off", hook: "A pattern of covering anxiety about not having enough with showy spending." },
+    "scarcity+avoidance": { title: "Anxious Avoidant", hook: "Your anxiety about money runs deep, but you'd rather avoid it than face it." },
+    "ostentation+avoidance": { title: "All Show, No Substance", hook: "You care about how things look, but you avoid actually managing your finances." },
+    "scarcity+ostentation+avoidance": { title: "Compound Type", hook: "Fear of scarcity, the urge to show off, and avoidance are all tangled together strongly." },
+  },
+  es: {
+    baseline: { title: "Equilibrado", hook: "Tienes una actitud relativamente estable y equilibrada hacia el dinero." },
+    scarcity: { title: "Tipo Miedo a la Carencia", hook: "No importa cuánto tengas, nunca se siente suficiente — cargas una ansiedad real de que el dinero se te vaya a acabar." },
+    ostentation: { title: "Tipo Ostentoso", hook: "Tratas el dinero como una prueba de tu valor, y eres sensible a cómo te ven los demás." },
+    avoidance: { title: "Tipo Evitativo", hook: "Afrontar los temas de dinero se siente demasiado pesado, así que sigues postergando revisarlos y resolverlos." },
+    "scarcity+ostentation": { title: "Ostentoso Ansioso", hook: "Un patrón de cubrir la ansiedad de no tener suficiente con gastos ostentosos." },
+    "scarcity+avoidance": { title: "Evitativo Ansioso", hook: "Tu ansiedad por el dinero es profunda, pero prefieres evitarla en vez de afrontarla." },
+    "ostentation+avoidance": { title: "Todo Apariencia", hook: "Te importa cómo se ve todo, pero evitas manejar realmente tus finanzas." },
+    "scarcity+ostentation+avoidance": { title: "Tipo Compuesto", hook: "El miedo a la carencia, las ganas de aparentar y la evitación están todos entrelazados con fuerza." },
+  },
 };

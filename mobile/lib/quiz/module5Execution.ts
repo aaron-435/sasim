@@ -7,6 +7,7 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "../i18n/types";
 import type { ModuleQuestion } from "./quizProfile";
 
 export const MODULE5_QUESTIONS: ModuleQuestion[] = [
@@ -102,19 +103,53 @@ export const MODULE5_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   decisionParalysis: 10,
 };
 
-export const MODULE5_DIMENSION_LABELS: Record<string, { high: string; low: string }> = {
-  perfectionism: { high: "완벽주의", low: "일단 시작하는 유연함" },
-  avoidance: { high: "회피", low: "즉시 실행력" },
-  decisionParalysis: { high: "선택마비", low: "결정의 명료함" },
+export const MODULE5_DIMENSION_LABELS: Record<Locale, Record<string, { high: string; low: string }>> = {
+  ko: {
+    perfectionism: { high: "완벽주의", low: "일단 시작하는 유연함" },
+    avoidance: { high: "회피", low: "즉시 실행력" },
+    decisionParalysis: { high: "선택마비", low: "결정의 명료함" },
+  },
+  en: {
+    perfectionism: { high: "Perfectionism", low: "Flexibility to Just Start" },
+    avoidance: { high: "Avoidance", low: "Immediate Action" },
+    decisionParalysis: { high: "Decision Paralysis", low: "Clarity in Decisions" },
+  },
+  es: {
+    perfectionism: { high: "Perfeccionismo", low: "Flexibilidad para Empezar" },
+    avoidance: { high: "Evitación", low: "Acción Inmediata" },
+    decisionParalysis: { high: "Parálisis de Decisión", low: "Claridad para Decidir" },
+  },
 };
 
-export const MODULE5_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
-  baseline: { title: "안정 실행형", hook: "완벽주의·회피·선택마비 어느 쪽도 뚜렷하지 않은, 비교적 실행이 원활한 상태입니다." },
-  perfectionism: { title: "완벽주의형", hook: "확신이 서지 않으면 시작 자체를 미루는, 높은 기준이 발목을 잡는 패턴입니다." },
-  avoidance: { title: "회피형", hook: "하기 싫은 일은 마감 직전까지 손을 대지 않는 패턴입니다." },
-  decisionParalysis: { title: "선택마비형", hook: "선택지 앞에서 머릿속이 복잡해지고, 결정을 내리는 것 자체가 큰 부담입니다." },
-  "perfectionism+avoidance": { title: "완벽주의적 회피형", hook: "완벽하지 않을 바엔 시작을 미루는, 회피와 완벽주의가 서로를 강화하는 패턴입니다." },
-  "perfectionism+decisionParalysis": { title: "정지된 완벽주의형", hook: "완벽한 선택을 하려다 결정 자체를 내리지 못하는 패턴입니다." },
-  "avoidance+decisionParalysis": { title: "미루는 우유부단형", hook: "결정도 실행도 뒤로 미루며, 둘 다 부담스럽게 느끼는 패턴입니다." },
-  "perfectionism+avoidance+decisionParalysis": { title: "복합 정체형", hook: "완벽주의, 회피, 선택마비가 모두 강하게 얽혀 실행이 크게 막혀 있는 상태입니다." },
+export const MODULE5_TYPE_NAMES: Record<Locale, Record<string, { title: string; hook: string }>> = {
+  ko: {
+    baseline: { title: "안정 실행형", hook: "완벽주의·회피·선택마비 어느 쪽도 뚜렷하지 않은, 비교적 실행이 원활한 상태입니다." },
+    perfectionism: { title: "완벽주의형", hook: "확신이 서지 않으면 시작 자체를 미루는, 높은 기준이 발목을 잡는 패턴입니다." },
+    avoidance: { title: "회피형", hook: "하기 싫은 일은 마감 직전까지 손을 대지 않는 패턴입니다." },
+    decisionParalysis: { title: "선택마비형", hook: "선택지 앞에서 머릿속이 복잡해지고, 결정을 내리는 것 자체가 큰 부담입니다." },
+    "perfectionism+avoidance": { title: "완벽주의적 회피형", hook: "완벽하지 않을 바엔 시작을 미루는, 회피와 완벽주의가 서로를 강화하는 패턴입니다." },
+    "perfectionism+decisionParalysis": { title: "정지된 완벽주의형", hook: "완벽한 선택을 하려다 결정 자체를 내리지 못하는 패턴입니다." },
+    "avoidance+decisionParalysis": { title: "미루는 우유부단형", hook: "결정도 실행도 뒤로 미루며, 둘 다 부담스럽게 느끼는 패턴입니다." },
+    "perfectionism+avoidance+decisionParalysis": { title: "복합 정체형", hook: "완벽주의, 회피, 선택마비가 모두 강하게 얽혀 실행이 크게 막혀 있는 상태입니다." },
+  },
+  en: {
+    baseline: { title: "Steady Executor", hook: "Neither perfectionism, avoidance, nor decision paralysis stands out clearly — you get things done relatively smoothly." },
+    perfectionism: { title: "Perfectionist Type", hook: "If you're not sure it'll be good, you put off even starting — high standards that end up holding you back." },
+    avoidance: { title: "Avoidant Type", hook: "You don't touch things you don't want to do until right before the deadline." },
+    decisionParalysis: { title: "Decision-Paralyzed Type", hook: "Your mind gets tangled in front of options, and making a decision at all feels like a huge burden." },
+    "perfectionism+avoidance": { title: "Perfectionist Avoider", hook: "Rather than do it imperfectly, you delay starting — avoidance and perfectionism reinforcing each other." },
+    "perfectionism+decisionParalysis": { title: "Frozen Perfectionist", hook: "Trying to make the perfect choice leaves you unable to decide at all." },
+    "avoidance+decisionParalysis": { title: "Procrastinating Indecisive", hook: "You push back both deciding and doing — both feel like a burden." },
+    "perfectionism+avoidance+decisionParalysis": { title: "Compound Stuck Type", hook: "Perfectionism, avoidance, and decision paralysis are all strongly tangled together, leaving you quite stuck." },
+  },
+  es: {
+    baseline: { title: "Ejecutor Estable", hook: "Ni el perfeccionismo, ni la evitación, ni la parálisis de decisión destacan con claridad — sacas las cosas adelante de forma relativamente fluida." },
+    perfectionism: { title: "Tipo Perfeccionista", hook: "Si no estás seguro de que saldrá bien, pospones incluso empezar — estándares altos que terminan frenándote." },
+    avoidance: { title: "Tipo Evitativo", hook: "No tocas lo que no quieres hacer hasta justo antes de la fecha límite." },
+    decisionParalysis: { title: "Tipo Parálisis de Decisión", hook: "Tu mente se enreda frente a las opciones, y decidir se siente como una carga enorme." },
+    "perfectionism+avoidance": { title: "Perfeccionista Evitativo", hook: "Antes que hacerlo de forma imperfecta, retrasas empezar — evitación y perfeccionismo reforzándose mutuamente." },
+    "perfectionism+decisionParalysis": { title: "Perfeccionista Congelado", hook: "Intentar tomar la decisión perfecta te deja sin poder decidir nada." },
+    "avoidance+decisionParalysis": { title: "Indeciso Procrastinador", hook: "Postergas tanto decidir como actuar — ambos se sienten como una carga." },
+    "perfectionism+avoidance+decisionParalysis": { title: "Tipo Estancamiento Compuesto", hook: "Perfeccionismo, evitación y parálisis de decisión están todos entrelazados con fuerza, dejándote bastante estancado." },
+  },
 };

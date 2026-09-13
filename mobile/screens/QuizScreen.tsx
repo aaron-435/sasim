@@ -5,8 +5,8 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
-import { useStrings } from "../lib/i18n";
-import { getModuleById } from "../lib/quiz/modules";
+import { useLocale, useStrings } from "../lib/i18n";
+import { getModuleById, resolveModuleLocale } from "../lib/quiz/modules";
 import {
   classifyProfile,
   computeAllDimensionResults,
@@ -57,8 +57,13 @@ export default function QuizScreen({
   onBack: () => void;
 }) {
   const strings = useStrings();
+  const { locale } = useLocale();
   const moduleDef = useMemo(() => getModuleById(moduleId) ?? getModuleById("module1")!, [moduleId]);
   const questions = moduleDef.questions;
+  const { dimensionLabels, typeNames, dimensionShortNames } = useMemo(
+    () => resolveModuleLocale(moduleDef, locale),
+    [moduleDef, locale]
+  );
 
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswerRecord[]>([]);
@@ -103,11 +108,11 @@ export default function QuizScreen({
     if (!done) return null;
     const dimensionResults = computeAllDimensionResults(answers, moduleDef.dimensionItemCounts);
     const classification = classifyProfile(dimensionResults);
-    const typeInfo = resolveTypeName(classification, moduleDef.typeNames, (dims) => ({
-      title: dims.map((d) => moduleDef.dimensionShortNames[d] ?? d).join("+") + " " + strings.quiz.combinedTypeSuffix,
+    const typeInfo = resolveTypeName(classification, typeNames, (dims) => ({
+      title: dims.map((d) => dimensionShortNames[d] ?? d).join("+") + " " + strings.quiz.combinedTypeSuffix,
       hook: strings.quiz.combinedTypeHook,
     }));
-    const nuancedSummary = generateNuancedSummary(dimensionResults, moduleDef.dimensionLabels);
+    const nuancedSummary = generateNuancedSummary(dimensionResults, dimensionLabels, locale);
     const elements = sajuElements ?? null;
     const dominantElement = elements ? Object.entries(elements).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null : null;
     return {
@@ -118,11 +123,11 @@ export default function QuizScreen({
       classification,
       typeInfo,
       nuancedSummary,
-      dimensionShortNames: moduleDef.dimensionShortNames,
+      dimensionShortNames,
       elements,
       dominantElement,
     };
-  }, [answers, done, moduleDef, sajuElements, strings]);
+  }, [answers, done, moduleDef, sajuElements, strings, dimensionLabels, typeNames, dimensionShortNames, locale]);
 
   function handleContinue() {
     if (!diagnosis) return;

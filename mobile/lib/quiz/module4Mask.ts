@@ -15,6 +15,7 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "../i18n/types";
 import type { ModuleQuestion } from "./quizProfile";
 
 export const MODULE4_QUESTIONS: ModuleQuestion[] = [
@@ -107,19 +108,53 @@ export const MODULE4_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   socialFatigue: 10,
 };
 
-export const MODULE4_DIMENSION_LABELS: Record<string, { high: string; low: string }> = {
-  imageManagement: { high: "이미지관리", low: "일관된 자기표현" },
-  concealment: { high: "은폐", low: "솔직한 개방성" },
-  socialFatigue: { high: "관계피로", low: "관계에서 얻는 충전감" },
+export const MODULE4_DIMENSION_LABELS: Record<Locale, Record<string, { high: string; low: string }>> = {
+  ko: {
+    imageManagement: { high: "이미지관리", low: "일관된 자기표현" },
+    concealment: { high: "은폐", low: "솔직한 개방성" },
+    socialFatigue: { high: "관계피로", low: "관계에서 얻는 충전감" },
+  },
+  en: {
+    imageManagement: { high: "Image Management", low: "Consistent Self-Expression" },
+    concealment: { high: "Concealment", low: "Honest Openness" },
+    socialFatigue: { high: "Social Fatigue", low: "Feeling Recharged by Others" },
+  },
+  es: {
+    imageManagement: { high: "Gestión de Imagen", low: "Autoexpresión Consistente" },
+    concealment: { high: "Ocultamiento", low: "Apertura Honesta" },
+    socialFatigue: { high: "Fatiga Social", low: "Sentirte Recargado con Otros" },
+  },
 };
 
-export const MODULE4_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
-  baseline: { title: "일관된 자기형", hook: "상황에 따라 크게 다른 모습을 보이지 않는, 비교적 일관된 자기표현을 갖고 있습니다." },
-  imageManagement: { title: "이미지관리형", hook: "상황과 상대에 맞춰 보여주는 모습을 세심하게 조정합니다." },
-  concealment: { title: "은폐형", hook: "진짜 속마음은 가까운 사람에게도 잘 드러내지 않습니다." },
-  socialFatigue: { title: "관계피로형", hook: "사람을 만나는 걸 좋아하면서도, 그만큼 크게 소진됩니다." },
-  "imageManagement+concealment": { title: "가면형", hook: "보여주는 모습을 관리하는 동시에 진짜 속마음은 철저히 숨기는 패턴입니다." },
-  "imageManagement+socialFatigue": { title: "연기하는 인싸형", hook: "밝은 모습을 보여주려 애쓰지만, 그만큼 관계에서 크게 지칩니다." },
-  "concealment+socialFatigue": { title: "고립된 은폐형", hook: "속마음을 숨기다 보니 관계에서 진짜 충전을 얻지 못하고 있습니다." },
-  "imageManagement+concealment+socialFatigue": { title: "완전 가면형", hook: "이미지관리, 은폐, 관계피로가 모두 뚜렷한, '가면'이 가장 무거운 패턴입니다." },
+export const MODULE4_TYPE_NAMES: Record<Locale, Record<string, { title: string; hook: string }>> = {
+  ko: {
+    baseline: { title: "일관된 자기형", hook: "상황에 따라 크게 다른 모습을 보이지 않는, 비교적 일관된 자기표현을 갖고 있습니다." },
+    imageManagement: { title: "이미지관리형", hook: "상황과 상대에 맞춰 보여주는 모습을 세심하게 조정합니다." },
+    concealment: { title: "은폐형", hook: "진짜 속마음은 가까운 사람에게도 잘 드러내지 않습니다." },
+    socialFatigue: { title: "관계피로형", hook: "사람을 만나는 걸 좋아하면서도, 그만큼 크게 소진됩니다." },
+    "imageManagement+concealment": { title: "가면형", hook: "보여주는 모습을 관리하는 동시에 진짜 속마음은 철저히 숨기는 패턴입니다." },
+    "imageManagement+socialFatigue": { title: "연기하는 인싸형", hook: "밝은 모습을 보여주려 애쓰지만, 그만큼 관계에서 크게 지칩니다." },
+    "concealment+socialFatigue": { title: "고립된 은폐형", hook: "속마음을 숨기다 보니 관계에서 진짜 충전을 얻지 못하고 있습니다." },
+    "imageManagement+concealment+socialFatigue": { title: "완전 가면형", hook: "이미지관리, 은폐, 관계피로가 모두 뚜렷한, '가면'이 가장 무거운 패턴입니다." },
+  },
+  en: {
+    baseline: { title: "Consistent Self", hook: "You don't change dramatically depending on the situation — your self-expression stays relatively consistent." },
+    imageManagement: { title: "Image-Managed Type", hook: "You carefully adjust the face you show depending on the situation and the person." },
+    concealment: { title: "Concealed Type", hook: "You rarely reveal your real feelings, even to people close to you." },
+    socialFatigue: { title: "Socially Drained Type", hook: "You enjoy seeing people, but it wears you out just as much." },
+    "imageManagement+concealment": { title: "Masked Type", hook: "Managing how you appear while thoroughly hiding how you really feel, at the same time." },
+    "imageManagement+socialFatigue": { title: "Performing Extrovert", hook: "You work to project a bright image, but it drains you heavily in return." },
+    "concealment+socialFatigue": { title: "Isolated and Concealed", hook: "Hiding your real feelings means you never actually get recharged by being with others." },
+    "imageManagement+concealment+socialFatigue": { title: "Fully Masked", hook: "Image management, concealment, and social fatigue are all pronounced — the heaviest version of the 'mask.'" },
+  },
+  es: {
+    baseline: { title: "Yo Consistente", hook: "No cambias drásticamente según la situación — tu forma de expresarte se mantiene relativamente consistente." },
+    imageManagement: { title: "Tipo Gestión de Imagen", hook: "Ajustas con cuidado la cara que muestras según la situación y la persona." },
+    concealment: { title: "Tipo Ocultamiento", hook: "Rara vez muestras lo que realmente sientes, incluso con la gente cercana." },
+    socialFatigue: { title: "Tipo Fatiga Social", hook: "Disfrutas ver gente, pero eso también te agota igual de fuerte." },
+    "imageManagement+concealment": { title: "Tipo Máscara", hook: "Gestionas cómo te ven mientras escondes por completo lo que realmente sientes, al mismo tiempo." },
+    "imageManagement+socialFatigue": { title: "Extrovertido Actuado", hook: "Te esfuerzas por proyectar una imagen alegre, pero eso te agota mucho a cambio." },
+    "concealment+socialFatigue": { title: "Aislado y Oculto", hook: "Esconder lo que sientes hace que nunca termines de recargarte al estar con otros." },
+    "imageManagement+concealment+socialFatigue": { title: "Máscara Total", hook: "Gestión de imagen, ocultamiento y fatiga social están los tres marcados — la versión más pesada de la 'máscara.'" },
+  },
 };

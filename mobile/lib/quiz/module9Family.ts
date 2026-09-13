@@ -8,6 +8,7 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "../i18n/types";
 import type { ModuleQuestion } from "./quizProfile";
 
 export const MODULE9_QUESTIONS: ModuleQuestion[] = [
@@ -106,19 +107,53 @@ export const MODULE9_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   parentification: 10,
 };
 
-export const MODULE9_DIMENSION_LABELS: Record<string, { high: string; low: string }> = {
-  enmeshment: { high: "정서적얽힘", low: "건강한 분리" },
-  cutoff: { high: "정서적단절", low: "열린 소통" },
-  parentification: { high: "역할부담", low: "가벼운 책임감" },
+export const MODULE9_DIMENSION_LABELS: Record<Locale, Record<string, { high: string; low: string }>> = {
+  ko: {
+    enmeshment: { high: "정서적얽힘", low: "건강한 분리" },
+    cutoff: { high: "정서적단절", low: "열린 소통" },
+    parentification: { high: "역할부담", low: "가벼운 책임감" },
+  },
+  en: {
+    enmeshment: { high: "Emotional Enmeshment", low: "Healthy Separation" },
+    cutoff: { high: "Emotional Cutoff", low: "Open Communication" },
+    parentification: { high: "Parentification", low: "Light Sense of Responsibility" },
+  },
+  es: {
+    enmeshment: { high: "Enmarañamiento Emocional", low: "Separación Saludable" },
+    cutoff: { high: "Corte Emocional", low: "Comunicación Abierta" },
+    parentification: { high: "Parentalización", low: "Responsabilidad Llevadera" },
+  },
 };
 
-export const MODULE9_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
-  baseline: { title: "균형잡힌 가족거리형", hook: "가족과 정서적으로 지나치게 얽혀 있지도, 단절되어 있지도 않은 균형 잡힌 상태입니다." },
-  enmeshment: { title: "정서적 얽힘형", hook: "가족의 감정이 나도 모르게 크게 전이되고, 그 영향에서 벗어나기 어렵습니다." },
-  cutoff: { title: "정서적 단절형", hook: "가족과 깊은 이야기를 나누기 어렵고, 의식적이든 아니든 거리를 두고 있습니다." },
-  parentification: { title: "조숙한 돌봄형", hook: "어릴 때부터 어른 역할을 떠맡아온 패턴이 지금의 관계에도 이어지고 있습니다." },
-  "enmeshment+cutoff": { title: "거리를 둔 채 끌려가는형", hook: "표면적으론 거리를 두면서도, 마음은 여전히 가족의 감정에 크게 끌려가는 모순적인 패턴입니다." },
-  "enmeshment+parentification": { title: "책임과 얽힘형", hook: "가족의 감정도 떠안고, 돌봄의 책임까지 함께 짊어진 상태입니다." },
-  "cutoff+parentification": { title: "거리를 둔 채 짊어진형", hook: "정서적으로는 멀어졌지만, 여전히 역할과 책임감만은 남아있는 상태입니다." },
-  "enmeshment+cutoff+parentification": { title: "원가족 부담 총체형", hook: "얽힘, 단절, 역할부담이 모두 뚜렷하게 나타나는, 원가족의 영향이 여러 방향에서 무겁게 걸려있는 상태입니다." },
+export const MODULE9_TYPE_NAMES: Record<Locale, Record<string, { title: string; hook: string }>> = {
+  ko: {
+    baseline: { title: "균형잡힌 가족거리형", hook: "가족과 정서적으로 지나치게 얽혀 있지도, 단절되어 있지도 않은 균형 잡힌 상태입니다." },
+    enmeshment: { title: "정서적 얽힘형", hook: "가족의 감정이 나도 모르게 크게 전이되고, 그 영향에서 벗어나기 어렵습니다." },
+    cutoff: { title: "정서적 단절형", hook: "가족과 깊은 이야기를 나누기 어렵고, 의식적이든 아니든 거리를 두고 있습니다." },
+    parentification: { title: "조숙한 돌봄형", hook: "어릴 때부터 어른 역할을 떠맡아온 패턴이 지금의 관계에도 이어지고 있습니다." },
+    "enmeshment+cutoff": { title: "거리를 둔 채 끌려가는형", hook: "표면적으론 거리를 두면서도, 마음은 여전히 가족의 감정에 크게 끌려가는 모순적인 패턴입니다." },
+    "enmeshment+parentification": { title: "책임과 얽힘형", hook: "가족의 감정도 떠안고, 돌봄의 책임까지 함께 짊어진 상태입니다." },
+    "cutoff+parentification": { title: "거리를 둔 채 짊어진형", hook: "정서적으로는 멀어졌지만, 여전히 역할과 책임감만은 남아있는 상태입니다." },
+    "enmeshment+cutoff+parentification": { title: "원가족 부담 총체형", hook: "얽힘, 단절, 역할부담이 모두 뚜렷하게 나타나는, 원가족의 영향이 여러 방향에서 무겁게 걸려있는 상태입니다." },
+  },
+  en: {
+    baseline: { title: "Balanced Family Distance", hook: "You're neither overly entangled with your family's emotions nor cut off from them — a balanced state." },
+    enmeshment: { title: "Emotionally Enmeshed Type", hook: "Your family's emotions bleed into you more than you realize, and it's hard to step outside their pull." },
+    cutoff: { title: "Emotionally Cut-Off Type", hook: "It's hard to have deep conversations with your family, and you keep some distance, whether on purpose or not." },
+    parentification: { title: "Precocious Caretaker Type", hook: "A pattern of taking on an adult role from a young age that still carries into your relationships now." },
+    "enmeshment+cutoff": { title: "Distant Yet Pulled In", hook: "A contradictory pattern — keeping your distance on the surface while your heart still gets pulled strongly by the family's emotions." },
+    "enmeshment+parentification": { title: "Entangled and Burdened", hook: "Carrying both your family's emotions and the weight of caretaking responsibility." },
+    "cutoff+parentification": { title: "Distant Yet Burdened", hook: "You've pulled away emotionally, but the role and the responsibility have stuck around." },
+    "enmeshment+cutoff+parentification": { title: "Full Family-Burden Type", hook: "Enmeshment, cutoff, and parentification are all clearly present — your family of origin's influence is weighing heavily from several directions." },
+  },
+  es: {
+    baseline: { title: "Distancia Familiar Equilibrada", hook: "No estás excesivamente enredado con las emociones de tu familia ni tampoco cortado de ellas — un estado equilibrado." },
+    enmeshment: { title: "Tipo Enmarañado Emocionalmente", hook: "Las emociones de tu familia se te filtran más de lo que crees, y es difícil salir de su influencia." },
+    cutoff: { title: "Tipo Corte Emocional", hook: "Es difícil tener conversaciones profundas con tu familia, y mantienes cierta distancia, a propósito o no." },
+    parentification: { title: "Tipo Cuidador Precoz", hook: "Un patrón de haber asumido un rol de adulto desde muy joven que todavía se refleja en tus relaciones de ahora." },
+    "enmeshment+cutoff": { title: "Distante Pero Arrastrado", hook: "Un patrón contradictorio — mantener distancia en la superficie mientras tu corazón sigue siendo arrastrado con fuerza por las emociones familiares." },
+    "enmeshment+parentification": { title: "Enredado y Cargado", hook: "Llevas tanto las emociones de tu familia como el peso de la responsabilidad de cuidar." },
+    "cutoff+parentification": { title: "Distante Pero con Carga", hook: "Te alejaste emocionalmente, pero el rol y la responsabilidad se quedaron contigo." },
+    "enmeshment+cutoff+parentification": { title: "Carga Familiar Total", hook: "Enmarañamiento, corte emocional y parentalización están los tres claramente presentes — la influencia de tu familia de origen pesa fuerte desde varios frentes." },
+  },
 };

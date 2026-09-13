@@ -8,6 +8,7 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "../i18n/types";
 import type { ModuleQuestion } from "./quizProfile";
 
 export const MODULE7_QUESTIONS: ModuleQuestion[] = [
@@ -106,19 +107,53 @@ export const MODULE7_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   lowSensoryThreshold: 10,
 };
 
-export const MODULE7_DIMENSION_LABELS: Record<string, { high: string; low: string }> = {
-  overstimulation: { high: "자극과부하", low: "안정적인 자극처리" },
-  aestheticSensitivity: { high: "심미적민감성", low: "담담한 감상" },
-  lowSensoryThreshold: { high: "낮은감각역치", low: "둔감한 감각" },
+export const MODULE7_DIMENSION_LABELS: Record<Locale, Record<string, { high: string; low: string }>> = {
+  ko: {
+    overstimulation: { high: "자극과부하", low: "안정적인 자극처리" },
+    aestheticSensitivity: { high: "심미적민감성", low: "담담한 감상" },
+    lowSensoryThreshold: { high: "낮은감각역치", low: "둔감한 감각" },
+  },
+  en: {
+    overstimulation: { high: "Overstimulation", low: "Stable Stimulus Processing" },
+    aestheticSensitivity: { high: "Aesthetic Sensitivity", low: "Detached Appreciation" },
+    lowSensoryThreshold: { high: "Low Sensory Threshold", low: "Dulled Senses" },
+  },
+  es: {
+    overstimulation: { high: "Sobreestimulación", low: "Procesamiento Estable de Estímulos" },
+    aestheticSensitivity: { high: "Sensibilidad Estética", low: "Apreciación Distante" },
+    lowSensoryThreshold: { high: "Umbral Sensorial Bajo", low: "Sentidos Embotados" },
+  },
 };
 
-export const MODULE7_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
-  baseline: { title: "무난한 감각형", hook: "자극에 특별히 압도되거나 예민하지 않은, 비교적 무난한 감각 반응을 보입니다." },
-  overstimulation: { title: "과부하형", hook: "여러 자극이 한꺼번에 몰리면 쉽게 압도되고, 혼자만의 시간이 꼭 필요합니다." },
-  aestheticSensitivity: { title: "심미형", hook: "음악, 예술, 풍경 같은 아름다움과 감정적 울림에 남들보다 깊이 반응합니다." },
-  lowSensoryThreshold: { title: "감각민감형", hook: "소리, 빛, 냄새, 촉감 같은 물리적 자극에 유독 예민하게 반응합니다." },
-  "overstimulation+aestheticSensitivity": { title: "감성 과몰입형", hook: "깊이 느끼는 만큼 그 감정에 쉽게 압도되기도 하는 패턴입니다." },
-  "overstimulation+lowSensoryThreshold": { title: "감각 과부하형", hook: "물리적 자극에도 민감하고, 여러 자극이 겹치면 쉽게 지치는 편입니다." },
-  "aestheticSensitivity+lowSensoryThreshold": { title: "섬세한 감각형", hook: "아름다움은 깊이 느끼면서, 불편한 자극도 예민하게 감지하는 섬세한 감각을 가졌습니다." },
-  "overstimulation+aestheticSensitivity+lowSensoryThreshold": { title: "고감각민감형(HSP)", hook: "자극과부하, 심미적 민감성, 낮은 감각역치가 모두 뚜렷한, 전형적인 고감각민감자(HSP) 패턴입니다." },
+export const MODULE7_TYPE_NAMES: Record<Locale, Record<string, { title: string; hook: string }>> = {
+  ko: {
+    baseline: { title: "무난한 감각형", hook: "자극에 특별히 압도되거나 예민하지 않은, 비교적 무난한 감각 반응을 보입니다." },
+    overstimulation: { title: "과부하형", hook: "여러 자극이 한꺼번에 몰리면 쉽게 압도되고, 혼자만의 시간이 꼭 필요합니다." },
+    aestheticSensitivity: { title: "심미형", hook: "음악, 예술, 풍경 같은 아름다움과 감정적 울림에 남들보다 깊이 반응합니다." },
+    lowSensoryThreshold: { title: "감각민감형", hook: "소리, 빛, 냄새, 촉감 같은 물리적 자극에 유독 예민하게 반응합니다." },
+    "overstimulation+aestheticSensitivity": { title: "감성 과몰입형", hook: "깊이 느끼는 만큼 그 감정에 쉽게 압도되기도 하는 패턴입니다." },
+    "overstimulation+lowSensoryThreshold": { title: "감각 과부하형", hook: "물리적 자극에도 민감하고, 여러 자극이 겹치면 쉽게 지치는 편입니다." },
+    "aestheticSensitivity+lowSensoryThreshold": { title: "섬세한 감각형", hook: "아름다움은 깊이 느끼면서, 불편한 자극도 예민하게 감지하는 섬세한 감각을 가졌습니다." },
+    "overstimulation+aestheticSensitivity+lowSensoryThreshold": { title: "고감각민감형(HSP)", hook: "자극과부하, 심미적 민감성, 낮은 감각역치가 모두 뚜렷한, 전형적인 고감각민감자(HSP) 패턴입니다." },
+  },
+  en: {
+    baseline: { title: "Easygoing Senses", hook: "You're not especially overwhelmed or especially sensitive to stimulation — a relatively easygoing sensory response." },
+    overstimulation: { title: "Overloaded Type", hook: "When several stimuli hit at once, you get overwhelmed easily, and you really need time alone." },
+    aestheticSensitivity: { title: "Aesthetic Type", hook: "Music, art, scenery, and other forms of beauty or emotional resonance hit you more deeply than most." },
+    lowSensoryThreshold: { title: "Sensory-Sensitive Type", hook: "Physical stimuli — sound, light, smell, touch — register with you unusually strongly." },
+    "overstimulation+aestheticSensitivity": { title: "Emotionally Immersive Type", hook: "Feeling things deeply also means getting easily overwhelmed by those same feelings." },
+    "overstimulation+lowSensoryThreshold": { title: "Sensory Overload Type", hook: "You're sensitive to physical stimuli, and when several pile up at once you tire easily." },
+    "aestheticSensitivity+lowSensoryThreshold": { title: "Finely Tuned Senses", hook: "You feel beauty deeply while also picking up on uncomfortable stimuli sharply — a finely tuned sensory makeup." },
+    "overstimulation+aestheticSensitivity+lowSensoryThreshold": { title: "Highly Sensitive (HSP)", hook: "Overstimulation, aesthetic sensitivity, and a low sensory threshold are all clearly present — a classic highly sensitive person (HSP) pattern." },
+  },
+  es: {
+    baseline: { title: "Sentidos Tranquilos", hook: "No te abruman especialmente los estímulos ni eres especialmente sensible a ellos — una respuesta sensorial relativamente tranquila." },
+    overstimulation: { title: "Tipo Sobrecargado", hook: "Cuando varios estímulos llegan a la vez, te abrumas con facilidad, y realmente necesitas tiempo a solas." },
+    aestheticSensitivity: { title: "Tipo Estético", hook: "La música, el arte, el paisaje y otras formas de belleza o resonancia emocional te llegan más hondo que a la mayoría." },
+    lowSensoryThreshold: { title: "Tipo Sensorialmente Sensible", hook: "Los estímulos físicos — sonido, luz, olor, tacto — te afectan con una intensidad inusual." },
+    "overstimulation+aestheticSensitivity": { title: "Tipo Inmersión Emocional", hook: "Sentir las cosas profundamente también significa abrumarte con facilidad por esas mismas emociones." },
+    "overstimulation+lowSensoryThreshold": { title: "Tipo Sobrecarga Sensorial", hook: "Eres sensible a los estímulos físicos, y cuando se acumulan varios a la vez te cansas con facilidad." },
+    "aestheticSensitivity+lowSensoryThreshold": { title: "Sentidos Finamente Afinados", hook: "Sientes la belleza profundamente a la vez que percibes con agudeza los estímulos incómodos — una sensibilidad muy afinada." },
+    "overstimulation+aestheticSensitivity+lowSensoryThreshold": { title: "Altamente Sensible (PAS)", hook: "Sobreestimulación, sensibilidad estética y un umbral sensorial bajo están los tres claramente presentes — un patrón clásico de persona altamente sensible (PAS)." },
+  },
 };

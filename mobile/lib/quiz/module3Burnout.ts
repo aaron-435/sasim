@@ -8,6 +8,7 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "../i18n/types";
 import type { ModuleQuestion } from "./quizProfile";
 
 export const MODULE3_QUESTIONS: ModuleQuestion[] = [
@@ -106,19 +107,53 @@ export const MODULE3_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   efficacyLoss: 10,
 };
 
-export const MODULE3_DIMENSION_LABELS: Record<string, { high: string; low: string }> = {
-  exhaustion: { high: "소진", low: "회복된 에너지" },
-  cynicism: { high: "냉소", low: "일에 대한 애정" },
-  efficacyLoss: { high: "효능감저하", low: "자기효능감" },
+export const MODULE3_DIMENSION_LABELS: Record<Locale, Record<string, { high: string; low: string }>> = {
+  ko: {
+    exhaustion: { high: "소진", low: "회복된 에너지" },
+    cynicism: { high: "냉소", low: "일에 대한 애정" },
+    efficacyLoss: { high: "효능감저하", low: "자기효능감" },
+  },
+  en: {
+    exhaustion: { high: "Exhaustion", low: "Restored Energy" },
+    cynicism: { high: "Cynicism", low: "Care for the Work" },
+    efficacyLoss: { high: "Reduced Efficacy", low: "Self-Efficacy" },
+  },
+  es: {
+    exhaustion: { high: "Agotamiento", low: "Energía Recuperada" },
+    cynicism: { high: "Cinismo", low: "Aprecio por el Trabajo" },
+    efficacyLoss: { high: "Baja Eficacia", low: "Autoeficacia" },
+  },
 };
 
-export const MODULE3_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
-  baseline: { title: "제 페이스 유지형", hook: "지금은 소진·냉소·효능감저하 어느 쪽도 뚜렷하지 않은, 비교적 안정된 상태입니다." },
-  exhaustion: { title: "소진형", hook: "에너지가 바닥난 상태지만, 일에 대한 애정과 자기 확신은 아직 남아있습니다." },
-  cynicism: { title: "냉소형", hook: "몸은 버틸 만하지만, 일과 조직에 대한 마음이 식어가고 있습니다." },
-  efficacyLoss: { title: "효능감저하형", hook: "실제 성과와 무관하게, 스스로의 능력에 대한 확신이 흔들리고 있습니다." },
-  "exhaustion+cynicism": { title: "탈진형", hook: "에너지도 바닥났고 일에 대한 애정도 식어가는, 번아웃이 상당히 진행된 상태입니다." },
-  "exhaustion+efficacyLoss": { title: "소진된 확신 결여형", hook: "지쳐있는 동시에 스스로를 의심하게 되는, MBI에서 흔한 조합입니다." },
-  "cynicism+efficacyLoss": { title: "회의적 무력형", hook: "일에 대한 의미도, 스스로에 대한 확신도 함께 옅어진 상태입니다." },
-  "exhaustion+cynicism+efficacyLoss": { title: "완전 소진형", hook: "MBI가 정의하는 전형적인 '풀 번아웃 증후군' — 소진, 냉소, 효능감저하가 모두 뚜렷합니다." },
+export const MODULE3_TYPE_NAMES: Record<Locale, Record<string, { title: string; hook: string }>> = {
+  ko: {
+    baseline: { title: "제 페이스 유지형", hook: "지금은 소진·냉소·효능감저하 어느 쪽도 뚜렷하지 않은, 비교적 안정된 상태입니다." },
+    exhaustion: { title: "소진형", hook: "에너지가 바닥난 상태지만, 일에 대한 애정과 자기 확신은 아직 남아있습니다." },
+    cynicism: { title: "냉소형", hook: "몸은 버틸 만하지만, 일과 조직에 대한 마음이 식어가고 있습니다." },
+    efficacyLoss: { title: "효능감저하형", hook: "실제 성과와 무관하게, 스스로의 능력에 대한 확신이 흔들리고 있습니다." },
+    "exhaustion+cynicism": { title: "탈진형", hook: "에너지도 바닥났고 일에 대한 애정도 식어가는, 번아웃이 상당히 진행된 상태입니다." },
+    "exhaustion+efficacyLoss": { title: "소진된 확신 결여형", hook: "지쳐있는 동시에 스스로를 의심하게 되는, MBI에서 흔한 조합입니다." },
+    "cynicism+efficacyLoss": { title: "회의적 무력형", hook: "일에 대한 의미도, 스스로에 대한 확신도 함께 옅어진 상태입니다." },
+    "exhaustion+cynicism+efficacyLoss": { title: "완전 소진형", hook: "MBI가 정의하는 전형적인 '풀 번아웃 증후군' — 소진, 냉소, 효능감저하가 모두 뚜렷합니다." },
+  },
+  en: {
+    baseline: { title: "Steady Pace", hook: "Right now, neither exhaustion, cynicism, nor reduced efficacy stands out clearly — a relatively stable state." },
+    exhaustion: { title: "Exhausted Type", hook: "Your energy has run dry, but your care for the work and your self-belief are still intact." },
+    cynicism: { title: "Cynical Type", hook: "Your body can still keep up, but your heart is cooling toward the work and the organization." },
+    efficacyLoss: { title: "Reduced-Efficacy Type", hook: "Regardless of your actual performance, your confidence in your own ability is shaking." },
+    "exhaustion+cynicism": { title: "Burned Out", hook: "Your energy is gone and your care for the work is fading too — burnout has progressed quite far." },
+    "exhaustion+efficacyLoss": { title: "Exhausted and Self-Doubting", hook: "You're worn out and doubting yourself at the same time — a combination that shows up often in burnout research." },
+    "cynicism+efficacyLoss": { title: "Disillusioned and Powerless", hook: "Both the meaning you find in the work and your confidence in yourself have faded together." },
+    "exhaustion+cynicism+efficacyLoss": { title: "Full Burnout", hook: "The classic 'full burnout syndrome' — exhaustion, cynicism, and reduced efficacy are all clearly present." },
+  },
+  es: {
+    baseline: { title: "Ritmo Sostenido", hook: "Por ahora, ni el agotamiento, ni el cinismo, ni la baja eficacia destacan con claridad — un estado relativamente estable." },
+    exhaustion: { title: "Tipo Agotado", hook: "Tu energía está por el suelo, pero tu aprecio por el trabajo y tu confianza en ti mismo siguen intactos." },
+    cynicism: { title: "Tipo Cínico", hook: "Tu cuerpo todavía aguanta, pero tu corazón se está enfriando hacia el trabajo y la organización." },
+    efficacyLoss: { title: "Tipo Baja Eficacia", hook: "Sin importar tu desempeño real, tu confianza en tu propia capacidad se está tambaleando." },
+    "exhaustion+cynicism": { title: "Quemado", hook: "Tu energía se acabó y tu aprecio por el trabajo también se está desvaneciendo — el burnout ha avanzado bastante." },
+    "exhaustion+efficacyLoss": { title: "Agotado y Dudando de Ti Mismo", hook: "Estás exhausto y dudando de ti mismo al mismo tiempo, una combinación muy frecuente en el burnout." },
+    "cynicism+efficacyLoss": { title: "Desilusionado y Sin Fuerzas", hook: "Tanto el sentido que le encuentras al trabajo como tu confianza en ti mismo se han desvanecido juntos." },
+    "exhaustion+cynicism+efficacyLoss": { title: "Burnout Total", hook: "El clásico 'síndrome de burnout completo' — agotamiento, cinismo y baja eficacia están todos claramente presentes." },
+  },
 };

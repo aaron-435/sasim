@@ -8,6 +8,7 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "../i18n/types";
 import type { ModuleQuestion } from "./quizProfile";
 
 export const MODULE10_QUESTIONS: ModuleQuestion[] = [
@@ -104,19 +105,53 @@ export const MODULE10_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   impulsivity: 10,
 };
 
-export const MODULE10_DIMENSION_LABELS: Record<string, { high: string; low: string }> = {
-  distractibility: { high: "산만함", low: "안정적인 집중" },
-  hyperfocus: { high: "과집중", low: "유연한 전환" },
-  impulsivity: { high: "충동성", low: "신중한 판단" },
+export const MODULE10_DIMENSION_LABELS: Record<Locale, Record<string, { high: string; low: string }>> = {
+  ko: {
+    distractibility: { high: "산만함", low: "안정적인 집중" },
+    hyperfocus: { high: "과집중", low: "유연한 전환" },
+    impulsivity: { high: "충동성", low: "신중한 판단" },
+  },
+  en: {
+    distractibility: { high: "Distractibility", low: "Stable Focus" },
+    hyperfocus: { high: "Hyperfocus", low: "Flexible Switching" },
+    impulsivity: { high: "Impulsivity", low: "Careful Judgment" },
+  },
+  es: {
+    distractibility: { high: "Distractibilidad", low: "Concentración Estable" },
+    hyperfocus: { high: "Hiperconcentración", low: "Cambio Flexible" },
+    impulsivity: { high: "Impulsividad", low: "Juicio Cuidadoso" },
+  },
 };
 
-export const MODULE10_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
-  baseline: { title: "균형잡힌 주의형", hook: "주의가 쉽게 흩어지지도, 과하게 몰입하지도 않는 균형 잡힌 상태입니다." },
-  distractibility: { title: "산만형", hook: "여러 자극이 눈에 들어오면 쉽게 그쪽으로 정신이 팔리는 편입니다." },
-  hyperfocus: { title: "과몰입형", hook: "한번 꽂히면 주변이 안 보일 정도로 깊이 빠져드는 편입니다." },
-  impulsivity: { title: "충동형", hook: "생각보다 행동이 먼저 나가는 편으로, 즉흥적인 결정이 많습니다." },
-  "distractibility+hyperfocus": { title: "극과 극 주의형", hook: "평소엔 쉽게 산만해지다가도, 흥미가 생기면 과할 정도로 몰입하는 양극단을 오갑니다." },
-  "distractibility+impulsivity": { title: "즉흥 산만형", hook: "주의가 쉽게 흩어지는 동시에, 행동도 계획 없이 충동적으로 나가는 편입니다." },
-  "hyperfocus+impulsivity": { title: "몰아치는 몰입형", hook: "꽂히면 앞뒤 재지 않고 곧장 파고드는, 강렬하고 즉각적인 몰입 패턴입니다." },
-  "distractibility+hyperfocus+impulsivity": { title: "주의 조절 과부하형", hook: "산만함, 과몰입, 충동성이 모두 뚜렷하게 나타나는, 주의 조절의 진폭이 큰 상태입니다." },
+export const MODULE10_TYPE_NAMES: Record<Locale, Record<string, { title: string; hook: string }>> = {
+  ko: {
+    baseline: { title: "균형잡힌 주의형", hook: "주의가 쉽게 흩어지지도, 과하게 몰입하지도 않는 균형 잡힌 상태입니다." },
+    distractibility: { title: "산만형", hook: "여러 자극이 눈에 들어오면 쉽게 그쪽으로 정신이 팔리는 편입니다." },
+    hyperfocus: { title: "과몰입형", hook: "한번 꽂히면 주변이 안 보일 정도로 깊이 빠져드는 편입니다." },
+    impulsivity: { title: "충동형", hook: "생각보다 행동이 먼저 나가는 편으로, 즉흥적인 결정이 많습니다." },
+    "distractibility+hyperfocus": { title: "극과 극 주의형", hook: "평소엔 쉽게 산만해지다가도, 흥미가 생기면 과할 정도로 몰입하는 양극단을 오갑니다." },
+    "distractibility+impulsivity": { title: "즉흥 산만형", hook: "주의가 쉽게 흩어지는 동시에, 행동도 계획 없이 충동적으로 나가는 편입니다." },
+    "hyperfocus+impulsivity": { title: "몰아치는 몰입형", hook: "꽂히면 앞뒤 재지 않고 곧장 파고드는, 강렬하고 즉각적인 몰입 패턴입니다." },
+    "distractibility+hyperfocus+impulsivity": { title: "주의 조절 과부하형", hook: "산만함, 과몰입, 충동성이 모두 뚜렷하게 나타나는, 주의 조절의 진폭이 큰 상태입니다." },
+  },
+  en: {
+    baseline: { title: "Balanced Attention", hook: "Your attention neither scatters easily nor locks in excessively — a balanced state." },
+    distractibility: { title: "Distractible Type", hook: "When several things catch your eye, your attention easily drifts toward them." },
+    hyperfocus: { title: "Hyperfocused Type", hook: "Once something grabs you, you sink into it so deeply you lose sight of everything around you." },
+    impulsivity: { title: "Impulsive Type", hook: "Action tends to come before thought, so you make a lot of spur-of-the-moment decisions." },
+    "distractibility+hyperfocus": { title: "Two Extremes of Attention", hook: "You swing between getting easily distracted and, once interested, diving in to an almost excessive degree." },
+    "distractibility+impulsivity": { title: "Scattered and Impulsive", hook: "Your attention scatters easily, and your actions also tend to jump ahead of any plan." },
+    "hyperfocus+impulsivity": { title: "All-In Focus", hook: "Once something hooks you, you dive straight in without weighing the consequences — an intense, immediate kind of focus." },
+    "distractibility+hyperfocus+impulsivity": { title: "Attention-Regulation Overload", hook: "Distractibility, hyperfocus, and impulsivity are all clearly present — your attention swings across a wide range." },
+  },
+  es: {
+    baseline: { title: "Atención Equilibrada", hook: "Tu atención ni se dispersa fácilmente ni se fija en exceso — un estado equilibrado." },
+    distractibility: { title: "Tipo Distraído", hook: "Cuando varias cosas llaman tu atención, te es fácil irte detrás de ellas." },
+    hyperfocus: { title: "Tipo Hiperconcentrado", hook: "Una vez que algo te atrapa, te sumerges tan profundo que pierdes de vista todo lo demás." },
+    impulsivity: { title: "Tipo Impulsivo", hook: "La acción suele adelantarse al pensamiento, así que tomas muchas decisiones espontáneas." },
+    "distractibility+hyperfocus": { title: "Dos Extremos de la Atención", hook: "Oscilas entre distraerte con facilidad y, cuando algo te interesa, sumergirte en ello casi en exceso." },
+    "distractibility+impulsivity": { title: "Disperso e Impulsivo", hook: "Tu atención se dispersa con facilidad, y tus acciones también suelen adelantarse a cualquier plan." },
+    "hyperfocus+impulsivity": { title: "Concentración Arrolladora", hook: "Una vez que algo te atrapa, te lanzas de lleno sin medir las consecuencias — una concentración intensa e inmediata." },
+    "distractibility+hyperfocus+impulsivity": { title: "Sobrecarga en la Regulación de la Atención", hook: "Distractibilidad, hiperconcentración e impulsividad están las tres claramente presentes — tu atención oscila en un rango muy amplio." },
+  },
 };

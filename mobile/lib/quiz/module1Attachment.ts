@@ -15,6 +15,8 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "../i18n/types";
+
 export type AttachmentDimension = "anxiety" | "avoidance";
 
 export interface Module1ChoiceOption {
@@ -391,27 +393,75 @@ export const MODULE1_DIMENSION_ITEM_COUNTS: Record<AttachmentDimension, number> 
   avoidance: 15,
 };
 
-export const MODULE1_DIMENSION_LABELS = {
-  anxiety: { high: "불안 애착", low: "정서적 안정감" },
-  avoidance: { high: "회피 애착", low: "친밀감에 대한 개방성" },
-} as const;
+export const MODULE1_DIMENSION_LABELS: Record<Locale, Record<AttachmentDimension, { high: string; low: string }>> = {
+  ko: {
+    anxiety: { high: "불안 애착", low: "정서적 안정감" },
+    avoidance: { high: "회피 애착", low: "친밀감에 대한 개방성" },
+  },
+  en: {
+    anxiety: { high: "Anxious Attachment", low: "Emotional Security" },
+    avoidance: { high: "Avoidant Attachment", low: "Openness to Intimacy" },
+  },
+  es: {
+    anxiety: { high: "Apego Ansioso", low: "Seguridad Emocional" },
+    avoidance: { high: "Apego Evitativo", low: "Apertura a la Intimidad" },
+  },
+};
 
 /** 성인애착이론 4유형 명칭 — classifyProfile()의 typeKey에 대응. */
-export const MODULE1_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
-  baseline: {
-    title: "안정형 (Secure)",
-    hook: "관계에서 크게 불안해하거나 거리를 두지 않는, 비교적 안정된 애착 패턴입니다.",
+export const MODULE1_TYPE_NAMES: Record<Locale, Record<string, { title: string; hook: string }>> = {
+  ko: {
+    baseline: {
+      title: "안정형 (Secure)",
+      hook: "관계에서 크게 불안해하거나 거리를 두지 않는, 비교적 안정된 애착 패턴입니다.",
+    },
+    anxiety: {
+      title: "불안형 (Anxious-Preoccupied)",
+      hook: "관계의 안정성을 자주 확인받고 싶어하고, 상대의 반응에 민감하게 반응하는 패턴입니다.",
+    },
+    avoidance: {
+      title: "회피형 (Dismissive-Avoidant)",
+      hook: "친밀감이나 정서적 의존을 부담스러워하고, 독립성을 우선시하는 패턴입니다.",
+    },
+    "anxiety+avoidance": {
+      title: "혼란형 (Fearful-Avoidant)",
+      hook: "가까워지고 싶은 마음과 거리를 두고 싶은 마음이 동시에 강하게 작동하는, 양가적인 패턴입니다.",
+    },
   },
-  anxiety: {
-    title: "불안형 (Anxious-Preoccupied)",
-    hook: "관계의 안정성을 자주 확인받고 싶어하고, 상대의 반응에 민감하게 반응하는 패턴입니다.",
+  en: {
+    baseline: {
+      title: "Secure",
+      hook: "A relatively stable attachment pattern — you don't get especially anxious about the relationship or feel the need to keep your distance.",
+    },
+    anxiety: {
+      title: "Anxious-Preoccupied",
+      hook: "You tend to seek frequent reassurance that the relationship is okay, and you're sensitive to how your partner reacts.",
+    },
+    avoidance: {
+      title: "Dismissive-Avoidant",
+      hook: "Closeness and emotional dependence feel like a lot — you tend to prioritize your independence.",
+    },
+    "anxiety+avoidance": {
+      title: "Fearful-Avoidant",
+      hook: "A push-and-pull pattern — wanting to get closer and wanting to keep your distance are both running strong at the same time.",
+    },
   },
-  avoidance: {
-    title: "회피형 (Dismissive-Avoidant)",
-    hook: "친밀감이나 정서적 의존을 부담스러워하고, 독립성을 우선시하는 패턴입니다.",
-  },
-  "anxiety+avoidance": {
-    title: "혼란형 (Fearful-Avoidant)",
-    hook: "가까워지고 싶은 마음과 거리를 두고 싶은 마음이 동시에 강하게 작동하는, 양가적인 패턴입니다.",
+  es: {
+    baseline: {
+      title: "Seguro",
+      hook: "Un patrón de apego relativamente estable — no te pones especialmente ansioso por la relación ni sientes la necesidad de mantener distancia.",
+    },
+    anxiety: {
+      title: "Ansioso-Preocupado",
+      hook: "Tiendes a buscar que te confirmen seguido que la relación está bien, y eres sensible a las reacciones de la otra persona.",
+    },
+    avoidance: {
+      title: "Evitativo-Desentendido",
+      hook: "La cercanía y la dependencia emocional se sienten pesadas — tiendes a priorizar tu independencia.",
+    },
+    "anxiety+avoidance": {
+      title: "Evitativo-Temeroso",
+      hook: "Un patrón ambivalente — las ganas de acercarte y las ganas de mantener distancia actúan con la misma fuerza al mismo tiempo.",
+    },
   },
 };

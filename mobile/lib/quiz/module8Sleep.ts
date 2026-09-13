@@ -7,6 +7,7 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "../i18n/types";
 import type { ModuleQuestion } from "./quizProfile";
 
 export const MODULE8_QUESTIONS: ModuleQuestion[] = [
@@ -105,19 +106,53 @@ export const MODULE8_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   subconsciousLeak: 10,
 };
 
-export const MODULE8_DIMENSION_LABELS: Record<string, { high: string; low: string }> = {
-  cognitiveArousal: { high: "인지적각성", low: "조용한 머릿속" },
-  somaticArousal: { high: "신체적각성", low: "이완된 몸" },
-  subconsciousLeak: { high: "무의식누수", low: "개운한 아침" },
+export const MODULE8_DIMENSION_LABELS: Record<Locale, Record<string, { high: string; low: string }>> = {
+  ko: {
+    cognitiveArousal: { high: "인지적각성", low: "조용한 머릿속" },
+    somaticArousal: { high: "신체적각성", low: "이완된 몸" },
+    subconsciousLeak: { high: "무의식누수", low: "개운한 아침" },
+  },
+  en: {
+    cognitiveArousal: { high: "Cognitive Arousal", low: "A Quiet Mind" },
+    somaticArousal: { high: "Somatic Arousal", low: "A Relaxed Body" },
+    subconsciousLeak: { high: "Subconscious Leak", low: "Waking Refreshed" },
+  },
+  es: {
+    cognitiveArousal: { high: "Activación Cognitiva", low: "Mente en Calma" },
+    somaticArousal: { high: "Activación Corporal", low: "Cuerpo Relajado" },
+    subconsciousLeak: { high: "Fuga Subconsciente", low: "Despertar Descansado" },
+  },
 };
 
-export const MODULE8_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
-  baseline: { title: "평온한 수면형", hook: "생각도, 몸도, 무의식도 비교적 편안하게 가라앉는 안정적인 수면 상태입니다." },
-  cognitiveArousal: { title: "생각과잉형", hook: "누우면 머릿속 생각이 꼬리를 물어 잠들기까지 시간이 오래 걸립니다." },
-  somaticArousal: { title: "몸 긴장형", hook: "머리는 비교적 조용해도, 몸이 좀처럼 이완되지 않아 잠들기 어렵습니다." },
-  subconsciousLeak: { title: "무의식 누수형", hook: "낮의 감정이 꿈으로 새어나오고, 자고 일어나도 개운하지 않습니다." },
-  "cognitiveArousal+somaticArousal": { title: "몸과 마음 모두 각성형", hook: "생각도 몸도 좀처럼 쉬지 못한 채 잠자리에 드는 상태입니다." },
-  "cognitiveArousal+subconsciousLeak": { title: "생각이 꿈까지 이어지는형", hook: "낮의 걱정이 잠들기 전부터 꿈속까지 계속 이어지는 패턴입니다." },
-  "somaticArousal+subconsciousLeak": { title: "긴장이 꿈에 새는형", hook: "몸의 긴장이 풀리지 않은 채로 잠들어, 그 여파가 꿈과 아침 컨디션까지 이어집니다." },
-  "cognitiveArousal+somaticArousal+subconsciousLeak": { title: "깊은 잠 결핍형", hook: "생각, 몸, 무의식 어느 쪽도 제대로 쉬지 못하는, 회복이 필요한 수면 상태입니다." },
+export const MODULE8_TYPE_NAMES: Record<Locale, Record<string, { title: string; hook: string }>> = {
+  ko: {
+    baseline: { title: "평온한 수면형", hook: "생각도, 몸도, 무의식도 비교적 편안하게 가라앉는 안정적인 수면 상태입니다." },
+    cognitiveArousal: { title: "생각과잉형", hook: "누우면 머릿속 생각이 꼬리를 물어 잠들기까지 시간이 오래 걸립니다." },
+    somaticArousal: { title: "몸 긴장형", hook: "머리는 비교적 조용해도, 몸이 좀처럼 이완되지 않아 잠들기 어렵습니다." },
+    subconsciousLeak: { title: "무의식 누수형", hook: "낮의 감정이 꿈으로 새어나오고, 자고 일어나도 개운하지 않습니다." },
+    "cognitiveArousal+somaticArousal": { title: "몸과 마음 모두 각성형", hook: "생각도 몸도 좀처럼 쉬지 못한 채 잠자리에 드는 상태입니다." },
+    "cognitiveArousal+subconsciousLeak": { title: "생각이 꿈까지 이어지는형", hook: "낮의 걱정이 잠들기 전부터 꿈속까지 계속 이어지는 패턴입니다." },
+    "somaticArousal+subconsciousLeak": { title: "긴장이 꿈에 새는형", hook: "몸의 긴장이 풀리지 않은 채로 잠들어, 그 여파가 꿈과 아침 컨디션까지 이어집니다." },
+    "cognitiveArousal+somaticArousal+subconsciousLeak": { title: "깊은 잠 결핍형", hook: "생각, 몸, 무의식 어느 쪽도 제대로 쉬지 못하는, 회복이 필요한 수면 상태입니다." },
+  },
+  en: {
+    baseline: { title: "Peaceful Sleeper", hook: "Your mind, body, and subconscious all settle down relatively comfortably — a stable sleep pattern." },
+    cognitiveArousal: { title: "Overthinking Type", hook: "The moment you lie down, your thoughts chain into each other, so it takes a long time to actually fall asleep." },
+    somaticArousal: { title: "Bodily-Tense Type", hook: "Your mind is relatively quiet, but your body just won't relax, which makes falling asleep hard." },
+    subconsciousLeak: { title: "Subconscious-Leak Type", hook: "The day's emotions leak into your dreams, and you don't wake up feeling refreshed." },
+    "cognitiveArousal+somaticArousal": { title: "Mind and Body Both Wired", hook: "Neither your mind nor your body gets to rest before you go to sleep." },
+    "cognitiveArousal+subconsciousLeak": { title: "Thoughts That Carry Into Dreams", hook: "Your daytime worries keep running right through falling asleep and into your dreams." },
+    "somaticArousal+subconsciousLeak": { title: "Tension That Leaks Into Dreams", hook: "You fall asleep without your body's tension releasing, and the aftereffects carry into your dreams and your morning." },
+    "cognitiveArousal+somaticArousal+subconsciousLeak": { title: "Deep-Sleep Deprived", hook: "Neither your mind, body, nor subconscious gets a proper rest — a sleep state that needs real recovery." },
+  },
+  es: {
+    baseline: { title: "Sueño en Paz", hook: "Tu mente, tu cuerpo y tu subconsciente se calman con relativa comodidad — un patrón de sueño estable." },
+    cognitiveArousal: { title: "Tipo Pensamiento Excesivo", hook: "En el momento en que te acuestas, un pensamiento lleva a otro, así que te toma mucho tiempo realmente dormirte." },
+    somaticArousal: { title: "Tipo Tensión Corporal", hook: "Tu mente está relativamente tranquila, pero tu cuerpo simplemente no se relaja, lo que hace difícil dormirte." },
+    subconsciousLeak: { title: "Tipo Fuga Subconsciente", hook: "Las emociones del día se filtran en tus sueños, y no despiertas sintiéndote descansado." },
+    "cognitiveArousal+somaticArousal": { title: "Mente y Cuerpo Activados", hook: "Ni tu mente ni tu cuerpo logran descansar antes de dormir." },
+    "cognitiveArousal+subconsciousLeak": { title: "Pensamientos que Siguen en los Sueños", hook: "Tus preocupaciones del día siguen corriendo hasta que te duermes y continúan en tus sueños." },
+    "somaticArousal+subconsciousLeak": { title: "Tensión que se Filtra en los Sueños", hook: "Te duermes sin que la tensión de tu cuerpo se libere, y sus efectos siguen en tus sueños y tu mañana." },
+    "cognitiveArousal+somaticArousal+subconsciousLeak": { title: "Falta de Sueño Profundo", hook: "Ni tu mente, ni tu cuerpo, ni tu subconsciente logran descansar bien — un estado de sueño que necesita una recuperación real." },
+  },
 };
