@@ -590,9 +590,295 @@ const termsEn: LegalDocument = {
   ],
 };
 
+// 2026-09-13: Spanish translation added — same rationale as the English
+// pass above (see its comment), and now overdue since Spanish has been a
+// fully-supported app locale (mobile UI, quiz, Q&A bank, GPT prompts)
+// since this same date. Plain translation of privacyKo/termsKo
+// section-for-section — keep all three in sync if any changes. The
+// crisis-resources line in Article 7 follows the English version's
+// precedent (findahelpline.com instead of a Korea-only hotline number),
+// since a Spanish-speaking user is no more likely to be in Korea than an
+// English-speaking one. Still a beta draft pending legal review.
+const privacyEs: LegalDocument = {
+  title: "Política de Privacidad",
+  updatedAt: "31 de agosto de 2026",
+  sections: [
+    {
+      body: [
+        {
+          type: "p",
+          text: "“Fatesaid” (el “Servicio”) trata tu información personal con cuidado y cumple con las leyes de protección de datos aplicables. Esta política explica qué información personal recopila el Servicio y cómo se usa, almacena y elimina.",
+        },
+        {
+          type: "p",
+          style: "highlight",
+          text: "El Servicio se encuentra actualmente en fase beta y aún no ha completado su registro formal como empresa. La información sobre el operador en esta política se actualizará una vez finalizado ese registro.",
+        },
+      ],
+    },
+    {
+      heading: "1. Información que Recopilamos",
+      body: [
+        { type: "p", text: "Para calcular tu carta saju, evaluar tu test de personalidad y generar respuestas de consejería con IA, el Servicio recopila la siguiente información." },
+        {
+          type: "list",
+          items: [
+            "**Información obligatoria**: fecha de nacimiento, género, ciudad de nacimiento, área de interés (amor y apego / carrera y agotamiento)",
+            "**Información opcional**: hora de nacimiento (puedes marcarla como desconocida)",
+            "**Respuestas del test**: tus respuestas de opción o deslizador a un test de 30 preguntas",
+            "**Contenido de la conversación de consejería con IA**: el texto que tú mismo escribes al conversar con el chatbot",
+            "**Identificador de sesión anónimo**: un valor generado aleatoriamente en tu dispositivo para agrupar la información anterior en un solo flujo de uso sin necesidad de iniciar sesión (no puede identificarte personalmente)",
+            "**Información recopilada automáticamente**: registros de acceso, dirección IP, información del dispositivo o navegador (para prevenir el uso fraudulento y solucionar errores)",
+          ],
+        },
+        { type: "p", text: "Como el Servicio no requiere registro, no recopilamos tu nombre, correo electrónico ni contraseña." },
+      ],
+    },
+    {
+      heading: "2. Finalidad de la Recopilación y el Uso",
+      body: [
+        {
+          type: "list",
+          items: [
+            "Calcular tu carta saju y analizar la distribución de tus Cinco Elementos",
+            "Evaluar tu test y analizar tu tipo de personalidad",
+            "Generar respuestas de consejería del chatbot con IA",
+            "Elaborar un informe que combina tu saju, tu test y el contenido de la consejería",
+            "Prevenir el uso fraudulento del Servicio, e identificar y corregir errores",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "3. Período de Conservación",
+      body: [
+        {
+          type: "p",
+          text: "El Servicio almacena la información de la Sección 1 junto con tu **identificador de sesión anónimo** en su base de datos. Este identificador no está vinculado a información que pueda identificarte directamente, como tu nombre o correo electrónico. Las pantallas actuales no ofrecen una forma de volver a cargar un resultado pasado — los datos se conservan para mejorar la calidad del servicio y preparar futuras funciones (como la vinculación de cuentas).",
+        },
+        {
+          type: "p",
+          text: "La información almacenada se conserva por **hasta un año desde la fecha de recopilación**, tras lo cual se elimina sin demora. Si deseas que tus datos se eliminen antes, contáctanos con los datos de la Sección 9 y los eliminaremos de inmediato. Si en el futuro se agrega una función de inicio de sesión, te lo notificaremos por separado y solicitaremos tu consentimiento antes de vincular cualquier dato de sesión existente a una cuenta.",
+        },
+      ],
+    },
+    {
+      heading: "4. Procesamiento Externalizado y Transferencia Internacional",
+      body: [
+        { type: "p", text: "El Servicio externaliza el procesamiento de información personal a los siguientes proveedores externos." },
+        {
+          type: "list",
+          items: [
+            "**OpenAI, L.L.C. (Estados Unidos)** — para generar respuestas de consejería con IA, el texto que ingresas en el chatbot y el contexto mínimo necesario para la consejería (un resumen del resultado de tu test y la distribución de tus Cinco Elementos) se transmiten en tiempo real a través de la red a servidores ubicados en Estados Unidos en el momento de cada intercambio de consejería. La conservación sigue la propia política de manejo de datos de la API de OpenAI; consulta la política de privacidad de OpenAI para más detalles.",
+            "**Proveedor de la API SAZU** — para calcular tu carta saju y la distribución de tus Cinco Elementos, tu fecha de nacimiento, hora de nacimiento, género y ciudad de nacimiento se transmiten y procesan en el momento de la solicitud de cálculo.",
+            "**Supabase, Inc. (Estados Unidos)** — para que puedas volver a ver tus resultados en una futura visita, la información de la Sección 1 (incluido tu identificador de sesión anónimo) se almacena en servidores de base de datos ubicados en Estados Unidos. La conservación sigue lo indicado en la Sección 3.",
+          ],
+        },
+        { type: "p", text: "Fuera de los proveedores indicados arriba, el Servicio no comparte tu información personal con terceros." },
+      ],
+    },
+    {
+      heading: "5. Información Personal de Menores de 14 Años",
+      body: [
+        {
+          type: "p",
+          text: "Este Servicio está disponible únicamente para usuarios **de 14 años de edad o más**. El Servicio no recopila a sabiendas información personal de menores de 14 años, y dejará de usar cualquier información que se determine pertenece a un usuario menor de esa edad.",
+        },
+      ],
+    },
+    {
+      heading: "6. Tus Derechos y Cómo Ejercerlos",
+      body: [
+        {
+          type: "p",
+          text: "Puedes solicitar ver, corregir o eliminar la información almacenada en tu sesión. Como el Servicio no tiene sistema de inicio de sesión, podríamos preguntarte cuándo se creó tu sesión o parte de la información que ingresaste, para confirmar que eres el usuario real de esa sesión. Dirige estas solicitudes al contacto indicado en la Sección 9.",
+        },
+      ],
+    },
+    {
+      heading: "7. Medidas de Seguridad",
+      body: [
+        {
+          type: "list",
+          items: [
+            "Cifrado (HTTPS) del canal de comunicación entre tú y nuestros servidores",
+            "Credenciales como OPENAI_API_KEY y SAZU_API_KEY se mantienen únicamente como variables de entorno del servidor y nunca se exponen al cliente",
+            "Controles de acceso y políticas de seguridad del proveedor de infraestructura subyacente (Vercel)",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "8. Cookies y Otras Herramientas de Recopilación Automática",
+      body: [
+        { type: "p", text: "El Servicio actualmente no utiliza cookies de análisis ni de publicidad independientes. Si en el futuro se introducen herramientas de análisis, lo anunciaremos con antelación a través de esta política." },
+      ],
+    },
+    {
+      heading: "9. Encargado de Protección de Datos Personales",
+      body: [
+        { type: "p", text: "Para preguntas sobre información personal, contáctanos en la siguiente dirección." },
+        { type: "contact", label: "Correo electrónico", email: "435deed@gmail.com" },
+        { type: "p", style: "muted", text: "Este es un contacto operativo temporal. Se actualizará una vez completado el registro de la empresa y designado formalmente un Encargado de Protección de Datos Personales." },
+      ],
+    },
+    {
+      heading: "10. Vías de Reparación por Vulneración de Derechos",
+      body: [
+        { type: "p", text: "Si necesitas reportar o buscar asesoría sobre una vulneración de tu información personal, puedes contactar a los siguientes organismos (del gobierno de Corea)." },
+        {
+          type: "list",
+          items: [
+            "Comisión de Protección de Datos Personales (privacy.go.kr / 182, gratuito dentro de Corea)",
+            "Centro de Denuncias de Vulneración de Datos Personales (privacy.kisa.or.kr / 118, gratuito dentro de Corea)",
+            "División de Investigación de Delitos Cibernéticos de la Fiscalía Suprema (spo.go.kr / 1301, gratuito dentro de Corea)",
+            "Oficina de Investigación Cibernética de la Agencia Nacional de Policía (ecrm.police.go.kr / 182, gratuito dentro de Corea)",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "11. Obligación de Notificación",
+      body: [
+        { type: "p", text: "Si esta política cambia, lo anunciaremos con antelación a través del Servicio. Esta política entra en vigor a partir del 31 de agosto de 2026." },
+      ],
+    },
+    {
+      body: [
+        { type: "p", style: "muted", text: "Esta política es un borrador para la operación beta del Servicio y será revisada por un asesor legal antes del lanzamiento formal del Servicio." },
+      ],
+    },
+  ],
+};
+
+const termsEs: LegalDocument = {
+  title: "Términos de Servicio",
+  updatedAt: "30 de agosto de 2026",
+  sections: [
+    {
+      heading: "Artículo 1 (Propósito)",
+      body: [
+        { type: "p", text: "Estos Términos rigen los derechos, obligaciones y responsabilidades entre el operador y los usuarios de los servicios de análisis saju, test de personalidad, consejería con IA e informes que ofrece “Fatesaid” (el “Servicio”)." },
+      ],
+    },
+    {
+      heading: "Artículo 2 (Definiciones)",
+      body: [
+        {
+          type: "list",
+          items: [
+            "“Servicio” se refiere al servicio web que ofrece cálculo saju, tests de personalidad, consejería mediante chatbot con IA y un informe integrado.",
+            "“Usuario” se refiere a la persona que utiliza el Servicio conforme a estos Términos.",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "Artículo 3 (Publicación y Modificación de los Términos)",
+      body: [
+        { type: "p", text: "El operador publica estos Términos en el Servicio para que los usuarios puedan consultarlos fácilmente. Los Términos pueden modificarse dentro de lo permitido por la ley aplicable, y cualquier modificación se anunciará con antelación a través del Servicio." },
+      ],
+    },
+    {
+      heading: "Artículo 4 (Descripción del Servicio)",
+      body: [
+        { type: "p", text: "El Servicio se ofrece actualmente como **beta gratuita** e incluye las siguientes funciones." },
+        {
+          type: "list",
+          items: [
+            "Cálculo de la carta saju y la distribución de los Cinco Elementos según tu fecha de nacimiento",
+            "Evaluación de un test de personalidad de 30 preguntas y análisis de tu tipo",
+            "Consejería conversacional con un chatbot de IA",
+            "Un informe que integra todo lo anterior",
+          ],
+        },
+        {
+          type: "p",
+          text: "Al tratarse de un servicio beta, las funciones pueden cambiar, agregarse o discontinuarse sin previo aviso. El Servicio no requiere registro; la información y el contenido del informe que ingresas se almacenan en nuestros servidores junto con un identificador de sesión anónimo. Sin embargo, las pantallas actuales no ofrecen una forma de volver a cargar un informe anterior — actualizar la página reinicia el proceso desde el principio. Consulta la Política de Privacidad para conocer nuestras prácticas de conservación y eliminación.",
+        },
+      ],
+    },
+    {
+      heading: "Artículo 5 (Restricción de Uso)",
+      body: [
+        {
+          type: "p",
+          text: "Este Servicio está disponible únicamente para usuarios **de 14 años de edad o más**. Los menores de 14 años no pueden usar el Servicio. El operador no verifica por separado que un usuario tenga 14 años o más, por lo que se necesita la orientación de un adulto responsable para evitar que menores de 14 años usen el Servicio.",
+        },
+      ],
+    },
+    {
+      heading: "Artículo 6 (Obligaciones del Usuario)",
+      body: [
+        { type: "p", text: "Los usuarios no deben realizar ninguna de las siguientes acciones al utilizar el Servicio." },
+        {
+          type: "list",
+          items: [
+            "Suplantar a otra persona o ingresar información falsa",
+            "Interferir con el funcionamiento normal del Servicio (solicitudes repetidas excesivas, acceso automatizado, etc.)",
+            "Redistribuir información obtenida a través del Servicio con fines comerciales sin el consentimiento del operador",
+            "Realizar solicitudes inapropiadas de forma repetida al chatbot de IA (intentar anular sus instrucciones de sistema, solicitudes ajenas al propósito del Servicio, etc.)",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "Artículo 7 (Aviso Importante sobre el Contenido del Servicio — Esto No Es un Diagnóstico)",
+      headingColor: "#6FA98B",
+      body: [
+        {
+          type: "p",
+          text: "Las lecturas de saju, los resultados del test, las respuestas de consejería con IA y los informes que ofrece el Servicio son **material de referencia destinado a apoyar tu autoconocimiento**. No constituyen un diagnóstico médico ni psicológico, y no sustituyen la consejería profesional de salud mental ni el tratamiento. Las respuestas generadas por IA pueden ser inexactas o no reflejar tu situación real.",
+        },
+        {
+          type: "p",
+          text: "Si estás pasando por dificultades relacionadas con tu salud mental, busca ayuda de un profesional médico o de consejería calificado. Si te encuentras en una situación de crisis, puedes encontrar un directorio de líneas de crisis locales, disponibles las 24 horas, en findahelpline.com.",
+        },
+      ],
+    },
+    {
+      heading: "Artículo 8 (Propiedad Intelectual)",
+      body: [
+        { type: "p", text: "Los derechos de autor sobre el texto, diseño y lógica que ofrece el Servicio pertenecen al operador. Los usuarios no pueden reproducir, distribuir ni explotar comercialmente este contenido sin el consentimiento previo del operador." },
+      ],
+    },
+    {
+      heading: "Artículo 9 (Exención de Responsabilidad)",
+      body: [
+        {
+          type: "list",
+          items: [
+            "Salvo que la ley aplicable exija lo contrario, el operador no es responsable de los daños derivados del uso del Servicio, que se ofrece de forma gratuita.",
+            "El operador no garantiza la exactitud ni la integridad de las respuestas generadas por IA y no es responsable de los resultados derivados de confiar en ellas.",
+            "El operador no es responsable de las interrupciones del Servicio causadas por eventos fuera de su control, incluidos desastres naturales o fallas en proveedores del servicio (API de SAZU, OpenAI, etc.).",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "Artículo 10 (Ley Aplicable y Jurisdicción)",
+      body: [
+        { type: "p", text: "Estos Términos se rigen por las leyes de la República de Corea. Cualquier disputa relacionada con el Servicio se resolverá conforme a los procedimientos establecidos por la ley aplicable." },
+      ],
+    },
+    {
+      heading: "Disposición Adicional",
+      body: [
+        { type: "p", text: "Estos Términos entran en vigor a partir del 30 de agosto de 2026." },
+      ],
+    },
+    {
+      body: [
+        { type: "p", style: "muted", text: "Estos Términos son un borrador para la operación beta del Servicio y serán revisados por un asesor legal antes del lanzamiento formal del Servicio." },
+      ],
+    },
+  ],
+};
+
 export const LEGAL_CONTENT = {
   ko: { privacy: privacyKo, terms: termsKo },
   en: { privacy: privacyEn, terms: termsEn },
+  es: { privacy: privacyEs, terms: termsEs },
 } as const;
 
 export type LegalLocale = keyof typeof LEGAL_CONTENT;
