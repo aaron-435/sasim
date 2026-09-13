@@ -2,11 +2,12 @@ import { ArrowLeft, MessageCircleQuestion } from "lucide-react-native";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useStrings } from "../lib/i18n";
+import { useLocale, useStrings } from "../lib/i18n";
+import { localizedText } from "../lib/qaBankLocale";
 import { COLORS } from "../theme/colors";
 
-type Question = { id: string; text_ko: string };
-type Subcategory = { id: string; name_ko: string; questions: Question[] };
+type Question = { id: string; text_ko: string; text_en?: string; text_es?: string };
+type Subcategory = { id: string; name_ko: string; name_en?: string; name_es?: string; questions: Question[] };
 
 // Ported from components/QAQuestionPage.jsx — scrollable question list for one 중분류
 // (~20 questions each). Picking one is the only action here; it's handed back to
@@ -21,6 +22,7 @@ export default function QAQuestionScreen({
   onSelect: (q: Question) => void;
 }) {
   const strings = useStrings();
+  const { locale } = useLocale();
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -30,14 +32,14 @@ export default function QAQuestionScreen({
         </Pressable>
 
         <View style={styles.header}>
-          <Text style={styles.subcategoryLabel}>{subcategory.name_ko}</Text>
+          <Text style={styles.subcategoryLabel}>{localizedText(subcategory.name_ko, subcategory.name_en, subcategory.name_es, locale)}</Text>
           <Text style={styles.heading}>{strings.qa.subcategoryHeading}</Text>
         </View>
 
         {subcategory.questions.map((q) => (
           <Pressable key={q.id} style={styles.card} onPress={() => onSelect(q)}>
             <MessageCircleQuestion size={15} strokeWidth={1.75} color={COLORS.subheadline} style={styles.cardIcon} />
-            <Text style={styles.cardLabel}>{q.text_ko}</Text>
+            <Text style={styles.cardLabel}>{localizedText(q.text_ko, q.text_en, q.text_es, locale)}</Text>
           </Pressable>
         ))}
       </ScrollView>

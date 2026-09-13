@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import questionBank from "../data/questionBank.json";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
+import { localizedText } from "../lib/qaBankLocale";
 import { getDailyLimit, getUsageToday, incrementUsageToday, PAID_DAILY_LIMIT } from "../lib/qaQuota";
 import { saveLastQuestion } from "../lib/qaHistory";
 import type { NormalizedSajuResult } from "../lib/saju";
@@ -13,9 +14,9 @@ import { COLORS } from "../theme/colors";
 import QAQuestionScreen from "./QAQuestionScreen";
 import QASubcategoryScreen from "./QASubcategoryScreen";
 
-type Question = { id: string; text_ko: string };
-type Subcategory = { id: string; name_ko: string; questions: Question[] };
-type Category = { id: string; name_ko: string; subcategories: Subcategory[] };
+type Question = { id: string; text_ko: string; text_en?: string; text_es?: string };
+type Subcategory = { id: string; name_ko: string; name_en?: string; name_es?: string; questions: Question[] };
+type Category = { id: string; name_ko: string; name_en?: string; name_es?: string; subcategories: Subcategory[] };
 
 type Message = { role: "bot" | "user"; text: string } | { role: "picker" };
 
@@ -159,9 +160,10 @@ export default function QAScreen({
   }
 
   function handleSelectQuestion(q: Question) {
+    const questionText = localizedText(q.text_ko, q.text_en, q.text_es, locale);
     setView("chat");
-    pushUser(q.text_ko);
-    requestAnswer(q.text_ko);
+    pushUser(questionText);
+    requestAnswer(questionText);
   }
 
   function handleRetry() {
@@ -194,7 +196,7 @@ export default function QAScreen({
                 <View style={styles.pickerBubble}>
                   {CATEGORIES.map((cat) => (
                     <Pressable key={cat.id} style={styles.optionButton} onPress={() => handlePickCategory(cat)}>
-                      <Text style={styles.optionLabel}>{cat.name_ko}</Text>
+                      <Text style={styles.optionLabel}>{localizedText(cat.name_ko, cat.name_en, cat.name_es, locale)}</Text>
                     </Pressable>
                   ))}
                 </View>

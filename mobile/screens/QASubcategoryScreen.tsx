@@ -2,11 +2,18 @@ import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react-native";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useStrings } from "../lib/i18n";
+import { useLocale, useStrings } from "../lib/i18n";
+import { localizedText } from "../lib/qaBankLocale";
 import { COLORS } from "../theme/colors";
 
-type Subcategory = { id: string; name_ko: string; questions: { id: string; text_ko: string }[] };
-type Category = { id: string; name_ko: string; subcategories: Subcategory[] };
+type Subcategory = {
+  id: string;
+  name_ko: string;
+  name_en?: string;
+  name_es?: string;
+  questions: { id: string; text_ko: string; text_en?: string; text_es?: string }[];
+};
+type Category = { id: string; name_ko: string; name_en?: string; name_es?: string; subcategories: Subcategory[] };
 
 // Ported from components/QASubcategoryPage.jsx — full-screen 중분류 picker for one
 // 대분류. No third tier in the data today, so picking a subcategory always goes
@@ -21,6 +28,7 @@ export default function QASubcategoryScreen({
   onSelect: (sub: Subcategory) => void;
 }) {
   const strings = useStrings();
+  const { locale } = useLocale();
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -32,14 +40,14 @@ export default function QASubcategoryScreen({
         <View style={styles.header}>
           <View style={styles.categoryRow}>
             <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.categoryLabel}>{category.name_ko}</Text>
+            <Text style={styles.categoryLabel}>{localizedText(category.name_ko, category.name_en, category.name_es, locale)}</Text>
           </View>
           <Text style={styles.heading}>{strings.qa.categoryHeading}</Text>
         </View>
 
         {category.subcategories.map((sub) => (
           <Pressable key={sub.id} style={styles.card} onPress={() => onSelect(sub)}>
-            <Text style={styles.cardLabel}>{sub.name_ko}</Text>
+            <Text style={styles.cardLabel}>{localizedText(sub.name_ko, sub.name_en, sub.name_es, locale)}</Text>
             <ArrowRight size={16} strokeWidth={2.25} color={COLORS.gold} />
           </Pressable>
         ))}
