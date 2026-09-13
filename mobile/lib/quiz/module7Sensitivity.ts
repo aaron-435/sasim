@@ -9,7 +9,7 @@
  */
 
 import type { Locale } from "../i18n/types";
-import type { ModuleQuestion } from "./quizProfile";
+import type { ModuleQuestion, QuestionTextOverride } from "./quizProfile";
 
 export const MODULE7_QUESTIONS: ModuleQuestion[] = [
   // ---- 자극과부하 (Overstimulation) — X1-X10 ----
@@ -100,6 +100,75 @@ export const MODULE7_QUESTIONS: ModuleQuestion[] = [
     { label: "둔감한 편이다", score: 0 }, { label: "보통이다", score: 1 },
     { label: "예민한 편이다", score: 2 }, { label: "남들보다 훨씬 강하게 느낀다", score: 3 } ] },
 ];
+
+// Display-text-only translations of MODULE7_QUESTIONS above — see MODULE1's
+// equivalent comment in module1Attachment.ts for why id/dimension/format/
+// score aren't duplicated per locale.
+export const MODULE7_QUESTIONS_EN: Record<string, QuestionTextOverride> = {
+  X1: { prompt: "How overwhelmed do you get when several things pile up at once?", minLabel: "Not overwhelmed at all", maxLabel: "Completely overwhelmed" },
+  X2: { prompt: "When several things need doing at the same time?", optionLabels: ["I handle them one by one", "It's a bit hectic, but I manage", "My mind gets tangled up quickly", "I get so overwhelmed I can't focus on anything"] },
+  X3: { prompt: "When you spend a long time in a loud, crowded place?", optionLabels: ["I'm fine", "I get a little tired", "I get tired quickly", "I want to leave as soon as possible"] },
+  X4: { prompt: "Under a deadline or time pressure?", optionLabels: ["My focus actually sharpens", "I get reasonably tense", "I get anxious easily", "There are times my mind goes blank"] },
+  X5: { prompt: "When your schedule suddenly changes?", optionLabels: ["I adapt flexibly", "I'm a bit thrown off, but I adjust", "It takes me time to adjust", "My whole day's rhythm gets thrown off"] },
+  X6: { prompt: "When someone is watching you while you work?", optionLabels: ["No different from usual", "It bothers me a little", "I get tense and make more mistakes", "I can't perform at my usual level"] },
+  X7: { prompt: "After meeting a lot of people in one day?", optionLabels: ["I still have energy left", "I'm reasonably tired", "I really need some time alone", "I feel completely drained"] },
+  X8: { prompt: "How quickly do you adjust to a new environment (moving, a new job, etc.)?", optionLabels: ["I adjust quickly", "I adjust reasonably well", "It takes quite a while", "Adjusting comes with a lot of stress"] },
+  X9: { prompt: "After a day full of stimulation (an exam, a presentation, a trip, etc.)?", optionLabels: ["I'm still fine the next day", "A day of rest and I'm recovered", "It lingers for a few days", "It takes quite a while to recover"] },
+  X10: { prompt: "When several people talk to you at once?", optionLabels: ["I handle it without trouble", "It's a bit much", "I get confused about who to listen to first", "My mind goes blank and I can't respond at all"] },
+  A1: { prompt: "How deeply do music, movies, or scenery move you emotionally?", minLabel: "Barely moves me", maxLabel: "Moves me very deeply (overwhelming)" },
+  A2: { prompt: "When you listen to music you love?", optionLabels: ["I just listen comfortably", "It puts me in a good mood", "I get moved fairly deeply", "There are times I get chills or tear up"] },
+  A3: { prompt: "When visiting an art museum or exhibition?", optionLabels: ["I take it in casually and move on", "I spend a while on a few pieces that stand out", "I often linger in front of a piece for a long time", "I often feel overwhelmed by it"] },
+  A4: { prompt: "When you see a natural landscape (a sunset, the sea, etc.)?", optionLabels: ["I think it's pretty and move on", "I take a moment to appreciate it", "It moves me deeply", "There are times I feel overcome or tear up"] },
+  A5: { prompt: "How do you respond to someone else's artistic expression (writing, painting, etc.)?", optionLabels: ["I respond casually", "I compliment it if I like it", "I notice even the delicate details", "I'm deeply moved even by small details"] },
+  A6: { prompt: "When watching a movie or drama?", optionLabels: ["I watch it mainly for entertainment", "I get absorbed in it", "I empathize strongly with the emotions", "It lingers with me for days"] },
+  A7: { prompt: "How well do you notice subtle differences in color or texture?", optionLabels: ["I can't really tell them apart", "I notice occasionally", "I notice fairly well", "I notice differences others can't even perceive"] },
+  A8: { prompt: "How much does the atmosphere of a space (lighting, interior, etc.) affect you?", optionLabels: ["I don't really notice it", "I notice it to some degree", "It affects my mood quite a bit", "My whole state changes completely depending on the atmosphere"] },
+  A9: { prompt: "When you encounter something you love (a scent, food, a sound, etc.)?", optionLabels: ["I enjoy it casually", "I enjoy it happily", "I get fully absorbed in enjoying it", "I enjoy it to the point of feeling overwhelmed with happiness"] },
+  A10: { prompt: "When you come across a sad story (a book, the news, etc.)?", optionLabels: ["I take it in calmly", "I feel a sense of pity", "It weighs on my heart", "It stays on my mind and hurts for days"] },
+  L1: { prompt: "How uncomfortable do bright lights, loud sounds, or strong smells make you feel?", minLabel: "Not uncomfortable at all", maxLabel: "Extremely uncomfortable" },
+  L2: { prompt: "When you hear loud noise (construction, a loudspeaker, etc.)?", optionLabels: ["It doesn't really bother me", "It's a bit grating", "It's quite uncomfortable", "It's so distressing I want to cover my ears"] },
+  L3: { prompt: "When a clothing tag or fabric feels scratchy?", optionLabels: ["I barely notice it", "It bothers me sometimes", "It keeps bothering me", "I have to cut it off or change right away"] },
+  L4: { prompt: "When you smell a strong perfume or odor?", optionLabels: ["I'm generally fine", "It's a bit grating", "It sometimes gives me a headache", "It makes me feel sick or I have to leave the area"] },
+  L5: { prompt: "How do you react to bright lighting or screen light?", optionLabels: ["I adjust well", "My eyes get a little tired", "I get easily dazzled", "It sometimes leads to a headache"] },
+  L6: { prompt: "When you're hungry or have a lot of caffeine?", optionLabels: ["No major change in how I feel", "I notice a slight change", "I get on edge or anxious", "My body reacts noticeably (racing heart, etc.)"] },
+  L7: { prompt: "How well can you focus in an environment with several sounds at once?", optionLabels: ["Very well", "Reasonably well", "I get distracted easily", "It's nearly impossible"] },
+  L8: { prompt: "How do you react to temperature changes (somewhere too hot or too cold)?", optionLabels: ["I adjust well", "I feel a bit uncomfortable", "I react quite sensitively", "It affects my whole physical condition"] },
+  L9: { prompt: "How do you react to stimuli on your skin (sunlight, wind, etc.)?", optionLabels: ["I barely notice it", "I notice it lightly", "I feel it sensitively", "I get easily irritated and uncomfortable"] },
+  L10: { prompt: "How sensitive are you to pain (an injection, a small cut, etc.)?", optionLabels: ["I'm on the less sensitive side", "About average", "I'm on the more sensitive side", "I feel it far more intensely than others"] },
+};
+
+export const MODULE7_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
+  X1: { prompt: "¿Qué tan abrumado/a te sientes cuando varias cosas se juntan a la vez?", minLabel: "Nada abrumado/a", maxLabel: "Completamente abrumado/a" },
+  X2: { prompt: "Cuando tienes que hacer varias cosas al mismo tiempo?", optionLabels: ["Las resuelvo una por una", "Es algo agitado, pero lo manejo", "Mi mente se enreda rápido", "Me abrumo tanto que no puedo concentrarme en nada"] },
+  X3: { prompt: "Cuando pasas mucho tiempo en un lugar ruidoso y lleno de gente?", optionLabels: ["Estoy bien", "Me canso un poco", "Me canso rápido", "Quiero irme lo antes posible"] },
+  X4: { prompt: "Bajo presión de tiempo o una fecha límite?", optionLabels: ["Mi concentración en realidad mejora", "Me pongo razonablemente tenso/a", "Me pongo nervioso/a con facilidad", "A veces se me pone la mente en blanco"] },
+  X5: { prompt: "Cuando tu horario cambia de repente?", optionLabels: ["Me adapto con flexibilidad", "Me desconcierta un poco, pero me ajusto", "Me toma tiempo adaptarme", "Se me desordena el ritmo de todo el día"] },
+  X6: { prompt: "Cuando alguien te observa mientras trabajas?", optionLabels: ["No es diferente de lo normal", "Me molesta un poco", "Me pongo tenso/a y cometo más errores", "No puedo rendir a mi nivel habitual"] },
+  X7: { prompt: "Después de estar con mucha gente en un día?", optionLabels: ["Todavía me queda energía", "Estoy razonablemente cansado/a", "Realmente necesito tiempo a solas", "Me siento completamente agotado/a"] },
+  X8: { prompt: "¿Qué tan rápido te adaptas a un ambiente nuevo (mudanza, trabajo nuevo, etc.)?", optionLabels: ["Me adapto rápido", "Me adapto razonablemente bien", "Me toma bastante tiempo", "Adaptarme viene con mucho estrés"] },
+  X9: { prompt: "Después de un día lleno de estímulos (un examen, una presentación, un viaje, etc.)?", optionLabels: ["Al día siguiente sigo bien", "Con un día de descanso me recupero", "El efecto se queda por unos días", "Me toma bastante tiempo recuperarme"] },
+  X10: { prompt: "Cuando varias personas te hablan a la vez?", optionLabels: ["Lo manejo sin problema", "Se siente algo pesado", "Me confundo sobre a quién escuchar primero", "Se me pone la mente en blanco y no puedo responder"] },
+  A1: { prompt: "¿Qué tan profundamente te conmueven la música, el cine o el paisaje?", minLabel: "Casi no me conmueven", maxLabel: "Me conmueven muy profundamente (me desbordan)" },
+  A2: { prompt: "Cuando escuchas música que te encanta?", optionLabels: ["Simplemente la escucho con tranquilidad", "Me pone de buen humor", "Me conmueve bastante", "A veces se me eriza la piel o se me salen las lágrimas"] },
+  A3: { prompt: "Al visitar un museo o una exposición de arte?", optionLabels: ["Lo aprecio de forma casual y sigo adelante", "Me quedo un rato en algunas obras que me llaman la atención", "Muchas veces me quedo mucho tiempo frente a una obra", "Seguido me siento abrumado/a por ella"] },
+  A4: { prompt: "Cuando ves un paisaje natural (un atardecer, el mar, etc.)?", optionLabels: ["Pienso que es bonito y sigo", "Me tomo un momento para apreciarlo", "Me conmueve profundamente", "A veces me desborda o se me salen las lágrimas"] },
+  A5: { prompt: "¿Cómo respondes a la expresión artística de otra persona (escritura, pintura, etc.)?", optionLabels: ["Respondo de forma casual", "Lo elogio si me gusta", "Noto hasta los detalles más delicados", "Me conmueven profundamente hasta los pequeños detalles"] },
+  A6: { prompt: "Al ver una película o serie?", optionLabels: ["La veo principalmente por entretenimiento", "Me absorbe", "Me identifico fuertemente con las emociones", "Se me queda dando vueltas por días"] },
+  A7: { prompt: "¿Qué tan bien notas diferencias sutiles de color o textura?", optionLabels: ["No logro distinguirlas bien", "Las noto de vez en cuando", "Las noto bastante bien", "Noto diferencias que otros ni siquiera perciben"] },
+  A8: { prompt: "¿Cuánto te afecta el ambiente de un espacio (iluminación, decoración, etc.)?", optionLabels: ["No lo noto mucho", "Lo noto hasta cierto punto", "Afecta bastante mi ánimo", "Mi estado cambia por completo según el ambiente"] },
+  A9: { prompt: "Cuando encuentras algo que te encanta (un aroma, comida, un sonido, etc.)?", optionLabels: ["Lo disfruto de forma casual", "Lo disfruto con alegría", "Me absorbo por completo disfrutándolo", "Lo disfruto hasta sentirme desbordado/a de felicidad"] },
+  A10: { prompt: "Cuando te topas con una historia triste (un libro, las noticias, etc.)?", optionLabels: ["Lo tomo con calma", "Siento algo de lástima", "Se me pone pesado el corazón", "Se me queda en la mente y me duele por días"] },
+  L1: { prompt: "¿Qué tan incómodo/a te sientes con luces brillantes, sonidos fuertes u olores intensos?", minLabel: "Nada incómodo/a", maxLabel: "Extremadamente incómodo/a" },
+  L2: { prompt: "Cuando escuchas un ruido fuerte (construcción, un altavoz, etc.)?", optionLabels: ["No me molesta mucho", "Se siente algo molesto", "Se siente bastante incómodo", "Es tan molesto que quiero taparme los oídos"] },
+  L3: { prompt: "Cuando la etiqueta o la tela de la ropa te da comezón?", optionLabels: ["Casi no lo noto", "A veces me molesta", "Me sigue molestando", "Tengo que cortarla o cambiarme de inmediato"] },
+  L4: { prompt: "Cuando hueles un perfume u olor fuerte?", optionLabels: ["En general estoy bien", "Se siente algo molesto", "A veces me da dolor de cabeza", "Me hace sentir mal o tengo que alejarme del lugar"] },
+  L5: { prompt: "¿Cómo reaccionas a la luz brillante o la luz de las pantallas?", optionLabels: ["Me adapto bien", "Se me cansan un poco los ojos", "Me encandilo con facilidad", "A veces me termina dando dolor de cabeza"] },
+  L6: { prompt: "Cuando tienes hambre o consumes mucha cafeína?", optionLabels: ["No noto mayor cambio en mi cuerpo", "Noto un cambio leve", "Me pongo nervioso/a o ansioso/a", "Mi cuerpo reacciona claramente (se me acelera el corazón, etc.)"] },
+  L7: { prompt: "¿Qué tan bien te concentras en un ambiente con varios sonidos a la vez?", optionLabels: ["Muy bien", "Razonablemente bien", "Me distraigo con facilidad", "Es casi imposible"] },
+  L8: { prompt: "¿Cómo reaccionas a los cambios de temperatura (un lugar demasiado caluroso o frío)?", optionLabels: ["Me adapto bien", "Me siento algo incómodo/a", "Reacciono con bastante sensibilidad", "Afecta toda mi condición física"] },
+  L9: { prompt: "¿Cómo reaccionas a estímulos en la piel (el sol, el viento, etc.)?", optionLabels: ["Casi no lo noto", "Lo noto levemente", "Lo siento con sensibilidad", "Me irrito con facilidad y me siento incómodo/a"] },
+  L10: { prompt: "¿Qué tan sensible eres al dolor (una inyección, una pequeña herida, etc.)?", optionLabels: ["Soy más bien poco sensible", "Normal", "Soy más bien sensible", "Lo siento mucho más intensamente que otros"] },
+};
 
 export const MODULE7_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   overstimulation: 10,

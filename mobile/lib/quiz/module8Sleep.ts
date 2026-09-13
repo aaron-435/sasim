@@ -8,7 +8,7 @@
  */
 
 import type { Locale } from "../i18n/types";
-import type { ModuleQuestion } from "./quizProfile";
+import type { ModuleQuestion, QuestionTextOverride } from "./quizProfile";
 
 export const MODULE8_QUESTIONS: ModuleQuestion[] = [
   // ---- 인지적각성 (Cognitive Arousal) — C1-C10 ----
@@ -99,6 +99,75 @@ export const MODULE8_QUESTIONS: ModuleQuestion[] = [
     { label: "가뿐하다", score: 0 }, { label: "보통이다", score: 1 },
     { label: "무겁게 느껴진다", score: 2 }, { label: "밤새 뭔가에 시달린 듯 지쳐있다", score: 3 } ] },
 ];
+
+// Display-text-only translations of MODULE8_QUESTIONS above — see MODULE1's
+// equivalent comment in module1Attachment.ts for why id/dimension/format/
+// score aren't duplicated per locale.
+export const MODULE8_QUESTIONS_EN: Record<string, QuestionTextOverride> = {
+  C1: { prompt: "How much do your thoughts keep chaining into each other once you're in bed?", minLabel: "Not at all (my mind is quiet)", maxLabel: "Very much (thoughts won't stop)" },
+  C2: { prompt: "What's your mind like right before falling asleep?", optionLabels: ["Fairly quiet", "The occasional thought passes through", "All sorts of thoughts keep coming up", "I can't stop the thoughts"] },
+  C3: { prompt: "Do you replay what happened during the day while in bed?", optionLabels: ["Almost never", "Lightly, sometimes", "I keep dwelling on it", "Scenes of mistakes I made keep replaying"] },
+  C4: { prompt: "Do tomorrow's tasks or worries come up before sleep?", optionLabels: ["I don't think about them before sleep", "They cross my mind occasionally", "I keep making plans in my head", "Worry chases sleep away"] },
+  C5: { prompt: "When there's an unresolved problem?", optionLabels: ["I let it go before bed", "It bothers me a little", "I keep dwelling on it even lying down", "There have been nights that thought kept me wide awake"] },
+  C6: { prompt: "How long does it take you to fall asleep?", optionLabels: ["I fall asleep the moment I lie down", "About 10-20 minutes", "More than 30 minutes", "I often toss and turn for over an hour"] },
+  C7: { prompt: "When an idea or worry suddenly pops up?", optionLabels: ["I decide to think about it tomorrow and let it go", "I jot it down and lie back down", "I keep expanding on it in my head", "I end up having to get up and deal with it before I can sleep"] },
+  C8: { prompt: "Do past regrets come up before sleep?", optionLabels: ["Almost never", "Occasionally", "Often", "Even old memories get dredged up and it's painful"] },
+  C9: { prompt: "Do you replay conversations or conflicts in your head?", optionLabels: ["Almost never", "Sometimes", "Often", "I keep simulating what I should have said"] },
+  C10: { prompt: "When you want to switch off your thoughts?", optionLabels: ["They switch off easily", "I can manage it to some degree", "They don't switch off easily", "It's like there's no switch for my thoughts at all"] },
+  S1: { prompt: "How tense does your body feel once you're in bed?", minLabel: "Not tense at all (completely relaxed)", maxLabel: "Very tense" },
+  S2: { prompt: "Even lying down, how does your body feel?", optionLabels: ["It relaxes quickly", "It relaxes to some degree", "It stays stiff and tense", "It doesn't loosen up easily"] },
+  S3: { prompt: "What's your heart rate like before falling asleep?", optionLabels: ["Calm", "About the same as usual", "Sometimes it feels a bit fast", "It pounds enough to bother me"] },
+  S4: { prompt: "How easily do you find a comfortable sleeping position?", optionLabels: ["Quickly", "After tossing a bit", "I toss and turn often", "I keep moving because I can't find a comfortable position"] },
+  S5: { prompt: "How do your hands, feet, or body feel?", optionLabels: ["Comfortable", "Occasionally stiff", "Often stiff or tingly", "So tense it's hard to fall asleep"] },
+  S6: { prompt: "How do your muscles (shoulders, jaw, etc.) feel in bed?", optionLabels: ["Relaxed", "A little tight", "Fairly tense", "There's unconscious tension, like clenching my jaw"] },
+  S7: { prompt: "How often does your body twitch or wake you up while sleeping?", optionLabels: ["Almost never", "Occasionally", "Often", "Almost every day"] },
+  S8: { prompt: "How's your breathing while in bed?", optionLabels: ["Comfortable and deep", "About the same as usual", "Sometimes shallow and fast", "It sometimes feels stifled"] },
+  S9: { prompt: "On nights after caffeine or stress?", optionLabels: ["No major effect on sleep", "A bit of an effect", "My body clearly reacts", "It affects me enough to keep me wide awake"] },
+  S10: { prompt: "How does relaxing your body before sleep go?", optionLabels: ["It happens on its own", "It takes a bit of time", "I have to make a conscious effort", "Even with effort, it doesn't really loosen up"] },
+  D1: { prompt: "How much fatigue lingers in your body right after waking up?", minLabel: "None at all (I feel light)", maxLabel: "Very severe (like I didn't sleep at all)" },
+  D2: { prompt: "How often do you dream?", optionLabels: ["Almost never (no memory of it)", "Occasionally", "Often", "Vividly, almost every day"] },
+  D3: { prompt: "What are your dreams usually like?", optionLabels: ["Ordinary, without much feeling", "Occasionally memorable", "Often reflect real-life worries", "Often about being chased or feeling anxious"] },
+  D4: { prompt: "How refreshed do you feel after waking up?", optionLabels: ["Fully refreshed", "Generally fine", "It often doesn't feel like I slept at all", "Sometimes I feel even more tired"] },
+  D5: { prompt: "Do daytime emotions (anxiety, worry, etc.) show up in your dreams?", optionLabels: ["Almost never", "Occasionally reflected", "Often reflected", "Daytime emotions show up amplified in dreams"] },
+  D6: { prompt: "How many times do you wake up in the middle of the night?", optionLabels: ["Almost never", "About once", "2-3 times", "I wake up often, breaking up my sleep"] },
+  D7: { prompt: "How often do you have nightmares or scary dreams?", optionLabels: ["Almost never", "Occasionally", "Fairly often", "Often enough that it wears on me"] },
+  D8: { prompt: "How do you feel right after waking from a dream?", optionLabels: ["Generally calm", "Average", "Often unsettled or uncomfortable", "So intense I get confused about what's real"] },
+  D9: { prompt: "Do you have recurring dreams or patterns?", optionLabels: ["No", "I think there are some, occasionally", "A few recurring ones", "The same situation or place keeps repeating"] },
+  D10: { prompt: "How does your body feel right after waking up?", optionLabels: ["Light", "Average", "It feels heavy", "Worn out, like something wore me down all night"] },
+};
+
+export const MODULE8_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
+  C1: { prompt: "¿Cuánto se te encadenan los pensamientos, uno tras otro, al acostarte?", minLabel: "Nada (mi mente está en calma)", maxLabel: "Mucho (los pensamientos no paran)" },
+  C2: { prompt: "¿Cómo está tu mente justo antes de dormirte?", optionLabels: ["Bastante tranquila", "De vez en cuando pasa algún pensamiento", "Me vienen todo tipo de pensamientos sin parar", "No logro detener los pensamientos"] },
+  C3: { prompt: "¿Repasas lo que pasó durante el día estando en la cama?", optionLabels: ["Casi nunca", "Levemente, a veces", "Sigo dándole vueltas", "Se me repiten escenas de errores que cometí"] },
+  C4: { prompt: "¿Te vienen las tareas de mañana o preocupaciones antes de dormir?", optionLabels: ["No pienso en eso antes de dormir", "Me pasan por la cabeza de vez en cuando", "Sigo haciendo planes en mi mente", "La preocupación me quita el sueño"] },
+  C5: { prompt: "Cuando hay un problema sin resolver?", optionLabels: ["Lo dejo ir antes de dormir", "Me molesta un poco", "Sigo dándole vueltas incluso acostado/a", "Ha habido noches que ese pensamiento me mantuvo completamente despierto/a"] },
+  C6: { prompt: "¿Cuánto tiempo te toma quedarte dormido/a?", optionLabels: ["Me duermo en cuanto me acuesto", "Unos 10-20 minutos", "Más de 30 minutos", "Seguido doy vueltas por más de una hora"] },
+  C7: { prompt: "Cuando de repente se te ocurre una idea o preocupación?", optionLabels: ["Decido pensarlo mañana y lo dejo pasar", "Lo anoto y vuelvo a acostarme", "Sigo desarrollándolo en mi mente", "Termino teniendo que levantarme a resolverlo para poder dormir"] },
+  C8: { prompt: "¿Te vienen arrepentimientos del pasado antes de dormir?", optionLabels: ["Casi nunca", "De vez en cuando", "Seguido", "Hasta cosas viejas resurgen y me duele"] },
+  C9: { prompt: "¿Repites conversaciones o conflictos en tu mente?", optionLabels: ["Casi nunca", "A veces", "Seguido", "Sigo simulando qué debería haber dicho"] },
+  C10: { prompt: "Cuando quieres apagar tus pensamientos?", optionLabels: ["Se apagan con facilidad", "Puedo controlarlos hasta cierto punto", "No se apagan con facilidad", "Es como si no tuviera un interruptor para mis pensamientos"] },
+  S1: { prompt: "¿Qué tan tenso se siente tu cuerpo una vez que estás en la cama?", minLabel: "Nada tenso (completamente relajado)", maxLabel: "Muy tenso" },
+  S2: { prompt: "¿Cómo se siente tu cuerpo incluso acostado?", optionLabels: ["Se relaja rápido", "Se relaja hasta cierto punto", "Se queda rígido y tenso", "No se afloja con facilidad"] },
+  S3: { prompt: "¿Cómo está tu ritmo cardíaco antes de dormirte?", optionLabels: ["Tranquilo", "Más o menos como siempre", "A veces se siente algo acelerado", "Late fuerte y me molesta"] },
+  S4: { prompt: "¿Qué tan fácil te resulta encontrar una posición cómoda para dormir?", optionLabels: ["Rápido", "Después de dar unas vueltas", "Doy vueltas seguido", "Sigo moviéndome porque no encuentro una posición cómoda"] },
+  S5: { prompt: "¿Cómo se sienten tus manos, pies o cuerpo?", optionLabels: ["Cómodos", "A veces algo rígidos", "Seguido rígidos u hormigueantes", "Tan tensos que me cuesta dormirme"] },
+  S6: { prompt: "¿Cómo están tus músculos (hombros, mandíbula, etc.) en la cama?", optionLabels: ["Relajados", "Algo tensos", "Bastante tensos", "Hay tensión inconsciente, como apretar la mandíbula"] },
+  S7: { prompt: "¿Con qué frecuencia tu cuerpo da sacudidas o te despierta mientras duermes?", optionLabels: ["Casi nunca", "De vez en cuando", "Seguido", "Casi todos los días"] },
+  S8: { prompt: "¿Cómo es tu respiración estando en la cama?", optionLabels: ["Cómoda y profunda", "Más o menos como siempre", "A veces superficial y rápida", "A veces se siente sofocante"] },
+  S9: { prompt: "¿En las noches después de cafeína o estrés?", optionLabels: ["Sin mayor efecto en el sueño", "Un poco de efecto", "Mi cuerpo reacciona claramente", "Me afecta tanto que me mantiene completamente despierto/a"] },
+  S10: { prompt: "¿Cómo te va al intentar relajar tu cuerpo antes de dormir?", optionLabels: ["Sucede solo", "Toma algo de tiempo", "Tengo que esforzarme conscientemente", "Incluso esforzándome, no se afloja bien"] },
+  D1: { prompt: "¿Cuánto cansancio te queda en el cuerpo justo al despertar?", minLabel: "Nada (me siento ligero/a)", maxLabel: "Muy severo (como si no hubiera dormido nada)" },
+  D2: { prompt: "¿Con qué frecuencia sueñas?", optionLabels: ["Casi nunca (no recuerdo)", "De vez en cuando", "Seguido", "Vívidamente, casi todos los días"] },
+  D3: { prompt: "¿Cómo suelen ser tus sueños?", optionLabels: ["Comunes, sin mucha emoción", "A veces memorables", "Muchas veces reflejan preocupaciones reales", "Suelo soñar que me persiguen o con ansiedad"] },
+  D4: { prompt: "¿Qué tan descansado/a te sientes al despertar?", optionLabels: ["Completamente descansado/a", "En general bien", "Muchas veces siento que no dormí", "A veces me siento incluso más cansado/a"] },
+  D5: { prompt: "¿Las emociones del día (ansiedad, preocupación, etc.) aparecen en tus sueños?", optionLabels: ["Casi nunca", "A veces se reflejan", "Seguido se reflejan", "Las emociones del día aparecen amplificadas en los sueños"] },
+  D6: { prompt: "¿Cuántas veces te despiertas a la mitad de la noche?", optionLabels: ["Casi nunca", "Una vez, más o menos", "2-3 veces", "Me despierto seguido y el sueño se interrumpe"] },
+  D7: { prompt: "¿Con qué frecuencia tienes pesadillas o sueños que dan miedo?", optionLabels: ["Casi nunca", "De vez en cuando", "Bastante seguido", "Con la frecuencia suficiente para agotarme"] },
+  D8: { prompt: "¿Cómo te sientes justo al despertar de un sueño?", optionLabels: ["En general en calma", "Normal", "Muchas veces incómodo/a o intranquilo/a", "Tan intenso que me confundo sobre qué es real"] },
+  D9: { prompt: "¿Tienes sueños o patrones que se repiten?", optionLabels: ["No", "Creo que a veces sí", "Algunos que se repiten", "La misma situación o lugar se repite constantemente"] },
+  D10: { prompt: "¿Cómo se siente tu cuerpo justo al despertar?", optionLabels: ["Ligero", "Normal", "Se siente pesado", "Agotado, como si algo me hubiera atormentado toda la noche"] },
+};
 
 export const MODULE8_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   cognitiveArousal: 10,
