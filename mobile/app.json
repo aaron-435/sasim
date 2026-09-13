@@ -1,15 +1,17 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Fatesaid",
+    "slug": "fatesaid",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fatesaid.app"
     },
     "android": {
+      "package": "com.fatesaid.app",
       "adaptiveIcon": {
         "backgroundColor": "#122019",
         "foregroundImage": "./assets/android-icon-foreground.png",
