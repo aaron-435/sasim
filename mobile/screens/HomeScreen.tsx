@@ -1,6 +1,7 @@
 import { ArrowRight, Bot, Brain, FileText, HelpCircle, Lock, MessageCircleQuestion, Sparkles } from "lucide-react-native";
-import { useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "../components/PatternBackground";
 import { getDailyInsight } from "../lib/dailyInsight";
@@ -21,6 +22,8 @@ const FEATURES = [
   { key: "chat", icon: Bot, label: "AI 상담", description: "심리테스트 완료 후 이용 가능", ready: false },
   { key: "report", icon: FileText, label: "심층 리포트", description: "심리테스트 완료 후 이용 가능", ready: false },
 ] as const;
+
+const SECTION_COUNT = 6; // header, chart, insight, explainer, feature list, recap
 
 // The one home screen reached from either onboarding path: finishing the full
 // nickname→gender→dob→tob→city flow (real /api/saju call), or redeeming a web
@@ -49,11 +52,51 @@ export default function HomeScreen({
 
   const maxPercent = elements ? Math.max(...ELEMENT_ORDER.map((k) => elements[k] ?? 0), 1) : 1;
 
+  const sectionAnims = useRef([...Array(SECTION_COUNT)].map(() => new Animated.Value(0))).current;
+  const barGrowth = useRef(new Animated.Value(0)).current;
+  const rowScales = useRef(FEATURES.map(() => new Animated.Value(1))).current;
+  const recapScale = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.stagger(
+      90,
+      sectionAnims.map((anim) =>
+        Animated.timing(anim, { toValue: 1, duration: 480, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      ),
+    ).start();
+    // Bar width is a layout property, so it can't ride the native driver like the
+    // section fades above — this one animation stays JS-driven, which is fine for a
+    // one-off entrance on five thin bars.
+    Animated.timing(barGrowth, {
+      toValue: 1,
+      duration: 850,
+      delay: 260,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function sectionStyle(index: number) {
+    const anim = sectionAnims[index];
+    return {
+      opacity: anim,
+      transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [16, 0] }) }],
+    };
+  }
+
+  function pressIn(anim: Animated.Value) {
+    Animated.spring(anim, { toValue: 0.97, useNativeDriver: true, speed: 40, bounciness: 0 }).start();
+  }
+  function pressOut(anim: Animated.Value) {
+    Animated.spring(anim, { toValue: 1, useNativeDriver: true, speed: 40, bounciness: 6 }).start();
+  }
+
   return (
     <PatternBackground>
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <View style={styles.header}>
+          <Animated.View style={[styles.header, sectionStyle(0)]}>
             <View style={styles.brandRow}>
               <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
               <Text style={styles.brandLabel}>FATESAID</Text>
@@ -64,10 +107,10 @@ export default function HomeScreen({
                 <Text style={styles.elementBadgeText}>오행 · {ELEMENT_LABELS_KO[dominantElement] ?? dominantElement}</Text>
               </View>
             )}
-          </View>
+          </Animated.View>
 
           {elements && (
-            <View style={styles.section}>
+            <Animated.View style={[styles.section, sectionStyle(1)]}>
               <Text style={styles.sectionLabel}>나의 오행 분포</Text>
               <View style={styles.elementChart}>
                 {ELEMENT_ORDER.map((key) => {
@@ -77,22 +120,30 @@ export default function HomeScreen({
                     <View key={key} style={styles.elementRow}>
                       <Text style={styles.elementRowLabel}>{ELEMENT_LABELS_KO[key]}</Text>
                       <View style={styles.elementBarTrack}>
-                        <View style={[styles.elementBarFill, { width: `${widthPct}%`, backgroundColor: ELEMENT_COLORS[key] }]} />
+                        <Animated.View
+                          style={[
+                            styles.elementBarFill,
+                            {
+                              backgroundColor: ELEMENT_COLORS[key],
+                              width: barGrowth.interpolate({ inputRange: [0, 1], outputRange: ["0%", `${widthPct}%`] }),
+                            },
+                          ]}
+                        />
                       </View>
                       <Text style={styles.elementRowValue}>{Math.round(value)}%</Text>
                     </View>
                   );
                 })}
               </View>
-            </View>
+            </Animated.View>
           )}
 
-          <View style={styles.insightCard}>
+          <Animated.View style={[styles.insightCard, sectionStyle(2)]}>
             <Text style={styles.insightLabel}>오늘의 한마디</Text>
             <Text style={styles.insightText}>{getDailyInsight(dominantElement)}</Text>
-          </View>
+          </Animated.View>
 
-          <View style={styles.section}>
+          <Animated.View style={[styles.section, sectionStyle(3)]}>
             <Text style={styles.sectionLabel}>사주, 어떻게 활용하면 좋을까요</Text>
             <View style={styles.explainCard}>
               <Text style={styles.explainHeading}>사주명리학이란?</Text>
@@ -108,58 +159,76 @@ export default function HomeScreen({
                 이어지고, 상담이 끝나면 지금까지의 답변을 모두 엮은 나만의 심층 리포트를 받아볼 수 있어요.
               </Text>
             </View>
-          </View>
+          </Animated.View>
 
-          <View style={styles.section}>
+          <Animated.View style={[styles.section, sectionStyle(4)]}>
             <Text style={styles.sectionLabel}>무엇을 해볼까요</Text>
             <View style={styles.featureList}>
-              {FEATURES.map(({ key, icon: Icon, label, description, ready }) => (
+              {FEATURES.map(({ key, icon: Icon, label, description, ready }, index) => (
                 <Pressable
                   key={key}
                   disabled={!ready}
                   onPress={ready ? handlers[key] : undefined}
-                  style={({ pressed }) => [styles.row, ready && styles.rowReady, ready && pressed && styles.rowPressed]}
+                  onPressIn={ready ? () => pressIn(rowScales[index]) : undefined}
+                  onPressOut={ready ? () => pressOut(rowScales[index]) : undefined}
+                  style={[styles.row, ready && styles.rowReady]}
                 >
-                  <View style={[styles.rowIconWrap, ready && styles.rowIconWrapReady]}>
-                    <Icon size={20} strokeWidth={1.75} color={ready ? COLORS.ctaText : COLORS.subheadline} />
-                  </View>
-                  <View style={styles.rowTextWrap}>
-                    <Text style={[styles.rowLabel, ready && styles.rowLabelReady]}>{label}</Text>
-                    <Text style={[styles.rowDescription, ready && styles.rowDescriptionReady]}>{description}</Text>
-                  </View>
-                  {ready ? (
-                    <ArrowRight size={18} strokeWidth={2} color={COLORS.ctaText} />
-                  ) : (
-                    <Lock size={15} strokeWidth={1.75} color={COLORS.subheadline} />
-                  )}
+                  <Animated.View style={[styles.rowInner, { transform: [{ scale: rowScales[index] }] }]}>
+                    <View style={[styles.rowIconWrap, ready && styles.rowIconWrapReady]}>
+                      <Icon size={20} strokeWidth={1.75} color={ready ? COLORS.ctaText : COLORS.subheadline} />
+                    </View>
+                    <View style={styles.rowTextWrap}>
+                      <Text style={[styles.rowLabel, ready && styles.rowLabelReady]}>{label}</Text>
+                      <Text style={[styles.rowDescription, ready && styles.rowDescriptionReady]}>{description}</Text>
+                    </View>
+                    {ready ? (
+                      <ArrowRight size={18} strokeWidth={2} color={COLORS.ctaText} />
+                    ) : (
+                      <Lock size={15} strokeWidth={1.75} color={COLORS.subheadline} />
+                    )}
+                  </Animated.View>
                 </Pressable>
               ))}
             </View>
-          </View>
+          </Animated.View>
 
-          <View style={styles.section}>
+          <Animated.View style={[styles.section, sectionStyle(5)]}>
             <Text style={styles.sectionLabel}>최근 질문</Text>
             {lastQuestion ? (
-              <Pressable style={styles.recapCard} onPress={onOpenQA}>
-                <MessageCircleQuestion size={18} strokeWidth={1.75} color={COLORS.gold} />
-                <View style={styles.recapTextWrap}>
-                  <Text style={styles.recapQuestion} numberOfLines={1}>
-                    {lastQuestion.question}
-                  </Text>
-                  <Text style={styles.recapAnswer} numberOfLines={2}>
-                    {lastQuestion.answerPreview}
-                  </Text>
-                </View>
-                <ArrowRight size={16} strokeWidth={2} color={COLORS.subheadline} />
+              <Pressable
+                onPress={onOpenQA}
+                onPressIn={() => pressIn(recapScale)}
+                onPressOut={() => pressOut(recapScale)}
+                style={styles.recapCard}
+              >
+                <Animated.View style={[styles.recapInner, { transform: [{ scale: recapScale }] }]}>
+                  <MessageCircleQuestion size={18} strokeWidth={1.75} color={COLORS.gold} />
+                  <View style={styles.recapTextWrap}>
+                    <Text style={styles.recapQuestion} numberOfLines={1}>
+                      {lastQuestion.question}
+                    </Text>
+                    <Text style={styles.recapAnswer} numberOfLines={2}>
+                      {lastQuestion.answerPreview}
+                    </Text>
+                  </View>
+                  <ArrowRight size={16} strokeWidth={2} color={COLORS.subheadline} />
+                </Animated.View>
               </Pressable>
             ) : (
-              <Pressable style={styles.recapEmptyCard} onPress={onOpenQA}>
-                <MessageCircleQuestion size={18} strokeWidth={1.75} color={COLORS.subheadline} />
-                <Text style={styles.recapEmptyText}>아직 질문한 기록이 없어요 · 첫 질문 물어보기</Text>
-                <ArrowRight size={16} strokeWidth={2} color={COLORS.subheadline} />
+              <Pressable
+                onPress={onOpenQA}
+                onPressIn={() => pressIn(recapScale)}
+                onPressOut={() => pressOut(recapScale)}
+                style={styles.recapEmptyCard}
+              >
+                <Animated.View style={[styles.recapInner, { transform: [{ scale: recapScale }] }]}>
+                  <MessageCircleQuestion size={18} strokeWidth={1.75} color={COLORS.subheadline} />
+                  <Text style={styles.recapEmptyText}>아직 질문한 기록이 없어요 · 첫 질문 물어보기</Text>
+                  <ArrowRight size={16} strokeWidth={2} color={COLORS.subheadline} />
+                </Animated.View>
               </Pressable>
             )}
-          </View>
+          </Animated.View>
         </ScrollView>
       </SafeAreaView>
     </PatternBackground>
@@ -306,9 +375,6 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   row: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
     borderRadius: 14,
     borderWidth: 1,
     borderStyle: "dashed",
@@ -322,8 +388,10 @@ const styles = StyleSheet.create({
     borderColor: COLORS.gold,
     backgroundColor: COLORS.gold,
   },
-  rowPressed: {
-    opacity: 0.85,
+  rowInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
   },
   rowIconWrap: {
     width: 38,
@@ -357,14 +425,16 @@ const styles = StyleSheet.create({
     color: "rgba(15,26,21,0.72)",
   },
   recapCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: COLORS.border,
     borderRadius: 14,
     padding: 16,
+  },
+  recapInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   recapTextWrap: {
     flex: 1,
@@ -382,9 +452,6 @@ const styles = StyleSheet.create({
     color: COLORS.subheadline,
   },
   recapEmptyCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderStyle: "dashed",
