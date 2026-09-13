@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from "react-native";
+import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { API_BASE_URL } from "../config";
@@ -113,6 +114,18 @@ export default function CityScreen({
           autoFocus
         />
         {searching && <ActivityIndicator style={styles.searchSpinner} color={COLORS.gold} />}
+        {!searching && !selected && query.trim().length > 0 && results.length === 0 && (
+          // Korea sits in one timezone (Asia/Seoul), and that timezone is what actually
+          // drives the manseryeok calculation — the exact city only fine-tunes the
+          // true-solar-time correction by a few minutes. Small Korean towns are absent
+          // from the underlying city-timezones dataset (see lib/worldCities.ts), so
+          // pointing people to a same-timezone major city is a real, correct fallback,
+          // not just a UX band-aid.
+          <Text style={styles.noResultsHint}>
+            검색 결과가 없어요. 사주 계산에는 태어난 시간대가 가장 중요해서, 같은 시간대의 가까운 대도시(예: 서울, 부산, 대구)로
+            검색해보셔도 괜찮아요.
+          </Text>
+        )}
         {results.length > 0 && (
           <View style={styles.resultsBox}>
             {results.map((r) => (
@@ -186,6 +199,13 @@ const styles = StyleSheet.create({
     fontFamily: "Manrope_400Regular",
     fontSize: 13,
     color: COLORS.subheadline,
+  },
+  noResultsHint: {
+    fontFamily: "Manrope_400Regular",
+    fontSize: 12.5,
+    lineHeight: 19,
+    color: COLORS.subheadline,
+    marginTop: 10,
   },
   error: {
     fontFamily: "Manrope_400Regular",
