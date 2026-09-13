@@ -20,6 +20,7 @@ import TobScreen from "./screens/TobScreen";
 import VerifyCodeScreen, { type VerifiedData } from "./screens/VerifyCodeScreen";
 import { dominantElementFrom } from "./lib/elements";
 import { LocaleProvider, useLocale } from "./lib/i18n";
+import { configurePurchases } from "./lib/purchases";
 import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/saju";
 
 // Onboarding flow shell — mirrors components/AppFlow.jsx's step-switcher role on web,
@@ -46,6 +47,10 @@ function makeSessionId() {
 }
 
 export default function App() {
+  useEffect(() => {
+    configurePurchases();
+  }, []);
+
   return (
     <LocaleProvider>
       <AppContent />

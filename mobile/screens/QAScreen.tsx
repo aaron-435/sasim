@@ -81,9 +81,9 @@ export default function QAScreen({
       if (!mountedRef.current) return;
       pushBot(strings.qa.greeting1(nickname || strings.qa.defaultNickname));
 
-      const usage = await getUsageToday();
+      const [usage, dailyLimit] = await Promise.all([getUsageToday(), getDailyLimit()]);
       if (!mountedRef.current) return;
-      if (usage >= getDailyLimit()) {
+      if (usage >= dailyLimit) {
         await wait(700);
         if (!mountedRef.current) return;
         pushLimitReachedMessage();
@@ -130,11 +130,11 @@ export default function QAScreen({
       }
       saveLastQuestion(questionText, json.lines as string[]);
 
-      const usageAfter = await incrementUsageToday();
+      const [usageAfter, dailyLimit] = await Promise.all([incrementUsageToday(), getDailyLimit()]);
       await wait(700);
       if (!mountedRef.current) return;
 
-      if (usageAfter >= getDailyLimit()) {
+      if (usageAfter >= dailyLimit) {
         pushLimitReachedMessage();
       } else {
         pushBot(strings.qa.askOneMore);
