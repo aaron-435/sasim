@@ -16,6 +16,7 @@
  */
 
 import type { Locale } from "../i18n/types";
+import type { QuestionTextOverride } from "./quizProfile";
 
 export type AttachmentDimension = "anxiety" | "avoidance";
 
@@ -387,6 +388,75 @@ export const MODULE1_QUESTIONS: Module1Question[] = [
     ],
   },
 ];
+
+// Display-text-only translations of MODULE1_QUESTIONS above — id/dimension/
+// format/score never change per locale, so they stay in the single Korean
+// array; see localizeQuestions() in quizProfile.ts for how these merge in.
+export const MODULE1_QUESTIONS_EN: Record<string, QuestionTextOverride> = {
+  A1: { prompt: "How much does it bother you when they're slow to reply?", minLabel: "Doesn't bother me at all", maxLabel: "Makes me extremely anxious" },
+  A2: { prompt: "If it seems like they're showing you less affection?", optionLabels: ["I figure that's just how they are", "I let it go without thinking much of it", "I start replaying what I might have done wrong", "I get anxious that I'm about to be abandoned"] },
+  A3: { prompt: "When you need reassurance in a relationship?", optionLabels: ["I don't really feel the need to be reassured", "Asking once in a while is enough", "I need to be reassured often to feel okay", "Even constant reassurance doesn't calm my anxiety"] },
+  A4: { prompt: "When you see them happily talking with another friend?", optionLabels: ["I don't think anything of it", "It bothers me a little", "My mind gets tangled up", "A wave of jealousy hits me"] },
+  A5: { prompt: "If they don't reach out first after a fight?", optionLabels: ["I figure it'll naturally sort itself out with time", "I wait it out a bit", "I get anxious if they don't reach out first", "I panic, wondering if the relationship is over"] },
+  A6: { prompt: "If they look like they're in a bad mood?", optionLabels: ["I figure it's just one of those things", "I get curious about what's going on", "I start wondering if it's because of me", "I keep thinking about what I might have done wrong"] },
+  A7: { prompt: "If they go quiet while you're together?", optionLabels: ["I take it as a comfortable silence", "I don't think much of it", "I wonder if they're upset with me", "I get anxious that I did something wrong"] },
+  A8: { prompt: "If plans for the future (marriage, moving in together, etc.) stay unclear?", optionLabels: ["I'm fine taking it slow", "I trust it'll naturally sort itself out someday", "The uncertainty keeps nagging at me", "It makes me anxious, like the relationship itself is shaky"] },
+  A9: { prompt: "When something they did leaves you feeling hurt?", optionLabels: ["I mention it lightly and move on", "I bring it up when the timing feels right", "I keep reading their mood before I say anything", "I hold it in until my feelings finally burst"] },
+  A10: { prompt: "When you see their new post on social media?", optionLabels: ["I just scroll past it", "I glance at it, nothing more", "I start analyzing who they're with and what it means", "I keep checking it, turning the meaning over and over"] },
+  A11: { prompt: "When you get a feeling they love you less than before?", optionLabels: ["That feeling rarely comes up at all", "It crosses my mind every once in a while", "The thought comes up often", "I get so consumed by the thought I can't focus on anything else"] },
+  A12: { prompt: "How confident do you feel in yourself within the relationship?", optionLabels: ["I feel like I fully deserve to be loved", "I feel mostly fine about it", "Sometimes I wonder if I'm not enough", "I'm always anxious they'll leave me"] },
+  A13: { prompt: "When even a small conflict comes up with them?", optionLabels: ["I see it as a normal part of any relationship", "I figure it'll blow over quickly", "I worry something's wrong with the relationship", "I imagine the worst, like we're about to break up"] },
+  A14: { prompt: "When you spend a long stretch of time alone, do you think about them?", optionLabels: ["Not especially", "It crosses my mind once in a while", "I keep wondering what they're up to", "I can't stand it if they don't reach out"] },
+  A15: { prompt: "Even after hearing them say 'I love you'?", optionLabels: ["It reassures me completely", "It reassures me, but it doesn't last long", "It only helps for the moment, then I need reassurance again", "Even hearing it, the anxiety underneath doesn't really go away"] },
+  V1: { prompt: "How much pressure do you feel when things start getting emotionally close?", minLabel: "No pressure at all", maxLabel: "Enough pressure to make me want to run" },
+  V2: { prompt: "When something's hard, what do you do with your partner?", optionLabels: ["I open up to them first, before anyone else", "I share some of it with them", "I try to handle it alone whenever I can", "I never want to show them a vulnerable side of me"] },
+  V3: { prompt: "The deeper the relationship gets?", optionLabels: ["The more comfortable and good it feels", "It feels good, but I get a little tense too", "Somehow, my feelings start to cool", "I get the urge to run away"] },
+  V4: { prompt: `If they ask, "What are we, exactly?"`, optionLabels: ["I talk about it comfortably", "It feels a bit heavy, but I answer", "I'd rather avoid that conversation altogether", "That question makes me shut down completely"] },
+  V5: { prompt: "If they ask about the details of your day?", optionLabels: ["I happily tell them everything", "I tell them most of it", "I don't feel the need to share every detail", "It feels like an invasion of my privacy"] },
+  V6: { prompt: "When you want to lean on your partner?", optionLabels: ["I lean on them naturally", "I lean on them sometimes", "I try to handle it myself whenever I can", "Even the idea of relying on someone makes me uncomfortable"] },
+  V7: { prompt: "When they tell you they feel hurt by something?", optionLabels: ["I listen seriously and talk it through", "I listen, but it feels a bit heavy", "I just want to move past that moment quickly", "That kind of emotional expression feels like too much"] },
+  V8: { prompt: "When it comes to planning a future together as a couple?", optionLabels: ["I actively picture it together with them", "I think about it together, to some extent", "Getting specific about it feels like pressure", "Just thinking about it makes me feel suffocated"] },
+  V9: { prompt: "How do you feel about staying in touch with them every day?", optionLabels: ["It feels natural and good", "It's fine as long as it's not too much", "Sometimes it feels tiring", "My own time alone starts to feel more precious"] },
+  V10: { prompt: "When they check in on your emotional state?", optionLabels: ["It feels thoughtful and comforting", "It's not bad", "It feels a little like too much", "It feels uncomfortable, like being watched"] },
+  V11: { prompt: "How do you feel at the start of a relationship?", optionLabels: ["I fall in completely, with an excited heart", "I enjoy it, while keeping a bit of a line", "I hold myself back from falling too deep", "Getting attached itself scares me"] },
+  V12: { prompt: `When they say "I love you," what do you do?`, optionLabels: ["I say it back naturally", "It's a bit embarrassing, but I say it back", "Hearing it feels like pressure", "It's hard for me to say something similar back"] },
+  V13: { prompt: "When you want to make up after a fight?", optionLabels: ["I reach out first to fix things", "I wait for the right moment, then reach out", "It's hard for me to reach out first", "I just wait for time to sort it out"] },
+  V14: { prompt: "If you had to take a trip where you'd be together 24/7?", optionLabels: ["I'd be excited about it", "It sounds nice, but I'd still need some time alone", "I'd worry about not having room to breathe", "Just thinking about it feels like pressure"] },
+  V15: { prompt: "The thought \"I'd be fine even without this person\"?", optionLabels: ["It almost never comes up", "It crosses my mind occasionally", "It comes up fairly often", "It's always there somewhere in the back of my mind"] },
+};
+
+export const MODULE1_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
+  A1: { prompt: "¿Cuánto te molesta que tarden en responderte?", minLabel: "No me molesta en absoluto", maxLabel: "Me pone extremadamente ansioso/a" },
+  A2: { prompt: "Si sientes que muestra menos cariño que antes?", optionLabels: ["Pienso que así es esa persona", "Lo dejo pasar sin darle muchas vueltas", "Empiezo a repasar qué pude haber hecho mal", "Me angustia pensar que me van a abandonar"] },
+  A3: { prompt: "Cuando necesitas que te confirmen algo en la relación?", optionLabels: ["No siento mucha necesidad de que me lo confirmen", "Con preguntar de vez en cuando me basta", "Necesito que me confirmen seguido para sentirme tranquilo/a", "Ni confirmándomelo todo el tiempo se me quita la ansiedad"] },
+  A4: { prompt: "Cuando ves que habla animadamente con un amigo/a?", optionLabels: ["No me afecta en nada", "Me incomoda un poco", "Se me complica la cabeza", "Me suben de golpe los celos"] },
+  A5: { prompt: "Si después de una pelea no te escribe primero?", optionLabels: ["Pienso que con el tiempo se resuelve solo", "Espero un poco", "Me pongo ansioso/a si no escribe primero", "Entro en pánico pensando que la relación se acabó"] },
+  A6: { prompt: "Si ves que tiene mala cara?", optionLabels: ["Pienso que es algo normal", "Me da curiosidad qué le pasa", "Empiezo a pensar si es por mí", "Sigo dándole vueltas a qué pude haber hecho mal"] },
+  A7: { prompt: "Si se queda callado/a estando juntos?", optionLabels: ["Lo siento como un silencio cómodo", "No le doy mayor importancia", "Me preocupa si está molesto/a conmigo", "Me pongo ansioso/a pensando que hice algo mal"] },
+  A8: { prompt: "Si los planes de futuro (matrimonio, vivir juntos, etc.) siguen sin estar claros?", optionLabels: ["Está bien ir despacio", "Confío en que algún día se aclarará solo", "La incertidumbre no deja de inquietarme", "Me da ansiedad, como si la relación misma estuviera tambaleándose"] },
+  A9: { prompt: "Cuando algo que hizo te dejó dolido/a?", optionLabels: ["Lo menciono sin darle mucha importancia y sigo", "Lo hablo cuando encuentro el momento adecuado", "Sigo midiendo su ánimo antes de decir algo", "Me lo trago hasta que exploto"] },
+  A10: { prompt: "Cuando ves su nueva publicación en redes sociales?", optionLabels: ["Simplemente sigo de largo", "Le echo un vistazo rápido, nada más", "Empiezo a analizar con quién está y qué significa", "Sigo revisándolo, dándole vueltas al significado"] },
+  A11: { prompt: "Cuando sientes que te quiere menos que antes?", optionLabels: ["Casi nunca tengo esa sensación", "Me pasa por la cabeza de vez en cuando", "Pienso en eso seguido", "Me quedo tan atrapado/a en ese pensamiento que no puedo concentrarme en nada más"] },
+  A12: { prompt: "¿Qué tan seguro/a te sientes de ti mismo/a en la relación?", optionLabels: ["Siento que merezco totalmente ser amado/a", "En general me siento bien", "A veces pienso que no soy suficiente", "Siempre me da ansiedad que me deje"] },
+  A13: { prompt: "Cuando surge aunque sea un pequeño conflicto?", optionLabels: ["Lo veo como algo normal en cualquier relación", "Pienso que se pasará pronto", "Me preocupa que haya un problema en la relación", "Imagino lo peor, como que estamos por terminar"] },
+  A14: { prompt: "Cuando pasas mucho tiempo a solas, ¿piensas en la otra persona?", optionLabels: ["No especialmente", "Me viene a la mente de vez en cuando", "Sigo preguntándome qué estará haciendo", "No lo soporto si no tengo noticias suyas"] },
+  A15: { prompt: "Aunque te diga \"te amo\"?", optionLabels: ["Me tranquiliza por completo", "Me tranquiliza, pero no dura mucho", "Solo funciona en el momento y enseguida quiero que me lo confirme de nuevo", "Aunque lo escuche, la ansiedad de adentro no se me quita"] },
+  V1: { prompt: "¿Qué tan pesado se siente cuando la relación empieza a volverse emocionalmente cercana?", minLabel: "Nada pesado", maxLabel: "Tan pesado que dan ganas de huir" },
+  V2: { prompt: "Cuando algo se pone difícil, ¿qué haces con tu pareja?", optionLabels: ["Se lo cuento primero, antes que a nadie", "Le cuento parte de lo que pasa", "Trato de resolverlo solo/a en lo posible", "Nunca quiero mostrarle un lado vulnerable de mí"] },
+  V3: { prompt: "Mientras más profunda se vuelve la relación?", optionLabels: ["Más cómodo y bien me siento", "Se siente bien, pero también me pongo algo tenso/a", "Sin saber por qué, mi cariño se va enfriando", "Me dan ganas de huir"] },
+  V4: { prompt: "Si te pregunta \"¿qué somos exactamente?\"", optionLabels: ["Lo hablo con tranquilidad", "Se siente algo pesado, pero respondo", "Preferiría evitar esa conversación por completo", "Esa pregunta hace que me cierre por completo"] },
+  V5: { prompt: "Si te pregunta los detalles de tu día?", optionLabels: ["Le cuento todo con gusto", "Le cuento la mayor parte", "No siento la necesidad de contarlo todo", "Se siente como una invasión a mi privacidad"] },
+  V6: { prompt: "Cuando quieres apoyarte en tu pareja?", optionLabels: ["Me apoyo de forma natural", "Me apoyo de vez en cuando", "Trato de resolverlo yo mismo/a en lo posible", "Hasta la idea de depender de alguien me incomoda"] },
+  V7: { prompt: "Cuando te dice que algo le dolió?", optionLabels: ["Lo escucho con seriedad y lo hablamos", "Lo escucho, pero se siente algo pesado", "Solo quiero que ese momento pase rápido", "Ese tipo de expresión emocional se siente demasiado"] },
+  V8: { prompt: "Cuando se trata de planear un futuro como pareja?", optionLabels: ["Lo imagino activamente junto con la otra persona", "Lo pienso en conjunto, hasta cierto punto", "Ponerlo en concreto se siente pesado", "Solo de pensarlo me siento agobiado/a"] },
+  V9: { prompt: "¿Qué piensas de estar en contacto todos los días?", optionLabels: ["Se siente natural y bien", "Está bien mientras no sea demasiado", "A veces se siente cansado", "Mi tiempo a solas empieza a sentirse más valioso"] },
+  V10: { prompt: "Cuando se acerca preguntando cómo estás emocionalmente?", optionLabels: ["Se siente considerado y reconfortante", "No está mal", "Se siente un poco pesado", "Se siente incómodo, como si me estuvieran observando"] },
+  V11: { prompt: "¿Cómo te sientes al empezar una relación?", optionLabels: ["Me entrego por completo, con el corazón emocionado", "Lo disfruto, pero mantengo cierta distancia", "Me controlo para no enamorarme demasiado", "Encariñarme me da miedo en sí mismo"] },
+  V12: { prompt: "Cuando te dice \"te amo\", ¿qué haces?", optionLabels: ["Le respondo de forma natural", "Me da vergüenza, pero le respondo", "Escucharlo se siente pesado", "Me cuesta decir algo parecido de vuelta"] },
+  V13: { prompt: "Cuando quieres reconciliarte después de una pelea?", optionLabels: ["Doy el primer paso para resolverlo", "Espero el momento adecuado y me acerco", "Me cuesta dar el primer paso", "Solo espero a que el tiempo lo resuelva"] },
+  V14: { prompt: "Si tuvieras que hacer un viaje donde estén juntos las 24 horas?", optionLabels: ["Me emociona la idea", "Suena bien, pero también necesitaría tiempo a solas", "Me preocuparía no tener espacio para respirar", "Solo de pensarlo se siente pesado"] },
+  V15: { prompt: "El pensamiento \"estaría bien incluso sin esta persona\"?", optionLabels: ["Casi nunca lo tengo", "Me viene a la mente de vez en cuando", "Me viene con cierta frecuencia", "Siempre está ahí, en algún rincón de mi mente"] },
+};
 
 export const MODULE1_DIMENSION_ITEM_COUNTS: Record<AttachmentDimension, number> = {
   anxiety: 15,

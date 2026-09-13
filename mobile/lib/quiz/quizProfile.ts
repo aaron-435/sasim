@@ -76,6 +76,50 @@ export function scoreSliderValue(format: "slider" | "slider-reverse", value: num
   return format === "slider-reverse" ? scaleToScore(11 - value, 1, 10) : scaleToScore(value, 1, 10);
 }
 
+/**
+ * A non-Korean translation of one question's DISPLAY text only — id,
+ * dimension, format, and each option's score never change per locale, so
+ * they stay in the single Korean MODULE{N}_QUESTIONS array (the source of
+ * truth for scoring) instead of being duplicated per language. `optionLabels`
+ * must be given in the same order as the original question's `options` array.
+ */
+export interface QuestionTextOverride {
+  prompt: string;
+  optionLabels?: string[]; // "choice" format only
+  minLabel?: string; // "slider"/"slider-reverse" format only
+  maxLabel?: string;
+}
+
+/**
+ * Merges a locale's text overrides into the base (Korean) question bank,
+ * falling back to the Korean text for any question a locale hasn't
+ * translated yet (e.g. mid-translation) so the quiz never renders blank text.
+ */
+export function localizeQuestions(
+  questions: ModuleQuestion[],
+  overrides: Record<string, QuestionTextOverride> | undefined
+): ModuleQuestion[] {
+  if (!overrides) return questions;
+  return questions.map((q) => {
+    const o = overrides[q.id];
+    if (!o) return q;
+    if (q.format === "choice") {
+      const opts = q.options as ModuleChoiceOption[];
+      return {
+        ...q,
+        prompt: o.prompt,
+        options: opts.map((opt, i) => ({ ...opt, label: o.optionLabels?.[i] ?? opt.label })),
+      };
+    }
+    const sliderOptions = q.options as { minLabel: string; maxLabel: string };
+    return {
+      ...q,
+      prompt: o.prompt,
+      options: { minLabel: o.minLabel ?? sliderOptions.minLabel, maxLabel: o.maxLabel ?? sliderOptions.maxLabel },
+    };
+  });
+}
+
 export type IntensityTier = "약함" | "보통" | "강함" | "매우 강함";
 
 export interface DimensionResult {

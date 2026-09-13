@@ -8,7 +8,7 @@
  */
 
 import type { Locale } from "../i18n/types";
-import type { ModuleQuestion } from "./quizProfile";
+import type { ModuleQuestion, QuestionTextOverride } from "./quizProfile";
 
 export const MODULE2_QUESTIONS: ModuleQuestion[] = [
   // ---- 결핍공포 (Scarcity Fear) — S1-S10 ----
@@ -99,6 +99,75 @@ export const MODULE2_QUESTIONS: ModuleQuestion[] = [
     { label: "충분히 잘 해낼 수 있다고 믿는다", score: 0 }, { label: "어느 정도 자신 있다", score: 1 },
     { label: "잘 모르겠고 자신 없다", score: 2 }, { label: "나는 돈 관리에 소질이 없다고 느낀다", score: 3 } ] },
 ];
+
+// Display-text-only translations of MODULE2_QUESTIONS above — see MODULE1's
+// equivalent comment in module1Attachment.ts for why id/dimension/format/
+// score aren't duplicated per locale.
+export const MODULE2_QUESTIONS_EN: Record<string, QuestionTextOverride> = {
+  S1: { prompt: "How anxious do you feel when checking your bank balance?", minLabel: "Not anxious at all", maxLabel: "Very anxious" },
+  S2: { prompt: "Even when you have as much money as you need?", optionLabels: ["I feel comfortable and at ease", "I feel reasonably reassured", "I still worry it might not be enough", "It always feels like it's not enough, and that makes me anxious"] },
+  S3: { prompt: "What goes through your mind when you spend money?", optionLabels: ["If I need it, I spend it", "I think it over a bit before spending", "Every time I spend, I feel like it's a waste", "After spending, I feel guilty or anxious"] },
+  S4: { prompt: "When you think about your financial future?", optionLabels: ["I don't worry about it much", "I worry about it sometimes", "I get anxious about it often", "Worrying about retirement or the future sometimes keeps me up at night"] },
+  S5: { prompt: "When you come into some money (a bonus, allowance, etc.)?", optionLabels: ["I spend it comfortably on what I want", "I spend some and save the rest", "I save almost all of it", "It just piles up, even when there's something I actually need to spend it on"] },
+  S6: { prompt: "When someone else talks about money (salary, spending, etc.)?", optionLabels: ["I listen comfortably", "It bothers me a little", "I compare it to my own situation and get anxious", "I feel needlessly on edge and small"] },
+  S7: { prompt: "When you imagine suddenly needing a large amount of money?", optionLabels: ["I figure I'll manage somehow", "I feel a bit worried, but it's fine", "I get very anxious", "I start imagining the worst-case scenario"] },
+  S8: { prompt: "When buying something, even something you truly need?", optionLabels: ["If I need it, I buy it", "I compare prices once", "I mull it over several times before buying", "I can only bring myself to buy it once I'm sure it's cheap"] },
+  S9: { prompt: "When you daydream or imagine things about money?", optionLabels: ["I imagine having plenty, comfortably", "I don't really think about it", "Sometimes I imagine running out of money", "Sometimes I imagine going bankrupt or ending up penniless"] },
+  S10: { prompt: "When your savings or balance goes down?", optionLabels: ["I see it as a natural part of life", "It bothers me a little", "I immediately want to build it back up", "I get extremely on edge"] },
+  G1: { prompt: "When buying things, does the brand or price tier matter to you?", optionLabels: ["Not really", "I consider it a little", "I care about how it looks to other people", "I feel like the brand proves who I am"] },
+  G2: { prompt: "When posting about spending (a trip, an item, etc.) on social media?", optionLabels: ["It's just to keep a record", "There's a part of me that wants to show it off, too", "I care about people's reactions", "I really need to feel recognized for it"] },
+  G3: { prompt: "If it seems like you're not doing as well as others?", optionLabels: ["It doesn't really matter to me", "It bothers me a little", "It hurts my pride", "I feel like I have to catch up somehow"] },
+  G4: { prompt: "When you spend money, does your sense of self-worth change?", optionLabels: ["I feel it has nothing to do with money", "I feel it's related, a little", "I feel like it proves something, to some extent", "I feel my worth is decided by how much I spend"] },
+  G5: { prompt: "How strong is your desire to look well-off to others?", minLabel: "Not at all", maxLabel: "Very strong" },
+  G6: { prompt: "When you feel you have to buy something nice, even beyond your means?", optionLabels: ["I only buy within my budget", "I overspend once in a while", "I overspend often", "I'll buy it on installments or even go into debt for it"] },
+  G7: { prompt: "When giving a gift or treating someone?", optionLabels: ["I keep it within a comfortable range", "I spend enough to make it feel special", "I end up spending beyond what I can really afford", "I overspend because I want to look good"] },
+  G8: { prompt: "When the topic of investing or growing your money comes up?", optionLabels: ["I listen calmly", "I'm interested", "I get anxious about falling behind others", "I feel like I need results worth bragging about"] },
+  G9: { prompt: "How satisfied do you feel after spending money?", optionLabels: ["The item itself is satisfying enough", "I'm generally satisfied", "I only feel truly satisfied once others react to it", "If I can't show it off, it feels empty"] },
+  G10: { prompt: "Why do you want to make a lot of money?", optionLabels: ["To live the life I want", "For stability and freedom", "Partly because I want to be recognized by others", "So I won't be looked down on"] },
+  M1: { prompt: "How often do you check your bank statement or spending history?", optionLabels: ["Regularly", "Sometimes", "Almost never", "Even looking at it feels frightening"] },
+  M2: { prompt: "When you have to negotiate a salary or talk about money?", optionLabels: ["I talk about it comfortably", "It's a bit awkward, but I do it", "I want to avoid it as much as possible", "I can't even bring myself to say a word"] },
+  M3: { prompt: "When dealing with money-related paperwork (taxes, contracts, etc.)?", optionLabels: ["I take care of it right away", "I put it off, but eventually get it done", "I put it off for as long as possible", "I hope someone else will just do it for me"] },
+  M4: { prompt: "If you ended up making a lot of money?", optionLabels: ["I'd feel it's obviously a good thing", "It's good, but it would feel a bit unfamiliar", "It would feel strangely like a burden", "I'd feel some guilt or discomfort"] },
+  M5: { prompt: "When it comes to managing your money (budgeting, tracking spending, etc.)?", optionLabels: ["I manage it systematically", "I have a rough idea", "I barely keep track", "I deliberately avoid looking at it"] },
+  M6: { prompt: "When someone around you asks to borrow money or split a cost?", optionLabels: ["I decide based on the situation", "It's a burden, but I help out", "I'm bad at saying no, so I end up losing out", "I go along with it even if it costs me"] },
+  M7: { prompt: "When you try to start investing or growing your money?", optionLabels: ["I actively look into it", "I look into it with interest", "It feels too complicated, so I keep putting it off", "I haven't been able to touch it at all"] },
+  M8: { prompt: "How much pressure do you feel about facing money issues?", minLabel: "No pressure at all", maxLabel: "Extremely pressuring" },
+  M9: { prompt: "If you became successful and made a lot of money, how would people around you react?", optionLabels: ["I trust they'd be genuinely happy for me", "I think they'd mostly be glad for me", "I worry they might get jealous or grow distant", "I hold back from succeeding because I worry it'll strain the relationship"] },
+  M10: { prompt: "How do you feel about your own ability to earn and manage money?", optionLabels: ["I believe I can handle it just fine", "I feel reasonably confident", "I'm not sure, and I don't feel confident", "I feel like I just don't have a knack for managing money"] },
+};
+
+export const MODULE2_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
+  S1: { prompt: "¿Qué tan ansioso/a te sientes al revisar el saldo de tu cuenta?", minLabel: "Nada ansioso/a", maxLabel: "Muy ansioso/a" },
+  S2: { prompt: "¿Aunque tengas todo el dinero que necesitas?", optionLabels: ["Me siento tranquilo/a y a gusto", "Me siento razonablemente tranquilo/a", "Aun así me preocupa que no sea suficiente", "Siempre siento que no alcanza, y eso me da ansiedad"] },
+  S3: { prompt: "¿Qué piensas cuando gastas dinero?", optionLabels: ["Si lo necesito, lo gasto", "Lo pienso un poco antes de gastarlo", "Cada vez que gasto, siento que es un desperdicio", "Después de gastar, siento culpa o ansiedad"] },
+  S4: { prompt: "Cuando piensas en tu futuro económico?", optionLabels: ["No me preocupa mucho", "A veces me preocupa", "Me da ansiedad seguido", "A veces no puedo dormir por preocuparme del futuro o la vejez"] },
+  S5: { prompt: "Cuando te llega algo de dinero (un bono, una propina, etc.)?", optionLabels: ["Lo gasto tranquilamente en lo que quiero", "Gasto un poco y ahorro el resto", "Ahorro casi todo", "Se me va acumulando sin gastarlo ni en lo que realmente necesito"] },
+  S6: { prompt: "Cuando alguien más habla de dinero (sueldo, gastos, etc.)?", optionLabels: ["Lo escucho con tranquilidad", "Me incomoda un poco", "Lo comparo con mi situación y me da ansiedad", "Me pongo nervioso/a y me siento pequeño/a sin razón"] },
+  S7: { prompt: "Cuando imaginas necesitar de repente una gran cantidad de dinero?", optionLabels: ["Pienso que de algún modo se resolverá", "Me preocupa un poco, pero está bien", "Me da mucha ansiedad", "Empiezo a imaginar el peor escenario"] },
+  S8: { prompt: "Al comprar algo, incluso algo que realmente necesitas?", optionLabels: ["Si lo necesito, lo compro", "Comparo el precio una vez", "Lo pienso varias veces antes de comprarlo", "Solo logro comprarlo cuando estoy seguro/a de que es barato"] },
+  S9: { prompt: "Cuando sueñas o imaginas cosas sobre el dinero?", optionLabels: ["Imagino tener de sobra, con tranquilidad", "No pienso mucho en eso", "A veces imagino que se me acaba el dinero", "A veces imagino quebrar o quedarme sin nada"] },
+  S10: { prompt: "Cuando tus ahorros o tu saldo bajan?", optionLabels: ["Lo veo como algo natural", "Me molesta un poco", "Quiero recuperarlo de inmediato", "Me pongo extremadamente nervioso/a"] },
+  G1: { prompt: "Al comprar cosas, ¿importa la marca o el nivel de precio?", optionLabels: ["No mucho", "Lo considero un poco", "Me importa cómo se ve ante los demás", "Siento que la marca demuestra quién soy"] },
+  G2: { prompt: "Al publicar un gasto (un viaje, algo que compraste, etc.) en redes sociales?", optionLabels: ["Es solo para llevar un registro", "También tengo ganas de mostrarlo un poco", "Me importan las reacciones", "Necesito sentirme reconocido/a por ello"] },
+  G3: { prompt: "Si sientes que te va peor que a los demás?", optionLabels: ["No me importa mucho", "Me molesta un poco", "Hiere mi orgullo", "Siento que tengo que alcanzarlos como sea"] },
+  G4: { prompt: "Cuando gastas dinero, ¿cambia tu sentido de valor propio?", optionLabels: ["Siento que no tiene nada que ver con el dinero", "Siento que está un poco relacionado", "Siento que se demuestra algo, hasta cierto punto", "Siento que mi valor se define por cuánto gasto"] },
+  G5: { prompt: "¿Qué tan fuerte es tu deseo de verte próspero/a ante los demás?", minLabel: "Nada", maxLabel: "Muy fuerte" },
+  G6: { prompt: "Cuando sientes que debes comprar algo bueno, aunque no te alcance?", optionLabels: ["Solo compro dentro de mi presupuesto", "Me excedo de vez en cuando", "Me excedo con frecuencia", "Lo compro a plazos o hasta me endeudo por ello"] },
+  G7: { prompt: "Al dar un regalo o invitar a alguien?", optionLabels: ["Lo mantengo en un rango cómodo", "Gasto lo suficiente para que se sienta especial", "Termino gastando más de lo que puedo permitirme", "Gasto de más porque quiero quedar bien"] },
+  G8: { prompt: "Cuando surge el tema de invertir o hacer crecer tu dinero?", optionLabels: ["Lo escucho con calma", "Me interesa", "Me da ansiedad quedarme atrás de los demás", "Siento que necesito resultados de los que presumir"] },
+  G9: { prompt: "¿Qué tan satisfecho/a te sientes después de gastar dinero?", optionLabels: ["El objeto en sí ya me satisface", "En general estoy satisfecho/a", "Solo me siento realmente satisfecho/a cuando otros reaccionan", "Si no puedo lucirlo, se siente vacío"] },
+  G10: { prompt: "¿Por qué quieres ganar mucho dinero?", optionLabels: ["Para vivir la vida que quiero", "Por estabilidad y libertad", "También en parte para que me reconozcan", "Para que no me menosprecien"] },
+  M1: { prompt: "¿Con qué frecuencia revisas tu cuenta o tus gastos?", optionLabels: ["Regularmente", "De vez en cuando", "Casi nunca", "Hasta mirarlo me da miedo"] },
+  M2: { prompt: "Cuando tienes que negociar tu sueldo o hablar de dinero?", optionLabels: ["Lo hablo con tranquilidad", "Se siente algo incómodo, pero lo hago", "Quiero evitarlo lo más posible", "No puedo ni abrir la boca"] },
+  M3: { prompt: "Al tramitar documentos relacionados con dinero (impuestos, contratos, etc.)?", optionLabels: ["Los resuelvo de inmediato", "Los pospongo, pero al final los hago", "Los postergo lo más posible", "Espero que alguien más lo haga por mí"] },
+  M4: { prompt: "Si llegaras a ganar mucho dinero?", optionLabels: ["Sentiría que obviamente es algo bueno", "Sería bueno, pero se sentiría algo extraño", "Se sentiría raramente pesado", "Sentiría culpa o incomodidad"] },
+  M5: { prompt: "Sobre el manejo de tu dinero (presupuesto, gastos, etc.)?", optionLabels: ["Lo manejo de forma organizada", "Tengo una idea general", "Casi no lo tengo controlado", "Evito verlo a propósito"] },
+  M6: { prompt: "Cuando alguien cercano te pide prestado o que dividan un gasto?", optionLabels: ["Lo decido según la situación", "Es una carga, pero ayudo", "Me cuesta decir que no, así que salgo perdiendo", "Accedo aunque me perjudique"] },
+  M7: { prompt: "Cuando intentas empezar a invertir o hacer crecer tu dinero?", optionLabels: ["Lo investigo activamente", "Lo investigo con interés", "Se siente complicado, así que sigo postergándolo", "No he podido ni empezar"] },
+  M8: { prompt: "¿Qué tan pesado se siente enfrentar los temas de dinero?", minLabel: "Nada pesado", maxLabel: "Extremadamente pesado" },
+  M9: { prompt: "Si tuvieras éxito y ganaras mucho dinero, ¿cómo crees que reaccionaría la gente a tu alrededor?", optionLabels: ["Confío en que se alegrarían de verdad por mí", "Creo que en general les daría gusto", "Me preocupa que sientan envidia o se alejen", "Dudo en tener éxito por miedo a que la relación se vuelva incómoda"] },
+  M10: { prompt: "¿Cómo te sientes respecto a tu propia capacidad de ganar y manejar dinero?", optionLabels: ["Creo que puedo hacerlo muy bien", "Me siento razonablemente seguro/a", "No estoy seguro/a y me falta confianza", "Siento que simplemente no tengo talento para manejar el dinero"] },
+};
 
 export const MODULE2_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   scarcity: 10,

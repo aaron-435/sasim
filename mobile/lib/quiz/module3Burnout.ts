@@ -9,7 +9,7 @@
  */
 
 import type { Locale } from "../i18n/types";
-import type { ModuleQuestion } from "./quizProfile";
+import type { ModuleQuestion, QuestionTextOverride } from "./quizProfile";
 
 export const MODULE3_QUESTIONS: ModuleQuestion[] = [
   // ---- 소진 (Exhaustion) — E1-E10 ----
@@ -100,6 +100,75 @@ export const MODULE3_QUESTIONS: ModuleQuestion[] = [
     { label: "꽤 능력 있는 사람이라 생각한다", score: 0 }, { label: "평범한 수준이라 생각한다", score: 1 },
     { label: "자주 부족하다고 느낀다", score: 2 }, { label: "무능하다고 느낄 때가 많다", score: 3 } ] },
 ];
+
+// Display-text-only translations of MODULE3_QUESTIONS above — see MODULE1's
+// equivalent comment in module1Attachment.ts for why id/dimension/format/
+// score aren't duplicated per locale.
+export const MODULE3_QUESTIONS_EN: Record<string, QuestionTextOverride> = {
+  E1: { prompt: "How tired do you feel after work (or after your day is done)?", minLabel: "Not tired at all", maxLabel: "Completely drained" },
+  E2: { prompt: "In a typical week, how many days do you still have energy left?", optionLabels: ["Almost every day is fine", "The weekend is enough to recover", "I'm drained the entire week", "I can't even remember the last time I felt okay"] },
+  E3: { prompt: "When you open your eyes in the morning?", optionLabels: ["I look forward to the day", "I manage to drag myself up", "Just getting up feels like a lot", "I'm already exhausted the moment I wake up"] },
+  E4: { prompt: "Even simple tasks (replying to emails, small chores)?", optionLabels: ["I handle them right away", "I put them off a bit, but get to them", "I keep putting them off because I don't even want to touch them", "Just thinking about them drains me"] },
+  E5: { prompt: "After the weekend or a vacation ends?", optionLabels: ["I feel recharged again", "I recover to some extent", "Resting doesn't change much", "Even resting feels tiring"] },
+  E6: { prompt: "How's your physical condition (headaches, indigestion, muscle tension, etc.)?", optionLabels: ["Nothing out of the ordinary", "Occasionally stiff or tired", "Something chronically hurts or feels off", "There's barely a part of me that doesn't hurt"] },
+  E7: { prompt: "How do you feel after finishing your day?", optionLabels: ["A sense of accomplishment", "Just a feeling that the day passed", "A feeling of being drained", "A feeling like I can't keep going much longer"] },
+  E8: { prompt: "What's your state right before falling asleep?", optionLabels: ["I fall asleep comfortably", "I toss a little before falling asleep", "I'm tired but can't fall asleep easily", "My body's exhausted but my mind is wired"] },
+  E9: { prompt: "When a new task or request comes in?", optionLabels: ["I have the energy to take it on gladly", "It's a burden, but I get it done", "It feels like too much to handle", "I'm already at my limit and want to say no"] },
+  E10: { prompt: "How would you describe your overall energy level right now?", optionLabels: ["Plenty", "Average", "Running on empty", "Completely depleted"] },
+  C1: { prompt: "How numb or cynical do you feel about your work?", minLabel: "Not at all (I still care)", maxLabel: "Completely numb/cynical" },
+  C2: { prompt: "When dealing with coworkers or clients?", optionLabels: ["I treat them with the same care as before", "I'm a bit more formal than before", "I keep my distance and stay purely businesslike", "Cynical thoughts come up often"] },
+  C3: { prompt: "How much do you care about the outcome of your work?", optionLabels: ["I still genuinely care", "I care a reasonable amount", "I just care about getting it over with", "I feel like it doesn't matter whether it turns out well or not"] },
+  C4: { prompt: "How do you feel about your company (or organization)?", optionLabels: ["I feel attached to it", "It's fine, nothing special", "I feel a sense of distance", "I feel strongly cynical or disillusioned"] },
+  C5: { prompt: "Something you used to be passionate about — how does it feel now?", optionLabels: ["That passion is still there", "It's less than before, but it's there", "I can barely recall that feeling", "It feels so distant I wonder why I ever cared that much"] },
+  C6: { prompt: "How often do cynical thoughts (like \"none of this matters anyway\") come up at work?", optionLabels: ["Almost never", "Occasionally", "Often", "Almost every day"] },
+  C7: { prompt: "How much do you trust the people you work with?", optionLabels: ["Still a lot", "Generally fine", "I've gotten more suspicious than before", "I've stopped trusting almost everyone"] },
+  C8: { prompt: "When you think about the meaning or purpose of your work?", optionLabels: ["I feel a clear sense of meaning", "There's some meaning, more or less", "I struggle to find meaning in it", "It all feels meaningless"] },
+  C9: { prompt: "How do you react when a problem comes up?", optionLabels: ["I actively try to solve it", "I tend to make an effort to solve it", "I just let it slide", "I give up, figuring nothing will change anyway"] },
+  C10: { prompt: "When you talk about your work, how do you sound to yourself?", optionLabels: ["Positive", "Pretty neutral", "I end up sounding cynical", "I end up sounding sarcastic or self-deprecating"] },
+  F1: { prompt: "How much do you doubt your own ability or achievements?", minLabel: "No doubt at all (I feel confident)", maxLabel: "Extreme doubt" },
+  F2: { prompt: "How confident do you feel in your own abilities?", optionLabels: ["I know what I'm good at", "I feel mostly fine about it", "I often doubt whether I'm doing well", "I feel like there's nothing I do properly"] },
+  F3: { prompt: "When you receive a compliment?", optionLabels: ["I accept it gratefully", "I'm happy, but it feels a bit awkward", "I feel like I don't deserve it", "I can't quite bring myself to believe it"] },
+  F4: { prompt: "When given a difficult task?", optionLabels: ["I feel confident I can pull it off", "It's a burden, but I give it a try", "I wonder if I can really handle it", "I feel helpless before I've even started"] },
+  F5: { prompt: "When you make a mistake?", optionLabels: ["I let it go, these things happen", "I reflect on it and pay more attention next time", "I think, 'of course, I really can't do this'", "It's painful, like my incompetence has been exposed"] },
+  F6: { prompt: "How do you rate your own ability compared to others?", optionLabels: ["I feel plenty good enough", "I feel about the same as everyone else", "I often feel like I'm falling behind", "I always feel like I'm not enough"] },
+  F7: { prompt: "When you have to make an important decision?", optionLabels: ["I trust my own judgment", "I agonize over it, but end up trusting myself", "I keep doubting whether my judgment is right", "I feel like I'm not qualified to make the call"] },
+  F8: { prompt: "When you look back on what you've achieved so far?", optionLabels: ["I feel proud of myself", "I feel it's not bad", "I feel it's mostly luck or other people's doing", "I feel like I haven't really achieved anything"] },
+  F9: { prompt: "When you're given a new role or responsibility?", optionLabels: ["I'm excited and feel I can do well", "It's a burden, but it seems doable", "I'm afraid I won't be able to handle it", "I feel like my incompetence will eventually be exposed"] },
+  F10: { prompt: "How would you rate yourself overall?", optionLabels: ["I think I'm quite capable", "I think I'm about average", "I often feel I fall short", "I often feel incompetent"] },
+};
+
+export const MODULE3_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
+  E1: { prompt: "¿Qué tan cansado/a te sientes después del trabajo (o al terminar tu día)?", minLabel: "Nada cansado/a", maxLabel: "Completamente agotado/a" },
+  E2: { prompt: "En una semana típica, ¿cuántos días todavía tienes energía?", optionLabels: ["Casi todos los días estoy bien", "Con el fin de semana me recupero", "Estoy agotado/a toda la semana", "Ni siquiera recuerdo la última vez que estuve bien"] },
+  E3: { prompt: "Cuando abres los ojos por la mañana?", optionLabels: ["Tengo ganas de empezar el día", "Me las arreglo para levantarme", "Solo levantarme ya se siente pesado", "Ya estoy agotado/a apenas despierto"] },
+  E4: { prompt: "¿Incluso tareas simples (responder correos, pendientes pequeños)?", optionLabels: ["Las resuelvo enseguida", "Las pospongo un poco, pero las termino", "Las sigo postergando porque ni ganas tengo de tocarlas", "Solo de pensarlas me agoto"] },
+  E5: { prompt: "Después de que termina el fin de semana o unas vacaciones?", optionLabels: ["Me siento recargado/a de nuevo", "Me recupero hasta cierto punto", "Descansar no cambia mucho", "Hasta descansar se siente cansado"] },
+  E6: { prompt: "¿Cómo está tu condición física (dolores de cabeza, indigestión, tensión muscular, etc.)?", optionLabels: ["Nada fuera de lo normal", "A veces algo de rigidez o cansancio", "Algo me duele o me molesta de forma crónica", "Casi no hay parte de mí que no me duela"] },
+  E7: { prompt: "¿Cómo te sientes al terminar tu día?", optionLabels: ["Con sensación de logro", "Solo con la sensación de que el día pasó", "Con sensación de agotamiento", "Con la sensación de que ya no puedo más"] },
+  E8: { prompt: "¿Cómo estás justo antes de dormirte?", optionLabels: ["Me duermo cómodamente", "Doy vueltas un poco antes de dormirme", "Estoy cansado/a pero no logro dormirme fácil", "Mi cuerpo está agotado pero mi mente sigue activada"] },
+  E9: { prompt: "Cuando llega una tarea o petición nueva?", optionLabels: ["Tengo energía para aceptarla con gusto", "Es una carga, pero la cumplo", "Se siente como demasiado para manejar", "Ya estoy en mi límite y quiero decir que no"] },
+  E10: { prompt: "¿Cómo describirías tu nivel general de energía ahora mismo?", optionLabels: ["De sobra", "Normal", "Por el suelo", "Completamente agotada"] },
+  C1: { prompt: "¿Qué tan indiferente o cínico/a te sientes respecto a tu trabajo?", minLabel: "Nada (todavía me importa)", maxLabel: "Completamente indiferente/cínico/a" },
+  C2: { prompt: "Al tratar con compañeros o clientes?", optionLabels: ["Los trato con el mismo cuidado de antes", "Soy un poco más formal que antes", "Mantengo distancia y solo trato lo estrictamente laboral", "Me vienen pensamientos cínicos con frecuencia"] },
+  C3: { prompt: "¿Cuánto te importa el resultado de tu trabajo?", optionLabels: ["Todavía me importa de verdad", "Me importa una cantidad razonable", "Solo me importa terminarlo", "Siento que da igual si sale bien o no"] },
+  C4: { prompt: "¿Cómo te sientes respecto a tu empresa (u organización)?", optionLabels: ["Le tengo cariño", "Me es indiferente, nada especial", "Siento cierta distancia", "Siento un cinismo o desilusión fuerte"] },
+  C5: { prompt: "Algo que antes te apasionaba, ¿cómo se siente ahora?", optionLabels: ["Esa pasión sigue ahí", "Es menos que antes, pero sigue estando", "Casi no logro recordar esa sensación", "Se siente tan lejano que me pregunto por qué me importaba tanto"] },
+  C6: { prompt: "¿Con qué frecuencia te vienen pensamientos cínicos (como \"total, nada de esto sirve\") en el trabajo?", optionLabels: ["Casi nunca", "De vez en cuando", "Seguido", "Casi todos los días"] },
+  C7: { prompt: "¿Cuánto confías en las personas con las que trabajas?", optionLabels: ["Todavía mucho", "En general está bien", "Me he vuelto más desconfiado/a que antes", "Dejé de confiar en casi todos"] },
+  C8: { prompt: "Cuando piensas en el sentido o propósito de tu trabajo?", optionLabels: ["Siento un sentido claro", "Tiene algo de sentido, más o menos", "Me cuesta encontrarle sentido", "Todo se siente sin sentido"] },
+  C9: { prompt: "¿Cómo reaccionas cuando surge un problema?", optionLabels: ["Trato de resolverlo activamente", "Tiendo a esforzarme por resolverlo", "Simplemente lo dejo pasar", "Me resigno pensando que nada va a cambiar"] },
+  C10: { prompt: "Cuando hablas de tu trabajo, ¿cómo te escuchas a ti mismo/a?", optionLabels: ["Positivo/a", "Bastante neutral", "Termino sonando cínico/a", "Termino sonando sarcástico/a o autocrítico/a"] },
+  F1: { prompt: "¿Cuánto dudas de tu propia capacidad o tus logros?", minLabel: "Nada de duda (me siento seguro/a)", maxLabel: "Duda extrema" },
+  F2: { prompt: "¿Qué tan seguro/a te sientes de tus propias capacidades?", optionLabels: ["Sé en qué soy bueno/a", "En general me siento bien", "Seguido dudo si lo estoy haciendo bien", "Siento que no hay nada que haga bien"] },
+  F3: { prompt: "Cuando recibes un cumplido?", optionLabels: ["Lo acepto con gratitud", "Me alegra, pero se siente algo incómodo", "Siento que no lo merezco", "No logro creérmelo del todo"] },
+  F4: { prompt: "Cuando te dan una tarea difícil?", optionLabels: ["Me siento seguro/a de poder lograrlo", "Es una carga, pero lo intento", "Me pregunto si de verdad puedo con esto", "Me siento impotente antes de siquiera empezar"] },
+  F5: { prompt: "Cuando cometes un error?", optionLabels: ["Lo dejo pasar, son cosas que pasan", "Reflexiono y pongo más atención la próxima vez", "Pienso: 'claro, si es que yo no sirvo para esto'", "Me duele, como si se hubiera expuesto mi incompetencia"] },
+  F6: { prompt: "¿Cómo calificas tu propia capacidad comparada con la de otros?", optionLabels: ["Me siento bastante bien", "Me siento a un nivel similar", "Seguido siento que me quedo atrás", "Siempre siento que no soy suficiente"] },
+  F7: { prompt: "Cuando tienes que tomar una decisión importante?", optionLabels: ["Confío en mi propio juicio", "Le doy vueltas, pero termino confiando en mí", "Sigo dudando si mi juicio es correcto", "Siento que no tengo la capacidad para decidir"] },
+  F8: { prompt: "Cuando miras hacia atrás y ves lo que has logrado?", optionLabels: ["Me siento orgulloso/a de mí mismo/a", "Siento que no está mal", "Siento que fue por suerte o por otros", "Siento que no he logrado nada de verdad"] },
+  F9: { prompt: "Cuando te asignan un rol o responsabilidad nuevos?", optionLabels: ["Me emociona y siento que puedo hacerlo bien", "Es una carga, pero parece manejable", "Me da miedo no poder con esto", "Siento que tarde o temprano se descubrirá mi incompetencia"] },
+  F10: { prompt: "¿Cómo te calificarías a ti mismo/a en general?", optionLabels: ["Creo que soy bastante capaz", "Creo que estoy en un nivel promedio", "Seguido siento que me quedo corto/a", "Muchas veces me siento incompetente"] },
+};
 
 export const MODULE3_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   exhaustion: 10,

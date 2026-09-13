@@ -16,7 +16,7 @@
  */
 
 import type { Locale } from "../i18n/types";
-import type { ModuleQuestion } from "./quizProfile";
+import type { ModuleQuestion, QuestionTextOverride } from "./quizProfile";
 
 export const MODULE4_QUESTIONS: ModuleQuestion[] = [
   // ---- 이미지관리 (Image Management) — IM1-IM10 ----
@@ -101,6 +101,75 @@ export const MODULE4_QUESTIONS: ModuleQuestion[] = [
     { label: "충분히 있다", score: 0 }, { label: "어느 정도 있다", score: 1 },
     { label: "거의 없다", score: 2 }, { label: "전혀 없다고 느껴진다", score: 3 } ] },
 ];
+
+// Display-text-only translations of MODULE4_QUESTIONS above — see MODULE1's
+// equivalent comment in module1Attachment.ts for why id/dimension/format/
+// score aren't duplicated per locale.
+export const MODULE4_QUESTIONS_EN: Record<string, QuestionTextOverride> = {
+  IM1: { prompt: "How much do you change how you present yourself depending on the situation or person?", minLabel: "The same everywhere", maxLabel: "Like a completely different person for each" },
+  IM2: { prompt: "In front of someone you just met, are you...?", optionLabels: ["I act just as I am", "A little more careful than usual", "I show a side I think they'll like", "I act almost like a different person"] },
+  IM3: { prompt: "I switch between two completely different personalities depending on the situation, like flipping a switch.", optionLabels: ["Not at all true", "Very true"] },
+  IM4: { prompt: "When the mood at a gathering starts to sag?", optionLabels: ["I don't feel the need to step in", "I go along with it reasonably", "I take it on myself to lighten the mood", "I force myself to play the upbeat character"] },
+  IM5: { prompt: "How different are you in front of a boss or senior versus in front of friends?", optionLabels: ["Almost the same", "A little different", "Quite different", "Like a completely different person"] },
+  IM6: { prompt: "The \"me\" that people like is closer to a character I created than my real self.", optionLabels: ["Not at all true", "Very true"] },
+  IM7: { prompt: "While watching the other person's reaction during a conversation?", optionLabels: ["I barely pay attention to it", "I take it lightly into account", "I adjust my attitude in real time", "I adjust my performance to match their every expression"] },
+  IM8: { prompt: "How does the you on social media compare to real life?", optionLabels: ["It's exactly how I normally am", "A slightly better version of me", "A pretty edited version", "Closer to a character than the real me"] },
+  IM9: { prompt: "When someone says they like you?", optionLabels: ["I believe they like me for who I really am", "I mostly believe that", "I think they like the image I've shown them", "I think they wouldn't like the real me"] },
+  IM10: { prompt: "Across your different relationships, are you...?", optionLabels: ["One consistent person", "Slightly different, but mostly similar", "Playing a different role in each relationship", "Like there's a different \"me\" for every relationship I have"] },
+  AS1: { prompt: "How often do you have to say something different from what you really think?", optionLabels: ["Almost never", "Sometimes", "Often", "Almost every time"] },
+  AS2: { prompt: "There's a real part of my inner self I could never tell even my closest person.", optionLabels: ["Not at all true", "Very true"] },
+  AS3: { prompt: "Even when you're angry or hurt?", optionLabels: ["I express it right away", "I express it to a reasonable degree", "I laugh it off", "I hide it completely, without a trace"] },
+  AS4: { prompt: "Are you afraid people will think you're strange if you share your real tastes or thoughts?", optionLabels: ["I don't worry about that", "I worry about it sometimes", "So I hold back and phrase things carefully", "I just don't bring it up at all"] },
+  AS5: { prompt: "Right now, how confident are you that someone truly knows the \"you\" without the mask?", minLabel: "No one knows the real me", maxLabel: "Someone knows me completely" },
+  AS6: { prompt: "When you're going through a hard time?", optionLabels: ["I let people around me know right away", "I let people close to me know", "It's easier to pretend I'm fine", "I try not to show it to anyone"] },
+  AS7: { prompt: "Even while smiling in front of people, I sometimes feel a completely different emotion inside.", optionLabels: ["Not at all true", "Very true"] },
+  AS8: { prompt: "When your opinion differs from the majority?", optionLabels: ["I clearly state my opinion", "I say it carefully", "I just let it go without saying anything", "I pretend to agree with the majority"] },
+  AS9: { prompt: "If someone found out who you really are?", optionLabels: ["I think I'd feel comfortable", "I think it'd feel a little awkward", "I think it'd feel like a burden", "I'm afraid it would break the relationship"] },
+  AS10: { prompt: "When you're finally alone at the end of the day?", optionLabels: ["I feel at ease, nothing in particular", "I feel reasonably relieved", "I feel a strong sense of relief, like taking off a mask", "I feel worn out, like I performed all day"] },
+  SE1: { prompt: "After enjoying time with people and coming home?", optionLabels: ["I feel recharged", "I feel reasonably satisfied", "I feel strangely empty", "All I want is to be alone"] },
+  SE2: { prompt: "After being in a crowded gathering, separate from whether it was fun, my body and mind feel completely drained.", optionLabels: ["Not at all true", "Very true"] },
+  SE3: { prompt: "How do you feel about maintaining relationships?", optionLabels: ["It feels natural and easy", "It takes some effort", "It's pretty tiring", "It often feels like too much"] },
+  SE4: { prompt: "How do you feel when people think you're outgoing or social?", optionLabels: ["That's genuinely who I am", "That's mostly right", "It feels only half right", "It feels like a complete misunderstanding"] },
+  SE5: { prompt: "How contradictory does it feel to like being around people, yet also find it tiring?", minLabel: "Not contradictory at all", maxLabel: "Feels very contradictory" },
+  SE6: { prompt: "Even when you're with a group of people?", optionLabels: ["I feel completely fulfilled", "I feel mostly fine", "A hint of loneliness slips through sometimes", "I feel alone even in a crowd"] },
+  SE7: { prompt: "Even when a lot of people like me, there are times I feel like no one is truly on my side.", optionLabels: ["Not at all true", "Very true"] },
+  SE8: { prompt: "When plans get canceled?", optionLabels: ["I feel quite disappointed", "I feel somewhat disappointed", "Honestly, I feel a bit relieved", "Secretly, I think 'thank goodness'"] },
+  SE9: { prompt: "Compared to the effort you put into maintaining relationships, how much emotional satisfaction do you get back?", optionLabels: ["Plenty", "A reasonable amount", "It often feels lacking", "It feels hollow compared to the effort I put in"] },
+  SE10: { prompt: "How much time or how many people do you have where you can fully take off the mask and rest?", optionLabels: ["Plenty", "Some", "Almost none", "It feels like I have none at all"] },
+};
+
+export const MODULE4_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
+  IM1: { prompt: "¿Cuánto cambias tu forma de mostrarte según la situación o la persona?", minLabel: "Igual en todas partes", maxLabel: "Como una persona completamente distinta con cada quien" },
+  IM2: { prompt: "¿Frente a alguien que acabas de conocer?", optionLabels: ["Actúo tal como soy", "Un poco más precavido/a de lo normal", "Muestro un lado que creo que le va a gustar", "Actúo casi como otra persona"] },
+  IM3: { prompt: "Cambio entre dos personalidades completamente distintas según la situación, como accionar un interruptor.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  IM4: { prompt: "Cuando el ambiente en una reunión empieza a decaer?", optionLabels: ["No siento la necesidad de intervenir", "Me adapto lo suficiente", "Me encargo yo de animar el ambiente", "Me esfuerzo por actuar como el personaje alegre"] },
+  IM5: { prompt: "¿Qué tan diferente eres frente a un jefe o superior comparado con frente a tus amigos?", optionLabels: ["Casi igual", "Un poco diferente", "Bastante diferente", "Como una persona completamente distinta"] },
+  IM6: { prompt: "El \"yo\" que le gusta a la gente se parece más a un personaje que creé que a mi verdadero yo.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  IM7: { prompt: "Mientras observas la reacción de la otra persona en una conversación?", optionLabels: ["Casi no le presto atención", "Lo tomo en cuenta levemente", "Ajusto mi actitud en tiempo real", "Ajusto mi actuación según cada gesto suyo"] },
+  IM8: { prompt: "¿Cómo se compara el \"tú\" de las redes sociales con el de la vida real?", optionLabels: ["Es exactamente como soy normalmente", "Una versión ligeramente mejor de mí", "Una versión bastante editada", "Más cercano a un personaje que a mi yo real"] },
+  IM9: { prompt: "Cuando alguien dice que le gustas?", optionLabels: ["Creo que le gusto tal como soy", "En general creo que sí", "Pienso que le gusta la imagen que le he mostrado", "Pienso que no le gustaría mi verdadero yo"] },
+  IM10: { prompt: "En tus distintas relaciones, ¿eres...?", optionLabels: ["Una persona consistente", "Un poco diferente, pero mayormente similar", "Cumples un rol distinto en cada relación", "Sientes que hay un \"tú\" diferente para cada relación"] },
+  AS1: { prompt: "¿Con qué frecuencia tienes que decir algo distinto de lo que realmente piensas?", optionLabels: ["Casi nunca", "A veces", "Seguido", "Casi siempre"] },
+  AS2: { prompt: "Hay una parte real de mi interior que jamás podría contarle ni a la persona más cercana.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  AS3: { prompt: "Incluso cuando estás enojado/a o dolido/a?", optionLabels: ["Lo expreso de inmediato", "Lo expreso de forma razonable", "Lo dejo pasar riéndome", "Lo escondo por completo, sin que se note"] },
+  AS4: { prompt: "¿Te preocupa que la gente te vea raro/a si compartes tus verdaderos gustos o pensamientos?", optionLabels: ["No me preocupa eso", "A veces me preocupa", "Por eso lo oculto un poco al hablar", "Directamente no lo menciono"] },
+  AS5: { prompt: "En este momento, ¿qué tan seguro/a estás de que alguien conoce de verdad al \"tú\" sin la máscara?", minLabel: "Nadie conoce a mi verdadero yo", maxLabel: "Alguien me conoce por completo" },
+  AS6: { prompt: "Cuando estás pasando por un momento difícil?", optionLabels: ["Se lo hago saber a mi entorno de inmediato", "Se lo hago saber a la gente cercana", "Es más fácil fingir que estoy bien", "Trato de no mostrárselo a nadie"] },
+  AS7: { prompt: "Incluso sonriendo frente a la gente, a veces siento algo completamente distinto por dentro.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  AS8: { prompt: "Cuando tu opinión difiere de la mayoría?", optionLabels: ["Digo mi opinión con claridad", "La digo con cautela", "Simplemente lo dejo pasar sin decir nada", "Finjo estar de acuerdo con la mayoría"] },
+  AS9: { prompt: "Si alguien descubriera quién eres realmente?", optionLabels: ["Creo que me sentiría cómodo/a", "Creo que se sentiría algo incómodo", "Creo que se sentiría pesado", "Me da miedo que eso rompa la relación"] },
+  AS10: { prompt: "Cuando por fin te quedas a solas al final del día?", optionLabels: ["Me siento tranquilo/a, sin nada en particular", "Me siento razonablemente aliviado/a", "Siento un gran alivio, como quitarme una máscara", "Siento un agotamiento, como si hubiera actuado todo el día"] },
+  SE1: { prompt: "Después de disfrutar tiempo con gente y volver a casa?", optionLabels: ["Siento que se recargó mi energía", "Me siento razonablemente satisfecho/a", "Siento un vacío extraño", "Solo quiero estar solo/a"] },
+  SE2: { prompt: "Después de estar en una reunión con mucha gente, más allá de si la pasé bien, mi cuerpo y mente quedan completamente agotados.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  SE3: { prompt: "¿Cómo te sientes respecto a mantener relaciones?", optionLabels: ["Se siente natural y fácil", "Requiere algo de esfuerzo", "Es bastante agotador", "Muchas veces se siente demasiado"] },
+  SE4: { prompt: "¿Cómo te sientes cuando la gente piensa que eres extrovertido/a o sociable?", optionLabels: ["Eso es genuinamente quien soy", "En general es correcto", "Se siente solo parcialmente correcto", "Se siente como un malentendido total"] },
+  SE5: { prompt: "¿Qué tan contradictorio se siente disfrutar estar con gente y a la vez sentirte agotado/a por eso?", minLabel: "Nada contradictorio", maxLabel: "Se siente muy contradictorio" },
+  SE6: { prompt: "¿Incluso estando con un grupo de gente?", optionLabels: ["Me siento completamente pleno/a", "Me siento mayormente bien", "A veces se me cuela algo de soledad", "Me siento solo/a incluso en medio de la multitud"] },
+  SE7: { prompt: "Aunque le guste a mucha gente, a veces siento que nadie está realmente de mi lado.", optionLabels: ["Para nada cierto", "Totalmente cierto"] },
+  SE8: { prompt: "Cuando se cancela un plan?", optionLabels: ["Me da bastante pena", "Me da algo de pena", "Honestamente, siento algo de alivio", "En secreto pienso \"qué bueno\""] },
+  SE9: { prompt: "Comparado con el esfuerzo que pones en mantener relaciones, ¿cuánta satisfacción emocional recibes a cambio?", optionLabels: ["Suficiente", "Una cantidad razonable", "Muchas veces se siente insuficiente", "Se siente vacío comparado con el esfuerzo que puse"] },
+  SE10: { prompt: "¿Cuánto tiempo o cuánta gente tienes con quien puedas quitarte la máscara por completo y descansar?", optionLabels: ["Suficiente", "Algo", "Casi nada", "Siento que no tengo nada de eso"] },
+};
 
 export const MODULE4_DIMENSION_ITEM_COUNTS: Record<string, number> = {
   imageManagement: 10,
