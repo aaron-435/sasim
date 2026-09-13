@@ -109,6 +109,18 @@ export interface ReportDimensionResult {
   intensity: string;
 }
 
+/** One dimension's single highest-scoring (most extreme) literal quiz answer — computed
+ * client-side via lib/quiz/quizProfile.ts's findTopAnswers(), not by the model. Handed over
+ * so the model can write one real sentence ABOUT this specific answer instead of the report
+ * just displaying the bare question/answer pair with no interpretation (2026-09-14, user
+ * feedback: showing the raw Q&A alone felt flat). */
+export interface ReportTopAnswer {
+  dimension: string;
+  dimensionLabel: string;
+  prompt: string;
+  label: string;
+}
+
 export interface ReportContext {
   nickname: string;
   track: "romance" | "career";
@@ -119,6 +131,9 @@ export interface ReportContext {
   dimensionResults: ReportDimensionResult[];
   dimensionShortNames: Record<string, string>;
   nuancedSummary: string;
+  /** One entry per psych-test dimension (see ReportTopAnswer), ordered by how prominent
+   * that dimension is — the same order answer_notes must be returned in. */
+  topAnswers?: ReportTopAnswer[];
   /** Present when the user completed the free chat; absent for a report generated without it. */
   chatExtract?: ChatExtract | null;
   /** From /api/saju (CityScreen path) or recomputed at redemption time (VerifyCode path) —
@@ -164,7 +179,16 @@ const STYLE_EXCERPT = `
 // 페이지 넘김 방식으로 바뀜에 따라 — 각 필드는 이제 화면 한 장에 표시되므로 길게 늘어지면
 // 안 되고, 대신 다루는 주제 자체를 오행 5개 개별 분석·다가오는 시기 전망처럼 실제로 늘렸다).
 // saju_dominant_*/saju_weak_* 두 쌍은 element_readings 하나로 통합(5개 전부 다루면서 중복 제거).
-const OUTPUT_SCHEMA = `
+/** answer_notes' array-length rule has to name the exact count, so the schema is built per
+ * request instead of being one static string — see ReportTopAnswer's header comment for why
+ * this field exists at all (a literal Q&A pair alone read as flat with no interpretation). */
+function buildOutputSchema(topAnswerCount: number): string {
+  const answerNotesField =
+    topAnswerCount > 0
+      ? `,
+  "answer_notes": ["실제로 답한 문항 각각에 대한 해설 — 정확히 ${topAnswerCount}개, 아래 '실제로 답한 문항들' 데이터에 나온 순서 그대로. 그 문항의 질문과 답을 다시 반복하지 말고, 그 특정 답이 이 사람의 어떤 면을 보여주는지 1문장으로 짚을 것 — 그 원소/오행 이야기가 아니라 심리테스트 축 이름과 연결해서 설명"]`
+      : "";
+  return `
 {
   "title_line1": "리포트 제목 1행 — 시적이고 은유적, 이 사람의 핵심 패턴을 압축",
   "title_line2": "리포트 제목 2행 — 1행과 이어지는 한 문장",
@@ -182,7 +206,7 @@ const OUTPUT_SCHEMA = `
   },
   "upcoming_period_heading": "'다가오는 시기' 섹션 소제목 — 아래 데이터의 '다가오는 대운 시기' 줄에 나온 나이대와 원소를 반드시 그대로 반영해서, 예를 들면 '32세부터, 물의 계절이 옵니다' 같은 형식으로. 그 줄이 '정보 없음'이면 나이 없이 '다가오는 흐름' 정도의 일반적인 제목",
   "upcoming_period_body": "1~2문장. 아래 '다가오는 대운 시기' 데이터에 근거해서, 그 시기에 어떤 변화나 기회가 자연스럽게 따라오는지 서술. 나이 숫자는 그 데이터 줄에 있는 그대로만 쓰고 절대 새로 만들어내지 말 것 — 정보가 없다고 나오면 숫자 없이 일반적인 흐름으로만 쓸 것. 이미 지난 시기를 다루지 말고 반드시 앞으로 올 시기만 다룰 것.",
-  "cross_analysis_quotes": ["우세 원소와 심리검사 주요 축을 명시적으로 연결하는 인용구 스타일 문장 1개", "약한 원소와 심리검사의 다른 축을 연결하는 문장 1개"],
+  "cross_analysis_quotes": ["우세 원소와 심리검사 주요 축을 명시적으로 연결하는 인용구 스타일 문장 1개", "약한 원소와 심리검사의 다른 축을 연결하는 문장 1개"]${answerNotesField},
   "psychology_fact_heading": "이 사람의 패턴과 관련된 실제 심리학 개념/이론/연구자 이름을 정확히 인용한 소제목. 화면에 이미 '잠깐, 심리학 상식 하나'라는 라벨이 따로 표시되므로 그 문구를 다시 쓰지 말 것 — 개념 이름 자체로 시작 (예: '볼비와 불안-회피 애착')",
   "psychology_fact_body": "그 개념을 1~2문장으로 정확하게 설명하고 이 사람 패턴과 연결",
   "psychology_takeaway": "한 문장짜리 핵심 요약. 화면에 이미 '기억할 한 가지 ·' 라벨이 따로 붙으므로 '기억할 한 가지' 같은 말을 반복하지 말고 바로 요약 문장으로 시작",
@@ -196,6 +220,7 @@ const OUTPUT_SCHEMA = `
   "closing_body": "마무리 문단 1~2문장 — 희망적이되 과장하지 않게"
 }
 `.trim();
+}
 
 export function buildReportPrompt(context: ReportContext): string {
   const locale: Locale = context.locale ?? "ko";
@@ -214,6 +239,10 @@ export function buildReportPrompt(context: ReportContext): string {
   const dimensionLines = context.dimensionResults
     .map((r) => `${context.dimensionShortNames[r.dimension] ?? r.dimension}: ${r.direction === "high" ? "높음" : "낮음"} (${Math.round(r.percentOfMax)}%, ${r.intensity})`)
     .join("; ");
+
+  const topAnswersLine = context.topAnswers?.length
+    ? context.topAnswers.map((a, i) => `[${i + 1}] ${a.dimensionLabel} — "${a.prompt}" → "${a.label}"`).join(" / ")
+    : null;
 
   const chatSection = context.chatExtract
     ? `
@@ -265,6 +294,10 @@ ${STYLE_EXCERPT}
    정확히 지켜서 쓴다 — 붙여쓰기·오탈자 없이. 이 리포트는 이제 한 필드가 화면 한 장에
    표시되므로, 필드마다 2~4개의 짧고 명확한 문장으로 끊어 쓰고 한 문장에 여러 생각을
    욱여넣지 않는다 — 문장이 길어지면 마침표로 끊어서 여러 문장으로 나눌 것.
+9. answer_notes는 아래 "실제로 답한 문항들" 데이터에 있는 항목 순서와 정확히 같은
+   순서·개수로 작성한다. 각 노트는 그 문항의 질문이나 답을 그대로 되풀이하지 말고 —
+   화면에 질문과 답은 이미 그대로 표시되므로 반복하면 중복이다 — 그 답이 이 사람에
+   대해 무엇을 보여주는지 새로운 관점 하나를 짚는다.
 
 ## 이번 리포트의 데이터
 - 닉네임: ${context.nickname}
@@ -277,11 +310,12 @@ ${STYLE_EXCERPT}
 - 심리테스트 유형: ${context.psychTestTypeTitle} — ${context.psychTestTypeHook}
 - 심리테스트 세부 축: ${dimensionLines}
 - 심리테스트 서술: ${context.nuancedSummary}
+${topAnswersLine ? `- 실제로 답한 문항들 (answer_notes는 이 순서 그대로): ${topAnswersLine}` : ""}
 
 ${chatSection}
 
 ## 출력 스키마
-${OUTPUT_SCHEMA}
+${buildOutputSchema(context.topAnswers?.length ?? 0)}
 ${outputLanguageDirective(locale, { en: "the JSON schema above", es: "esquema JSON anterior" })}
 `.trim();
 }

@@ -52,6 +52,7 @@ type ReportContent = {
   upcoming_period_heading: string;
   upcoming_period_body: string;
   cross_analysis_quotes: string[];
+  answer_notes: string[];
   psychology_fact_heading: string;
   psychology_fact_body: string;
   psychology_takeaway: string;
@@ -108,6 +109,24 @@ export default function ReportScreen({
   const scrollRef = useRef<ScrollView>(null);
   const resolvedElements = elements ?? DEFAULT_ELEMENTS;
 
+  // The single highest-scoring (most extreme) literal answer for each of this module's
+  // psych-test dimensions — sorted by how prominent that dimension is (percentOfMax desc)
+  // so the narrative goes from most-to-least defining. Computed once and reused both for
+  // the /api/report request (so the model can write a real note about each one) and for
+  // rendering the matching AnswerQuotePage below.
+  const topAnswers = useMemo(() => {
+    return (quizDiagnosis.dimensionResults ?? [])
+      .slice()
+      .sort((a, b) => b.percentOfMax - a.percentOfMax)
+      .map((r) => {
+        const top = findTopAnswers(quizDiagnosis.answers, r.dimension, 1)[0];
+        if (!top) return null;
+        return { dimension: r.dimension, dimensionLabel: quizDiagnosis.dimensionShortNames?.[r.dimension] ?? r.dimension, prompt: top.prompt, label: top.label };
+      })
+      .filter((x): x is { dimension: string; dimensionLabel: string; prompt: string; label: string } => !!x);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quizDiagnosis]);
+
   useEffect(() => {
     mountedRef.current = true;
     return () => {
@@ -146,6 +165,7 @@ export default function ReportScreen({
             })),
             dimensionShortNames: quizDiagnosis.dimensionShortNames ?? {},
             nuancedSummary: quizDiagnosis.nuancedSummary ?? "",
+            topAnswers,
             chatExtract: chatExtract ?? null,
             locale,
           },
@@ -243,6 +263,33 @@ export default function ReportScreen({
         node: <ChatStoryPage chatExtract={chatExtract} strings={strings} />,
       });
 
+      const concern = chatExtract.primary_concern;
+      const emotion = chatExtract.emotional_state;
+      if ((typeof concern === "string" && concern.trim()) || (typeof emotion === "string" && emotion.trim())) {
+        body.push({
+          key: "chat-snapshot",
+          locked: true,
+          node: (
+            <ConcernSnapshotPage
+              eyebrow={strings.report.chatSnapshotEyebrow}
+              concernLabel={strings.report.chatConcernLabel}
+              concern={typeof concern === "string" ? concern : ""}
+              emotionLabel={strings.report.chatEmotionLabel}
+              emotion={typeof emotion === "string" ? emotion : ""}
+            />
+          ),
+        });
+      }
+
+      const trigger = chatExtract.trigger_point;
+      if (typeof trigger === "string" && trigger.trim()) {
+        body.push({
+          key: "chat-trigger",
+          locked: true,
+          node: <QuotePage eyebrow={strings.report.chatTriggerEyebrow} quote={trigger} />,
+        });
+      }
+
       const repeatPattern = chatExtract.repeat_pattern;
       if (typeof repeatPattern === "string" && repeatPattern.trim()) {
         body.push({
@@ -262,15 +309,21 @@ export default function ReportScreen({
       }
     }
 
-    const activeQuizDimension = quizDiagnosis.classification?.activeDimensions?.[0];
-    const topQuizAnswer = activeQuizDimension ? findTopAnswers(quizDiagnosis.answers, activeQuizDimension, 1)[0] : undefined;
-    if (topQuizAnswer) {
+    topAnswers.forEach((a, i) => {
       body.push({
-        key: "quiz-answer-quote",
+        key: `quiz-answer-${i}`,
+        tocLabel: i === 0 ? strings.report.sectionAnswerQuotesToc : undefined,
         locked: true,
-        node: <AnswerQuotePage eyebrow={strings.report.quizAnswerEyebrow} prompt={topQuizAnswer.prompt} answer={topQuizAnswer.label} />,
+        node: (
+          <AnswerQuotePage
+            eyebrow={strings.report.quizAnswerEyebrow(a.dimensionLabel)}
+            prompt={a.prompt}
+            answer={a.label}
+            note={content.answer_notes[i]}
+          />
+        ),
       });
-    }
+    });
 
     content.cross_analysis_quotes.forEach((q, i) => {
       body.push({
@@ -349,7 +402,7 @@ export default function ReportScreen({
       ...gated,
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, resolvedElements, chatExtract, unlocked, ownedCount, strings, locale, quizDiagnosis, nickname]);
+  }, [content, resolvedElements, chatExtract, unlocked, ownedCount, strings, locale, quizDiagnosis, nickname, topAnswers]);
 
   function goTo(index: number) {
     const clamped = Math.max(0, Math.min(pages.length - 1, index));
@@ -648,13 +701,51 @@ function QuotePage({ quote, eyebrow }: { quote: string; eyebrow?: string }) {
  * answer for their dominant psych-test dimension), instead of a paraphrased summary.
  * "이거 완전 나잖아" lands harder from the user's own words than from a description
  * of them. */
-function AnswerQuotePage({ eyebrow, prompt, answer }: { eyebrow: string; prompt: string; answer: string }) {
+function AnswerQuotePage({ eyebrow, prompt, answer, note }: { eyebrow: string; prompt: string; answer: string; note?: string }) {
   return (
     <PageShell>
       <Eyebrow>{eyebrow}</Eyebrow>
       <View style={pageStyles.quoteMid}>
         <Text style={pageStyles.quotePrompt}>{prompt}</Text>
         <Text style={[pageStyles.pullQuote, pageStyles.answerQuoteSpacing]}>{sentenceLines(answer)}</Text>
+        {!!note && <Text style={[pageStyles.caseBody, pageStyles.answerNote]}>{sentenceLines(note)}</Text>}
+      </View>
+    </PageShell>
+  );
+}
+
+/** Two very short chat-extract fields (a 2-6자 noun phrase and a single emotion word) that
+ * don't carry enough text for a pull-quote page on their own — shown together as a small
+ * labeled snapshot instead. */
+function ConcernSnapshotPage({
+  eyebrow,
+  concernLabel,
+  concern,
+  emotionLabel,
+  emotion,
+}: {
+  eyebrow: string;
+  concernLabel: string;
+  concern: string;
+  emotionLabel: string;
+  emotion: string;
+}) {
+  return (
+    <PageShell>
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <View style={pageStyles.elemMid}>
+        {!!concern && (
+          <>
+            <Text style={pageStyles.quotePrompt}>{concernLabel}</Text>
+            <Text style={pageStyles.snapshotValue}>{concern}</Text>
+          </>
+        )}
+        {!!emotion && (
+          <>
+            <Text style={[pageStyles.quotePrompt, pageStyles.snapshotSecondLabel]}>{emotionLabel}</Text>
+            <Text style={pageStyles.snapshotValue}>{emotion}</Text>
+          </>
+        )}
       </View>
     </PageShell>
   );
@@ -875,6 +966,16 @@ const pageStyles = StyleSheet.create({
   },
   answerQuoteSpacing: { marginTop: 10 },
   quotePrompt: { fontFamily: "Manrope_400Regular", fontSize: 11, lineHeight: 18, color: COLORS.footer },
+  answerNote: { marginTop: 18 },
+  snapshotValue: {
+    fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
+    fontSize: 26,
+    lineHeight: 33,
+    color: COLORS.headline,
+    marginTop: 6,
+  },
+  snapshotSecondLabel: { marginTop: 28 },
 
   chatQuoteBox: { backgroundColor: "rgba(62,110,160,0.08)", borderWidth: 1, borderColor: "rgba(62,110,160,0.35)", borderRadius: 10, padding: 16, marginVertical: 14 },
   chatQuoteHeader: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 },

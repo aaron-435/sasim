@@ -42,6 +42,8 @@ export interface ReportContent {
   upcoming_period_heading: string;
   upcoming_period_body: string;
   cross_analysis_quotes: string[];
+  /** One entry per ReportContext.topAnswers, same order — empty when topAnswers wasn't sent. */
+  answer_notes: string[];
   psychology_fact_heading: string;
   psychology_fact_body: string;
   psychology_takeaway: string;
@@ -118,6 +120,7 @@ export async function getReportContent(context: ReportContext, sessionId?: strin
     upcoming_period_heading: String(parsed.upcoming_period_heading ?? ""),
     upcoming_period_body: String(parsed.upcoming_period_body ?? ""),
     cross_analysis_quotes: asStringList(parsed.cross_analysis_quotes),
+    answer_notes: asStringList(parsed.answer_notes),
     psychology_fact_heading: String(parsed.psychology_fact_heading ?? ""),
     psychology_fact_body: String(parsed.psychology_fact_body ?? ""),
     psychology_takeaway: String(parsed.psychology_takeaway ?? ""),
