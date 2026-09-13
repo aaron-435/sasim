@@ -89,7 +89,7 @@ export const en: typeof ko = {
     heading: "Birth city (searchable worldwide)",
     placeholder: "Enter a city name",
     noResultsHint:
-      "No results found. Since your birth timezone matters most for saju calculations, it's fine to search a nearby major city in the same timezone instead (e.g. Seoul, Busan, Daegu).",
+      "No results found. Since your birth timezone matters most for saju calculations, it's fine to search a nearby major city in the same timezone instead — your capital, or another well-known city near you.",
     errorDefault: "We couldn't calculate your saju.",
     errorNetwork: "A network error kept us from calculating your saju.",
   },

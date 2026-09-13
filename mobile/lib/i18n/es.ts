@@ -89,7 +89,7 @@ export const es: typeof ko = {
     heading: "Ciudad de nacimiento (búsqueda mundial)",
     placeholder: "Ingresa el nombre de una ciudad",
     noResultsHint:
-      "No se encontraron resultados. Como lo que más importa para el cálculo del saju es tu zona horaria de nacimiento, también puedes buscar una ciudad grande cercana en la misma zona horaria (por ejemplo, Seúl, Busan, Daegu).",
+      "No se encontraron resultados. Como lo que más importa para el cálculo del saju es tu zona horaria de nacimiento, también puedes buscar una ciudad grande cercana en la misma zona horaria — tu capital, u otra ciudad conocida cerca de ti.",
     errorDefault: "No pudimos calcular tu saju.",
     errorNetwork: "Un error de red impidió calcular tu saju.",
   },
