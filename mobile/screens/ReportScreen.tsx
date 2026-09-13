@@ -5,7 +5,7 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
-import { INTENSITY_LABEL } from "../lib/quiz/quizProfile";
+import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
 import { formatUsd, REPORT_PRICE, remainingBundlePrice, TOTAL_MODULES } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
@@ -238,8 +238,37 @@ export default function ReportScreen({
     if (chatExtract) {
       body.push({
         key: "chat-story",
+        tocLabel: strings.report.sectionChatStory,
         locked: true,
         node: <ChatStoryPage chatExtract={chatExtract} strings={strings} />,
+      });
+
+      const repeatPattern = chatExtract.repeat_pattern;
+      if (typeof repeatPattern === "string" && repeatPattern.trim()) {
+        body.push({
+          key: "chat-repeat-pattern",
+          locked: true,
+          node: <QuotePage eyebrow={strings.report.chatRepeatPatternEyebrow} quote={repeatPattern} />,
+        });
+      }
+
+      const coreFear = chatExtract.core_fear_or_meaning;
+      if (typeof coreFear === "string" && coreFear.trim()) {
+        body.push({
+          key: "chat-core-fear",
+          locked: true,
+          node: <QuotePage eyebrow={strings.report.chatCoreFearEyebrow} quote={coreFear} />,
+        });
+      }
+    }
+
+    const activeQuizDimension = quizDiagnosis.classification?.activeDimensions?.[0];
+    const topQuizAnswer = activeQuizDimension ? findTopAnswers(quizDiagnosis.answers, activeQuizDimension, 1)[0] : undefined;
+    if (topQuizAnswer) {
+      body.push({
+        key: "quiz-answer-quote",
+        locked: true,
+        node: <AnswerQuotePage eyebrow={strings.report.quizAnswerEyebrow} prompt={topQuizAnswer.prompt} answer={topQuizAnswer.label} />,
       });
     }
 
@@ -603,11 +632,29 @@ function ChatStoryPage({ chatExtract, strings }: { chatExtract: ChatExtract; str
   );
 }
 
-function QuotePage({ quote }: { quote: string }) {
+function QuotePage({ quote, eyebrow }: { quote: string; eyebrow?: string }) {
   return (
     <PageShell>
+      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
       <View style={pageStyles.quoteMid}>
         <Text style={pageStyles.pullQuote}>{sentenceLines(quote)}</Text>
+      </View>
+    </PageShell>
+  );
+}
+
+/** Quotes the user's own literal answer back at them — the exact question and the
+ * exact option they picked (via findTopAnswers(), the highest-scoring/most-extreme
+ * answer for their dominant psych-test dimension), instead of a paraphrased summary.
+ * "이거 완전 나잖아" lands harder from the user's own words than from a description
+ * of them. */
+function AnswerQuotePage({ eyebrow, prompt, answer }: { eyebrow: string; prompt: string; answer: string }) {
+  return (
+    <PageShell>
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <View style={pageStyles.quoteMid}>
+        <Text style={pageStyles.quotePrompt}>{prompt}</Text>
+        <Text style={[pageStyles.pullQuote, pageStyles.answerQuoteSpacing]}>{sentenceLines(answer)}</Text>
       </View>
     </PageShell>
   );
@@ -826,6 +873,8 @@ const pageStyles = StyleSheet.create({
     borderLeftColor: COLORS.gold,
     paddingLeft: 16,
   },
+  answerQuoteSpacing: { marginTop: 10 },
+  quotePrompt: { fontFamily: "Manrope_400Regular", fontSize: 11, lineHeight: 18, color: COLORS.footer },
 
   chatQuoteBox: { backgroundColor: "rgba(62,110,160,0.08)", borderWidth: 1, borderColor: "rgba(62,110,160,0.35)", borderRadius: 10, padding: 16, marginVertical: 14 },
   chatQuoteHeader: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 },
