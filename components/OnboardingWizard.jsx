@@ -4,7 +4,9 @@ import React, { useState, useMemo, useCallback, useEffect, useRef } from "react"
 import { Calendar, Clock, MapPin, ArrowRight, ArrowLeft, HelpCircle, Sparkles } from "lucide-react";
 import LoadingReveal from "./LoadingReveal";
 import ErrorNotice from "./ErrorNotice";
-import { useStrings } from "@/lib/i18n";
+import { useStrings, useLocale, LOCALES } from "@/lib/i18n";
+
+const LOCALE_LABELS = { ko: "한국어", en: "English", es: "Español" };
 
 const MIN_LOADING_MS = 2400;
 
@@ -127,6 +129,7 @@ const PROGRESS_STEP_IDS = STEP_IDS.slice(1); // intro has no progress chrome
 
 export default function OnboardingWizard({ sessionId, onComplete }) {
   const t = useStrings();
+  const { locale, setLocale } = useLocale();
   const [stepIndex, setStepIndex] = useState(0);
   const stepId = STEP_IDS[stepIndex];
 
@@ -173,7 +176,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
     setCitySearching(true);
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/cities/search?q=${encodeURIComponent(cityInput)}`);
+        const res = await fetch(`/api/cities/search?q=${encodeURIComponent(cityInput)}&locale=${locale}`);
         const json = await res.json();
         if (citySearchSeq.current === seq) setCityResults(json.results ?? []);
       } catch {
@@ -184,7 +187,7 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
     }, 300);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cityInput, stepId]);
+  }, [cityInput, stepId, locale]);
 
   const runSajuCalculation = useCallback(async () => {
     if (!parsedDate || !selectedCity || isFemale === null) return null;
@@ -330,6 +333,26 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
 
         {stepId === "intro" && (
           <div className="ob-fade-in" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+            <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginTop: "8px" }}>
+              {LOCALES.map((l) => (
+                <button
+                  key={l}
+                  type="button"
+                  onClick={() => setLocale(l)}
+                  style={{
+                    background: l === locale ? "rgba(111,169,139,0.14)" : "transparent",
+                    border: l === locale ? "1px solid rgba(111,169,139,0.4)" : "1px solid #26332B",
+                    color: l === locale ? "#6FA98B" : "#756B54",
+                    borderRadius: "999px",
+                    padding: "4px 11px",
+                    fontSize: "11px",
+                    cursor: "pointer",
+                  }}
+                >
+                  {LOCALE_LABELS[l]}
+                </button>
+              ))}
+            </div>
             <div style={{ textAlign: "center", marginTop: "12vh" }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", letterSpacing: "0.16em", color: "#6FA98B", textTransform: "uppercase", marginBottom: "16px" }}>
                 <Sparkles size={12} strokeWidth={1.75} />
@@ -354,9 +377,9 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
               {t.onboarding.freeNote}
               <br />
               {t.onboarding.ageNoticePrefix}{" "}
-              <a href="/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#756B54", textDecoration: "underline" }}>{t.onboarding.termsLinkLabel}</a>
+              <a href={`/terms?lang=${locale}`} target="_blank" rel="noopener noreferrer" style={{ color: "#756B54", textDecoration: "underline" }}>{t.onboarding.termsLinkLabel}</a>
               {" "}{t.onboarding.ageNoticeAnd}{" "}
-              <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: "#756B54", textDecoration: "underline" }}>{t.onboarding.privacyLinkLabel}</a>
+              <a href={`/privacy?lang=${locale}`} target="_blank" rel="noopener noreferrer" style={{ color: "#756B54", textDecoration: "underline" }}>{t.onboarding.privacyLinkLabel}</a>
               {t.onboarding.ageNoticeSuffix}
             </p>
           </div>

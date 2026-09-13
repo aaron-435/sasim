@@ -152,6 +152,11 @@ export const ko = {
     doneBadge: "무료 질문을 모두 사용했어요",
     errorDefault: "답변을 가져오지 못했습니다.",
     errorNetwork: "네트워크 오류로 답변을 가져오지 못했습니다.",
+    // 2026-09-13: QASubcategoryPage/QAQuestionPage 자체 화면 문구 — 원래
+    // 이 두 컴포넌트에 하드코딩돼 있던 것을 다국어화하며 여기로 옮김.
+    backButton: "이전",
+    subcategoryHeading: "더 자세히 골라주세요",
+    questionHeading: "궁금한 질문을 골라주세요",
   },
 
   moduleSelect: {

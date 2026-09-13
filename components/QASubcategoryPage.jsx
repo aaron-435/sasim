@@ -2,6 +2,8 @@
 
 import React from "react";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { useStrings, useLocale } from "@/lib/i18n";
+import { localizedText } from "@/lib/qaBankLocale";
 
 /**
  * QASubcategoryPage — full-screen 중분류 picker for one 대분류
@@ -19,6 +21,8 @@ import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
  * ------------------------------------------------------------------
  */
 export default function QASubcategoryPage({ category, onBack, onSelect }) {
+  const t = useStrings();
+  const { locale } = useLocale();
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#122019", backgroundImage: "radial-gradient(circle at 50% -10%, rgba(111,169,139,0.10), transparent 55%)", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `
@@ -37,22 +41,22 @@ export default function QASubcategoryPage({ category, onBack, onSelect }) {
       ` }} />
       <div className="qsc-root" style={{ width: "100%", maxWidth: "460px", padding: "24px 22px 40px" }}>
         <button type="button" className="qsc-back" onClick={onBack}>
-          <ArrowLeft size={16} strokeWidth={2} /> 이전
+          <ArrowLeft size={16} strokeWidth={2} /> {t.qa.backButton}
         </button>
 
         <div style={{ marginBottom: "20px" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", letterSpacing: "0.16em", color: "#6FA98B", textTransform: "uppercase", marginBottom: "10px" }}>
-            <Sparkles size={12} strokeWidth={1.75} /> {category.name_ko}
+            <Sparkles size={12} strokeWidth={1.75} /> {localizedText(category.name_ko, category.name_en, category.name_es, locale)}
           </div>
           <h1 className="qsc-serif" style={{ fontSize: "24px", fontWeight: 500, color: "#D9C9A3", margin: 0 }}>
-            더 자세히 골라주세요
+            {t.qa.subcategoryHeading}
           </h1>
         </div>
 
         <div>
           {category.subcategories.map((sub) => (
             <button key={sub.id} type="button" className="qsc-card" onClick={() => onSelect(sub)}>
-              <span>{sub.name_ko}</span>
+              <span>{localizedText(sub.name_ko, sub.name_en, sub.name_es, locale)}</span>
               <ArrowRight size={16} strokeWidth={2.25} color="#6FA98B" />
             </button>
           ))}

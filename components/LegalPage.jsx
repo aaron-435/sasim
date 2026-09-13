@@ -1,15 +1,23 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { useStrings } from "@/lib/i18n";
+import { getDictionary } from "@/lib/i18n";
 
 /**
  * LegalPage — shared chrome for /privacy and /terms. Full-width article
  * layout (wider than the 460px app-shell screens) since long-form legal
  * text reads better at a normal article line-length than in the phone
  * card layout the rest of the app uses.
+ *
+ * Takes an explicit `locale` prop rather than useStrings()/useLocale()
+ * on purpose (2026-09-13) — these pages render outside AppFlow's
+ * LocaleProvider tree (a separate route, not a separate step within the
+ * same app), so there's no context to read from. The caller (app/privacy
+ * or app/terms's page.tsx) resolves locale from the `?lang=` query
+ * param and passes it straight down; getDictionary() is a plain
+ * function, so this stays a normal Server Component.
  */
-export default function LegalPage({ title, updatedAt, children }) {
-  const t = useStrings();
+export default function LegalPage({ title, updatedAt, locale = "ko", children }) {
+  const t = getDictionary(locale);
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#122019", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `

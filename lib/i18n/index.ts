@@ -2,35 +2,13 @@
  * lib/i18n/index.ts
  * ------------------------------------------------------------------
  * Entry point every component imports from: `import { useStrings } from
- * "@/lib/i18n"`. See lib/i18n/README.md for the full picture (what's
- * covered, what's deliberately excluded, how to add a translated
- * locale, how to wire up real locale switching later).
- *
- * No locale-switching mechanism exists yet on purpose — `useStrings()`
- * always returns DEFAULT_LOCALE's dictionary today. When real switching
- * is needed (URL-based routing, a manual toggle, browser-locale
- * detection — a separate decision not made yet), only THIS function
- * needs to change; every component already reads text through it.
+ * "@/lib/i18n"`. See lib/i18n/README.md for what's covered and how to
+ * extend a locale, and lib/i18n/LocaleContext.tsx for how real locale
+ * switching works (added 2026-09-13, replacing the old DEFAULT_LOCALE-
+ * only placeholder).
  * ------------------------------------------------------------------
  */
 
-import { ko } from "./ko";
-import { en } from "./en";
-import { es } from "./es";
-import { type Locale, DEFAULT_LOCALE, LOCALES } from "./types";
-
-export type { Locale };
-export { DEFAULT_LOCALE, LOCALES };
-
-export type Dictionary = typeof ko;
-
-export const dictionaries: Record<Locale, Dictionary> = { ko, en, es };
-
-export function getDictionary(locale: Locale = DEFAULT_LOCALE): Dictionary {
-  return dictionaries[locale] ?? dictionaries[DEFAULT_LOCALE];
-}
-
-/** Client-component hook. Always DEFAULT_LOCALE for now — see header comment. */
-export function useStrings(): Dictionary {
-  return getDictionary(DEFAULT_LOCALE);
-}
+export { dictionaries, getDictionary, type Dictionary } from "./dictionaries";
+export { LocaleProvider, useLocale, useStrings } from "./LocaleContext";
+export { DEFAULT_LOCALE, LOCALES, type Locale } from "./types";

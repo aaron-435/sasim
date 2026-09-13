@@ -6,7 +6,8 @@ import ErrorNotice from "./ErrorNotice";
 import QASubcategoryPage from "./QASubcategoryPage";
 import QAQuestionPage from "./QAQuestionPage";
 import questionBank from "@/lib/questionBank.json";
-import { useStrings } from "@/lib/i18n";
+import { useStrings, useLocale } from "@/lib/i18n";
+import { localizedText } from "@/lib/qaBankLocale";
 import { trackQaQuestionAsked, trackQaInstallPitchShown } from "@/lib/analytics";
 
 /**
@@ -63,6 +64,7 @@ function wait(ms) {
 
 export default function QAChat({ nickname, sajuResult, sessionId }) {
   const t = useStrings();
+  const { locale } = useLocale();
   const [messages, setMessages] = useState([]); // {role:'bot'|'user', text} | {role:'picker', options}
   const [view, setView] = useState("chat"); // 'chat' | 'subcategory' | 'question'
   const [activeCategory, setActiveCategory] = useState(null);
@@ -150,7 +152,7 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
       const res = await fetch("/api/qa-answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nickname, question: questionText, sajuResult, sessionId }),
+        body: JSON.stringify({ nickname, question: questionText, sajuResult, sessionId, locale, platform: "web" }),
       });
       const json = await res.json();
       if (!mountedRef.current) return;
@@ -198,8 +200,9 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
   function handleSelectQuestion(q) {
     setView("chat");
     window.history.pushState({ view: "chat" }, "");
-    pushUser(q.text_ko);
-    requestAnswer(q.text_ko);
+    const questionText = localizedText(q.text_ko, q.text_en, q.text_es, locale);
+    pushUser(questionText);
+    requestAnswer(questionText);
   }
 
   function handleRetry() {
@@ -287,7 +290,7 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
                   <div className="qa-bubble-bot" style={{ maxWidth: "88%", width: "88%", padding: "12px", borderRadius: "16px 16px 16px 4px" }}>
                     {m.options.map((cat) => (
                       <button key={cat.id} type="button" className="qa-option-btn" onClick={() => handlePickCategory(cat)}>
-                        {cat.name_ko}
+                        {localizedText(cat.name_ko, cat.name_en, cat.name_es, locale)}
                       </button>
                     ))}
                   </div>

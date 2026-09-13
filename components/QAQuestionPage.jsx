@@ -2,6 +2,8 @@
 
 import React from "react";
 import { ArrowLeft, MessageCircleQuestion } from "lucide-react";
+import { useStrings, useLocale } from "@/lib/i18n";
+import { localizedText } from "@/lib/qaBankLocale";
 
 /**
  * QAQuestionPage — full-screen scrollable question list for one 중분류
@@ -14,6 +16,8 @@ import { ArrowLeft, MessageCircleQuestion } from "lucide-react";
  * ------------------------------------------------------------------
  */
 export default function QAQuestionPage({ subcategory, onBack, onSelect }) {
+  const t = useStrings();
+  const { locale } = useLocale();
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#122019", backgroundImage: "radial-gradient(circle at 50% -10%, rgba(111,169,139,0.10), transparent 55%)", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `
@@ -32,15 +36,15 @@ export default function QAQuestionPage({ subcategory, onBack, onSelect }) {
       ` }} />
       <div className="qq-root" style={{ width: "100%", maxWidth: "460px", padding: "24px 22px 40px" }}>
         <button type="button" className="qq-back" onClick={onBack}>
-          <ArrowLeft size={16} strokeWidth={2} /> 이전
+          <ArrowLeft size={16} strokeWidth={2} /> {t.qa.backButton}
         </button>
 
         <div style={{ marginBottom: "20px" }}>
           <div style={{ fontSize: "11px", letterSpacing: "0.16em", color: "#6FA98B", textTransform: "uppercase", marginBottom: "10px" }}>
-            {subcategory.name_ko}
+            {localizedText(subcategory.name_ko, subcategory.name_en, subcategory.name_es, locale)}
           </div>
           <h1 className="qq-serif" style={{ fontSize: "24px", fontWeight: 500, color: "#D9C9A3", margin: 0 }}>
-            궁금한 질문을 골라주세요
+            {t.qa.questionHeading}
           </h1>
         </div>
 
@@ -48,7 +52,7 @@ export default function QAQuestionPage({ subcategory, onBack, onSelect }) {
           {subcategory.questions.map((q) => (
             <button key={q.id} type="button" className="qq-card" onClick={() => onSelect(q)}>
               <MessageCircleQuestion size={15} strokeWidth={1.75} color="#7C8A82" style={{ flexShrink: 0, marginTop: "2px" }} />
-              <span>{q.text_ko}</span>
+              <span>{localizedText(q.text_ko, q.text_en, q.text_es, locale)}</span>
             </button>
           ))}
         </div>
