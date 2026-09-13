@@ -6,7 +6,7 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
-import { getModuleById, resolveModuleLocale } from "../lib/quiz/modules";
+import { getLocalizedQuestions, getModuleById, resolveModuleLocale } from "../lib/quiz/modules";
 import {
   classifyProfile,
   computeAllDimensionResults,
@@ -59,11 +59,11 @@ export default function QuizScreen({
   const strings = useStrings();
   const { locale } = useLocale();
   const moduleDef = useMemo(() => getModuleById(moduleId) ?? getModuleById("module1")!, [moduleId]);
-  const questions = moduleDef.questions;
-  const { dimensionLabels, typeNames, dimensionShortNames } = useMemo(
+  const { title: moduleTitle, dimensionLabels, typeNames, dimensionShortNames } = useMemo(
     () => resolveModuleLocale(moduleDef, locale),
     [moduleDef, locale]
   );
+  const questions = useMemo(() => getLocalizedQuestions(moduleDef, locale), [moduleDef, locale]);
 
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswerRecord[]>([]);
@@ -117,7 +117,7 @@ export default function QuizScreen({
     const dominantElement = elements ? Object.entries(elements).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null : null;
     return {
       moduleId: moduleDef.id,
-      moduleTitle: moduleDef.title,
+      moduleTitle,
       answers,
       dimensionResults,
       classification,
@@ -127,7 +127,7 @@ export default function QuizScreen({
       elements,
       dominantElement,
     };
-  }, [answers, done, moduleDef, sajuElements, strings, dimensionLabels, typeNames, dimensionShortNames, locale]);
+  }, [answers, done, moduleDef, moduleTitle, sajuElements, strings, dimensionLabels, typeNames, dimensionShortNames, locale]);
 
   function handleContinue() {
     if (!diagnosis) return;
@@ -138,7 +138,7 @@ export default function QuizScreen({
         body: JSON.stringify({
           sessionId,
           moduleId: moduleDef.id,
-          moduleTitle: moduleDef.title,
+          moduleTitle,
           answers,
           dimensionResults: diagnosis.dimensionResults,
           typeInfo: diagnosis.typeInfo,
@@ -171,7 +171,7 @@ export default function QuizScreen({
             <Text style={styles.resultTitle}>{diagnosis.typeInfo.title}</Text>
             <Text style={styles.resultHook}>{diagnosis.typeInfo.hook}</Text>
             <View style={styles.resultFooter}>
-              <Text style={styles.resultModuleTitle}>{moduleDef.title}</Text>
+              <Text style={styles.resultModuleTitle}>{moduleTitle}</Text>
               <Text style={styles.resultBrand}>{strings.common.brand}</Text>
             </View>
           </View>
@@ -206,7 +206,7 @@ export default function QuizScreen({
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.moduleRow}>
           <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-          <Text style={styles.moduleLabel}>{moduleDef.title}</Text>
+          <Text style={styles.moduleLabel}>{moduleTitle}</Text>
         </View>
         <Text style={styles.prompt}>{current.prompt}</Text>
 

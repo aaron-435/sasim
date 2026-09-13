@@ -10,27 +10,61 @@
  * ------------------------------------------------------------------
  */
 
-import { MODULE1_QUESTIONS, MODULE1_DIMENSION_ITEM_COUNTS, MODULE1_DIMENSION_LABELS, MODULE1_TYPE_NAMES } from "./module1Attachment";
-import { MODULE2_QUESTIONS, MODULE2_DIMENSION_ITEM_COUNTS, MODULE2_DIMENSION_LABELS, MODULE2_TYPE_NAMES } from "./module2Money";
-import { MODULE3_QUESTIONS, MODULE3_DIMENSION_ITEM_COUNTS, MODULE3_DIMENSION_LABELS, MODULE3_TYPE_NAMES } from "./module3Burnout";
-import { MODULE4_QUESTIONS, MODULE4_DIMENSION_ITEM_COUNTS, MODULE4_DIMENSION_LABELS, MODULE4_TYPE_NAMES } from "./module4Mask";
-import { MODULE5_QUESTIONS, MODULE5_DIMENSION_ITEM_COUNTS, MODULE5_DIMENSION_LABELS, MODULE5_TYPE_NAMES } from "./module5Execution";
-import { MODULE6_QUESTIONS, MODULE6_DIMENSION_ITEM_COUNTS, MODULE6_DIMENSION_LABELS, MODULE6_TYPE_NAMES } from "./module6Anger";
-import { MODULE7_QUESTIONS, MODULE7_DIMENSION_ITEM_COUNTS, MODULE7_DIMENSION_LABELS, MODULE7_TYPE_NAMES } from "./module7Sensitivity";
-import { MODULE8_QUESTIONS, MODULE8_DIMENSION_ITEM_COUNTS, MODULE8_DIMENSION_LABELS, MODULE8_TYPE_NAMES } from "./module8Sleep";
-import { MODULE9_QUESTIONS, MODULE9_DIMENSION_ITEM_COUNTS, MODULE9_DIMENSION_LABELS, MODULE9_TYPE_NAMES } from "./module9Family";
-import { MODULE10_QUESTIONS, MODULE10_DIMENSION_ITEM_COUNTS, MODULE10_DIMENSION_LABELS, MODULE10_TYPE_NAMES } from "./module10Focus";
-import { MODULE11_QUESTIONS, MODULE11_DIMENSION_ITEM_COUNTS, MODULE11_DIMENSION_LABELS, MODULE11_TYPE_NAMES } from "./module11Instinct";
+import {
+  MODULE1_QUESTIONS, MODULE1_QUESTIONS_EN, MODULE1_QUESTIONS_ES,
+  MODULE1_DIMENSION_ITEM_COUNTS, MODULE1_DIMENSION_LABELS, MODULE1_TYPE_NAMES,
+} from "./module1Attachment";
+import {
+  MODULE2_QUESTIONS, MODULE2_QUESTIONS_EN, MODULE2_QUESTIONS_ES,
+  MODULE2_DIMENSION_ITEM_COUNTS, MODULE2_DIMENSION_LABELS, MODULE2_TYPE_NAMES,
+} from "./module2Money";
+import {
+  MODULE3_QUESTIONS, MODULE3_QUESTIONS_EN, MODULE3_QUESTIONS_ES,
+  MODULE3_DIMENSION_ITEM_COUNTS, MODULE3_DIMENSION_LABELS, MODULE3_TYPE_NAMES,
+} from "./module3Burnout";
+import {
+  MODULE4_QUESTIONS, MODULE4_QUESTIONS_EN, MODULE4_QUESTIONS_ES,
+  MODULE4_DIMENSION_ITEM_COUNTS, MODULE4_DIMENSION_LABELS, MODULE4_TYPE_NAMES,
+} from "./module4Mask";
+import {
+  MODULE5_QUESTIONS, MODULE5_QUESTIONS_EN, MODULE5_QUESTIONS_ES,
+  MODULE5_DIMENSION_ITEM_COUNTS, MODULE5_DIMENSION_LABELS, MODULE5_TYPE_NAMES,
+} from "./module5Execution";
+import {
+  MODULE6_QUESTIONS, MODULE6_QUESTIONS_EN, MODULE6_QUESTIONS_ES,
+  MODULE6_DIMENSION_ITEM_COUNTS, MODULE6_DIMENSION_LABELS, MODULE6_TYPE_NAMES,
+} from "./module6Anger";
+import {
+  MODULE7_QUESTIONS, MODULE7_QUESTIONS_EN, MODULE7_QUESTIONS_ES,
+  MODULE7_DIMENSION_ITEM_COUNTS, MODULE7_DIMENSION_LABELS, MODULE7_TYPE_NAMES,
+} from "./module7Sensitivity";
+import {
+  MODULE8_QUESTIONS, MODULE8_QUESTIONS_EN, MODULE8_QUESTIONS_ES,
+  MODULE8_DIMENSION_ITEM_COUNTS, MODULE8_DIMENSION_LABELS, MODULE8_TYPE_NAMES,
+} from "./module8Sleep";
+import {
+  MODULE9_QUESTIONS, MODULE9_QUESTIONS_EN, MODULE9_QUESTIONS_ES,
+  MODULE9_DIMENSION_ITEM_COUNTS, MODULE9_DIMENSION_LABELS, MODULE9_TYPE_NAMES,
+} from "./module9Family";
+import {
+  MODULE10_QUESTIONS, MODULE10_QUESTIONS_EN, MODULE10_QUESTIONS_ES,
+  MODULE10_DIMENSION_ITEM_COUNTS, MODULE10_DIMENSION_LABELS, MODULE10_TYPE_NAMES,
+} from "./module10Focus";
+import {
+  MODULE11_QUESTIONS, MODULE11_QUESTIONS_EN, MODULE11_QUESTIONS_ES,
+  MODULE11_DIMENSION_ITEM_COUNTS, MODULE11_DIMENSION_LABELS, MODULE11_TYPE_NAMES,
+} from "./module11Instinct";
 import type { Locale } from "../i18n/types";
-import type { ModuleQuestion } from "./quizProfile";
+import { localizeQuestions, type ModuleQuestion, type QuestionTextOverride } from "./quizProfile";
 
 export interface ModuleDefinition {
   id: string;
-  // Deliberately NOT locale-aware yet — module select stays Korean-only for
-  // this translation pass (see lib/i18n/ko.ts's header comment).
-  title: string;
-  subtitle: string;
+  title: Record<Locale, string>;
+  subtitle: Record<Locale, string>;
+  /** Korean question bank — the single source of truth for id/dimension/format/score. */
   questions: ModuleQuestion[];
+  /** Per-locale display-text overrides for `questions`, keyed by question id. ko has none — the base array already is ko. */
+  questionText: Partial<Record<Locale, Record<string, QuestionTextOverride>>>;
   dimensionItemCounts: Record<string, number>;
   dimensionLabels: Record<Locale, Record<string, { high: string; low: string }>>;
   typeNames: Record<Locale, Record<string, { title: string; hook: string }>>;
@@ -41,9 +75,10 @@ export interface ModuleDefinition {
 export const MODULES: ModuleDefinition[] = [
   {
     id: "module1",
-    title: "모듈 1 · 연애 & 애착",
-    subtitle: "불안/회피 애착 성향",
+    title: { ko: "모듈 1 · 연애 & 애착", en: "Module 1 · Love & Attachment", es: "Módulo 1 · Amor y Apego" },
+    subtitle: { ko: "불안/회피 애착 성향", en: "Anxious/Avoidant Attachment Tendencies", es: "Tendencias de Apego Ansioso/Evitativo" },
     questions: MODULE1_QUESTIONS,
+    questionText: { en: MODULE1_QUESTIONS_EN, es: MODULE1_QUESTIONS_ES },
     dimensionItemCounts: MODULE1_DIMENSION_ITEM_COUNTS,
     dimensionLabels: MODULE1_DIMENSION_LABELS,
     typeNames: MODULE1_TYPE_NAMES,
@@ -55,9 +90,10 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module2",
-    title: "모듈 2 · 돈",
-    subtitle: "결핍공포 / 과시욕 / 회피",
+    title: { ko: "모듈 2 · 돈", en: "Module 2 · Money", es: "Módulo 2 · Dinero" },
+    subtitle: { ko: "결핍공포 / 과시욕 / 회피", en: "Scarcity Fear / Ostentation / Avoidance", es: "Miedo a la Carencia / Ostentación / Evitación" },
     questions: MODULE2_QUESTIONS,
+    questionText: { en: MODULE2_QUESTIONS_EN, es: MODULE2_QUESTIONS_ES },
     dimensionItemCounts: MODULE2_DIMENSION_ITEM_COUNTS,
     dimensionLabels: MODULE2_DIMENSION_LABELS,
     typeNames: MODULE2_TYPE_NAMES,
@@ -69,9 +105,10 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module3",
-    title: "모듈 3 · 번아웃",
-    subtitle: "소진 / 냉소 / 효능감저하",
+    title: { ko: "모듈 3 · 번아웃", en: "Module 3 · Burnout", es: "Módulo 3 · Burnout" },
+    subtitle: { ko: "소진 / 냉소 / 효능감저하", en: "Exhaustion / Cynicism / Reduced Efficacy", es: "Agotamiento / Cinismo / Baja Eficacia" },
     questions: MODULE3_QUESTIONS,
+    questionText: { en: MODULE3_QUESTIONS_EN, es: MODULE3_QUESTIONS_ES },
     dimensionItemCounts: MODULE3_DIMENSION_ITEM_COUNTS,
     dimensionLabels: MODULE3_DIMENSION_LABELS,
     typeNames: MODULE3_TYPE_NAMES,
@@ -83,9 +120,10 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module4",
-    title: "모듈 4 · 가면",
-    subtitle: "이미지관리 / 은폐 / 관계피로",
+    title: { ko: "모듈 4 · 가면", en: "Module 4 · The Mask", es: "Módulo 4 · La Máscara" },
+    subtitle: { ko: "이미지관리 / 은폐 / 관계피로", en: "Image Management / Concealment / Social Fatigue", es: "Gestión de Imagen / Ocultamiento / Fatiga Social" },
     questions: MODULE4_QUESTIONS,
+    questionText: { en: MODULE4_QUESTIONS_EN, es: MODULE4_QUESTIONS_ES },
     dimensionItemCounts: MODULE4_DIMENSION_ITEM_COUNTS,
     dimensionLabels: MODULE4_DIMENSION_LABELS,
     typeNames: MODULE4_TYPE_NAMES,
@@ -97,9 +135,10 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module5",
-    title: "모듈 5 · 실행력",
-    subtitle: "완벽주의 / 회피 / 선택마비",
+    title: { ko: "모듈 5 · 실행력", en: "Module 5 · Follow-Through", es: "Módulo 5 · Capacidad de Ejecución" },
+    subtitle: { ko: "완벽주의 / 회피 / 선택마비", en: "Perfectionism / Avoidance / Decision Paralysis", es: "Perfeccionismo / Evitación / Parálisis de Decisión" },
     questions: MODULE5_QUESTIONS,
+    questionText: { en: MODULE5_QUESTIONS_EN, es: MODULE5_QUESTIONS_ES },
     dimensionItemCounts: MODULE5_DIMENSION_ITEM_COUNTS,
     dimensionLabels: MODULE5_DIMENSION_LABELS,
     typeNames: MODULE5_TYPE_NAMES,
@@ -111,9 +150,10 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module6",
-    title: "모듈 6 · 분노",
-    subtitle: "억압 / 폭발 / 반추",
+    title: { ko: "모듈 6 · 분노", en: "Module 6 · Anger", es: "Módulo 6 · Ira" },
+    subtitle: { ko: "억압 / 폭발 / 반추", en: "Suppression / Explosion / Rumination", es: "Supresión / Explosión / Rumiación" },
     questions: MODULE6_QUESTIONS,
+    questionText: { en: MODULE6_QUESTIONS_EN, es: MODULE6_QUESTIONS_ES },
     dimensionItemCounts: MODULE6_DIMENSION_ITEM_COUNTS,
     dimensionLabels: MODULE6_DIMENSION_LABELS,
     typeNames: MODULE6_TYPE_NAMES,
@@ -125,9 +165,10 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module7",
-    title: "모듈 7 · 예민함",
-    subtitle: "자극과부하 / 심미적민감성 / 낮은감각역치",
+    title: { ko: "모듈 7 · 예민함", en: "Module 7 · Sensitivity", es: "Módulo 7 · Sensibilidad" },
+    subtitle: { ko: "자극과부하 / 심미적민감성 / 낮은감각역치", en: "Overstimulation / Aesthetic Sensitivity / Low Sensory Threshold", es: "Sobreestimulación / Sensibilidad Estética / Umbral Sensorial Bajo" },
     questions: MODULE7_QUESTIONS,
+    questionText: { en: MODULE7_QUESTIONS_EN, es: MODULE7_QUESTIONS_ES },
     dimensionItemCounts: MODULE7_DIMENSION_ITEM_COUNTS,
     dimensionLabels: MODULE7_DIMENSION_LABELS,
     typeNames: MODULE7_TYPE_NAMES,
@@ -139,9 +180,10 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module8",
-    title: "모듈 8 · 수면",
-    subtitle: "인지적각성 / 신체적각성 / 무의식누수",
+    title: { ko: "모듈 8 · 수면", en: "Module 8 · Sleep", es: "Módulo 8 · Sueño" },
+    subtitle: { ko: "인지적각성 / 신체적각성 / 무의식누수", en: "Cognitive Arousal / Somatic Arousal / Subconscious Leak", es: "Activación Cognitiva / Activación Corporal / Fuga Subconsciente" },
     questions: MODULE8_QUESTIONS,
+    questionText: { en: MODULE8_QUESTIONS_EN, es: MODULE8_QUESTIONS_ES },
     dimensionItemCounts: MODULE8_DIMENSION_ITEM_COUNTS,
     dimensionLabels: MODULE8_DIMENSION_LABELS,
     typeNames: MODULE8_TYPE_NAMES,
@@ -153,9 +195,10 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module9",
-    title: "모듈 9 · 원가족",
-    subtitle: "정서적얽힘 / 정서적단절 / 역할부담",
+    title: { ko: "모듈 9 · 원가족", en: "Module 9 · Family of Origin", es: "Módulo 9 · Familia de Origen" },
+    subtitle: { ko: "정서적얽힘 / 정서적단절 / 역할부담", en: "Enmeshment / Emotional Cutoff / Parentification", es: "Enmarañamiento / Corte Emocional / Parentalización" },
     questions: MODULE9_QUESTIONS,
+    questionText: { en: MODULE9_QUESTIONS_EN, es: MODULE9_QUESTIONS_ES },
     dimensionItemCounts: MODULE9_DIMENSION_ITEM_COUNTS,
     dimensionLabels: MODULE9_DIMENSION_LABELS,
     typeNames: MODULE9_TYPE_NAMES,
@@ -167,9 +210,10 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module10",
-    title: "모듈 10 · 몰입",
-    subtitle: "산만함 / 과집중 / 충동성",
+    title: { ko: "모듈 10 · 몰입", en: "Module 10 · Focus", es: "Módulo 10 · Concentración" },
+    subtitle: { ko: "산만함 / 과집중 / 충동성", en: "Distractibility / Hyperfocus / Impulsivity", es: "Distractibilidad / Hiperconcentración / Impulsividad" },
     questions: MODULE10_QUESTIONS,
+    questionText: { en: MODULE10_QUESTIONS_EN, es: MODULE10_QUESTIONS_ES },
     dimensionItemCounts: MODULE10_DIMENSION_ITEM_COUNTS,
     dimensionLabels: MODULE10_DIMENSION_LABELS,
     typeNames: MODULE10_TYPE_NAMES,
@@ -181,9 +225,10 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "module11",
-    title: "모듈 11 · 본능",
-    subtitle: "표현억제 / 즉흥성억제 / 확신부족",
+    title: { ko: "모듈 11 · 본능", en: "Module 11 · Instinct", es: "Módulo 11 · Instinto" },
+    subtitle: { ko: "표현억제 / 즉흥성억제 / 확신부족", en: "Expression Suppression / Suppressed Spontaneity / Lack of Confidence", es: "Supresión de la Expresión / Espontaneidad Reprimida / Falta de Confianza" },
     questions: MODULE11_QUESTIONS,
+    questionText: { en: MODULE11_QUESTIONS_EN, es: MODULE11_QUESTIONS_ES },
     dimensionItemCounts: MODULE11_DIMENSION_ITEM_COUNTS,
     dimensionLabels: MODULE11_DIMENSION_LABELS,
     typeNames: MODULE11_TYPE_NAMES,
@@ -199,15 +244,23 @@ export function getModuleById(id: string): ModuleDefinition | undefined {
   return MODULES.find((m) => m.id === id);
 }
 
-/** Resolves a module's locale-keyed result strings (dimension labels, type
- * names, short dimension names) down to one locale, falling back to ko for
- * any locale not yet populated. Module title/subtitle stay Korean-only for
- * now (see ModuleDefinition) — this only covers what generateNuancedSummary
- * and resolveTypeName need. */
+/** Resolves a module's locale-keyed result strings (title, dimension labels,
+ * type names, short dimension names) down to one locale, falling back to ko
+ * for any locale not yet populated. */
 export function resolveModuleLocale(moduleDef: ModuleDefinition, locale: Locale) {
   return {
+    title: moduleDef.title[locale] ?? moduleDef.title.ko,
+    subtitle: moduleDef.subtitle[locale] ?? moduleDef.subtitle.ko,
     dimensionLabels: moduleDef.dimensionLabels[locale] ?? moduleDef.dimensionLabels.ko,
     typeNames: moduleDef.typeNames[locale] ?? moduleDef.typeNames.ko,
     dimensionShortNames: moduleDef.dimensionShortNames[locale] ?? moduleDef.dimensionShortNames.ko,
   };
+}
+
+/** Resolves `moduleDef.questions` (always Korean) against that locale's
+ * QuestionTextOverride dictionary — see localizeQuestions() in
+ * quizProfile.ts. Falls back to the Korean text for ko or any question a
+ * locale hasn't translated yet. */
+export function getLocalizedQuestions(moduleDef: ModuleDefinition, locale: Locale): ModuleQuestion[] {
+  return localizeQuestions(moduleDef.questions, moduleDef.questionText[locale]);
 }

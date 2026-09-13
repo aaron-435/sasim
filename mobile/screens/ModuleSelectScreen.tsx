@@ -2,15 +2,15 @@ import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react-native";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useStrings } from "../lib/i18n";
+import { useLocale, useStrings } from "../lib/i18n";
 import { MODULES } from "../lib/quiz/modules";
 import { COLORS } from "../theme/colors";
 
 // Ported from components/ModuleSelect.jsx — picks which of the 11 30-question modules
 // to run. Same list web uses (lib/modules.ts, copied verbatim into mobile/lib/quiz/).
-// Module titles/subtitles stay Korean-only for now — see lib/i18n/README.md.
 export default function ModuleSelectScreen({ onSelect, onBack }: { onSelect: (moduleId: string) => void; onBack: () => void }) {
   const strings = useStrings();
+  const { locale } = useLocale();
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -30,8 +30,8 @@ export default function ModuleSelectScreen({ onSelect, onBack }: { onSelect: (mo
         {MODULES.map((m) => (
           <Pressable key={m.id} style={styles.card} onPress={() => onSelect(m.id)}>
             <View style={styles.cardText}>
-              <Text style={styles.cardTitle}>{m.title}</Text>
-              <Text style={styles.cardSubtitle}>{m.subtitle}</Text>
+              <Text style={styles.cardTitle}>{m.title[locale] ?? m.title.ko}</Text>
+              <Text style={styles.cardSubtitle}>{m.subtitle[locale] ?? m.subtitle.ko}</Text>
             </View>
             <ArrowRight size={17} strokeWidth={2.25} color={COLORS.gold} />
           </Pressable>
