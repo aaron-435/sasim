@@ -1,6 +1,7 @@
 import { BookOpen, Lock, Sparkles } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { ELEMENT_LABELS_KO } from "../lib/elements";

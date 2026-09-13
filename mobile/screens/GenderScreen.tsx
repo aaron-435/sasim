@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { COLORS } from "../theme/colors";

@@ -1,6 +1,7 @@
 import { ArrowLeft, RefreshCw, Sparkles } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, Easing, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import questionBank from "../data/questionBank.json";
 import { API_BASE_URL } from "../config";

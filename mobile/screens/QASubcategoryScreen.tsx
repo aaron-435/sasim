@@ -1,5 +1,6 @@
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react-native";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "../theme/colors";
 

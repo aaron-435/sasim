@@ -8,11 +8,11 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Text from "../components/AppText";
 import { API_BASE_URL } from "../config";
 import { findTopAnswers } from "../lib/quiz/quizProfile";
 import type { QuizDiagnosis } from "./QuizScreen";

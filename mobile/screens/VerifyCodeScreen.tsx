@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from "react-native";
+import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { API_BASE_URL } from "../config";

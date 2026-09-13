@@ -1,5 +1,6 @@
 import { useMemo, useRef } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
+import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { calculateAge, MIN_AGE } from "../lib/age";
