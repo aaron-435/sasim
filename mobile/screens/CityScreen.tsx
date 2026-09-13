@@ -14,6 +14,7 @@ export type SajuResult = {
   dominantElement: string;
   fourPillars: unknown;
   decadeFortune: unknown;
+  currentAge: number;
 };
 
 export default function CityScreen({

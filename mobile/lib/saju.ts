@@ -8,6 +8,12 @@ export type NormalizedSajuResult = {
   fourPillars?: unknown;
   decadeFortune?: unknown;
   summary?: unknown;
+  /** 만 나이, "지금" 기준 — 대운(decadeFortune) 중 어느 시기가 이미 지났고 어느 시기가
+   *  다가오는지 가리는 데 씀 (리포트의 "다가오는 시기" 섹션). CityScreen 경로는 /api/saju가
+   *  직접 계산해서 내려주고, 인증코드 복원 경로는 저장된 생년월일로 여기서 같은 방식으로
+   *  다시 계산 — 인증코드 발급 시점이 아니라 "지금 열어보는 시점" 기준이어야 정확하므로
+   *  DB에 저장해두지 않고 매번 새로 계산한다. */
+  currentAge?: number;
 };
 
 // DB row shape from GET /api/verification-code's sajuResult.
@@ -16,7 +22,16 @@ type VerifyCodeSajuRow = {
   four_pillars?: unknown;
   decade_fortune?: unknown;
   summary?: unknown;
+  birth_year?: number;
+  birth_month?: number;
+  birth_day?: number;
 } | null;
+
+function computeCurrentAge(birthYear?: number, birthMonth?: number, birthDay?: number): number | undefined {
+  if (!birthYear || !birthMonth || !birthDay) return undefined;
+  const birth = new Date(Date.UTC(birthYear, birthMonth - 1, birthDay));
+  return Math.floor((Date.now() - birth.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+}
 
 export function normalizeVerifyCodeSajuResult(row: VerifyCodeSajuRow, dominantElement: string | null): NormalizedSajuResult {
   return {
@@ -25,5 +40,6 @@ export function normalizeVerifyCodeSajuResult(row: VerifyCodeSajuRow, dominantEl
     fourPillars: row?.four_pillars,
     decadeFortune: row?.decade_fortune,
     summary: row?.summary,
+    currentAge: computeCurrentAge(row?.birth_year, row?.birth_month, row?.birth_day),
   };
 }

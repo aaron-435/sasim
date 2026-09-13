@@ -17,7 +17,7 @@
  *   list in lib/birthCities.ts if birthCityId is absent).
  *
  * Response body (to the client):
- *   { elements, dominantElement, fourPillars, decadeFortune, timezoneNote, isSandboxSample, resolvedLocation? }
+ *   { elements, dominantElement, fourPillars, decadeFortune, currentAge, timezoneNote, isSandboxSample, resolvedLocation? }
  *   or { error: string, code?: string } with a non-200 status
  * ------------------------------------------------------------------
  */
@@ -115,6 +115,7 @@ export async function POST(req: NextRequest) {
       dominantElement: result.dominantElement,
       fourPillars: result.fourPillars,
       decadeFortune: result.decadeFortune,
+      currentAge: result.currentAge,
       summary: result.summary,
       timezoneNote: result.timezoneNote,
       isSandboxSample: result.isSandboxSample,

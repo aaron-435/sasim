@@ -271,6 +271,11 @@ export interface ManseryeokResult {
   resolvedLocation: { source: "worldCity" | "koreaFallback"; cityLabel: string; longitude: number; civilOffsetMinutes: number };
   summary: SummaryResult;
   dominantElement: ElementKey | null;
+  /** 만 나이(실제 경과 연수), 계산 시점(오늘) 기준 — decadeFortune.list의 각 entry.startAge와
+   *  같은 "생일로부터 실제 경과일" 방식으로 셈해서, 둘을 직접 비교해 "지금 몇 번째 대운인지"를
+   *  가릴 수 있게 함. 리포트의 "다가오는 시기" 같은 미래 예측 섹션이 이미 지난 시기를 미래인
+   *  것처럼 잘못 언급하지 않도록 하는 목적 — 2026-09-14, 실사용자 피드백으로 추가. */
+  currentAge: number;
 }
 
 function tallyElements(pillars: FourPillars): ElementsResult {
@@ -415,6 +420,7 @@ export async function calculateManseryeok(input: ManseryeokInput): Promise<Manse
     (a, b) => b[1].total.count - a[1].total.count
   );
   const dominantElement = sortedElements[0][1].total.count > 0 ? sortedElements[0][0] : null;
+  const currentAge = Math.floor((Date.now() - birthUtc.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
 
-  return { fourPillars, elements, decadeFortune, summary, dominantElement, resolvedLocation };
+  return { fourPillars, elements, decadeFortune, summary, dominantElement, resolvedLocation, currentAge };
 }

@@ -227,6 +227,7 @@ function AppContent() {
                 dominantElement: result.dominantElement ?? null,
                 fourPillars: result.fourPillars,
                 decadeFortune: result.decadeFortune,
+                currentAge: result.currentAge,
               },
             });
             setStep("home");

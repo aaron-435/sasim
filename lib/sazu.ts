@@ -60,6 +60,15 @@ export interface NormalizedSajuResult {
   summary: unknown; // pass through modules.summary (dayMaster, elementBalance, harmony/conflict, fortunePhase — FREE tier)
   timezoneNote: unknown; // data.timezone (진태양시 보정 정보)
   isSandboxSample: boolean; // true when meta.sample === true (Free tier fixed profile)
+  /** 만 나이, 계산 시점(오늘) 기준 — decadeFortune.list의 entry.startAge와 비교해서
+   *  "지금 몇 번째 대운인지"를 가리는 용도. 두 계산 경로(자체 엔진/SAZU) 모두에서 항상
+   *  채워지도록 여기서 직접 계산 (SAZU 응답 자체엔 이 필드가 없음). */
+  currentAge: number;
+}
+
+function computeCurrentAge(birthYear: number, birthMonth: number, birthDay: number): number {
+  const birth = new Date(Date.UTC(birthYear, birthMonth - 1, birthDay));
+  return Math.floor((Date.now() - birth.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
 }
 
 function normalizeElements(
@@ -117,6 +126,7 @@ async function calculateViaManseryeok(input: SazuCalculateInput): Promise<Normal
     timezoneNote: null,
     isSandboxSample: false, // self-hosted engine has no sandbox restriction
     resolvedLocation: result.resolvedLocation,
+    currentAge: result.currentAge,
   };
 }
 
@@ -159,6 +169,7 @@ async function calculateViaSazuApi(input: SazuCalculateInput): Promise<Normalize
     summary: response.modules?.summary,
     timezoneNote: response.timezone,
     isSandboxSample: false, // SDK doesn't currently expose a sandbox/sample flag — see header comment
+    currentAge: computeCurrentAge(input.birthYear, input.birthMonth, input.birthDay),
   };
 }
 
