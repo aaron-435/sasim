@@ -5,7 +5,7 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import questionBank from "../data/questionBank.json";
 import { API_BASE_URL } from "../config";
-import { useStrings } from "../lib/i18n";
+import { useLocale, useStrings } from "../lib/i18n";
 import { getDailyLimit, getUsageToday, incrementUsageToday, PAID_DAILY_LIMIT } from "../lib/qaQuota";
 import { saveLastQuestion } from "../lib/qaHistory";
 import type { NormalizedSajuResult } from "../lib/saju";
@@ -45,6 +45,7 @@ export default function QAScreen({
   onBack: () => void;
 }) {
   const strings = useStrings();
+  const { locale } = useLocale();
   const [messages, setMessages] = useState<Message[]>([]);
   const [view, setView] = useState<"chat" | "subcategory" | "question">("chat");
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
@@ -109,7 +110,7 @@ export default function QAScreen({
       const res = await fetch(`${API_BASE_URL}/api/qa-answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nickname, question: questionText, sajuResult, sessionId }),
+        body: JSON.stringify({ nickname, question: questionText, sajuResult, sessionId, locale }),
       });
       const json = await res.json();
       if (!mountedRef.current) return;

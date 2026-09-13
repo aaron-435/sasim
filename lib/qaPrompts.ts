@@ -17,6 +17,9 @@
  * ------------------------------------------------------------------
  */
 
+import type { Locale } from "./i18n/types";
+import { CRISIS_RESOURCES, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
+
 export interface QAContext {
   nickname: string;
   question: string;
@@ -28,9 +31,15 @@ export interface QAContext {
     decadeFortune?: unknown;
     summary?: unknown;
   };
+  /** User's app locale. Defaults to "ko" when absent — same convention as
+   * ChatSessionContext.locale in chatPrompts.ts. Note: the question text
+   * itself stays whatever language it was asked in (mobile's question bank
+   * is Korean-only for now) — this only affects the language of the answer. */
+  locale?: Locale;
 }
 
 export function buildQASystemPrompt(ctx: QAContext): string {
+  const locale: Locale = ctx.locale ?? "ko";
   const dataBlock = JSON.stringify(
     {
       오행분포: ctx.sajuResult.elements,
@@ -53,8 +62,9 @@ ${dataBlock}
 2. ${ctx.nickname}님의 질문에 대해 3~4문단, 친근하지만 신뢰감 있는 존댓말 톤으로 답하세요. 각 문단은 그 자체로 완결된 메시지가 되도록 쓰세요 — 메신저로 여러 번 나눠 보내는 것처럼요.
 3. 가능하면 대운(decadeFortune) 데이터를 활용해 구체적인 시기나 흐름을 언급하세요. 단, 위 데이터의 "정미"/"병오" 같은 원본 갑자(干支) 이름이나 한자는 절대 그대로 인용하지 마세요 — "24세 무렵부터 34세까지는 화 기운이 강해지는 시기" 처럼 나이대와 오행 변화로만 풀어서 설명하세요. 갑자 이름은 일반 사용자에게 아무 의미가 없는 전문용어입니다.
 4. 의료·법률·재정적 판단의 근거로 오해될 수 있는 단정적 표현("반드시 ~이다", "~하면 안 된다" 같은 절대적 명령)은 피하세요.
-5. 자해·자살 등 위기 신호가 질문에 담겨 있다면, 사주 해석 대신 "자살예방상담전화 1393(24시간)"을 안내하는 짧고 진지한 문단으로만 답하세요.
+5. 자해·자살 등 위기 신호가 질문에 담겨 있다면, 사주 해석 대신 ${CRISIS_RESOURCES[locale]}를 안내하는 짧고 진지한 문단으로만 (${FIELD_LANGUAGE_NAME[locale]}로) 답하세요.
 6. 마지막 문단 끝에는 자연스럽게 궁금증을 하나 더 남기거나, 더 깊이 알고 싶다면 관련 심리테스트를 찾아볼 수 있다는 걸 가볍게 한 줄로 덧붙이세요 — 강매하듯 말하지 마세요.
+7. 아래 "사용자 질문"이 한국어로 적혀 있더라도, 답변은 반드시 ${FIELD_LANGUAGE_NAME[locale]}로만 작성하세요 — 질문의 언어를 그대로 따라가지 마세요.
 
 ## 사용자 질문
 "${ctx.question}"
@@ -62,5 +72,6 @@ ${dataBlock}
 ## 응답 형식
 아래 JSON 형식으로만 응답하세요. 다른 텍스트는 포함하지 마세요.
 { "lines": ["문단1", "문단2", "문단3"] }
-lines 배열은 3~4개 항목이어야 합니다.`;
+lines 배열은 3~4개 항목이어야 합니다.
+${outputLanguageDirective(locale, { en: `the "lines" array`, es: `array "lines"` })}`;
 }

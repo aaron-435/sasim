@@ -4,7 +4,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "reac
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
-import { useStrings, type Dictionary } from "../lib/i18n";
+import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
 import { formatUsd, REPORT_PRICE, remainingBundlePrice, TOTAL_MODULES } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
@@ -66,6 +66,7 @@ export default function ReportScreen({
   onBack: () => void;
 }) {
   const strings = useStrings();
+  const { locale } = useLocale();
   const LOADING_MESSAGES = strings.report.loadingMessages;
   const [content, setContent] = useState<ReportContent | null>(null);
   const [errorText, setErrorText] = useState<string | null>(null);
@@ -111,6 +112,7 @@ export default function ReportScreen({
             dimensionShortNames: quizDiagnosis.dimensionShortNames ?? {},
             nuancedSummary: quizDiagnosis.nuancedSummary ?? "",
             chatExtract: chatExtract ?? null,
+            locale,
           },
         }),
       });

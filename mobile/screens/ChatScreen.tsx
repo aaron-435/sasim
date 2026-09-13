@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "../components/AppText";
 import { API_BASE_URL } from "../config";
-import { useStrings } from "../lib/i18n";
+import { useLocale, useStrings } from "../lib/i18n";
 import { findTopAnswers } from "../lib/quiz/quizProfile";
 import type { QuizDiagnosis } from "./QuizScreen";
 import { COLORS } from "../theme/colors";
@@ -47,6 +47,7 @@ export default function ChatScreen({
   onBack: () => void;
 }) {
   const strings = useStrings();
+  const { locale } = useLocale();
   const [messages, setMessages] = useState<Message[]>([]);
   const [turn, setTurn] = useState(0);
   const [input, setInput] = useState("");
@@ -113,6 +114,7 @@ export default function ChatScreen({
               psychTestType: quizDiagnosis.typeInfo?.title ?? "",
               psychTestSummary: quizDiagnosis.nuancedSummary ?? "",
               quizAnswer: headlineAnswerRaw ? { prompt: headlineAnswerRaw.prompt, label: headlineAnswerRaw.label } : null,
+              locale,
             },
             history: apiHistory,
             sessionId,
@@ -145,7 +147,7 @@ export default function ChatScreen({
         setErrorText(strings.chat.errorNetwork);
       }
     },
-    [quizDiagnosis, onComplete, revealLines, sessionStartedAt, sessionId, strings]
+    [quizDiagnosis, onComplete, revealLines, sessionStartedAt, sessionId, strings, locale]
   );
 
   useEffect(() => {

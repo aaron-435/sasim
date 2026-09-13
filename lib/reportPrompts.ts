@@ -23,6 +23,8 @@
 
 import type { ElementKey } from "./sajuScore";
 import type { ChatExtract } from "./chat";
+import type { Locale } from "./i18n/types";
+import { FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 
 const ELEMENT_LABEL: Record<ElementKey, string> = {
   wood: "목(木)",
@@ -64,6 +66,9 @@ export interface ReportContext {
   nuancedSummary: string;
   /** Present when the user completed the free chat; absent for a report generated without it. */
   chatExtract?: ChatExtract | null;
+  /** User's app locale. Defaults to "ko" when absent — same convention as
+   * ChatSessionContext.locale in chatPrompts.ts. */
+  locale?: Locale;
 }
 
 // A trimmed excerpt of the original hand-written Module 3 report (see git
@@ -123,6 +128,7 @@ const OUTPUT_SCHEMA = `
 `.trim();
 
 export function buildReportPrompt(context: ReportContext): string {
+  const locale: Locale = context.locale ?? "ko";
   const elementsLine = (Object.keys(context.elements) as ElementKey[])
     .map((k) => `${ELEMENT_LABEL[k]} ${Math.round(context.elements[k])}%`)
     .join(", ");
@@ -170,7 +176,7 @@ ${STYLE_EXCERPT}
 4. track이 "career"면 일·커리어 맥락으로, "romance"면 관계·연애 맥락으로 사례와 환경
    조언을 맞춘다.
 5. 반드시 아래 JSON 스키마와 정확히 일치하는 객체 하나만 출력한다 (다른 텍스트 금지).
-6. 모든 필드의 문장은 반드시 한국어로만 작성한다 — 영어·아랍어 등 다른 언어나 문자가 단어 사이에 섞여 나오면 안 된다.
+6. 모든 필드의 문장은 반드시 ${FIELD_LANGUAGE_NAME[locale]}로만 작성한다 — 그 외 다른 언어나 문자가 단어 사이에 섞여 나오면 안 된다.
 
 ## 이번 리포트의 데이터
 - 닉네임: ${context.nickname}
@@ -187,5 +193,6 @@ ${chatSection}
 
 ## 출력 스키마
 ${OUTPUT_SCHEMA}
+${outputLanguageDirective(locale, { en: "the JSON schema above", es: "esquema JSON anterior" })}
 `.trim();
 }

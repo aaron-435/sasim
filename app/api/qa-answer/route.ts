@@ -19,6 +19,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { getQAAnswer } from "@/lib/qaChat";
+import type { Locale } from "@/lib/i18n/types";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
 
 interface QAAnswerRequestBody {
@@ -32,6 +33,8 @@ interface QAAnswerRequestBody {
     summary?: unknown;
   };
   sessionId?: string;
+  /** Defaults to "ko" when absent — only the native app sends this today. */
+  locale?: Locale;
 }
 
 export async function POST(req: NextRequest) {
@@ -45,7 +48,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { nickname, question, sajuResult, sessionId } = body ?? {};
+  const { nickname, question, sajuResult, sessionId, locale } = body ?? {};
 
   if (!question || !sajuResult) {
     return NextResponse.json({ error: "question, sajuResult는 필수입니다." }, { status: 400 });
@@ -57,6 +60,7 @@ export async function POST(req: NextRequest) {
         nickname: nickname?.trim() || "회원",
         question,
         sajuResult,
+        locale,
       },
       sessionId
     );
