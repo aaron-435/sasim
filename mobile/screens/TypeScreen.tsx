@@ -7,6 +7,7 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
+import { getCelebritiesForType } from "../lib/sajuTypeCelebrities";
 import { formatSajuTypeName, getTypePieces } from "../lib/sajuTypeContent";
 import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
@@ -29,6 +30,7 @@ export default function TypeScreen({
 
   const { archetype, mode } = getTypePieces(locale, sajuType);
   const typeName = formatSajuTypeName(locale, sajuType);
+  const celebrities = getCelebritiesForType(sajuType.code);
   const ArchetypeIcon = ELEMENT_ICON[sajuType.dayMasterElement];
   const ModeIcon = ELEMENT_ICON[sajuType.dominantElement];
   const tint = ELEMENT_COLORS[sajuType.dayMasterElement] ?? COLORS.gold;
@@ -86,6 +88,23 @@ export default function TypeScreen({
           <Text style={styles.pieceTagline}>{mode.tagline}</Text>
           <Text style={styles.pieceBody}>{mode.body}</Text>
         </View>
+
+        {celebrities.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>{strings.sajuType.celebritiesLabel}</Text>
+            <View style={styles.celebrityList}>
+              {celebrities.map((c) => (
+                <View key={c.name} style={[styles.celebrityCard, { borderColor: `${tint}33` }]}>
+                  <Text style={styles.celebrityName}>{c.name}</Text>
+                  <Text style={styles.celebrityMeta}>
+                    {c.field[locale]} · {strings.sajuType.celebrityBirthYear(c.birthYear)}
+                  </Text>
+                  <Text style={styles.celebrityBlurb}>{c.blurb[locale]}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
 
         <Pressable style={styles.shareButton} onPress={handleShare} disabled={sharing}>
           {sharing ? (
@@ -196,6 +215,33 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     color: COLORS.subheadline,
     marginTop: 10,
+  },
+  celebrityList: {
+    gap: 12,
+  },
+  celebrityCard: {
+    backgroundColor: COLORS.inputBg,
+    borderWidth: 1,
+    borderRadius: 14,
+    padding: 16,
+  },
+  celebrityName: {
+    fontFamily: "Manrope_600SemiBold",
+    fontSize: 14.5,
+    color: COLORS.headline,
+  },
+  celebrityMeta: {
+    fontFamily: "Manrope_500Medium",
+    fontSize: 12,
+    color: COLORS.gold,
+    marginTop: 2,
+  },
+  celebrityBlurb: {
+    fontFamily: "Manrope_400Regular",
+    fontSize: 13.5,
+    lineHeight: 20,
+    color: COLORS.subheadline,
+    marginTop: 8,
   },
   shareButton: {
     flexDirection: "row",

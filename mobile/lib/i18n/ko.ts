@@ -152,6 +152,8 @@ export const ko = {
     shareButton: "결과 공유하기",
     shareMessage: (nickname: string, typeName: string) =>
       `${nickname}님의 사주 유형은 "${typeName}" — Fatesaid에서 확인해보세요.`,
+    celebritiesLabel: "이 유형을 가진 유명인",
+    celebrityBirthYear: (year: number) => `${year}년생`,
   },
 
   decadeNotification: {

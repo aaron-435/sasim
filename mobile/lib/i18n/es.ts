@@ -129,6 +129,8 @@ export const es: typeof ko = {
     shareButton: "Compartir resultado",
     shareMessage: (nickname: string, typeName: string) =>
       `El tipo de saju de ${nickname} es "${typeName}" — descubre el tuyo en Fatesaid.`,
+    celebritiesLabel: "Personas que comparten este tipo",
+    celebrityBirthYear: (year: number) => `n. ${year}`,
   },
 
   decadeNotification: {
