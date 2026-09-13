@@ -1,15 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { hasQaProEntitlement } from "./purchases";
 
-// Daily Q&A quota — 2026-09-11 decision: 1 free question/day, 10/day for a $19/month
+// Daily Q&A quota — 2026-09-11 decision: 1 free question/day, 10/day for a $19.99/month
 // subscriber. The free side is fully real (tracked here).
 //
-// 2026-09-13: isSubscribed() now checks a real RevenueCat entitlement instead of always
-// returning false — see lib/purchases.ts. This makes the CHECK real; there is still no
-// "구독하기" purchase button anywhere in the app (that's a separate, later step — see
-// lib/purchases.ts's header comment for why one isn't wired up yet). So in practice this
-// still resolves false for every real user today, just for an honest reason (nobody can
-// buy the subscription yet) instead of a hardcoded one.
+// 2026-09-13/14: isSubscribed() checks a real RevenueCat entitlement (see lib/purchases.ts),
+// and as of 2026-09-14 a real "구독하기" purchase button exists too (QAScreen.tsx, wired to
+// purchaseQaPro()) backed by a real App Store subscription product — this is no longer a
+// placeholder path, an actual subscription purchase here works.
 //
 // The free side is tracked client-side only (AsyncStorage), not server-side — same known
 // limitation as web's QAChat FREE_QUESTIONS cap (see lib/rateLimit.ts's docstring):
@@ -18,7 +16,7 @@ import { hasQaProEntitlement } from "./purchases";
 // becomes a real problem.
 export const FREE_DAILY_LIMIT = 1;
 export const PAID_DAILY_LIMIT = 10;
-export const SUBSCRIPTION_PRICE_LABEL = "월 $19";
+export const SUBSCRIPTION_PRICE_LABEL = "월 $19.99";
 
 const STORAGE_PREFIX = "fatesaid_qa_usage_";
 

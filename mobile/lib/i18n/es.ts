@@ -177,18 +177,26 @@ export const es: typeof ko = {
 
   qa: {
     headerLabel: "Saju Q&A · Respuesta IA",
-    subscriptionPriceLabel: "$19/mes",
+    subscriptionPriceLabel: "$19.99/mes",
     defaultNickname: "amigo",
     greeting1: (nickname: string) => `¡Hola, ${nickname}!`,
     greeting2: "Fatesaid es un equipo de expertos en saju y psicología de Corea.",
     promptCategory: "Pregunta lo que quieras — elige un tema que te interese.",
     askOneMore: "¿Quieres elegir una pregunta más?",
     limitReached1: "Ya usaste tus preguntas gratis de hoy. Puedes volver a preguntar mañana.",
-    limitReached2: (price: string, limit: number) => `Estamos preparando una función para que los suscriptores de ${price} puedan hacer hasta ${limit} preguntas al día.`,
+    limitReached2: (price: string, limit: number) => `Suscríbete ahora por ${price} y haz hasta ${limit} preguntas al día.`,
     errorDefault: "No pudimos obtener una respuesta.",
     errorNetwork: "Un error de red impidió obtener una respuesta.",
     subcategoryHeading: "Elige la pregunta que te interesa",
     categoryHeading: "Elige con más detalle",
+    subscribeButton: "Suscribirme",
+    subscribing: "Procesando...",
+    restoreButton: "Restaurar compras",
+    restoring: "Restaurando...",
+    subscribeSuccess: (limit: number) => `¡Ya estás suscrito! Ahora puedes hacer hasta ${limit} preguntas al día.`,
+    restoreSuccess: (limit: number) => `¡Tu suscripción fue restaurada! Ahora puedes hacer hasta ${limit} preguntas al día.`,
+    restoreNotFound: "No encontramos ninguna suscripción para restaurar.",
+    purchaseErrorDefault: "Hubo un problema con la compra. Intenta de nuevo en un momento.",
   },
 
   report: {

@@ -8,6 +8,7 @@ import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import { getDailyLimit, getUsageToday, incrementUsageToday, PAID_DAILY_LIMIT } from "../lib/qaQuota";
+import { purchaseQaPro, restoreQaPro } from "../lib/purchases";
 import { saveLastQuestion } from "../lib/qaHistory";
 import type { NormalizedSajuResult } from "../lib/saju";
 import { COLORS } from "../theme/colors";
@@ -18,7 +19,7 @@ type Question = { id: string; text_ko: string; text_en?: string; text_es?: strin
 type Subcategory = { id: string; name_ko: string; name_en?: string; name_es?: string; questions: Question[] };
 type Category = { id: string; name_ko: string; name_en?: string; name_es?: string; subcategories: Subcategory[] };
 
-type Message = { role: "bot" | "user"; text: string } | { role: "picker" };
+type Message = { role: "bot" | "user"; text: string } | { role: "picker" } | { role: "subscribe" };
 
 const CATEGORIES = questionBank.categories as Category[];
 
@@ -32,8 +33,9 @@ function wait(ms: number) {
 //     app (see project_fatesaid_web_app_handoff memory). That funnel doesn't make
 //     sense once you're already inside the native app.
 //  2. 2026-09-11: replaced with a daily quota instead — 1 free question/day, 10/day
-//     for a SUBSCRIPTION_PRICE_LABEL subscriber (see lib/qaQuota.ts for why the paid
-//     side is a documented target, not a working purchase flow yet).
+//     for a SUBSCRIPTION_PRICE_LABEL subscriber. 2026-09-14: the paid side became a real,
+//     working purchase flow (see handleSubscribe/handleRestore below and lib/purchases.ts)
+//     once a real App Store subscription product existed behind it.
 export default function QAScreen({
   nickname,
   sessionId,
@@ -54,6 +56,9 @@ export default function QAScreen({
   const [busy, setBusy] = useState(false);
   const [errorText, setErrorText] = useState<string | null>(null);
   const [retryQuestion, setRetryQuestion] = useState<string | null>(null);
+  const [purchasing, setPurchasing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
   const mountedRef = useRef(true);
   const greetedRef = useRef(false);
@@ -71,6 +76,7 @@ export default function QAScreen({
   const pushLimitReachedMessage = useCallback(() => {
     pushBot(strings.qa.limitReached1);
     pushBot(strings.qa.limitReached2(strings.qa.subscriptionPriceLabel, PAID_DAILY_LIMIT));
+    setMessages((m) => [...m, { role: "subscribe" }]);
   }, [pushBot, strings]);
 
   useEffect(() => {
@@ -171,6 +177,44 @@ export default function QAScreen({
     if (retryQuestion) requestAnswer(retryQuestion);
   }
 
+  async function unlockAfterEntitlementChange() {
+    await wait(500);
+    if (!mountedRef.current) return;
+    pushBot(strings.qa.promptCategory);
+    pushCategoryPicker();
+  }
+
+  async function handleSubscribe() {
+    if (purchasing || restoring) return;
+    setPurchasing(true);
+    setPurchaseNotice(null);
+    const outcome = await purchaseQaPro();
+    if (!mountedRef.current) return;
+    setPurchasing(false);
+    if (outcome.status === "success") {
+      pushBot(strings.qa.subscribeSuccess(PAID_DAILY_LIMIT));
+      await unlockAfterEntitlementChange();
+    } else if (outcome.status === "error") {
+      setPurchaseNotice(strings.qa.purchaseErrorDefault);
+    }
+    // "cancelled" — the user backed out of the store sheet, nothing to say.
+  }
+
+  async function handleRestore() {
+    if (purchasing || restoring) return;
+    setRestoring(true);
+    setPurchaseNotice(null);
+    const restored = await restoreQaPro();
+    if (!mountedRef.current) return;
+    setRestoring(false);
+    if (restored) {
+      pushBot(strings.qa.restoreSuccess(PAID_DAILY_LIMIT));
+      await unlockAfterEntitlementChange();
+    } else {
+      setPurchaseNotice(strings.qa.restoreNotFound);
+    }
+  }
+
   if (view === "subcategory" && activeCategory) {
     return <QASubcategoryScreen category={activeCategory} onBack={() => setView("chat")} onSelect={handlePickSubcategory} />;
   }
@@ -199,6 +243,27 @@ export default function QAScreen({
                       <Text style={styles.optionLabel}>{localizedText(cat.name_ko, cat.name_en, cat.name_es, locale)}</Text>
                     </Pressable>
                   ))}
+                </View>
+              </View>
+            );
+          }
+          if (m.role === "subscribe") {
+            return (
+              <View key={i} style={styles.pickerRow}>
+                <View style={styles.subscribeCard}>
+                  <Pressable
+                    style={[styles.subscribeButton, purchasing && styles.subscribeButtonDisabled]}
+                    disabled={purchasing || restoring}
+                    onPress={handleSubscribe}
+                  >
+                    <Text style={styles.subscribeButtonText}>
+                      {purchasing ? strings.qa.subscribing : `${strings.qa.subscribeButton} · ${strings.qa.subscriptionPriceLabel}`}
+                    </Text>
+                  </Pressable>
+                  <Pressable style={styles.restoreLink} disabled={purchasing || restoring} onPress={handleRestore}>
+                    <Text style={styles.restoreLinkText}>{restoring ? strings.qa.restoring : strings.qa.restoreButton}</Text>
+                  </Pressable>
+                  {purchaseNotice && <Text style={styles.subscribeNoticeText}>{purchaseNotice}</Text>}
                 </View>
               </View>
             );
@@ -356,6 +421,45 @@ const styles = StyleSheet.create({
     fontFamily: "Manrope_400Regular",
     fontSize: 14,
     color: COLORS.headline,
+  },
+  subscribeCard: {
+    width: "88%",
+    backgroundColor: "rgba(255,255,255,0.05)",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 16,
+    borderBottomLeftRadius: 4,
+    padding: 14,
+    gap: 10,
+  },
+  subscribeButton: {
+    backgroundColor: COLORS.gold,
+    borderRadius: 10,
+    paddingVertical: 13,
+    alignItems: "center",
+  },
+  subscribeButtonDisabled: {
+    opacity: 0.6,
+  },
+  subscribeButtonText: {
+    fontFamily: "Manrope_600SemiBold",
+    fontSize: 14.5,
+    color: COLORS.ctaText,
+  },
+  restoreLink: {
+    alignItems: "center",
+    paddingVertical: 4,
+  },
+  restoreLinkText: {
+    fontFamily: "Manrope_500Medium",
+    fontSize: 12.5,
+    color: COLORS.subheadline,
+  },
+  subscribeNoticeText: {
+    fontFamily: "Manrope_400Regular",
+    fontSize: 12,
+    color: "#E0A296",
+    textAlign: "center",
   },
   typingBubble: {
     flexDirection: "row",

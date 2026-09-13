@@ -1,5 +1,11 @@
 import { Platform } from "react-native";
-import Purchases, { LOG_LEVEL, type CustomerInfo } from "react-native-purchases";
+import Purchases, {
+  LOG_LEVEL,
+  PURCHASES_ERROR_CODE,
+  type CustomerInfo,
+  type PurchasesError,
+  type PurchasesPackage,
+} from "react-native-purchases";
 import { REVENUECAT_API_KEY } from "../config";
 
 /**
@@ -19,14 +25,11 @@ import { REVENUECAT_API_KEY } from "../config";
  * RevenueCat yet, so mobile/lib/reportEntitlement.ts stays a
  * placeholder (isReportUnlocked() always false) until they're added.
  *
- * There is still no purchase button anywhere in the app — this module
- * only lets the app CHECK entitlement status (real, live check against
- * RevenueCat), not buy one. A real subscription only exists today if
- * granted manually from the RevenueCat dashboard (for testing) or
- * through a sandbox purchase made outside this app. Wiring an actual
- * "Subscribe" CTA to Purchases.purchasePackage() is a separate,
- * later step — building one now would repeat the exact dead-affordance
- * bug already fixed once on web's QAChat install button.
+ * 2026-09-14: a real purchase/restore path was added (purchaseQaPro,
+ * restoreQaPro) once a real App Store subscription product existed
+ * behind the "default" offering's Monthly package — see QAScreen.tsx
+ * for where these are called from. Until this point only entitlement
+ * CHECKING was real; now buying one through the app is too.
  * ------------------------------------------------------------------
  */
 
@@ -60,4 +63,46 @@ export async function getCustomerInfo(): Promise<CustomerInfo | null> {
 export async function hasQaProEntitlement(): Promise<boolean> {
   const info = await getCustomerInfo();
   return !!info?.entitlements.active[QA_PRO_ENTITLEMENT_ID];
+}
+
+/** The "default" offering's Monthly package — null if unavailable (offline, misconfigured
+ * dashboard, or a platform with no store product attached yet, e.g. Android today). */
+export async function getMonthlyPackage(): Promise<PurchasesPackage | null> {
+  if (!isSupportedPlatform()) return null;
+  try {
+    const offerings = await Purchases.getOfferings();
+    return offerings.current?.monthly ?? null;
+  } catch (err) {
+    console.error("[purchases] failed to fetch offerings", err);
+    return null;
+  }
+}
+
+export type PurchaseOutcome = { status: "success" } | { status: "cancelled" } | { status: "error"; message: string };
+
+export async function purchaseQaPro(): Promise<PurchaseOutcome> {
+  const pkg = await getMonthlyPackage();
+  if (!pkg) return { status: "error", message: "no offering available" };
+  try {
+    await Purchases.purchasePackage(pkg);
+    return { status: "success" };
+  } catch (err) {
+    const purchasesError = err as PurchasesError;
+    if (purchasesError?.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) {
+      return { status: "cancelled" };
+    }
+    console.error("[purchases] purchase failed", err);
+    return { status: "error", message: purchasesError?.message ?? "purchase failed" };
+  }
+}
+
+export async function restoreQaPro(): Promise<boolean> {
+  if (!isSupportedPlatform()) return false;
+  try {
+    const info = await Purchases.restorePurchases();
+    return !!info.entitlements.active[QA_PRO_ENTITLEMENT_ID];
+  } catch (err) {
+    console.error("[purchases] restore failed", err);
+    return false;
+  }
 }

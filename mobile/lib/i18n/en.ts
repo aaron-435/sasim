@@ -177,18 +177,26 @@ export const en: typeof ko = {
 
   qa: {
     headerLabel: "Saju Q&A · AI Answer",
-    subscriptionPriceLabel: "$19/month",
+    subscriptionPriceLabel: "$19.99/month",
     defaultNickname: "there",
     greeting1: (nickname: string) => `Hi, ${nickname}!`,
     greeting2: "Fatesaid is a team of saju and psychology experts from Korea.",
     promptCategory: "Ask anything that's on your mind — pick a topic you're curious about.",
     askOneMore: "Want to pick one more question?",
     limitReached1: "You've used up today's free questions. You can ask again tomorrow.",
-    limitReached2: (price: string, limit: number) => `We're working on a feature that lets ${price} subscribers ask up to ${limit} questions a day.`,
+    limitReached2: (price: string, limit: number) => `Subscribe now for ${price} and ask up to ${limit} questions a day.`,
     errorDefault: "We couldn't get an answer.",
     errorNetwork: "A network error kept us from getting an answer.",
     subcategoryHeading: "Pick the question you're curious about",
     categoryHeading: "Narrow it down a bit more",
+    subscribeButton: "Subscribe",
+    subscribing: "Processing...",
+    restoreButton: "Restore Purchases",
+    restoring: "Restoring...",
+    subscribeSuccess: (limit: number) => `You're subscribed! You can now ask up to ${limit} questions a day.`,
+    restoreSuccess: (limit: number) => `Your subscription is restored! You can now ask up to ${limit} questions a day.`,
+    restoreNotFound: "We couldn't find a subscription to restore.",
+    purchaseErrorDefault: "There was a problem with the purchase. Please try again shortly.",
   },
 
   report: {

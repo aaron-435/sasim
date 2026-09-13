@@ -200,18 +200,26 @@ export const ko = {
 
   qa: {
     headerLabel: "사주 Q&A · AI 답변",
-    subscriptionPriceLabel: "월 $19",
+    subscriptionPriceLabel: "월 $19.99",
     defaultNickname: "회원",
     greeting1: (nickname: string) => `안녕하세요, ${nickname}님!`,
     greeting2: "Fatesaid는 한국에서 온 사주 전문가와 심리 전문가로 이루어진 팀이에요.",
     promptCategory: "궁금한 거 편하게 물어보세요. 관심 있는 주제를 골라주세요.",
     askOneMore: "질문 1개 더 골라볼까요?",
     limitReached1: "오늘의 무료 질문을 다 쓰셨어요. 내일 다시 질문할 수 있어요.",
-    limitReached2: (price: string, limit: number) => `${price} 구독하면 하루 ${limit}개까지 질문할 수 있는 기능을 준비하고 있어요.`,
+    limitReached2: (price: string, limit: number) => `지금 ${price}에 구독하면 하루 ${limit}개까지 질문할 수 있어요.`,
     errorDefault: "답변을 가져오지 못했습니다.",
     errorNetwork: "네트워크 오류로 답변을 가져오지 못했습니다.",
     subcategoryHeading: "궁금한 질문을 골라주세요",
     categoryHeading: "더 자세히 골라주세요",
+    subscribeButton: "구독하기",
+    subscribing: "처리 중...",
+    restoreButton: "구매 복원",
+    restoring: "복원 중...",
+    subscribeSuccess: (limit: number) => `구독이 시작됐어요! 이제 하루 ${limit}개까지 질문할 수 있어요.`,
+    restoreSuccess: (limit: number) => `구독을 복원했어요! 이제 하루 ${limit}개까지 질문할 수 있어요.`,
+    restoreNotFound: "복원할 구독을 찾지 못했어요.",
+    purchaseErrorDefault: "결제 중 문제가 생겼어요. 잠시 후 다시 시도해주세요.",
   },
 
   report: {
