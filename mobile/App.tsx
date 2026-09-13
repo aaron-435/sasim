@@ -10,6 +10,7 @@ import DobScreen from "./screens/DobScreen";
 import GenderScreen from "./screens/GenderScreen";
 import HomeScreen from "./screens/HomeScreen";
 import IntroScreen from "./screens/IntroScreen";
+import LanguageScreen from "./screens/LanguageScreen";
 import ModuleSelectScreen from "./screens/ModuleSelectScreen";
 import NicknameScreen from "./screens/NicknameScreen";
 import QAScreen from "./screens/QAScreen";
@@ -18,18 +19,20 @@ import ReportScreen from "./screens/ReportScreen";
 import TobScreen from "./screens/TobScreen";
 import VerifyCodeScreen, { type VerifiedData } from "./screens/VerifyCodeScreen";
 import { dominantElementFrom } from "./lib/elements";
+import { LocaleProvider, useLocale } from "./lib/i18n";
 import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/saju";
 
 // Onboarding flow shell — mirrors components/AppFlow.jsx's step-switcher role on web,
 // just with local state for now (no react-navigation/expo-router wired up yet; this is
 // still the "does this feel high-quality" proof-of-concept phase, not the final wiring).
-// STEP_IDS matches components/OnboardingWizard.jsx's list, plus "verifyCode" (the
+// STEP_IDS matches components/OnboardingWizard.jsx's list, plus "language" (the very
+// first screen — manual locale picker, see lib/i18n/README), "verifyCode" (the
 // web→app handoff screen), "home" (the hub landing screen reached from either path),
 // "qa" (independently reachable), and moduleSelect→quiz→chat→report (the other
 // pipeline — chained, not independently reachable from Home, since chat needs a quiz
 // diagnosis and report needs both quiz+chat context — same dependency web's
 // components/AppFlow.jsx has).
-type StepId = "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report";
+type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
@@ -43,6 +46,14 @@ function makeSessionId() {
 }
 
 export default function App() {
+  return (
+    <LocaleProvider>
+      <AppContent />
+    </LocaleProvider>
+  );
+}
+
+function AppContent() {
   const [fontsLoaded] = useFonts({
     CormorantGaramond_500Medium,
     Manrope_400Regular,
@@ -50,8 +61,13 @@ export default function App() {
     Manrope_600SemiBold,
     Manrope_700Bold,
   });
+  const { ready: localeReady, hasStoredLocale } = useLocale();
 
-  const [step, setStep] = useState<StepId>("intro");
+  // Stays null until the persisted locale check resolves, so the very first render
+  // already lands on the right starting screen — LanguageScreen for a first launch,
+  // straight to "intro" for a returning session — instead of flashing the picker for
+  // one frame before flipping away from it.
+  const [step, setStep] = useState<StepId | null>(null);
   const [sessionId] = useState(makeSessionId);
   const [nickname, setNickname] = useState("");
   const [isFemale, setIsFemale] = useState<boolean | null>(null);
@@ -66,6 +82,12 @@ export default function App() {
   const [moduleId, setModuleId] = useState<string | null>(null);
   const [quizDiagnosis, setQuizDiagnosis] = useState<QuizDiagnosis | null>(null);
   const [chatExtract, setChatExtract] = useState<ChatExtract | null>(null);
+
+  useEffect(() => {
+    if (localeReady && step === null) {
+      setStep(hasStoredLocale ? "intro" : "language");
+    }
+  }, [localeReady, hasStoredLocale, step]);
 
   // Android hardware back button — a plain BackHandler listener, unrelated to the
   // window.history/popstate approach that broke web's "이전" button (see
@@ -112,11 +134,13 @@ export default function App() {
     return () => sub.remove();
   }, [step]);
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || step === null) return null;
 
   return (
     <SafeAreaProvider>
       <StatusBar style="light" />
+      {step === "language" && <LanguageScreen onNext={() => setStep("intro")} />}
+
       {step === "intro" && <IntroScreen onNext={() => setStep("verifyCode")} />}
 
       {step === "verifyCode" && (

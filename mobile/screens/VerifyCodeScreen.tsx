@@ -4,6 +4,7 @@ import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { API_BASE_URL } from "../config";
+import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 
 const CODE_LENGTH = 6;
@@ -28,6 +29,7 @@ export default function VerifyCodeScreen({
   onSkip: () => void;
   onBack: () => void;
 }) {
+  const strings = useStrings();
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,12 +43,12 @@ export default function VerifyCodeScreen({
       const res = await fetch(`${API_BASE_URL}/api/verification-code?code=${encodeURIComponent(code)}`);
       const json = await res.json();
       if (!res.ok) {
-        setError(json.error || "유효하지 않거나 이미 사용된 코드입니다.");
+        setError(json.error || strings.verifyCode.errorDefault);
         return;
       }
       onVerified(json);
     } catch {
-      setError("네트워크 오류로 코드를 확인하지 못했습니다.");
+      setError(strings.verifyCode.errorNetwork);
     } finally {
       setLoading(false);
     }
@@ -55,14 +57,11 @@ export default function VerifyCodeScreen({
   return (
     <OnboardingShell onBack={onBack}>
       <View style={styles.top}>
-        <Text style={styles.heading}>인증코드가 있으신가요?</Text>
-        <Text style={styles.subtext}>
-          웹에서 Q&A를 진행하셨다면, 그때 안내된 6자리 코드를 입력해주세요. 지금까지 입력하신 정보를 그대로 이어서
-          사용할 수 있어요.
-        </Text>
+        <Text style={styles.heading}>{strings.verifyCode.heading}</Text>
+        <Text style={styles.subtext}>{strings.verifyCode.subtext}</Text>
         <TextInput
           style={styles.input}
-          placeholder="000000"
+          placeholder={strings.verifyCode.placeholder}
           placeholderTextColor={COLORS.disabledText}
           value={code}
           onChangeText={(v) => setCode(v.replace(/[^0-9]/g, "").slice(0, CODE_LENGTH))}
@@ -83,7 +82,7 @@ export default function VerifyCodeScreen({
           <AuraNextButton disabled={!canSubmit} onPress={handleVerify} size={190} />
         )}
         <Pressable onPress={onSkip} hitSlop={12} style={styles.skipButton}>
-          <Text style={styles.skipLabel}>코드가 없어요, 새로 시작할게요</Text>
+          <Text style={styles.skipLabel}>{strings.verifyCode.skipLabel}</Text>
         </Pressable>
       </View>
     </OnboardingShell>

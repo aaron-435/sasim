@@ -4,6 +4,7 @@ import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { API_BASE_URL } from "../config";
+import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 
 type CityResult = { id: string; cityDisplay: string; countryDisplay: string };
@@ -34,6 +35,7 @@ export default function CityScreen({
   onSubmitted: (result: SajuResult) => void;
   onBack: () => void;
 }) {
+  const strings = useStrings();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<CityResult[]>([]);
   const [selected, setSelected] = useState<CityResult | null>(null);
@@ -90,12 +92,12 @@ export default function CityScreen({
       });
       const json = await res.json();
       if (!res.ok) {
-        setError(json.error || "사주 계산에 실패했습니다.");
+        setError(json.error || strings.city.errorDefault);
         return;
       }
       onSubmitted(json);
     } catch {
-      setError("네트워크 오류로 사주 계산에 실패했습니다.");
+      setError(strings.city.errorNetwork);
     } finally {
       setSubmitting(false);
     }
@@ -104,10 +106,10 @@ export default function CityScreen({
   return (
     <OnboardingShell stepIndex={4} onBack={onBack}>
       <View style={styles.top}>
-        <Text style={styles.heading}>출생 도시 (전세계 검색 가능)</Text>
+        <Text style={styles.heading}>{strings.city.heading}</Text>
         <TextInput
           style={styles.input}
-          placeholder="도시 이름을 입력하세요"
+          placeholder={strings.city.placeholder}
           placeholderTextColor={COLORS.disabledText}
           value={query}
           onChangeText={setQuery}
@@ -121,10 +123,7 @@ export default function CityScreen({
           // from the underlying city-timezones dataset (see lib/worldCities.ts), so
           // pointing people to a same-timezone major city is a real, correct fallback,
           // not just a UX band-aid.
-          <Text style={styles.noResultsHint}>
-            검색 결과가 없어요. 사주 계산에는 태어난 시간대가 가장 중요해서, 같은 시간대의 가까운 대도시(예: 서울, 부산, 대구)로
-            검색해보셔도 괜찮아요.
-          </Text>
+          <Text style={styles.noResultsHint}>{strings.city.noResultsHint}</Text>
         )}
         {results.length > 0 && (
           <View style={styles.resultsBox}>

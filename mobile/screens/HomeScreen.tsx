@@ -4,8 +4,9 @@ import { Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "../components/PatternBackground";
-import { getDailyInsight } from "../lib/dailyInsight";
-import { ELEMENT_COLORS, ELEMENT_LABELS_KO, ELEMENT_ORDER } from "../lib/elements";
+import { ELEMENT_COLORS, ELEMENT_ORDER } from "../lib/elements";
+import { useStrings } from "../lib/i18n";
+import { getDailyInsight } from "../lib/i18n/dailyInsight";
 import { getLastQuestion, type LastQuestion } from "../lib/qaHistory";
 import { COLORS } from "../theme/colors";
 
@@ -15,12 +16,13 @@ import { COLORS } from "../theme/colors";
 // App.tsx). Giving them their own tappable card with nothing behind it would repeat
 // the exact dead-affordance bug already found and fixed on web's QAChat (see
 // lib/i18n/ko.ts's qa.appComingSoonLabel) — "ready" here means "has a real entry
-// point from Home", not "the screen exists".
-const FEATURES = [
-  { key: "qa", icon: HelpCircle, label: "사주 Q&A", description: "궁금한 순간, 지금 바로 물어보세요", ready: true },
-  { key: "quiz", icon: Brain, label: "심리테스트", description: "나를 이해하는 첫걸음", ready: true },
-  { key: "chat", icon: Bot, label: "AI 상담", description: "심리테스트 완료 후 이용 가능", ready: false },
-  { key: "report", icon: FileText, label: "심층 리포트", description: "심리테스트 완료 후 이용 가능", ready: false },
+// point from Home", not "the screen exists". Only icon/ready are static; label/description
+// come from useStrings() so they translate.
+const FEATURE_META = [
+  { key: "qa", icon: HelpCircle, ready: true },
+  { key: "quiz", icon: Brain, ready: true },
+  { key: "chat", icon: Bot, ready: false },
+  { key: "report", icon: FileText, ready: false },
 ] as const;
 
 const SECTION_COUNT = 6; // header, chart, insight, explainer, feature list, recap
@@ -43,6 +45,13 @@ export default function HomeScreen({
   onOpenQA: () => void;
   onOpenQuiz: () => void;
 }) {
+  const strings = useStrings();
+  const FEATURES = [
+    { ...FEATURE_META[0], label: strings.home.featureQaLabel, description: strings.home.featureQaDescription },
+    { ...FEATURE_META[1], label: strings.home.featureQuizLabel, description: strings.home.featureQuizDescription },
+    { ...FEATURE_META[2], label: strings.home.featureChatLabel, description: strings.home.featureChatDescription },
+    { ...FEATURE_META[3], label: strings.home.featureReportLabel, description: strings.home.featureReportDescription },
+  ];
   const handlers: Record<string, () => void> = { qa: onOpenQA, quiz: onOpenQuiz };
   const [lastQuestion, setLastQuestion] = useState<LastQuestion | null | undefined>(undefined);
 
@@ -101,24 +110,26 @@ export default function HomeScreen({
               <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
               <Text style={styles.brandLabel}>FATESAID</Text>
             </View>
-            <Text style={styles.greeting}>안녕하세요, {nickname}님</Text>
+            <Text style={styles.greeting}>{strings.home.greeting(nickname)}</Text>
             {dominantElement && (
               <View style={styles.elementBadge}>
-                <Text style={styles.elementBadgeText}>오행 · {ELEMENT_LABELS_KO[dominantElement] ?? dominantElement}</Text>
+                <Text style={styles.elementBadgeText}>
+                  {strings.home.elementBadgePrefix} {strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement}
+                </Text>
               </View>
             )}
           </Animated.View>
 
           {elements && (
             <Animated.View style={[styles.section, sectionStyle(1)]}>
-              <Text style={styles.sectionLabel}>나의 오행 분포</Text>
+              <Text style={styles.sectionLabel}>{strings.home.elementDistribution}</Text>
               <View style={styles.elementChart}>
                 {ELEMENT_ORDER.map((key) => {
                   const value = elements[key] ?? 0;
                   const widthPct = Math.max((value / maxPercent) * 100, 4);
                   return (
                     <View key={key} style={styles.elementRow}>
-                      <Text style={styles.elementRowLabel}>{ELEMENT_LABELS_KO[key]}</Text>
+                      <Text style={styles.elementRowLabel}>{strings.common.elementLabels[key as keyof typeof strings.common.elementLabels]}</Text>
                       <View style={styles.elementBarTrack}>
                         <Animated.View
                           style={[
@@ -139,30 +150,22 @@ export default function HomeScreen({
           )}
 
           <Animated.View style={[styles.insightCard, sectionStyle(2)]}>
-            <Text style={styles.insightLabel}>오늘의 한마디</Text>
-            <Text style={styles.insightText}>{getDailyInsight(dominantElement)}</Text>
+            <Text style={styles.insightLabel}>{strings.home.dailyInsightLabel}</Text>
+            <Text style={styles.insightText}>{getDailyInsight(strings, dominantElement)}</Text>
           </Animated.View>
 
           <Animated.View style={[styles.section, sectionStyle(3)]}>
-            <Text style={styles.sectionLabel}>사주, 어떻게 활용하면 좋을까요</Text>
+            <Text style={styles.sectionLabel}>{strings.home.explainerSectionLabel}</Text>
             <View style={styles.explainCard}>
-              <Text style={styles.explainHeading}>사주명리학이란?</Text>
-              <Text style={styles.explainBody}>
-                사주(四柱)는 태어난 연·월·일·시 네 기둥에 담긴 기운을 오행(목·화·토·금·수)으로 풀어, 타고난 성향과 삶의 흐름을 해석하는
-                동양의 전통 학문이에요. 정해진 운명을 점치기보다는, 나를 이루는 균형을 이해하고 스스로를 더 잘 알아가기 위한 도구로 보면
-                가장 잘 어울려요.
-              </Text>
-              <Text style={styles.explainHeading}>이렇게 활용해보세요</Text>
-              <Text style={styles.explainBody}>
-                먼저 사주 Q&A에서 지금 가장 궁금한 질문 하나를 편하게 물어보세요. 그다음 심리테스트로 나의 성향과 패턴을 진단해보면,
-                오행 데이터와 심리 데이터가 함께 맞물리면서 훨씬 입체적인 이해가 가능해져요. 심리테스트를 마치면 AI 상담으로 자연스럽게
-                이어지고, 상담이 끝나면 지금까지의 답변을 모두 엮은 나만의 심층 리포트를 받아볼 수 있어요.
-              </Text>
+              <Text style={styles.explainHeading}>{strings.home.explainerHeading1}</Text>
+              <Text style={styles.explainBody}>{strings.home.explainerBody1}</Text>
+              <Text style={styles.explainHeading}>{strings.home.explainerHeading2}</Text>
+              <Text style={styles.explainBody}>{strings.home.explainerBody2}</Text>
             </View>
           </Animated.View>
 
           <Animated.View style={[styles.section, sectionStyle(4)]}>
-            <Text style={styles.sectionLabel}>무엇을 해볼까요</Text>
+            <Text style={styles.sectionLabel}>{strings.home.featuresSectionLabel}</Text>
             <View style={styles.featureList}>
               {FEATURES.map(({ key, icon: Icon, label, description, ready }, index) => (
                 <Pressable
@@ -193,7 +196,7 @@ export default function HomeScreen({
           </Animated.View>
 
           <Animated.View style={[styles.section, sectionStyle(5)]}>
-            <Text style={styles.sectionLabel}>최근 질문</Text>
+            <Text style={styles.sectionLabel}>{strings.home.recentQuestionLabel}</Text>
             {lastQuestion ? (
               <Pressable
                 onPress={onOpenQA}
@@ -223,7 +226,7 @@ export default function HomeScreen({
               >
                 <Animated.View style={[styles.recapInner, { transform: [{ scale: recapScale }] }]}>
                   <MessageCircleQuestion size={18} strokeWidth={1.75} color={COLORS.subheadline} />
-                  <Text style={styles.recapEmptyText}>아직 질문한 기록이 없어요 · 첫 질문 물어보기</Text>
+                  <Text style={styles.recapEmptyText}>{strings.home.recentQuestionEmpty}</Text>
                   <ArrowRight size={16} strokeWidth={2} color={COLORS.subheadline} />
                 </Animated.View>
               </Pressable>

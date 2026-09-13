@@ -4,8 +4,9 @@ import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { calculateAge, MIN_AGE } from "../lib/age";
+import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
-import { getZodiac, toISODateString, ZODIAC_LABELS_KO } from "../lib/zodiac";
+import { getZodiac, toISODateString } from "../lib/zodiac";
 
 export default function DobScreen({
   year,
@@ -26,6 +27,7 @@ export default function DobScreen({
   onNext: () => void;
   onBack: () => void;
 }) {
+  const strings = useStrings();
   const monthRef = useRef<TextInput>(null);
   const dayRef = useRef<TextInput>(null);
 
@@ -42,11 +44,11 @@ export default function DobScreen({
   return (
     <OnboardingShell stepIndex={2} onBack={onBack}>
       <View style={styles.top}>
-        <Text style={styles.heading}>생년월일</Text>
+        <Text style={styles.heading}>{strings.dob.heading}</Text>
         <View style={styles.row}>
           <TextInput
             style={[styles.input, styles.yearInput]}
-            placeholder="YYYY"
+            placeholder={strings.dob.yearPlaceholder}
             placeholderTextColor={COLORS.disabledText}
             value={year}
             onChangeText={(v) => {
@@ -62,7 +64,7 @@ export default function DobScreen({
           <TextInput
             ref={monthRef}
             style={[styles.input, styles.shortInput]}
-            placeholder="MM"
+            placeholder={strings.dob.monthPlaceholder}
             placeholderTextColor={COLORS.disabledText}
             value={month}
             onChangeText={(v) => {
@@ -77,7 +79,7 @@ export default function DobScreen({
           <TextInput
             ref={dayRef}
             style={[styles.input, styles.shortInput]}
-            placeholder="DD"
+            placeholder={strings.dob.dayPlaceholder}
             placeholderTextColor={COLORS.disabledText}
             value={day}
             onChangeText={(v) => onChangeDay(digitsOnly(v).slice(0, 2))}
@@ -89,11 +91,11 @@ export default function DobScreen({
         {zodiac && (
           <View style={styles.zodiacCard}>
             <Text style={styles.zodiacSymbol}>{zodiac.symbol}</Text>
-            <Text style={styles.zodiacLabel}>{ZODIAC_LABELS_KO[zodiac.nameKey]}</Text>
+            <Text style={styles.zodiacLabel}>{strings.common.zodiacLabels[zodiac.nameKey]}</Text>
           </View>
         )}
 
-        {isTooYoung && <Text style={styles.ageWarning}>죄송하지만 만 {MIN_AGE}세 이상만 이용할 수 있어요.</Text>}
+        {isTooYoung && <Text style={styles.ageWarning}>{strings.dob.ageWarning(MIN_AGE)}</Text>}
       </View>
 
       <View style={styles.middle}>

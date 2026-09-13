@@ -2,6 +2,7 @@ import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react-native";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 
 type Subcategory = { id: string; name_ko: string; questions: { id: string; text_ko: string }[] };
@@ -19,12 +20,13 @@ export default function QASubcategoryScreen({
   onBack: () => void;
   onSelect: (sub: Subcategory) => void;
 }) {
+  const strings = useStrings();
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
         <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
-          <Text style={styles.backLabel}>이전</Text>
+          <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </Pressable>
 
         <View style={styles.header}>
@@ -32,7 +34,7 @@ export default function QASubcategoryScreen({
             <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
             <Text style={styles.categoryLabel}>{category.name_ko}</Text>
           </View>
-          <Text style={styles.heading}>더 자세히 골라주세요</Text>
+          <Text style={styles.heading}>{strings.qa.categoryHeading}</Text>
         </View>
 
         {category.subcategories.map((sub) => (

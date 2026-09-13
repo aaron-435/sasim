@@ -1,12 +1,3 @@
-// Matches lib/i18n/ko.ts's `elements` namespace on web — keep both in sync.
-export const ELEMENT_LABELS_KO: Record<string, string> = {
-  wood: "목(木)",
-  fire: "화(火)",
-  earth: "토(土)",
-  metal: "금(金)",
-  water: "수(水)",
-};
-
 // Shared five-element colors — matches the shades already duplicated in
 // ReportScreen.tsx/QuizScreen.tsx (semantic data-viz colors, independent of the
 // Celadon & Hanji brand palette, so they weren't touched by that rebrand).

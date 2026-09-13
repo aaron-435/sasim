@@ -6,12 +6,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AuraNextButton from "../components/AuraNextButton";
 import PatternBackground from "../components/PatternBackground";
 import { API_BASE_URL } from "../config";
+import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 
 const TERMS_URL = `${API_BASE_URL}/terms`;
 const PRIVACY_URL = `${API_BASE_URL}/privacy`;
 
 export default function IntroScreen({ onNext }: { onNext: () => void }) {
+  const strings = useStrings();
   const contentAnim = useRef(new Animated.Value(0)).current;
   const ctaAnim = useRef(new Animated.Value(0)).current;
 
@@ -40,9 +42,11 @@ export default function IntroScreen({ onNext }: { onNext: () => void }) {
             <Text style={styles.brandLabel}>FATESAID</Text>
           </View>
           <Text style={styles.headline}>
-            운명은 이미 말했습니다.{"\n"}이제 당신이 답할 차례입니다.
+            {strings.intro.headlineLine1}
+            {"\n"}
+            {strings.intro.headlineLine2}
           </Text>
-          <Text style={styles.subheadline}>운명을 바꾸고 싶나요? 사주를 분석하고 지금 시작하세요.</Text>
+          <Text style={styles.subheadline}>{strings.intro.subheadline}</Text>
         </Animated.View>
 
         {/* Absolutely centered on the FULL screen, independent of how much space the
@@ -59,16 +63,17 @@ export default function IntroScreen({ onNext }: { onNext: () => void }) {
         <View style={{ flex: 1 }} />
 
         <Text style={styles.footer}>
-          무료 10분 리딩 · 신용카드 불필요{"\n"}
-          만 14세 이상만 이용할 수 있어요 ·{" "}
+          {strings.intro.freeNote}
+          {"\n"}
+          {strings.intro.ageNoticePrefix}{" "}
           <Text style={styles.footerLink} onPress={() => Linking.openURL(TERMS_URL)}>
-            이용약관
+            {strings.intro.termsLinkLabel}
           </Text>{" "}
-          및{" "}
+          {strings.intro.ageNoticeAnd}{" "}
           <Text style={styles.footerLink} onPress={() => Linking.openURL(PRIVACY_URL)}>
-            개인정보처리방침
+            {strings.intro.privacyLinkLabel}
           </Text>
-          에 동의합니다
+          {strings.intro.ageNoticeSuffix}
         </Text>
       </SafeAreaView>
     </PatternBackground>

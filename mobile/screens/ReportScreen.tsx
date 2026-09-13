@@ -4,7 +4,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "reac
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
-import { ELEMENT_LABELS_KO } from "../lib/elements";
+import { useStrings, type Dictionary } from "../lib/i18n";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
 import { formatUsd, REPORT_PRICE, remainingBundlePrice, TOTAL_MODULES } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
@@ -20,7 +20,6 @@ const ELEMENT_COLOR: Record<string, string> = {
 };
 const DIMENSION_BAR_COLORS = ["#C1503B", "#3E6EA0", "#B98A4E", "#4E8368", "#8B6BB0"];
 const DEFAULT_ELEMENTS: Record<string, number> = { fire: 20, earth: 20, wood: 20, metal: 20, water: 20 };
-const LOADING_MESSAGES = ["사주와 심리검사를 통합하고 있어요...", "당신만의 이야기를 쓰고 있어요...", "거의 다 됐어요..."];
 
 type ReportContent = {
   title_line1: string;
@@ -66,6 +65,8 @@ export default function ReportScreen({
   sessionId: string;
   onBack: () => void;
 }) {
+  const strings = useStrings();
+  const LOADING_MESSAGES = strings.report.loadingMessages;
   const [content, setContent] = useState<ReportContent | null>(null);
   const [errorText, setErrorText] = useState<string | null>(null);
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
@@ -116,13 +117,13 @@ export default function ReportScreen({
       const json = await res.json();
       if (!mountedRef.current) return;
       if (!res.ok) {
-        setErrorText(json.error || "리포트를 생성하지 못했습니다.");
+        setErrorText(json.error || strings.report.errorDefault);
         return;
       }
       setContent(json);
     } catch {
       if (!mountedRef.current) return;
-      setErrorText("네트워크 오류로 리포트를 생성하지 못했습니다.");
+      setErrorText(strings.report.errorNetwork);
     }
   }
 
@@ -139,10 +140,10 @@ export default function ReportScreen({
         <View style={styles.errorCard}>
           <Text style={styles.errorText}>{errorText}</Text>
           <Pressable onPress={fetchReport} style={styles.retryButton}>
-            <Text style={styles.retryLabel}>다시 시도</Text>
+            <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
           </Pressable>
           <Pressable onPress={onBack} style={styles.retryButton}>
-            <Text style={styles.backLabel}>홈으로</Text>
+            <Text style={styles.backLabel}>{strings.report.homeLinkLabel}</Text>
           </Pressable>
         </View>
       </SafeAreaView>
@@ -179,14 +180,17 @@ export default function ReportScreen({
             {content.title_line2}
           </Text>
           <Text style={styles.heroSubtitle}>{content.subtitle}</Text>
-          <Text style={styles.heroNickname}>{nickname} 님</Text>
+          <Text style={styles.heroNickname}>
+            {nickname}
+            {strings.report.nicknameSuffix ? ` ${strings.report.nicknameSuffix}` : ""}
+          </Text>
         </View>
 
-        <Section num={nextNum()} title="어느 밤의 장면">
+        <Section num={nextNum()} title={strings.report.sectionOpeningScene}>
           <Body>{content.opening_scene}</Body>
         </Section>
 
-        <Section num={nextNum()} title="닮은 이야기 하나">
+        <Section num={nextNum()} title={strings.report.sectionCaseStudy}>
           <View style={styles.caseBox}>
             <Text style={styles.caseTag}>{content.case_tag}</Text>
             {content.case_paragraphs.map((p, i) => (
@@ -197,7 +201,11 @@ export default function ReportScreen({
           </View>
         </Section>
 
-        <Section num={nextNum()} title={quizDiagnosis.typeInfo?.title ?? ""} subtitle={`${quizDiagnosis.moduleTitle ?? "심리테스트"} 분석`}>
+        <Section
+          num={nextNum()}
+          title={quizDiagnosis.typeInfo?.title ?? ""}
+          subtitle={`${quizDiagnosis.moduleTitle ?? strings.report.defaultModuleTitle} ${strings.report.quizAnalysisSuffix}`}
+        >
           <Body>{quizDiagnosis.typeInfo?.hook}</Body>
           <View style={styles.barGroup}>
             {quizDiagnosis.dimensionResults?.map((r, i) => (
@@ -217,13 +225,13 @@ export default function ReportScreen({
           {quizDiagnosis.nuancedSummary && <Body>{quizDiagnosis.nuancedSummary}</Body>}
         </Section>
 
-        <Section num={nextNum()} title="무엇이 이 패턴을 만들었나" subtitle="사주 원국 분석">
+        <Section num={nextNum()} title={strings.report.sectionSajuPattern} subtitle={strings.report.sectionSajuPatternSubtitle}>
           <View style={styles.barGroup}>
             {Object.entries(resolvedElements).map(([key, val]) => (
               <View key={key} style={styles.barRow}>
                 <View style={styles.barLabelRow}>
                   <Text style={styles.barLabel}>
-                    {ELEMENT_LABELS_KO[key] ?? key}
+                    {strings.common.elementLabels[key as keyof typeof strings.common.elementLabels] ?? key}
                     {key === dominantKey ? " ·" : ""}
                   </Text>
                   <Text style={styles.barLabel}>{val}%</Text>
@@ -243,26 +251,27 @@ export default function ReportScreen({
         {unlocked ? (
           <>
             {chatExtract && (
-              <Section num={nextNum()} title="직접 나눈 이야기">
-                <Body>사주와 심리검사가 구조를 보여준다면, 방금 나눈 대화는 지금 이 순간의 실제 결을 보여줍니다.</Body>
+              <Section num={nextNum()} title={strings.report.sectionChatStory}>
+                <Body>{strings.report.chatStoryIntro}</Body>
                 <View style={styles.chatQuoteBox}>
                   <View style={styles.chatQuoteHeader}>
                     <BookOpen size={13} strokeWidth={2} color="#7FA8D6" />
-                    <Text style={styles.chatQuoteLabel}>상담 중 나온 이야기</Text>
+                    <Text style={styles.chatQuoteLabel}>{strings.report.chatQuoteLabel}</Text>
                   </View>
                   <Text style={styles.chatQuoteText}>
                     &quot;{String(chatExtract.summary_quote || chatExtract.trigger_point || "")}&quot;
                   </Text>
                 </View>
                 <Body>
-                  직접 나눈 대화에서도 {String(chatExtract.primary_concern ?? "")} 쪽 고민이 선명하게 드러났고, 그 안에 담긴 감정은{" "}
-                  {String(chatExtract.emotional_state ?? "")}에 가까웠습니다.
+                  {strings.report.chatStoryBodyPrefix} {String(chatExtract.primary_concern ?? "")} {strings.report.chatStoryBodyMiddle}{" "}
+                  {String(chatExtract.emotional_state ?? "")}
+                  {strings.report.chatStoryBodySuffix}
                 </Body>
                 {!!chatExtract.integrated_summary && <Body>{String(chatExtract.integrated_summary)}</Body>}
               </Section>
             )}
 
-            <Section num={nextNum()} title="사주와 심리검사가 같은 이야기를 하는 지점">
+            <Section num={nextNum()} title={strings.report.sectionCrossAnalysis}>
               {content.cross_analysis_quotes.map((q, i) => (
                 <Text key={i} style={styles.quote}>
                   {q}
@@ -272,63 +281,63 @@ export default function ReportScreen({
 
             <Section num={nextNum()} title="">
               <View style={styles.breather}>
-                <Text style={styles.breatherLabel}>잠깐, 심리학 상식 하나</Text>
+                <Text style={styles.breatherLabel}>{strings.report.breatherLabel}</Text>
                 <Text style={styles.breatherTitle}>{content.psychology_fact_heading}</Text>
                 <Body noMargin>{content.psychology_fact_body}</Body>
                 <View style={styles.takeaway}>
                   <Text style={styles.takeawayText}>
-                    <Text style={styles.takeawayBold}>기억할 한 가지 · </Text>
+                    <Text style={styles.takeawayBold}>{strings.report.takeawayBold} </Text>
                     {content.psychology_takeaway}
                   </Text>
                 </View>
               </View>
             </Section>
 
-            <Section num={nextNum()} title="강점">
+            <Section num={nextNum()} title={strings.report.sectionStrengths}>
               {content.strengths.map((s) => (
                 <BulletItem key={s.title} title={s.title} body={s.body} />
               ))}
             </Section>
 
-            <Section num={nextNum()} title="취약점 및 주의할 점">
+            <Section num={nextNum()} title={strings.report.sectionWeaknesses}>
               {content.weaknesses.map((w) => (
                 <BulletItem key={w.title} title={w.title} body={w.body} />
               ))}
             </Section>
 
-            <Section num={nextNum()} title="당신에게 맞는 일·환경">
+            <Section num={nextNum()} title={strings.report.sectionFit}>
               <View style={styles.fitGood}>
-                <Text style={[styles.fitLabel, { color: "#4E8368" }]}>이런 환경을 찾으세요</Text>
+                <Text style={[styles.fitLabel, { color: "#4E8368" }]}>{strings.report.fitGoodLabel}</Text>
                 <Text style={styles.fitBody}>{content.fit_good}</Text>
               </View>
               <View style={styles.fitBad}>
-                <Text style={[styles.fitLabel, { color: "#CB6249" }]}>이런 환경은 피하세요</Text>
+                <Text style={[styles.fitLabel, { color: "#CB6249" }]}>{strings.report.fitBadLabel}</Text>
                 <Text style={styles.fitBody}>{content.fit_bad}</Text>
               </View>
             </Section>
 
-            <Section num={nextNum()} title="어떻게 행동하면 좋을까">
+            <Section num={nextNum()} title={strings.report.sectionBehaviorGuides}>
               {content.behavior_guides.map((g) => (
                 <BulletItem key={g.title} title={g.title} body={g.body} />
               ))}
             </Section>
 
-            <Section num={nextNum()} title="어떻게 생각하면 편해질까">
+            <Section num={nextNum()} title={strings.report.sectionMindset}>
               <Body>{content.mindset_guide}</Body>
             </Section>
 
             <Section num={nextNum()} title={content.closing_title} noBorder>
               <Body>{content.closing_body}</Body>
-              <Text style={styles.disclaimer}>이 리포트는 자체 구축한 만세력 엔진의 정밀 사주 계산을 바탕으로 AI가 해석·작성한 콘텐츠이며, 전문적인 심리 상담이나 의학적 진단을 대체하지 않습니다.</Text>
-              <Text style={styles.disclaimer}>재미와 자기 이해를 위한 참고 자료로 봐주세요.</Text>
+              <Text style={styles.disclaimer}>{strings.report.disclaimer1}</Text>
+              <Text style={styles.disclaimer}>{strings.report.disclaimer2}</Text>
             </Section>
           </>
         ) : (
-          <PaywallCard ownedCount={ownedCount} />
+          <PaywallCard ownedCount={ownedCount} strings={strings} />
         )}
 
         <Pressable onPress={onBack} style={styles.homeButton}>
-          <Text style={styles.homeButtonLabel}>홈으로 돌아가기</Text>
+          <Text style={styles.homeButtonLabel}>{strings.report.homeButtonLabel}</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>
@@ -384,23 +393,24 @@ function BulletItem({ title, body }: { title: string; body: string }) {
 // on purpose: real IAP isn't wired yet (see lib/reportEntitlement.ts), and a button that
 // looks functional but isn't would repeat the exact dead-affordance bug already found
 // and fixed once this session on web's QAChat install button.
-function PaywallCard({ ownedCount }: { ownedCount: number }) {
+function PaywallCard({ ownedCount, strings }: { ownedCount: number; strings: Dictionary }) {
   const remainingCount = TOTAL_MODULES - ownedCount;
   return (
     <View style={styles.section}>
       <View style={styles.paywallCard}>
         <Lock size={22} strokeWidth={1.75} color={COLORS.gold} />
-        <Text style={styles.paywallTitle}>여기부터는 심층 리포트예요</Text>
-        <Text style={styles.paywallBody}>
-          대화 인용 분석, 사주×심리 교차분석, 강점·약점, 맞는 환경, 행동 지침까지 — 이 리포트의 핵심 조언이 이어집니다.
+        <Text style={styles.paywallTitle}>{strings.report.paywallTitle}</Text>
+        <Text style={styles.paywallBody}>{strings.report.paywallBody}</Text>
+        <Text style={styles.paywallPrice}>
+          {formatUsd(REPORT_PRICE)}
+          {strings.report.paywallPriceSuffix}
         </Text>
-        <Text style={styles.paywallPrice}>{formatUsd(REPORT_PRICE)}에 전체 보기</Text>
         {ownedCount > 0 && (
           <Text style={styles.paywallBundle}>
-            남은 {remainingCount}개 리포트를 한번에 보면 {formatUsd(remainingBundlePrice(ownedCount))} (25% 할인)
+            {strings.report.paywallBundle(remainingCount, formatUsd(remainingBundlePrice(ownedCount)))}
           </Text>
         )}
-        <Text style={styles.paywallComingSoon}>결제 기능은 준비 중이에요</Text>
+        <Text style={styles.paywallComingSoon}>{strings.report.paywallComingSoon}</Text>
       </View>
     </View>
   );

@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
-import { ELEMENT_LABELS_KO } from "../lib/elements";
+import { useStrings } from "../lib/i18n";
 import { getModuleById } from "../lib/quiz/modules";
 import {
   classifyProfile,
@@ -56,6 +56,7 @@ export default function QuizScreen({
   onComplete: (diagnosis: QuizDiagnosis) => void;
   onBack: () => void;
 }) {
+  const strings = useStrings();
   const moduleDef = useMemo(() => getModuleById(moduleId) ?? getModuleById("module1")!, [moduleId]);
   const questions = moduleDef.questions;
 
@@ -103,8 +104,8 @@ export default function QuizScreen({
     const dimensionResults = computeAllDimensionResults(answers, moduleDef.dimensionItemCounts);
     const classification = classifyProfile(dimensionResults);
     const typeInfo = resolveTypeName(classification, moduleDef.typeNames, (dims) => ({
-      title: dims.map((d) => moduleDef.dimensionShortNames[d] ?? d).join("+") + " 복합형",
-      hook: "여러 성향이 함께 나타나는 패턴입니다.",
+      title: dims.map((d) => moduleDef.dimensionShortNames[d] ?? d).join("+") + " " + strings.quiz.combinedTypeSuffix,
+      hook: strings.quiz.combinedTypeHook,
     }));
     const nuancedSummary = generateNuancedSummary(dimensionResults, moduleDef.dimensionLabels);
     const elements = sajuElements ?? null;
@@ -121,7 +122,7 @@ export default function QuizScreen({
       elements,
       dominantElement,
     };
-  }, [answers, done, moduleDef, sajuElements]);
+  }, [answers, done, moduleDef, sajuElements, strings]);
 
   function handleContinue() {
     if (!diagnosis) return;
@@ -150,33 +151,35 @@ export default function QuizScreen({
         <ScrollView contentContainerStyle={styles.doneContent}>
           <View style={styles.doneBadgeRow}>
             <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.doneBadgeLabel}>첫 블루프린트가 완성됐어요</Text>
+            <Text style={styles.doneBadgeLabel}>{strings.quiz.doneHeader}</Text>
           </View>
 
           <View style={styles.resultCard}>
             {dominantElement && ELEMENT_COLORS[dominantElement] && (
               <View style={styles.elementChip}>
                 <View style={[styles.elementDot, { backgroundColor: ELEMENT_COLORS[dominantElement] }]} />
-                <Text style={styles.elementChipLabel}>오행 · {ELEMENT_LABELS_KO[dominantElement] ?? dominantElement}</Text>
+                <Text style={styles.elementChipLabel}>
+                  {strings.quiz.elementBadgePrefix} {strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement}
+                </Text>
               </View>
             )}
             <Text style={styles.resultTitle}>{diagnosis.typeInfo.title}</Text>
             <Text style={styles.resultHook}>{diagnosis.typeInfo.hook}</Text>
             <View style={styles.resultFooter}>
               <Text style={styles.resultModuleTitle}>{moduleDef.title}</Text>
-              <Text style={styles.resultBrand}>Fatesaid</Text>
+              <Text style={styles.resultBrand}>{strings.common.brand}</Text>
             </View>
           </View>
 
-          <Text style={styles.moreDetailNote}>더 자세한 분석(오행 궁합, 성향 상세, 상담 대화 기반 인사이트)은 AI 상담을 마친 뒤 리포트에서 확인하실 수 있어요.</Text>
+          <Text style={styles.moreDetailNote}>{strings.quiz.moreDetail}</Text>
 
           <Pressable style={styles.continueButton} onPress={handleContinue}>
-            <Text style={styles.continueLabel}>AI 상담으로 이어가기</Text>
+            <Text style={styles.continueLabel}>{strings.quiz.continueToChatButton}</Text>
             <ArrowRight size={17} strokeWidth={2.25} color={COLORS.ctaText} />
           </Pressable>
           <Pressable style={styles.restartButton} onPress={handleRestart}>
             <RotateCcw size={12} strokeWidth={1.75} color={COLORS.footer} />
-            <Text style={styles.restartLabel}>다시 풀기</Text>
+            <Text style={styles.restartLabel}>{strings.quiz.restartButton}</Text>
           </Pressable>
         </ScrollView>
       </SafeAreaView>
@@ -192,9 +195,7 @@ export default function QuizScreen({
         <View style={styles.progressTrack}>
           <View style={[styles.progressFill, { width: `${Math.min(progress * 100, 100)}%` }]} />
         </View>
-        <Text style={styles.progressLabel}>
-          {index + 1} / {questions.length}
-        </Text>
+        <Text style={styles.progressLabel}>{strings.quiz.progressLabel(index + 1, questions.length)}</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -231,7 +232,7 @@ export default function QuizScreen({
             />
             <Text style={styles.sliderValue}>{sliderValue}</Text>
             <Pressable style={styles.sliderButton} onPress={handleSliderSubmit} disabled={transitioning}>
-              <Text style={styles.sliderButtonLabel}>다음</Text>
+              <Text style={styles.sliderButtonLabel}>{strings.quiz.nextButton}</Text>
             </Pressable>
           </View>
         )}

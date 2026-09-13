@@ -2,26 +2,29 @@ import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react-native";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useStrings } from "../lib/i18n";
 import { MODULES } from "../lib/quiz/modules";
 import { COLORS } from "../theme/colors";
 
 // Ported from components/ModuleSelect.jsx — picks which of the 11 30-question modules
 // to run. Same list web uses (lib/modules.ts, copied verbatim into mobile/lib/quiz/).
+// Module titles/subtitles stay Korean-only for now — see lib/i18n/README.md.
 export default function ModuleSelectScreen({ onSelect, onBack }: { onSelect: (moduleId: string) => void; onBack: () => void }) {
+  const strings = useStrings();
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
         <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
-          <Text style={styles.backLabel}>이전</Text>
+          <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </Pressable>
 
         <View style={styles.header}>
           <View style={styles.badgeRow}>
             <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.badgeLabel}>심리테스트</Text>
+            <Text style={styles.badgeLabel}>{strings.moduleSelect.badge}</Text>
           </View>
-          <Text style={styles.heading}>어떤 심리테스트를 진행할까요?</Text>
+          <Text style={styles.heading}>{strings.moduleSelect.heading}</Text>
         </View>
 
         {MODULES.map((m) => (

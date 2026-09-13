@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "../components/AppText";
 import { API_BASE_URL } from "../config";
+import { useStrings } from "../lib/i18n";
 import { findTopAnswers } from "../lib/quiz/quizProfile";
 import type { QuizDiagnosis } from "./QuizScreen";
 import { COLORS } from "../theme/colors";
@@ -45,6 +46,7 @@ export default function ChatScreen({
   onComplete: (extract: ChatExtract) => void;
   onBack: () => void;
 }) {
+  const strings = useStrings();
   const [messages, setMessages] = useState<Message[]>([]);
   const [turn, setTurn] = useState(0);
   const [input, setInput] = useState("");
@@ -121,7 +123,7 @@ export default function ChatScreen({
 
         if (!res.ok) {
           setIsTyping(false);
-          setErrorText(json.error || "챗봇 응답을 받아오지 못했습니다.");
+          setErrorText(json.error || strings.chat.errorDefault);
           return;
         }
 
@@ -140,10 +142,10 @@ export default function ChatScreen({
       } catch {
         if (!mountedRef.current) return;
         setIsTyping(false);
-        setErrorText("네트워크 오류로 챗봇 응답을 받지 못했습니다.");
+        setErrorText(strings.chat.errorNetwork);
       }
     },
-    [quizDiagnosis, onComplete, revealLines, sessionStartedAt, sessionId]
+    [quizDiagnosis, onComplete, revealLines, sessionStartedAt, sessionId, strings]
   );
 
   useEffect(() => {
@@ -176,7 +178,7 @@ export default function ChatScreen({
   const remainingSeconds = Math.max(0, TIME_LIMIT_MINUTES * 60 - elapsedSeconds);
   const timeUp = remainingSeconds <= 0;
   const countdownLabel = timeUp
-    ? "정리 중"
+    ? strings.chat.timeUpLabel
     : `${String(Math.floor(remainingSeconds / 60)).padStart(2, "0")}:${String(remainingSeconds % 60).padStart(2, "0")}`;
   const canFinishEarly = !done && !isTyping && !errorText && elapsedSeconds >= EARLY_FINISH_SECONDS;
   const showTextInput = !isTyping && !done && !errorText;
@@ -189,7 +191,7 @@ export default function ChatScreen({
             <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
           </Pressable>
           <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
-          <Text style={styles.headerLabel}>무료 AI 상담</Text>
+          <Text style={styles.headerLabel}>{strings.chat.headerLabel}</Text>
           {!done && (
             <View style={styles.countdown}>
               <Clock size={12} strokeWidth={2} color={remainingSeconds <= 60 ? "#CB6249" : COLORS.footer} />
@@ -213,7 +215,7 @@ export default function ChatScreen({
             <View style={styles.errorCard}>
               <Text style={styles.errorText}>{errorText}</Text>
               <Pressable onPress={handleRetry} style={styles.retryButton}>
-                <Text style={styles.retryLabel}>다시 시도</Text>
+                <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
               </Pressable>
             </View>
           )}
@@ -221,7 +223,7 @@ export default function ChatScreen({
           {done && (
             <View style={styles.doneBadge}>
               <ShieldCheck size={12} strokeWidth={2} color={COLORS.footer} />
-              <Text style={styles.doneBadgeLabel}>상담 종료 — 리포트를 준비하고 있어요</Text>
+              <Text style={styles.doneBadgeLabel}>{strings.chat.doneBadge}</Text>
             </View>
           )}
         </ScrollView>
@@ -230,7 +232,7 @@ export default function ChatScreen({
           <View style={styles.finishRow}>
             <Pressable style={styles.finishButton} onPress={handleFinishEarly}>
               <ShieldCheck size={13} strokeWidth={2} color={COLORS.gold} />
-              <Text style={styles.finishLabel}>충분히 상담했어요</Text>
+              <Text style={styles.finishLabel}>{strings.chat.finishEarlyButton}</Text>
             </Pressable>
           </View>
         )}
@@ -241,7 +243,7 @@ export default function ChatScreen({
               style={styles.input}
               value={input}
               onChangeText={setInput}
-              placeholder="편하게 이야기해주세요"
+              placeholder={strings.chat.inputPlaceholder}
               placeholderTextColor={COLORS.disabledText}
               onSubmitEditing={handleSend}
               returnKeyType="send"

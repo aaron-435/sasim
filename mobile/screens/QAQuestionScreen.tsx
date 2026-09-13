@@ -2,6 +2,7 @@ import { ArrowLeft, MessageCircleQuestion } from "lucide-react-native";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 
 type Question = { id: string; text_ko: string };
@@ -19,17 +20,18 @@ export default function QAQuestionScreen({
   onBack: () => void;
   onSelect: (q: Question) => void;
 }) {
+  const strings = useStrings();
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
         <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
-          <Text style={styles.backLabel}>이전</Text>
+          <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </Pressable>
 
         <View style={styles.header}>
           <Text style={styles.subcategoryLabel}>{subcategory.name_ko}</Text>
-          <Text style={styles.heading}>궁금한 질문을 골라주세요</Text>
+          <Text style={styles.heading}>{strings.qa.subcategoryHeading}</Text>
         </View>
 
         {subcategory.questions.map((q) => (

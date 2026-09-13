@@ -5,7 +5,8 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import questionBank from "../data/questionBank.json";
 import { API_BASE_URL } from "../config";
-import { getDailyLimit, getUsageToday, incrementUsageToday, PAID_DAILY_LIMIT, SUBSCRIPTION_PRICE_LABEL } from "../lib/qaQuota";
+import { useStrings } from "../lib/i18n";
+import { getDailyLimit, getUsageToday, incrementUsageToday, PAID_DAILY_LIMIT } from "../lib/qaQuota";
 import { saveLastQuestion } from "../lib/qaHistory";
 import type { NormalizedSajuResult } from "../lib/saju";
 import { COLORS } from "../theme/colors";
@@ -43,6 +44,7 @@ export default function QAScreen({
   sajuResult: NormalizedSajuResult;
   onBack: () => void;
 }) {
+  const strings = useStrings();
   const [messages, setMessages] = useState<Message[]>([]);
   const [view, setView] = useState<"chat" | "subcategory" | "question">("chat");
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
@@ -65,9 +67,9 @@ export default function QAScreen({
   const pushUser = useCallback((text: string) => setMessages((m) => [...m, { role: "user", text }]), []);
   const pushCategoryPicker = useCallback(() => setMessages((m) => [...m, { role: "picker" }]), []);
   const pushLimitReachedMessage = useCallback(() => {
-    pushBot("오늘의 무료 질문을 다 쓰셨어요. 내일 다시 질문할 수 있어요.");
-    pushBot(`${SUBSCRIPTION_PRICE_LABEL} 구독하면 하루 ${PAID_DAILY_LIMIT}개까지 질문할 수 있는 기능을 준비하고 있어요.`);
-  }, [pushBot]);
+    pushBot(strings.qa.limitReached1);
+    pushBot(strings.qa.limitReached2(strings.qa.subscriptionPriceLabel, PAID_DAILY_LIMIT));
+  }, [pushBot, strings]);
 
   useEffect(() => {
     if (greetedRef.current) return;
@@ -75,7 +77,7 @@ export default function QAScreen({
     (async () => {
       await wait(350);
       if (!mountedRef.current) return;
-      pushBot(`안녕하세요, ${nickname || "회원"}님!`);
+      pushBot(strings.qa.greeting1(nickname || strings.qa.defaultNickname));
 
       const usage = await getUsageToday();
       if (!mountedRef.current) return;
@@ -88,13 +90,13 @@ export default function QAScreen({
 
       await wait(850);
       if (!mountedRef.current) return;
-      pushBot("Fatesaid는 한국에서 온 사주 전문가와 심리 전문가로 이루어진 팀이에요.");
+      pushBot(strings.qa.greeting2);
       await wait(700);
       if (!mountedRef.current) return;
-      pushBot("궁금한 거 편하게 물어보세요. 관심 있는 주제를 골라주세요.");
+      pushBot(strings.qa.promptCategory);
       pushCategoryPicker();
     })();
-  }, [nickname, pushBot, pushCategoryPicker, pushLimitReachedMessage]);
+  }, [nickname, pushBot, pushCategoryPicker, pushLimitReachedMessage, strings]);
 
   useEffect(() => {
     scrollRef.current?.scrollToEnd({ animated: true });
@@ -113,7 +115,7 @@ export default function QAScreen({
       if (!mountedRef.current) return;
 
       if (!res.ok) {
-        setErrorText(json.error || "답변을 가져오지 못했습니다.");
+        setErrorText(json.error || strings.qa.errorDefault);
         setRetryQuestion(questionText);
         setBusy(false);
         return;
@@ -133,13 +135,13 @@ export default function QAScreen({
       if (usageAfter >= getDailyLimit()) {
         pushLimitReachedMessage();
       } else {
-        pushBot("질문 1개 더 골라볼까요?");
+        pushBot(strings.qa.askOneMore);
         pushCategoryPicker();
       }
       setBusy(false);
     } catch {
       if (!mountedRef.current) return;
-      setErrorText("네트워크 오류로 답변을 가져오지 못했습니다.");
+      setErrorText(strings.qa.errorNetwork);
       setRetryQuestion(questionText);
       setBusy(false);
     }
@@ -180,7 +182,7 @@ export default function QAScreen({
           <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
         </Pressable>
         <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
-        <Text style={styles.headerLabel}>사주 Q&A</Text>
+        <Text style={styles.headerLabel}>{strings.qa.headerLabel}</Text>
       </View>
 
       <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContent}>
@@ -214,7 +216,7 @@ export default function QAScreen({
             <Text style={styles.errorText}>{errorText}</Text>
             <Pressable onPress={handleRetry} style={styles.retryButton}>
               <RefreshCw size={13} strokeWidth={2} color={COLORS.gold} />
-              <Text style={styles.retryLabel}>다시 시도</Text>
+              <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
             </Pressable>
           </View>
         )}

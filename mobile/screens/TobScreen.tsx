@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
+import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { to24HourString } from "../lib/zodiac";
 
@@ -29,6 +30,7 @@ export default function TobScreen({
   onNext: () => void;
   onBack: () => void;
 }) {
+  const strings = useStrings();
   const minuteRef = useRef<TextInput>(null);
   const tob = to24HourString(hour, minute, period);
   const canProceed = timeUnknown || tob !== "";
@@ -41,16 +43,16 @@ export default function TobScreen({
     <OnboardingShell stepIndex={3} onBack={onBack}>
       <View style={styles.top}>
         <View style={styles.headerRow}>
-          <Text style={styles.heading}>태어난 시간</Text>
+          <Text style={styles.heading}>{strings.tob.heading}</Text>
           <Pressable onPress={onToggleUnknown} hitSlop={8} style={styles.unknownButton}>
-            <Text style={[styles.unknownLabel, timeUnknown && styles.unknownLabelActive]}>모름</Text>
+            <Text style={[styles.unknownLabel, timeUnknown && styles.unknownLabelActive]}>{strings.tob.unknownTime}</Text>
           </Pressable>
         </View>
 
         <View style={styles.row}>
           <TextInput
             style={[styles.input, styles.shortInput, timeUnknown && styles.inputDisabled]}
-            placeholder="시"
+            placeholder={strings.tob.hourPlaceholder}
             placeholderTextColor={COLORS.disabledText}
             value={hour}
             editable={!timeUnknown}
@@ -67,7 +69,7 @@ export default function TobScreen({
           <TextInput
             ref={minuteRef}
             style={[styles.input, styles.shortInput, timeUnknown && styles.inputDisabled]}
-            placeholder="분"
+            placeholder={strings.tob.minutePlaceholder}
             placeholderTextColor={COLORS.disabledText}
             value={minute}
             editable={!timeUnknown}
@@ -79,13 +81,13 @@ export default function TobScreen({
             style={[styles.periodButton, period === "AM" && styles.periodButtonActive, timeUnknown && styles.inputDisabled]}
             onPress={() => !timeUnknown && onChangePeriod("AM")}
           >
-            <Text style={[styles.periodLabel, period === "AM" && styles.periodLabelActive]}>오전</Text>
+            <Text style={[styles.periodLabel, period === "AM" && styles.periodLabelActive]}>{strings.tob.periodAM}</Text>
           </Pressable>
           <Pressable
             style={[styles.periodButton, period === "PM" && styles.periodButtonActive, timeUnknown && styles.inputDisabled]}
             onPress={() => !timeUnknown && onChangePeriod("PM")}
           >
-            <Text style={[styles.periodLabel, period === "PM" && styles.periodLabelActive]}>오후</Text>
+            <Text style={[styles.periodLabel, period === "PM" && styles.periodLabelActive]}>{strings.tob.periodPM}</Text>
           </Pressable>
         </View>
       </View>

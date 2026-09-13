@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
+import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 
 export default function GenderScreen({
@@ -15,22 +16,23 @@ export default function GenderScreen({
   onNext: () => void;
   onBack: () => void;
 }) {
+  const strings = useStrings();
   return (
     <OnboardingShell stepIndex={1} onBack={onBack}>
       <View style={styles.top}>
-        <Text style={styles.heading}>성별</Text>
+        <Text style={styles.heading}>{strings.gender.heading}</Text>
         <View style={styles.row}>
           <Pressable
             style={[styles.option, isFemale === false && styles.optionActive]}
             onPress={() => onChange(false)}
           >
-            <Text style={[styles.optionLabel, isFemale === false && styles.optionLabelActive]}>남성</Text>
+            <Text style={[styles.optionLabel, isFemale === false && styles.optionLabelActive]}>{strings.gender.male}</Text>
           </Pressable>
           <Pressable
             style={[styles.option, isFemale === true && styles.optionActive]}
             onPress={() => onChange(true)}
           >
-            <Text style={[styles.optionLabel, isFemale === true && styles.optionLabelActive]}>여성</Text>
+            <Text style={[styles.optionLabel, isFemale === true && styles.optionLabelActive]}>{strings.gender.female}</Text>
           </Pressable>
         </View>
       </View>

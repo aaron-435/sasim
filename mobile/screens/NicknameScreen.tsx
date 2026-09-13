@@ -3,6 +3,7 @@ import { StyleSheet, TextInput, View } from "react-native";
 import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
+import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 
 const MAX_LENGTH = 20;
@@ -18,17 +19,18 @@ export default function NicknameScreen({
   onNext: () => void;
   onBack: () => void;
 }) {
+  const strings = useStrings();
   const [focused, setFocused] = useState(false);
   const canProceed = value.trim().length > 0;
 
   return (
     <OnboardingShell stepIndex={0} onBack={onBack}>
       <View style={styles.top}>
-        <Text style={styles.heading}>뭐라고 불러 드릴까요?</Text>
-        <Text style={styles.subtext}>이 이름으로 결과를 안내해 드릴게요.</Text>
+        <Text style={styles.heading}>{strings.nickname.heading}</Text>
+        <Text style={styles.subtext}>{strings.nickname.subtext}</Text>
         <TextInput
           style={[styles.input, focused && styles.inputFocused]}
-          placeholder="닉네임을 입력하세요"
+          placeholder={strings.nickname.placeholder}
           placeholderTextColor={COLORS.disabledText}
           value={value}
           onChangeText={onChange}
