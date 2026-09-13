@@ -24,6 +24,13 @@ export interface ReportBullet {
   body: string;
 }
 
+export interface ElementReading {
+  heading: string;
+  body: string;
+}
+
+const ELEMENT_KEYS = ["wood", "fire", "earth", "metal", "water"] as const;
+
 export interface ReportContent {
   title_line1: string;
   title_line2: string;
@@ -31,10 +38,9 @@ export interface ReportContent {
   opening_scene: string;
   case_tag: string;
   case_paragraphs: string[];
-  saju_dominant_heading: string;
-  saju_dominant_body: string;
-  saju_weak_heading: string;
-  saju_weak_body: string;
+  element_readings: Record<(typeof ELEMENT_KEYS)[number], ElementReading>;
+  upcoming_period_heading: string;
+  upcoming_period_body: string;
   cross_analysis_quotes: string[];
   psychology_fact_heading: string;
   psychology_fact_body: string;
@@ -62,6 +68,18 @@ function asBulletList(value: unknown): ReportBullet[] {
 function asStringList(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   return value.map((v) => String(v)).filter(Boolean);
+}
+
+function asElementReadings(value: unknown): ReportContent["element_readings"] {
+  const obj = (value ?? {}) as Record<string, { heading?: unknown; body?: unknown }>;
+  const result = {} as ReportContent["element_readings"];
+  for (const key of ELEMENT_KEYS) {
+    result[key] = {
+      heading: String(obj[key]?.heading ?? ""),
+      body: String(obj[key]?.body ?? ""),
+    };
+  }
+  return result;
 }
 
 export async function getReportContent(context: ReportContext, sessionId?: string): Promise<ReportContent> {
@@ -96,10 +114,9 @@ export async function getReportContent(context: ReportContext, sessionId?: strin
     opening_scene: String(parsed.opening_scene ?? ""),
     case_tag: String(parsed.case_tag ?? ""),
     case_paragraphs: asStringList(parsed.case_paragraphs),
-    saju_dominant_heading: String(parsed.saju_dominant_heading ?? ""),
-    saju_dominant_body: String(parsed.saju_dominant_body ?? ""),
-    saju_weak_heading: String(parsed.saju_weak_heading ?? ""),
-    saju_weak_body: String(parsed.saju_weak_body ?? ""),
+    element_readings: asElementReadings(parsed.element_readings),
+    upcoming_period_heading: String(parsed.upcoming_period_heading ?? ""),
+    upcoming_period_body: String(parsed.upcoming_period_body ?? ""),
     cross_analysis_quotes: asStringList(parsed.cross_analysis_quotes),
     psychology_fact_heading: String(parsed.psychology_fact_heading ?? ""),
     psychology_fact_body: String(parsed.psychology_fact_body ?? ""),

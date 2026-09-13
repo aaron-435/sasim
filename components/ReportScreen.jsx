@@ -123,6 +123,7 @@ export default function ReportScreen({ nickname = "OOO", track = "romance", elem
 
   const sortedElements = Object.keys(resolvedElements).sort((a, b) => resolvedElements[b] - resolvedElements[a]);
   const dominantKey = sortedElements[0];
+  const weakKey = sortedElements[sortedElements.length - 1];
 
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#122019", display: "flex", justifyContent: "center" }}>
@@ -222,10 +223,10 @@ export default function ReportScreen({ nickname = "OOO", track = "romance", elem
               );
             })}
           </div>
-          <h2 className="rp-h2">{content.saju_dominant_heading}</h2>
-          <p className="rp-body">{content.saju_dominant_body}</p>
-          <h2 className="rp-h2">{content.saju_weak_heading}</h2>
-          <p className="rp-body">{content.saju_weak_body}</p>
+          <h2 className="rp-h2">{content.element_readings?.[dominantKey]?.heading}</h2>
+          <p className="rp-body">{content.element_readings?.[dominantKey]?.body}</p>
+          <h2 className="rp-h2">{content.element_readings?.[weakKey]?.heading}</h2>
+          <p className="rp-body">{content.element_readings?.[weakKey]?.body}</p>
         </div>
 
         {chatExtract && (

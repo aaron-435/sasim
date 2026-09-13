@@ -295,6 +295,8 @@ function AppContent() {
         <ReportScreen
           nickname={homeData.nickname}
           elements={homeData.sajuResult.elements}
+          decadeFortune={homeData.sajuResult.decadeFortune}
+          currentAge={homeData.sajuResult.currentAge}
           quizDiagnosis={quizDiagnosis}
           chatExtract={chatExtract}
           sessionId={sessionId}
