@@ -145,13 +145,13 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       ),
     },
     {
-      name: "Kim Dae-jung",
-      birthYear: 1924,
-      field: t("정치인", "Politician", "Político"),
+      name: "Miriam Makeba",
+      birthYear: 1932,
+      field: t("가수", "Singer", "Cantante"),
       blurb: t(
-        "여러 차례 암살 위협을 견디고 한국 민주화 공로로 노벨평화상을 받았습니다.",
-        "Survived assassination attempts to win the Nobel Peace Prize for Korean democracy.",
-        "Sobrevivió a intentos de asesinato y ganó el Nobel de la Paz por la democracia coreana."
+        "망명 생활 중에도 남아프리카 음악을 세계에 알렸습니다.",
+        "Brought South African music to the world while exiled for opposing apartheid.",
+        "Llevó la música sudafricana al mundo mientras estaba exiliada por oponerse al apartheid."
       ),
     },
   ],
@@ -211,13 +211,13 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       ),
     },
     {
-      name: "Son Heung-min",
-      birthYear: 1992,
-      field: t("축구선수", "Soccer player", "Futbolista"),
+      name: "Amy Winehouse",
+      birthYear: 1983,
+      field: t("가수", "Singer", "Cantante"),
       blurb: t(
-        "아시아 선수 최초로 유럽 최상위 리그 득점왕에 올랐습니다.",
-        "Became the first Asian player to win Europe's top league Golden Boot.",
-        "Se convirtió en el primer jugador asiático en ganar el Botín de Oro de la mejor liga europea."
+        "독보적인 목소리로 현대 소울 음악의 흐름을 바꿔놓았습니다.",
+        "Reshaped modern soul music with a singular, raw voice.",
+        "Transformó la música soul moderna con una voz única y cruda."
       ),
     },
   ],
@@ -1115,13 +1115,13 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       ),
     },
     {
-      name: "Kim Yuna",
-      birthYear: 1990,
-      field: t("피겨스케이팅선수", "Figure skater", "Patinadora artística"),
+      name: "Reese Witherspoon",
+      birthYear: 1976,
+      field: t("배우", "Actor", "Actriz"),
       blurb: t(
-        "올림픽 금메달을 따내며 국민적인 아이콘이 됐습니다.",
-        "Won Olympic gold and became a national icon in figure skating.",
-        "Ganó el oro olímpico y se convirtió en un ícono nacional del patinaje artístico."
+        "여성들을 위한 더 많은 배역을 만들기 위해 직접 제작사를 설립했습니다.",
+        "Built a production company to create more roles for women.",
+        "Fundó su propia productora para crear más papeles para mujeres."
       ),
     },
   ],
