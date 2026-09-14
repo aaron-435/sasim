@@ -2,6 +2,7 @@
   "expo": {
     "name": "Fatesaid",
     "slug": "fatesaid",
+    "owner": "aaron_435",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -28,6 +29,11 @@
       "expo-dev-client",
       "expo-sharing",
       "expo-notifications"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "9bd986eb-bf65-4db0-b05c-b6a083c696e2"
+      }
+    }
   }
 }
