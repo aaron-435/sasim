@@ -1,4 +1,4 @@
-import { ArrowRight, Bot, Brain, FileText, HelpCircle, Lock, MessageCircleQuestion, Sparkles, Users } from "lucide-react-native";
+import { ArrowRight, Bot, Brain, FileText, HelpCircle, Lock, MessageCircleQuestion, Settings, Sparkles, Users } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
@@ -44,6 +44,7 @@ export default function HomeScreen({
   onOpenQuiz,
   onOpenType,
   onOpenCompatibility,
+  onOpenSettings,
 }: {
   nickname: string;
   dominantElement: string | null;
@@ -53,6 +54,7 @@ export default function HomeScreen({
   onOpenQuiz: () => void;
   onOpenType: () => void;
   onOpenCompatibility: () => void;
+  onOpenSettings: () => void;
 }) {
   const strings = useStrings();
   const { locale } = useLocale();
@@ -117,9 +119,14 @@ export default function HomeScreen({
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <Animated.View style={[styles.header, sectionStyle(0)]}>
-            <View style={styles.brandRow}>
-              <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-              <Text style={styles.brandLabel}>FATESAID</Text>
+            <View style={styles.headerTopRow}>
+              <View style={styles.brandRow}>
+                <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
+                <Text style={styles.brandLabel}>FATESAID</Text>
+              </View>
+              <Pressable onPress={onOpenSettings} hitSlop={10} style={styles.settingsButton}>
+                <Settings size={18} strokeWidth={1.75} color={COLORS.subheadline} />
+              </Pressable>
             </View>
             <Text style={styles.greeting}>{strings.home.greeting(nickname)}</Text>
             <View style={styles.badgeRow}>
@@ -270,11 +277,20 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 28,
   },
+  headerTopRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
   brandRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    marginBottom: 16,
+  },
+  settingsButton: {
+    padding: 6,
+    marginRight: -6,
   },
   brandLabel: {
     fontFamily: "Manrope_600SemiBold",

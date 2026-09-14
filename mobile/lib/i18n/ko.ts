@@ -161,6 +161,26 @@ export const ko = {
     body: (pillarLabel: string) => `일주일 뒤, 당신의 대운이 ${pillarLabel}(으)로 바뀝니다. Fatesaid에서 어떤 흐름인지 확인해보세요.`,
   },
 
+  routineNotification: {
+    dailyTitle: "오늘의 운세가 도착했어요",
+    dailyBody: "지금 열어보고 오늘 하루의 흐름을 확인해보세요.",
+    weeklyTitle: "이번 주 운세가 도착했어요",
+    weeklyBody: "한 주를 시작하기 전에 이번 주 흐름을 확인해보세요.",
+  },
+
+  settings: {
+    heading: "설정",
+    languageSectionLabel: "언어",
+    notificationSectionLabel: "알림",
+    notificationOff: "알림 안 받기",
+    notificationOffDescription: "운세 알림을 보내지 않아요",
+    notificationDaily: "오늘의 운세 받아보기",
+    notificationDailyDescription: "매일 아침 오늘의 운세를 알려드려요",
+    notificationWeekly: "주간 운세 받아보기",
+    notificationWeeklyDescription: "매주 월요일 아침 이번 주 운세를 알려드려요",
+    notificationPermissionDenied: "알림 권한이 꺼져 있어요. 기기 설정에서 알림을 허용해주세요.",
+  },
+
   compatibility: {
     heading: "궁합",
     subtitle: "상대방의 생년월일을 입력하면 두 사람의 사주 흐름을 비교해드려요.",

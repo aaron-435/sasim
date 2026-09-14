@@ -18,6 +18,7 @@ import QAScreen from "./screens/QAScreen";
 import QuizScreen, { type QuizDiagnosis } from "./screens/QuizScreen";
 import ReportScreen from "./screens/ReportScreen";
 import TobScreen from "./screens/TobScreen";
+import SettingsScreen from "./screens/SettingsScreen";
 import TypeScreen from "./screens/TypeScreen";
 import VerifyCodeScreen, { type VerifiedData } from "./screens/VerifyCodeScreen";
 import { scheduleDecadeTransitionNotification } from "./lib/decadeNotification";
@@ -36,7 +37,7 @@ import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/
 // pipeline — chained, not independently reachable from Home, since chat needs a quiz
 // diagnosis and report needs both quiz+chat context — same dependency web's
 // components/AppFlow.jsx has).
-type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility";
+type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "settings";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
@@ -270,8 +271,11 @@ function AppContent() {
           onOpenQuiz={() => setStep("moduleSelect")}
           onOpenType={() => setStep("type")}
           onOpenCompatibility={() => setStep("compatibility")}
+          onOpenSettings={() => setStep("settings")}
         />
       )}
+
+      {step === "settings" && <SettingsScreen onBack={() => setStep("home")} />}
 
       {step === "type" && homeData?.sajuResult.sajuType && (
         <TypeScreen

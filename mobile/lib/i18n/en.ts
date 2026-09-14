@@ -138,6 +138,26 @@ export const en: typeof ko = {
     body: (pillarLabel: string) => `In one week, your decade fortune shifts to ${pillarLabel}. See what that means on Fatesaid.`,
   },
 
+  routineNotification: {
+    dailyTitle: "Your daily fortune is ready",
+    dailyBody: "Open the app to see how today looks for you.",
+    weeklyTitle: "Your weekly fortune is ready",
+    weeklyBody: "See how this week looks before it gets going.",
+  },
+
+  settings: {
+    heading: "Settings",
+    languageSectionLabel: "Language",
+    notificationSectionLabel: "Notifications",
+    notificationOff: "Don't send notifications",
+    notificationOffDescription: "You won't get any fortune reminders",
+    notificationDaily: "Get my daily fortune",
+    notificationDailyDescription: "A reminder every morning",
+    notificationWeekly: "Get my weekly fortune",
+    notificationWeeklyDescription: "A reminder every Monday morning",
+    notificationPermissionDenied: "Notifications are turned off for this app. Enable them in your device settings.",
+  },
+
   compatibility: {
     heading: "Compatibility",
     subtitle: "Enter the other person's birth date to compare how your two charts flow together.",

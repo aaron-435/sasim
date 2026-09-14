@@ -138,6 +138,26 @@ export const es: typeof ko = {
     body: (pillarLabel: string) => `En una semana, tu década de fortuna cambia a ${pillarLabel}. Descubre qué significa en Fatesaid.`,
   },
 
+  routineNotification: {
+    dailyTitle: "Tu fortuna de hoy ya está lista",
+    dailyBody: "Abre la app para ver cómo se ve tu día.",
+    weeklyTitle: "Tu fortuna de la semana ya está lista",
+    weeklyBody: "Descubre cómo se ve tu semana antes de que empiece.",
+  },
+
+  settings: {
+    heading: "Ajustes",
+    languageSectionLabel: "Idioma",
+    notificationSectionLabel: "Notificaciones",
+    notificationOff: "No enviar notificaciones",
+    notificationOffDescription: "No recibirás recordatorios de tu fortuna",
+    notificationDaily: "Recibir mi fortuna diaria",
+    notificationDailyDescription: "Un recordatorio cada mañana",
+    notificationWeekly: "Recibir mi fortuna semanal",
+    notificationWeeklyDescription: "Un recordatorio cada lunes por la mañana",
+    notificationPermissionDenied: "Las notificaciones están desactivadas para esta app. Actívalas en los ajustes de tu dispositivo.",
+  },
+
   compatibility: {
     heading: "Compatibilidad",
     subtitle: "Ingresa la fecha de nacimiento de la otra persona para comparar cómo fluyen sus dos cartas.",

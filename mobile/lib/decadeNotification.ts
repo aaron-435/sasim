@@ -8,33 +8,19 @@
 // react-native-purchases — see the IAP memory).
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
+import "./notificationSetup";
 import { findNextDecadeTransition } from "./decadeTransition";
+import { getNotificationPreference } from "./notificationPreference";
 import type { Dictionary } from "./i18n/dictionaries";
 
 const NOTIFICATION_ID = "fatesaid-decade-transition";
 const HEADS_UP_DAYS = 7;
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowBanner: true,
-    shouldShowList: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
-
-if (Platform.OS === "android") {
-  // Required on Android 8+ (API 26+) — a notification with no known channel is dropped.
-  Notifications.setNotificationChannelAsync("default", {
-    name: "default",
-    importance: Notifications.AndroidImportance.DEFAULT,
-  });
-}
-
 /**
  * homeData가 갖춰질 때마다(앱 시작/온보딩 완료 시) 호출 — 이미 예약된 알림을 정리하고
  * 다음 대운 전환이 있으면 그 7일 전으로 새로 예약한다. 권한이 없거나 다음 전환이
- * 이미 7일 이내로 다가와 있거나 지나갔으면 조용히 아무 것도 하지 않는다(에러 아님).
+ * 이미 7일 이내로 다가와 있거나 지나갔으면, 혹은 사용자가 설정에서 알림을 껐으면
+ * 조용히 아무 것도 하지 않는다(에러 아님).
  */
 export async function scheduleDecadeTransitionNotification(
   strings: Dictionary,
@@ -49,6 +35,8 @@ export async function scheduleDecadeTransitionNotification(
   } catch {
     // nothing was scheduled yet — fine
   }
+
+  if ((await getNotificationPreference()) === "off") return;
 
   const transition = findNextDecadeTransition(decadeFortune, currentAge, birthYear, birthMonth, birthDay);
   if (!transition) return;
