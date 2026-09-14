@@ -21,6 +21,14 @@
  * name map yet, so `es` falls back to English rather than incorrect Korean.
  * Defaults to "ko" when the param is absent, so the web app's existing
  * behavior is unchanged.)
+ *
+ * (2026-09-14: added a permissive CORS header. This is public, unauthenticated
+ * reference data — no user data in or out — so there's no confidentiality
+ * reason to restrict the origin. Without it, the mobile app's `expo start
+ * --web` preview (a different origin, localhost:8082) can't read the
+ * response at all: the native app itself never hits this wall since CORS is
+ * a browser-only mechanism, but that made this endpoint untestable outside
+ * an actual device build.)
  * ------------------------------------------------------------------
  */
 
@@ -35,5 +43,5 @@ export async function GET(req: NextRequest) {
     cityDisplay: locale === "ko" ? c.cityDisplay : c.cityEn,
     countryDisplay: locale === "ko" ? c.countryDisplay : c.countryEn,
   }));
-  return NextResponse.json({ results });
+  return NextResponse.json({ results }, { headers: { "Access-Control-Allow-Origin": "*" } });
 }
