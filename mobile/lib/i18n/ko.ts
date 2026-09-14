@@ -134,6 +134,8 @@ export const ko = {
     featureQaDescription: "궁금한 순간, 지금 바로 물어보세요",
     featureQuizLabel: "심리테스트",
     featureQuizDescription: "나를 이해하는 첫걸음",
+    featureTypeLabel: "나의 사주 유형",
+    featureTypeDescription: "50가지 유형 중 나는 어떤 사람일까요",
     featureChatLabel: "AI 상담",
     featureChatDescription: "심리테스트 완료 후 이용 가능",
     featureReportLabel: "심층 리포트",

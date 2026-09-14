@@ -111,6 +111,8 @@ export const es: typeof ko = {
     featureQaDescription: "¿Tienes una pregunta? Pregúntala ahora mismo",
     featureQuizLabel: "Test Psicológico",
     featureQuizDescription: "El primer paso para entenderte a ti mismo",
+    featureTypeLabel: "Mi Tipo de Saju",
+    featureTypeDescription: "¿Cuál de los 50 tipos eres tú?",
     featureChatLabel: "Consejería con IA",
     featureChatDescription: "Disponible al terminar el test psicológico",
     featureReportLabel: "Informe Detallado",
