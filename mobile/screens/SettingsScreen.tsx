@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, Check } from "lucide-react-native";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LOCALES, LOCALE_LABELS, useLocale, useStrings, type Locale } from "../lib/i18n";
@@ -27,7 +27,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
     weekly: { label: strings.settings.notificationWeekly, description: strings.settings.notificationWeeklyDescription },
   };
 
-  async function handlePickNotification(pref: NotificationPreference) {
+  async function commitNotificationPreference(pref: NotificationPreference) {
     if (applying || pref === notificationPref) return;
     setApplying(true);
     setPermissionDenied(false);
@@ -44,6 +44,22 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
     } finally {
       setApplying(false);
     }
+  }
+
+  function handlePickNotification(pref: NotificationPreference) {
+    if (applying || pref === notificationPref) return;
+    // Going straight from daily to off skips a lighter middle ground — offer weekly as
+    // an alternative before actually turning everything off. Already-weekly has no
+    // lighter step below it, so that case turns off directly.
+    if (pref === "off" && notificationPref === "daily") {
+      Alert.alert(strings.settings.turnOffPromptTitle, strings.settings.turnOffPromptBody, [
+        { text: strings.settings.cancelLabel, style: "cancel" },
+        { text: strings.settings.turnOffPromptSwitchToWeekly, onPress: () => commitNotificationPreference("weekly") },
+        { text: strings.settings.turnOffPromptConfirm, style: "destructive", onPress: () => commitNotificationPreference("off") },
+      ]);
+      return;
+    }
+    commitNotificationPreference(pref);
   }
 
   return (

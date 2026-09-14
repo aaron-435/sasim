@@ -156,6 +156,11 @@ export const es: typeof ko = {
     notificationWeekly: "Recibir mi fortuna semanal",
     notificationWeeklyDescription: "Un recordatorio cada lunes por la mañana",
     notificationPermissionDenied: "Las notificaciones están desactivadas para esta app. Actívalas en los ajustes de tu dispositivo.",
+    turnOffPromptTitle: "¿Desactivar las notificaciones?",
+    turnOffPromptBody: "También puedes cambiar a solo una vez por semana en lugar de cada día.",
+    turnOffPromptSwitchToWeekly: "Cambiar a semanal",
+    turnOffPromptConfirm: "Desactivar",
+    cancelLabel: "Cancelar",
   },
 
   compatibility: {

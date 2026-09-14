@@ -22,6 +22,8 @@ import SettingsScreen from "./screens/SettingsScreen";
 import TypeScreen from "./screens/TypeScreen";
 import VerifyCodeScreen, { type VerifiedData } from "./screens/VerifyCodeScreen";
 import { scheduleDecadeTransitionNotification } from "./lib/decadeNotification";
+import { DEFAULT_NOTIFICATION_PREFERENCE, getStoredNotificationPreference, setNotificationPreference } from "./lib/notificationPreference";
+import { applyNotificationPreference } from "./lib/routineNotification";
 import { dominantElementFrom } from "./lib/elements";
 import { LocaleProvider, useLocale, useStrings } from "./lib/i18n";
 import { configurePurchases } from "./lib/purchases";
@@ -112,6 +114,20 @@ function AppContent() {
       homeData.sajuResult.birthMonth,
       homeData.sajuResult.birthDay
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeData]);
+
+  // First time a user reaches Home, no explicit Settings choice exists yet — apply and
+  // persist the default (see notificationPreference.ts) so it's actually scheduled, not
+  // just what Settings would show if opened. A later explicit choice is never overwritten.
+  useEffect(() => {
+    if (!homeData) return;
+    (async () => {
+      const stored = await getStoredNotificationPreference();
+      if (stored !== null) return;
+      await setNotificationPreference(DEFAULT_NOTIFICATION_PREFERENCE);
+      await applyNotificationPreference(DEFAULT_NOTIFICATION_PREFERENCE, strings);
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeData]);
 

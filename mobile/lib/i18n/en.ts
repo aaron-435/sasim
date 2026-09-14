@@ -156,6 +156,11 @@ export const en: typeof ko = {
     notificationWeekly: "Get my weekly fortune",
     notificationWeeklyDescription: "A reminder every Monday morning",
     notificationPermissionDenied: "Notifications are turned off for this app. Enable them in your device settings.",
+    turnOffPromptTitle: "Turn off notifications?",
+    turnOffPromptBody: "You could also switch to just once a week instead of every day.",
+    turnOffPromptSwitchToWeekly: "Switch to weekly",
+    turnOffPromptConfirm: "Turn off",
+    cancelLabel: "Cancel",
   },
 
   compatibility: {

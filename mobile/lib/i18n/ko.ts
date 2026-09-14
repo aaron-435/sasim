@@ -179,6 +179,11 @@ export const ko = {
     notificationWeekly: "주간 운세 받아보기",
     notificationWeeklyDescription: "매주 월요일 아침 이번 주 운세를 알려드려요",
     notificationPermissionDenied: "알림 권한이 꺼져 있어요. 기기 설정에서 알림을 허용해주세요.",
+    turnOffPromptTitle: "알림을 끌까요?",
+    turnOffPromptBody: "매일 대신 일주일에 한 번만 받아보는 방법도 있어요.",
+    turnOffPromptSwitchToWeekly: "주간 알림으로 바꾸기",
+    turnOffPromptConfirm: "끄기",
+    cancelLabel: "취소",
   },
 
   compatibility: {
