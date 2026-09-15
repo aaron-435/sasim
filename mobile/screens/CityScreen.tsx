@@ -16,6 +16,10 @@ export type SajuResult = {
   dominantElement: string;
   fourPillars: unknown;
   decadeFortune: unknown;
+  // dayMaster.char 등 — 궁합/오늘의 운세가 필요로 하는 값 (App.tsx가 homeData로
+  // 옮길 때 이 필드를 빠뜨리면 두 기능 다 selfDayMasterChar가 null이 되어 조용히
+  // 아무것도 안 뜨는 채로 멈춘다, 2026-09-15에 실기기 테스트로 발견).
+  summary: unknown;
   currentAge: number;
   sajuType: SajuType | null;
   birthYear: number;

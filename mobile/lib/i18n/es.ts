@@ -119,6 +119,8 @@ export const es: typeof ko = {
     featureReportDescription: "Disponible al terminar el test psicológico",
     featureCompatLabel: "Compatibilidad",
     featureCompatDescription: "Descubre cómo fluyen tu carta y la de otra persona",
+    featureFortuneLabel: "Fortuna Diaria",
+    featureFortuneDescription: "La energía cambiante de tu día",
     recentQuestionLabel: "Pregunta Reciente",
     recentQuestionEmpty: "Aún no has preguntado nada · Haz tu primera pregunta",
     typeBadgeTap: "Toca para ver más",
@@ -145,6 +147,10 @@ export const es: typeof ko = {
     dailyBody: "Abre la app para ver cómo se ve tu día.",
     weeklyTitle: "Tu fortuna de la semana ya está lista",
     weeklyBody: "Descubre cómo se ve tu semana antes de que empiece.",
+    dailyTitleFree: "Tu pregunta gratis ya está lista",
+    dailyBodyFree: "Tienes una pregunta gratis al día — anímate a preguntar.",
+    weeklyTitleFree: "Tu pregunta gratis de esta semana te espera",
+    weeklyBodyFree: "Tienes una pregunta gratis al día — anímate a preguntar.",
   },
 
   settings: {
@@ -163,6 +169,11 @@ export const es: typeof ko = {
     turnOffPromptSwitchToWeekly: "Cambiar a semanal",
     turnOffPromptConfirm: "Desactivar",
     cancelLabel: "Cancelar",
+    resetSectionLabel: "Perfil",
+    resetButton: "Restablecer mi información",
+    resetConfirmTitle: "¿Restablecer tu información?",
+    resetConfirmBody: "Se eliminará tu lectura de saju guardada y volverás a empezar el proceso desde cero.",
+    resetConfirmButton: "Restablecer",
   },
 
   compatibility: {
@@ -184,6 +195,22 @@ export const es: typeof ko = {
     otherTypeLabel: (name: string, typeName: string) => `Tipo de ${name} · ${typeName}`,
     shareMessage: (selfName: string, otherName: string, score: number) =>
       `${selfName} × ${otherName} compatibilidad: ${score} puntos — descubre la tuya en Fatesaid.`,
+  },
+
+  fortune: {
+    headerLabel: "Fortuna Diaria",
+    dailyTab: "Hoy",
+    weeklyTab: "Esta Semana",
+    lockedHeading: "Fortuna Diaria · Fortuna Semanal",
+    lockedBody: "Suscríbete para ver la energía de hoy cada mañana, y el flujo de toda tu semana con un solo toque.",
+    scoreLabel: "Puntaje de energía de hoy",
+    weeklyScoreLabel: "Puntaje de energía",
+    todayElementPrefix: "Energía de hoy",
+    weeklyBestDayLabel: "Día con mejor energía",
+    weeklyCautionDayLabel: "Un día para bajar el ritmo",
+    loadErrorText: "No pudimos cargar tu fortuna.",
+    subscribeSuccess: "¡Ya estás suscrito! Ahora puedes ver tu fortuna diaria y semanal.",
+    restoreSuccess: "¡Tu suscripción fue restaurada! Ahora puedes ver tu fortuna diaria y semanal.",
   },
 
   dailyInsight: {

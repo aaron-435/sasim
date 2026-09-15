@@ -8,6 +8,7 @@ import ChatScreen, { type ChatExtract } from "./screens/ChatScreen";
 import CityScreen, { type SajuResult } from "./screens/CityScreen";
 import CompatibilityScreen from "./screens/CompatibilityScreen";
 import DobScreen from "./screens/DobScreen";
+import FortuneScreen from "./screens/FortuneScreen";
 import GenderScreen from "./screens/GenderScreen";
 import HomeScreen from "./screens/HomeScreen";
 import IntroScreen from "./screens/IntroScreen";
@@ -26,7 +27,8 @@ import { DEFAULT_NOTIFICATION_PREFERENCE, getStoredNotificationPreference, setNo
 import { applyNotificationPreference } from "./lib/routineNotification";
 import { dominantElementFrom } from "./lib/elements";
 import { LocaleProvider, useLocale, useStrings } from "./lib/i18n";
-import { configurePurchases } from "./lib/purchases";
+import { configurePurchases, hasQaProEntitlement } from "./lib/purchases";
+import { clearHomeData, getStoredHomeData, saveHomeData } from "./lib/homeDataStorage";
 import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/saju";
 
 // Onboarding flow shell — mirrors components/AppFlow.jsx's step-switcher role on web,
@@ -39,7 +41,7 @@ import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/
 // pipeline — chained, not independently reachable from Home, since chat needs a quiz
 // diagnosis and report needs both quiz+chat context — same dependency web's
 // components/AppFlow.jsx has).
-type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "settings";
+type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "settings";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
@@ -95,10 +97,20 @@ function AppContent() {
   const [quizDiagnosis, setQuizDiagnosis] = useState<QuizDiagnosis | null>(null);
   const [chatExtract, setChatExtract] = useState<ChatExtract | null>(null);
 
+  // Restores a previously-onboarded user straight to Home instead of making them
+  // re-enter their birth info on every cold start (2026-09-15, caught in live device
+  // testing — homeData used to be plain in-memory state with nothing backing it).
   useEffect(() => {
-    if (localeReady && step === null) {
+    if (!localeReady || step !== null) return;
+    (async () => {
+      const stored = await getStoredHomeData();
+      if (stored) {
+        setHomeData(stored);
+        setStep("home");
+        return;
+      }
       setStep(hasStoredLocale ? "intro" : "language");
-    }
+    })();
   }, [localeReady, hasStoredLocale, step]);
 
   // (Re)schedules the one local "your decade fortune is about to shift" heads-up
@@ -126,10 +138,28 @@ function AppContent() {
       const stored = await getStoredNotificationPreference();
       if (stored !== null) return;
       await setNotificationPreference(DEFAULT_NOTIFICATION_PREFERENCE);
-      await applyNotificationPreference(DEFAULT_NOTIFICATION_PREFERENCE, strings);
+      await applyNotificationPreference(DEFAULT_NOTIFICATION_PREFERENCE, strings, await hasQaProEntitlement());
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeData]);
+
+  // Clears the persisted saju reading and every raw onboarding field, then drops the
+  // user back at "intro" — the only way to re-onboard once a reading is auto-restored
+  // on launch (see the effect above). Exposed from Settings.
+  function handleLogout() {
+    clearHomeData();
+    setHomeData(null);
+    setNickname("");
+    setIsFemale(null);
+    setDobYear("");
+    setDobMonth("");
+    setDobDay("");
+    setTobHour("");
+    setTobMinute("");
+    setTobPeriod(null);
+    setTimeUnknown(false);
+    setStep("intro");
+  }
 
   // Android hardware back button — a plain BackHandler listener, unrelated to the
   // window.history/popstate approach that broke web's "이전" button (see
@@ -190,7 +220,9 @@ function AppContent() {
           onVerified={(data: VerifiedData) => {
             const row = data.sajuResult as Parameters<typeof normalizeVerifyCodeSajuResult>[0];
             const dominant = dominantElementFrom(row?.elements);
-            setHomeData({ nickname: data.nickname, sajuResult: normalizeVerifyCodeSajuResult(row, dominant) });
+            const newHomeData: HomeData = { nickname: data.nickname, sajuResult: normalizeVerifyCodeSajuResult(row, dominant) };
+            setHomeData(newHomeData);
+            saveHomeData(newHomeData);
             setStep("home");
           }}
           onSkip={() => setStep("nickname")}
@@ -257,7 +289,7 @@ function AppContent() {
             nickname: nickname.trim(),
           }}
           onSubmitted={(result: SajuResult) => {
-            setHomeData({
+            const newHomeData: HomeData = {
               nickname: nickname.trim(),
               sajuResult: {
                 elements: result.elements ?? {},
@@ -266,11 +298,16 @@ function AppContent() {
                 decadeFortune: result.decadeFortune,
                 currentAge: result.currentAge,
                 sajuType: result.sajuType ?? null,
+                // 2026-09-15: 이 필드가 빠져 있어서 selfDayMasterChar가 계속 null이
+                // 되고, 궁합/오늘의 운세가 조용히 아무것도 안 뜨는 채로 멈춰 있었다.
+                summary: result.summary,
                 birthYear: result.birthYear,
                 birthMonth: result.birthMonth,
                 birthDay: result.birthDay,
               },
-            });
+            };
+            setHomeData(newHomeData);
+            saveHomeData(newHomeData);
             setStep("home");
           }}
           onBack={() => setStep("tob")}
@@ -287,11 +324,12 @@ function AppContent() {
           onOpenQuiz={() => setStep("moduleSelect")}
           onOpenType={() => setStep("type")}
           onOpenCompatibility={() => setStep("compatibility")}
+          onOpenFortune={() => setStep("fortune")}
           onOpenSettings={() => setStep("settings")}
         />
       )}
 
-      {step === "settings" && <SettingsScreen onBack={() => setStep("home")} />}
+      {step === "settings" && <SettingsScreen onBack={() => setStep("home")} onLogout={handleLogout} />}
 
       {step === "type" && homeData?.sajuResult.sajuType && (
         <TypeScreen
@@ -304,6 +342,13 @@ function AppContent() {
       {step === "compatibility" && homeData && (
         <CompatibilityScreen
           selfNickname={homeData.nickname}
+          selfDayMasterChar={(homeData.sajuResult.summary as { dayMaster?: { char?: string } } | undefined)?.dayMaster?.char ?? null}
+          onBack={() => setStep("home")}
+        />
+      )}
+
+      {step === "fortune" && homeData && (
+        <FortuneScreen
           selfDayMasterChar={(homeData.sajuResult.summary as { dayMaster?: { char?: string } } | undefined)?.dayMaster?.char ?? null}
           onBack={() => setStep("home")}
         />

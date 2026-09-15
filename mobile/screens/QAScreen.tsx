@@ -9,6 +9,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import { getDailyLimit, getUsageToday, incrementUsageToday, PAID_DAILY_LIMIT } from "../lib/qaQuota";
 import { purchaseQaPro, restoreQaPro } from "../lib/purchases";
+import { refreshRoutineNotification } from "../lib/routineNotification";
 import { saveLastQuestion } from "../lib/qaHistory";
 import type { NormalizedSajuResult } from "../lib/saju";
 import { COLORS } from "../theme/colors";
@@ -179,6 +180,7 @@ export default function QAScreen({
   }
 
   async function unlockAfterEntitlementChange() {
+    refreshRoutineNotification(strings).catch(() => {});
     await wait(500);
     if (!mountedRef.current) return;
     pushBot(strings.qa.promptCategory);

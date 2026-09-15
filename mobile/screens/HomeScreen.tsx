@@ -1,4 +1,4 @@
-import { ArrowRight, Bot, Brain, FileText, HelpCircle, Lock, MessageCircleQuestion, Settings, Shapes, Sparkles, Users } from "lucide-react-native";
+import { ArrowRight, Bot, Brain, FileText, HelpCircle, Lock, MessageCircleQuestion, Settings, Shapes, Sparkles, Sunrise, Users } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
@@ -25,6 +25,7 @@ const FEATURE_META = [
   { key: "quiz", icon: Brain, ready: true },
   { key: "type", icon: Shapes, ready: true },
   { key: "compat", icon: Users, ready: true },
+  { key: "fortune", icon: Sunrise, ready: true },
   { key: "chat", icon: Bot, ready: false },
   { key: "report", icon: FileText, ready: false },
 ] as const;
@@ -45,6 +46,7 @@ export default function HomeScreen({
   onOpenQuiz,
   onOpenType,
   onOpenCompatibility,
+  onOpenFortune,
   onOpenSettings,
 }: {
   nickname: string;
@@ -55,6 +57,7 @@ export default function HomeScreen({
   onOpenQuiz: () => void;
   onOpenType: () => void;
   onOpenCompatibility: () => void;
+  onOpenFortune: () => void;
   onOpenSettings: () => void;
 }) {
   const strings = useStrings();
@@ -67,10 +70,11 @@ export default function HomeScreen({
     // blank screen, since App.tsx only renders TypeScreen when sajuType is non-null.
     { ...FEATURE_META[2], ready: !!sajuType, label: strings.home.featureTypeLabel, description: strings.home.featureTypeDescription },
     { ...FEATURE_META[3], label: strings.home.featureCompatLabel, description: strings.home.featureCompatDescription },
-    { ...FEATURE_META[4], label: strings.home.featureChatLabel, description: strings.home.featureChatDescription },
-    { ...FEATURE_META[5], label: strings.home.featureReportLabel, description: strings.home.featureReportDescription },
+    { ...FEATURE_META[4], label: strings.home.featureFortuneLabel, description: strings.home.featureFortuneDescription },
+    { ...FEATURE_META[5], label: strings.home.featureChatLabel, description: strings.home.featureChatDescription },
+    { ...FEATURE_META[6], label: strings.home.featureReportLabel, description: strings.home.featureReportDescription },
   ];
-  const handlers: Record<string, () => void> = { qa: onOpenQA, quiz: onOpenQuiz, type: onOpenType, compat: onOpenCompatibility };
+  const handlers: Record<string, () => void> = { qa: onOpenQA, quiz: onOpenQuiz, type: onOpenType, compat: onOpenCompatibility, fortune: onOpenFortune };
   const [lastQuestion, setLastQuestion] = useState<LastQuestion | null | undefined>(undefined);
 
   useEffect(() => {

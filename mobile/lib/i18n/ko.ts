@@ -142,6 +142,8 @@ export const ko = {
     featureReportDescription: "심리테스트 완료 후 이용 가능",
     featureCompatLabel: "궁합",
     featureCompatDescription: "그 사람과 나, 어떤 흐름일까요",
+    featureFortuneLabel: "오늘의 운세",
+    featureFortuneDescription: "매일 바뀌는 오늘 하루의 기운",
     recentQuestionLabel: "최근 질문",
     recentQuestionEmpty: "아직 질문한 기록이 없어요 · 첫 질문 물어보기",
     typeBadgeTap: "탭해서 자세히 보기",
@@ -168,6 +170,13 @@ export const ko = {
     dailyBody: "지금 열어보고 오늘 하루의 흐름을 확인해보세요.",
     weeklyTitle: "이번 주 운세가 도착했어요",
     weeklyBody: "한 주를 시작하기 전에 이번 주 흐름을 확인해보세요.",
+    // 2026-09-15: 오늘의 운세/이번주 운세가 구독자 전용 기능이 되면서, 구독하지
+    // 않은 유저에게 잠긴 화면을 미리 보여주는 대신 실제로 무료로 쓸 수 있는
+    // 기능(하루 1개 무료 질문)으로 리마인더 내용을 바꿨다.
+    dailyTitleFree: "오늘의 무료 질문이 준비됐어요",
+    dailyBodyFree: "하루 1번, 사주에게 궁금한 걸 물어보세요.",
+    weeklyTitleFree: "이번 주 무료 질문을 사용해보세요",
+    weeklyBodyFree: "하루 1번, 사주에게 물어볼 기회가 기다리고 있어요.",
   },
 
   settings: {
@@ -186,6 +195,11 @@ export const ko = {
     turnOffPromptSwitchToWeekly: "주간 알림으로 바꾸기",
     turnOffPromptConfirm: "끄기",
     cancelLabel: "취소",
+    resetSectionLabel: "프로필",
+    resetButton: "내 정보 초기화",
+    resetConfirmTitle: "정보를 초기화할까요?",
+    resetConfirmBody: "저장된 사주 정보가 삭제되고, 처음부터 다시 입력하게 돼요.",
+    resetConfirmButton: "초기화",
   },
 
   compatibility: {
@@ -207,6 +221,22 @@ export const ko = {
     otherTypeLabel: (name: string, typeName: string) => `${name}님의 유형 · ${typeName}`,
     shareMessage: (selfName: string, otherName: string, score: number) =>
       `${selfName} × ${otherName} 궁합 포인트 ${score}점 — Fatesaid에서 확인해보세요.`,
+  },
+
+  fortune: {
+    headerLabel: "오늘의 운세",
+    dailyTab: "오늘",
+    weeklyTab: "이번주",
+    lockedHeading: "오늘의 운세 · 이번주 운세",
+    lockedBody: "구독하면 매일 아침 오늘의 기운을, 한 번의 탭으로 이번 주 전체 흐름까지 확인할 수 있어요.",
+    scoreLabel: "오늘의 기운 점수",
+    weeklyScoreLabel: "기운 점수",
+    todayElementPrefix: "오늘의 기운",
+    weeklyBestDayLabel: "가장 잘 맞는 날",
+    weeklyCautionDayLabel: "페이스 조절이 필요한 날",
+    loadErrorText: "운세를 불러오지 못했어요.",
+    subscribeSuccess: "구독이 시작됐어요! 이제 오늘의 운세와 이번 주 운세를 볼 수 있어요.",
+    restoreSuccess: "구독을 복원했어요! 이제 오늘의 운세와 이번 주 운세를 볼 수 있어요.",
   },
 
   dailyInsight: {

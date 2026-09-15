@@ -119,6 +119,8 @@ export const en: typeof ko = {
     featureReportDescription: "Available after finishing the psych test",
     featureCompatLabel: "Compatibility",
     featureCompatDescription: "See how you and someone else flow together",
+    featureFortuneLabel: "Daily Fortune",
+    featureFortuneDescription: "Today's shifting energy, decoded",
     recentQuestionLabel: "Recent Question",
     recentQuestionEmpty: "No questions yet · Ask your first one",
     typeBadgeTap: "Tap to see more",
@@ -145,6 +147,10 @@ export const en: typeof ko = {
     dailyBody: "Open the app to see how today looks for you.",
     weeklyTitle: "Your weekly fortune is ready",
     weeklyBody: "See how this week looks before it gets going.",
+    dailyTitleFree: "Your free question is ready",
+    dailyBodyFree: "You get one free question a day — go ahead and ask.",
+    weeklyTitleFree: "Your free question is waiting this week",
+    weeklyBodyFree: "You get one free question a day — go ahead and ask.",
   },
 
   settings: {
@@ -163,6 +169,11 @@ export const en: typeof ko = {
     turnOffPromptSwitchToWeekly: "Switch to weekly",
     turnOffPromptConfirm: "Turn off",
     cancelLabel: "Cancel",
+    resetSectionLabel: "Profile",
+    resetButton: "Reset my info",
+    resetConfirmTitle: "Reset your info?",
+    resetConfirmBody: "Your saved saju reading will be deleted, and you'll start onboarding over from scratch.",
+    resetConfirmButton: "Reset",
   },
 
   compatibility: {
@@ -184,6 +195,22 @@ export const en: typeof ko = {
     otherTypeLabel: (name: string, typeName: string) => `${name}'s type · ${typeName}`,
     shareMessage: (selfName: string, otherName: string, score: number) =>
       `${selfName} × ${otherName} compatibility: ${score} points — check yours on Fatesaid.`,
+  },
+
+  fortune: {
+    headerLabel: "Daily Fortune",
+    dailyTab: "Today",
+    weeklyTab: "This Week",
+    lockedHeading: "Daily Fortune · Weekly Fortune",
+    lockedBody: "Subscribe to see today's energy every morning, and your whole week's flow with one tap.",
+    scoreLabel: "Today's energy score",
+    weeklyScoreLabel: "Energy score",
+    todayElementPrefix: "Today's energy",
+    weeklyBestDayLabel: "Best-matched day",
+    weeklyCautionDayLabel: "A day to pace yourself",
+    loadErrorText: "Couldn't load your fortune.",
+    subscribeSuccess: "You're subscribed! You can now see your daily and weekly fortune.",
+    restoreSuccess: "Your subscription is restored! You can now see your daily and weekly fortune.",
   },
 
   dailyInsight: {

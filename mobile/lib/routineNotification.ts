@@ -9,7 +9,8 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import "./notificationSetup";
-import type { NotificationPreference } from "./notificationPreference";
+import { getNotificationPreference, type NotificationPreference } from "./notificationPreference";
+import { hasQaProEntitlement } from "./purchases";
 import type { Dictionary } from "./i18n/dictionaries";
 
 const DAILY_ID = "fatesaid-daily-fortune";
@@ -33,7 +34,20 @@ async function ensurePermission(): Promise<boolean> {
   return requested === "granted";
 }
 
-export async function applyNotificationPreference(pref: NotificationPreference, strings: Dictionary): Promise<{ permissionDenied: boolean }> {
+/**
+ * isSubscribed picks which copy this reminder ships with — "오늘의 운세"/"이번주
+ * 운세" now only has real content behind a subscription (screens/FortuneScreen.tsx),
+ * so a free user gets pointed at something they can actually open instead: the 1
+ * free Q&A question/day. Since a local notification's body is fixed at schedule
+ * time (see file header), this only reflects subscription status as of the last
+ * (re)schedule — callers reschedule on preference changes and on a fresh
+ * subscribe/restore (see QAScreen.tsx's unlockAfterEntitlementChange).
+ */
+export async function applyNotificationPreference(
+  pref: NotificationPreference,
+  strings: Dictionary,
+  isSubscribed: boolean
+): Promise<{ permissionDenied: boolean }> {
   await cancelRoutineNotifications();
   if (pref === "off") return { permissionDenied: false };
 
@@ -44,13 +58,19 @@ export async function applyNotificationPreference(pref: NotificationPreference, 
   if (pref === "daily") {
     await Notifications.scheduleNotificationAsync({
       identifier: DAILY_ID,
-      content: { title: strings.routineNotification.dailyTitle, body: strings.routineNotification.dailyBody },
+      content: {
+        title: isSubscribed ? strings.routineNotification.dailyTitle : strings.routineNotification.dailyTitleFree,
+        body: isSubscribed ? strings.routineNotification.dailyBody : strings.routineNotification.dailyBodyFree,
+      },
       trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: REMINDER_HOUR, minute: REMINDER_MINUTE, ...(channelId ? { channelId } : {}) },
     });
   } else {
     await Notifications.scheduleNotificationAsync({
       identifier: WEEKLY_ID,
-      content: { title: strings.routineNotification.weeklyTitle, body: strings.routineNotification.weeklyBody },
+      content: {
+        title: isSubscribed ? strings.routineNotification.weeklyTitle : strings.routineNotification.weeklyTitleFree,
+        body: isSubscribed ? strings.routineNotification.weeklyBody : strings.routineNotification.weeklyBodyFree,
+      },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
         weekday: WEEKLY_WEEKDAY,
@@ -62,4 +82,15 @@ export async function applyNotificationPreference(pref: NotificationPreference, 
   }
 
   return { permissionDenied: false };
+}
+
+/**
+ * Re-applies the user's current cadence with up-to-date subscription status — call
+ * this right after a successful subscribe/restore (QAScreen, FortuneScreen) so the
+ * already-scheduled reminder's copy doesn't stay stuck on the free-tier wording until
+ * the user happens to revisit Settings.
+ */
+export async function refreshRoutineNotification(strings: Dictionary): Promise<void> {
+  const pref = await getNotificationPreference();
+  await applyNotificationPreference(pref, strings, await hasQaProEntitlement());
 }

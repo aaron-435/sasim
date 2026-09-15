@@ -6,11 +6,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LOCALES, LOCALE_LABELS, useLocale, useStrings, type Locale } from "../lib/i18n";
 import { getNotificationPreference, setNotificationPreference, type NotificationPreference } from "../lib/notificationPreference";
 import { applyNotificationPreference } from "../lib/routineNotification";
+import { hasQaProEntitlement } from "../lib/purchases";
 import { COLORS } from "../theme/colors";
 
 const NOTIFICATION_OPTIONS: NotificationPreference[] = ["off", "daily", "weekly"];
 
-export default function SettingsScreen({ onBack }: { onBack: () => void }) {
+export default function SettingsScreen({ onBack, onLogout }: { onBack: () => void; onLogout: () => void }) {
   const strings = useStrings();
   const { locale, setLocale } = useLocale();
   const [notificationPref, setNotificationPrefState] = useState<NotificationPreference | null>(null);
@@ -34,7 +35,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
     const previous = notificationPref;
     setNotificationPrefState(pref);
     try {
-      const { permissionDenied: denied } = await applyNotificationPreference(pref, strings);
+      const { permissionDenied: denied } = await applyNotificationPreference(pref, strings, await hasQaProEntitlement());
       if (denied) {
         setPermissionDenied(true);
         setNotificationPrefState(previous);
@@ -60,6 +61,13 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
       return;
     }
     commitNotificationPreference(pref);
+  }
+
+  function handleResetPress() {
+    Alert.alert(strings.settings.resetConfirmTitle, strings.settings.resetConfirmBody, [
+      { text: strings.settings.cancelLabel, style: "cancel" },
+      { text: strings.settings.resetConfirmButton, style: "destructive", onPress: onLogout },
+    ]);
   }
 
   return (
@@ -104,6 +112,11 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
           ))}
         </View>
         {permissionDenied && <Text style={styles.warning}>{strings.settings.notificationPermissionDenied}</Text>}
+
+        <Text style={[styles.sectionLabel, styles.sectionSpacing]}>{strings.settings.resetSectionLabel}</Text>
+        <Pressable style={styles.resetRow} onPress={handleResetPress}>
+          <Text style={styles.resetLabel}>{strings.settings.resetButton}</Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -162,5 +175,19 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: "#CB6249",
     marginTop: 14,
+  },
+  resetRow: {
+    paddingVertical: 15,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: COLORS.inputBg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+  },
+  resetLabel: {
+    fontFamily: "Manrope_600SemiBold",
+    fontSize: 14,
+    color: "#CB6249",
   },
 });
