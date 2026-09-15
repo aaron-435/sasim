@@ -14,22 +14,29 @@
  *      서사 문구는 여기서 만들지 않는다 — mobile/lib/dailyFortuneContent.ts가
  *      relation 값을 받아 로케일별 카피를 입힌다(compatibilityContent.ts와
  *      같은 분리 원칙).
+ *
+ * 2026-09-15: dayMaster에 pillarIndex(60갑자 순번, 0-59)를 추가했다 — relation은
+ * 오행 5종뿐이라 문구를 하나씩만 두면 일주일 안에 반드시 겹치는 문제가 있었고
+ * (10일 주기 오행 배열상 relation은 최대 2일 연속만 다르고 그 외엔 반복), 구독자
+ * 피드백으로 "표현이 안 겹치게" 요청받아 콘텐츠 쪽에서 pillarIndex % 6으로 6가지
+ * 문구를 순환시키게 됨(mobile/lib/dailyFortuneContent.ts) — 그러려면 오행(element)
+ * 뿐 아니라 60갑자 전체 순번이 필요해서 여기서 계산해 내려준다.
  * ------------------------------------------------------------------
  */
 
-import { calculateManseryeok } from "./manseryeok";
+import { calculateManseryeok, sixtyIndex } from "./manseryeok";
 import { calculateCompatibility, type CompatibilityResult } from "./compatibility";
 
 export interface DayFortune {
   date: string; // YYYY-MM-DD, KST
-  dayMaster: { char: string; element: string };
+  dayMaster: { char: string; element: string; pillarIndex: number };
   compatibility: CompatibilityResult | null;
 }
 
 // 하루치 일간은 계산이 끝나면 다시 바뀌지 않는 값이라 프로세스 내 캐시로 KASI
 // 왕복을 줄인다 — lib/rateLimit.ts와 같은 한계(서버리스 인스턴스별 로컬 캐시,
 // 인스턴스 간 공유 안 됨)를 그대로 가진다.
-const dayMasterCache = new Map<string, { char: string; element: string }>();
+const dayMasterCache = new Map<string, { char: string; element: string; pillarIndex: number }>();
 
 function kstDate(offsetDays: number): { year: number; month: number; day: number; iso: string } {
   const kstNow = new Date(Date.now() + 9 * 3600 * 1000);
@@ -41,12 +48,13 @@ function kstDate(offsetDays: number): { year: number; month: number; day: number
   return { year, month, day, iso };
 }
 
-async function getDayMaster(year: number, month: number, day: number, iso: string): Promise<{ char: string; element: string }> {
+async function getDayMaster(year: number, month: number, day: number, iso: string): Promise<{ char: string; element: string; pillarIndex: number }> {
   const cached = dayMasterCache.get(iso);
   if (cached) return cached;
   const result = await calculateManseryeok({ birthYear: year, birthMonth: month, birthDay: day, birthHour: null, isFemale: true });
-  dayMasterCache.set(iso, result.summary.dayMaster);
-  return result.summary.dayMaster;
+  const dayMaster = { ...result.summary.dayMaster, pillarIndex: sixtyIndex(result.fourPillars.day.sky, result.fourPillars.day.earth) };
+  dayMasterCache.set(iso, dayMaster);
+  return dayMaster;
 }
 
 export async function getDailyFortune(selfDayMasterChar: string, offsetDays = 0): Promise<DayFortune> {

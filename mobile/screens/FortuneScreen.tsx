@@ -7,7 +7,7 @@ import { API_BASE_URL } from "../config";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
 import type { Locale } from "../lib/i18n/types";
-import { DAILY_FORTUNE_CONTENT, LUCKY_NUMBERS, LUCKY_POINTS } from "../lib/dailyFortuneContent";
+import { DAILY_FORTUNE_CONTENT, LUCKY_NUMBERS, LUCKY_POINTS, getOverview } from "../lib/dailyFortuneContent";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { hasQaProEntitlement, purchaseQaPro, restoreQaPro } from "../lib/purchases";
 import { refreshRoutineNotification } from "../lib/routineNotification";
@@ -21,7 +21,7 @@ import { COLORS } from "../theme/colors";
 // (2026-09-15: "질문 10개"뿐이던 구독 혜택이 빈약하다는 피드백으로 추가된 기능).
 type DayFortune = {
   date: string;
-  dayMaster: { char: string; element: string };
+  dayMaster: { char: string; element: string; pillarIndex: number };
   compatibility: CompatibilityResult | null;
 };
 
@@ -72,7 +72,6 @@ export default function FortuneScreen({
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
-  const [purchaseSuccessNotice, setPurchaseSuccessNotice] = useState<string | null>(null);
 
   const mountedRef = useRef(true);
   useEffect(() => {
@@ -139,7 +138,6 @@ export default function FortuneScreen({
     setPurchasing(false);
     if (outcome.status === "success") {
       setEntitled(true);
-      setPurchaseSuccessNotice(strings.fortune.subscribeSuccess);
       refreshRoutineNotification(strings).catch(() => {});
     } else if (outcome.status === "error") {
       setPurchaseNotice(strings.qa.purchaseErrorDefault);
@@ -155,7 +153,6 @@ export default function FortuneScreen({
     setRestoring(false);
     if (restored) {
       setEntitled(true);
-      setPurchaseSuccessNotice(strings.fortune.restoreSuccess);
       refreshRoutineNotification(strings).catch(() => {});
     } else {
       setPurchaseNotice(strings.qa.restoreNotFound);
@@ -215,7 +212,6 @@ export default function FortuneScreen({
         </Pressable>
 
         <Text style={styles.heading}>{strings.fortune.headerLabel}</Text>
-        {purchaseSuccessNotice && <Text style={styles.successText}>{purchaseSuccessNotice}</Text>}
 
         <View style={styles.tabRow}>
           <Pressable style={[styles.tabButton, tab === "daily" && styles.tabButtonActive]} onPress={() => handleSelectTab("daily")}>
@@ -235,13 +231,12 @@ export default function FortuneScreen({
               <Text style={[styles.scoreValue, { color: ELEMENT_COLORS[daily.compatibility.otherDayMasterElement] ?? COLORS.gold }]}>
                 {daily.compatibility.score}
               </Text>
-              <Text style={styles.scoreExplain}>{strings.fortune.scoreExplain}</Text>
             </View>
 
             <View style={styles.sectionCard}>
               <Text style={styles.sectionLabel}>{strings.fortune.overviewLabel}</Text>
-              <Text style={styles.sectionHeadline}>{content.relations[daily.compatibility.relation].overview.headline}</Text>
-              <Text style={styles.sectionBody}>{content.relations[daily.compatibility.relation].overview.body}</Text>
+              <Text style={styles.sectionHeadline}>{getOverview(content, daily.compatibility.relation, daily.dayMaster.pillarIndex).headline}</Text>
+              <Text style={styles.sectionBody}>{getOverview(content, daily.compatibility.relation, daily.dayMaster.pillarIndex).body}</Text>
             </View>
 
             <View style={styles.sectionCard}>
@@ -291,19 +286,19 @@ export default function FortuneScreen({
             <View style={styles.highlightCard}>
               <Text style={styles.highlightLabel}>{strings.fortune.weeklyBestDayLabel}</Text>
               <Text style={styles.highlightDate}>{formatShortDate(weeklyBest.date, locale)}</Text>
-              <Text style={styles.highlightHeadline}>{content.relations[weeklyBest.compatibility!.relation].overview.headline}</Text>
+              <Text style={styles.highlightHeadline}>{getOverview(content, weeklyBest.compatibility!.relation, weeklyBest.dayMaster.pillarIndex).headline}</Text>
             </View>
             <View style={styles.highlightCard}>
               <Text style={styles.highlightLabel}>{strings.fortune.weeklyCautionDayLabel}</Text>
               <Text style={styles.highlightDate}>{formatShortDate(weeklyCaution.date, locale)}</Text>
-              <Text style={styles.highlightHeadline}>{content.relations[weeklyCaution.compatibility!.relation].overview.headline}</Text>
+              <Text style={styles.highlightHeadline}>{getOverview(content, weeklyCaution.compatibility!.relation, weeklyCaution.dayMaster.pillarIndex).headline}</Text>
             </View>
             <View style={styles.weekList}>
               {weeklyWithScore.map((d) => (
                 <View key={d.date} style={styles.weekRow}>
                   <Text style={styles.weekRowDate}>{formatShortDate(d.date, locale)}</Text>
                   <Text style={styles.weekRowHeadline} numberOfLines={1}>
-                    {content.relations[d.compatibility!.relation].overview.headline}
+                    {getOverview(content, d.compatibility!.relation, d.dayMaster.pillarIndex).headline}
                   </Text>
                   <Text style={styles.weekRowScore}>{d.compatibility!.score}</Text>
                 </View>
@@ -324,7 +319,6 @@ const styles = StyleSheet.create({
   backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12 },
   backLabel: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginBottom: 16 },
-  successText: { fontFamily: "Manrope_500Medium", fontSize: 13, color: COLORS.gold, marginBottom: 16 },
   lockedCard: {
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
@@ -367,7 +361,6 @@ const styles = StyleSheet.create({
   },
   scoreLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.subheadline, letterSpacing: 0.3 },
   scoreValue: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 48 },
-  scoreExplain: { fontFamily: "Manrope_400Regular", fontSize: 11.5, lineHeight: 17, color: COLORS.footer, marginTop: 8, textAlign: "center" },
   sectionCard: {
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,

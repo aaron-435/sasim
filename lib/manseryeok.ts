@@ -195,7 +195,7 @@ function computeYearAndMonthPillar(birthUtc: Date): { year: Pillar; month: Pilla
   };
 }
 
-function sixtyIndex(stem: Stem, branch: Branch): number {
+export function sixtyIndex(stem: Stem, branch: Branch): number {
   const s = STEMS.indexOf(stem);
   const b = BRANCHES.indexOf(branch);
   for (let i = 0; i < 60; i++) {
