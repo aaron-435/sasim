@@ -1,8 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { hasQaProEntitlement } from "./purchases";
 
-// Daily Q&A quota — 2026-09-11 decision: 1 free question/day, 10/day for a $19.99/month
-// subscriber. The free side is fully real (tracked here).
+// Daily Q&A quota — 2026-09-11 decision: 1 free question/day, 10/day for a subscriber
+// (price: see strings.qa.subscriptionPriceLabel — $7.99/month as of 2026-09-15, down from
+// the original $19.99 launch price to lower the conversion barrier). The free side is
+// fully real (tracked here).
 //
 // 2026-09-13/14: isSubscribed() checks a real RevenueCat entitlement (see lib/purchases.ts),
 // and as of 2026-09-14 a real "구독하기" purchase button exists too (QAScreen.tsx, wired to

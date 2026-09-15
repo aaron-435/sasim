@@ -305,7 +305,7 @@ export const ko = {
 
   qa: {
     headerLabel: "사주 Q&A · AI 답변",
-    subscriptionPriceLabel: "월 $19.99",
+    subscriptionPriceLabel: "월 $7.99",
     defaultNickname: "회원",
     greeting1: (nickname: string) => `안녕하세요, ${nickname}님!`,
     greeting2: "Fatesaid는 한국에서 온 사주 전문가와 심리 전문가로 이루어진 팀이에요.",

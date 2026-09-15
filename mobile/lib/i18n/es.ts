@@ -279,7 +279,7 @@ export const es: typeof ko = {
 
   qa: {
     headerLabel: "Saju Q&A · Respuesta IA",
-    subscriptionPriceLabel: "$19.99/mes",
+    subscriptionPriceLabel: "$7.99/mes",
     defaultNickname: "amigo",
     greeting1: (nickname: string) => `¡Hola, ${nickname}!`,
     greeting2: "Fatesaid es un equipo de expertos en saju y psicología de Corea.",
