@@ -204,6 +204,7 @@ export const en: typeof ko = {
     lockedHeading: "Daily Fortune · Weekly Fortune",
     lockedBody: "Subscribe to see today's energy every morning, and your whole week's flow with one tap.",
     scoreLabel: "Today's energy score",
+    scoreExplain: "Shown on a 58–95 scale — saju holds that there's no such thing as a 'bad day,' so the score never swings to either extreme.",
     weeklyScoreLabel: "Energy score",
     todayElementPrefix: "Today's energy",
     weeklyBestDayLabel: "Best-matched day",
@@ -211,6 +212,14 @@ export const en: typeof ko = {
     loadErrorText: "Couldn't load your fortune.",
     subscribeSuccess: "You're subscribed! You can now see your daily and weekly fortune.",
     restoreSuccess: "Your subscription is restored! You can now see your daily and weekly fortune.",
+    overviewLabel: "Overview",
+    wealthLabel: "Wealth",
+    loveLabel: "Love",
+    healthLabel: "Health",
+    luckyPointLabel: "Today's Lucky Points",
+    luckyColorLabel: "Lucky color",
+    luckyNumberLabel: "Lucky number",
+    luckyDirectionLabel: "Lucky direction",
   },
 
   dailyInsight: {

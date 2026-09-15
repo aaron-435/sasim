@@ -7,7 +7,7 @@ import { API_BASE_URL } from "../config";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
 import type { Locale } from "../lib/i18n/types";
-import { DAILY_FORTUNE_CONTENT } from "../lib/dailyFortuneContent";
+import { DAILY_FORTUNE_CONTENT, LUCKY_NUMBERS, LUCKY_POINTS } from "../lib/dailyFortuneContent";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { hasQaProEntitlement, purchaseQaPro, restoreQaPro } from "../lib/purchases";
 import { refreshRoutineNotification } from "../lib/routineNotification";
@@ -201,6 +201,11 @@ export default function FortuneScreen({
   const weeklyBest = weeklyWithScore.length ? pickExtreme(weeklyWithScore, "max") : null;
   const weeklyCaution = weeklyWithScore.length ? pickExtreme(weeklyWithScore, "min") : null;
 
+  // 오늘의 행운 포인트 — 그날의 오행 하나로만 정해지는 값이라 relation과 무관.
+  const todayElementKey = daily?.compatibility?.otherDayMasterElement;
+  const luckyPoint = todayElementKey ? (LUCKY_POINTS[locale] ?? LUCKY_POINTS.ko)[todayElementKey] : null;
+  const luckyNumber = todayElementKey ? LUCKY_NUMBERS[todayElementKey] : null;
+
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -224,14 +229,56 @@ export default function FortuneScreen({
         {tab === "daily" && dailyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
         {tab === "daily" && !dailyLoading && dailyError && <Text style={styles.errorText}>{dailyError}</Text>}
         {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && (
-          <View style={[styles.scoreCard, { borderColor: `${ELEMENT_COLORS[daily.compatibility.otherDayMasterElement] ?? COLORS.gold}55` }]}>
-            <Text style={styles.scoreLabel}>{strings.fortune.scoreLabel}</Text>
-            <Text style={[styles.scoreValue, { color: ELEMENT_COLORS[daily.compatibility.otherDayMasterElement] ?? COLORS.gold }]}>
-              {daily.compatibility.score}
-            </Text>
-            <Text style={styles.relationHeadline}>{content.relations[daily.compatibility.relation].headline}</Text>
-            <Text style={styles.relationBody}>{content.relations[daily.compatibility.relation].body}</Text>
-          </View>
+          <>
+            <View style={[styles.scoreCard, { borderColor: `${ELEMENT_COLORS[daily.compatibility.otherDayMasterElement] ?? COLORS.gold}55` }]}>
+              <Text style={styles.scoreLabel}>{strings.fortune.scoreLabel}</Text>
+              <Text style={[styles.scoreValue, { color: ELEMENT_COLORS[daily.compatibility.otherDayMasterElement] ?? COLORS.gold }]}>
+                {daily.compatibility.score}
+              </Text>
+              <Text style={styles.scoreExplain}>{strings.fortune.scoreExplain}</Text>
+            </View>
+
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionLabel}>{strings.fortune.overviewLabel}</Text>
+              <Text style={styles.sectionHeadline}>{content.relations[daily.compatibility.relation].overview.headline}</Text>
+              <Text style={styles.sectionBody}>{content.relations[daily.compatibility.relation].overview.body}</Text>
+            </View>
+
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionLabel}>{strings.fortune.wealthLabel}</Text>
+              <Text style={styles.sectionBody}>{content.relations[daily.compatibility.relation].wealth}</Text>
+            </View>
+
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionLabel}>{strings.fortune.loveLabel}</Text>
+              <Text style={styles.sectionBody}>{content.relations[daily.compatibility.relation].love}</Text>
+            </View>
+
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionLabel}>{strings.fortune.healthLabel}</Text>
+              <Text style={styles.sectionBody}>{content.relations[daily.compatibility.relation].health}</Text>
+            </View>
+
+            {luckyPoint && luckyNumber && (
+              <View style={styles.sectionCard}>
+                <Text style={styles.sectionLabel}>{strings.fortune.luckyPointLabel}</Text>
+                <View style={styles.luckyRow}>
+                  <View style={styles.luckyItem}>
+                    <Text style={styles.luckyItemLabel}>{strings.fortune.luckyColorLabel}</Text>
+                    <Text style={styles.luckyItemValue}>{luckyPoint.color}</Text>
+                  </View>
+                  <View style={styles.luckyItem}>
+                    <Text style={styles.luckyItemLabel}>{strings.fortune.luckyNumberLabel}</Text>
+                    <Text style={styles.luckyItemValue}>{luckyNumber}</Text>
+                  </View>
+                  <View style={styles.luckyItem}>
+                    <Text style={styles.luckyItemLabel}>{strings.fortune.luckyDirectionLabel}</Text>
+                    <Text style={styles.luckyItemValue}>{luckyPoint.direction}</Text>
+                  </View>
+                </View>
+              </View>
+            )}
+          </>
         )}
 
         {tab === "weekly" && weeklyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
@@ -244,19 +291,19 @@ export default function FortuneScreen({
             <View style={styles.highlightCard}>
               <Text style={styles.highlightLabel}>{strings.fortune.weeklyBestDayLabel}</Text>
               <Text style={styles.highlightDate}>{formatShortDate(weeklyBest.date, locale)}</Text>
-              <Text style={styles.highlightHeadline}>{content.relations[weeklyBest.compatibility!.relation].headline}</Text>
+              <Text style={styles.highlightHeadline}>{content.relations[weeklyBest.compatibility!.relation].overview.headline}</Text>
             </View>
             <View style={styles.highlightCard}>
               <Text style={styles.highlightLabel}>{strings.fortune.weeklyCautionDayLabel}</Text>
               <Text style={styles.highlightDate}>{formatShortDate(weeklyCaution.date, locale)}</Text>
-              <Text style={styles.highlightHeadline}>{content.relations[weeklyCaution.compatibility!.relation].headline}</Text>
+              <Text style={styles.highlightHeadline}>{content.relations[weeklyCaution.compatibility!.relation].overview.headline}</Text>
             </View>
             <View style={styles.weekList}>
               {weeklyWithScore.map((d) => (
                 <View key={d.date} style={styles.weekRow}>
                   <Text style={styles.weekRowDate}>{formatShortDate(d.date, locale)}</Text>
                   <Text style={styles.weekRowHeadline} numberOfLines={1}>
-                    {content.relations[d.compatibility!.relation].headline}
+                    {content.relations[d.compatibility!.relation].overview.headline}
                   </Text>
                   <Text style={styles.weekRowScore}>{d.compatibility!.score}</Text>
                 </View>
@@ -320,8 +367,29 @@ const styles = StyleSheet.create({
   },
   scoreLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.subheadline, letterSpacing: 0.3 },
   scoreValue: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 48 },
-  relationHeadline: { fontFamily: "Manrope_600SemiBold", fontSize: 15, color: COLORS.headline, marginTop: 4 },
-  relationBody: { fontFamily: "Manrope_400Regular", fontSize: 14.5, lineHeight: 22, color: COLORS.subheadline, marginTop: 12, textAlign: "center" },
+  scoreExplain: { fontFamily: "Manrope_400Regular", fontSize: 11.5, lineHeight: 17, color: COLORS.footer, marginTop: 8, textAlign: "center" },
+  sectionCard: {
+    backgroundColor: COLORS.inputBg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 16,
+    padding: 18,
+    marginTop: 14,
+  },
+  sectionLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 11, letterSpacing: 1.5, color: COLORS.gold, textTransform: "uppercase" },
+  sectionHeadline: { fontFamily: "Manrope_600SemiBold", fontSize: 16, color: COLORS.headline, marginTop: 8 },
+  sectionBody: { fontFamily: "Manrope_400Regular", fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginTop: 8 },
+  luckyRow: { flexDirection: "row", marginTop: 12, gap: 8 },
+  luckyItem: {
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.03)",
+    borderRadius: 10,
+    paddingVertical: 12,
+    gap: 4,
+  },
+  luckyItemLabel: { fontFamily: "Manrope_400Regular", fontSize: 11, color: COLORS.footer },
+  luckyItemValue: { fontFamily: "Manrope_600SemiBold", fontSize: 14, color: COLORS.headline },
   highlightCard: {
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,

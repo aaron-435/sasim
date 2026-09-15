@@ -204,6 +204,7 @@ export const es: typeof ko = {
     lockedHeading: "Fortuna Diaria · Fortuna Semanal",
     lockedBody: "Suscríbete para ver la energía de hoy cada mañana, y el flujo de toda tu semana con un solo toque.",
     scoreLabel: "Puntaje de energía de hoy",
+    scoreExplain: "Se muestra en una escala de 58 a 95 — el saju sostiene que no existe un 'mal día', así que el puntaje nunca llega a ningún extremo.",
     weeklyScoreLabel: "Puntaje de energía",
     todayElementPrefix: "Energía de hoy",
     weeklyBestDayLabel: "Día con mejor energía",
@@ -211,6 +212,14 @@ export const es: typeof ko = {
     loadErrorText: "No pudimos cargar tu fortuna.",
     subscribeSuccess: "¡Ya estás suscrito! Ahora puedes ver tu fortuna diaria y semanal.",
     restoreSuccess: "¡Tu suscripción fue restaurada! Ahora puedes ver tu fortuna diaria y semanal.",
+    overviewLabel: "Resumen",
+    wealthLabel: "Dinero",
+    loveLabel: "Amor",
+    healthLabel: "Salud",
+    luckyPointLabel: "Puntos de Suerte de Hoy",
+    luckyColorLabel: "Color de la suerte",
+    luckyNumberLabel: "Número de la suerte",
+    luckyDirectionLabel: "Dirección de la suerte",
   },
 
   dailyInsight: {
