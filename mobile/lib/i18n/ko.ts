@@ -246,6 +246,8 @@ export const ko = {
     wealthLabel: "재물운",
     loveLabel: "애정운",
     healthLabel: "건강운",
+    lifeStageLabel: "오늘의 12운성",
+    sinsalLabel: "오늘의 12신살",
     luckyPointLabel: "오늘의 행운 포인트",
     luckyColorLabel: "행운의 색",
     luckyNumberLabel: "행운의 숫자",

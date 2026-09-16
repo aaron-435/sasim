@@ -8,6 +8,7 @@ import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
 import type { Locale } from "../lib/i18n/types";
 import { DAILY_FORTUNE_CONTENT, LUCKY_NUMBERS, LUCKY_POINTS, getOverview } from "../lib/dailyFortuneContent";
+import { TWELVE_STAGES_CONTENT } from "../lib/twelveStagesContent";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
 import { hasQaProEntitlement, purchaseQaPro, restoreQaPro } from "../lib/purchases";
@@ -15,8 +16,8 @@ import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
 
 // Daily content sections that fade/slide in, one after another, once the seal card below
-// is opened — score, overview, wealth, love, health, lucky points.
-const DAILY_SECTION_COUNT = 6;
+// is opened — score, overview, wealth, love, health, life stage, sinsal, lucky points.
+const DAILY_SECTION_COUNT = 8;
 
 // "오늘의 운세" / "이번주 운세" — 화면은 순전히 프레젠테이션이다. relation 분류·
 // 점수는 lib/compatibility.ts를 그대로 재사용해 만든 app/api/dailyFortune가
@@ -24,10 +25,17 @@ const DAILY_SECTION_COUNT = 6;
 // 값을 받아 lib/dailyFortuneContent.ts의 카피를 입힌다 — CompatibilityScreen과
 // 같은 분리. 구독 게이트는 QAScreen과 같은 qa_premium 엔타이틀먼트를 재사용한다
 // (2026-09-15: "질문 10개"뿐이던 구독 혜택이 빈약하다는 피드백으로 추가된 기능).
+//
+// 2026-09-16: lifeStageIndex/sinsalIndex 추가 — 경쟁 앱(포스텔러 등) 대비
+// 콘텐츠 깊이 격차를 좁히려고 실제 명리학 계산(lib/twelveStages.ts, 서버 쪽)을
+// 하나 더 얹었다. 이 화면은 인덱스만 받아 twelveStagesContent.ts로 카피를
+// 입히는 동일한 분리 원칙을 그대로 따른다.
 type DayFortune = {
   date: string;
-  dayMaster: { char: string; element: string; pillarIndex: number };
+  dayMaster: { char: string; element: string; pillarIndex: number; branch: string };
   compatibility: CompatibilityResult | null;
+  lifeStageIndex: number;
+  sinsalIndex: number | null;
 };
 
 const WEEKDAY_SHORT: Record<Locale, string[]> = {
@@ -54,14 +62,17 @@ function pickExtreme(list: DayFortune[], mode: "max" | "min"): DayFortune {
 
 export default function FortuneScreen({
   selfDayMasterChar,
+  selfDayBranch,
   onBack,
 }: {
   selfDayMasterChar: string | null;
+  selfDayBranch: string | null;
   onBack: () => void;
 }) {
   const strings = useStrings();
   const { locale } = useLocale();
   const content = DAILY_FORTUNE_CONTENT[locale] ?? DAILY_FORTUNE_CONTENT.ko;
+  const stagesContent = TWELVE_STAGES_CONTENT[locale] ?? TWELVE_STAGES_CONTENT.ko;
 
   const [entitled, setEntitled] = useState<boolean | null>(null);
   const [tab, setTab] = useState<"daily" | "weekly">("daily");
@@ -98,16 +109,18 @@ export default function FortuneScreen({
   }, []);
 
   useEffect(() => {
-    if (entitled && selfDayMasterChar && !daily && !dailyLoading) loadDaily();
+    if (entitled && selfDayMasterChar && selfDayBranch && !daily && !dailyLoading) loadDaily();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entitled, selfDayMasterChar]);
+  }, [entitled, selfDayMasterChar, selfDayBranch]);
 
   async function loadDaily() {
-    if (!selfDayMasterChar) return;
+    if (!selfDayMasterChar || !selfDayBranch) return;
     setDailyLoading(true);
     setDailyError(null);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/dailyFortune?mode=daily&selfDayMasterChar=${encodeURIComponent(selfDayMasterChar)}`);
+      const res = await fetch(
+        `${API_BASE_URL}/api/dailyFortune?mode=daily&selfDayMasterChar=${encodeURIComponent(selfDayMasterChar)}&selfDayBranch=${encodeURIComponent(selfDayBranch)}`,
+      );
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "failed");
       if (!mountedRef.current) return;
@@ -122,11 +135,13 @@ export default function FortuneScreen({
   }
 
   async function loadWeekly() {
-    if (!selfDayMasterChar) return;
+    if (!selfDayMasterChar || !selfDayBranch) return;
     setWeeklyLoading(true);
     setWeeklyError(null);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/dailyFortune?mode=weekly&selfDayMasterChar=${encodeURIComponent(selfDayMasterChar)}`);
+      const res = await fetch(
+        `${API_BASE_URL}/api/dailyFortune?mode=weekly&selfDayMasterChar=${encodeURIComponent(selfDayMasterChar)}&selfDayBranch=${encodeURIComponent(selfDayBranch)}`,
+      );
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "failed");
       if (mountedRef.current) setWeekly(json.weekly);
@@ -321,8 +336,22 @@ export default function FortuneScreen({
               <Text style={styles.sectionBody}>{content.relations[daily.compatibility.relation].health}</Text>
             </Animated.View>
 
+            <Animated.View style={[styles.sectionCard, sectionStyle(5)]}>
+              <Text style={styles.sectionLabel}>{strings.fortune.lifeStageLabel}</Text>
+              <Text style={styles.sectionHeadline}>{stagesContent.lifeStages[daily.lifeStageIndex]?.name}</Text>
+              <Text style={styles.sectionBody}>{stagesContent.lifeStages[daily.lifeStageIndex]?.body}</Text>
+            </Animated.View>
+
+            {daily.sinsalIndex !== null && (
+              <Animated.View style={[styles.sectionCard, sectionStyle(6)]}>
+                <Text style={styles.sectionLabel}>{strings.fortune.sinsalLabel}</Text>
+                <Text style={styles.sectionHeadline}>{stagesContent.sinsal[daily.sinsalIndex]?.name}</Text>
+                <Text style={styles.sectionBody}>{stagesContent.sinsal[daily.sinsalIndex]?.body}</Text>
+              </Animated.View>
+            )}
+
             {luckyPoint && luckyNumber && (
-              <Animated.View style={[styles.sectionCard, sectionStyle(5)]}>
+              <Animated.View style={[styles.sectionCard, sectionStyle(7)]}>
                 <Text style={styles.sectionLabel}>{strings.fortune.luckyPointLabel}</Text>
                 <View style={styles.luckyRow}>
                   <View style={styles.luckyItem}>

@@ -350,6 +350,7 @@ function AppContent() {
       {step === "fortune" && homeData && (
         <FortuneScreen
           selfDayMasterChar={(homeData.sajuResult.summary as { dayMaster?: { char?: string } } | undefined)?.dayMaster?.char ?? null}
+          selfDayBranch={(homeData.sajuResult.fourPillars as { day?: { earth?: string } } | undefined)?.day?.earth ?? null}
           onBack={() => setStep("home")}
         />
       )}

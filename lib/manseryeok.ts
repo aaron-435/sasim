@@ -70,11 +70,11 @@ import { findCurrentMonthTerm, MONTH_TERMS } from "./solarTerms";
 import { getLocationCorrection, getDstAwareUtcOffsetMinutes } from "./birthCities";
 import { getWorldCityById } from "./worldCities";
 
-const STEMS = ["갑", "을", "병", "정", "무", "기", "경", "신", "임", "계"] as const;
-const BRANCHES = ["자", "축", "인", "묘", "진", "사", "오", "미", "신", "유", "술", "해"] as const;
+export const STEMS = ["갑", "을", "병", "정", "무", "기", "경", "신", "임", "계"] as const;
+export const BRANCHES = ["자", "축", "인", "묘", "진", "사", "오", "미", "신", "유", "술", "해"] as const;
 
-type Stem = (typeof STEMS)[number];
-type Branch = (typeof BRANCHES)[number];
+export type Stem = (typeof STEMS)[number];
+export type Branch = (typeof BRANCHES)[number];
 type ElementKey = "wood" | "fire" | "earth" | "metal" | "water";
 
 const STEM_ELEMENT: Record<Stem, ElementKey> = {
@@ -97,7 +97,7 @@ const ELEMENT_KO: Record<ElementKey, string> = {
   wood: "목", fire: "화", earth: "토", metal: "금", water: "수",
 };
 
-function isYangStem(stem: Stem): boolean {
+export function isYangStem(stem: Stem): boolean {
   return STEMS.indexOf(stem) % 2 === 0; // 갑병무경임
 }
 

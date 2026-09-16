@@ -220,6 +220,8 @@ export const en: typeof ko = {
     wealthLabel: "Wealth",
     loveLabel: "Love",
     healthLabel: "Health",
+    lifeStageLabel: "Today's Energy Cycle",
+    sinsalLabel: "Today's Influence",
     luckyPointLabel: "Today's Lucky Points",
     luckyColorLabel: "Lucky color",
     luckyNumberLabel: "Lucky number",

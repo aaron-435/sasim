@@ -21,22 +21,34 @@
  * 피드백으로 "표현이 안 겹치게" 요청받아 콘텐츠 쪽에서 pillarIndex % 6으로 6가지
  * 문구를 순환시키게 됨(mobile/lib/dailyFortuneContent.ts) — 그러려면 오행(element)
  * 뿐 아니라 60갑자 전체 순번이 필요해서 여기서 계산해 내려준다.
+ *
+ * 2026-09-16: 십이운성(lifeStageIndex)과 십이신살(sinsalIndex)을 추가했다 —
+ * 경쟁 앱(포스텔러 등) 대비 콘텐츠 깊이 격차를 좁히려고 실제 명리학 계산을
+ * 하나 더 얹은 것(lib/twelveStages.ts). 십이운성은 본인 일간 vs 오늘의 일지로
+ * 계산되어 기존 파라미터만으로 충분하지만, 십이신살은 본인 일지(그룹)가 추가로
+ * 필요하다. selfDayBranch는 일부러 선택 파라미터로 뒀다 — 구 버전 앱(OTA 배포
+ * 전)은 이 값을 안 보내는데, 그걸 필수로 만들면 배포 순간 구버전 앱의 오늘의
+ * 운세 전체가 400으로 깨진다. 없으면 sinsalIndex만 null로 빠지고 나머지는
+ * 정상 응답한다.
  * ------------------------------------------------------------------
  */
 
-import { calculateManseryeok, sixtyIndex } from "./manseryeok";
+import { calculateManseryeok, sixtyIndex, type Branch, type Stem } from "./manseryeok";
 import { calculateCompatibility, type CompatibilityResult } from "./compatibility";
+import { lifeStageIndex, sinsalIndex } from "./twelveStages";
 
 export interface DayFortune {
   date: string; // YYYY-MM-DD, KST
-  dayMaster: { char: string; element: string; pillarIndex: number };
+  dayMaster: { char: string; element: string; pillarIndex: number; branch: string };
   compatibility: CompatibilityResult | null;
+  lifeStageIndex: number;
+  sinsalIndex: number | null;
 }
 
 // 하루치 일간은 계산이 끝나면 다시 바뀌지 않는 값이라 프로세스 내 캐시로 KASI
 // 왕복을 줄인다 — lib/rateLimit.ts와 같은 한계(서버리스 인스턴스별 로컬 캐시,
 // 인스턴스 간 공유 안 됨)를 그대로 가진다.
-const dayMasterCache = new Map<string, { char: string; element: string; pillarIndex: number }>();
+const dayMasterCache = new Map<string, { char: string; element: string; pillarIndex: number; branch: string }>();
 
 function kstDate(offsetDays: number): { year: number; month: number; day: number; iso: string } {
   const kstNow = new Date(Date.now() + 9 * 3600 * 1000);
@@ -48,19 +60,34 @@ function kstDate(offsetDays: number): { year: number; month: number; day: number
   return { year, month, day, iso };
 }
 
-async function getDayMaster(year: number, month: number, day: number, iso: string): Promise<{ char: string; element: string; pillarIndex: number }> {
+async function getDayMaster(
+  year: number,
+  month: number,
+  day: number,
+  iso: string,
+): Promise<{ char: string; element: string; pillarIndex: number; branch: string }> {
   const cached = dayMasterCache.get(iso);
   if (cached) return cached;
   const result = await calculateManseryeok({ birthYear: year, birthMonth: month, birthDay: day, birthHour: null, isFemale: true });
-  const dayMaster = { ...result.summary.dayMaster, pillarIndex: sixtyIndex(result.fourPillars.day.sky, result.fourPillars.day.earth) };
+  const dayMaster = {
+    ...result.summary.dayMaster,
+    pillarIndex: sixtyIndex(result.fourPillars.day.sky, result.fourPillars.day.earth),
+    branch: result.fourPillars.day.earth as string,
+  };
   dayMasterCache.set(iso, dayMaster);
   return dayMaster;
 }
 
-export async function getDailyFortune(selfDayMasterChar: string, offsetDays = 0): Promise<DayFortune> {
+export async function getDailyFortune(selfDayMasterChar: string, selfDayBranch: string | null, offsetDays = 0): Promise<DayFortune> {
   const { year, month, day, iso } = kstDate(offsetDays);
   const dayMaster = await getDayMaster(year, month, day, iso);
-  return { date: iso, dayMaster, compatibility: calculateCompatibility(selfDayMasterChar, dayMaster.char) };
+  return {
+    date: iso,
+    dayMaster,
+    compatibility: calculateCompatibility(selfDayMasterChar, dayMaster.char),
+    lifeStageIndex: lifeStageIndex(selfDayMasterChar as Stem, dayMaster.branch as Branch),
+    sinsalIndex: selfDayBranch ? sinsalIndex(selfDayBranch as Branch, dayMaster.branch as Branch) : null,
+  };
 }
 
 /** 오늘부터 앞으로 7일 — 이미 지난 요일을 되짚는 대신 "이번주"를 "다가오는 한
@@ -69,7 +96,9 @@ export async function getDailyFortune(selfDayMasterChar: string, offsetDays = 0)
  * KASI가 동시 요청에 429를 주는 경우가 있었던 이력(사주 유형 유명인 콘텐츠
  * 생성 때 확인됨) 때문에 allSettled로 받는다 — 하루치가 실패해도 나머지
  * 6일치는 그대로 보여주는 게, 이번 주 전체를 에러로 날리는 것보다 낫다. */
-export async function getWeeklyFortune(selfDayMasterChar: string): Promise<DayFortune[]> {
-  const settled = await Promise.allSettled([0, 1, 2, 3, 4, 5, 6].map((offset) => getDailyFortune(selfDayMasterChar, offset)));
+export async function getWeeklyFortune(selfDayMasterChar: string, selfDayBranch: string | null): Promise<DayFortune[]> {
+  const settled = await Promise.allSettled(
+    [0, 1, 2, 3, 4, 5, 6].map((offset) => getDailyFortune(selfDayMasterChar, selfDayBranch, offset)),
+  );
   return settled.filter((r): r is PromiseFulfilledResult<DayFortune> => r.status === "fulfilled").map((r) => r.value);
 }
