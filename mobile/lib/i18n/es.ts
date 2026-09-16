@@ -194,6 +194,8 @@ export const es: typeof ko = {
     scoreLabel: "Puntos de compatibilidad",
     otherTypeLabel: (name: string, typeName: string) => `Tipo de ${name} · ${typeName}`,
     shareCardEyebrow: "Compatibilidad de Saju",
+    shareCardGoodPointLabel: "Lo Bueno",
+    shareCardCautionLabel: "Ten Cuidado Con",
     shareCardFooter: "Descubre tu compatibilidad en Fatesaid",
   },
 

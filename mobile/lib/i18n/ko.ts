@@ -220,6 +220,8 @@ export const ko = {
     scoreLabel: "궁합 포인트",
     otherTypeLabel: (name: string, typeName: string) => `${name}님의 유형 · ${typeName}`,
     shareCardEyebrow: "사주 궁합",
+    shareCardGoodPointLabel: "좋은 점",
+    shareCardCautionLabel: "주의할 점",
     shareCardFooter: "Fatesaid에서 나의 사주 궁합 확인하기",
   },
 
