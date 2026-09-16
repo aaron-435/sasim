@@ -112,7 +112,7 @@ function parseGanji(raw: string): { stem: Stem; branch: Branch } {
   return { stem, branch };
 }
 
-interface Pillar {
+export interface Pillar {
   full: string;
   sky: Stem;
   earth: Branch;
@@ -193,6 +193,17 @@ function computeYearAndMonthPillar(birthUtc: Date): { year: Pillar; month: Pilla
     year: buildPillar(yearStem, yearBranch),
     month: buildPillar(STEMS[monthStemIdx], monthBranch),
   };
+}
+
+/** The year pillar for an arbitrary saju-year number (e.g. 2027) — a pure 60갑자-cycle
+ * formula, unlike month/day pillars which need precise solar-term/KASI lookups. Added
+ * 2026-09-16 for the Year Fortune feature, which needs "the pillar for year N" without
+ * tying it to anyone's specific birth date (contrast computeYearAndMonthPillar above,
+ * which resolves a birth timestamp to its saju-year first via 절입 boundaries). */
+export function yearPillarForSajuYear(sajuYear: number): Pillar {
+  const yearStemIdx = ((sajuYear - 4) % 10 + 10) % 10;
+  const yearBranchIdx = ((sajuYear - 4) % 12 + 12) % 12;
+  return buildPillar(STEMS[yearStemIdx], BRANCHES[yearBranchIdx]);
 }
 
 export function sixtyIndex(stem: Stem, branch: Branch): number {

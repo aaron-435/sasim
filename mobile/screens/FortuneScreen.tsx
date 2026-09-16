@@ -9,6 +9,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import type { Locale } from "../lib/i18n/types";
 import { DAILY_FORTUNE_CONTENT, LUCKY_NUMBERS, LUCKY_POINTS, getOverview } from "../lib/dailyFortuneContent";
 import { TWELVE_STAGES_CONTENT } from "../lib/twelveStagesContent";
+import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
 import { hasQaProEntitlement, purchaseQaPro, restoreQaPro } from "../lib/purchases";
@@ -36,6 +37,18 @@ type DayFortune = {
   compatibility: CompatibilityResult | null;
   lifeStageIndex: number;
   sinsalIndex: number | null;
+};
+
+// 2026-09-16: "신년운세" Phase 1 — a third tab reusing the exact same subscription
+// gate/chrome/styles as daily/weekly (see lib/yearFortune.ts for why this needed no
+// new async KASI plumbing: year pillars are a closed-form 60갑자 formula).
+type YearFortune = {
+  year: number;
+  yearMaster: { char: string; element: string; branch: string };
+  compatibility: CompatibilityResult | null;
+  lifeStageIndex: number;
+  sinsalIndex: number | null;
+  branchRelation: "hap" | "chung" | "none";
 };
 
 const WEEKDAY_SHORT: Record<Locale, string[]> = {
@@ -73,9 +86,10 @@ export default function FortuneScreen({
   const { locale } = useLocale();
   const content = DAILY_FORTUNE_CONTENT[locale] ?? DAILY_FORTUNE_CONTENT.ko;
   const stagesContent = TWELVE_STAGES_CONTENT[locale] ?? TWELVE_STAGES_CONTENT.ko;
+  const yearContent = YEAR_FORTUNE_CONTENT[locale] ?? YEAR_FORTUNE_CONTENT.ko;
 
   const [entitled, setEntitled] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<"daily" | "weekly">("daily");
+  const [tab, setTab] = useState<"daily" | "weekly" | "yearly">("daily");
 
   const [daily, setDaily] = useState<DayFortune | null>(null);
   const [dailyLoading, setDailyLoading] = useState(false);
@@ -84,6 +98,10 @@ export default function FortuneScreen({
   const [weekly, setWeekly] = useState<DayFortune[] | null>(null);
   const [weeklyLoading, setWeeklyLoading] = useState(false);
   const [weeklyError, setWeeklyError] = useState<string | null>(null);
+
+  const [yearly, setYearly] = useState<YearFortune | null>(null);
+  const [yearlyLoading, setYearlyLoading] = useState(false);
+  const [yearlyError, setYearlyError] = useState<string | null>(null);
 
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
@@ -152,9 +170,28 @@ export default function FortuneScreen({
     }
   }
 
-  function handleSelectTab(next: "daily" | "weekly") {
+  async function loadYearly() {
+    if (!selfDayMasterChar) return;
+    setYearlyLoading(true);
+    setYearlyError(null);
+    try {
+      const params = new URLSearchParams({ selfDayMasterChar });
+      if (selfDayBranch) params.set("selfDayBranch", selfDayBranch);
+      const res = await fetch(`${API_BASE_URL}/api/yearFortune?${params.toString()}`);
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "failed");
+      if (mountedRef.current) setYearly(json.yearFortune);
+    } catch {
+      if (mountedRef.current) setYearlyError(strings.fortune.loadErrorText);
+    } finally {
+      if (mountedRef.current) setYearlyLoading(false);
+    }
+  }
+
+  function handleSelectTab(next: "daily" | "weekly" | "yearly") {
     setTab(next);
     if (next === "weekly" && !weekly && !weeklyLoading) loadWeekly();
+    if (next === "yearly" && !yearly && !yearlyLoading) loadYearly();
   }
 
   useEffect(() => {
@@ -280,6 +317,9 @@ export default function FortuneScreen({
           <Pressable style={[styles.tabButton, tab === "weekly" && styles.tabButtonActive]} onPress={() => handleSelectTab("weekly")}>
             <Text style={[styles.tabLabel, tab === "weekly" && styles.tabLabelActive]}>{strings.fortune.weeklyTab}</Text>
           </Pressable>
+          <Pressable style={[styles.tabButton, tab === "yearly" && styles.tabButtonActive]} onPress={() => handleSelectTab("yearly")}>
+            <Text style={[styles.tabLabel, tab === "yearly" && styles.tabLabelActive]}>{strings.fortune.yearlyTab}</Text>
+          </Pressable>
         </View>
 
         {tab === "daily" && dailyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
@@ -400,6 +440,70 @@ export default function FortuneScreen({
                 </View>
               ))}
             </View>
+          </>
+        )}
+
+        {tab === "yearly" && yearlyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
+        {tab === "yearly" && !yearlyLoading && yearlyError && <Text style={styles.errorText}>{yearlyError}</Text>}
+        {tab === "yearly" && !yearlyLoading && !yearlyError && yearly?.compatibility && (
+          <>
+            <View style={[styles.scoreCard, { borderColor: `${ELEMENT_COLORS[yearly.compatibility.otherDayMasterElement] ?? COLORS.gold}55` }]}>
+              <Text style={styles.scoreLabel}>{strings.fortune.yearHeading(yearly.year)}</Text>
+              <Text style={[styles.scoreValue, { color: ELEMENT_COLORS[yearly.compatibility.otherDayMasterElement] ?? COLORS.gold }]}>
+                {yearly.compatibility.score}
+              </Text>
+            </View>
+
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionLabel}>{strings.fortune.overviewLabel}</Text>
+              <Text style={styles.sectionHeadline}>{yearContent.relations[yearly.compatibility.relation].headline}</Text>
+              <Text style={styles.sectionBody}>{yearContent.relations[yearly.compatibility.relation].overview}</Text>
+            </View>
+
+            {yearly.branchRelation !== "none" && (
+              <View style={styles.sectionCard}>
+                <Text style={styles.sectionBody}>{yearly.branchRelation === "hap" ? yearContent.hapNote : yearContent.chungNote}</Text>
+              </View>
+            )}
+
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionLabel}>{strings.fortune.wealthLabel}</Text>
+              <Text style={styles.sectionBody}>{yearContent.relations[yearly.compatibility.relation].wealth}</Text>
+            </View>
+
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionLabel}>{strings.fortune.loveLabel}</Text>
+              <Text style={styles.sectionBody}>{yearContent.relations[yearly.compatibility.relation].love}</Text>
+            </View>
+
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionLabel}>{strings.fortune.careerLabel}</Text>
+              <Text style={styles.sectionBody}>{yearContent.relations[yearly.compatibility.relation].career}</Text>
+            </View>
+
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionLabel}>{strings.fortune.studyLabel}</Text>
+              <Text style={styles.sectionBody}>{yearContent.relations[yearly.compatibility.relation].study}</Text>
+            </View>
+
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionLabel}>{strings.fortune.healthLabel}</Text>
+              <Text style={styles.sectionBody}>{yearContent.relations[yearly.compatibility.relation].health}</Text>
+            </View>
+
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionLabel}>{strings.fortune.yearLifeStageLabel}</Text>
+              <Text style={styles.sectionHeadline}>{stagesContent.lifeStages[yearly.lifeStageIndex]?.name}</Text>
+              <Text style={styles.sectionBody}>{stagesContent.lifeStages[yearly.lifeStageIndex]?.body}</Text>
+            </View>
+
+            {yearly.sinsalIndex !== null && (
+              <View style={styles.sectionCard}>
+                <Text style={styles.sectionLabel}>{strings.fortune.yearSinsalLabel}</Text>
+                <Text style={styles.sectionHeadline}>{stagesContent.sinsal[yearly.sinsalIndex]?.name}</Text>
+                <Text style={styles.sectionBody}>{stagesContent.sinsal[yearly.sinsalIndex]?.body}</Text>
+              </View>
+            )}
           </>
         )}
       </ScrollView>

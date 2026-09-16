@@ -8,6 +8,11 @@
  * 십이신살(十二神殺, Twelve Sinsal). Both are real, deterministic
  * classical calculations — not AI-generated — matching this app's
  * "실제 만세력 엔진" positioning.
+ *
+ * 2026-09-16: added branchRelation (육합/충) for the Year Fortune feature.
+ * Deliberately limited to just these two — compatibility.ts's header already
+ * scoped 형/파/해 out as excess complexity for the narrative value they add,
+ * and that reasoning holds here too.
  * ------------------------------------------------------------------
  */
 
@@ -78,4 +83,36 @@ export function sinsalIndex(referenceBranch: Branch, targetBranch: Branch): numb
   const geopsalIdx = (startIdx - 3 + 12) % 12; // 겁살은 그룹 생지의 -3 위치에서 시작
   const targetIdx = BRANCHES.indexOf(targetBranch);
   return (targetIdx - geopsalIdx + 12) % 12;
+}
+
+// 육합(六合) 여섯 쌍 — 자축, 인해, 묘술, 진유, 사신, 오미.
+const HAP_PAIRS: readonly [Branch, Branch][] = [
+  ["자", "축"],
+  ["인", "해"],
+  ["묘", "술"],
+  ["진", "유"],
+  ["사", "신"],
+  ["오", "미"],
+];
+
+// 충(沖) 여섯 쌍 — 열두 지지 순환에서 정반대(6칸 차이) 위치.
+const CHUNG_PAIRS: readonly [Branch, Branch][] = [
+  ["자", "오"],
+  ["축", "미"],
+  ["인", "신"],
+  ["묘", "유"],
+  ["진", "술"],
+  ["사", "해"],
+];
+
+function isPair(a: Branch, b: Branch, pairs: readonly [Branch, Branch][]): boolean {
+  return pairs.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+}
+
+/** 두 지지 사이의 육합/충 관계 — 같은 지지면 "none" (합충 대상 아님). */
+export function branchRelation(a: Branch, b: Branch): "hap" | "chung" | "none" {
+  if (a === b) return "none";
+  if (isPair(a, b, HAP_PAIRS)) return "hap";
+  if (isPair(a, b, CHUNG_PAIRS)) return "chung";
+  return "none";
 }
