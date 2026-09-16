@@ -6,7 +6,7 @@ import Purchases, {
   type PurchasesError,
   type PurchasesPackage,
 } from "react-native-purchases";
-import { REVENUECAT_API_KEY } from "../config";
+import { REVENUECAT_API_KEY_ANDROID, REVENUECAT_API_KEY_IOS } from "../config";
 
 /**
  * lib/purchases.ts
@@ -47,7 +47,8 @@ export function configurePurchases(): void {
   if (configured || !isSupportedPlatform()) return;
   configured = true;
   if (__DEV__) Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-  Purchases.configure({ apiKey: REVENUECAT_API_KEY });
+  const apiKey = Platform.OS === "ios" ? REVENUECAT_API_KEY_IOS : REVENUECAT_API_KEY_ANDROID;
+  Purchases.configure({ apiKey });
 }
 
 export async function getCustomerInfo(): Promise<CustomerInfo | null> {
