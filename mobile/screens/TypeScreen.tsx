@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { ArrowLeft, Droplets, Flame, Gem, Mountain, Share2, TreePine } from "lucide-react-native";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
@@ -39,7 +39,12 @@ export default function TypeScreen({
     if (sharing) return;
     setSharing(true);
     try {
-      const uri = await captureRef(cardRef, { format: "png", quality: 1 });
+      // width-only: consistent 1080px-wide export regardless of on-screen size/device
+      // pixel ratio, height following this card's actual (content-driven) aspect ratio —
+      // same approach as CompatibilityScreen's share card, for the same reason (the
+      // mode copy's length varies enough across types/locales that a hardcoded aspect
+      // ratio risks clipping it).
+      const uri = await captureRef(cardRef, { format: "png", quality: 1, width: 1080 });
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(uri, { mimeType: "image/png" });
       }
@@ -58,7 +63,7 @@ export default function TypeScreen({
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </Pressable>
 
-        <View ref={cardRef} collapsable={false} style={[styles.card, { borderColor: `${tint}55` }]}>
+        <View style={[styles.card, { borderColor: `${tint}55` }]}>
           <Text style={styles.brandLabel}>FATESAID</Text>
           <View style={[styles.iconRow]}>
             <View style={[styles.iconBubble, { backgroundColor: `${tint}22` }]}>
@@ -105,6 +110,26 @@ export default function TypeScreen({
             </View>
           </View>
         )}
+
+        <View ref={cardRef} collapsable={false} style={styles.shareCard}>
+          <Image source={require("../assets/patterns/onboarding-bg.png")} resizeMode="cover" style={StyleSheet.absoluteFill} />
+          <View style={styles.shareCardInner}>
+            <Text style={styles.shareBrandLabel}>FATESAID</Text>
+
+            <View style={styles.shareCardMid}>
+              <View style={[styles.shareIconBubble, { backgroundColor: `${ELEMENT_COLORS[sajuType.dominantElement]}22` }]}>
+                <ModeIcon size={22} strokeWidth={1.75} color={ELEMENT_COLORS[sajuType.dominantElement]} />
+              </View>
+              <Text style={styles.shareEyebrow}>{strings.sajuType.modeLabel}</Text>
+              <Text style={styles.shareTitle}>{mode.name}</Text>
+              <Text style={styles.shareTagline}>{mode.tagline}</Text>
+              <Text style={styles.shareBody}>{mode.body}</Text>
+              <Text style={styles.shareTypeLine}>{strings.sajuType.shareCardTypeLine(nickname, typeName)}</Text>
+            </View>
+
+            <Text style={styles.shareFooter}>{strings.sajuType.shareCardFooter}</Text>
+          </View>
+        </View>
 
         <Pressable style={styles.shareButton} onPress={handleShare} disabled={sharing}>
           {sharing ? (
@@ -243,6 +268,30 @@ const styles = StyleSheet.create({
     color: COLORS.subheadline,
     marginTop: 8,
   },
+  // Deliberately no fixed aspectRatio, same reasoning as CompatibilityScreen's share
+  // card — the mode copy's length varies across types/locales, so the card grows to
+  // fit its content instead of risking a clipped fixed-height box.
+  shareCard: {
+    width: "100%",
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: COLORS.background,
+    marginTop: 32,
+  },
+  shareCardInner: {
+    paddingHorizontal: "9%",
+    paddingVertical: "9%",
+    alignItems: "center",
+  },
+  shareBrandLabel: { fontFamily: "Manrope_700Bold", fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: 28 },
+  shareCardMid: { alignItems: "center", width: "100%" },
+  shareIconBubble: { width: 52, height: 52, borderRadius: 26, alignItems: "center", justifyContent: "center", marginBottom: 14 },
+  shareEyebrow: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 6 },
+  shareTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 34, color: COLORS.headline },
+  shareTagline: { fontFamily: "Manrope_500Medium", fontSize: 14, color: COLORS.gold, textAlign: "center", marginTop: 8 },
+  shareBody: { fontFamily: "Manrope_400Regular", fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, textAlign: "center", marginTop: 14 },
+  shareTypeLine: { fontFamily: "Manrope_500Medium", fontSize: 12, color: COLORS.headline, marginTop: 20 },
+  shareFooter: { fontFamily: "Manrope_500Medium", fontSize: 12.5, color: COLORS.subheadline, textAlign: "center", marginTop: 30 },
   shareButton: {
     flexDirection: "row",
     alignItems: "center",

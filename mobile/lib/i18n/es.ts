@@ -131,8 +131,8 @@ export const es: typeof ko = {
     archetypeLabel: "Quién eres de nacimiento",
     modeLabel: "Qué te impulsa ahora mismo",
     shareButton: "Compartir resultado",
-    shareMessage: (nickname: string, typeName: string) =>
-      `El tipo de saju de ${nickname} es "${typeName}" — descubre el tuyo en Fatesaid.`,
+    shareCardTypeLine: (nickname: string, typeName: string) => `Tipo de saju de ${nickname} · ${typeName}`,
+    shareCardFooter: "Descubre tu tipo de saju en Fatesaid",
     celebritiesLabel: "Personas que comparten este tipo",
     celebrityBirthYear: (year: number) => `n. ${year}`,
   },
