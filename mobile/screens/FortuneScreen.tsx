@@ -9,7 +9,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import type { Locale } from "../lib/i18n/types";
 import { DAILY_FORTUNE_CONTENT, LUCKY_NUMBERS, LUCKY_POINTS, getOverview } from "../lib/dailyFortuneContent";
 import type { CompatibilityResult } from "../lib/compatibility";
-import { isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
+import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
 import { hasQaProEntitlement, purchaseQaPro, restoreQaPro } from "../lib/purchases";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
@@ -79,6 +79,7 @@ export default function FortuneScreen({
   const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
 
   const [revealed, setRevealed] = useState(false);
+  const [streak, setStreak] = useState(0);
   const sealScale = useRef(new Animated.Value(1)).current;
   const sectionAnims = useRef([...Array(DAILY_SECTION_COUNT)].map(() => new Animated.Value(0))).current;
 
@@ -112,6 +113,7 @@ export default function FortuneScreen({
       if (!mountedRef.current) return;
       setDaily(json.daily);
       setRevealed(await isFortuneOpened(json.daily.date));
+      setStreak(await getFortuneStreak());
     } catch {
       if (mountedRef.current) setDailyError(strings.fortune.loadErrorText);
     } finally {
@@ -166,8 +168,10 @@ export default function FortuneScreen({
 
   function handleOpenDaily() {
     if (!daily) return;
-    markFortuneOpened(daily.date).catch(() => {});
     setRevealed(true);
+    markFortuneOpened(daily.date)
+      .then(setStreak)
+      .catch(() => {});
   }
 
   async function handleSubscribe() {
@@ -277,6 +281,7 @@ export default function FortuneScreen({
               <View style={styles.sealButton}>
                 <Text style={styles.sealButtonLabel}>{strings.fortune.sealButtonLabel}</Text>
               </View>
+              {streak > 0 && <Text style={styles.streakContinueText}>{strings.fortune.streakContinue(streak)}</Text>}
             </Animated.View>
           </Pressable>
         )}
@@ -288,6 +293,11 @@ export default function FortuneScreen({
               <Text style={[styles.scoreValue, { color: ELEMENT_COLORS[daily.compatibility.otherDayMasterElement] ?? COLORS.gold }]}>
                 {daily.compatibility.score}
               </Text>
+              {streak > 1 && (
+                <View style={styles.streakBadge}>
+                  <Text style={styles.streakBadgeText}>{strings.fortune.streakBadge(streak)}</Text>
+                </View>
+              )}
             </Animated.View>
 
             <Animated.View style={[styles.sectionCard, sectionStyle(1)]}>
@@ -433,6 +443,17 @@ const styles = StyleSheet.create({
   sealBody: { fontFamily: "Manrope_400Regular", fontSize: 13, lineHeight: 20, color: COLORS.subheadline, textAlign: "center", marginBottom: 10 },
   sealButton: { backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 13, paddingHorizontal: 22 },
   sealButtonLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 13.5, color: COLORS.ctaText },
+  streakContinueText: { fontFamily: "Manrope_500Medium", fontSize: 12, color: COLORS.gold, marginTop: 4 },
+  streakBadge: {
+    marginTop: 10,
+    backgroundColor: "rgba(212,175,110,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(212,175,110,0.3)",
+    borderRadius: 999,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+  },
+  streakBadgeText: { fontFamily: "Manrope_600SemiBold", fontSize: 11.5, color: COLORS.gold },
   scoreCard: {
     alignItems: "center",
     backgroundColor: COLORS.inputBg,

@@ -232,6 +232,8 @@ export const ko = {
     sealHeading: "오늘의 운세가 도착했어요",
     sealBody: "탭해서 오늘 하루의 흐름을 확인해보세요.",
     sealButtonLabel: "오늘의 운세 열어보기",
+    streakContinue: (n: number) => `지금 ${n}일 연속 확인 중이에요`,
+    streakBadge: (n: number) => `${n}일 연속`,
     scoreLabel: "오늘의 기운 점수",
     weeklyScoreLabel: "기운 점수",
     todayElementPrefix: "오늘의 기운",

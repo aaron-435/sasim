@@ -206,6 +206,8 @@ export const es: typeof ko = {
     sealHeading: "Tu fortuna de hoy ha llegado",
     sealBody: "Toca para revelar lo que te depara el día de hoy.",
     sealButtonLabel: "Revelar la fortuna de hoy",
+    streakContinue: (n: number) => `Llevas una racha de ${n} días`,
+    streakBadge: (n: number) => `Racha de ${n} días`,
     scoreLabel: "Puntaje de energía de hoy",
     weeklyScoreLabel: "Puntaje de energía",
     todayElementPrefix: "Energía de hoy",

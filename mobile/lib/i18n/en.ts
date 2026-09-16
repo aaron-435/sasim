@@ -206,6 +206,8 @@ export const en: typeof ko = {
     sealHeading: "Today's fortune has arrived",
     sealBody: "Tap to reveal what today has in store for you.",
     sealButtonLabel: "Reveal today's fortune",
+    streakContinue: (n: number) => `You're on a ${n}-day streak`,
+    streakBadge: (n: number) => `${n}-day streak`,
     scoreLabel: "Today's energy score",
     weeklyScoreLabel: "Energy score",
     todayElementPrefix: "Today's energy",
