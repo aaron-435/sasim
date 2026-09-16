@@ -117,6 +117,18 @@ export default function TypeScreen({
             <Text style={styles.shareBrandLabel}>FATESAID</Text>
 
             <View style={styles.shareCardMid}>
+              <View style={[styles.shareIconBubble, { backgroundColor: `${tint}22` }]}>
+                <ArchetypeIcon size={22} strokeWidth={1.75} color={tint} />
+              </View>
+              <Text style={styles.shareEyebrow}>{strings.sajuType.archetypeLabel}</Text>
+              <Text style={styles.shareTitle}>{archetype.name}</Text>
+              <Text style={styles.shareTagline}>{archetype.tagline}</Text>
+              <Text style={styles.shareBody}>{archetype.body}</Text>
+            </View>
+
+            <View style={styles.shareDivider} />
+
+            <View style={styles.shareCardMid}>
               <View style={[styles.shareIconBubble, { backgroundColor: `${ELEMENT_COLORS[sajuType.dominantElement]}22` }]}>
                 <ModeIcon size={22} strokeWidth={1.75} color={ELEMENT_COLORS[sajuType.dominantElement]} />
               </View>
@@ -124,9 +136,27 @@ export default function TypeScreen({
               <Text style={styles.shareTitle}>{mode.name}</Text>
               <Text style={styles.shareTagline}>{mode.tagline}</Text>
               <Text style={styles.shareBody}>{mode.body}</Text>
-              <Text style={styles.shareTypeLine}>{strings.sajuType.shareCardTypeLine(nickname, typeName)}</Text>
             </View>
 
+            {celebrities.length > 0 && (
+              <>
+                <View style={styles.shareDivider} />
+                <View style={styles.shareCardMid}>
+                  <Text style={styles.shareEyebrow}>{strings.sajuType.celebritiesLabel}</Text>
+                  {celebrities.map((c) => (
+                    <View key={c.name} style={styles.shareCelebRow}>
+                      <Text style={styles.shareCelebName}>{c.name}</Text>
+                      <Text style={styles.shareCelebMeta}>
+                        {c.field[locale]} · {strings.sajuType.celebrityBirthYear(c.birthYear)}
+                      </Text>
+                      <Text style={styles.shareCelebBlurb}>{c.blurb[locale]}</Text>
+                    </View>
+                  ))}
+                </View>
+              </>
+            )}
+
+            <Text style={styles.shareTypeLine}>{strings.sajuType.shareCardTypeLine(nickname, typeName)}</Text>
             <Text style={styles.shareFooter}>{strings.sajuType.shareCardFooter}</Text>
           </View>
         </View>
@@ -285,12 +315,17 @@ const styles = StyleSheet.create({
   },
   shareBrandLabel: { fontFamily: "Manrope_700Bold", fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: 28 },
   shareCardMid: { alignItems: "center", width: "100%" },
+  shareDivider: { width: "60%", height: 1, backgroundColor: COLORS.border, marginVertical: 26 },
+  shareCelebRow: { width: "100%", alignItems: "center", marginTop: 16 },
+  shareCelebName: { fontFamily: "Manrope_600SemiBold", fontSize: 14, color: COLORS.headline, marginTop: 4 },
+  shareCelebMeta: { fontFamily: "Manrope_500Medium", fontSize: 11.5, color: COLORS.gold, marginTop: 2 },
+  shareCelebBlurb: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: 6 },
   shareIconBubble: { width: 52, height: 52, borderRadius: 26, alignItems: "center", justifyContent: "center", marginBottom: 14 },
   shareEyebrow: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 6 },
   shareTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 34, color: COLORS.headline },
   shareTagline: { fontFamily: "Manrope_500Medium", fontSize: 14, color: COLORS.gold, textAlign: "center", marginTop: 8 },
   shareBody: { fontFamily: "Manrope_400Regular", fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, textAlign: "center", marginTop: 14 },
-  shareTypeLine: { fontFamily: "Manrope_500Medium", fontSize: 12, color: COLORS.headline, marginTop: 20 },
+  shareTypeLine: { fontFamily: "Manrope_500Medium", fontSize: 12, color: COLORS.headline, marginTop: 26 },
   shareFooter: { fontFamily: "Manrope_500Medium", fontSize: 12.5, color: COLORS.subheadline, textAlign: "center", marginTop: 30 },
   shareButton: {
     flexDirection: "row",
