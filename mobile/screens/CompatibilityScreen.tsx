@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import { ArrowLeft, Share2 } from "lucide-react-native";
-import { ActivityIndicator, Pressable, ScrollView, Share, StyleSheet, TextInput, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import * as Sharing from "expo-sharing";
+import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
@@ -53,6 +55,8 @@ export default function CompatibilityScreen({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ApiResult | null>(null);
+  const [sharing, setSharing] = useState(false);
+  const shareCardRef = useRef<View>(null);
 
   const monthRef = useRef<TextInput>(null);
   const dayRef = useRef<TextInput>(null);
@@ -123,14 +127,20 @@ export default function CompatibilityScreen({
   }
 
   async function handleShare() {
-    if (!result?.compatibility) return;
-    const otherDisplayName = otherName.trim() || strings.compatibility.namePlaceholder;
+    if (sharing) return;
+    setSharing(true);
     try {
-      await Share.share({
-        message: strings.compatibility.shareMessage(selfNickname, otherDisplayName, result.compatibility.score),
-      });
+      // Fixed 1080x1920 (9:16) output regardless of the on-screen preview's rendered
+      // size or device pixel ratio — captureRef resizes the same aspect-ratio bitmap,
+      // so this always lands as a full-bleed Instagram Story image.
+      const uri = await captureRef(shareCardRef, { format: "png", quality: 1, width: 1080, height: 1920 });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, { mimeType: "image/png" });
+      }
     } catch {
-      // best-effort
+      // Best-effort — sharing is a bonus action, not something worth surfacing an error screen for.
+    } finally {
+      setSharing(false);
     }
   }
 
@@ -164,9 +174,34 @@ export default function CompatibilityScreen({
 
           {result.compatibility.stemBond && <Text style={styles.bondNote}>{content.bondNote}</Text>}
 
-          <Pressable style={styles.shareButton} onPress={handleShare}>
-            <Share2 size={16} strokeWidth={2} color={COLORS.ctaText} />
-            <Text style={styles.shareButtonLabel}>{strings.compatibility.shareButton}</Text>
+          <View ref={shareCardRef} collapsable={false} style={styles.shareCard}>
+            <Image source={require("../assets/patterns/onboarding-bg.png")} resizeMode="cover" style={StyleSheet.absoluteFill} />
+            <View style={styles.shareCardInner}>
+              <Text style={styles.shareBrandLabel}>FATESAID</Text>
+
+              <View style={styles.shareCardMid}>
+                <Text style={styles.shareEyebrow}>{strings.compatibility.shareCardEyebrow}</Text>
+                <Text style={styles.shareNames}>
+                  {selfNickname} · {otherDisplayName}
+                </Text>
+                <Text style={[styles.shareScore, { color: tint }]}>{result.compatibility.score}</Text>
+                <Text style={styles.shareScoreLabel}>{strings.compatibility.scoreLabel}</Text>
+                <Text style={styles.shareHeadline}>{relationCopy.headline}</Text>
+              </View>
+
+              <Text style={styles.shareFooter}>{strings.compatibility.shareCardFooter}</Text>
+            </View>
+          </View>
+
+          <Pressable style={styles.shareButton} onPress={handleShare} disabled={sharing}>
+            {sharing ? (
+              <ActivityIndicator color={COLORS.ctaText} />
+            ) : (
+              <>
+                <Share2 size={16} strokeWidth={2} color={COLORS.ctaText} />
+                <Text style={styles.shareButtonLabel}>{strings.compatibility.shareButton}</Text>
+              </>
+            )}
           </Pressable>
 
           <Pressable style={styles.tryAgainButton} onPress={handleTryAgain}>
@@ -401,6 +436,29 @@ const styles = StyleSheet.create({
   otherTypeLine: { fontFamily: "Manrope_500Medium", fontSize: 13.5, color: COLORS.gold, marginTop: 18, textAlign: "center" },
   relationBody: { fontFamily: "Manrope_400Regular", fontSize: 14.5, lineHeight: 22, color: COLORS.subheadline, marginTop: 12 },
   bondNote: { fontFamily: "Manrope_500Medium", fontSize: 13.5, lineHeight: 20, color: COLORS.gold, marginTop: 16 },
+  shareCard: {
+    width: "100%",
+    aspectRatio: 9 / 16,
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: COLORS.background,
+    marginTop: 28,
+  },
+  shareCardInner: {
+    flex: 1,
+    paddingHorizontal: "9%",
+    paddingVertical: "6%",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  shareBrandLabel: { fontFamily: "Manrope_700Bold", fontSize: 13, letterSpacing: 3, color: COLORS.gold },
+  shareCardMid: { alignItems: "center", gap: 6 },
+  shareEyebrow: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 4 },
+  shareNames: { fontFamily: "Manrope_600SemiBold", fontSize: 17, color: COLORS.headline, textAlign: "center" },
+  shareScore: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 88, lineHeight: 96, marginTop: 12 },
+  shareScoreLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, letterSpacing: 0.5, color: COLORS.subheadline },
+  shareHeadline: { fontFamily: "Manrope_600SemiBold", fontSize: 18, color: COLORS.headline, textAlign: "center", marginTop: 22, lineHeight: 26 },
+  shareFooter: { fontFamily: "Manrope_500Medium", fontSize: 12.5, color: COLORS.subheadline, textAlign: "center" },
   shareButton: {
     flexDirection: "row",
     alignItems: "center",

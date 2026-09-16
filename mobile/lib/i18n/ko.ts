@@ -219,8 +219,8 @@ export const ko = {
     errorNetwork: "네트워크 오류로 궁합 계산에 실패했습니다.",
     scoreLabel: "궁합 포인트",
     otherTypeLabel: (name: string, typeName: string) => `${name}님의 유형 · ${typeName}`,
-    shareMessage: (selfName: string, otherName: string, score: number) =>
-      `${selfName} × ${otherName} 궁합 포인트 ${score}점 — Fatesaid에서 확인해보세요.`,
+    shareCardEyebrow: "사주 궁합",
+    shareCardFooter: "Fatesaid에서 나의 사주 궁합 확인하기",
   },
 
   fortune: {

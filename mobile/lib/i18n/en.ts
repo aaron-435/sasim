@@ -193,8 +193,8 @@ export const en: typeof ko = {
     errorNetwork: "A network error prevented the calculation.",
     scoreLabel: "Compatibility points",
     otherTypeLabel: (name: string, typeName: string) => `${name}'s type · ${typeName}`,
-    shareMessage: (selfName: string, otherName: string, score: number) =>
-      `${selfName} × ${otherName} compatibility: ${score} points — check yours on Fatesaid.`,
+    shareCardEyebrow: "Saju Compatibility",
+    shareCardFooter: "Check your own compatibility on Fatesaid",
   },
 
   fortune: {

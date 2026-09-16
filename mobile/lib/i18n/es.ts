@@ -193,8 +193,8 @@ export const es: typeof ko = {
     errorNetwork: "Un error de red impidió el cálculo.",
     scoreLabel: "Puntos de compatibilidad",
     otherTypeLabel: (name: string, typeName: string) => `Tipo de ${name} · ${typeName}`,
-    shareMessage: (selfName: string, otherName: string, score: number) =>
-      `${selfName} × ${otherName} compatibilidad: ${score} puntos — descubre la tuya en Fatesaid.`,
+    shareCardEyebrow: "Compatibilidad de Saju",
+    shareCardFooter: "Descubre tu compatibilidad en Fatesaid",
   },
 
   fortune: {
