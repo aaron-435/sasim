@@ -51,6 +51,22 @@ type YearFortune = {
   branchRelation: "hap" | "chung" | "none";
 };
 
+// 2026-09-16: Phase 2 — the same year's 12 saju-months, same fields as YearFortune.
+// No new content: the domain picker below just re-indexes yearContent's existing
+// 5-relation copy per month instead of once for the whole year.
+type MonthFortune = {
+  monthIndex: number;
+  calendarYear: number;
+  calendarMonth: number;
+  monthMaster: { char: string; element: string; branch: string };
+  compatibility: CompatibilityResult | null;
+  lifeStageIndex: number;
+  sinsalIndex: number | null;
+  branchRelation: "hap" | "chung" | "none";
+};
+
+type YearDomain = "overview" | "wealth" | "love" | "career" | "study" | "health";
+
 const WEEKDAY_SHORT: Record<Locale, string[]> = {
   ko: ["일", "월", "화", "수", "목", "금", "토"],
   en: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
@@ -102,6 +118,11 @@ export default function FortuneScreen({
   const [yearly, setYearly] = useState<YearFortune | null>(null);
   const [yearlyLoading, setYearlyLoading] = useState(false);
   const [yearlyError, setYearlyError] = useState<string | null>(null);
+
+  const [monthly, setMonthly] = useState<MonthFortune[] | null>(null);
+  const [monthlyLoading, setMonthlyLoading] = useState(false);
+  const [monthlyError, setMonthlyError] = useState<string | null>(null);
+  const [monthlyDomain, setMonthlyDomain] = useState<YearDomain>("overview");
 
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
@@ -188,10 +209,34 @@ export default function FortuneScreen({
     }
   }
 
+  async function loadMonthly() {
+    if (!selfDayMasterChar) return;
+    setMonthlyLoading(true);
+    setMonthlyError(null);
+    try {
+      const params = new URLSearchParams({ selfDayMasterChar, mode: "monthly" });
+      if (selfDayBranch) params.set("selfDayBranch", selfDayBranch);
+      const res = await fetch(`${API_BASE_URL}/api/yearFortune?${params.toString()}`);
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "failed");
+      if (mountedRef.current) setMonthly(json.monthly);
+    } catch {
+      if (mountedRef.current) setMonthlyError(strings.fortune.loadErrorText);
+    } finally {
+      if (mountedRef.current) setMonthlyLoading(false);
+    }
+  }
+
   function handleSelectTab(next: "daily" | "weekly" | "yearly") {
     setTab(next);
     if (next === "weekly" && !weekly && !weeklyLoading) loadWeekly();
     if (next === "yearly" && !yearly && !yearlyLoading) loadYearly();
+    if (next === "yearly" && !monthly && !monthlyLoading) loadMonthly();
+  }
+
+  function domainText(relation: CompatibilityResult["relation"], domain: YearDomain): string {
+    const r = yearContent.relations[relation];
+    return domain === "overview" ? r.overview : r[domain];
   }
 
   useEffect(() => {
@@ -506,6 +551,65 @@ export default function FortuneScreen({
             )}
           </>
         )}
+
+        {tab === "yearly" && (
+          <View style={styles.monthlySection}>
+            <Text style={styles.sectionLabel}>{strings.fortune.monthlyFlowLabel}</Text>
+
+            <View style={styles.domainPickerRow}>
+              {(["overview", "wealth", "love", "career", "study", "health"] as YearDomain[]).map((d) => (
+                <Pressable
+                  key={d}
+                  style={[styles.domainChip, monthlyDomain === d && styles.domainChipActive]}
+                  onPress={() => setMonthlyDomain(d)}
+                >
+                  <Text style={[styles.domainChipLabel, monthlyDomain === d && styles.domainChipLabelActive]}>
+                    {d === "overview"
+                      ? strings.fortune.overviewLabel
+                      : d === "wealth"
+                        ? strings.fortune.wealthLabel
+                        : d === "love"
+                          ? strings.fortune.loveLabel
+                          : d === "career"
+                            ? strings.fortune.careerLabel
+                            : d === "study"
+                              ? strings.fortune.studyLabel
+                              : strings.fortune.healthLabel}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
+            {monthlyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
+            {!monthlyLoading && monthlyError && <Text style={styles.errorText}>{monthlyError}</Text>}
+            {!monthlyLoading && !monthlyError && monthly && (
+              <View style={styles.weekList}>
+                {monthly
+                  .filter((m) => m.compatibility)
+                  .map((m) => (
+                    <View key={m.monthIndex} style={styles.monthRow}>
+                      <View style={styles.monthRowHeader}>
+                        <Text style={styles.monthRowDate}>
+                          {m.calendarYear}.{String(m.calendarMonth).padStart(2, "0")}
+                        </Text>
+                        <View style={styles.monthRowRight}>
+                          {m.branchRelation !== "none" && (
+                            <View style={[styles.branchBadge, m.branchRelation === "hap" ? styles.branchBadgeHap : styles.branchBadgeChung]}>
+                              <Text style={styles.branchBadgeText}>{m.branchRelation === "hap" ? strings.fortune.hapBadge : strings.fortune.chungBadge}</Text>
+                            </View>
+                          )}
+                          <Text style={styles.monthRowScore}>{m.compatibility!.score}</Text>
+                        </View>
+                      </View>
+                      <Text style={styles.monthRowText} numberOfLines={2}>
+                        {domainText(m.compatibility!.relation, monthlyDomain)}
+                      </Text>
+                    </View>
+                  ))}
+              </View>
+            )}
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -646,4 +750,34 @@ const styles = StyleSheet.create({
   weekRowDate: { fontFamily: "Manrope_500Medium", fontSize: 12.5, color: COLORS.headline, width: 78 },
   weekRowHeadline: { fontFamily: "Manrope_400Regular", fontSize: 12.5, color: COLORS.subheadline, flex: 1 },
   weekRowScore: { fontFamily: "Manrope_600SemiBold", fontSize: 13, color: COLORS.gold },
+  monthlySection: { marginTop: 22 },
+  domainPickerRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 10, marginBottom: 14 },
+  domainChip: {
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    backgroundColor: COLORS.inputBg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  domainChipActive: { backgroundColor: "rgba(212,175,110,0.14)", borderColor: "rgba(212,175,110,0.4)" },
+  domainChipLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 11.5, color: COLORS.subheadline },
+  domainChipLabelActive: { color: COLORS.gold },
+  monthRow: {
+    backgroundColor: COLORS.inputBg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 10,
+    padding: 12,
+    gap: 6,
+  },
+  monthRowHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  monthRowDate: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.headline },
+  monthRowRight: { flexDirection: "row", alignItems: "center", gap: 6 },
+  monthRowScore: { fontFamily: "Manrope_600SemiBold", fontSize: 13, color: COLORS.gold, minWidth: 20, textAlign: "right" },
+  monthRowText: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline },
+  branchBadge: { borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 },
+  branchBadgeHap: { backgroundColor: "rgba(111,169,139,0.15)" },
+  branchBadgeChung: { backgroundColor: "rgba(203,98,73,0.15)" },
+  branchBadgeText: { fontFamily: "Manrope_700Bold", fontSize: 10.5, color: COLORS.headline },
 });

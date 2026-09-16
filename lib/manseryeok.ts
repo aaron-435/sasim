@@ -206,6 +206,22 @@ export function yearPillarForSajuYear(sajuYear: number): Pillar {
   return buildPillar(STEMS[yearStemIdx], BRANCHES[yearBranchIdx]);
 }
 
+/** The 12 month pillars belonging to an arbitrary saju-year, in saju order (index 0 =
+ * 인월/termIndex 0, roughly Feb, through index 11 = 축월/termIndex 11, roughly the
+ * following Jan) — added 2026-09-16 for Year Fortune's monthly breakdown (Phase 2).
+ * Like yearPillarForSajuYear, this is a closed-form lookup (오호둔 표 + termIndex),
+ * not a solar-term date lookup — finding exact 절입 crossing times is only needed
+ * when resolving a birth TIMESTAMP to a month, not when enumerating a saju-year's
+ * own 12 months in the abstract. */
+export function monthPillarsForSajuYear(sajuYear: number): Pillar[] {
+  const yearStem = yearPillarForSajuYear(sajuYear).sky;
+  const yinMonthStem = YEAR_STEM_TO_YIN_MONTH_STEM[yearStem];
+  return MONTH_TERMS.map((term, termIndex) => {
+    const monthStemIdx = (STEMS.indexOf(yinMonthStem) + termIndex) % 10;
+    return buildPillar(STEMS[monthStemIdx], term.branch as Branch);
+  });
+}
+
 export function sixtyIndex(stem: Stem, branch: Branch): number {
   const s = STEMS.indexOf(stem);
   const b = BRANCHES.indexOf(branch);
