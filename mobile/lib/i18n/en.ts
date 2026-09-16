@@ -99,13 +99,12 @@ export const en: typeof ko = {
     elementBadgePrefix: "Element ·",
     elementDistribution: "My Five-Element Balance",
     dailyInsightLabel: "Today's Insight",
-    explainerSectionLabel: "How to make the most of your saju",
-    explainerHeading1: "What is Saju (Four Pillars)?",
-    explainerBody1:
-      "Saju (四柱) reads the energy in the four pillars of your birth — year, month, day, and hour — through the five elements (wood, fire, earth, metal, water) to interpret your innate tendencies and life patterns. Rather than a fixed fate to predict, it's best used as a tool for understanding your own balance and getting to know yourself better.",
-    explainerHeading2: "Try it this way",
-    explainerBody2:
-      "Start by asking one question that's on your mind right now in Saju Q&A. Then take the psych test to diagnose your tendencies and patterns — combining your element data with psychological data gives you a much richer picture. Once you finish the test, you'll naturally move into an AI counseling session, and afterward you'll get your own in-depth report weaving together everything you've shared so far.",
+    philosophySectionLabel: "How we think about Saju",
+    philosophyQuote: "Saju isn't fortune-telling that predicts the future — it's an analysis tool for reading your innate temperament and the flow of your environment, so you can find your own direction in life.",
+    philosophyPoint1: "Like the changing of seasons, life has cycles that come and go.",
+    philosophyPoint2: "It works like a mirror, helping you objectively see your personality, strengths, weaknesses, and tendencies — building real self-understanding.",
+    philosophyPoint3: "It's like a navigation system, helping you make better decisions by referencing the environmental shifts headed your way.",
+    learnMoreLink: "How to use Fatesaid · Learn about Saju",
     featuresSectionLabel: "What would you like to do?",
     featureQaLabel: "Saju Q&A",
     featureQaDescription: "Got a question? Ask it right now",
@@ -135,6 +134,28 @@ export const en: typeof ko = {
     shareCardFooter: "Check your own saju type on Fatesaid",
     celebritiesLabel: "People who share this type",
     celebrityBirthYear: (year: number) => `b. ${year}`,
+  },
+
+  sajuLearn: {
+    pageTitle: "How to Use Fatesaid · Learn About Saju",
+    usageHeading: "Try it this way",
+    usageBody:
+      "Start by asking one question that's on your mind right now in Saju Q&A. Then take the psych test to diagnose your tendencies and patterns — combining your element data with psychological data gives you a much richer picture. Once you finish the test, you'll naturally move into an AI counseling session, and afterward you'll get your own in-depth report weaving together everything you've shared so far.",
+    introHeading: "What Is Saju (Four Pillars)?",
+    introBody:
+      "Saju is a Korean method of reading a birth chart built from the year, month, day, and hour you were born. A reading typically covers your natural temperament, the environments where you tend to thrive, where relationship or emotional friction tends to show up, and how longer stretches of your life shift in focus over time.",
+    termsHeading: "Three terms worth knowing",
+    terms: [
+      { label: "Four Pillars", body: "The four columns built from your birth year, month, day, and hour, each pairing a \"heavenly stem\" with an \"earthly branch.\"" },
+      { label: "Day Master", body: "The single element (from your day pillar) that represents you in the chart. Everything else is read in relation to it — it's the anchor your whole reading points back to." },
+      { label: "Five Elements", body: "Wood, Fire, Earth, Metal, and Water. Their balance across your chart shapes how your energy tends to move." },
+    ],
+    elementsHeading: "Why the Five Elements Matter",
+    elementsBody:
+      "The point isn't to have all five elements perfectly balanced — almost no one does. What matters is which elements run strong and which run weak, and what that pattern tends to mean. A chart heavy in Fire often reads as expressive and visible; heavy Water often reads as perceptive and adaptive. A weak element usually points to something worth deliberately supporting, not a flaw.",
+    cyclesHeading: "What Longer Cycles Add",
+    cyclesBody:
+      "Your chart on its own shows a fixed pattern, but Saju also tracks \"luck cycles\" — roughly decade-long stretches that shift what a chart is more or less suited for at a given time (stability, visibility, responsibility, change, relationships). This is why a reading feels less like a fixed personality label and more like a map that changes as you move through it. Fatesaid's Decade Fortune feature is built on exactly this idea.",
   },
 
   decadeNotification: {

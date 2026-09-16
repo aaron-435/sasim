@@ -99,13 +99,12 @@ export const es: typeof ko = {
     elementBadgePrefix: "Elemento ·",
     elementDistribution: "Mi Balance de los Cinco Elementos",
     dailyInsightLabel: "El Mensaje de Hoy",
-    explainerSectionLabel: "Cómo aprovechar mejor tu saju",
-    explainerHeading1: "¿Qué es el Saju (Cuatro Pilares)?",
-    explainerBody1:
-      "El Saju (四柱) interpreta la energía de los cuatro pilares de tu nacimiento —año, mes, día y hora— a través de los cinco elementos (madera, fuego, tierra, metal, agua) para leer tus tendencias naturales y el rumbo de tu vida. Más que un destino fijo para predecir, funciona mejor como una herramienta para entender tu propio equilibrio y conocerte mejor a ti mismo.",
-    explainerHeading2: "Pruébalo así",
-    explainerBody2:
-      "Empieza por hacer en Saju Q&A la pregunta que más te ronda ahora mismo. Luego haz el test psicológico para diagnosticar tus tendencias y patrones — combinar tus datos de elementos con los datos psicológicos te da una comprensión mucho más completa. Al terminar el test, pasarás de forma natural a una sesión de consejería con IA, y al final recibirás tu propio informe detallado que reúne todo lo que has compartido hasta ahora.",
+    philosophySectionLabel: "Cómo entendemos el Saju",
+    philosophyQuote: "El Saju no es una adivinación que predice el futuro — es una herramienta de análisis para leer tu temperamento innato y el flujo de tu entorno, para que puedas encontrar tu propia dirección en la vida.",
+    philosophyPoint1: "Como el cambio de las estaciones, la vida también tiene ciclos que van y vienen.",
+    philosophyPoint2: "Funciona como un espejo que te ayuda a mirar objetivamente tu personalidad, fortalezas, debilidades y tendencias — construyendo un verdadero autoconocimiento.",
+    philosophyPoint3: "Es como un sistema de navegación que te ayuda a tomar mejores decisiones anticipando los cambios de entorno que se aproximan.",
+    learnMoreLink: "Cómo usar Fatesaid · Aprende sobre el Saju",
     featuresSectionLabel: "¿Qué te gustaría hacer?",
     featureQaLabel: "Saju Q&A",
     featureQaDescription: "¿Tienes una pregunta? Pregúntala ahora mismo",
@@ -135,6 +134,28 @@ export const es: typeof ko = {
     shareCardFooter: "Descubre tu tipo de saju en Fatesaid",
     celebritiesLabel: "Personas que comparten este tipo",
     celebrityBirthYear: (year: number) => `n. ${year}`,
+  },
+
+  sajuLearn: {
+    pageTitle: "Cómo Usar Fatesaid · Aprende Sobre el Saju",
+    usageHeading: "Pruébalo así",
+    usageBody:
+      "Empieza por hacer en Saju Q&A la pregunta que más te ronda ahora mismo. Luego haz el test psicológico para diagnosticar tus tendencias y patrones — combinar tus datos de elementos con los datos psicológicos te da una comprensión mucho más completa. Al terminar el test, pasarás de forma natural a una sesión de consejería con IA, y al final recibirás tu propio informe detallado que reúne todo lo que has compartido hasta ahora.",
+    introHeading: "¿Qué Es el Saju (Cuatro Pilares)?",
+    introBody:
+      "El Saju es un método coreano para leer una carta natal construida a partir del año, mes, día y hora de tu nacimiento. Una lectura suele cubrir tu temperamento natural, los entornos en los que sueles prosperar, dónde tiende a aparecer la fricción emocional o relacional, y cómo el enfoque de tu vida cambia con el tiempo.",
+    termsHeading: "Tres términos que vale la pena conocer",
+    terms: [
+      { label: "Cuatro Pilares", body: "Las cuatro columnas construidas a partir del año, mes, día y hora de tu nacimiento, cada una combinando un \"tallo celestial\" con una \"rama terrenal\"." },
+      { label: "Day Master (Maestro del Día)", body: "El elemento único (de tu pilar del día) que te representa a ti en la carta. Todo lo demás se interpreta en relación a él — es el ancla a la que apunta toda tu lectura." },
+      { label: "Cinco Elementos", body: "Madera, Fuego, Tierra, Metal y Agua. Su equilibrio en tu carta determina cómo tiende a moverse tu energía." },
+    ],
+    elementsHeading: "Por Qué Importan los Cinco Elementos",
+    elementsBody:
+      "El objetivo no es tener los cinco elementos perfectamente equilibrados — casi nadie los tiene. Lo que importa es qué elementos son fuertes y cuáles son débiles, y qué tiende a significar ese patrón. Una carta con mucho Fuego suele leerse como expresiva y visible; con mucha Agua, como perceptiva y adaptable. Un elemento débil normalmente señala algo que vale la pena reforzar conscientemente, no un defecto.",
+    cyclesHeading: "Lo Que Aportan los Ciclos Más Largos",
+    cyclesBody:
+      "Tu carta por sí sola muestra un patrón fijo, pero el Saju también sigue \"ciclos de suerte\" — tramos de aproximadamente una década que cambian para qué está más o menos preparada tu carta en un momento dado (estabilidad, visibilidad, responsabilidad, cambio, relaciones). Por eso una lectura se siente menos como una etiqueta de personalidad fija y más como un mapa que cambia mientras avanzas. La función de Fortuna por Década de Fatesaid está construida justamente sobre esta idea.",
   },
 
   decadeNotification: {

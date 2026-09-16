@@ -9,6 +9,7 @@ import CityScreen, { type SajuResult } from "./screens/CityScreen";
 import CompatibilityScreen from "./screens/CompatibilityScreen";
 import DobScreen from "./screens/DobScreen";
 import FortuneScreen from "./screens/FortuneScreen";
+import SajuLearnScreen from "./screens/SajuLearnScreen";
 import GenderScreen from "./screens/GenderScreen";
 import HomeScreen from "./screens/HomeScreen";
 import IntroScreen from "./screens/IntroScreen";
@@ -41,7 +42,7 @@ import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/
 // pipeline — chained, not independently reachable from Home, since chat needs a quiz
 // diagnosis and report needs both quiz+chat context — same dependency web's
 // components/AppFlow.jsx has).
-type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "settings";
+type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
@@ -325,9 +326,12 @@ function AppContent() {
           onOpenType={() => setStep("type")}
           onOpenCompatibility={() => setStep("compatibility")}
           onOpenFortune={() => setStep("fortune")}
+          onOpenSajuLearn={() => setStep("sajuLearn")}
           onOpenSettings={() => setStep("settings")}
         />
       )}
+
+      {step === "sajuLearn" && <SajuLearnScreen onBack={() => setStep("home")} />}
 
       {step === "settings" && <SettingsScreen onBack={() => setStep("home")} onLogout={handleLogout} />}
 

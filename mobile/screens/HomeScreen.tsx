@@ -47,6 +47,7 @@ export default function HomeScreen({
   onOpenType,
   onOpenCompatibility,
   onOpenFortune,
+  onOpenSajuLearn,
   onOpenSettings,
 }: {
   nickname: string;
@@ -58,6 +59,7 @@ export default function HomeScreen({
   onOpenType: () => void;
   onOpenCompatibility: () => void;
   onOpenFortune: () => void;
+  onOpenSajuLearn: () => void;
   onOpenSettings: () => void;
 }) {
   const strings = useStrings();
@@ -190,12 +192,18 @@ export default function HomeScreen({
           </Animated.View>
 
           <Animated.View style={[styles.section, sectionStyle(3)]}>
-            <Text style={styles.sectionLabel}>{strings.home.explainerSectionLabel}</Text>
+            <Text style={styles.sectionLabel}>{strings.home.philosophySectionLabel}</Text>
             <View style={styles.explainCard}>
-              <Text style={styles.explainHeading}>{strings.home.explainerHeading1}</Text>
-              <Text style={styles.explainBody}>{strings.home.explainerBody1}</Text>
-              <Text style={styles.explainHeading}>{strings.home.explainerHeading2}</Text>
-              <Text style={styles.explainBody}>{strings.home.explainerBody2}</Text>
+              <Text style={styles.philosophyQuote}>{strings.home.philosophyQuote}</Text>
+              <View style={styles.philosophyList}>
+                <Text style={styles.philosophyPoint}>• {strings.home.philosophyPoint1}</Text>
+                <Text style={styles.philosophyPoint}>• {strings.home.philosophyPoint2}</Text>
+                <Text style={styles.philosophyPoint}>• {strings.home.philosophyPoint3}</Text>
+              </View>
+              <Pressable onPress={onOpenSajuLearn} style={styles.learnMoreLink} hitSlop={8}>
+                <Text style={styles.learnMoreLinkText}>{strings.home.learnMoreLink}</Text>
+                <ArrowRight size={14} strokeWidth={2} color={COLORS.gold} />
+              </Pressable>
             </View>
           </Animated.View>
 
@@ -431,17 +439,35 @@ const styles = StyleSheet.create({
     padding: 18,
     gap: 8,
   },
-  explainHeading: {
-    fontFamily: "Manrope_600SemiBold",
-    fontSize: 13.5,
+  philosophyQuote: {
+    fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
+    fontStyle: "italic",
+    fontSize: 16,
+    lineHeight: 24,
     color: COLORS.headline,
-    marginTop: 8,
+    borderLeftWidth: 2,
+    borderLeftColor: COLORS.gold,
+    paddingLeft: 12,
   },
-  explainBody: {
+  philosophyList: { gap: 10, marginTop: 6 },
+  philosophyPoint: {
     fontFamily: "Manrope_400Regular",
-    fontSize: 13,
-    lineHeight: 21,
+    fontSize: 12.5,
+    lineHeight: 19,
     color: COLORS.subheadline,
+  },
+  learnMoreLink: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 6,
+    alignSelf: "flex-start",
+  },
+  learnMoreLinkText: {
+    fontFamily: "Manrope_600SemiBold",
+    fontSize: 12.5,
+    color: COLORS.gold,
   },
   featureList: {
     gap: 10,
