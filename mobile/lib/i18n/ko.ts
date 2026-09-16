@@ -380,9 +380,12 @@ export const ko = {
     disclaimer2: "재미와 자기 이해를 위한 참고 자료로 봐주세요.",
     paywallTitle: "여기부터는 심층 리포트예요",
     paywallBody: "대화 인용 분석, 사주×심리 교차분석, 강점·약점, 맞는 환경, 행동 지침까지 — 이 리포트의 핵심 조언이 이어집니다.",
-    paywallPriceSuffix: "에 전체 보기",
-    paywallBundle: (remaining: number, price: string, discountPercent: number) =>
-      `남은 ${remaining}개 리포트를 한번에 보면 ${price} (${discountPercent}% 할인)`,
-    paywallComingSoon: "결제 기능은 준비 중이에요",
+    paywallBuyLabel: (price: string) => `이 리포트 잠금해제 · ${price}`,
+    paywallBundleBuyLabel: (price: string) => `전체 11개 리포트 한번에 · ${price}`,
+    paywallBundleSub: (fullPrice: string, discountPercent: number) => `따로 사면 총 ${fullPrice} (${discountPercent}% 할인)`,
+    paywallRestoreLabel: "구매 복원",
+    paywallRestoring: "복원하는 중...",
+    purchaseErrorDefault: "구매에 실패했어요. 다시 시도해주세요.",
+    restoreNotFound: "복원할 구매 내역이 없어요.",
   },
 };

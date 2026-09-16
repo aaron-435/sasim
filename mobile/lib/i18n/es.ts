@@ -354,9 +354,12 @@ export const es: typeof ko = {
     disclaimer2: "Tómalo como material de referencia para divertirte y conocerte mejor.",
     paywallTitle: "Aquí continúa el informe detallado",
     paywallBody: "Análisis de citas de tu chat, análisis cruzado de saju y psicología, fortalezas y debilidades, entornos que encajan contigo y guías de comportamiento — el consejo central del informe continúa abajo.",
-    paywallPriceSuffix: " para ver el informe completo",
-    paywallBundle: (remaining: number, price: string, discountPercent: number) =>
-      `Ve tus ${remaining} informes restantes juntos por ${price} (${discountPercent}% de descuento)`,
-    paywallComingSoon: "Los pagos estarán disponibles pronto",
+    paywallBuyLabel: (price: string) => `Desbloquear este informe · ${price}`,
+    paywallBundleBuyLabel: (price: string) => `Desbloquear los 11 informes · ${price}`,
+    paywallBundleSub: (fullPrice: string, discountPercent: number) => `${fullPrice} si los compras por separado (${discountPercent}% de descuento)`,
+    paywallRestoreLabel: "Restaurar compras",
+    paywallRestoring: "Restaurando...",
+    purchaseErrorDefault: "La compra falló. Inténtalo de nuevo.",
+    restoreNotFound: "No se encontraron compras anteriores.",
   },
 };

@@ -1,13 +1,14 @@
 import { ArrowLeft, BookOpen, Lock, Sparkles } from "lucide-react-native";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Dimensions, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
+import { purchaseReportBundle, purchaseReportModule, restoreReports } from "../lib/purchases";
 import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
-import { BUNDLE_DISCOUNT, formatUsd, REPORT_PRICE, remainingBundlePrice, TOTAL_MODULES } from "../lib/reportPricing";
+import { BUNDLE_PRICE, bundleDiscountPercent, formatUsd, fullIndividualTotal, REPORT_PRICE } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
 import type { ChatExtract } from "./ChatScreen";
 import type { QuizDiagnosis } from "./QuizScreen";
@@ -104,6 +105,11 @@ export default function ReportScreen({
   const [errorText, setErrorText] = useState<string | null>(null);
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
+  const [unlocked, setUnlocked] = useState(false);
+  const [ownedCount, setOwnedCount] = useState(0);
+  const [purchasing, setPurchasing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
   const mountedRef = useRef(true);
   const firedRef = useRef(false);
   const scrollRef = useRef<ScrollView>(null);
@@ -191,8 +197,62 @@ export default function ReportScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const unlocked = isReportUnlocked(quizDiagnosis.moduleId);
-  const ownedCount = ownedReportCount();
+  const refreshEntitlement = useCallback(async () => {
+    const [u, c] = await Promise.all([isReportUnlocked(quizDiagnosis.moduleId), ownedReportCount()]);
+    if (!mountedRef.current) return;
+    setUnlocked(u);
+    setOwnedCount(c);
+  }, [quizDiagnosis.moduleId]);
+
+  useEffect(() => {
+    refreshEntitlement();
+  }, [refreshEntitlement]);
+
+  async function handleBuyModule() {
+    if (purchasing || restoring) return;
+    setPurchasing(true);
+    setPurchaseNotice(null);
+    const outcome = await purchaseReportModule(quizDiagnosis.moduleId);
+    if (!mountedRef.current) return;
+    setPurchasing(false);
+    if (outcome.status === "success") {
+      await refreshEntitlement();
+    } else if (outcome.status === "error") {
+      setPurchaseNotice(strings.report.purchaseErrorDefault);
+    }
+  }
+
+  async function handleBuyBundle() {
+    if (purchasing || restoring) return;
+    setPurchasing(true);
+    setPurchaseNotice(null);
+    const outcome = await purchaseReportBundle();
+    if (!mountedRef.current) return;
+    setPurchasing(false);
+    if (outcome.status === "success") {
+      await refreshEntitlement();
+    } else if (outcome.status === "error") {
+      setPurchaseNotice(strings.report.purchaseErrorDefault);
+    }
+  }
+
+  async function handleRestore() {
+    if (purchasing || restoring) return;
+    setRestoring(true);
+    setPurchaseNotice(null);
+    const countBefore = ownedCount;
+    const ok = await restoreReports();
+    if (!mountedRef.current) return;
+    const newCount = ok ? await ownedReportCount() : countBefore;
+    if (!mountedRef.current) return;
+    setRestoring(false);
+    if (ok && newCount > countBefore) {
+      setOwnedCount(newCount);
+      setUnlocked(await isReportUnlocked(quizDiagnosis.moduleId));
+    } else {
+      setPurchaseNotice(strings.report.restoreNotFound);
+    }
+  }
 
   const pages = useMemo<PageDef[]>(() => {
     if (!content) return [];
@@ -391,7 +451,23 @@ export default function ReportScreen({
       .filter((x): x is { label: string; pageNumber: number } => !!x);
 
     const gated = body.map((p) =>
-      !unlocked && p.locked ? { ...p, node: <PaywallPage ownedCount={ownedCount} strings={strings} /> } : p
+      !unlocked && p.locked ? (
+        {
+          ...p,
+          node: (
+            <PaywallPage
+              ownedCount={ownedCount}
+              strings={strings}
+              purchasing={purchasing}
+              restoring={restoring}
+              purchaseNotice={purchaseNotice}
+              onBuyModule={handleBuyModule}
+              onBuyBundle={handleBuyBundle}
+              onRestore={handleRestore}
+            />
+          ),
+        }
+      ) : p
     );
 
     const total = body.length + 2;
@@ -402,7 +478,7 @@ export default function ReportScreen({
       ...gated,
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, resolvedElements, chatExtract, unlocked, ownedCount, strings, locale, quizDiagnosis, nickname, topAnswers]);
+  }, [content, resolvedElements, chatExtract, unlocked, ownedCount, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, topAnswers]);
 
   function goTo(index: number) {
     const clamped = Math.max(0, Math.min(pages.length - 1, index));
@@ -837,12 +913,30 @@ function ClosingPage({ title, body, disclaimer1, disclaimer2 }: { title: string;
 }
 
 // Gates everything past the free preview (opening scene, case study, quiz analysis, saju
-// analysis) — the actionable half of the report. No working purchase button here on
-// purpose: real IAP for report unlocks isn't wired yet (see lib/reportEntitlement.ts), and a
-// button that looks functional but isn't would repeat the exact dead-affordance bug already
-// fixed once this session on web's QAChat install button.
-function PaywallPage({ ownedCount, strings }: { ownedCount: number; strings: Dictionary }) {
-  const remainingCount = TOTAL_MODULES - ownedCount;
+// analysis) — the actionable half of the report. Real IAP added 2026-09-16: the bundle
+// (all 11 at a fixed price) is only offered while the user owns none of them yet, since
+// neither store supports charging a price that depends on what's already owned — see
+// lib/reportPricing.ts's header comment.
+function PaywallPage({
+  ownedCount,
+  strings,
+  purchasing,
+  restoring,
+  purchaseNotice,
+  onBuyModule,
+  onBuyBundle,
+  onRestore,
+}: {
+  ownedCount: number;
+  strings: Dictionary;
+  purchasing: boolean;
+  restoring: boolean;
+  purchaseNotice: string | null;
+  onBuyModule: () => void;
+  onBuyBundle: () => void;
+  onRestore: () => void;
+}) {
+  const busy = purchasing || restoring;
   return (
     <PageShell>
       <View style={pageStyles.paywallMid}>
@@ -850,16 +944,25 @@ function PaywallPage({ ownedCount, strings }: { ownedCount: number; strings: Dic
           <Lock size={22} strokeWidth={1.75} color={COLORS.gold} />
           <Text style={pageStyles.paywallTitle}>{strings.report.paywallTitle}</Text>
           <Text style={pageStyles.paywallBody}>{strings.report.paywallBody}</Text>
-          <Text style={pageStyles.paywallPrice}>
-            {formatUsd(REPORT_PRICE)}
-            {strings.report.paywallPriceSuffix}
-          </Text>
-          {ownedCount > 0 && (
-            <Text style={pageStyles.paywallBundle}>
-              {strings.report.paywallBundle(remainingCount, formatUsd(remainingBundlePrice(ownedCount)), Math.round(BUNDLE_DISCOUNT * 100))}
-            </Text>
+
+          <Pressable style={[pageStyles.paywallBuyButton, busy && pageStyles.paywallButtonDisabled]} onPress={onBuyModule} disabled={busy}>
+            {purchasing ? <ActivityIndicator color={COLORS.background} /> : <Text style={pageStyles.paywallBuyButtonLabel}>{strings.report.paywallBuyLabel(formatUsd(REPORT_PRICE))}</Text>}
+          </Pressable>
+
+          {ownedCount === 0 && (
+            <Pressable style={[pageStyles.paywallBundleButton, busy && pageStyles.paywallButtonDisabled]} onPress={onBuyBundle} disabled={busy}>
+              <Text style={pageStyles.paywallBundleButtonLabel}>{strings.report.paywallBundleBuyLabel(formatUsd(BUNDLE_PRICE))}</Text>
+              <Text style={pageStyles.paywallBundleSub}>
+                {strings.report.paywallBundleSub(formatUsd(fullIndividualTotal()), bundleDiscountPercent())}
+              </Text>
+            </Pressable>
           )}
-          <Text style={pageStyles.paywallComingSoon}>{strings.report.paywallComingSoon}</Text>
+
+          <Pressable onPress={onRestore} disabled={busy} hitSlop={8}>
+            <Text style={pageStyles.paywallRestoreLabel}>{restoring ? strings.report.paywallRestoring : strings.report.paywallRestoreLabel}</Text>
+          </Pressable>
+
+          {!!purchaseNotice && <Text style={pageStyles.paywallNotice}>{purchaseNotice}</Text>}
         </View>
       </View>
     </PageShell>
@@ -1013,10 +1116,15 @@ const pageStyles = StyleSheet.create({
   disclaimer: { fontFamily: "Manrope_400Regular", fontSize: 10.5, lineHeight: 17, color: COLORS.footer, marginTop: 10 },
 
   paywallMid: { flex: 1, justifyContent: "center" },
-  paywallCard: { alignItems: "center", backgroundColor: "rgba(111,169,139,0.06)", borderWidth: 1, borderColor: "rgba(111,169,139,0.3)", borderRadius: 16, padding: 26, gap: 10 },
+  paywallCard: { alignItems: "center", backgroundColor: "rgba(111,169,139,0.06)", borderWidth: 1, borderColor: "rgba(111,169,139,0.3)", borderRadius: 16, padding: 26, gap: 10, width: "100%" },
   paywallTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 19, color: COLORS.headline, textAlign: "center", marginTop: 4 },
   paywallBody: { fontFamily: "Manrope_400Regular", fontSize: 13, lineHeight: 21, color: "#C7C3D1", textAlign: "center" },
-  paywallPrice: { fontFamily: "Manrope_700Bold", fontSize: 17, color: COLORS.gold, marginTop: 6 },
-  paywallBundle: { fontFamily: "Manrope_400Regular", fontSize: 12, color: COLORS.subheadline, textAlign: "center" },
-  paywallComingSoon: { fontFamily: "Manrope_400Regular", fontSize: 11, color: COLORS.footer, marginTop: 6 },
+  paywallButtonDisabled: { opacity: 0.6 },
+  paywallBuyButton: { width: "100%", backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 14, alignItems: "center", marginTop: 8 },
+  paywallBuyButtonLabel: { fontFamily: "Manrope_700Bold", fontSize: 14, color: COLORS.background },
+  paywallBundleButton: { width: "100%", borderWidth: 1, borderColor: "rgba(111,169,139,0.4)", borderRadius: 12, paddingVertical: 12, alignItems: "center", gap: 3 },
+  paywallBundleButtonLabel: { fontFamily: "Manrope_700Bold", fontSize: 13, color: COLORS.headline },
+  paywallBundleSub: { fontFamily: "Manrope_400Regular", fontSize: 11, color: COLORS.subheadline, textAlign: "center" },
+  paywallRestoreLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: COLORS.subheadline, marginTop: 4, textDecorationLine: "underline" },
+  paywallNotice: { fontFamily: "Manrope_400Regular", fontSize: 11.5, lineHeight: 17, color: "#E0A296", textAlign: "center", marginTop: 4 },
 });

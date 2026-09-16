@@ -354,9 +354,12 @@ export const en: typeof ko = {
     disclaimer2: "Please treat it as a reference for fun and self-understanding.",
     paywallTitle: "The in-depth report continues here",
     paywallBody: "Chat-quote analysis, saju × psychology cross-analysis, strengths and weaknesses, environments that fit you, and behavior guides — the report's core advice continues below.",
-    paywallPriceSuffix: " to unlock the full report",
-    paywallBundle: (remaining: number, price: string, discountPercent: number) =>
-      `See your remaining ${remaining} reports together for ${price} (${discountPercent}% off)`,
-    paywallComingSoon: "Payments are coming soon",
+    paywallBuyLabel: (price: string) => `Unlock this report · ${price}`,
+    paywallBundleBuyLabel: (price: string) => `Unlock all 11 reports · ${price}`,
+    paywallBundleSub: (fullPrice: string, discountPercent: number) => `${fullPrice} if bought separately (${discountPercent}% off)`,
+    paywallRestoreLabel: "Restore purchases",
+    paywallRestoring: "Restoring...",
+    purchaseErrorDefault: "The purchase failed. Please try again.",
+    restoreNotFound: "No previous purchases found.",
   },
 };

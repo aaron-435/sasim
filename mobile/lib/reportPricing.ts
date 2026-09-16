@@ -1,15 +1,18 @@
-// Report paywall pricing — 2026-09-11 decision: $14.99 per individual module report,
-// with a bundle-upsell discount once the user already owns at least one: the REMAINING
-// (not-yet-owned) reports, bundled, at 25% off their individual total.
+// Report paywall pricing — 2026-09-11 decision: $14.99 per individual module report.
 //
-// Payment itself is NOT wired here on purpose — the user explicitly said to hold off on
-// real IAP integration until IAP gets connected to the app generally (see
-// [[project-fatesaid-native-app-progress]]). This file is pure pricing math, ready to
-// slot in once real purchase/entitlement state exists — see reportEntitlement.ts for the
-// (currently always-false) placeholder that'll be swapped for real data then.
+// 2026-09-16: real IAP wired (see lib/purchases.ts's "reports" offering). The original
+// design here priced a dynamic "whatever's left, bundled" discount, but neither store
+// supports charging a price that depends on which products a customer already owns —
+// an IAP product's price is fixed in the dashboard, full stop. So the bundle is now a
+// single fixed-price product (report_bundle_all) covering all 11, only ever offered
+// before the user owns any of them individually (see ReportScreen.tsx's PaywallPage).
 export const REPORT_PRICE = 14.99;
 export const TOTAL_MODULES = 11;
-export const BUNDLE_DISCOUNT = 0.25;
+
+/** Must match the report_bundle_all product's real price in App Store Connect / Play
+ * Console — this constant only drives the marketing copy (savings %, "buy all" label),
+ * it doesn't set the actual charge. */
+export const BUNDLE_PRICE = 119.99;
 
 function round2(n: number): number {
   return Math.round(n * 100) / 100;
@@ -20,10 +23,10 @@ export function fullIndividualTotal(): number {
   return round2(REPORT_PRICE * TOTAL_MODULES);
 }
 
-/** Bundle price for whatever's left, once `alreadyOwnedCount` reports are already owned. */
-export function remainingBundlePrice(alreadyOwnedCount: number): number {
-  const remaining = Math.max(0, TOTAL_MODULES - alreadyOwnedCount);
-  return round2(remaining * REPORT_PRICE * (1 - BUNDLE_DISCOUNT));
+/** Bundle's savings vs. buying all 11 individually, derived from BUNDLE_PRICE so the
+ * displayed percentage can't drift out of sync with the actual bundle price. */
+export function bundleDiscountPercent(): number {
+  return Math.round((1 - BUNDLE_PRICE / fullIndividualTotal()) * 100);
 }
 
 export function formatUsd(amount: number): string {

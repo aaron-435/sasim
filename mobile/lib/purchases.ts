@@ -30,6 +30,17 @@ import { REVENUECAT_API_KEY_ANDROID, REVENUECAT_API_KEY_IOS } from "../config";
  * behind the "default" offering's Monthly package — see QAScreen.tsx
  * for where these are called from. Until this point only entitlement
  * CHECKING was real; now buying one through the app is too.
+ *
+ * 2026-09-16: report-unlock purchases added (purchaseReportModule,
+ * purchaseReportBundle) — these are non-subscription ("lifetime")
+ * products, not the "default" offering, so they live behind a separate
+ * "reports" offering: 11 packages identified by quiz module id
+ * ("module1".."module11", one per lib/quiz/modules.ts entry) plus
+ * REPORT_BUNDLE_PACKAGE_ID for the all-11 bundle. Each per-module
+ * product is attached (in the RevenueCat dashboard) to its own
+ * "report_<moduleId>" entitlement; the bundle product is attached to
+ * all 11 of those entitlements at once, so buying it unlocks everything
+ * in a single purchase. See lib/reportEntitlement.ts for the read side.
  * ------------------------------------------------------------------
  */
 
@@ -81,9 +92,7 @@ export async function getMonthlyPackage(): Promise<PurchasesPackage | null> {
 
 export type PurchaseOutcome = { status: "success" } | { status: "cancelled" } | { status: "error"; message: string };
 
-export async function purchaseQaPro(): Promise<PurchaseOutcome> {
-  const pkg = await getMonthlyPackage();
-  if (!pkg) return { status: "error", message: "no offering available" };
+async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseOutcome> {
   try {
     await Purchases.purchasePackage(pkg);
     return { status: "success" };
@@ -97,11 +106,70 @@ export async function purchaseQaPro(): Promise<PurchaseOutcome> {
   }
 }
 
+export async function purchaseQaPro(): Promise<PurchaseOutcome> {
+  const pkg = await getMonthlyPackage();
+  if (!pkg) return { status: "error", message: "no offering available" };
+  return purchasePackage(pkg);
+}
+
 export async function restoreQaPro(): Promise<boolean> {
   if (!isSupportedPlatform()) return false;
   try {
     const info = await Purchases.restorePurchases();
     return !!info.entitlements.active[QA_PRO_ENTITLEMENT_ID];
+  } catch (err) {
+    console.error("[purchases] restore failed", err);
+    return false;
+  }
+}
+
+export type ReportPackageMap = Record<string, PurchasesPackage>;
+
+/** Purchasing this package's product unlocks all 11 report entitlements at once —
+ * see the header comment above for how that's wired in the RevenueCat dashboard. */
+export const REPORT_BUNDLE_PACKAGE_ID = "report_bundle_all";
+
+/** The "reports" offering's packages, keyed by RevenueCat package identifier (a quiz
+ * module id, or REPORT_BUNDLE_PACKAGE_ID) — null if unavailable (offline, the dashboard
+ * offering not configured yet, or a platform with no store product attached). */
+export async function getReportPackages(): Promise<ReportPackageMap | null> {
+  if (!isSupportedPlatform()) return null;
+  try {
+    const offerings = await Purchases.getOfferings();
+    const offering = offerings.all["reports"];
+    if (!offering) return null;
+    const map: ReportPackageMap = {};
+    for (const pkg of offering.availablePackages) map[pkg.identifier] = pkg;
+    return map;
+  } catch (err) {
+    console.error("[purchases] failed to fetch report offerings", err);
+    return null;
+  }
+}
+
+export async function purchaseReportModule(moduleId: string): Promise<PurchaseOutcome> {
+  const packages = await getReportPackages();
+  const pkg = packages?.[moduleId];
+  if (!pkg) return { status: "error", message: "no offering available" };
+  return purchasePackage(pkg);
+}
+
+export async function purchaseReportBundle(): Promise<PurchaseOutcome> {
+  const packages = await getReportPackages();
+  const pkg = packages?.[REPORT_BUNDLE_PACKAGE_ID];
+  if (!pkg) return { status: "error", message: "no offering available" };
+  return purchasePackage(pkg);
+}
+
+/** Reports have no single entitlement to check post-restore (unlike restoreQaPro's
+ * qa_premium) — the caller re-reads isReportUnlocked()/ownedReportCount() itself after
+ * this resolves, since "what got restored" depends on which module the caller cares
+ * about right now. */
+export async function restoreReports(): Promise<boolean> {
+  if (!isSupportedPlatform()) return false;
+  try {
+    await Purchases.restorePurchases();
+    return true;
   } catch (err) {
     console.error("[purchases] restore failed", err);
     return false;
