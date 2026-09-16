@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft } from "lucide-react-native";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ArrowLeft, Sparkles } from "lucide-react-native";
+import { ActivityIndicator, Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
@@ -9,9 +9,14 @@ import { useLocale, useStrings } from "../lib/i18n";
 import type { Locale } from "../lib/i18n/types";
 import { DAILY_FORTUNE_CONTENT, LUCKY_NUMBERS, LUCKY_POINTS, getOverview } from "../lib/dailyFortuneContent";
 import type { CompatibilityResult } from "../lib/compatibility";
+import { isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
 import { hasQaProEntitlement, purchaseQaPro, restoreQaPro } from "../lib/purchases";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
+
+// Daily content sections that fade/slide in, one after another, once the seal card below
+// is opened — score, overview, wealth, love, health, lucky points.
+const DAILY_SECTION_COUNT = 6;
 
 // "오늘의 운세" / "이번주 운세" — 화면은 순전히 프레젠테이션이다. relation 분류·
 // 점수는 lib/compatibility.ts를 그대로 재사용해 만든 app/api/dailyFortune가
@@ -73,6 +78,10 @@ export default function FortuneScreen({
   const [restoring, setRestoring] = useState(false);
   const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
 
+  const [revealed, setRevealed] = useState(false);
+  const sealScale = useRef(new Animated.Value(1)).current;
+  const sectionAnims = useRef([...Array(DAILY_SECTION_COUNT)].map(() => new Animated.Value(0))).current;
+
   const mountedRef = useRef(true);
   useEffect(() => {
     mountedRef.current = true;
@@ -100,7 +109,9 @@ export default function FortuneScreen({
       const res = await fetch(`${API_BASE_URL}/api/dailyFortune?mode=daily&selfDayMasterChar=${encodeURIComponent(selfDayMasterChar)}`);
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "failed");
-      if (mountedRef.current) setDaily(json.daily);
+      if (!mountedRef.current) return;
+      setDaily(json.daily);
+      setRevealed(await isFortuneOpened(json.daily.date));
     } catch {
       if (mountedRef.current) setDailyError(strings.fortune.loadErrorText);
     } finally {
@@ -127,6 +138,36 @@ export default function FortuneScreen({
   function handleSelectTab(next: "daily" | "weekly") {
     setTab(next);
     if (next === "weekly" && !weekly && !weeklyLoading) loadWeekly();
+  }
+
+  useEffect(() => {
+    if (!revealed) return;
+    Animated.stagger(
+      80,
+      sectionAnims.map((anim) => Animated.timing(anim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true })),
+    ).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revealed]);
+
+  function sectionStyle(index: number) {
+    const anim = sectionAnims[index];
+    return {
+      opacity: anim,
+      transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [14, 0] }) }],
+    };
+  }
+
+  function handleSealPressIn() {
+    Animated.spring(sealScale, { toValue: 0.97, useNativeDriver: true, speed: 40, bounciness: 0 }).start();
+  }
+  function handleSealPressOut() {
+    Animated.spring(sealScale, { toValue: 1, useNativeDriver: true, speed: 40, bounciness: 6 }).start();
+  }
+
+  function handleOpenDaily() {
+    if (!daily) return;
+    markFortuneOpened(daily.date).catch(() => {});
+    setRevealed(true);
   }
 
   async function handleSubscribe() {
@@ -224,38 +265,54 @@ export default function FortuneScreen({
 
         {tab === "daily" && dailyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
         {tab === "daily" && !dailyLoading && dailyError && <Text style={styles.errorText}>{dailyError}</Text>}
-        {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && (
+
+        {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && !revealed && (
+          <Pressable onPress={handleOpenDaily} onPressIn={handleSealPressIn} onPressOut={handleSealPressOut}>
+            <Animated.View style={[styles.sealCard, { transform: [{ scale: sealScale }] }]}>
+              <View style={styles.sealIconRing}>
+                <Sparkles size={20} strokeWidth={1.75} color={COLORS.gold} />
+              </View>
+              <Text style={styles.sealHeading}>{strings.fortune.sealHeading}</Text>
+              <Text style={styles.sealBody}>{strings.fortune.sealBody}</Text>
+              <View style={styles.sealButton}>
+                <Text style={styles.sealButtonLabel}>{strings.fortune.sealButtonLabel}</Text>
+              </View>
+            </Animated.View>
+          </Pressable>
+        )}
+
+        {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && revealed && (
           <>
-            <View style={[styles.scoreCard, { borderColor: `${ELEMENT_COLORS[daily.compatibility.otherDayMasterElement] ?? COLORS.gold}55` }]}>
+            <Animated.View style={[styles.scoreCard, sectionStyle(0), { borderColor: `${ELEMENT_COLORS[daily.compatibility.otherDayMasterElement] ?? COLORS.gold}55` }]}>
               <Text style={styles.scoreLabel}>{strings.fortune.scoreLabel}</Text>
               <Text style={[styles.scoreValue, { color: ELEMENT_COLORS[daily.compatibility.otherDayMasterElement] ?? COLORS.gold }]}>
                 {daily.compatibility.score}
               </Text>
-            </View>
+            </Animated.View>
 
-            <View style={styles.sectionCard}>
+            <Animated.View style={[styles.sectionCard, sectionStyle(1)]}>
               <Text style={styles.sectionLabel}>{strings.fortune.overviewLabel}</Text>
               <Text style={styles.sectionHeadline}>{getOverview(content, daily.compatibility.relation, daily.dayMaster.pillarIndex).headline}</Text>
               <Text style={styles.sectionBody}>{getOverview(content, daily.compatibility.relation, daily.dayMaster.pillarIndex).body}</Text>
-            </View>
+            </Animated.View>
 
-            <View style={styles.sectionCard}>
+            <Animated.View style={[styles.sectionCard, sectionStyle(2)]}>
               <Text style={styles.sectionLabel}>{strings.fortune.wealthLabel}</Text>
               <Text style={styles.sectionBody}>{content.relations[daily.compatibility.relation].wealth}</Text>
-            </View>
+            </Animated.View>
 
-            <View style={styles.sectionCard}>
+            <Animated.View style={[styles.sectionCard, sectionStyle(3)]}>
               <Text style={styles.sectionLabel}>{strings.fortune.loveLabel}</Text>
               <Text style={styles.sectionBody}>{content.relations[daily.compatibility.relation].love}</Text>
-            </View>
+            </Animated.View>
 
-            <View style={styles.sectionCard}>
+            <Animated.View style={[styles.sectionCard, sectionStyle(4)]}>
               <Text style={styles.sectionLabel}>{strings.fortune.healthLabel}</Text>
               <Text style={styles.sectionBody}>{content.relations[daily.compatibility.relation].health}</Text>
-            </View>
+            </Animated.View>
 
             {luckyPoint && luckyNumber && (
-              <View style={styles.sectionCard}>
+              <Animated.View style={[styles.sectionCard, sectionStyle(5)]}>
                 <Text style={styles.sectionLabel}>{strings.fortune.luckyPointLabel}</Text>
                 <View style={styles.luckyRow}>
                   <View style={styles.luckyItem}>
@@ -271,7 +328,7 @@ export default function FortuneScreen({
                     <Text style={styles.luckyItemValue}>{luckyPoint.direction}</Text>
                   </View>
                 </View>
-              </View>
+              </Animated.View>
             )}
           </>
         )}
@@ -350,6 +407,32 @@ const styles = StyleSheet.create({
   tabLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 13.5, color: COLORS.subheadline },
   tabLabelActive: { color: COLORS.gold },
   errorText: { fontFamily: "Manrope_400Regular", fontSize: 13, color: "#CB6249", marginTop: 20 },
+  sealCard: {
+    alignItems: "center",
+    backgroundColor: COLORS.inputBg,
+    borderWidth: 1,
+    borderColor: "rgba(212,175,110,0.35)",
+    borderRadius: 20,
+    paddingVertical: 36,
+    paddingHorizontal: 24,
+    marginTop: 12,
+    gap: 8,
+  },
+  sealIconRing: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(212,175,110,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(212,175,110,0.3)",
+    marginBottom: 6,
+  },
+  sealHeading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 20, color: COLORS.headline, textAlign: "center" },
+  sealBody: { fontFamily: "Manrope_400Regular", fontSize: 13, lineHeight: 20, color: COLORS.subheadline, textAlign: "center", marginBottom: 10 },
+  sealButton: { backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 13, paddingHorizontal: 22 },
+  sealButtonLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 13.5, color: COLORS.ctaText },
   scoreCard: {
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
