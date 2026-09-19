@@ -1,6 +1,6 @@
-import { ArrowLeft, BookOpen, Lock, Sparkles } from "lucide-react-native";
+import { ArrowLeft, BookOpen, Download, Lock, Sparkles } from "lucide-react-native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, Alert, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
@@ -10,6 +10,7 @@ import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
 import { elementWithEmoji } from "../lib/elements";
 import { saveReport } from "../lib/reportStorage";
+import { exportReportPdf, pdfErrorMessage } from "../lib/reportPdf";
 import { BUNDLE_PRICE, bundleDiscountPercent, formatUsd, fullIndividualTotal, REPORT_PRICE, TOTAL_MODULES } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
 import type { ChatExtract } from "./ChatScreen";
@@ -119,6 +120,7 @@ export default function ReportScreen({
   const mountedRef = useRef(true);
   const firedRef = useRef(false);
   const scrollRef = useRef<ScrollView>(null);
+  const [exporting, setExporting] = useState(false);
   const resolvedElements = elements ?? DEFAULT_ELEMENTS;
 
   // The single highest-scoring (most extreme) literal answer for each of this module's
@@ -510,6 +512,39 @@ export default function ReportScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, resolvedElements, chatExtract, unlocked, ownedCount, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, topAnswers]);
 
+  // PDF of the whole report — only offered once it's unlocked. The server re-verifies the
+  // purchase (app/api/report-pdf), so this button is a convenience, not the gate.
+  async function handleExportPdf() {
+    if (exporting || !content) return;
+    setExporting(true);
+    const result = await exportReportPdf(
+      {
+        kind: "deep",
+        moduleId: quizDiagnosis.moduleId,
+        locale,
+        nickname,
+        content,
+        extras: {
+          moduleTitle: quizDiagnosis.moduleTitle,
+          typeTitle: quizDiagnosis.typeInfo?.title ?? "",
+          typeHook: quizDiagnosis.typeInfo?.hook ?? "",
+          nuancedSummary: quizDiagnosis.nuancedSummary ?? "",
+          dimensions: (quizDiagnosis.dimensionResults ?? []).map((r) => ({
+            name: quizDiagnosis.dimensionShortNames?.[r.dimension] ?? r.dimension,
+            percent: r.percentOfMax,
+          })),
+          elements: resolvedElements,
+          topAnswers: topAnswers.map((a) => ({ dimensionLabel: a.dimensionLabel, prompt: a.prompt, answer: a.label })),
+          chat: chatExtract ?? null,
+        },
+      },
+      strings.pdf.dialogTitle,
+    );
+    if (!mountedRef.current) return;
+    setExporting(false);
+    if (!result.ok) Alert.alert(strings.pdf.button, pdfErrorMessage(result.reason, strings.pdf));
+  }
+
   function goTo(index: number) {
     const clamped = Math.max(0, Math.min(pages.length - 1, index));
     scrollRef.current?.scrollTo({ x: clamped * screenWidth, animated: true });
@@ -561,6 +596,18 @@ export default function ReportScreen({
         <Text style={styles.progressCount}>
           {String(pageIndex + 1).padStart(2, "0")}/{String(pages.length).padStart(2, "0")}
         </Text>
+        {unlocked && (
+          <Pressable
+            onPress={handleExportPdf}
+            disabled={exporting}
+            hitSlop={8}
+            style={styles.chromePdf}
+            accessibilityRole="button"
+            accessibilityLabel={exporting ? strings.pdf.preparing : strings.pdf.button}
+          >
+            {exporting ? <ActivityIndicator size="small" color={COLORS.subheadline} /> : <Download size={18} strokeWidth={1.75} color={COLORS.subheadline} />}
+          </Pressable>
+        )}
       </View>
 
       <View style={styles.pagerWrap}>
@@ -1039,6 +1086,7 @@ const styles = StyleSheet.create({
 
   chrome: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 18, paddingTop: 10, paddingBottom: 8 },
   chromeBack: { padding: 4 },
+  chromePdf: { width: 36, height: 36, alignItems: "center", justifyContent: "center", marginRight: -6 },
   progressTrack: { flex: 1, height: 3, borderRadius: 2, backgroundColor: "rgba(217,201,163,0.16)", overflow: "hidden" },
   progressFill: { height: "100%", borderRadius: 2, backgroundColor: COLORS.headline },
   progressCount: { fontFamily: "Manrope_600SemiBold", fontSize: 11, color: COLORS.subheadline, letterSpacing: 0.5, minWidth: 44, textAlign: "right" },

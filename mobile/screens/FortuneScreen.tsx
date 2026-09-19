@@ -13,6 +13,7 @@ import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
 import { hasQaProEntitlement, purchaseQaPro, restoreQaPro } from "../lib/purchases";
+import { comingSajuYear } from "../lib/sajuYear";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
 
@@ -152,10 +153,12 @@ function ErrorNotice({ text, retryLabel, onRetry }: { text: string; retryLabel: 
 export default function FortuneScreen({
   selfDayMasterChar,
   selfDayBranch,
+  onOpenYearReport,
   onBack,
 }: {
   selfDayMasterChar: string | null;
   selfDayBranch: string | null;
+  onOpenYearReport: () => void;
   onBack: () => void;
 }) {
   const strings = useStrings();
@@ -233,8 +236,10 @@ export default function FortuneScreen({
     if (next === "yearly" && !monthly && !monthlyLoading) fetchMonthly(fortuneUrl("yearFortune", "monthly"), "monthly");
   }
 
+  // Month rows use the month-worded copy (yearContent.monthRelations), not the whole-year
+  // copy — that one says "this year" and reads wrong on a single month.
   function domainText(relation: CompatibilityResult["relation"], domain: YearDomain): string {
-    const r = yearContent.relations[relation];
+    const r = yearContent.monthRelations[relation];
     return domain === "overview" ? r.overview : r[domain];
   }
 
@@ -575,6 +580,18 @@ export default function FortuneScreen({
           </>
         )}
 
+        {tab === "yearly" && (
+          // The paid deep read of this same year (a separate one-time purchase, not part of
+          // the subscription) — the natural next step from the year tab.
+          <Pressable style={styles.yearReportCard} onPress={onOpenYearReport} accessibilityRole="button">
+            <View style={styles.yearReportText}>
+              <Text style={styles.yearReportTitle}>{strings.yearReport.tabCardTitle(yearly?.year ?? comingSajuYear())}</Text>
+              <Text style={styles.yearReportBody}>{strings.yearReport.tabCardBody}</Text>
+              <Text style={styles.yearReportCta}>{strings.yearReport.tabCardCta}</Text>
+            </View>
+          </Pressable>
+        )}
+
         {tab === "yearly" && yearlyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
         {tab === "yearly" && !yearlyLoading && yearlyError && <ErrorNotice text={yearlyError} retryLabel={strings.common.retryLabel} onRetry={retryYearly} />}
         {tab === "yearly" && !yearlyLoading && !yearlyError && yearly?.compatibility && (
@@ -624,14 +641,14 @@ export default function FortuneScreen({
             <View style={styles.sectionCard}>
               <Text style={styles.sectionLabel}>{strings.fortune.yearLifeStageLabel}</Text>
               <Text style={styles.sectionHeadline}>{stagesContent.lifeStages[yearly.lifeStageIndex]?.name}</Text>
-              <Text style={styles.sectionBody}>{stagesContent.lifeStages[yearly.lifeStageIndex]?.body}</Text>
+              <Text style={styles.sectionBody}>{stagesContent.yearLifeStageBodies[yearly.lifeStageIndex]}</Text>
             </View>
 
             {yearly.sinsalIndex !== null && (
               <View style={styles.sectionCard}>
                 <Text style={styles.sectionLabel}>{strings.fortune.yearSinsalLabel}</Text>
                 <Text style={styles.sectionHeadline}>{stagesContent.sinsal[yearly.sinsalIndex]?.name}</Text>
-                <Text style={styles.sectionBody}>{stagesContent.sinsal[yearly.sinsalIndex]?.body}</Text>
+                <Text style={styles.sectionBody}>{stagesContent.yearSinsalBodies[yearly.sinsalIndex]}</Text>
               </View>
             )}
           </>
@@ -678,6 +695,9 @@ export default function FortuneScreen({
                           {m.calendarYear}.{String(m.calendarMonth).padStart(2, "0")}
                         </Text>
                         <View style={styles.monthRowRight}>
+                          {/* Each month has its own 12-stage name, so two months that share the
+                              same relation copy still read differently. */}
+                          <Text style={styles.monthRowStage}>{stagesContent.lifeStages[m.lifeStageIndex]?.name}</Text>
                           {m.branchRelation !== "none" && (
                             <View style={[styles.branchBadge, m.branchRelation === "hap" ? styles.branchBadgeHap : styles.branchBadgeChung]}>
                               <Text style={styles.branchBadgeText}>{m.branchRelation === "hap" ? strings.fortune.hapBadge : strings.fortune.chungBadge}</Text>
@@ -717,6 +737,11 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   lockedHeading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 22, color: COLORS.headline },
+  yearReportCard: { backgroundColor: "rgba(111,169,139,0.08)", borderWidth: 1, borderColor: "rgba(111,169,139,0.35)", borderRadius: 16, padding: 18, marginBottom: 14 },
+  yearReportText: { gap: 6 },
+  yearReportTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 20, color: COLORS.headline },
+  yearReportBody: { fontFamily: "Manrope_400Regular", fontSize: 13, lineHeight: 20, color: COLORS.subheadline },
+  yearReportCta: { fontFamily: "Manrope_600SemiBold", fontSize: 13.5, color: COLORS.gold, marginTop: 4 },
   benefitList: { gap: 14, marginBottom: 10 },
   benefitRow: { flexDirection: "row", gap: 12, alignItems: "flex-start" },
   benefitCheck: { marginTop: 2 },
@@ -880,6 +905,7 @@ const styles = StyleSheet.create({
   monthRowHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   monthRowDate: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.headline },
   monthRowRight: { flexDirection: "row", alignItems: "center", gap: 6 },
+  monthRowStage: { fontFamily: "Manrope_500Medium", fontSize: 12, color: COLORS.subheadline },
   monthRowText: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline },
   branchBadge: { borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 },
   branchBadgeHap: { backgroundColor: "rgba(111,169,139,0.15)" },

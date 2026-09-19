@@ -16,6 +16,9 @@ import HomeScreen from "./screens/HomeScreen";
 import IntroScreen from "./screens/IntroScreen";
 import LanguageScreen from "./screens/LanguageScreen";
 import ModuleSelectScreen from "./screens/ModuleSelectScreen";
+import ShareCardsScreen from "./screens/ShareCardsScreen";
+import YearReportScreen from "./screens/YearReportScreen";
+import { formatSajuTypeName } from "./lib/sajuTypeContent";
 import MyReportsScreen from "./screens/MyReportsScreen";
 import NicknameScreen from "./screens/NicknameScreen";
 import QAScreen from "./screens/QAScreen";
@@ -34,6 +37,7 @@ import { configurePurchases, hasQaProEntitlement } from "./lib/purchases";
 import { clearHomeData, getStoredHomeData, saveHomeData } from "./lib/homeDataStorage";
 import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/saju";
 import { clearSavedReports, type SavedReport } from "./lib/reportStorage";
+import { clearSavedYearReports } from "./lib/yearReportStorage";
 import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } from "./lib/userConcern";
 
 // Onboarding flow shell — mirrors components/AppFlow.jsx's step-switcher role on web,
@@ -46,7 +50,7 @@ import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } f
 // pipeline — chained, not independently reachable from Home, since chat needs a quiz
 // diagnosis and report needs both quiz+chat context — same dependency web's
 // components/AppFlow.jsx has).
-type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings" | "myReports";
+type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings" | "myReports" | "shareCards" | "yearReport";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
@@ -71,6 +75,8 @@ const BACK_TARGET: Partial<Record<StepId, StepId>> = {
   sajuLearn: "home",
   settings: "home",
   myReports: "home",
+  shareCards: "home",
+  yearReport: "home",
 };
 
 // The day master (일간) char and day branch (일지) the fortune/compatibility APIs key on —
@@ -111,7 +117,7 @@ function AppContent() {
     Manrope_600SemiBold,
     Manrope_700Bold,
   });
-  const { ready: localeReady, hasStoredLocale } = useLocale();
+  const { ready: localeReady, hasStoredLocale, locale } = useLocale();
   const strings = useStrings();
 
   // Stays null until the persisted locale check resolves, so the very first render
@@ -191,6 +197,7 @@ function AppContent() {
     clearHomeData();
     clearUserConcern();
     clearSavedReports();
+    clearSavedYearReports();
     setSavedReport(null);
     setHomeData(null);
     setNickname("");
@@ -371,8 +378,32 @@ function AppContent() {
           onOpenCompatibility={() => setStep("compatibility")}
           onOpenFortune={() => setStep("fortune")}
           onOpenMyReports={() => setStep("myReports")}
+          onOpenShareCards={() => setStep("shareCards")}
+          onOpenYearReport={() => setStep("yearReport")}
           onOpenSajuLearn={() => setStep("sajuLearn")}
           onOpenSettings={() => setStep("settings")}
+        />
+      )}
+
+      {step === "yearReport" && homeData && (
+        <YearReportScreen
+          nickname={homeData.nickname}
+          selfDayMasterChar={dayMasterCharOf(homeData)}
+          selfDayBranch={dayBranchOf(homeData)}
+          elements={homeData.sajuResult.elements}
+          sajuTypeName={homeData.sajuResult.sajuType ? formatSajuTypeName(locale, homeData.sajuResult.sajuType) : null}
+          onBack={() => setStep("home")}
+        />
+      )}
+
+      {step === "shareCards" && homeData?.sajuResult.sajuType && (
+        <ShareCardsScreen
+          nickname={homeData.nickname}
+          sajuType={homeData.sajuResult.sajuType}
+          selfDayMasterChar={dayMasterCharOf(homeData)}
+          selfDayBranch={dayBranchOf(homeData)}
+          onOpenFortune={() => setStep("fortune")}
+          onBack={() => setStep("home")}
         />
       )}
 
@@ -412,6 +443,7 @@ function AppContent() {
         <FortuneScreen
           selfDayMasterChar={dayMasterCharOf(homeData)}
           selfDayBranch={dayBranchOf(homeData)}
+          onOpenYearReport={() => setStep("yearReport")}
           onBack={() => setStep("home")}
         />
       )}

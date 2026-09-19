@@ -154,6 +154,40 @@ export async function purchaseReportModule(moduleId: string): Promise<PurchaseOu
   return purchasePackage(pkg);
 }
 
+// ---- Year-ahead report (one-time purchase, one product per year) --------------------
+// Package id and entitlement id are both `year_report_<year>` — the "reports" offering
+// gets one more package per year, and the server (lib/revenuecat.ts) checks the same
+// entitlement id before it generates the report.
+export function yearReportId(year: number): string {
+  return `year_report_${year}`;
+}
+
+export async function hasYearReportEntitlement(year: number): Promise<boolean> {
+  const info = await getCustomerInfo();
+  return !!info?.entitlements.active[yearReportId(year)];
+}
+
+export async function getYearReportPackage(year: number): Promise<PurchasesPackage | null> {
+  const packages = await getReportPackages();
+  return packages?.[yearReportId(year)] ?? null;
+}
+
+export async function purchaseYearReport(year: number): Promise<PurchaseOutcome> {
+  const pkg = await getYearReportPackage(year);
+  if (!pkg) return { status: "error", message: "no offering available" };
+  return purchasePackage(pkg);
+}
+
+/** RevenueCat's id for this install — sent to the server so it can verify a purchase. */
+export async function getRevenueCatUserId(): Promise<string | null> {
+  if (!isSupportedPlatform()) return null;
+  try {
+    return await Purchases.getAppUserID();
+  } catch {
+    return null;
+  }
+}
+
 export async function purchaseReportBundle(): Promise<PurchaseOutcome> {
   const packages = await getReportPackages();
   const pkg = packages?.[REPORT_BUNDLE_PACKAGE_ID];

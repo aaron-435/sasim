@@ -1,4 +1,4 @@
-import { ArrowRight, Brain, ChevronRight, FileText, HelpCircle, Settings, Sparkles, Users } from "lucide-react-native";
+import { ArrowRight, Brain, CalendarDays, ChevronRight, FileText, HelpCircle, Settings, Share2, Sparkles, Users } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { AccessibilityInfo, AppState, Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
@@ -12,8 +12,10 @@ import { getDailyInsight } from "../lib/i18n/dailyInsight";
 import { hasQaProEntitlement } from "../lib/purchases";
 import { getLastQuestion, type LastQuestion } from "../lib/qaHistory";
 import { listSavedReports } from "../lib/reportStorage";
+import type { CompatibilityResult } from "../lib/compatibility";
 import type { SajuType } from "../lib/sajuType";
 import { formatSajuTypeName } from "../lib/sajuTypeContent";
+import { comingSajuYear } from "../lib/sajuYear";
 import { fetchTodayFortune, type TodayFortune } from "../lib/todayFortune";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
@@ -35,18 +37,18 @@ type TodayState =
   | { kind: "error" }
   | { kind: "sealed"; streak: number }
   | { kind: "opened"; fortune: TodayFortune; streak: number }
-  | { kind: "teaser" };
+  | { kind: "teaser"; relation: CompatibilityResult["relation"] | null };
 
-type FeatureKey = "qa" | "quiz" | "compat" | "reports";
+type FeatureKey = "qa" | "yearReport" | "quiz" | "compat" | "cards" | "reports";
 
 // "romance" is the "사람과의 관계" concern — lead with the relationship feature there.
 const FEATURE_ORDER: Record<Track | "default", FeatureKey[]> = {
-  romance: ["compat", "qa", "quiz", "reports"],
-  career: ["qa", "quiz", "compat", "reports"],
-  default: ["qa", "quiz", "compat", "reports"],
+  romance: ["compat", "yearReport", "cards", "qa", "quiz", "reports"],
+  career: ["qa", "yearReport", "cards", "quiz", "compat", "reports"],
+  default: ["qa", "yearReport", "cards", "quiz", "compat", "reports"],
 };
 
-const FEATURE_ICONS = { qa: HelpCircle, quiz: Brain, compat: Users, reports: FileText } as const;
+const FEATURE_ICONS = { qa: HelpCircle, quiz: Brain, compat: Users, cards: Share2, yearReport: CalendarDays, reports: FileText } as const;
 
 function localDateKey(): string {
   const d = new Date();
@@ -74,6 +76,8 @@ export default function HomeScreen({
   onOpenCompatibility,
   onOpenFortune,
   onOpenMyReports,
+  onOpenShareCards,
+  onOpenYearReport,
   onOpenSajuLearn,
   onOpenSettings,
 }: {
@@ -90,6 +94,8 @@ export default function HomeScreen({
   onOpenCompatibility: () => void;
   onOpenFortune: () => void;
   onOpenMyReports: () => void;
+  onOpenShareCards: () => void;
+  onOpenYearReport: () => void;
   onOpenSajuLearn: () => void;
   onOpenSettings: () => void;
 }) {
@@ -126,8 +132,9 @@ export default function HomeScreen({
       const [isEntitled, fortune] = await Promise.all([hasQaProEntitlement(), fetchTodayFortune(selfDayMasterChar, selfDayBranch)]);
       if (!alive) return;
       if (!isEntitled) {
-        // The free teaser needs no fortune data, so a failed request doesn't block it.
-        setToday({ kind: "teaser" });
+        // The free teaser works without the reading (a failed request just drops the
+        // rhythm line). It names today's rhythm and keeps the why / what-to-do behind Pro.
+        setToday({ kind: "teaser", relation: fortune?.compatibility?.relation ?? null });
         return;
       }
       if (!fortune?.compatibility) {
@@ -181,7 +188,8 @@ export default function HomeScreen({
 
   const insight = getDailyInsight(strings, dominantElement);
   const opened = today.kind === "opened" ? getOverview(fortuneContent, today.fortune.compatibility!.relation, today.fortune.dayMaster.pillarIndex) : null;
-  const headline = opened?.headline ?? null;
+  const headline =
+    opened?.headline ?? (today.kind === "teaser" && today.relation ? strings.fortune.rhythmNames[today.relation] : null);
   const heroTitle = today.kind === "sealed" ? strings.home.todaySealedTitle : strings.home.todayTitle;
   // Free users get the generic (free) daily insight — not the day's relation headline,
   // which can read as a warning ("a headwind") sitting right above an upsell.
@@ -223,6 +231,14 @@ export default function HomeScreen({
     },
     quiz: { label: strings.home.featureQuizLabel, description: strings.home.featureQuizDescription, onPress: onOpenQuiz, available: true },
     compat: { label: strings.home.featureCompatLabel, description: strings.home.featureCompatDescription, onPress: onOpenCompatibility, available: true },
+    // The cards are built from the saju type, so they need one (same rule as the type badge).
+    cards: { label: strings.home.featureCardsLabel, description: strings.home.featureCardsDescription, onPress: onOpenShareCards, available: !!sajuType },
+    yearReport: {
+      label: strings.home.featureYearReportLabel(comingSajuYear()),
+      description: strings.home.featureYearReportDescription,
+      onPress: onOpenYearReport,
+      available: !!selfDayMasterChar,
+    },
     reports: { label: strings.home.featureReportsLabel, description: strings.home.featureReportsDescription, onPress: onOpenMyReports, available: hasSavedReports },
   };
   const features = FEATURE_ORDER[preferredTrack ?? "default"].filter((key) => featureMeta[key].available);

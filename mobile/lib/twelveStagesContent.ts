@@ -36,6 +36,11 @@ export interface TwelveStagesContent {
   lifeStages: StageEntry[];
   /** 12 entries, index matches lib/twelveStages.ts's SINSAL_ORDER. */
   sinsal: StageEntry[];
+  /** 2026-09-19: the same 12 stages / 12 sinsal worded for a whole YEAR (the entries
+   * above are worded for "today" and read wrong on the year tab). Same indices; the names
+   * are shared with lifeStages / sinsal. */
+  yearLifeStageBodies: string[];
+  yearSinsalBodies: string[];
 }
 
 const ko: TwelveStagesContent = {
@@ -66,6 +71,33 @@ const ko: TwelveStagesContent = {
     { name: "역마살", body: "가만히 있기보다 움직이고 싶은 마음이 강해지는 하루예요. 여행이나 이동, 새로운 곳으로의 시도가 답답함을 풀어주는 좋은 방법이 될 수 있어요." },
     { name: "육해살", body: "크지 않지만 잔잔하게 신경 쓰이는 일들이 겹칠 수 있는 날이에요. 몸 상태나 자잘한 일정 관리에 조금 더 신경 쓰면 무난하게 넘어갈 수 있어요." },
     { name: "화개살", body: "혼자만의 시간에서 오히려 좋은 아이디어가 떠오르는 하루예요. 예술적인 감각이나 깊이 있는 생각이 필요한 일이라면 오늘 시도해보기 좋아요." },
+  ],  yearLifeStageBodies: [
+    "새로운 기운이 움트는 해예요. 낯선 시도가 의외로 잘 받아들여지고, 새로운 인연이 시작될 수 있어요.",
+    "감정이 풍부해지고 마음이 말랑해지는 해예요. 설렘이 큰 만큼 즉흥적인 큰 결정은 한 박자 늦추세요.",
+    "자신감과 존재감이 붙는 해예요. 미뤄 온 일을 한 걸음 내딛기 좋은 시기예요.",
+    "노력한 만큼 결과가 따라오는 해예요. 일과 커리어에서 실력을 인정받기 좋아요.",
+    "기운이 가장 강한 해예요. 주도권을 쥐고 밀어붙이기 좋지만, 주변을 살피는 걸 잊지 마세요.",
+    "속도를 조금 늦추는 게 맞는 해예요. 새로 벌이기보다 이미 해 온 일을 다듬는 데 힘을 쓰세요.",
+    "체력과 마음의 관리가 우선인 해예요. 일정에 여유를 두고, 곁의 도움을 편하게 받아들이세요.",
+    "새로 벌이기보다 정리하고 되짚기 좋은 해예요. 조용히 마무리하면 다음 흐름이 준비돼요.",
+    "겉은 조용해도 다음을 위한 힘이 쌓이는 해예요. 성과가 바로 안 보여도 조급해하지 마세요.",
+    "하나의 흐름이 끊기고 다음 챕터로 넘어가는 해예요. 흘려보낼 건 보내야 새 기운이 들어와요.",
+    "눈에 안 보여도 새로운 가능성이 씨앗처럼 자리 잡는 해예요. 작은 계획을 마음에 심어 두세요.",
+    "심어 둔 것이 조용히 자라는 해예요. 서두르지 않고 꾸준히 돌보면 나중에 큰 차이가 돼요.",
+  ],
+  yearSinsalBodies: [
+    "예상 밖의 곳으로 기운이 새기 쉬운 해예요. 큰돈이 오가는 결정은 한 번 더 확인하세요.",
+    "의견 충돌이 생기기 쉬운 해예요. 옳고 그름보다 한발 물러서는 쪽이 손해를 줄여 줘요.",
+    "내 힘으로 어쩔 수 없는 변수가 끼어들 수 있는 해예요. 계획에 여유를 두고 유연하게 대응하세요.",
+    "이동하거나 새로운 환경에 놓이기 좋은 해예요. 낯선 자리가 오히려 기회가 될 수 있어요.",
+    "매력이 도드라지고 시선을 끄는 해예요. 새로운 인연이 생기기 좋으니 자신을 편하게 드러내세요.",
+    "뭘 해도 답답하게 느껴지는 순간이 있는 해예요. 억지로 밀기보다 숨을 고르며 기다리세요.",
+    "말과 행동이 다르게 전달되기 쉬운 해예요. 중요한 자리일수록 한 번 더 점검하세요.",
+    "주도권을 쥐고 사람들을 이끌기 좋은 해예요. 결단력이 신뢰를 얻으니 앞장서 보세요.",
+    "그동안의 노력이 눈에 띄는 자리로 이어지는 해예요. 승진이나 좋은 제안이 오면 잡으세요.",
+    "움직임이 많아지는 해예요. 여행, 이동, 새로운 시도가 답답함을 풀어 줘요.",
+    "크지 않지만 잔잔하게 신경 쓰이는 일이 겹치는 해예요. 몸 상태와 일정 관리에 신경 쓰세요.",
+    "혼자만의 시간에서 좋은 아이디어가 나오는 해예요. 창작이나 깊은 사고가 필요한 일에 잘 맞아요.",
   ],
 };
 
@@ -97,6 +129,33 @@ const en: TwelveStagesContent = {
     { name: "On the Move", body: "You'll likely feel restless, pulled toward motion rather than staying still. Travel or trying something new is a good outlet for that energy." },
     { name: "Minor Setback", body: "Small, nagging things may pile up today without being serious. A little extra care with your health or schedule keeps it manageable." },
     { name: "Inner World", body: "Good ideas tend to surface in solitude today. If your work calls for creativity or deeper thinking, this is a good day to lean into it." },
+  ],  yearLifeStageBodies: [
+    "A fresh current stirs this year. Unfamiliar attempts land better than expected, and a new connection may begin.",
+    "Feelings run richer and your guard comes down this year. The excitement is real; give big impulsive calls a beat.",
+    "Confidence and presence build this year. A good stretch for finally taking the step you've been putting off.",
+    "Effort pays off visibly this year. Strong for work and career, where your skill can be recognized.",
+    "This is the strongest point of your cycle. Good for taking charge; just keep an eye on the people around you.",
+    "This year favors slowing down. Spend energy refining what's already in motion instead of starting new things.",
+    "Looking after body and mind comes first this year. Leave slack in your schedule and let people help you.",
+    "A year better for tidying up and reflecting than for starting something new. Closing things quietly prepares the next current.",
+    "It looks quiet, but strength builds underneath for what's next. Don't rush results.",
+    "One chapter closes and the next begins. Let go of what needs letting go to make room for new energy.",
+    "A new possibility takes root this year, even if it's invisible yet. Plant small plans in your mind.",
+    "What you planted grows quietly this year. Steady, unhurried care makes a big difference later.",
+  ],
+  yearSinsalBodies: [
+    "Energy or resources can slip away from unexpected directions this year. Double-check big money decisions.",
+    "Disagreements come up more easily this year. Stepping back rather than proving a point costs you less.",
+    "Variables outside your control may cut in this year. Leave slack in your plans and stay flexible.",
+    "A good year for moving or entering a new environment. An unfamiliar place or person can become an opportunity.",
+    "You stand out and draw attention this year. A good year for new connections; let yourself be seen.",
+    "Some moments this year may feel stuck whatever you try. Pause and wait rather than forcing it.",
+    "Words and actions can land differently than you mean this year. Double-check the important moments.",
+    "A strong year for taking the lead. Decisiveness earns trust, so step forward.",
+    "Past effort can turn into visible recognition this year. If a promotion or offer appears, take it.",
+    "You'll likely move more this year. Travel, change and trying new things release that restlessness.",
+    "Small nagging things may pile up without being serious. Extra care with health and schedule keeps it manageable.",
+    "Good ideas tend to come from solitude this year. A good fit for creative or deep-thinking work.",
   ],
 };
 
@@ -128,6 +187,33 @@ const es: TwelveStagesContent = {
     { name: "En Movimiento", body: "Probablemente sientas inquietud, con ganas de moverte en vez de quedarte quieto/a. Viajar o probar algo nuevo es una buena salida para esa energía." },
     { name: "Contratiempo Menor", body: "Hoy pueden acumularse pequeñas molestias sin mayor gravedad. Un poco más de cuidado con tu salud o tu agenda mantiene todo bajo control." },
     { name: "Mundo Interior", body: "Hoy las buenas ideas tienden a surgir en soledad. Si tu trabajo pide creatividad o pensamiento profundo, es un buen día para dedicarte a eso." },
+  ],  yearLifeStageBodies: [
+    "Este año surge una corriente nueva. Los intentos poco familiares se reciben mejor de lo esperado y puede empezar una nueva conexión.",
+    "Las emociones fluyen más y bajas la guardia este año. La ilusión es real; deja pasar un momento las decisiones impulsivas grandes.",
+    "Crecen tu confianza y tu presencia este año. Buen tramo para dar por fin el paso que venías postergando.",
+    "El esfuerzo se nota en los resultados este año. Fuerte para el trabajo y la carrera, donde tu habilidad puede ser reconocida.",
+    "Este es el punto más fuerte de tu ciclo. Bueno para tomar el mando; solo cuida a quienes te rodean.",
+    "Este año conviene bajar el ritmo. Dedica energía a pulir lo que ya está en marcha en vez de empezar cosas nuevas.",
+    "Cuidar cuerpo y mente es lo primero este año. Deja holgura en tu agenda y acepta la ayuda de otros.",
+    "Un año mejor para ordenar y reflexionar que para empezar algo nuevo. Cerrar en silencio prepara la siguiente corriente.",
+    "Se ve tranquilo, pero por dentro se acumula fuerza para lo que viene. No apresures los resultados.",
+    "Se cierra un capítulo y empieza otro. Suelta lo que haya que soltar para dejar espacio a la nueva energía.",
+    "Una nueva posibilidad echa raíces este año, aunque aún no se vea. Siembra pequeños planes en tu mente.",
+    "Lo que sembraste crece en silencio este año. El cuidado constante y sin prisa marca una gran diferencia después.",
+  ],
+  yearSinsalBodies: [
+    "Este año la energía o los recursos pueden escaparse por donde no lo esperas. Revisa dos veces las decisiones de dinero grandes.",
+    "Los desacuerdos surgen con más facilidad este año. Dar un paso atrás en vez de tener la razón te cuesta menos.",
+    "Variables fuera de tu control pueden colarse este año. Deja holgura en tus planes y mantente flexible.",
+    "Buen año para moverte o entrar en un entorno nuevo. Un lugar o una persona desconocida puede convertirse en oportunidad.",
+    "Destacas y atraes miradas este año. Buen año para nuevas conexiones; déjate ver.",
+    "Algunos momentos de este año pueden sentirse estancados hagas lo que hagas. Pausa y espera en vez de forzar.",
+    "Tus palabras y acciones pueden interpretarse distinto de lo que quieres este año. Revisa dos veces los momentos importantes.",
+    "Un año fuerte para tomar la delantera. La decisión gana confianza, así que da el paso al frente.",
+    "El esfuerzo pasado puede convertirse en reconocimiento visible este año. Si llega un ascenso u oferta, tómalo.",
+    "Probablemente te muevas más este año. Viajar, cambiar y probar cosas nuevas liberan esa inquietud.",
+    "Pueden acumularse pequeñas molestias sin gravedad. Un cuidado extra con la salud y la agenda lo mantiene manejable.",
+    "Las buenas ideas suelen surgir en soledad este año. Buen encaje para trabajo creativo o de pensamiento profundo.",
   ],
 };
 
