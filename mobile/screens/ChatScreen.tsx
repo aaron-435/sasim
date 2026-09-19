@@ -1,8 +1,6 @@
 import { ArrowLeft, Clock, Send, ShieldCheck, Sparkles } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  Animated,
-  Easing,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -13,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "../components/AppText";
+import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
 import { findTopAnswers } from "../lib/quiz/quizProfile";
@@ -223,11 +222,7 @@ export default function ChatScreen({
 
         <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           {messages.map((m, i) => (
-            <View key={i} style={[styles.bubbleRow, m.role === "user" ? styles.bubbleRowUser : styles.bubbleRowBot]}>
-              <View style={m.role === "user" ? styles.bubbleUser : styles.bubbleBot}>
-                <Text style={m.role === "user" ? styles.bubbleTextUser : styles.bubbleTextBot}>{m.text}</Text>
-              </View>
-            </View>
+            <ChatBubble key={i} role={m.role} text={m.text} />
           ))}
 
           {isTyping && <TypingDots />}
@@ -290,35 +285,6 @@ export default function ChatScreen({
   );
 }
 
-function TypingDots() {
-  const anims = useRef([0, 1, 2].map(() => new Animated.Value(0.2))).current;
-
-  useEffect(() => {
-    const loops = anims.map((v, i) =>
-      Animated.loop(
-        Animated.sequence([
-          Animated.delay(i * 150),
-          Animated.timing(v, { toValue: 1, duration: 400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.timing(v, { toValue: 0.2, duration: 400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.delay((2 - i) * 150),
-        ])
-      )
-    );
-    loops.forEach((l) => l.start());
-    return () => loops.forEach((l) => l.stop());
-  }, [anims]);
-
-  return (
-    <View style={[styles.bubbleRow, styles.bubbleRowBot]}>
-      <View style={[styles.bubbleBot, styles.typingBubble]}>
-        {anims.map((v, i) => (
-          <Animated.View key={i} style={[styles.typingDot, { opacity: v }]} />
-        ))}
-      </View>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -367,58 +333,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 18,
     paddingBottom: 12,
-  },
-  bubbleRow: {
-    marginBottom: 10,
-    flexDirection: "row",
-  },
-  bubbleRowUser: {
-    justifyContent: "flex-end",
-  },
-  bubbleRowBot: {
-    justifyContent: "flex-start",
-  },
-  bubbleBot: {
-    maxWidth: "82%",
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 16,
-    borderBottomLeftRadius: 4,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-  },
-  bubbleUser: {
-    maxWidth: "82%",
-    backgroundColor: COLORS.gold,
-    borderRadius: 16,
-    borderBottomRightRadius: 4,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-  },
-  bubbleTextBot: {
-    fontFamily: "Manrope_400Regular",
-    fontSize: 14.5,
-    lineHeight: 22,
-    color: COLORS.headline,
-  },
-  bubbleTextUser: {
-    fontFamily: "Manrope_500Medium",
-    fontSize: 14.5,
-    lineHeight: 22,
-    color: COLORS.ctaText,
-  },
-  typingBubble: {
-    flexDirection: "row",
-    gap: 4,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-  },
-  typingDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: COLORS.subheadline,
   },
   errorCard: {
     backgroundColor: "rgba(203,98,73,0.08)",

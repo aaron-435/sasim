@@ -1,7 +1,8 @@
 import { ArrowLeft, RefreshCw, Sparkles } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { BackHandler, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import questionBank from "../data/questionBank.json";
 import { API_BASE_URL } from "../config";
@@ -111,6 +112,18 @@ export default function QAScreen({
   useEffect(() => {
     scrollRef.current?.scrollToEnd({ animated: true });
   }, [messages, busy, view]);
+
+  // Android hardware back inside the category/question pickers steps back one level,
+  // same as their on-screen back buttons, instead of App.tsx's handler dropping the
+  // user all the way to Home. Added after App's listener, so RN asks this one first.
+  useEffect(() => {
+    if (view === "chat") return;
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      setView(view === "question" ? "subcategory" : "chat");
+      return true;
+    });
+    return () => sub.remove();
+  }, [view]);
 
   async function requestAnswer(questionText: string) {
     setBusy(true);
@@ -271,13 +284,7 @@ export default function QAScreen({
               </View>
             );
           }
-          return (
-            <View key={i} style={[styles.bubbleRow, m.role === "user" ? styles.bubbleRowUser : styles.bubbleRowBot]}>
-              <View style={m.role === "user" ? styles.bubbleUser : styles.bubbleBot}>
-                <Text style={m.role === "user" ? styles.bubbleTextUser : styles.bubbleTextBot}>{m.text}</Text>
-              </View>
-            </View>
-          );
+          return <ChatBubble key={i} role={m.role} text={m.text} />;
         })}
 
         {busy && !errorText && <TypingDots />}
@@ -293,35 +300,6 @@ export default function QAScreen({
         )}
       </ScrollView>
     </SafeAreaView>
-  );
-}
-
-function TypingDots() {
-  const anims = useRef([0, 1, 2].map(() => new Animated.Value(0.2))).current;
-
-  useEffect(() => {
-    const loops = anims.map((v, i) =>
-      Animated.loop(
-        Animated.sequence([
-          Animated.delay(i * 150),
-          Animated.timing(v, { toValue: 1, duration: 400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.timing(v, { toValue: 0.2, duration: 400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.delay((2 - i) * 150),
-        ])
-      )
-    );
-    loops.forEach((l) => l.start());
-    return () => loops.forEach((l) => l.stop());
-  }, [anims]);
-
-  return (
-    <View style={[styles.bubbleRow, styles.bubbleRowBot]}>
-      <View style={[styles.bubbleBot, styles.typingBubble]}>
-        {anims.map((v, i) => (
-          <Animated.View key={i} style={[styles.typingDot, { opacity: v }]} />
-        ))}
-      </View>
-    </View>
   );
 }
 
@@ -356,46 +334,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 18,
     paddingBottom: 24,
-  },
-  bubbleRow: {
-    marginBottom: 10,
-    flexDirection: "row",
-  },
-  bubbleRowUser: {
-    justifyContent: "flex-end",
-  },
-  bubbleRowBot: {
-    justifyContent: "flex-start",
-  },
-  bubbleBot: {
-    maxWidth: "82%",
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 16,
-    borderBottomLeftRadius: 4,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-  },
-  bubbleUser: {
-    maxWidth: "82%",
-    backgroundColor: COLORS.gold,
-    borderRadius: 16,
-    borderBottomRightRadius: 4,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-  },
-  bubbleTextBot: {
-    fontFamily: "Manrope_400Regular",
-    fontSize: 14.5,
-    lineHeight: 22,
-    color: COLORS.headline,
-  },
-  bubbleTextUser: {
-    fontFamily: "Manrope_500Medium",
-    fontSize: 14.5,
-    lineHeight: 22,
-    color: COLORS.ctaText,
   },
   pickerRow: {
     marginBottom: 10,
@@ -463,18 +401,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#E0A296",
     textAlign: "center",
-  },
-  typingBubble: {
-    flexDirection: "row",
-    gap: 4,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-  },
-  typingDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: COLORS.subheadline,
   },
   errorCard: {
     backgroundColor: "rgba(203,98,73,0.08)",

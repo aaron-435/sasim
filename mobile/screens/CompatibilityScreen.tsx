@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Share2 } from "lucide-react-native";
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import * as Sharing from "expo-sharing";
@@ -51,6 +51,10 @@ export default function CompatibilityScreen({
   const [cityResults, setCityResults] = useState<CityResult[]>([]);
   const [selectedCity, setSelectedCity] = useState<CityResult | null>(null);
   const citySearchSeq = useRef(0);
+  const citySearchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (citySearchTimer.current) clearTimeout(citySearchTimer.current);
+  }, []);
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,11 +71,19 @@ export default function CompatibilityScreen({
     setCityQuery(v);
     setSelectedCity(null);
     if (!v.trim()) {
+      // Also cancel any search still pending for the text just erased — otherwise its
+      // results would pop back in under an empty field.
+      citySearchSeq.current++;
+      if (citySearchTimer.current) clearTimeout(citySearchTimer.current);
       setCityResults([]);
       return;
     }
+    // Real debounce: each keystroke cancels the previous pending search, so only the
+    // query the user pauses on hits the API (the seq check below still drops a slow
+    // response that lands after a newer one). Same behavior as CityScreen's search.
     const seq = ++citySearchSeq.current;
-    setTimeout(async () => {
+    if (citySearchTimer.current) clearTimeout(citySearchTimer.current);
+    citySearchTimer.current = setTimeout(async () => {
       try {
         const res = await fetch(`${API_BASE_URL}/api/cities/search?q=${encodeURIComponent(v)}&locale=${locale}`);
         const json = await res.json();

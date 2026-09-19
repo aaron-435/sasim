@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, Sparkles } from "lucide-react-native";
 import { ActivityIndicator, Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
@@ -89,6 +89,46 @@ function pickExtreme(list: DayFortune[], mode: "max" | "min"): DayFortune {
   }, list[0]);
 }
 
+// One lazily-triggered GET per tab — replaces five hand-copied loader functions that
+// each carried their own data/loading/error state trio. `load` resolves to the payload
+// (or null on failure) so a caller can chain follow-up work, like the daily tab's
+// open-state/streak lookup.
+function useLazyFetch<T>(errorText: string) {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  const load = useCallback(
+    async (url: string, key: string): Promise<T | null> => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(url);
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || "failed");
+        if (!mountedRef.current) return null;
+        setData(json[key]);
+        return json[key] as T;
+      } catch {
+        if (mountedRef.current) setError(errorText);
+        return null;
+      } finally {
+        if (mountedRef.current) setLoading(false);
+      }
+    },
+    [errorText],
+  );
+
+  return { data, loading, error, load };
+}
+
 export default function FortuneScreen({
   selfDayMasterChar,
   selfDayBranch,
@@ -107,27 +147,13 @@ export default function FortuneScreen({
   const [entitled, setEntitled] = useState<boolean | null>(null);
   const [tab, setTab] = useState<"daily" | "weekly" | "month" | "yearly">("daily");
 
-  const [daily, setDaily] = useState<DayFortune | null>(null);
-  const [dailyLoading, setDailyLoading] = useState(false);
-  const [dailyError, setDailyError] = useState<string | null>(null);
-
-  const [weekly, setWeekly] = useState<DayFortune[] | null>(null);
-  const [weeklyLoading, setWeeklyLoading] = useState(false);
-  const [weeklyError, setWeeklyError] = useState<string | null>(null);
-
+  const { data: daily, loading: dailyLoading, error: dailyError, load: fetchDaily } = useLazyFetch<DayFortune>(strings.fortune.loadErrorText);
+  const { data: weekly, loading: weeklyLoading, error: weeklyError, load: fetchWeekly } = useLazyFetch<DayFortune[]>(strings.fortune.loadErrorText);
   // "이달의 길흉일 캘린더" — weekly와 완전히 같은 하루치 엔진/화면 패턴을
   // 범위만 이번 달 전체로 넓힌 것 (lib/dailyFortune.ts의 getMonthFortune 참고).
-  const [monthDays, setMonthDays] = useState<DayFortune[] | null>(null);
-  const [monthDaysLoading, setMonthDaysLoading] = useState(false);
-  const [monthDaysError, setMonthDaysError] = useState<string | null>(null);
-
-  const [yearly, setYearly] = useState<YearFortune | null>(null);
-  const [yearlyLoading, setYearlyLoading] = useState(false);
-  const [yearlyError, setYearlyError] = useState<string | null>(null);
-
-  const [monthly, setMonthly] = useState<MonthFortune[] | null>(null);
-  const [monthlyLoading, setMonthlyLoading] = useState(false);
-  const [monthlyError, setMonthlyError] = useState<string | null>(null);
+  const { data: monthDays, loading: monthDaysLoading, error: monthDaysError, load: fetchMonthDays } = useLazyFetch<DayFortune[]>(strings.fortune.loadErrorText);
+  const { data: yearly, loading: yearlyLoading, error: yearlyError, load: fetchYearly } = useLazyFetch<YearFortune>(strings.fortune.loadErrorText);
+  const { data: monthly, loading: monthlyLoading, error: monthlyError, load: fetchMonthly } = useLazyFetch<MonthFortune[]>(strings.fortune.loadErrorText);
   const [monthlyDomain, setMonthlyDomain] = useState<YearDomain>("overview");
 
   const [purchasing, setPurchasing] = useState(false);
@@ -153,110 +179,38 @@ export default function FortuneScreen({
     });
   }, []);
 
+  // 2026-09-19: selfDayBranch is optional here, matching the API (see
+  // app/api/dailyFortune/route.ts) — only the 신살 section needs it, and the server
+  // returns sinsalIndex: null without it, which the daily view already handles. These
+  // loaders used to bail out entirely when it was missing, leaving a subscriber whose
+  // stored reading lacked a day branch staring at a permanently blank screen.
+  function fortuneUrl(path: "dailyFortune" | "yearFortune", mode?: string): string {
+    const params = new URLSearchParams({ selfDayMasterChar: selfDayMasterChar ?? "" });
+    if (mode) params.set("mode", mode);
+    if (selfDayBranch) params.set("selfDayBranch", selfDayBranch);
+    return `${API_BASE_URL}/api/${path}?${params.toString()}`;
+  }
+
   useEffect(() => {
-    if (entitled && selfDayMasterChar && selfDayBranch && !daily && !dailyLoading) loadDaily();
+    if (!entitled || !selfDayMasterChar || daily || dailyLoading) return;
+    (async () => {
+      const result = await fetchDaily(fortuneUrl("dailyFortune", "daily"), "daily");
+      if (!result) return;
+      const [opened, currentStreak] = await Promise.all([isFortuneOpened(result.date), getFortuneStreak()]);
+      if (!mountedRef.current) return;
+      setRevealed(opened);
+      setStreak(currentStreak);
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entitled, selfDayMasterChar, selfDayBranch]);
 
-  async function loadDaily() {
-    if (!selfDayMasterChar || !selfDayBranch) return;
-    setDailyLoading(true);
-    setDailyError(null);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/dailyFortune?mode=daily&selfDayMasterChar=${encodeURIComponent(selfDayMasterChar)}&selfDayBranch=${encodeURIComponent(selfDayBranch)}`,
-      );
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "failed");
-      if (!mountedRef.current) return;
-      setDaily(json.daily);
-      setRevealed(await isFortuneOpened(json.daily.date));
-      setStreak(await getFortuneStreak());
-    } catch {
-      if (mountedRef.current) setDailyError(strings.fortune.loadErrorText);
-    } finally {
-      if (mountedRef.current) setDailyLoading(false);
-    }
-  }
-
-  async function loadWeekly() {
-    if (!selfDayMasterChar || !selfDayBranch) return;
-    setWeeklyLoading(true);
-    setWeeklyError(null);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/dailyFortune?mode=weekly&selfDayMasterChar=${encodeURIComponent(selfDayMasterChar)}&selfDayBranch=${encodeURIComponent(selfDayBranch)}`,
-      );
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "failed");
-      if (mountedRef.current) setWeekly(json.weekly);
-    } catch {
-      if (mountedRef.current) setWeeklyError(strings.fortune.loadErrorText);
-    } finally {
-      if (mountedRef.current) setWeeklyLoading(false);
-    }
-  }
-
-  async function loadMonthDays() {
-    if (!selfDayMasterChar || !selfDayBranch) return;
-    setMonthDaysLoading(true);
-    setMonthDaysError(null);
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/api/dailyFortune?mode=month&selfDayMasterChar=${encodeURIComponent(selfDayMasterChar)}&selfDayBranch=${encodeURIComponent(selfDayBranch)}`,
-      );
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "failed");
-      if (mountedRef.current) setMonthDays(json.month);
-    } catch {
-      if (mountedRef.current) setMonthDaysError(strings.fortune.loadErrorText);
-    } finally {
-      if (mountedRef.current) setMonthDaysLoading(false);
-    }
-  }
-
-  async function loadYearly() {
-    if (!selfDayMasterChar) return;
-    setYearlyLoading(true);
-    setYearlyError(null);
-    try {
-      const params = new URLSearchParams({ selfDayMasterChar });
-      if (selfDayBranch) params.set("selfDayBranch", selfDayBranch);
-      const res = await fetch(`${API_BASE_URL}/api/yearFortune?${params.toString()}`);
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "failed");
-      if (mountedRef.current) setYearly(json.yearFortune);
-    } catch {
-      if (mountedRef.current) setYearlyError(strings.fortune.loadErrorText);
-    } finally {
-      if (mountedRef.current) setYearlyLoading(false);
-    }
-  }
-
-  async function loadMonthly() {
-    if (!selfDayMasterChar) return;
-    setMonthlyLoading(true);
-    setMonthlyError(null);
-    try {
-      const params = new URLSearchParams({ selfDayMasterChar, mode: "monthly" });
-      if (selfDayBranch) params.set("selfDayBranch", selfDayBranch);
-      const res = await fetch(`${API_BASE_URL}/api/yearFortune?${params.toString()}`);
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "failed");
-      if (mountedRef.current) setMonthly(json.monthly);
-    } catch {
-      if (mountedRef.current) setMonthlyError(strings.fortune.loadErrorText);
-    } finally {
-      if (mountedRef.current) setMonthlyLoading(false);
-    }
-  }
-
   function handleSelectTab(next: "daily" | "weekly" | "month" | "yearly") {
     setTab(next);
-    if (next === "weekly" && !weekly && !weeklyLoading) loadWeekly();
-    if (next === "month" && !monthDays && !monthDaysLoading) loadMonthDays();
-    if (next === "yearly" && !yearly && !yearlyLoading) loadYearly();
-    if (next === "yearly" && !monthly && !monthlyLoading) loadMonthly();
+    if (!selfDayMasterChar) return;
+    if (next === "weekly" && !weekly && !weeklyLoading) fetchWeekly(fortuneUrl("dailyFortune", "weekly"), "weekly");
+    if (next === "month" && !monthDays && !monthDaysLoading) fetchMonthDays(fortuneUrl("dailyFortune", "month"), "month");
+    if (next === "yearly" && !yearly && !yearlyLoading) fetchYearly(fortuneUrl("yearFortune"), "yearFortune");
+    if (next === "yearly" && !monthly && !monthlyLoading) fetchMonthly(fortuneUrl("yearFortune", "monthly"), "monthly");
   }
 
   function domainText(relation: CompatibilityResult["relation"], domain: YearDomain): string {
@@ -374,6 +328,8 @@ export default function FortuneScreen({
   const monthBest = monthPool.length ? pickExtreme(monthPool, "max") : null;
   const monthCaution = monthPool.length ? pickExtreme(monthPool, "min") : null;
 
+  const dailyOverview = daily?.compatibility ? getOverview(content, daily.compatibility.relation, daily.dayMaster.pillarIndex) : null;
+
   // 오늘의 행운 포인트 — 그날의 오행 하나로만 정해지는 값이라 relation과 무관.
   const todayElementKey = daily?.compatibility?.otherDayMasterElement;
   const luckyPoint = todayElementKey ? (LUCKY_POINTS[locale] ?? LUCKY_POINTS.ko)[todayElementKey] : null;
@@ -403,6 +359,8 @@ export default function FortuneScreen({
             <Text style={[styles.tabLabel, tab === "yearly" && styles.tabLabelActive]}>{strings.fortune.yearlyTab}</Text>
           </Pressable>
         </View>
+
+        {!selfDayMasterChar && <Text style={styles.errorText}>{strings.fortune.loadErrorText}</Text>}
 
         {tab === "daily" && dailyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
         {tab === "daily" && !dailyLoading && dailyError && <Text style={styles.errorText}>{dailyError}</Text>}
@@ -439,8 +397,8 @@ export default function FortuneScreen({
 
             <Animated.View style={[styles.sectionCard, sectionStyle(1)]}>
               <Text style={styles.sectionLabel}>{strings.fortune.overviewLabel}</Text>
-              <Text style={styles.sectionHeadline}>{getOverview(content, daily.compatibility.relation, daily.dayMaster.pillarIndex).headline}</Text>
-              <Text style={styles.sectionBody}>{getOverview(content, daily.compatibility.relation, daily.dayMaster.pillarIndex).body}</Text>
+              <Text style={styles.sectionHeadline}>{dailyOverview?.headline}</Text>
+              <Text style={styles.sectionBody}>{dailyOverview?.body}</Text>
             </Animated.View>
 
             <Animated.View style={[styles.sectionCard, sectionStyle(2)]}>

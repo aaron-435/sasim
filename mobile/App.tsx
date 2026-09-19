@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { useFonts, CormorantGaramond_500Medium } from "@expo-google-fonts/cormorant-garamond";
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from "@expo-google-fonts/manrope";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BackHandler } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import ChatScreen, { type ChatExtract } from "./screens/ChatScreen";
@@ -47,6 +47,28 @@ import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } f
 type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
+
+// Where Android's hardware back goes from each step — mirrors each screen's own onBack
+// prop below. Steps missing here are roots, where back falls through to exiting the app.
+const BACK_TARGET: Partial<Record<StepId, StepId>> = {
+  verifyCode: "intro",
+  nickname: "verifyCode",
+  gender: "nickname",
+  dob: "gender",
+  tob: "dob",
+  city: "tob",
+  concern: "city",
+  quiz: "moduleSelect",
+  qa: "home",
+  moduleSelect: "home",
+  chat: "home",
+  report: "home",
+  type: "home",
+  compatibility: "home",
+  fortune: "home",
+  sajuLearn: "home",
+  settings: "home",
+};
 
 function makeSessionId() {
   // No expo-crypto installed for this POC — good enough for an opaque session key.
@@ -173,48 +195,27 @@ function AppContent() {
   // [[project-fatesaid-history-api-bug]]; that was a browser-history/App-Router
   // conflict specific to web, this is RN's own native key event, no such conflict
   // exists here). Steps back through the same transitions each screen's own onBack
-  // prop already uses; "intro" and "home" are treated as roots (default Android
-  // behavior — exit the app — applies there, same as a back gesture on any app's
-  // top-level screen).
+  // prop already uses; "language", "intro" and "home" are treated as roots (default
+  // Android behavior — exit the app — applies there, same as a back gesture on any
+  // app's top-level screen).
+  //
+  // 2026-09-19: registered ONCE and reads the current step through a ref. It used to
+  // re-register on every step change, which (a) put it after any listener a child
+  // screen added on mount — RN calls the most recently added listener first, so a
+  // screen could never intercept back for its own sub-views (QAScreen needs to) —
+  // and (b) the switch was missing type/compatibility/fortune/sajuLearn/settings, so
+  // back on any of those exited the app instead of returning Home.
+  const stepRef = useRef(step);
+  stepRef.current = step;
   useEffect(() => {
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
-      switch (step) {
-        case "verifyCode":
-          setStep("intro");
-          return true;
-        case "nickname":
-          setStep("verifyCode");
-          return true;
-        case "gender":
-          setStep("nickname");
-          return true;
-        case "dob":
-          setStep("gender");
-          return true;
-        case "tob":
-          setStep("dob");
-          return true;
-        case "city":
-          setStep("tob");
-          return true;
-        case "concern":
-          setStep("city");
-          return true;
-        case "qa":
-        case "moduleSelect":
-        case "chat":
-        case "report":
-          setStep("home");
-          return true;
-        case "quiz":
-          setStep("moduleSelect");
-          return true;
-        default:
-          return false; // "intro" / "home" — let Android's default back (exit app) happen
-      }
+      const prev = BACK_TARGET[stepRef.current ?? "home"];
+      if (!prev) return false;
+      setStep(prev);
+      return true;
     });
     return () => sub.remove();
-  }, [step]);
+  }, []);
 
   if (!fontsLoaded || step === null) return null;
 
