@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
+import { elementWithEmoji } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
 import { getLocalizedQuestions, getModuleById, resolveModuleLocale } from "../lib/quiz/modules";
 import {
@@ -168,7 +169,7 @@ export default function QuizScreen({
               <View style={styles.elementChip}>
                 <View style={[styles.elementDot, { backgroundColor: ELEMENT_COLORS[dominantElement] }]} />
                 <Text style={styles.elementChipLabel}>
-                  {strings.quiz.elementBadgePrefix} {strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement}
+                  {strings.quiz.elementBadgePrefix} {elementWithEmoji(dominantElement, strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement)}
                 </Text>
               </View>
             )}

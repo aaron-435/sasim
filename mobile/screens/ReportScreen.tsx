@@ -8,6 +8,7 @@ import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
 import { purchaseReportBundle, purchaseReportModule, restoreReports } from "../lib/purchases";
 import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
+import { elementWithEmoji } from "../lib/elements";
 import { saveReport } from "../lib/reportStorage";
 import { BUNDLE_PRICE, bundleDiscountPercent, formatUsd, fullIndividualTotal, REPORT_PRICE, TOTAL_MODULES } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
@@ -754,7 +755,7 @@ function OhengBarsPage({ title, elements, dominantKey }: { title: string; elemen
           <View key={key} style={pageStyles.barRow}>
             <View style={pageStyles.barLabelRow}>
               <Text style={pageStyles.barLabel}>
-                {strings.common.elementLabels[key]}
+                {elementWithEmoji(key, strings.common.elementLabels[key])}
                 {key === dominantKey ? " ·" : ""}
               </Text>
               <Text style={pageStyles.barLabel}>{Math.round(elements[key] ?? 0)}%</Text>

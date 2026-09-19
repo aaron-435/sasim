@@ -11,6 +11,24 @@ export const ELEMENT_COLORS: Record<string, string> = {
 
 export const ELEMENT_ORDER = ["wood", "fire", "earth", "metal", "water"];
 
+// Emoji shown next to each element instead of the hanja (목(木) etc.). Kept in one place
+// so swapping to drawn icons later is a one-file change. Metal is 💎 rather than 🪙: the
+// coin emoji only exists on Android 11+ / iOS 14+ and would render as a blank box on older
+// devices.
+export const ELEMENT_EMOJI: Record<string, string> = {
+  wood: "🌳",
+  fire: "🔥",
+  earth: "⛰️",
+  metal: "💎",
+  water: "💧",
+};
+
+/** "🌳 Wood" — the element's emoji followed by its localized name. */
+export function elementWithEmoji(key: string, label: string): string {
+  const emoji = ELEMENT_EMOJI[key];
+  return emoji ? `${emoji} ${label}` : label;
+}
+
 export function dominantElementFrom(elements: Record<string, number> | null | undefined): string | null {
   if (!elements) return null;
   const entries = Object.entries(elements);

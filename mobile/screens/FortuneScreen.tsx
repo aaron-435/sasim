@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, Sparkles } from "lucide-react-native";
+import { ArrowLeft, Check, Sparkles } from "lucide-react-native";
 import { AccessibilityInfo, ActivityIndicator, Animated, Easing, Linking, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -333,6 +333,17 @@ export default function FortuneScreen({
           <View style={styles.lockedCard}>
             <Text style={styles.lockedHeading}>{strings.fortune.lockedHeading}</Text>
             <Text style={styles.lockedBody}>{strings.fortune.lockedBody}</Text>
+            <View style={styles.benefitList}>
+              {strings.fortune.lockedBenefits.map((benefit) => (
+                <View key={benefit.title} style={styles.benefitRow}>
+                  <Check size={16} strokeWidth={2.25} color={COLORS.gold} style={styles.benefitCheck} />
+                  <View style={styles.benefitText}>
+                    <Text style={styles.benefitTitle}>{benefit.title}</Text>
+                    <Text style={styles.benefitBody}>{benefit.body}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
             <Pressable style={[styles.subscribeButton, purchasing && styles.buttonDisabled]} disabled={purchasing || restoring} onPress={handleSubscribe}>
               <Text style={styles.subscribeButtonText}>
                 {purchasing ? strings.qa.subscribing : `${strings.qa.subscribeButton} · ${strings.qa.subscriptionPriceLabel}`}
@@ -706,6 +717,12 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   lockedHeading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 22, color: COLORS.headline },
+  benefitList: { gap: 14, marginBottom: 10 },
+  benefitRow: { flexDirection: "row", gap: 12, alignItems: "flex-start" },
+  benefitCheck: { marginTop: 2 },
+  benefitText: { flex: 1, gap: 2 },
+  benefitTitle: { fontFamily: "Manrope_600SemiBold", fontSize: 14.5, color: COLORS.headline },
+  benefitBody: { fontFamily: "Manrope_400Regular", fontSize: 13, lineHeight: 19, color: COLORS.subheadline },
   lockedBody: { fontFamily: "Manrope_400Regular", fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginBottom: 8 },
   subscribeButton: { backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 15, alignItems: "center" },
   buttonDisabled: { opacity: 0.6 },

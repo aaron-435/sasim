@@ -5,7 +5,7 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "../components/PatternBackground";
 import { DAILY_FORTUNE_CONTENT, getOverview } from "../lib/dailyFortuneContent";
-import { ELEMENT_COLORS, ELEMENT_ORDER } from "../lib/elements";
+import { ELEMENT_COLORS, ELEMENT_ORDER, elementWithEmoji } from "../lib/elements";
 import { getFortuneStreak, isFortuneOpened } from "../lib/fortuneOpenState";
 import { useLocale, useStrings } from "../lib/i18n";
 import { getDailyInsight } from "../lib/i18n/dailyInsight";
@@ -98,10 +98,6 @@ export default function HomeScreen({
   const fortuneContent = DAILY_FORTUNE_CONTENT[locale] ?? DAILY_FORTUNE_CONTENT.ko;
 
   const [today, setToday] = useState<TodayState>({ kind: "loading" });
-  // Resolved separately from the fortune request so the Pro chip is already on the card
-  // while the reading is still loading — a free user can't tap through to a paywall
-  // before seeing what it costs.
-  const [entitled, setEntitled] = useState<boolean | null>(null);
   const [lastQuestion, setLastQuestion] = useState<LastQuestion | null>(null);
   // Bumped by the retry tap and by returning to the app on a new calendar day.
   const [reloadKey, setReloadKey] = useState(0);
@@ -127,11 +123,7 @@ export default function HomeScreen({
     loadedDay.current = localDateKey();
     setToday({ kind: "loading" });
     (async () => {
-      const entitledPromise = hasQaProEntitlement().then((value) => {
-        if (alive) setEntitled(value);
-        return value;
-      });
-      const [isEntitled, fortune] = await Promise.all([entitledPromise, fetchTodayFortune(selfDayMasterChar, selfDayBranch)]);
+      const [isEntitled, fortune] = await Promise.all([hasQaProEntitlement(), fetchTodayFortune(selfDayMasterChar, selfDayBranch)]);
       if (!alive) return;
       if (!isEntitled) {
         // The free teaser needs no fortune data, so a failed request doesn't block it.
@@ -211,10 +203,10 @@ export default function HomeScreen({
         : today.kind === "error"
           ? strings.common.retryLabel
           : strings.home.todayUnlockCta;
-  const showProChip = today.kind === "teaser" || (today.kind === "loading" && entitled === false);
-  const heroChip = showProChip
-    ? strings.home.proChip(strings.qa.subscriptionPriceLabel)
-    : today.kind === "sealed" && today.streak > 0
+  // No price or "Pro" tag on Home — the price lives on the screen the card opens, which
+  // lays out everything Pro includes. Only the streak shows here.
+  const heroChip =
+    today.kind === "sealed" && today.streak > 0
       ? strings.fortune.streakBadge(today.streak)
       : today.kind === "opened" && today.streak > 1
         ? strings.fortune.streakBadge(today.streak)
@@ -237,7 +229,7 @@ export default function HomeScreen({
 
   const maxPercent = elements ? Math.max(...ELEMENT_ORDER.map((k) => elements[k] ?? 0), 1) : 1;
   const elementName = dominantElement
-    ? (strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement)
+    ? elementWithEmoji(dominantElement, strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement)
     : null;
 
   return (
@@ -326,7 +318,6 @@ export default function HomeScreen({
                   <View style={[styles.skeletonLine, styles.skeletonLineShort]} />
                 </View>
               )}
-              {today.kind === "teaser" && <Text style={styles.heroNote}>{strings.home.todayProNote}</Text>}
               {today.kind !== "loading" && (
                 <View style={styles.heroCtaRow}>
                   <Text style={styles.heroCta}>{heroCta}</Text>
@@ -346,7 +337,7 @@ export default function HomeScreen({
                 {ELEMENT_ORDER.map((key) => {
                   const value = elements[key] ?? 0;
                   const widthPct = Math.max((value / maxPercent) * 100, 4);
-                  const label = strings.common.elementLabels[key as keyof typeof strings.common.elementLabels];
+                  const label = elementWithEmoji(key, strings.common.elementLabels[key as keyof typeof strings.common.elementLabels]);
                   return (
                     <View key={key} style={styles.elementRow} accessible accessibilityLabel={`${label} ${Math.round(value)}%`}>
                       <Text style={styles.elementRowLabel}>{label}</Text>
@@ -534,12 +525,6 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     color: HERO_SECONDARY,
   },
-  heroNote: {
-    fontFamily: "Manrope_400Regular",
-    fontSize: 13,
-    lineHeight: 19,
-    color: HERO_SECONDARY,
-  },
   skeletonWrap: {
     gap: 8,
     paddingVertical: 4,
@@ -587,7 +572,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   elementRowLabel: {
-    minWidth: 44,
+    minWidth: 68,
     fontFamily: "Manrope_500Medium",
     fontSize: 13,
     color: COLORS.headline,
