@@ -105,7 +105,7 @@ export default function FortuneScreen({
   const yearContent = YEAR_FORTUNE_CONTENT[locale] ?? YEAR_FORTUNE_CONTENT.ko;
 
   const [entitled, setEntitled] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<"daily" | "weekly" | "yearly">("daily");
+  const [tab, setTab] = useState<"daily" | "weekly" | "month" | "yearly">("daily");
 
   const [daily, setDaily] = useState<DayFortune | null>(null);
   const [dailyLoading, setDailyLoading] = useState(false);
@@ -114,6 +114,12 @@ export default function FortuneScreen({
   const [weekly, setWeekly] = useState<DayFortune[] | null>(null);
   const [weeklyLoading, setWeeklyLoading] = useState(false);
   const [weeklyError, setWeeklyError] = useState<string | null>(null);
+
+  // "이달의 길흉일 캘린더" — weekly와 완전히 같은 하루치 엔진/화면 패턴을
+  // 범위만 이번 달 전체로 넓힌 것 (lib/dailyFortune.ts의 getMonthFortune 참고).
+  const [monthDays, setMonthDays] = useState<DayFortune[] | null>(null);
+  const [monthDaysLoading, setMonthDaysLoading] = useState(false);
+  const [monthDaysError, setMonthDaysError] = useState<string | null>(null);
 
   const [yearly, setYearly] = useState<YearFortune | null>(null);
   const [yearlyLoading, setYearlyLoading] = useState(false);
@@ -191,6 +197,24 @@ export default function FortuneScreen({
     }
   }
 
+  async function loadMonthDays() {
+    if (!selfDayMasterChar || !selfDayBranch) return;
+    setMonthDaysLoading(true);
+    setMonthDaysError(null);
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/api/dailyFortune?mode=month&selfDayMasterChar=${encodeURIComponent(selfDayMasterChar)}&selfDayBranch=${encodeURIComponent(selfDayBranch)}`,
+      );
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "failed");
+      if (mountedRef.current) setMonthDays(json.month);
+    } catch {
+      if (mountedRef.current) setMonthDaysError(strings.fortune.loadErrorText);
+    } finally {
+      if (mountedRef.current) setMonthDaysLoading(false);
+    }
+  }
+
   async function loadYearly() {
     if (!selfDayMasterChar) return;
     setYearlyLoading(true);
@@ -227,9 +251,10 @@ export default function FortuneScreen({
     }
   }
 
-  function handleSelectTab(next: "daily" | "weekly" | "yearly") {
+  function handleSelectTab(next: "daily" | "weekly" | "month" | "yearly") {
     setTab(next);
     if (next === "weekly" && !weekly && !weeklyLoading) loadWeekly();
+    if (next === "month" && !monthDays && !monthDaysLoading) loadMonthDays();
     if (next === "yearly" && !yearly && !yearlyLoading) loadYearly();
     if (next === "yearly" && !monthly && !monthlyLoading) loadMonthly();
   }
@@ -340,6 +365,15 @@ export default function FortuneScreen({
   const weeklyBest = weeklyWithScore.length ? pickExtreme(weeklyWithScore, "max") : null;
   const weeklyCaution = weeklyWithScore.length ? pickExtreme(weeklyWithScore, "min") : null;
 
+  // 이미 지난 날짜는 목록엔 그대로 보여주되(이번 달 전체 흐름을 보여주는 게
+  // 목적), "가장 좋은 날/조절이 필요한 날" 하이라이트는 앞으로 남은 날짜
+  // 중에서만 고른다 — 지난 날짜를 추천해봐야 쓸모가 없다.
+  const monthWithScore = (monthDays ?? []).filter((d) => d.compatibility);
+  const monthUpcoming = daily ? monthWithScore.filter((d) => d.date >= daily.date) : monthWithScore;
+  const monthPool = monthUpcoming.length ? monthUpcoming : monthWithScore;
+  const monthBest = monthPool.length ? pickExtreme(monthPool, "max") : null;
+  const monthCaution = monthPool.length ? pickExtreme(monthPool, "min") : null;
+
   // 오늘의 행운 포인트 — 그날의 오행 하나로만 정해지는 값이라 relation과 무관.
   const todayElementKey = daily?.compatibility?.otherDayMasterElement;
   const luckyPoint = todayElementKey ? (LUCKY_POINTS[locale] ?? LUCKY_POINTS.ko)[todayElementKey] : null;
@@ -361,6 +395,9 @@ export default function FortuneScreen({
           </Pressable>
           <Pressable style={[styles.tabButton, tab === "weekly" && styles.tabButtonActive]} onPress={() => handleSelectTab("weekly")}>
             <Text style={[styles.tabLabel, tab === "weekly" && styles.tabLabelActive]}>{strings.fortune.weeklyTab}</Text>
+          </Pressable>
+          <Pressable style={[styles.tabButton, tab === "month" && styles.tabButtonActive]} onPress={() => handleSelectTab("month")}>
+            <Text style={[styles.tabLabel, tab === "month" && styles.tabLabelActive]}>{strings.fortune.monthTab}</Text>
           </Pressable>
           <Pressable style={[styles.tabButton, tab === "yearly" && styles.tabButtonActive]} onPress={() => handleSelectTab("yearly")}>
             <Text style={[styles.tabLabel, tab === "yearly" && styles.tabLabelActive]}>{strings.fortune.yearlyTab}</Text>
@@ -484,6 +521,45 @@ export default function FortuneScreen({
                   <Text style={styles.weekRowScore}>{d.compatibility!.score}</Text>
                 </View>
               ))}
+            </View>
+          </>
+        )}
+
+        {tab === "month" && monthDaysLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
+        {tab === "month" && !monthDaysLoading && monthDaysError && <Text style={styles.errorText}>{monthDaysError}</Text>}
+        {tab === "month" && !monthDaysLoading && !monthDaysError && monthDays && !monthBest && (
+          <Text style={styles.errorText}>{strings.fortune.loadErrorText}</Text>
+        )}
+        {tab === "month" && !monthDaysLoading && !monthDaysError && monthBest && monthCaution && (
+          <>
+            <View style={styles.highlightCard}>
+              <Text style={styles.highlightLabel}>{strings.fortune.monthBestDayLabel}</Text>
+              <Text style={styles.highlightDate}>{formatShortDate(monthBest.date, locale)}</Text>
+              <Text style={styles.highlightHeadline}>{getOverview(content, monthBest.compatibility!.relation, monthBest.dayMaster.pillarIndex).headline}</Text>
+            </View>
+            <View style={styles.highlightCard}>
+              <Text style={styles.highlightLabel}>{strings.fortune.monthCautionDayLabel}</Text>
+              <Text style={styles.highlightDate}>{formatShortDate(monthCaution.date, locale)}</Text>
+              <Text style={styles.highlightHeadline}>{getOverview(content, monthCaution.compatibility!.relation, monthCaution.dayMaster.pillarIndex).headline}</Text>
+            </View>
+            <View style={styles.weekList}>
+              {monthWithScore.map((d) => {
+                const isToday = daily?.date === d.date;
+                return (
+                  <View key={d.date} style={[styles.weekRow, isToday && styles.weekRowToday]}>
+                    <Text style={styles.weekRowDate}>{formatShortDate(d.date, locale)}</Text>
+                    <Text style={styles.weekRowHeadline} numberOfLines={1}>
+                      {getOverview(content, d.compatibility!.relation, d.dayMaster.pillarIndex).headline}
+                    </Text>
+                    {isToday && (
+                      <View style={styles.todayBadge}>
+                        <Text style={styles.todayBadgeText}>{strings.fortune.todayBadge}</Text>
+                      </View>
+                    )}
+                    <Text style={styles.weekRowScore}>{d.compatibility!.score}</Text>
+                  </View>
+                );
+              })}
             </View>
           </>
         )}
@@ -750,6 +826,14 @@ const styles = StyleSheet.create({
   weekRowDate: { fontFamily: "Manrope_500Medium", fontSize: 12.5, color: COLORS.headline, width: 78 },
   weekRowHeadline: { fontFamily: "Manrope_400Regular", fontSize: 12.5, color: COLORS.subheadline, flex: 1 },
   weekRowScore: { fontFamily: "Manrope_600SemiBold", fontSize: 13, color: COLORS.gold },
+  weekRowToday: { borderColor: "rgba(212,175,110,0.45)", backgroundColor: "rgba(212,175,110,0.06)" },
+  todayBadge: {
+    backgroundColor: "rgba(212,175,110,0.14)",
+    borderRadius: 999,
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+  },
+  todayBadgeText: { fontFamily: "Manrope_700Bold", fontSize: 10, color: COLORS.gold },
   monthlySection: { marginTop: 22 },
   domainPickerRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 10, marginBottom: 14 },
   domainChip: {

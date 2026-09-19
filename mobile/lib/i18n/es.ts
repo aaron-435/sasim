@@ -94,6 +94,15 @@ export const es: typeof ko = {
     errorNetwork: "Un error de red impidió calcular tu saju.",
   },
 
+  concern: {
+    heading: "¿Qué te preocupa más ahora mismo?",
+    subheading: "Elige una opción y empezaremos por lo que de verdad te interesa.",
+    romanceLabel: "Relaciones",
+    romanceHint: "Amor, apego, familia",
+    careerLabel: "Yo mismo y mi día a día",
+    careerHint: "Dinero, agotamiento, emociones, sueño y cosas así",
+  },
+
   home: {
     greeting: (nickname: string) => `Hola, ${nickname}`,
     elementBadgePrefix: "Elemento ·",
@@ -224,6 +233,7 @@ export const es: typeof ko = {
     headerLabel: "Fortuna Diaria",
     dailyTab: "Hoy",
     weeklyTab: "Esta Semana",
+    monthTab: "Este Mes",
     yearlyTab: "Año que Viene",
     yearHeading: (year: number) => `Puntaje de Energía de ${year}`,
     careerLabel: "Trabajo",
@@ -240,6 +250,9 @@ export const es: typeof ko = {
     todayElementPrefix: "Energía de hoy",
     weeklyBestDayLabel: "Día con mejor energía",
     weeklyCautionDayLabel: "Un día para bajar el ritmo",
+    monthBestDayLabel: "El mejor día de este mes",
+    monthCautionDayLabel: "Un día para bajar el ritmo este mes",
+    todayBadge: "Hoy",
     loadErrorText: "No pudimos cargar tu fortuna.",
     overviewLabel: "Resumen",
     wealthLabel: "Dinero",
@@ -290,6 +303,7 @@ export const es: typeof ko = {
   moduleSelect: {
     badge: "Test Psicológico",
     heading: "¿Qué test psicológico quieres hacer?",
+    recommendedBadge: "Recomendado",
   },
 
   quiz: {

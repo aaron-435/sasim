@@ -102,3 +102,23 @@ export async function getWeeklyFortune(selfDayMasterChar: string, selfDayBranch:
   );
   return settled.filter((r): r is PromiseFulfilledResult<DayFortune> => r.status === "fulfilled").map((r) => r.value);
 }
+
+/**
+ * 이번 달(1일~말일) 전체, "구독자 특전을 이 정도까지 쌓아준다" 전략의 일환으로
+ * 2026-09 추가(이달의 길흉일 캘린더). 새 사주 계산은 없다 — getWeeklyFortune과
+ * 완전히 같은 하루치 엔진을 범위만 7일에서 이번 달 전체 일수로 넓힌 것뿐이다.
+ * "달의 기운"이라는 별도 계산축을 만들지 않은 이유: 일간 하나로 이미 매일이
+ * 서로 다른 60갑자 조합을 맞기 때문에, 날짜 범위를 넓히는 것만으로 "매달 새로운
+ * 콘텐츠"라는 목표가 충족된다.
+ *
+ * 이미 지난 날짜도 포함한다(과거 회고가 아니라, "이번 달 전체 흐름을 한눈에"
+ * 보여주는 캘린더이기 때문 — 1일에 요청하면 사실상 getWeeklyFortune과 거의
+ * 같아지고, 말일에 가까울수록 지난 날짜 비중이 커진다. 둘 다 정상 동작).
+ */
+export async function getMonthFortune(selfDayMasterChar: string, selfDayBranch: string | null): Promise<DayFortune[]> {
+  const { year, month, day: today } = kstDate(0);
+  const daysInMonth = new Date(year, month, 0).getDate(); // month는 이미 1-indexed라 그대로 넘기면 "다음 달 0일" = 이번 달 말일
+  const offsets = Array.from({ length: daysInMonth }, (_, i) => i + 1 - today);
+  const settled = await Promise.allSettled(offsets.map((offset) => getDailyFortune(selfDayMasterChar, selfDayBranch, offset)));
+  return settled.filter((r): r is PromiseFulfilledResult<DayFortune> => r.status === "fulfilled").map((r) => r.value);
+}

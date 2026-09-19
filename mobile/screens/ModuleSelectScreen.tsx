@@ -4,13 +4,29 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { MODULES } from "../lib/quiz/modules";
+import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
 
 // Ported from components/ModuleSelect.jsx — picks which of the 11 30-question modules
 // to run. Same list web uses (lib/modules.ts, copied verbatim into mobile/lib/quiz/).
-export default function ModuleSelectScreen({ onSelect, onBack }: { onSelect: (moduleId: string) => void; onBack: () => void }) {
+//
+// 2026-09-19: preferredTrack — 온보딩의 "지금 가장 궁금한 것"(ConcernScreen)에서
+// 고른 값. 원래 순서를 다 갈아엎지 않고, 그 track과 맞는 모듈만 위로 끌어올리고
+// "추천" 배지를 붙인다 — 안 골랐거나(null) 저장 실패면 기존과 완전히 동일하게 동작.
+export default function ModuleSelectScreen({
+  preferredTrack,
+  onSelect,
+  onBack,
+}: {
+  preferredTrack?: Track | null;
+  onSelect: (moduleId: string) => void;
+  onBack: () => void;
+}) {
   const strings = useStrings();
   const { locale } = useLocale();
+  const orderedModules = preferredTrack
+    ? [...MODULES].sort((a, b) => Number(b.track === preferredTrack) - Number(a.track === preferredTrack))
+    : MODULES;
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -27,10 +43,17 @@ export default function ModuleSelectScreen({ onSelect, onBack }: { onSelect: (mo
           <Text style={styles.heading}>{strings.moduleSelect.heading}</Text>
         </View>
 
-        {MODULES.map((m) => (
+        {orderedModules.map((m) => (
           <Pressable key={m.id} style={styles.card} onPress={() => onSelect(m.id)}>
             <View style={styles.cardText}>
-              <Text style={styles.cardTitle}>{m.title[locale] ?? m.title.ko}</Text>
+              <View style={styles.cardTitleRow}>
+                <Text style={styles.cardTitle}>{m.title[locale] ?? m.title.ko}</Text>
+                {preferredTrack && m.track === preferredTrack && (
+                  <View style={styles.recommendedBadge}>
+                    <Text style={styles.recommendedBadgeText}>{strings.moduleSelect.recommendedBadge}</Text>
+                  </View>
+                )}
+              </View>
               <Text style={styles.cardSubtitle}>{m.subtitle[locale] ?? m.subtitle.ko}</Text>
             </View>
             <ArrowRight size={17} strokeWidth={2.25} color={COLORS.gold} />
@@ -105,11 +128,27 @@ const styles = StyleSheet.create({
   cardText: {
     flex: 1,
   },
+  cardTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 4,
+  },
   cardTitle: {
     fontFamily: "Manrope_700Bold",
     fontSize: 15,
     color: COLORS.headline,
-    marginBottom: 4,
+  },
+  recommendedBadge: {
+    backgroundColor: "rgba(212,175,110,0.14)",
+    borderRadius: 999,
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+  },
+  recommendedBadgeText: {
+    fontFamily: "Manrope_700Bold",
+    fontSize: 10,
+    color: COLORS.gold,
   },
   cardSubtitle: {
     fontFamily: "Manrope_400Regular",

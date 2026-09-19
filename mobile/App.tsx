@@ -7,6 +7,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import ChatScreen, { type ChatExtract } from "./screens/ChatScreen";
 import CityScreen, { type SajuResult } from "./screens/CityScreen";
 import CompatibilityScreen from "./screens/CompatibilityScreen";
+import ConcernScreen from "./screens/ConcernScreen";
 import DobScreen from "./screens/DobScreen";
 import FortuneScreen from "./screens/FortuneScreen";
 import SajuLearnScreen from "./screens/SajuLearnScreen";
@@ -31,6 +32,7 @@ import { LocaleProvider, useLocale, useStrings } from "./lib/i18n";
 import { configurePurchases, hasQaProEntitlement } from "./lib/purchases";
 import { clearHomeData, getStoredHomeData, saveHomeData } from "./lib/homeDataStorage";
 import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/saju";
+import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } from "./lib/userConcern";
 
 // Onboarding flow shell — mirrors components/AppFlow.jsx's step-switcher role on web,
 // just with local state for now (no react-navigation/expo-router wired up yet; this is
@@ -42,7 +44,7 @@ import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/
 // pipeline — chained, not independently reachable from Home, since chat needs a quiz
 // diagnosis and report needs both quiz+chat context — same dependency web's
 // components/AppFlow.jsx has).
-type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings";
+type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
@@ -93,6 +95,7 @@ function AppContent() {
   const [tobMinute, setTobMinute] = useState("");
   const [tobPeriod, setTobPeriod] = useState<"AM" | "PM" | null>(null);
   const [timeUnknown, setTimeUnknown] = useState(false);
+  const [concern, setConcern] = useState<Track | null>(null);
   const [homeData, setHomeData] = useState<HomeData | null>(null);
   const [moduleId, setModuleId] = useState<string | null>(null);
   const [quizDiagnosis, setQuizDiagnosis] = useState<QuizDiagnosis | null>(null);
@@ -107,6 +110,7 @@ function AppContent() {
       const stored = await getStoredHomeData();
       if (stored) {
         setHomeData(stored);
+        getStoredUserConcern().then(setConcern);
         setStep("home");
         return;
       }
@@ -149,6 +153,7 @@ function AppContent() {
   // on launch (see the effect above). Exposed from Settings.
   function handleLogout() {
     clearHomeData();
+    clearUserConcern();
     setHomeData(null);
     setNickname("");
     setIsFemale(null);
@@ -159,6 +164,7 @@ function AppContent() {
     setTobMinute("");
     setTobPeriod(null);
     setTimeUnknown(false);
+    setConcern(null);
     setStep("intro");
   }
 
@@ -190,6 +196,9 @@ function AppContent() {
           return true;
         case "city":
           setStep("tob");
+          return true;
+        case "concern":
+          setStep("city");
           return true;
         case "qa":
         case "moduleSelect":
@@ -309,9 +318,21 @@ function AppContent() {
             };
             setHomeData(newHomeData);
             saveHomeData(newHomeData);
-            setStep("home");
+            setStep("concern");
           }}
           onBack={() => setStep("tob")}
+        />
+      )}
+
+      {step === "concern" && (
+        <ConcernScreen
+          value={concern}
+          onChange={setConcern}
+          onNext={() => {
+            if (concern) saveUserConcern(concern);
+            setStep("home");
+          }}
+          onBack={() => setStep("city")}
         />
       )}
 
@@ -370,6 +391,7 @@ function AppContent() {
 
       {step === "moduleSelect" && (
         <ModuleSelectScreen
+          preferredTrack={concern}
           onSelect={(id) => {
             setModuleId(id);
             setStep("quiz");

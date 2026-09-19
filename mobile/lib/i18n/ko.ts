@@ -117,6 +117,15 @@ export const ko = {
     errorNetwork: "네트워크 오류로 사주 계산에 실패했습니다.",
   },
 
+  concern: {
+    heading: "지금 가장 궁금한 건",
+    subheading: "하나만 골라주시면, 앞으로 더 잘 맞는 이야기부터 보여드릴게요.",
+    romanceLabel: "사람과의 관계",
+    romanceHint: "연애, 애착, 가족",
+    careerLabel: "나 자신과 일상",
+    careerHint: "돈, 번아웃, 감정, 수면 같은 것들",
+  },
+
   home: {
     greeting: (nickname: string) => `안녕하세요, ${nickname}님`,
     elementBadgePrefix: "오행 ·",
@@ -250,6 +259,7 @@ export const ko = {
     headerLabel: "오늘의 운세",
     dailyTab: "오늘",
     weeklyTab: "이번주",
+    monthTab: "이달",
     yearlyTab: "신년",
     yearHeading: (year: number) => `${year}년의 기운 점수`,
     careerLabel: "직장운",
@@ -266,6 +276,9 @@ export const ko = {
     todayElementPrefix: "오늘의 기운",
     weeklyBestDayLabel: "가장 잘 맞는 날",
     weeklyCautionDayLabel: "페이스 조절이 필요한 날",
+    monthBestDayLabel: "이번 달 가장 좋은 날",
+    monthCautionDayLabel: "이번 달 페이스 조절이 필요한 날",
+    todayBadge: "오늘",
     loadErrorText: "운세를 불러오지 못했어요.",
     overviewLabel: "총론",
     wealthLabel: "재물운",
@@ -316,6 +329,7 @@ export const ko = {
   moduleSelect: {
     badge: "심리테스트",
     heading: "어떤 심리테스트를 진행할까요?",
+    recommendedBadge: "추천",
   },
 
   quiz: {
