@@ -1,47 +1,60 @@
-import { ArrowRight, Bot, Brain, FileText, HelpCircle, Lock, MessageCircleQuestion, Settings, Shapes, Sparkles, Sunrise, Users } from "lucide-react-native";
+import { ArrowRight, Brain, ChevronRight, HelpCircle, ListChecks, Settings, Shapes, Sparkles, Users } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
-import { Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { AccessibilityInfo, Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "../components/PatternBackground";
+import { DAILY_FORTUNE_CONTENT, getOverview } from "../lib/dailyFortuneContent";
 import { ELEMENT_COLORS, ELEMENT_ORDER } from "../lib/elements";
+import { getFortuneStreak, isFortuneOpened } from "../lib/fortuneOpenState";
 import { useLocale, useStrings } from "../lib/i18n";
 import { getDailyInsight } from "../lib/i18n/dailyInsight";
+import { hasQaProEntitlement } from "../lib/purchases";
 import { getLastQuestion, type LastQuestion } from "../lib/qaHistory";
 import type { SajuType } from "../lib/sajuType";
 import { formatSajuTypeName } from "../lib/sajuTypeContent";
+import { fetchTodayFortune, type TodayFortune } from "../lib/todayFortune";
+import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
 
-// "AI 상담" and "심층 리포트" stay non-interactive even though ChatScreen/ReportScreen
-// are now built — they're not independently reachable, only as the tail end of the
-// 심리테스트 chain (chat needs a quiz diagnosis, report needs quiz+chat context; see
-// App.tsx). Giving them their own tappable card with nothing behind it would repeat
-// the exact dead-affordance bug already found and fixed on web's QAChat (see
-// lib/i18n/ko.ts's qa.appComingSoonLabel) — "ready" here means "has a real entry
-// point from Home", not "the screen exists". Only icon/ready are static; label/description
-// come from useStrings() so they translate.
-const FEATURE_META = [
-  { key: "qa", icon: HelpCircle, ready: true },
-  { key: "quiz", icon: Brain, ready: true },
-  { key: "type", icon: Shapes, ready: true },
-  { key: "compat", icon: Users, ready: true },
-  { key: "fortune", icon: Sunrise, ready: true },
-  { key: "chat", icon: Bot, ready: false },
-  { key: "report", icon: FileText, ready: false },
-] as const;
+// 2026-09-19 redesign (Impeccable critique of this screen, 25/40): Home used to be a
+// feature menu — seven same-size solid jade cards under a permanent philosophy essay,
+// with the daily fortune ritual fifth in line. It is now a quiet daily ritual:
+//   1. today's fortune as the one filled surface, right under the greeting — sealed /
+//      opened + streak for subscribers, a one-line teaser + honest "Pro" chip for free
+//      users (the old row looked free and then hit a paywall);
+//   2. the five-element chart as "my chart";
+//   3. the remaining features as one quiet grouped list, ordered by the onboarding
+//      concern, with the chat/report prerequisite collapsed into a single disabled row
+//      (a list icon, not a lock — the lock now only ever means payment, on FortuneScreen);
+//   4. the philosophy reduced to one line + the existing SajuLearn link.
 
-const SECTION_COUNT = 6; // header, chart, insight, explainer, feature list, recap
+type TodayState =
+  | { kind: "loading" }
+  | { kind: "unavailable" }
+  | { kind: "sealed"; streak: number }
+  | { kind: "opened"; fortune: TodayFortune; streak: number }
+  | { kind: "teaser"; fortune: TodayFortune };
 
-// The one home screen reached from either onboarding path: finishing the full
-// nickname→gender→dob→tob→city flow (real /api/saju call), or redeeming a web
-// verification code (app/api/verification-code's GET). Both converge on the same
-// state — a nickname and a saju reading — so there's exactly one landing screen, not
-// two near-duplicates.
+type FeatureKey = "qa" | "quiz" | "type" | "compat";
+
+// "romance" is the "사람과의 관계" concern — lead with the relationship feature there.
+const FEATURE_ORDER: Record<Track | "default", FeatureKey[]> = {
+  romance: ["compat", "qa", "quiz", "type"],
+  career: ["qa", "quiz", "type", "compat"],
+  default: ["qa", "quiz", "type", "compat"],
+};
+
+const FEATURE_ICONS = { qa: HelpCircle, quiz: Brain, type: Shapes, compat: Users } as const;
+
 export default function HomeScreen({
   nickname,
   dominantElement,
   elements,
   sajuType,
+  selfDayMasterChar,
+  selfDayBranch,
+  preferredTrack,
   onOpenQA,
   onOpenQuiz,
   onOpenType,
@@ -54,6 +67,9 @@ export default function HomeScreen({
   dominantElement: string | null;
   elements: Record<string, number> | null;
   sajuType: SajuType | null;
+  selfDayMasterChar: string | null;
+  selfDayBranch: string | null;
+  preferredTrack: Track | null;
   onOpenQA: () => void;
   onOpenQuiz: () => void;
   onOpenType: () => void;
@@ -64,109 +80,209 @@ export default function HomeScreen({
 }) {
   const strings = useStrings();
   const { locale } = useLocale();
-  const FEATURES = [
-    { ...FEATURE_META[0], label: strings.home.featureQaLabel, description: strings.home.featureQaDescription },
-    { ...FEATURE_META[1], label: strings.home.featureQuizLabel, description: strings.home.featureQuizDescription },
-    // ready depends on sajuType actually being available — a null saju type (e.g. an
-    // edge case the day-master char failed to parse for) would otherwise land on a
-    // blank screen, since App.tsx only renders TypeScreen when sajuType is non-null.
-    { ...FEATURE_META[2], ready: !!sajuType, label: strings.home.featureTypeLabel, description: strings.home.featureTypeDescription },
-    { ...FEATURE_META[3], label: strings.home.featureCompatLabel, description: strings.home.featureCompatDescription },
-    { ...FEATURE_META[4], label: strings.home.featureFortuneLabel, description: strings.home.featureFortuneDescription },
-    { ...FEATURE_META[5], label: strings.home.featureChatLabel, description: strings.home.featureChatDescription },
-    { ...FEATURE_META[6], label: strings.home.featureReportLabel, description: strings.home.featureReportDescription },
-  ];
-  const handlers: Record<string, () => void> = { qa: onOpenQA, quiz: onOpenQuiz, type: onOpenType, compat: onOpenCompatibility, fortune: onOpenFortune };
-  const [lastQuestion, setLastQuestion] = useState<LastQuestion | null | undefined>(undefined);
+  const fortuneContent = DAILY_FORTUNE_CONTENT[locale] ?? DAILY_FORTUNE_CONTENT.ko;
+
+  const [today, setToday] = useState<TodayState>({ kind: "loading" });
+  const [lastQuestion, setLastQuestion] = useState<LastQuestion | null>(null);
 
   useEffect(() => {
     getLastQuestion().then(setLastQuestion);
   }, []);
 
-  const maxPercent = elements ? Math.max(...ELEMENT_ORDER.map((k) => elements[k] ?? 0), 1) : 1;
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      if (!selfDayMasterChar) {
+        setToday({ kind: "unavailable" });
+        return;
+      }
+      const [entitled, fortune] = await Promise.all([hasQaProEntitlement(), fetchTodayFortune(selfDayMasterChar, selfDayBranch)]);
+      if (!alive) return;
+      if (!fortune?.compatibility) {
+        setToday({ kind: "unavailable" });
+        return;
+      }
+      if (!entitled) {
+        setToday({ kind: "teaser", fortune });
+        return;
+      }
+      const [opened, streak] = await Promise.all([isFortuneOpened(fortune.date), getFortuneStreak()]);
+      if (!alive) return;
+      setToday(opened ? { kind: "opened", fortune, streak } : { kind: "sealed", streak });
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [selfDayMasterChar, selfDayBranch]);
 
-  const sectionAnims = useRef([...Array(SECTION_COUNT)].map(() => new Animated.Value(0))).current;
+  // One authored moment: the hero settles into place and the chart bars grow. Everything
+  // starts visible, so nothing is lost if an animation never runs, and Reduce Motion
+  // (iOS) / Remove animations (Android) skips straight to the end state.
+  const heroSettle = useRef(new Animated.Value(0)).current;
   const barGrowth = useRef(new Animated.Value(0)).current;
-  const rowScales = useRef(FEATURES.map(() => new Animated.Value(1))).current;
-  const recapScale = useRef(new Animated.Value(1)).current;
+  const heroPress = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    Animated.stagger(
-      90,
-      sectionAnims.map((anim) =>
-        Animated.timing(anim, { toValue: 1, duration: 480, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-      ),
-    ).start();
-    // Bar width is a layout property, so it can't ride the native driver like the
-    // section fades above — this one animation stays JS-driven, which is fine for a
-    // one-off entrance on five thin bars.
-    Animated.timing(barGrowth, {
-      toValue: 1,
-      duration: 850,
-      delay: 260,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    }).start();
+    let cancelled = false;
+    AccessibilityInfo.isReduceMotionEnabled()
+      .catch(() => false)
+      .then((reduceMotion) => {
+        if (cancelled) return;
+        if (reduceMotion) {
+          heroSettle.setValue(1);
+          barGrowth.setValue(1);
+          return;
+        }
+        Animated.timing(heroSettle, { toValue: 1, duration: 520, easing: Easing.out(Easing.exp), useNativeDriver: true }).start();
+        // Bar width is a layout property, so this one stays JS-driven — fine for a one-off
+        // entrance on five thin bars.
+        Animated.timing(barGrowth, { toValue: 1, duration: 850, delay: 200, easing: Easing.out(Easing.cubic), useNativeDriver: false }).start();
+      });
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function sectionStyle(index: number) {
-    const anim = sectionAnims[index];
-    return {
-      opacity: anim,
-      transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [16, 0] }) }],
-    };
+  function pressIn() {
+    Animated.spring(heroPress, { toValue: 0.98, useNativeDriver: true, speed: 40, bounciness: 0 }).start();
+  }
+  function pressOut() {
+    Animated.spring(heroPress, { toValue: 1, useNativeDriver: true, speed: 40, bounciness: 6 }).start();
   }
 
-  function pressIn(anim: Animated.Value) {
-    Animated.spring(anim, { toValue: 0.97, useNativeDriver: true, speed: 40, bounciness: 0 }).start();
-  }
-  function pressOut(anim: Animated.Value) {
-    Animated.spring(anim, { toValue: 1, useNativeDriver: true, speed: 40, bounciness: 6 }).start();
-  }
+  const insight = getDailyInsight(strings, dominantElement);
+  const headline =
+    today.kind === "opened" || today.kind === "teaser"
+      ? getOverview(fortuneContent, today.fortune.compatibility!.relation, today.fortune.dayMaster.pillarIndex).headline
+      : null;
+  const heroTitle = today.kind === "sealed" ? strings.home.todaySealedTitle : strings.home.todayTitle;
+  const heroBody = today.kind === "teaser" ? strings.home.todayProNote : insight;
+  const heroCta =
+    today.kind === "sealed"
+      ? strings.home.todayOpenCta
+      : today.kind === "opened"
+        ? strings.home.todayRevisitCta
+        : strings.home.todayFullCta;
+  const heroChip =
+    today.kind === "teaser"
+      ? strings.home.proChip(strings.qa.subscriptionPriceLabel)
+      : (today.kind === "sealed" || today.kind === "opened") && today.streak > 0
+        ? strings.fortune.streakBadge(today.streak)
+        : null;
+
+  const featureMeta: Record<FeatureKey, { label: string; description: string; onPress: () => void; available: boolean }> = {
+    qa: {
+      label: strings.home.featureQaLabel,
+      description: lastQuestion ? `${strings.home.recentQuestionPrefix} ${lastQuestion.question}` : strings.home.featureQaDescription,
+      onPress: onOpenQA,
+      available: true,
+    },
+    quiz: { label: strings.home.featureQuizLabel, description: strings.home.featureQuizDescription, onPress: onOpenQuiz, available: true },
+    // Only reachable when a saju type exists — App.tsx renders TypeScreen only then.
+    type: { label: strings.home.featureTypeLabel, description: strings.home.featureTypeDescription, onPress: onOpenType, available: !!sajuType },
+    compat: { label: strings.home.featureCompatLabel, description: strings.home.featureCompatDescription, onPress: onOpenCompatibility, available: true },
+  };
+  const features = FEATURE_ORDER[preferredTrack ?? "default"].filter((key) => featureMeta[key].available);
+
+  const maxPercent = elements ? Math.max(...ELEMENT_ORDER.map((k) => elements[k] ?? 0), 1) : 1;
+  const elementName = dominantElement
+    ? (strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement)
+    : null;
 
   return (
     <PatternBackground>
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <Animated.View style={[styles.header, sectionStyle(0)]}>
+          <View style={styles.header}>
             <View style={styles.headerTopRow}>
               <View style={styles.brandRow}>
                 <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
                 <Text style={styles.brandLabel}>FATESAID</Text>
               </View>
-              <Pressable onPress={onOpenSettings} hitSlop={10} style={styles.settingsButton}>
-                <Settings size={18} strokeWidth={1.75} color={COLORS.subheadline} />
+              <Pressable
+                onPress={onOpenSettings}
+                hitSlop={10}
+                style={styles.settingsButton}
+                accessibilityRole="button"
+                accessibilityLabel={strings.home.settingsLabel}
+              >
+                <Settings size={20} strokeWidth={1.75} color={COLORS.subheadline} />
               </Pressable>
             </View>
-            <Text style={styles.greeting}>{strings.home.greeting(nickname)}</Text>
-            <View style={styles.badgeRow}>
-              {dominantElement && (
-                <View style={styles.elementBadge}>
-                  <Text style={styles.elementBadgeText}>
-                    {strings.home.elementBadgePrefix} {strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement}
-                  </Text>
-                </View>
+            <Text style={styles.greeting} accessibilityRole="header">
+              {strings.home.greeting(nickname)}
+            </Text>
+            <View style={styles.identityRow}>
+              {elementName && (
+                <Text style={styles.elementLine}>
+                  {strings.home.elementBadgePrefix} {elementName}
+                </Text>
               )}
               {sajuType && (
-                <Pressable style={styles.typeBadge} onPress={onOpenType}>
+                <Pressable
+                  style={styles.typeBadge}
+                  onPress={onOpenType}
+                  hitSlop={8}
+                  accessibilityRole="button"
+                  accessibilityHint={strings.home.typeBadgeHint}
+                >
                   <Text style={styles.typeBadgeText}>{formatSajuTypeName(locale, sajuType)}</Text>
+                  <ChevronRight size={14} strokeWidth={2} color={COLORS.gold} />
                 </Pressable>
               )}
             </View>
-            {sajuType && <Text style={styles.typeBadgeTap}>{strings.home.typeBadgeTap}</Text>}
-          </Animated.View>
+          </View>
+
+          <Pressable
+            onPress={onOpenFortune}
+            onPressIn={pressIn}
+            onPressOut={pressOut}
+            accessibilityRole="button"
+            accessibilityLabel={[heroTitle, headline, heroChip].filter(Boolean).join(", ")}
+            accessibilityHint={heroCta}
+          >
+            <Animated.View
+              style={[
+                styles.hero,
+                {
+                  transform: [
+                    { scale: heroPress },
+                    { translateY: heroSettle.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) },
+                  ],
+                },
+              ]}
+            >
+              <View style={styles.heroTopRow}>
+                <Text style={styles.heroTitle}>{heroTitle}</Text>
+                {heroChip && (
+                  <View style={styles.heroChip}>
+                    <Text style={styles.heroChipText}>{heroChip}</Text>
+                  </View>
+                )}
+              </View>
+              {headline && <Text style={styles.heroHeadline}>{headline}</Text>}
+              <Text style={styles.heroBody}>{heroBody}</Text>
+              <View style={styles.heroCtaRow}>
+                <Text style={styles.heroCta}>{heroCta}</Text>
+                <ArrowRight size={16} strokeWidth={2} color={COLORS.ctaText} />
+              </View>
+            </Animated.View>
+          </Pressable>
 
           {elements && (
-            <Animated.View style={[styles.section, sectionStyle(1)]}>
-              <Text style={styles.sectionLabel}>{strings.home.elementDistribution}</Text>
-              <View style={styles.elementChart}>
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle} accessibilityRole="header">
+                {strings.home.myChartTitle}
+              </Text>
+              <View style={styles.chartCard}>
                 {ELEMENT_ORDER.map((key) => {
                   const value = elements[key] ?? 0;
                   const widthPct = Math.max((value / maxPercent) * 100, 4);
+                  const label = strings.common.elementLabels[key as keyof typeof strings.common.elementLabels];
                   return (
-                    <View key={key} style={styles.elementRow}>
-                      <Text style={styles.elementRowLabel}>{strings.common.elementLabels[key as keyof typeof strings.common.elementLabels]}</Text>
+                    <View key={key} style={styles.elementRow} accessible accessibilityLabel={`${label} ${Math.round(value)}%`}>
+                      <Text style={styles.elementRowLabel}>{label}</Text>
                       <View style={styles.elementBarTrack}>
                         <Animated.View
                           style={[
@@ -183,103 +299,68 @@ export default function HomeScreen({
                   );
                 })}
               </View>
-            </Animated.View>
+            </View>
           )}
 
-          <Animated.View style={[styles.insightCard, sectionStyle(2)]}>
-            <Text style={styles.insightLabel}>{strings.home.dailyInsightLabel}</Text>
-            <Text style={styles.insightText}>{getDailyInsight(strings, dominantElement)}</Text>
-          </Animated.View>
-
-          <Animated.View style={[styles.section, sectionStyle(3)]}>
-            <Text style={styles.sectionLabel}>{strings.home.philosophySectionLabel}</Text>
-            <View style={styles.explainCard}>
-              <Text style={styles.philosophyQuote}>{strings.home.philosophyQuote}</Text>
-              <View style={styles.philosophyList}>
-                <Text style={styles.philosophyPoint}>• {strings.home.philosophyPoint1}</Text>
-                <Text style={styles.philosophyPoint}>• {strings.home.philosophyPoint2}</Text>
-                <Text style={styles.philosophyPoint}>• {strings.home.philosophyPoint3}</Text>
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle} accessibilityRole="header">
+              {strings.home.featuresTitle}
+            </Text>
+            <View style={styles.list}>
+              {features.map((key, index) => {
+                const { label, description, onPress } = featureMeta[key];
+                const Icon = FEATURE_ICONS[key];
+                return (
+                  <Pressable
+                    key={key}
+                    onPress={onPress}
+                    android_ripple={{ color: "rgba(111,169,139,0.12)" }}
+                    style={({ pressed }) => [styles.listRow, index > 0 && styles.listRowDivider, pressed && styles.listRowPressed]}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${label}. ${description}`}
+                  >
+                    <Icon size={20} strokeWidth={1.75} color={COLORS.gold} />
+                    <View style={styles.listRowText}>
+                      <Text style={styles.listRowLabel}>{label}</Text>
+                      <Text style={styles.listRowDescription} numberOfLines={2}>
+                        {description}
+                      </Text>
+                    </View>
+                    <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
+                  </Pressable>
+                );
+              })}
+              <View
+                style={[styles.listRow, styles.listRowDivider]}
+                accessible
+                accessibilityState={{ disabled: true }}
+                accessibilityLabel={`${strings.home.prereqLabel}. ${strings.home.prereqDescription}`}
+              >
+                <ListChecks size={20} strokeWidth={1.75} color={COLORS.disabledText} />
+                <View style={styles.listRowText}>
+                  <Text style={[styles.listRowLabel, styles.listRowLabelMuted]}>{strings.home.prereqLabel}</Text>
+                  <Text style={styles.listRowDescription}>{strings.home.prereqDescription}</Text>
+                </View>
               </View>
-              <Pressable onPress={onOpenSajuLearn} style={styles.learnMoreLink} hitSlop={8}>
-                <Text style={styles.learnMoreLinkText}>{strings.home.learnMoreLink}</Text>
-                <ArrowRight size={14} strokeWidth={2} color={COLORS.gold} />
-              </Pressable>
             </View>
-          </Animated.View>
+          </View>
 
-          <Animated.View style={[styles.section, sectionStyle(4)]}>
-            <Text style={styles.sectionLabel}>{strings.home.featuresSectionLabel}</Text>
-            <View style={styles.featureList}>
-              {FEATURES.map(({ key, icon: Icon, label, description, ready }, index) => (
-                <Pressable
-                  key={key}
-                  disabled={!ready}
-                  onPress={ready ? handlers[key] : undefined}
-                  onPressIn={ready ? () => pressIn(rowScales[index]) : undefined}
-                  onPressOut={ready ? () => pressOut(rowScales[index]) : undefined}
-                  style={[styles.row, ready && styles.rowReady]}
-                >
-                  <Animated.View style={[styles.rowInner, { transform: [{ scale: rowScales[index] }] }]}>
-                    <View style={[styles.rowIconWrap, ready && styles.rowIconWrapReady]}>
-                      <Icon size={20} strokeWidth={1.75} color={ready ? COLORS.ctaText : COLORS.subheadline} />
-                    </View>
-                    <View style={styles.rowTextWrap}>
-                      <Text style={[styles.rowLabel, ready && styles.rowLabelReady]}>{label}</Text>
-                      <Text style={[styles.rowDescription, ready && styles.rowDescriptionReady]}>{description}</Text>
-                    </View>
-                    {ready ? (
-                      <ArrowRight size={18} strokeWidth={2} color={COLORS.ctaText} />
-                    ) : (
-                      <Lock size={15} strokeWidth={1.75} color={COLORS.subheadline} />
-                    )}
-                  </Animated.View>
-                </Pressable>
-              ))}
-            </View>
-          </Animated.View>
-
-          <Animated.View style={[styles.section, sectionStyle(5)]}>
-            <Text style={styles.sectionLabel}>{strings.home.recentQuestionLabel}</Text>
-            {lastQuestion ? (
-              <Pressable
-                onPress={onOpenQA}
-                onPressIn={() => pressIn(recapScale)}
-                onPressOut={() => pressOut(recapScale)}
-                style={styles.recapCard}
-              >
-                <Animated.View style={[styles.recapInner, { transform: [{ scale: recapScale }] }]}>
-                  <MessageCircleQuestion size={18} strokeWidth={1.75} color={COLORS.gold} />
-                  <View style={styles.recapTextWrap}>
-                    <Text style={styles.recapQuestion} numberOfLines={1}>
-                      {lastQuestion.question}
-                    </Text>
-                    <Text style={styles.recapAnswer} numberOfLines={2}>
-                      {lastQuestion.answerPreview}
-                    </Text>
-                  </View>
-                  <ArrowRight size={16} strokeWidth={2} color={COLORS.subheadline} />
-                </Animated.View>
-              </Pressable>
-            ) : (
-              <Pressable
-                onPress={onOpenQA}
-                onPressIn={() => pressIn(recapScale)}
-                onPressOut={() => pressOut(recapScale)}
-                style={styles.recapEmptyCard}
-              >
-                <Animated.View style={[styles.recapInner, { transform: [{ scale: recapScale }] }]}>
-                  <MessageCircleQuestion size={18} strokeWidth={1.75} color={COLORS.subheadline} />
-                  <Text style={styles.recapEmptyText}>{strings.home.recentQuestionEmpty}</Text>
-                  <ArrowRight size={16} strokeWidth={2} color={COLORS.subheadline} />
-                </Animated.View>
-              </Pressable>
-            )}
-          </Animated.View>
+          <View style={styles.footer}>
+            <Text style={styles.philosophyLine}>{strings.home.philosophyLine}</Text>
+            <Pressable onPress={onOpenSajuLearn} style={styles.learnMoreLink} accessibilityRole="link">
+              <Text style={styles.learnMoreLinkText}>{strings.home.learnMoreLink}</Text>
+              <ArrowRight size={14} strokeWidth={2} color={COLORS.gold} />
+            </Pressable>
+          </View>
         </ScrollView>
       </SafeAreaView>
     </PatternBackground>
   );
 }
+
+// Secondary text on the jade hero is tinted from the dark foreground (not gray), per the
+// contrast rule: rgba(15,26,21,0.85) on #6FA98B stays above 4.5:1.
+const HERO_SECONDARY = "rgba(15,26,21,0.85)";
 
 const styles = StyleSheet.create({
   root: {
@@ -287,91 +368,139 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   scrollContent: {
-    paddingHorizontal: 24,
-    paddingTop: "10%",
+    paddingHorizontal: 22,
+    paddingTop: 12,
     paddingBottom: 40,
   },
   header: {
-    marginBottom: 28,
+    marginBottom: 20,
   },
   headerTopRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: 14,
   },
   brandRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
   },
-  settingsButton: {
-    padding: 6,
-    marginRight: -6,
-  },
   brandLabel: {
     fontFamily: "Manrope_600SemiBold",
     fontSize: 11,
     letterSpacing: 2,
     color: COLORS.gold,
-    textTransform: "uppercase",
+  },
+  settingsButton: {
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: -12,
   },
   greeting: {
     fontFamily: "CormorantGaramond_500Medium",
     fontVariant: ["lining-nums"],
-    fontSize: 26,
+    fontSize: 30,
+    lineHeight: 36,
     color: COLORS.headline,
   },
-  badgeRow: {
+  identityRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
-    marginTop: 12,
+    alignItems: "center",
+    gap: 12,
+    marginTop: 10,
   },
-  elementBadge: {
-    alignSelf: "flex-start",
-    backgroundColor: "rgba(111,169,139,0.12)",
-    borderWidth: 1,
-    borderColor: "rgba(111,169,139,0.35)",
-    borderRadius: 999,
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-  },
-  elementBadgeText: {
-    fontFamily: "Manrope_600SemiBold",
-    fontSize: 12.5,
-    color: COLORS.gold,
+  elementLine: {
+    fontFamily: "Manrope_500Medium",
+    fontSize: 13,
+    color: COLORS.subheadline,
   },
   typeBadge: {
-    alignSelf: "flex-start",
-    backgroundColor: COLORS.gold,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    minHeight: 32,
+    borderWidth: 1,
+    borderColor: "rgba(111,169,139,0.45)",
     borderRadius: 999,
     paddingVertical: 6,
-    paddingHorizontal: 14,
+    paddingLeft: 12,
+    paddingRight: 8,
   },
   typeBadgeText: {
     fontFamily: "Manrope_600SemiBold",
-    fontSize: 12.5,
+    fontSize: 13,
+    color: COLORS.gold,
+  },
+  hero: {
+    backgroundColor: COLORS.gold,
+    borderRadius: 20,
+    padding: 20,
+    gap: 8,
+  },
+  heroTopRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  heroTitle: {
+    flex: 1,
+    fontFamily: "CormorantGaramond_500Medium",
+    fontVariant: ["lining-nums"],
+    fontSize: 24,
+    lineHeight: 29,
     color: COLORS.ctaText,
   },
-  typeBadgeTap: {
+  heroChip: {
+    backgroundColor: "rgba(15,26,21,0.14)",
+    borderRadius: 999,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    marginTop: 3,
+  },
+  heroChipText: {
+    fontFamily: "Manrope_700Bold",
+    fontSize: 12,
+    color: COLORS.ctaText,
+  },
+  heroHeadline: {
+    fontFamily: "Manrope_600SemiBold",
+    fontSize: 16,
+    lineHeight: 23,
+    color: COLORS.ctaText,
+  },
+  heroBody: {
     fontFamily: "Manrope_400Regular",
-    fontSize: 11,
-    color: COLORS.footer,
+    fontSize: 14,
+    lineHeight: 21,
+    color: HERO_SECONDARY,
+  },
+  heroCtaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
     marginTop: 6,
+    minHeight: 24,
+  },
+  heroCta: {
+    fontFamily: "Manrope_700Bold",
+    fontSize: 14,
+    color: COLORS.ctaText,
   },
   section: {
-    marginBottom: 28,
+    marginTop: 30,
   },
-  sectionLabel: {
+  sectionTitle: {
     fontFamily: "Manrope_600SemiBold",
-    fontSize: 11,
-    letterSpacing: 1.5,
-    color: COLORS.subheadline,
-    textTransform: "uppercase",
-    marginBottom: 14,
+    fontSize: 15,
+    color: COLORS.headline,
+    marginBottom: 12,
   },
-  elementChart: {
+  chartCard: {
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: COLORS.border,
@@ -385,9 +514,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   elementRowLabel: {
-    width: 40,
+    minWidth: 44,
     fontFamily: "Manrope_500Medium",
-    fontSize: 12.5,
+    fontSize: 13,
     color: COLORS.headline,
   },
   elementBarTrack: {
@@ -402,165 +531,73 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   elementRowValue: {
-    width: 38,
+    minWidth: 40,
     textAlign: "right",
     fontFamily: "Manrope_500Medium",
-    fontSize: 12,
+    fontSize: 13,
+    fontVariant: ["tabular-nums"],
     color: COLORS.subheadline,
   },
-  insightCard: {
-    backgroundColor: "rgba(111,169,139,0.08)",
-    borderWidth: 1,
-    borderColor: "rgba(111,169,139,0.25)",
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 28,
-  },
-  insightLabel: {
-    fontFamily: "Manrope_600SemiBold",
-    fontSize: 11,
-    letterSpacing: 1.5,
-    color: COLORS.gold,
-    textTransform: "uppercase",
-    marginBottom: 8,
-  },
-  insightText: {
-    fontFamily: "CormorantGaramond_500Medium",
-    fontVariant: ["lining-nums"],
-    fontSize: 17,
-    lineHeight: 25,
-    color: COLORS.headline,
-  },
-  explainCard: {
+  list: {
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: COLORS.border,
     borderRadius: 14,
-    padding: 18,
-    gap: 8,
+    overflow: "hidden",
   },
-  philosophyQuote: {
+  listRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    minHeight: 60,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  listRowDivider: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: COLORS.border,
+  },
+  listRowPressed: {
+    backgroundColor: "rgba(111,169,139,0.08)",
+  },
+  listRowText: {
+    flex: 1,
+    gap: 2,
+  },
+  listRowLabel: {
+    fontFamily: "Manrope_600SemiBold",
+    fontSize: 15,
+    color: COLORS.headline,
+  },
+  listRowLabelMuted: {
+    color: COLORS.subheadline,
+  },
+  listRowDescription: {
+    fontFamily: "Manrope_400Regular",
+    fontSize: 13,
+    color: COLORS.subheadline,
+  },
+  footer: {
+    marginTop: 30,
+    gap: 4,
+  },
+  philosophyLine: {
     fontFamily: "CormorantGaramond_500Medium",
-    fontVariant: ["lining-nums"],
     fontStyle: "italic",
     fontSize: 16,
-    lineHeight: 24,
-    color: COLORS.headline,
-    borderLeftWidth: 2,
-    borderLeftColor: COLORS.gold,
-    paddingLeft: 12,
-  },
-  philosophyList: { gap: 10, marginTop: 6 },
-  philosophyPoint: {
-    fontFamily: "Manrope_400Regular",
-    fontSize: 12.5,
-    lineHeight: 19,
+    lineHeight: 23,
     color: COLORS.subheadline,
   },
   learnMoreLink: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    marginTop: 6,
+    minHeight: 44,
     alignSelf: "flex-start",
   },
   learnMoreLinkText: {
     fontFamily: "Manrope_600SemiBold",
-    fontSize: 12.5,
-    color: COLORS.gold,
-  },
-  featureList: {
-    gap: 10,
-  },
-  row: {
-    borderRadius: 14,
-    borderWidth: 1,
-    borderStyle: "dashed",
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.inputBg,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  rowReady: {
-    borderStyle: "solid",
-    borderColor: COLORS.gold,
-    backgroundColor: COLORS.gold,
-  },
-  rowInner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-  },
-  rowIconWrap: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.04)",
-  },
-  rowIconWrapReady: {
-    backgroundColor: "rgba(15,26,21,0.14)",
-  },
-  rowTextWrap: {
-    flex: 1,
-    gap: 2,
-  },
-  rowLabel: {
-    fontFamily: "Manrope_600SemiBold",
-    fontSize: 15,
-    color: COLORS.headline,
-  },
-  rowLabelReady: {
-    color: COLORS.ctaText,
-  },
-  rowDescription: {
-    fontFamily: "Manrope_400Regular",
-    fontSize: 12,
-    color: COLORS.footer,
-  },
-  rowDescriptionReady: {
-    color: "rgba(15,26,21,0.72)",
-  },
-  recapCard: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 14,
-    padding: 16,
-  },
-  recapInner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  recapTextWrap: {
-    flex: 1,
-    gap: 4,
-  },
-  recapQuestion: {
-    fontFamily: "Manrope_600SemiBold",
-    fontSize: 13.5,
-    color: COLORS.headline,
-  },
-  recapAnswer: {
-    fontFamily: "Manrope_400Regular",
-    fontSize: 12.5,
-    lineHeight: 18,
-    color: COLORS.subheadline,
-  },
-  recapEmptyCard: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderStyle: "dashed",
-    borderColor: COLORS.border,
-    borderRadius: 14,
-    padding: 16,
-  },
-  recapEmptyText: {
-    flex: 1,
-    fontFamily: "Manrope_400Regular",
     fontSize: 13,
-    color: COLORS.subheadline,
+    color: COLORS.gold,
   },
 });

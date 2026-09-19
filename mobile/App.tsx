@@ -70,6 +70,15 @@ const BACK_TARGET: Partial<Record<StepId, StepId>> = {
   settings: "home",
 };
 
+// The day master (일간) char and day branch (일지) the fortune/compatibility APIs key on —
+// pulled from the stored reading's loosely-typed summary/fourPillars.
+function dayMasterCharOf(homeData: HomeData): string | null {
+  return (homeData.sajuResult.summary as { dayMaster?: { char?: string } } | undefined)?.dayMaster?.char ?? null;
+}
+function dayBranchOf(homeData: HomeData): string | null {
+  return (homeData.sajuResult.fourPillars as { day?: { earth?: string } } | undefined)?.day?.earth ?? null;
+}
+
 function makeSessionId() {
   // No expo-crypto installed for this POC — good enough for an opaque session key.
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
@@ -343,6 +352,9 @@ function AppContent() {
           dominantElement={homeData.sajuResult.dominantElement}
           elements={homeData.sajuResult.elements}
           sajuType={homeData.sajuResult.sajuType ?? null}
+          selfDayMasterChar={dayMasterCharOf(homeData)}
+          selfDayBranch={dayBranchOf(homeData)}
+          preferredTrack={concern}
           onOpenQA={() => setStep("qa")}
           onOpenQuiz={() => setStep("moduleSelect")}
           onOpenType={() => setStep("type")}
@@ -368,15 +380,15 @@ function AppContent() {
       {step === "compatibility" && homeData && (
         <CompatibilityScreen
           selfNickname={homeData.nickname}
-          selfDayMasterChar={(homeData.sajuResult.summary as { dayMaster?: { char?: string } } | undefined)?.dayMaster?.char ?? null}
+          selfDayMasterChar={dayMasterCharOf(homeData)}
           onBack={() => setStep("home")}
         />
       )}
 
       {step === "fortune" && homeData && (
         <FortuneScreen
-          selfDayMasterChar={(homeData.sajuResult.summary as { dayMaster?: { char?: string } } | undefined)?.dayMaster?.char ?? null}
-          selfDayBranch={(homeData.sajuResult.fourPillars as { day?: { earth?: string } } | undefined)?.day?.earth ?? null}
+          selfDayMasterChar={dayMasterCharOf(homeData)}
+          selfDayBranch={dayBranchOf(homeData)}
           onBack={() => setStep("home")}
         />
       )}
