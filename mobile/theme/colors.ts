@@ -8,7 +8,9 @@ export const COLORS = {
   subheadline: "#9C9277",
   gold: "#6FA98B",
   ctaText: "#0F1A15",
-  footer: "#756B54",
+  // 2026-09-19: was #756B54 (3.2:1 on background) and used for real text on
+  // Home, Fortune and Report — raised to pass 4.5:1 on the background and on cards.
+  footer: "#968B70",
   border: "#26332B",
   inputBg: "rgba(255,255,255,0.03)",
   disabledBg: "rgba(255,255,255,0.06)",

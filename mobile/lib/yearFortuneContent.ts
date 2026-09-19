@@ -76,7 +76,7 @@ const ko: YearFortuneContent = {
     },
   },
   hapNote: "게다가 올해는 당신의 사주와 특별한 합을 이루고 있어요 — 예상치 못한 좋은 인연이나 기회가 자연스럽게 따라올 수 있는 해예요.",
-  chungNote: "다만 올해는 당신의 사주와 충을 이루고 있어요 — 변화나 이동이 많아질 수 있으니 중요한 결정은 신중하게 접근하는 게 좋아요.",
+  chungNote: "이 해는 당신의 사주와 '전환'의 관계를 이뤄요 — 변화와 이동이 많아지는 만큼 새로운 흐름으로 옮겨 가기 좋은 해예요. 큰 결정은 조금 더 시간을 두고 내려보세요.",
 };
 
 const en: YearFortuneContent = {
@@ -128,7 +128,7 @@ const en: YearFortuneContent = {
     },
   },
   hapNote: "On top of that, this year forms a special bond with your chart — a good connection or opportunity could arrive when you least expect it.",
-  chungNote: "This year also clashes with your chart, though — change and movement pick up, so approach big decisions carefully.",
+  chungNote: "This year also forms a 'shift' with your chart — with more change and movement, it's a good year to move into something new. Give big decisions a little more time.",
 };
 
 const es: YearFortuneContent = {
@@ -180,7 +180,7 @@ const es: YearFortuneContent = {
     },
   },
   hapNote: "Además, este año forma un vínculo especial con tu carta — una buena conexión u oportunidad podría llegar cuando menos lo esperes.",
-  chungNote: "Este año también choca con tu carta, sin embargo — el cambio y el movimiento aumentan, así que aborda las decisiones importantes con cuidado.",
+  chungNote: "Este año también forma un 'cambio' con tu carta — con más movimiento, es un buen año para pasar a algo nuevo. Date un poco más de tiempo para las decisiones importantes.",
 };
 
 export const YEAR_FORTUNE_CONTENT: Record<Locale, YearFortuneContent> = { ko, en, es };

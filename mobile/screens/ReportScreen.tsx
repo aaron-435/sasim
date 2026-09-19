@@ -1,6 +1,6 @@
 import { ArrowLeft, BookOpen, Lock, Sparkles } from "lucide-react-native";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Dimensions, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
@@ -8,12 +8,11 @@ import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
 import { purchaseReportBundle, purchaseReportModule, restoreReports } from "../lib/purchases";
 import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
-import { BUNDLE_PRICE, bundleDiscountPercent, formatUsd, fullIndividualTotal, REPORT_PRICE } from "../lib/reportPricing";
+import { saveReport } from "../lib/reportStorage";
+import { BUNDLE_PRICE, bundleDiscountPercent, formatUsd, fullIndividualTotal, REPORT_PRICE, TOTAL_MODULES } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
 import type { ChatExtract } from "./ChatScreen";
 import type { QuizDiagnosis } from "./QuizScreen";
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const ELEMENT_COLOR: Record<string, string> = {
   wood: "#4E8368",
@@ -42,7 +41,7 @@ function sentenceLines(text: string): string {
 
 type ElementReading = { heading: string; body: string };
 
-type ReportContent = {
+export type ReportContent = {
   title_line1: string;
   title_line2: string;
   subtitle: string;
@@ -87,6 +86,7 @@ export default function ReportScreen({
   quizDiagnosis,
   chatExtract,
   sessionId,
+  savedContent,
   onBack,
 }: {
   nickname: string;
@@ -96,12 +96,17 @@ export default function ReportScreen({
   quizDiagnosis: QuizDiagnosis;
   chatExtract: ChatExtract | null;
   sessionId: string;
+  /** A report reopened from "My reports" — skips generation entirely. */
+  savedContent?: ReportContent | null;
   onBack: () => void;
 }) {
   const strings = useStrings();
   const { locale } = useLocale();
+  // Read live (not once at module load) so rotation, iPad Split View and window resizes
+  // keep the pager's page width and offsets correct.
+  const { width: screenWidth } = useWindowDimensions();
   const LOADING_MESSAGES = strings.report.loadingMessages;
-  const [content, setContent] = useState<ReportContent | null>(null);
+  const [content, setContent] = useState<ReportContent | null>(savedContent ?? null);
   const [errorText, setErrorText] = useState<string | null>(null);
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
@@ -142,14 +147,18 @@ export default function ReportScreen({
 
   useEffect(() => {
     if (content) return;
-    const id = setInterval(() => setLoadingMsgIndex((i) => (i + 1) % LOADING_MESSAGES.length), 2200);
+    const id = setInterval(() => setLoadingMsgIndex((i) => Math.min(i + 1, LOADING_MESSAGES.length - 1)), 2200);
     return () => clearInterval(id);
   }, [content]);
 
   async function fetchReport() {
     setErrorText(null);
+    // The report is a long GPT call — give up after 90s instead of spinning forever.
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 90_000);
     try {
       const res = await fetch(`${API_BASE_URL}/api/report`, {
+        signal: controller.signal,
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -180,18 +189,23 @@ export default function ReportScreen({
       const json = await res.json();
       if (!mountedRef.current) return;
       if (!res.ok) {
-        setErrorText(json.error || strings.report.errorDefault);
+        // Never show json.error: the server's messages are Korean, whatever the app locale.
+        setErrorText(res.status === 429 ? strings.report.errorRateLimited : strings.report.errorDefault);
         return;
       }
       setContent(json);
+      // Keep a local copy so the report can be reopened after leaving this screen.
+      saveReport({ moduleId: quizDiagnosis.moduleId, moduleTitle: quizDiagnosis.moduleTitle, quizDiagnosis, chatExtract: chatExtract ?? null, content: json });
     } catch {
       if (!mountedRef.current) return;
       setErrorText(strings.report.errorNetwork);
+    } finally {
+      clearTimeout(timeout);
     }
   }
 
   useEffect(() => {
-    if (firedRef.current) return;
+    if (firedRef.current || savedContent) return;
     firedRef.current = true;
     fetchReport();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -218,7 +232,7 @@ export default function ReportScreen({
     if (outcome.status === "success") {
       await refreshEntitlement();
     } else if (outcome.status === "error") {
-      setPurchaseNotice(strings.report.purchaseErrorDefault);
+      setPurchaseNotice(outcome.message === "no offering available" ? strings.report.purchaseUnavailable : strings.report.purchaseErrorDefault);
     }
   }
 
@@ -232,7 +246,7 @@ export default function ReportScreen({
     if (outcome.status === "success") {
       await refreshEntitlement();
     } else if (outcome.status === "error") {
-      setPurchaseNotice(strings.report.purchaseErrorDefault);
+      setPurchaseNotice(outcome.message === "no offering available" ? strings.report.purchaseUnavailable : strings.report.purchaseErrorDefault);
     }
   }
 
@@ -243,7 +257,13 @@ export default function ReportScreen({
     const countBefore = ownedCount;
     const ok = await restoreReports();
     if (!mountedRef.current) return;
-    const newCount = ok ? await ownedReportCount() : countBefore;
+    if (!ok) {
+      // A failed request is not the same as "nothing to restore".
+      setRestoring(false);
+      setPurchaseNotice(strings.report.restoreFailed);
+      return;
+    }
+    const newCount = await ownedReportCount();
     if (!mountedRef.current) return;
     setRestoring(false);
     if (ok && newCount > countBefore) {
@@ -447,16 +467,25 @@ export default function ReportScreen({
     });
 
     const tocEntries = body
-      .map((p, i) => (p.tocLabel ? { label: p.tocLabel, pageNumber: i + 3 } : null))
-      .filter((x): x is { label: string; pageNumber: number } => !!x);
+      .map((p, i) => (p.tocLabel ? { label: p.tocLabel, pageNumber: i + 3, locked: !unlocked && !!p.locked } : null))
+      .filter((x): x is { label: string; pageNumber: number; locked: boolean } => !!x);
 
-    const gated = body.map((p) =>
-      !unlocked && p.locked ? (
+    const lockedTotal = body.filter((p) => p.locked).length;
+    // One paywall page in place of every locked page (was ~29 identical copies to swipe
+    // through). The full page count still shows on the cover and in the paywall note.
+    let paywallPlaced = false;
+    const gated = body.flatMap((p): PageDef[] => {
+      if (unlocked || !p.locked) return [p];
+      if (paywallPlaced) return [];
+      paywallPlaced = true;
+      return [
         {
           ...p,
           node: (
             <PaywallPage
               ownedCount={ownedCount}
+              lockedCount={lockedTotal}
+              totalCount={body.length + 2}
               strings={strings}
               purchasing={purchasing}
               restoring={restoring}
@@ -466,9 +495,9 @@ export default function ReportScreen({
               onRestore={handleRestore}
             />
           ),
-        }
-      ) : p
-    );
+        },
+      ];
+    });
 
     const total = body.length + 2;
 
@@ -482,12 +511,12 @@ export default function ReportScreen({
 
   function goTo(index: number) {
     const clamped = Math.max(0, Math.min(pages.length - 1, index));
-    scrollRef.current?.scrollTo({ x: clamped * SCREEN_WIDTH, animated: true });
+    scrollRef.current?.scrollTo({ x: clamped * screenWidth, animated: true });
     setPageIndex(clamped);
   }
 
   function handleMomentumEnd(e: NativeSyntheticEvent<NativeScrollEvent>) {
-    const idx = Math.round(e.nativeEvent.contentOffset.x / SCREEN_WIDTH);
+    const idx = Math.round(e.nativeEvent.contentOffset.x / screenWidth);
     setPageIndex(idx);
   }
 
@@ -517,11 +546,12 @@ export default function ReportScreen({
   }
 
   const progressPct = ((pageIndex + 1) / pages.length) * 100;
+  const onPaywall = !unlocked && !!pages[pageIndex]?.locked;
 
   return (
     <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.chrome}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.chromeBack}>
+        <Pressable onPress={onBack} hitSlop={12} style={styles.chromeBack} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
         </Pressable>
         <View style={styles.progressTrack}>
@@ -541,14 +571,32 @@ export default function ReportScreen({
           onMomentumScrollEnd={handleMomentumEnd}
         >
           {pages.map((p) => (
-            <View key={p.key} style={{ width: SCREEN_WIDTH }}>
+            <View key={p.key} style={{ width: screenWidth }}>
               {p.node}
             </View>
           ))}
         </ScrollView>
 
-        <Pressable style={styles.tapLeft} onPress={() => goTo(pageIndex - 1)} />
-        <Pressable style={styles.tapRight} onPress={() => goTo(pageIndex + 1)} />
+        {/* Edge tap zones only, and none on a paywall page. These used to cover the whole
+            pager above the pages, so they sat on top of — and swallowed the taps meant
+            for — the paywall's buy, bundle and restore buttons. Swiping still turns pages
+            everywhere. */}
+        {!onPaywall && (
+          <>
+            <Pressable
+              style={styles.tapLeft}
+              onPress={() => goTo(pageIndex - 1)}
+              accessibilityRole="button"
+              accessibilityLabel={strings.report.previousPageLabel}
+            />
+            <Pressable
+              style={styles.tapRight}
+              onPress={() => goTo(pageIndex + 1)}
+              accessibilityRole="button"
+              accessibilityLabel={strings.report.nextPageLabel}
+            />
+          </>
+        )}
       </View>
 
       {pageIndex === pages.length - 1 && (
@@ -613,7 +661,7 @@ function CoverPage({
   );
 }
 
-function TocPage({ eyebrow, title, entries }: { eyebrow: string; title: string; entries: { label: string; pageNumber: number }[] }) {
+function TocPage({ eyebrow, title, entries }: { eyebrow: string; title: string; entries: { label: string; pageNumber: number; locked: boolean }[] }) {
   return (
     <PageShell paper>
       <Text style={pageStyles.tocEyebrow}>{eyebrow}</Text>
@@ -622,11 +670,11 @@ function TocPage({ eyebrow, title, entries }: { eyebrow: string; title: string; 
         {entries.map((e, i) => (
           <View key={e.label} style={pageStyles.tocRow}>
             <Text style={pageStyles.tocIdx}>{String(i + 1).padStart(2, "0")}</Text>
-            <Text style={pageStyles.tocName} numberOfLines={1}>
+            <Text style={pageStyles.tocName} numberOfLines={2}>
               {e.label}
             </Text>
             <View style={pageStyles.tocDots} />
-            <Text style={pageStyles.tocPage}>{String(e.pageNumber).padStart(2, "0")}</Text>
+            {e.locked ? <Lock size={12} strokeWidth={2} color="#5C5237" /> : <Text style={pageStyles.tocPage}>{String(e.pageNumber).padStart(2, "0")}</Text>}
           </View>
         ))}
       </View>
@@ -871,7 +919,8 @@ function CardPage({ kind, indexLabel, title, body }: { kind: "jade" | "warm" | "
 }
 
 function FitPage({ kind, label, body }: { kind: "good" | "bad"; label: string; body: string }) {
-  const color = kind === "good" ? "#4E8368" : "#C1503B";
+  // Lighter tints than the element bar colors (#4E8368 / #C1503B were 3.8 / 3.6:1 as text).
+  const color = kind === "good" ? COLORS.gold : "#D9917A";
   return (
     <PageShell>
       <View style={pageStyles.elemMid}>
@@ -919,6 +968,8 @@ function ClosingPage({ title, body, disclaimer1, disclaimer2 }: { title: string;
 // lib/reportPricing.ts's header comment.
 function PaywallPage({
   ownedCount,
+  lockedCount,
+  totalCount,
   strings,
   purchasing,
   restoring,
@@ -928,6 +979,8 @@ function PaywallPage({
   onRestore,
 }: {
   ownedCount: number;
+  lockedCount: number;
+  totalCount: number;
   strings: Dictionary;
   purchasing: boolean;
   restoring: boolean;
@@ -944,26 +997,30 @@ function PaywallPage({
           <Lock size={22} strokeWidth={1.75} color={COLORS.gold} />
           <Text style={pageStyles.paywallTitle}>{strings.report.paywallTitle}</Text>
           <Text style={pageStyles.paywallBody}>{strings.report.paywallBody}</Text>
+          <Text style={pageStyles.paywallLockedNote}>{strings.report.paywallLockedNote(lockedCount, totalCount)}</Text>
 
           <Pressable style={[pageStyles.paywallBuyButton, busy && pageStyles.paywallButtonDisabled]} onPress={onBuyModule} disabled={busy}>
             {purchasing ? <ActivityIndicator color={COLORS.background} /> : <Text style={pageStyles.paywallBuyButtonLabel}>{strings.report.paywallBuyLabel(formatUsd(REPORT_PRICE))}</Text>}
           </Pressable>
 
-          {ownedCount === 0 && (
+          {ownedCount < TOTAL_MODULES && (
             <Pressable style={[pageStyles.paywallBundleButton, busy && pageStyles.paywallButtonDisabled]} onPress={onBuyBundle} disabled={busy}>
               <Text style={pageStyles.paywallBundleButtonLabel}>{strings.report.paywallBundleBuyLabel(formatUsd(BUNDLE_PRICE))}</Text>
               <Text style={pageStyles.paywallBundleSub}>
-                {strings.report.paywallBundleSub(formatUsd(fullIndividualTotal()), bundleDiscountPercent())}
+                {ownedCount === 0
+                  ? strings.report.paywallBundleSub(formatUsd(fullIndividualTotal()), bundleDiscountPercent())
+                  : strings.report.paywallBundleSubOwned(ownedCount, formatUsd(fullIndividualTotal()))}
               </Text>
             </Pressable>
           )}
 
-          <Pressable onPress={onRestore} disabled={busy} hitSlop={8}>
+          <Pressable onPress={onRestore} disabled={busy} style={pageStyles.paywallRestoreButton} accessibilityRole="button">
             <Text style={pageStyles.paywallRestoreLabel}>{restoring ? strings.report.paywallRestoring : strings.report.paywallRestoreLabel}</Text>
           </Pressable>
 
           {!!purchaseNotice && <Text style={pageStyles.paywallNotice}>{purchaseNotice}</Text>}
         </View>
+        <Text style={pageStyles.paywallDisclaimer}>{strings.report.disclaimer1}</Text>
       </View>
     </PageShell>
   );
@@ -975,19 +1032,19 @@ const styles = StyleSheet.create({
   loadingText: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline, textAlign: "center" },
   errorCard: { width: "100%", backgroundColor: "rgba(203,98,73,0.08)", borderWidth: 1, borderColor: "rgba(203,98,73,0.35)", borderRadius: 12, padding: 16, gap: 12 },
   errorText: { fontFamily: "Manrope_400Regular", fontSize: 13, color: "#E0A296" },
-  retryButton: { alignSelf: "flex-start" },
+  retryButton: { alignSelf: "flex-start", minHeight: 44, justifyContent: "center", paddingHorizontal: 4 },
   retryLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.gold },
   backLabel: { fontFamily: "Manrope_400Regular", fontSize: 12.5, color: COLORS.subheadline },
 
   chrome: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 18, paddingTop: 10, paddingBottom: 8 },
   chromeBack: { padding: 4 },
-  progressTrack: { flex: 1, height: 3, borderRadius: 2, backgroundColor: "#1C1B24", overflow: "hidden" },
+  progressTrack: { flex: 1, height: 3, borderRadius: 2, backgroundColor: "rgba(217,201,163,0.16)", overflow: "hidden" },
   progressFill: { height: "100%", borderRadius: 2, backgroundColor: COLORS.headline },
   progressCount: { fontFamily: "Manrope_600SemiBold", fontSize: 11, color: COLORS.subheadline, letterSpacing: 0.5, minWidth: 44, textAlign: "right" },
 
   pagerWrap: { flex: 1, position: "relative" },
-  tapLeft: { position: "absolute", top: 0, bottom: 0, left: 0, width: "35%" },
-  tapRight: { position: "absolute", top: 0, bottom: 0, left: "35%", right: 0 },
+  tapLeft: { position: "absolute", top: 0, bottom: 0, left: 0, width: "16%" },
+  tapRight: { position: "absolute", top: 0, bottom: 0, right: 0, width: "16%" },
 
   homeButton: { marginHorizontal: 22, marginBottom: 16, marginTop: 6, borderWidth: 1, borderColor: COLORS.border, borderRadius: 12, paddingVertical: 14, alignItems: "center" },
   homeButtonLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 13.5, color: COLORS.headline },
@@ -1002,7 +1059,7 @@ const pageStyles = StyleSheet.create({
   brandLabel: { fontFamily: "Manrope_700Bold", fontSize: 10, letterSpacing: 3, color: COLORS.gold, textTransform: "uppercase" },
 
   eyebrow: { fontFamily: "Manrope_700Bold", fontSize: 10.5, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 16 },
-  eyebrowInk: { color: "#8A7B54" },
+  eyebrowInk: { color: "#5C5237" },
 
   pageFoot: { marginTop: "auto", flexDirection: "row", justifyContent: "space-between" },
   pageFootText: { fontFamily: "Manrope_600SemiBold", fontSize: 9.5, letterSpacing: 1.5, color: COLORS.footer, textTransform: "uppercase" },
@@ -1012,11 +1069,11 @@ const pageStyles = StyleSheet.create({
   coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: 16 },
   coverSub: { fontFamily: "Manrope_500Medium", fontSize: 13, color: COLORS.headline },
 
-  tocEyebrow: { fontFamily: "Manrope_700Bold", fontSize: 10.5, letterSpacing: 2, textTransform: "uppercase", color: "#8A7B54", marginTop: 24, marginBottom: 12 },
+  tocEyebrow: { fontFamily: "Manrope_700Bold", fontSize: 10.5, letterSpacing: 2, textTransform: "uppercase", color: "#5C5237", marginTop: 24, marginBottom: 12 },
   tocTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 24, lineHeight: 31, color: "#22301F", marginBottom: 26 },
   tocList: { gap: 15 },
   tocRow: { flexDirection: "row", alignItems: "baseline", gap: 8 },
-  tocIdx: { fontFamily: "Manrope_600SemiBold", fontSize: 11, color: "#8A7B54", width: 18 },
+  tocIdx: { fontFamily: "Manrope_600SemiBold", fontSize: 11, color: "#5C5237", width: 18 },
   tocName: { fontFamily: "Manrope_600SemiBold", fontSize: 13, color: "#22301F", flexShrink: 1 },
   tocDots: { flex: 1, borderBottomWidth: 1, borderBottomColor: "#B7A97D", borderStyle: "dotted", marginBottom: 3 },
   tocPage: { fontFamily: "Manrope_600SemiBold", fontSize: 11.5, color: "#5C5237" },
@@ -1050,7 +1107,7 @@ const pageStyles = StyleSheet.create({
   barRow: { gap: 5 },
   barLabelRow: { flexDirection: "row", justifyContent: "space-between" },
   barLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: COLORS.headline },
-  barTrack: { height: 8, backgroundColor: "#1C1B24", borderRadius: 999, overflow: "hidden" },
+  barTrack: { height: 8, backgroundColor: "rgba(217,201,163,0.14)", borderRadius: 999, overflow: "hidden" },
   barFill: { height: "100%", borderRadius: 999 },
 
   elemMid: { flex: 1, justifyContent: "flex-start", paddingTop: "16%" },
@@ -1098,7 +1155,7 @@ const pageStyles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 16,
   },
-  breatherLabelText: { fontFamily: "Manrope_700Bold", fontSize: 10, letterSpacing: 1, textTransform: "uppercase", color: "#4E8368" },
+  breatherLabelText: { fontFamily: "Manrope_700Bold", fontSize: 10, letterSpacing: 1, textTransform: "uppercase", color: COLORS.gold },
   breatherTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 19, lineHeight: 25, color: COLORS.headline },
   takeawayBox: { marginTop: 18, backgroundColor: "rgba(255,255,255,0.03)", borderWidth: 1, borderColor: COLORS.border, borderRadius: 8, padding: 14 },
   takeawayText: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 20, color: "#C7C3D1" },
@@ -1125,6 +1182,9 @@ const pageStyles = StyleSheet.create({
   paywallBundleButton: { width: "100%", borderWidth: 1, borderColor: "rgba(111,169,139,0.4)", borderRadius: 12, paddingVertical: 12, alignItems: "center", gap: 3 },
   paywallBundleButtonLabel: { fontFamily: "Manrope_700Bold", fontSize: 13, color: COLORS.headline },
   paywallBundleSub: { fontFamily: "Manrope_400Regular", fontSize: 11, color: COLORS.subheadline, textAlign: "center" },
+  paywallLockedNote: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.gold, textAlign: "center" },
+  paywallRestoreButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 8 },
+  paywallDisclaimer: { fontFamily: "Manrope_400Regular", fontSize: 11.5, lineHeight: 17, color: COLORS.subheadline, textAlign: "center", marginTop: 14, paddingHorizontal: 6 },
   paywallRestoreLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: COLORS.subheadline, marginTop: 4, textDecorationLine: "underline" },
   paywallNotice: { fontFamily: "Manrope_400Regular", fontSize: 11.5, lineHeight: 17, color: "#E0A296", textAlign: "center", marginTop: 4 },
 });

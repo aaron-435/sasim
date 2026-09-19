@@ -31,12 +31,17 @@ export async function isFortuneOpened(dateIso: string): Promise<boolean> {
   return record?.lastOpenedDate === dateIso;
 }
 
-/** The streak as of the last recorded open — if today hasn't been opened yet, this is
- * "the streak going into today" (e.g. still 2 after two prior consecutive days), which is
- * the more motivating number to show on the still-sealed card. */
-export async function getFortuneStreak(): Promise<number> {
+/** The streak that is still alive as of `todayIso` — if today hasn't been opened yet, this
+ * is "the streak going into today" (e.g. still 2 after two prior consecutive days), the
+ * more motivating number to show on the still-sealed card.
+ *
+ * 2026-09-19: returns 0 once a day has been missed. It used to return the last stored
+ * streak unconditionally, so the sealed card (and Home) announced "5-day streak" to someone
+ * who had skipped yesterday, and the badge then silently dropped to 1 on open. */
+export async function getFortuneStreak(todayIso: string): Promise<number> {
   const record = await readRecord();
-  return record?.streak ?? 0;
+  if (!record) return 0;
+  return daysBetween(record.lastOpenedDate, todayIso) <= 1 ? record.streak : 0;
 }
 
 /** Records today as opened and returns the resulting streak — 1 if this breaks a gap

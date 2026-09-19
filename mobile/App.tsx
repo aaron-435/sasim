@@ -16,6 +16,7 @@ import HomeScreen from "./screens/HomeScreen";
 import IntroScreen from "./screens/IntroScreen";
 import LanguageScreen from "./screens/LanguageScreen";
 import ModuleSelectScreen from "./screens/ModuleSelectScreen";
+import MyReportsScreen from "./screens/MyReportsScreen";
 import NicknameScreen from "./screens/NicknameScreen";
 import QAScreen from "./screens/QAScreen";
 import QuizScreen, { type QuizDiagnosis } from "./screens/QuizScreen";
@@ -32,6 +33,7 @@ import { LocaleProvider, useLocale, useStrings } from "./lib/i18n";
 import { configurePurchases, hasQaProEntitlement } from "./lib/purchases";
 import { clearHomeData, getStoredHomeData, saveHomeData } from "./lib/homeDataStorage";
 import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/saju";
+import { clearSavedReports, type SavedReport } from "./lib/reportStorage";
 import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } from "./lib/userConcern";
 
 // Onboarding flow shell — mirrors components/AppFlow.jsx's step-switcher role on web,
@@ -44,7 +46,7 @@ import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } f
 // pipeline — chained, not independently reachable from Home, since chat needs a quiz
 // diagnosis and report needs both quiz+chat context — same dependency web's
 // components/AppFlow.jsx has).
-type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings";
+type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings" | "myReports";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
@@ -68,6 +70,7 @@ const BACK_TARGET: Partial<Record<StepId, StepId>> = {
   fortune: "home",
   sajuLearn: "home",
   settings: "home",
+  myReports: "home",
 };
 
 // The day master (일간) char and day branch (일지) the fortune/compatibility APIs key on —
@@ -131,6 +134,8 @@ function AppContent() {
   const [moduleId, setModuleId] = useState<string | null>(null);
   const [quizDiagnosis, setQuizDiagnosis] = useState<QuizDiagnosis | null>(null);
   const [chatExtract, setChatExtract] = useState<ChatExtract | null>(null);
+  // Set when a report is reopened from "My reports" (skips generation); null for a fresh one.
+  const [savedReport, setSavedReport] = useState<SavedReport | null>(null);
 
   // Restores a previously-onboarded user straight to Home instead of making them
   // re-enter their birth info on every cold start (2026-09-15, caught in live device
@@ -185,6 +190,8 @@ function AppContent() {
   function handleLogout() {
     clearHomeData();
     clearUserConcern();
+    clearSavedReports();
+    setSavedReport(null);
     setHomeData(null);
     setNickname("");
     setIsFemale(null);
@@ -216,9 +223,12 @@ function AppContent() {
   // back on any of those exited the app instead of returning Home.
   const stepRef = useRef(step);
   stepRef.current = step;
+  const savedReportRef = useRef(savedReport);
+  savedReportRef.current = savedReport;
   useEffect(() => {
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
-      const prev = BACK_TARGET[stepRef.current ?? "home"];
+      // A report reopened from "My reports" goes back to that list, not straight Home.
+      const prev = stepRef.current === "report" && savedReportRef.current ? "myReports" : BACK_TARGET[stepRef.current ?? "home"];
       if (!prev) return false;
       setStep(prev);
       return true;
@@ -360,8 +370,21 @@ function AppContent() {
           onOpenType={() => setStep("type")}
           onOpenCompatibility={() => setStep("compatibility")}
           onOpenFortune={() => setStep("fortune")}
+          onOpenMyReports={() => setStep("myReports")}
           onOpenSajuLearn={() => setStep("sajuLearn")}
           onOpenSettings={() => setStep("settings")}
+        />
+      )}
+
+      {step === "myReports" && (
+        <MyReportsScreen
+          onOpen={(report) => {
+            setQuizDiagnosis(report.quizDiagnosis);
+            setChatExtract(report.chatExtract);
+            setSavedReport(report);
+            setStep("report");
+          }}
+          onBack={() => setStep("home")}
         />
       )}
 
@@ -433,6 +456,7 @@ function AppContent() {
           quizDiagnosis={quizDiagnosis}
           onComplete={(extract) => {
             setChatExtract(extract);
+            setSavedReport(null);
             setStep("report");
           }}
           onBack={() => setStep("home")}
@@ -448,7 +472,8 @@ function AppContent() {
           quizDiagnosis={quizDiagnosis}
           chatExtract={chatExtract}
           sessionId={sessionId}
-          onBack={() => setStep("home")}
+          savedContent={savedReport?.content ?? null}
+          onBack={() => setStep(savedReport ? "myReports" : "home")}
         />
       )}
     </SafeAreaProvider>

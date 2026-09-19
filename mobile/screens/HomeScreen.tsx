@@ -1,6 +1,6 @@
-import { ArrowRight, Brain, ChevronRight, HelpCircle, ListChecks, Settings, Shapes, Sparkles, Users } from "lucide-react-native";
+import { ArrowRight, Brain, ChevronRight, FileText, HelpCircle, Settings, Sparkles, Users } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
-import { AccessibilityInfo, Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { AccessibilityInfo, AppState, Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "../components/PatternBackground";
@@ -11,6 +11,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { getDailyInsight } from "../lib/i18n/dailyInsight";
 import { hasQaProEntitlement } from "../lib/purchases";
 import { getLastQuestion, type LastQuestion } from "../lib/qaHistory";
+import { listSavedReports } from "../lib/reportStorage";
 import type { SajuType } from "../lib/sajuType";
 import { formatSajuTypeName } from "../lib/sajuTypeContent";
 import { fetchTodayFortune, type TodayFortune } from "../lib/todayFortune";
@@ -25,27 +26,39 @@ import { COLORS } from "../theme/colors";
 //      users (the old row looked free and then hit a paywall);
 //   2. the five-element chart as "my chart";
 //   3. the remaining features as one quiet grouped list, ordered by the onboarding
-//      concern, with the chat/report prerequisite collapsed into a single disabled row
-//      (a list icon, not a lock — the lock now only ever means payment, on FortuneScreen);
+//      concern; the chat/report prerequisite is folded into the psych test row's
+//      description (the saju type has its own entry: the badge under the greeting);
 //   4. the philosophy reduced to one line + the existing SajuLearn link.
 
 type TodayState =
   | { kind: "loading" }
-  | { kind: "unavailable" }
+  | { kind: "error" }
   | { kind: "sealed"; streak: number }
   | { kind: "opened"; fortune: TodayFortune; streak: number }
-  | { kind: "teaser"; fortune: TodayFortune };
+  | { kind: "teaser" };
 
-type FeatureKey = "qa" | "quiz" | "type" | "compat";
+type FeatureKey = "qa" | "quiz" | "compat" | "reports";
 
 // "romance" is the "사람과의 관계" concern — lead with the relationship feature there.
 const FEATURE_ORDER: Record<Track | "default", FeatureKey[]> = {
-  romance: ["compat", "qa", "quiz", "type"],
-  career: ["qa", "quiz", "type", "compat"],
-  default: ["qa", "quiz", "type", "compat"],
+  romance: ["compat", "qa", "quiz", "reports"],
+  career: ["qa", "quiz", "compat", "reports"],
+  default: ["qa", "quiz", "compat", "reports"],
 };
 
-const FEATURE_ICONS = { qa: HelpCircle, quiz: Brain, type: Shapes, compat: Users } as const;
+const FEATURE_ICONS = { qa: HelpCircle, quiz: Brain, compat: Users, reports: FileText } as const;
+
+function localDateKey(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
+
+/** First sentence of a longer body — enough to carry the day's tone on Home without
+ * duplicating the full reading. */
+function firstSentence(text: string): string {
+  const match = text.match(/^.+?[.!?。](?=\s|$)/);
+  return (match ? match[0] : text).trim();
+}
 
 export default function HomeScreen({
   nickname,
@@ -60,6 +73,7 @@ export default function HomeScreen({
   onOpenType,
   onOpenCompatibility,
   onOpenFortune,
+  onOpenMyReports,
   onOpenSajuLearn,
   onOpenSettings,
 }: {
@@ -75,6 +89,7 @@ export default function HomeScreen({
   onOpenType: () => void;
   onOpenCompatibility: () => void;
   onOpenFortune: () => void;
+  onOpenMyReports: () => void;
   onOpenSajuLearn: () => void;
   onOpenSettings: () => void;
 }) {
@@ -83,37 +98,58 @@ export default function HomeScreen({
   const fortuneContent = DAILY_FORTUNE_CONTENT[locale] ?? DAILY_FORTUNE_CONTENT.ko;
 
   const [today, setToday] = useState<TodayState>({ kind: "loading" });
+  // Resolved separately from the fortune request so the Pro chip is already on the card
+  // while the reading is still loading — a free user can't tap through to a paywall
+  // before seeing what it costs.
+  const [entitled, setEntitled] = useState<boolean | null>(null);
   const [lastQuestion, setLastQuestion] = useState<LastQuestion | null>(null);
+  // Bumped by the retry tap and by returning to the app on a new calendar day.
+  const [reloadKey, setReloadKey] = useState(0);
+  const loadedDay = useRef(localDateKey());
+
+  const [hasSavedReports, setHasSavedReports] = useState(false);
 
   useEffect(() => {
     getLastQuestion().then(setLastQuestion);
+    listSavedReports().then((reports) => setHasSavedReports(reports.length > 0));
   }, []);
 
   useEffect(() => {
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active" && loadedDay.current !== localDateKey()) setReloadKey((k) => k + 1);
+    });
+    return () => sub.remove();
+  }, []);
+
+  useEffect(() => {
+    if (!selfDayMasterChar) return;
     let alive = true;
+    loadedDay.current = localDateKey();
+    setToday({ kind: "loading" });
     (async () => {
-      if (!selfDayMasterChar) {
-        setToday({ kind: "unavailable" });
-        return;
-      }
-      const [entitled, fortune] = await Promise.all([hasQaProEntitlement(), fetchTodayFortune(selfDayMasterChar, selfDayBranch)]);
+      const entitledPromise = hasQaProEntitlement().then((value) => {
+        if (alive) setEntitled(value);
+        return value;
+      });
+      const [isEntitled, fortune] = await Promise.all([entitledPromise, fetchTodayFortune(selfDayMasterChar, selfDayBranch)]);
       if (!alive) return;
+      if (!isEntitled) {
+        // The free teaser needs no fortune data, so a failed request doesn't block it.
+        setToday({ kind: "teaser" });
+        return;
+      }
       if (!fortune?.compatibility) {
-        setToday({ kind: "unavailable" });
+        setToday({ kind: "error" });
         return;
       }
-      if (!entitled) {
-        setToday({ kind: "teaser", fortune });
-        return;
-      }
-      const [opened, streak] = await Promise.all([isFortuneOpened(fortune.date), getFortuneStreak()]);
+      const [opened, streak] = await Promise.all([isFortuneOpened(fortune.date), getFortuneStreak(fortune.date)]);
       if (!alive) return;
       setToday(opened ? { kind: "opened", fortune, streak } : { kind: "sealed", streak });
     })();
     return () => {
       alive = false;
     };
-  }, [selfDayMasterChar, selfDayBranch]);
+  }, [selfDayMasterChar, selfDayBranch, reloadKey]);
 
   // One authored moment: the hero settles into place and the chart bars grow. Everything
   // starts visible, so nothing is lost if an animation never runs, and Reduce Motion
@@ -152,24 +188,39 @@ export default function HomeScreen({
   }
 
   const insight = getDailyInsight(strings, dominantElement);
-  const headline =
-    today.kind === "opened" || today.kind === "teaser"
-      ? getOverview(fortuneContent, today.fortune.compatibility!.relation, today.fortune.dayMaster.pillarIndex).headline
-      : null;
+  const opened = today.kind === "opened" ? getOverview(fortuneContent, today.fortune.compatibility!.relation, today.fortune.dayMaster.pillarIndex) : null;
+  const headline = opened?.headline ?? null;
   const heroTitle = today.kind === "sealed" ? strings.home.todaySealedTitle : strings.home.todayTitle;
-  const heroBody = today.kind === "teaser" ? strings.home.todayProNote : insight;
+  // Free users get the generic (free) daily insight — not the day's relation headline,
+  // which can read as a warning ("a headwind") sitting right above an upsell.
+  const heroBody =
+    today.kind === "sealed"
+      ? strings.fortune.sealBody
+      : today.kind === "opened"
+        ? firstSentence(opened!.body)
+        : today.kind === "error"
+          ? strings.fortune.loadErrorText
+          : today.kind === "loading"
+            ? null
+            : insight;
   const heroCta =
     today.kind === "sealed"
       ? strings.home.todayOpenCta
       : today.kind === "opened"
         ? strings.home.todayRevisitCta
-        : strings.home.todayFullCta;
-  const heroChip =
-    today.kind === "teaser"
-      ? strings.home.proChip(strings.qa.subscriptionPriceLabel)
-      : (today.kind === "sealed" || today.kind === "opened") && today.streak > 0
+        : today.kind === "error"
+          ? strings.common.retryLabel
+          : strings.home.todayUnlockCta;
+  const showProChip = today.kind === "teaser" || (today.kind === "loading" && entitled === false);
+  const heroChip = showProChip
+    ? strings.home.proChip(strings.qa.subscriptionPriceLabel)
+    : today.kind === "sealed" && today.streak > 0
+      ? strings.fortune.streakBadge(today.streak)
+      : today.kind === "opened" && today.streak > 1
         ? strings.fortune.streakBadge(today.streak)
         : null;
+  const heroPress_ =
+    today.kind === "error" ? () => setReloadKey((k) => k + 1) : today.kind === "loading" ? undefined : onOpenFortune;
 
   const featureMeta: Record<FeatureKey, { label: string; description: string; onPress: () => void; available: boolean }> = {
     qa: {
@@ -179,9 +230,8 @@ export default function HomeScreen({
       available: true,
     },
     quiz: { label: strings.home.featureQuizLabel, description: strings.home.featureQuizDescription, onPress: onOpenQuiz, available: true },
-    // Only reachable when a saju type exists — App.tsx renders TypeScreen only then.
-    type: { label: strings.home.featureTypeLabel, description: strings.home.featureTypeDescription, onPress: onOpenType, available: !!sajuType },
     compat: { label: strings.home.featureCompatLabel, description: strings.home.featureCompatDescription, onPress: onOpenCompatibility, available: true },
+    reports: { label: strings.home.featureReportsLabel, description: strings.home.featureReportsDescription, onPress: onOpenMyReports, available: hasSavedReports },
   };
   const features = FEATURE_ORDER[preferredTrack ?? "default"].filter((key) => featureMeta[key].available);
 
@@ -225,6 +275,7 @@ export default function HomeScreen({
                   onPress={onOpenType}
                   hitSlop={8}
                   accessibilityRole="button"
+                  accessibilityLabel={formatSajuTypeName(locale, sajuType)}
                   accessibilityHint={strings.home.typeBadgeHint}
                 >
                   <Text style={styles.typeBadgeText}>{formatSajuTypeName(locale, sajuType)}</Text>
@@ -234,13 +285,16 @@ export default function HomeScreen({
             </View>
           </View>
 
+          {selfDayMasterChar && (
           <Pressable
-            onPress={onOpenFortune}
+            onPress={heroPress_}
+            disabled={!heroPress_}
             onPressIn={pressIn}
             onPressOut={pressOut}
             accessibilityRole="button"
-            accessibilityLabel={[heroTitle, headline, heroChip].filter(Boolean).join(", ")}
-            accessibilityHint={heroCta}
+            accessibilityState={{ busy: today.kind === "loading", disabled: !heroPress_ }}
+            accessibilityLabel={[heroTitle, headline, heroBody, heroChip].filter(Boolean).join(", ")}
+            accessibilityHint={today.kind === "loading" ? undefined : heroCta}
           >
             <Animated.View
               style={[
@@ -262,13 +316,26 @@ export default function HomeScreen({
                 )}
               </View>
               {headline && <Text style={styles.heroHeadline}>{headline}</Text>}
-              <Text style={styles.heroBody}>{heroBody}</Text>
-              <View style={styles.heroCtaRow}>
-                <Text style={styles.heroCta}>{heroCta}</Text>
-                <ArrowRight size={16} strokeWidth={2} color={COLORS.ctaText} />
-              </View>
+              {heroBody ? (
+                <Text style={styles.heroBody}>{heroBody}</Text>
+              ) : (
+                // Fixed-height placeholder lines while the reading loads, so the card
+                // doesn't jump when the text arrives.
+                <View style={styles.skeletonWrap}>
+                  <View style={styles.skeletonLine} />
+                  <View style={[styles.skeletonLine, styles.skeletonLineShort]} />
+                </View>
+              )}
+              {today.kind === "teaser" && <Text style={styles.heroNote}>{strings.home.todayProNote}</Text>}
+              {today.kind !== "loading" && (
+                <View style={styles.heroCtaRow}>
+                  <Text style={styles.heroCta}>{heroCta}</Text>
+                  <ArrowRight size={16} strokeWidth={2} color={COLORS.ctaText} />
+                </View>
+              )}
             </Animated.View>
           </Pressable>
+          )}
 
           {elements && (
             <View style={styles.section}>
@@ -330,23 +397,11 @@ export default function HomeScreen({
                   </Pressable>
                 );
               })}
-              <View
-                style={[styles.listRow, styles.listRowDivider]}
-                accessible
-                accessibilityState={{ disabled: true }}
-                accessibilityLabel={`${strings.home.prereqLabel}. ${strings.home.prereqDescription}`}
-              >
-                <ListChecks size={20} strokeWidth={1.75} color={COLORS.disabledText} />
-                <View style={styles.listRowText}>
-                  <Text style={[styles.listRowLabel, styles.listRowLabelMuted]}>{strings.home.prereqLabel}</Text>
-                  <Text style={styles.listRowDescription}>{strings.home.prereqDescription}</Text>
-                </View>
-              </View>
             </View>
           </View>
 
           <View style={styles.footer}>
-            <Text style={styles.philosophyLine}>{strings.home.philosophyLine}</Text>
+            <Text style={[styles.philosophyLine, locale === "ko" && styles.philosophyLineKo]}>{strings.home.philosophyLine}</Text>
             <Pressable onPress={onOpenSajuLearn} style={styles.learnMoreLink} accessibilityRole="link">
               <Text style={styles.learnMoreLinkText}>{strings.home.learnMoreLink}</Text>
               <ArrowRight size={14} strokeWidth={2} color={COLORS.gold} />
@@ -479,6 +534,24 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     color: HERO_SECONDARY,
   },
+  heroNote: {
+    fontFamily: "Manrope_400Regular",
+    fontSize: 13,
+    lineHeight: 19,
+    color: HERO_SECONDARY,
+  },
+  skeletonWrap: {
+    gap: 8,
+    paddingVertical: 4,
+  },
+  skeletonLine: {
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: "rgba(15,26,21,0.14)",
+  },
+  skeletonLineShort: {
+    width: "60%",
+  },
   heroCtaRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -587,6 +660,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 23,
     color: COLORS.subheadline,
+  },
+  philosophyLineKo: {
+    fontStyle: "normal",
   },
   learnMoreLink: {
     flexDirection: "row",

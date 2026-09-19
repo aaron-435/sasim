@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, Sparkles } from "lucide-react-native";
-import { ActivityIndicator, Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { AccessibilityInfo, ActivityIndicator, Animated, Easing, Linking, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
@@ -105,8 +105,10 @@ function useLazyFetch<T>(errorText: string) {
     };
   }, []);
 
+  const lastRequest = useRef<{ url: string; key: string } | null>(null);
   const load = useCallback(
     async (url: string, key: string): Promise<T | null> => {
+      lastRequest.current = { url, key };
       setLoading(true);
       setError(null);
       try {
@@ -126,7 +128,25 @@ function useLazyFetch<T>(errorText: string) {
     [errorText],
   );
 
-  return { data, loading, error, load };
+  const retry = useCallback(() => {
+    if (lastRequest.current) return load(lastRequest.current.url, lastRequest.current.key);
+    return Promise.resolve(null);
+  }, [load]);
+
+  return { data, loading, error, load, retry };
+}
+
+// Error with a way out — every tab used to show a bare red line and no retry, so one
+// failed request stranded a paying subscriber until they left the screen.
+function ErrorNotice({ text, retryLabel, onRetry }: { text: string; retryLabel: string; onRetry: () => void }) {
+  return (
+    <View style={styles.errorBlock}>
+      <Text style={styles.errorBlockText}>{text}</Text>
+      <Pressable onPress={onRetry} style={styles.retryButton} accessibilityRole="button">
+        <Text style={styles.retryLabel}>{retryLabel}</Text>
+      </Pressable>
+    </View>
+  );
 }
 
 export default function FortuneScreen({
@@ -147,13 +167,13 @@ export default function FortuneScreen({
   const [entitled, setEntitled] = useState<boolean | null>(null);
   const [tab, setTab] = useState<"daily" | "weekly" | "month" | "yearly">("daily");
 
-  const { data: daily, loading: dailyLoading, error: dailyError, load: fetchDaily } = useLazyFetch<DayFortune>(strings.fortune.loadErrorText);
-  const { data: weekly, loading: weeklyLoading, error: weeklyError, load: fetchWeekly } = useLazyFetch<DayFortune[]>(strings.fortune.loadErrorText);
+  const { data: daily, loading: dailyLoading, error: dailyError, load: fetchDaily, retry: retryDaily } = useLazyFetch<DayFortune>(strings.fortune.loadErrorText);
+  const { data: weekly, loading: weeklyLoading, error: weeklyError, load: fetchWeekly, retry: retryWeekly } = useLazyFetch<DayFortune[]>(strings.fortune.loadErrorText);
   // "이달의 길흉일 캘린더" — weekly와 완전히 같은 하루치 엔진/화면 패턴을
   // 범위만 이번 달 전체로 넓힌 것 (lib/dailyFortune.ts의 getMonthFortune 참고).
-  const { data: monthDays, loading: monthDaysLoading, error: monthDaysError, load: fetchMonthDays } = useLazyFetch<DayFortune[]>(strings.fortune.loadErrorText);
-  const { data: yearly, loading: yearlyLoading, error: yearlyError, load: fetchYearly } = useLazyFetch<YearFortune>(strings.fortune.loadErrorText);
-  const { data: monthly, loading: monthlyLoading, error: monthlyError, load: fetchMonthly } = useLazyFetch<MonthFortune[]>(strings.fortune.loadErrorText);
+  const { data: monthDays, loading: monthDaysLoading, error: monthDaysError, load: fetchMonthDays, retry: retryMonthDays } = useLazyFetch<DayFortune[]>(strings.fortune.loadErrorText);
+  const { data: yearly, loading: yearlyLoading, error: yearlyError, load: fetchYearly, retry: retryYearly } = useLazyFetch<YearFortune>(strings.fortune.loadErrorText);
+  const { data: monthly, loading: monthlyLoading, error: monthlyError, load: fetchMonthly, retry: retryMonthly } = useLazyFetch<MonthFortune[]>(strings.fortune.loadErrorText);
   const [monthlyDomain, setMonthlyDomain] = useState<YearDomain>("overview");
 
   const [purchasing, setPurchasing] = useState(false);
@@ -196,7 +216,7 @@ export default function FortuneScreen({
     (async () => {
       const result = await fetchDaily(fortuneUrl("dailyFortune", "daily"), "daily");
       if (!result) return;
-      const [opened, currentStreak] = await Promise.all([isFortuneOpened(result.date), getFortuneStreak()]);
+      const [opened, currentStreak] = await Promise.all([isFortuneOpened(result.date), getFortuneStreak(result.date)]);
       if (!mountedRef.current) return;
       setRevealed(opened);
       setStreak(currentStreak);
@@ -220,10 +240,23 @@ export default function FortuneScreen({
 
   useEffect(() => {
     if (!revealed) return;
-    Animated.stagger(
-      80,
-      sectionAnims.map((anim) => Animated.timing(anim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true })),
-    ).start();
+    let cancelled = false;
+    AccessibilityInfo.isReduceMotionEnabled()
+      .catch(() => false)
+      .then((reduceMotion) => {
+        if (cancelled) return;
+        if (reduceMotion) {
+          sectionAnims.forEach((anim) => anim.setValue(1));
+          return;
+        }
+        Animated.stagger(
+          80,
+          sectionAnims.map((anim) => Animated.timing(anim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true })),
+        ).start();
+      });
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revealed]);
 
@@ -308,6 +341,15 @@ export default function FortuneScreen({
             <Pressable style={styles.restoreLink} disabled={purchasing || restoring} onPress={handleRestore}>
               <Text style={styles.restoreLinkText}>{restoring ? strings.qa.restoring : strings.qa.restoreButton}</Text>
             </Pressable>
+            <Text style={styles.renewNote}>{strings.fortune.autoRenewNote}</Text>
+            <View style={styles.legalRow}>
+              <Pressable onPress={() => Linking.openURL(`${API_BASE_URL}/terms`)} accessibilityRole="link" style={styles.legalLink}>
+                <Text style={styles.legalLinkText}>{strings.fortune.termsLink}</Text>
+              </Pressable>
+              <Pressable onPress={() => Linking.openURL(`${API_BASE_URL}/privacy`)} accessibilityRole="link" style={styles.legalLink}>
+                <Text style={styles.legalLinkText}>{strings.fortune.privacyLink}</Text>
+              </Pressable>
+            </View>
             {purchaseNotice && <Text style={styles.noticeText}>{purchaseNotice}</Text>}
           </View>
         </ScrollView>
@@ -346,16 +388,16 @@ export default function FortuneScreen({
         <Text style={styles.heading}>{strings.fortune.headerLabel}</Text>
 
         <View style={styles.tabRow}>
-          <Pressable style={[styles.tabButton, tab === "daily" && styles.tabButtonActive]} onPress={() => handleSelectTab("daily")}>
+          <Pressable style={[styles.tabButton, tab === "daily" && styles.tabButtonActive]} onPress={() => handleSelectTab("daily")} accessibilityRole="tab" accessibilityState={{ selected: tab === "daily" }}>
             <Text style={[styles.tabLabel, tab === "daily" && styles.tabLabelActive]}>{strings.fortune.dailyTab}</Text>
           </Pressable>
-          <Pressable style={[styles.tabButton, tab === "weekly" && styles.tabButtonActive]} onPress={() => handleSelectTab("weekly")}>
+          <Pressable style={[styles.tabButton, tab === "weekly" && styles.tabButtonActive]} onPress={() => handleSelectTab("weekly")} accessibilityRole="tab" accessibilityState={{ selected: tab === "weekly" }}>
             <Text style={[styles.tabLabel, tab === "weekly" && styles.tabLabelActive]}>{strings.fortune.weeklyTab}</Text>
           </Pressable>
-          <Pressable style={[styles.tabButton, tab === "month" && styles.tabButtonActive]} onPress={() => handleSelectTab("month")}>
+          <Pressable style={[styles.tabButton, tab === "month" && styles.tabButtonActive]} onPress={() => handleSelectTab("month")} accessibilityRole="tab" accessibilityState={{ selected: tab === "month" }}>
             <Text style={[styles.tabLabel, tab === "month" && styles.tabLabelActive]}>{strings.fortune.monthTab}</Text>
           </Pressable>
-          <Pressable style={[styles.tabButton, tab === "yearly" && styles.tabButtonActive]} onPress={() => handleSelectTab("yearly")}>
+          <Pressable style={[styles.tabButton, tab === "yearly" && styles.tabButtonActive]} onPress={() => handleSelectTab("yearly")} accessibilityRole="tab" accessibilityState={{ selected: tab === "yearly" }}>
             <Text style={[styles.tabLabel, tab === "yearly" && styles.tabLabelActive]}>{strings.fortune.yearlyTab}</Text>
           </Pressable>
         </View>
@@ -363,7 +405,7 @@ export default function FortuneScreen({
         {!selfDayMasterChar && <Text style={styles.errorText}>{strings.fortune.loadErrorText}</Text>}
 
         {tab === "daily" && dailyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
-        {tab === "daily" && !dailyLoading && dailyError && <Text style={styles.errorText}>{dailyError}</Text>}
+        {tab === "daily" && !dailyLoading && dailyError && <ErrorNotice text={dailyError} retryLabel={strings.common.retryLabel} onRetry={retryDaily} />}
 
         {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && !revealed && (
           <Pressable onPress={handleOpenDaily} onPressIn={handleSealPressIn} onPressOut={handleSealPressOut}>
@@ -385,9 +427,7 @@ export default function FortuneScreen({
           <>
             <Animated.View style={[styles.scoreCard, sectionStyle(0), { borderColor: `${ELEMENT_COLORS[daily.compatibility.otherDayMasterElement] ?? COLORS.gold}55` }]}>
               <Text style={styles.scoreLabel}>{strings.fortune.scoreLabel}</Text>
-              <Text style={[styles.scoreValue, { color: ELEMENT_COLORS[daily.compatibility.otherDayMasterElement] ?? COLORS.gold }]}>
-                {daily.compatibility.score}
-              </Text>
+              <Text style={styles.rhythmValue}>{strings.fortune.rhythmNames[daily.compatibility.relation]}</Text>
               {streak > 1 && (
                 <View style={styles.streakBadge}>
                   <Text style={styles.streakBadgeText}>{strings.fortune.streakBadge(streak)}</Text>
@@ -453,7 +493,7 @@ export default function FortuneScreen({
         )}
 
         {tab === "weekly" && weeklyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
-        {tab === "weekly" && !weeklyLoading && weeklyError && <Text style={styles.errorText}>{weeklyError}</Text>}
+        {tab === "weekly" && !weeklyLoading && weeklyError && <ErrorNotice text={weeklyError} retryLabel={strings.common.retryLabel} onRetry={retryWeekly} />}
         {tab === "weekly" && !weeklyLoading && !weeklyError && weekly && !weeklyBest && (
           <Text style={styles.errorText}>{strings.fortune.loadErrorText}</Text>
         )}
@@ -476,7 +516,6 @@ export default function FortuneScreen({
                   <Text style={styles.weekRowHeadline} numberOfLines={1}>
                     {getOverview(content, d.compatibility!.relation, d.dayMaster.pillarIndex).headline}
                   </Text>
-                  <Text style={styles.weekRowScore}>{d.compatibility!.score}</Text>
                 </View>
               ))}
             </View>
@@ -484,7 +523,7 @@ export default function FortuneScreen({
         )}
 
         {tab === "month" && monthDaysLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
-        {tab === "month" && !monthDaysLoading && monthDaysError && <Text style={styles.errorText}>{monthDaysError}</Text>}
+        {tab === "month" && !monthDaysLoading && monthDaysError && <ErrorNotice text={monthDaysError} retryLabel={strings.common.retryLabel} onRetry={retryMonthDays} />}
         {tab === "month" && !monthDaysLoading && !monthDaysError && monthDays && !monthBest && (
           <Text style={styles.errorText}>{strings.fortune.loadErrorText}</Text>
         )}
@@ -495,11 +534,15 @@ export default function FortuneScreen({
               <Text style={styles.highlightDate}>{formatShortDate(monthBest.date, locale)}</Text>
               <Text style={styles.highlightHeadline}>{getOverview(content, monthBest.compatibility!.relation, monthBest.dayMaster.pillarIndex).headline}</Text>
             </View>
+            {/* Late in the month only a day or two are left, so best and pace-yourself can be the
+                same date — showing it twice under opposite labels is contradictory. */}
+            {monthCaution.date !== monthBest.date && (
             <View style={styles.highlightCard}>
               <Text style={styles.highlightLabel}>{strings.fortune.monthCautionDayLabel}</Text>
               <Text style={styles.highlightDate}>{formatShortDate(monthCaution.date, locale)}</Text>
               <Text style={styles.highlightHeadline}>{getOverview(content, monthCaution.compatibility!.relation, monthCaution.dayMaster.pillarIndex).headline}</Text>
             </View>
+            )}
             <View style={styles.weekList}>
               {monthWithScore.map((d) => {
                 const isToday = daily?.date === d.date;
@@ -514,7 +557,6 @@ export default function FortuneScreen({
                         <Text style={styles.todayBadgeText}>{strings.fortune.todayBadge}</Text>
                       </View>
                     )}
-                    <Text style={styles.weekRowScore}>{d.compatibility!.score}</Text>
                   </View>
                 );
               })}
@@ -523,14 +565,12 @@ export default function FortuneScreen({
         )}
 
         {tab === "yearly" && yearlyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
-        {tab === "yearly" && !yearlyLoading && yearlyError && <Text style={styles.errorText}>{yearlyError}</Text>}
+        {tab === "yearly" && !yearlyLoading && yearlyError && <ErrorNotice text={yearlyError} retryLabel={strings.common.retryLabel} onRetry={retryYearly} />}
         {tab === "yearly" && !yearlyLoading && !yearlyError && yearly?.compatibility && (
           <>
             <View style={[styles.scoreCard, { borderColor: `${ELEMENT_COLORS[yearly.compatibility.otherDayMasterElement] ?? COLORS.gold}55` }]}>
               <Text style={styles.scoreLabel}>{strings.fortune.yearHeading(yearly.year)}</Text>
-              <Text style={[styles.scoreValue, { color: ELEMENT_COLORS[yearly.compatibility.otherDayMasterElement] ?? COLORS.gold }]}>
-                {yearly.compatibility.score}
-              </Text>
+              <Text style={styles.rhythmValue}>{strings.fortune.rhythmNames[yearly.compatibility.relation]}</Text>
             </View>
 
             <View style={styles.sectionCard}>
@@ -615,7 +655,7 @@ export default function FortuneScreen({
             </View>
 
             {monthlyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
-            {!monthlyLoading && monthlyError && <Text style={styles.errorText}>{monthlyError}</Text>}
+            {!monthlyLoading && monthlyError && <ErrorNotice text={monthlyError} retryLabel={strings.common.retryLabel} onRetry={retryMonthly} />}
             {!monthlyLoading && !monthlyError && monthly && (
               <View style={styles.weekList}>
                 {monthly
@@ -632,7 +672,6 @@ export default function FortuneScreen({
                               <Text style={styles.branchBadgeText}>{m.branchRelation === "hap" ? strings.fortune.hapBadge : strings.fortune.chungBadge}</Text>
                             </View>
                           )}
-                          <Text style={styles.monthRowScore}>{m.compatibility!.score}</Text>
                         </View>
                       </View>
                       <Text style={styles.monthRowText} numberOfLines={2}>
@@ -671,7 +710,11 @@ const styles = StyleSheet.create({
   subscribeButton: { backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 15, alignItems: "center" },
   buttonDisabled: { opacity: 0.6 },
   subscribeButtonText: { fontFamily: "Manrope_600SemiBold", fontSize: 14.5, color: COLORS.ctaText },
-  restoreLink: { alignItems: "center", paddingVertical: 6 },
+  restoreLink: { alignItems: "center", justifyContent: "center", minHeight: 44 },
+  renewNote: { fontFamily: "Manrope_400Regular", fontSize: 12, lineHeight: 18, color: COLORS.subheadline, textAlign: "center" },
+  legalRow: { flexDirection: "row", justifyContent: "center", gap: 20 },
+  legalLink: { minHeight: 44, justifyContent: "center" },
+  legalLinkText: { fontFamily: "Manrope_500Medium", fontSize: 12, color: COLORS.subheadline, textDecorationLine: "underline" },
   restoreLinkText: { fontFamily: "Manrope_500Medium", fontSize: 12.5, color: COLORS.subheadline },
   noticeText: { fontFamily: "Manrope_400Regular", fontSize: 12, color: "#E0A296", textAlign: "center" },
   tabRow: { flexDirection: "row", gap: 8, marginBottom: 20 },
@@ -687,12 +730,17 @@ const styles = StyleSheet.create({
   tabButtonActive: { backgroundColor: "rgba(111,169,139,0.12)", borderColor: "rgba(111,169,139,0.4)" },
   tabLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 13.5, color: COLORS.subheadline },
   tabLabelActive: { color: COLORS.gold },
-  errorText: { fontFamily: "Manrope_400Regular", fontSize: 13, color: "#CB6249", marginTop: 20 },
+  // #E0A296 (was #CB6249, 4.3:1) — the same soft coral as noticeText, 7:1 on the background.
+  errorText: { fontFamily: "Manrope_400Regular", fontSize: 13, color: "#E0A296", marginTop: 20 },
+  errorBlock: { marginTop: 20, alignItems: "flex-start" },
+  errorBlockText: { fontFamily: "Manrope_400Regular", fontSize: 13, color: "#E0A296" },
+  retryButton: { minHeight: 44, justifyContent: "center" },
+  retryLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 13.5, color: COLORS.gold },
   sealCard: {
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: "rgba(212,175,110,0.35)",
+    borderColor: "rgba(111,169,139,0.35)",
     borderRadius: 20,
     paddingVertical: 36,
     paddingHorizontal: 24,
@@ -705,9 +753,9 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(212,175,110,0.1)",
+    backgroundColor: "rgba(111,169,139,0.1)",
     borderWidth: 1,
-    borderColor: "rgba(212,175,110,0.3)",
+    borderColor: "rgba(111,169,139,0.3)",
     marginBottom: 6,
   },
   sealHeading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 20, color: COLORS.headline, textAlign: "center" },
@@ -717,9 +765,9 @@ const styles = StyleSheet.create({
   streakContinueText: { fontFamily: "Manrope_500Medium", fontSize: 12, color: COLORS.gold, marginTop: 4 },
   streakBadge: {
     marginTop: 10,
-    backgroundColor: "rgba(212,175,110,0.1)",
+    backgroundColor: "rgba(111,169,139,0.1)",
     borderWidth: 1,
-    borderColor: "rgba(212,175,110,0.3)",
+    borderColor: "rgba(111,169,139,0.3)",
     borderRadius: 999,
     paddingVertical: 5,
     paddingHorizontal: 12,
@@ -735,7 +783,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   scoreLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.subheadline, letterSpacing: 0.3 },
-  scoreValue: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 48 },
+  rhythmValue: { fontFamily: "CormorantGaramond_500Medium", fontSize: 30, lineHeight: 36, color: COLORS.headline, textAlign: "center", marginTop: 4 },
   sectionCard: {
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
@@ -756,7 +804,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     gap: 4,
   },
-  luckyItemLabel: { fontFamily: "Manrope_400Regular", fontSize: 11, color: COLORS.footer },
+  luckyItemLabel: { fontFamily: "Manrope_400Regular", fontSize: 11.5, color: COLORS.subheadline },
   luckyItemValue: { fontFamily: "Manrope_600SemiBold", fontSize: 14, color: COLORS.headline },
   highlightCard: {
     backgroundColor: COLORS.inputBg,
@@ -783,15 +831,14 @@ const styles = StyleSheet.create({
   },
   weekRowDate: { fontFamily: "Manrope_500Medium", fontSize: 12.5, color: COLORS.headline, width: 78 },
   weekRowHeadline: { fontFamily: "Manrope_400Regular", fontSize: 12.5, color: COLORS.subheadline, flex: 1 },
-  weekRowScore: { fontFamily: "Manrope_600SemiBold", fontSize: 13, color: COLORS.gold },
-  weekRowToday: { borderColor: "rgba(212,175,110,0.45)", backgroundColor: "rgba(212,175,110,0.06)" },
+  weekRowToday: { borderColor: "rgba(111,169,139,0.45)", backgroundColor: "rgba(111,169,139,0.06)" },
   todayBadge: {
-    backgroundColor: "rgba(212,175,110,0.14)",
+    backgroundColor: "rgba(111,169,139,0.14)",
     borderRadius: 999,
     paddingVertical: 2,
     paddingHorizontal: 8,
   },
-  todayBadgeText: { fontFamily: "Manrope_700Bold", fontSize: 10, color: COLORS.gold },
+  todayBadgeText: { fontFamily: "Manrope_700Bold", fontSize: 11, color: COLORS.headline },
   monthlySection: { marginTop: 22 },
   domainPickerRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 10, marginBottom: 14 },
   domainChip: {
@@ -802,7 +849,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  domainChipActive: { backgroundColor: "rgba(212,175,110,0.14)", borderColor: "rgba(212,175,110,0.4)" },
+  domainChipActive: { backgroundColor: "rgba(111,169,139,0.14)", borderColor: "rgba(111,169,139,0.4)" },
   domainChipLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 11.5, color: COLORS.subheadline },
   domainChipLabelActive: { color: COLORS.gold },
   monthRow: {
@@ -816,10 +863,9 @@ const styles = StyleSheet.create({
   monthRowHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   monthRowDate: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.headline },
   monthRowRight: { flexDirection: "row", alignItems: "center", gap: 6 },
-  monthRowScore: { fontFamily: "Manrope_600SemiBold", fontSize: 13, color: COLORS.gold, minWidth: 20, textAlign: "right" },
   monthRowText: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline },
   branchBadge: { borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 },
   branchBadgeHap: { backgroundColor: "rgba(111,169,139,0.15)" },
-  branchBadgeChung: { backgroundColor: "rgba(203,98,73,0.15)" },
+  branchBadgeChung: { borderWidth: 1, borderColor: "rgba(217,201,163,0.35)" },
   branchBadgeText: { fontFamily: "Manrope_700Bold", fontSize: 10.5, color: COLORS.headline },
 });
