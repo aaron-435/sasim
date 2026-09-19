@@ -127,10 +127,10 @@ function getZodiac(month, day) {
 const STEP_IDS = ["intro", "nickname", "gender", "dob", "tob", "city"];
 const PROGRESS_STEP_IDS = STEP_IDS.slice(1); // intro has no progress chrome
 
-export default function OnboardingWizard({ sessionId, onComplete }) {
+export default function OnboardingWizard({ sessionId, onComplete, skipIntro = false, onExit }) {
   const t = useStrings();
   const { locale, setLocale } = useLocale();
-  const [stepIndex, setStepIndex] = useState(0);
+  const [stepIndex, setStepIndex] = useState(skipIntro ? 1 : 0);
   const stepId = STEP_IDS[stepIndex];
 
   const [nickname, setNickname] = useState("");
@@ -263,7 +263,14 @@ export default function OnboardingWizard({ sessionId, onComplete }) {
   // Router owns browser history (e.g. driving it through next/navigation
   // instead of raw window.history).
   const goNext = () => setStepIndex((i) => Math.min(i + 1, STEP_IDS.length - 1));
-  const goBack = () => setStepIndex((i) => Math.max(i - 1, 0));
+  const goBack = () => {
+    // With the landing page acting as the intro, the first question's "back" leaves the wizard.
+    if (skipIntro && onExit && stepIndex <= 1) {
+      onExit();
+      return;
+    }
+    setStepIndex((i) => Math.max(i - 1, 0));
+  };
 
   const canProceed = {
     nickname: nickname.trim().length > 0,

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Landing from "./Landing";
 import OnboardingWizard from "./OnboardingWizard";
 import QAChat from "./QAChat";
 import ModuleSelect from "./ModuleSelect";
@@ -58,7 +59,7 @@ export default function AppFlow() {
   // DB에 저장하기 위한 값. 나중에 로그인을 붙이면 이 세션을 계정에 연결하면 되고,
   // 지금은 계속 null user_id로 저장된다 (supabase/schema.sql 참고).
   const [sessionId] = useState(() => (typeof crypto !== "undefined" ? crypto.randomUUID() : ""));
-  const [step, setStep] = useState("onboarding"); // 'onboarding' | 'qaChat' | 'moduleSelect' | 'quiz' | 'chat' | 'report'
+  const [step, setStep] = useState("landing"); // 'landing' | 'onboarding' | 'qaChat' | 'moduleSelect' | 'quiz' | 'chat' | 'report'
   const [sajuResult, setSajuResult] = useState(null);
   const [nickname, setNickname] = useState("");
   const [track, setTrack] = useState("romance");
@@ -144,5 +145,11 @@ export default function AppFlow() {
     return <QAChat nickname={nickname} sajuResult={sajuResult} sessionId={sessionId} />;
   }
 
-  return <OnboardingWizard sessionId={sessionId} onComplete={handleOnboardingComplete} />;
+  if (step === "landing") {
+    return <Landing onStart={() => setStep("onboarding")} />;
+  }
+
+  // The landing page already is the intro, so the wizard opens on its first real
+  // question and "back" from there returns to the landing page.
+  return <OnboardingWizard sessionId={sessionId} onComplete={handleOnboardingComplete} skipIntro onExit={() => setStep("landing")} />;
 }

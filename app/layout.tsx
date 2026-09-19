@@ -18,22 +18,21 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
+  // Absolute base for og:image / twitter:image (Next otherwise falls back to localhost:3000).
+  metadataBase: new URL("https://www.fatesaidapp.com"),
   title: t.meta.siteTitle,
   description: t.meta.siteDescription,
-  // og-image.png doesn't exist yet — public/og-template.html is the design
-  // source, screenshotted/cropped to exactly 1200x630 and saved at this
-  // path. Once that file exists, KakaoTalk/Instagram/Twitter previews
-  // pick it up automatically, no further code change needed.
+  // The preview image comes from app/opengraph-image.tsx (Next attaches it to og:image
+  // automatically). The old "/og-image.png" pointed at a file that never existed.
   openGraph: {
     title: t.meta.siteTitle,
     description: t.meta.siteDescription,
-    images: ["/og-image.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: t.meta.siteTitle,
     description: t.meta.siteDescription,
-    images: ["/og-image.png"],
+    images: ["/opengraph-image"],
   },
 };
 

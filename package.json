@@ -10,6 +10,10 @@
     "validate:manseryeok": "tsx scripts/validate-manseryeok.mts"
   },
   "dependencies": {
+    "@expo-google-fonts/cormorant-garamond": "^0.4.1",
+    "@expo-google-fonts/manrope": "^0.4.2",
+    "@expo-google-fonts/noto-sans-kr": "^0.4.3",
+    "@react-pdf/renderer": "^4.9.0",
     "@sazuapp/client": "^0.4.0",
     "@supabase/supabase-js": "^2.112.4",
     "@vercel/analytics": "^2.0.1",

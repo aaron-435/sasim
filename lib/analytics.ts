@@ -16,6 +16,11 @@
 
 import { track } from "@vercel/analytics";
 
+/** Which of the landing page's three CTAs (hero / bottom / sticky phone bar) got the click. */
+export function trackLandingCtaClick(position: string) {
+  track("landing_cta_click", { position });
+}
+
 export function trackOnboardingComplete(userTrack: string) {
   track("onboarding_complete", { track: userTrack });
 }
