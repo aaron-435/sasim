@@ -24,7 +24,7 @@ Set conversationally here instead of editing the skill file (it says overrides h
 
 - Palette: Celadon & Hanji (`mobile/theme/colors.ts`). Don't propose Obsidian & Gold or a new palette unless the user asks for a rebrand.
 - Fonts: Cormorant Garamond for display moments, Manrope for UI text.
-- No fear-driven design: no fake countdowns, no "unlucky day" red alerts, no forced chat cut-offs (see `PRODUCT.md` principles).
+- Pressure rule (decided 2026-09-19, the "middle path"): mild tension and curiosity are allowed — name what's coming and lock the why/what-to-do ("today asks you to pace yourself — why and what to do open with Pro"), and strong metaphors ("a headwind") are fine inside subscriber content. Still off-limits: fake countdowns or scarcity, "unlucky day" red alerts, health/death/accident/disaster predictions, flat negative predictions ("you will lose money"), and a negative prediction placed directly above a paywall as the hook. Reasons: store/consumer-protection rules for a subscription product, and vulnerable users. See `PRODUCT.md` principles.
 - Any new motion honors reduced motion (`AccessibilityInfo.isReduceMotionEnabled()` on native).
 - UI changes must stay OTA-shippable unless the user approves a native build: no new native dependencies without asking.
 
