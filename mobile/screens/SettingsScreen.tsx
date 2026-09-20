@@ -73,7 +73,7 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </Pressable>
@@ -83,7 +83,14 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
         <Text style={styles.sectionLabel}>{strings.settings.languageSectionLabel}</Text>
         <View style={styles.optionList}>
           {LOCALES.map((l: Locale) => (
-            <Pressable key={l} style={[styles.option, l === locale && styles.optionActive]} onPress={() => setLocale(l)}>
+            <Pressable
+              key={l}
+              style={[styles.option, l === locale && styles.optionActive]}
+              onPress={() => setLocale(l)}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: l === locale }}
+              accessibilityLabel={LOCALE_LABELS[l]}
+            >
               <Text style={[styles.optionLabel, l === locale && styles.optionLabelActive]}>{LOCALE_LABELS[l]}</Text>
               {l === locale && <Check size={16} strokeWidth={2.5} color={COLORS.gold} />}
             </Pressable>
@@ -98,6 +105,9 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
               style={[styles.optionRich, pref === notificationPref && styles.optionActive]}
               onPress={() => handlePickNotification(pref)}
               disabled={applying}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: pref === notificationPref, disabled: applying }}
+              accessibilityLabel={`${notificationLabels[pref].label}. ${notificationLabels[pref].description}`}
             >
               <View style={styles.optionTextWrap}>
                 <Text style={[styles.optionLabel, pref === notificationPref && styles.optionLabelActive]}>{notificationLabels[pref].label}</Text>
@@ -114,7 +124,7 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
         {permissionDenied && <Text style={styles.warning}>{strings.settings.notificationPermissionDenied}</Text>}
 
         <Text style={[styles.sectionLabel, styles.sectionSpacing]}>{strings.settings.resetSectionLabel}</Text>
-        <Pressable style={styles.resetRow} onPress={handleResetPress}>
+        <Pressable style={styles.resetRow} onPress={handleResetPress} accessibilityRole="button">
           <Text style={styles.resetLabel}>{strings.settings.resetButton}</Text>
         </Pressable>
       </ScrollView>
@@ -125,12 +135,12 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
-  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12 },
+  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },
   backLabel: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginBottom: 24 },
   sectionLabel: {
     fontFamily: "Manrope_600SemiBold",
-    fontSize: 11,
+    fontSize: 12,
     letterSpacing: 1.5,
     color: COLORS.subheadline,
     textTransform: "uppercase",
@@ -173,7 +183,7 @@ const styles = StyleSheet.create({
     fontFamily: "Manrope_400Regular",
     fontSize: 12.5,
     lineHeight: 19,
-    color: "#CB6249",
+    color: COLORS.danger,
     marginTop: 14,
   },
   resetRow: {
@@ -188,6 +198,6 @@ const styles = StyleSheet.create({
   resetLabel: {
     fontFamily: "Manrope_600SemiBold",
     fontSize: 14,
-    color: "#CB6249",
+    color: COLORS.danger,
   },
 });

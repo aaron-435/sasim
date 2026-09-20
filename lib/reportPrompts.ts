@@ -65,7 +65,7 @@ export interface ReportDecadeFortune {
  * against. Returns a "no data" line (not null) so buildReportPrompt always has a data line to
  * insert without extra branching, and the accompanying prompt rule tells the model exactly
  * how to handle that case (no invented ages). */
-function describeUpcomingPeriod(
+export function describeUpcomingPeriod(
   decadeFortune: ReportDecadeFortune | null | undefined,
   currentAge: number | undefined,
   locale: Locale
@@ -85,7 +85,15 @@ function describeUpcomingPeriod(
   const after = list[currentIdx + 2];
   const elementKey = HANJA_TO_ELEMENT_KEY[next.earthElement] ?? HANJA_TO_ELEMENT_KEY[next.skyElement];
   const elementLabel = elementKey ? ELEMENT_LABEL[locale][elementKey] : next.earthElement;
-  const ageRange = after ? `${next.startAge}세부터 ${after.startAge - 1}세까지` : `${next.startAge}세부터`;
+  const endAge = after ? after.startAge - 1 : null;
+  // Phrase the range in the OUTPUT language so the model copies it as-is instead of leaving
+  // Korean "세부터" fragments in an English or Spanish report.
+  const ageRange =
+    locale === "en"
+      ? endAge ? `from age ${next.startAge} to ${endAge}` : `from age ${next.startAge}`
+      : locale === "es"
+        ? endAge ? `de los ${next.startAge} a los ${endAge} años` : `a partir de los ${next.startAge} años`
+        : endAge ? `${next.startAge}세부터 ${endAge}세까지` : `${next.startAge}세부터`;
   return `다가오는 대운 시기: ${ageRange}, ${elementLabel} 기운이 강해지는 시기 (현재 만 ${currentAge}세 기준 — 이 시기는 아직 오지 않았음. upcoming_period_body에서 나이를 언급할 때 반드시 이 숫자 그대로만 쓸 것, 임의로 바꾸거나 다른 나이대를 지어내지 말 것)`;
 }
 
@@ -182,42 +190,50 @@ const STYLE_EXCERPT = `
 /** answer_notes' array-length rule has to name the exact count, so the schema is built per
  * request instead of being one static string — see ReportTopAnswer's header comment for why
  * this field exists at all (a literal Q&A pair alone read as flat with no interpretation). */
-function buildOutputSchema(topAnswerCount: number): string {
+function buildOutputSchema(topAnswerCount: number, hasChat: boolean): string {
   const answerNotesField =
     topAnswerCount > 0
       ? `,
-  "answer_notes": ["실제로 답한 문항 각각에 대한 해설 — 정확히 ${topAnswerCount}개, 아래 '실제로 답한 문항들' 데이터에 나온 순서 그대로. 그 문항의 질문과 답을 다시 반복하지 말고, 그 특정 답이 이 사람의 어떤 면을 보여주는지 1문장으로 짚을 것 — 그 원소/오행 이야기가 아니라 심리테스트 축 이름과 연결해서 설명"]`
+  "answer_notes": ["실제로 답한 문항 각각에 대한 해설 — 정확히 ${topAnswerCount}개, 아래 '실제로 답한 문항들' 데이터에 나온 순서 그대로. 각 노트는 3문장. 그 문항의 질문과 답을 다시 반복하지 말고, 그 특정 답이 이 사람의 어떤 면을 보여주는지(1문장), 그게 일상에서 어떤 장면으로 나타나는지(1문장), 그 답을 고른 사람에게 건네는 한마디(1문장) 순서로. 그 원소/오행 이야기가 아니라 심리테스트 축 이름과 연결해서 설명"]`
       : "";
+  const chatNotesFields = hasChat
+    ? `,
+  "chat_snapshot_note": "상담에서 나온 '핵심 고민'과 '감정 상태'(아래 상담 데이터) 두 가지를 함께 짚는 3문장. 이 사람이 상담에서 실제로 꺼낸 고민이 어떤 감정과 붙어 있는지 구체적으로. 마지막 문장은 저장하고 싶은 한 줄",
+  "chat_trigger_note": "상담에서 나온 '촉발 사건'(아래 데이터)이 이 사람에게 왜 그렇게 크게 걸렸는지 3문장. 심리테스트 축이나 사주 원소 중 하나와 연결해서",
+  "chat_repeat_note": "상담에서 나온 '반복 패턴'(아래 데이터)을 다시 비춰 주는 3문장. 그 패턴이 어떻게 굴러가는지(1), 그 안에서 이 사람이 하는 선택(1), 그 패턴을 살짝 벗어나는 작은 방법(1). 반복 패턴 데이터가 '(없음)'이면 빈 문자열",
+  "chat_fear_note": "상담에서 나온 '핵심 두려움/의미'(아래 데이터)를 따뜻하게 받아 주는 3문장. 두려움을 부풀리지 말고, 그 아래 있는 바람을 읽어 줄 것"`
+    : "";
   return `
 {
   "title_line1": "리포트 제목 1행 — 시적이고 은유적, 이 사람의 핵심 패턴을 압축",
   "title_line2": "리포트 제목 2행 — 1행과 이어지는 한 문장",
   "subtitle": "부제 — '~ 심층 리포트 — 사주 × 심리검사 × 상담 통합' 형식, 모듈명을 자연스럽게 녹여서. 모듈 번호는 아래 데이터의 '심리테스트 모듈' 값에 나온 숫자·표기 그대로 쓰고, '삼'/'사' 같은 한글 숫자로 풀어 쓰지 말 것 (예: '모듈 3', '모듈 9'처럼 아라비아 숫자 그대로)",
-  "opening_scene": "'어느 밤의 장면' 섹션 본문. 2~3문장, 화면 한 장 분량. 이 사람의 실제 패턴(dimensionResults, chatExtract)에서 나온 구체적 장면으로 시작해서, 마지막 문장에서 '{nickname}님의 요즘은 이런 모습이지 않으신가요' 식으로 직접 부른다.",
-  "case_tag": "'CASE — [가명]씨, [연령대], [상황]' 형식의 짧은 태그",
-  "case_paragraphs": ["가상의 닮은 사례 정확히 3문단, 배열 원소 3개. 각 문단은 화면 한 장 분량(2~3문장)이라 따로따로 읽혀도 되게 쓸 것. 1문단: 이 사람과 비슷한 패턴을 겪는 가상 인물의 상황 소개(실존 인물처럼 보이지 않게 가명 사용). 2문단: 그 인물이 그 패턴 때문에 실제로 겪은 구체적 어려움. 3문단: 그 인물의 사주도 이 사람과 비슷한 원소 불균형을 가졌다고 연결."],
+  "opening_scene": "'어느 밤의 장면' 섹션 본문. 4~5문장. 이 사람의 실제 패턴(dimensionResults, chatExtract)에서 나온 구체적 장면(시간대, 손에 든 것, 머릿속 문장까지)으로 시작해서, 마지막 문장에서 '{nickname}님의 요즘은 이런 모습이지 않으신가요' 식으로 직접 부른다.",
+  "case_tag": "'CASE — [가명]씨, [연령대], [상황]' 형식의 짧은 태그. 가명은 이 사람의 언어권에서 자연스러운 이름",
+  "case_paragraphs": ["이 사람과 닮은 가상 인물 사례 정확히 2문단, 배열 원소 2개. 각 문단은 3~4문장이고 따로따로 읽혀도 완결되어야 한다. 1문단: 가상 인물이 이 사람과 같은 패턴을 겪는 구체적인 하루(실존 인물처럼 보이지 않게 가명). 2문단: 그 패턴이 그 인물에게 남긴 것 + 그 인물의 사주도 이 사람과 비슷한 원소 불균형을 가졌다는 연결, 그리고 마지막 문장은 반드시 '당신도'처럼 이 사람에게 돌아오는 문장. 이 사례는 이 사람의 이야기로 가는 다리일 뿐이니 길게 끌지 말 것"],
+  "oheng_intro": "오행 분포 그래프 페이지 위에 붙는 해설. 3문장. 이 사람의 실제 수치(우세 원소 %, 약한 원소 %)를 그대로 언급하고, 이 분포가 이번 모듈 주제(아래 데이터의 심리테스트 모듈)에서 어떤 장면으로 나타나는지 짚는다",
   "element_readings": {
-    "설명": "다섯 원소 각각에 대한 짧은 해설 — 반드시 wood/fire/earth/metal/water 다섯 키 전부 채울 것, 하나도 빠뜨리지 말 것. 아래 데이터의 '오행 분포'에서 퍼센트가 가장 높은 원소(우세 원소)와 가장 낮은 원소(약한 원소)는 특별 취급하고, 나머지 세 개는 그보다 짧고 담백하게 쓴다. 이 사람의 오행 수치는 어느 모듈 리포트를 사도 똑같이 나오므로(같은 사람, 같은 사주), 다른 모듈 리포트와 구별되게 만드는 건 이 수치를 '이번 리포트 데이터'의 심리테스트 모듈(아래 참고) 상황에 빗대어 푸는 것뿐이다 — 그 모듈 주제가 안 보이는, 아무 리포트에나 붙여도 말이 되는 일반론으로 쓰면 안 된다.",
-    "wood": {"heading": "'목(木) [과다/보통/결핍 중 실제 수치에 맞는 표현] — 한 줄 은유' 형식", "body": "이 사람의 목 기운 수치에 대한 해설. 우세 원소면 1~2문장으로 과다할 때의 패턴을, 약한 원소면 1~2문장으로 그 결핍과 아래 데이터에 명시된 상생 관계 딱 하나만 언급, 그 외의 원소면 1문장으로 담백하게"},
-    "fire": {"heading": "화(火)에 대해 위와 같은 형식", "body": "위와 같은 기준"},
-    "earth": {"heading": "토(土)에 대해 위와 같은 형식", "body": "위와 같은 기준"},
-    "metal": {"heading": "금(金)에 대해 위와 같은 형식", "body": "위와 같은 기준"},
-    "water": {"heading": "수(水)에 대해 위와 같은 형식", "body": "위와 같은 기준"}
+    "설명": "다섯 원소 각각에 대한 해설 — 반드시 wood/fire/earth/metal/water 다섯 키 전부 채울 것, 하나도 빠뜨리지 말 것. 각 body는 예외 없이 최소 3문장 (우세 원소와 약한 원소는 4문장). 우세 원소와 약한 원소는 특별 취급하고 나머지 세 원소도 그 원소의 수치와 이번 모듈 상황에 빗댄 구체적 장면을 가진 3문장으로 쓴다(담백하되 얇지 않게). 이 사람의 오행 수치는 어느 모듈 리포트를 사도 똑같이 나오므로(같은 사람, 같은 사주), 다른 모듈 리포트와 구별되게 만드는 건 이 수치를 '이번 리포트 데이터'의 심리테스트 모듈 상황에 빗대어 푸는 것뿐이다 — 그 모듈 주제가 안 보이는, 아무 리포트에나 붙여도 말이 되는 일반론으로 쓰면 안 된다.",
+    "wood": {"heading": "'목(木) [과다/보통/결핍 중 실제 수치에 맞는 표현] — 한 줄 은유' 형식", "body": "이 사람의 목 기운 수치에 대한 해설(최소 3문장). 우세 원소면 과다할 때의 패턴을 장면으로, 약한 원소면 그 결핍과 아래 데이터에 명시된 상생 관계 딱 하나만 언급, 그 외의 원소면 수치가 이 사람의 일상에 주는 느낌을 장면으로"},
+    "fire": {"heading": "화(火)에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
+    "earth": {"heading": "토(土)에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
+    "metal": {"heading": "금(金)에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
+    "water": {"heading": "수(水)에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"}
   },
   "upcoming_period_heading": "'다가오는 시기' 섹션 소제목 — 아래 데이터의 '다가오는 대운 시기' 줄에 나온 나이대와 원소를 반드시 그대로 반영해서, 예를 들면 '32세부터, 물의 계절이 옵니다' 같은 형식으로. 그 줄이 '정보 없음'이면 나이 없이 '다가오는 흐름' 정도의 일반적인 제목",
-  "upcoming_period_body": "1~2문장. 아래 '다가오는 대운 시기' 데이터에 근거해서, 그 시기에 어떤 변화나 기회가 자연스럽게 따라오는지 서술. 나이 숫자는 그 데이터 줄에 있는 그대로만 쓰고 절대 새로 만들어내지 말 것 — 정보가 없다고 나오면 숫자 없이 일반적인 흐름으로만 쓸 것. 이미 지난 시기를 다루지 말고 반드시 앞으로 올 시기만 다룰 것.",
-  "cross_analysis_quotes": ["우세 원소와 심리검사 주요 축을 명시적으로 연결하는 인용구 스타일 문장 1개", "약한 원소와 심리검사의 다른 축을 연결하는 문장 1개"]${answerNotesField},
+  "upcoming_period_body": "3~4문장. 아래 '다가오는 대운 시기' 데이터에 근거해서, 그 시기에 어떤 변화나 기회가 자연스럽게 따라오는지, 그리고 지금부터 무엇을 준비해 두면 좋은지 서술. 나이 숫자는 그 데이터 줄에 있는 그대로만 쓰고 절대 새로 만들어내지 말 것 — 정보가 없다고 나오면 숫자 없이 일반적인 흐름으로만 쓰되, 정보가 없다는 사실 자체를 문장에 쓰지 말 것. 이미 지난 시기를 다루지 말고 반드시 앞으로 올 시기만 다룰 것.",
+  "cross_analysis_quotes": ["우세 원소와 심리검사 주요 축을 명시적으로 연결하는 3문장이 한 문자열 안에 모두 들어간 항목 — 첫 문장은 캡처해서 공유하고 싶은 짧고 강한 한 줄, 나머지 두 문장은 그 근거. 배열 원소는 정확히 2개이고, 첫 문장만 따로 배열 원소로 빼지 말 것", "약한 원소와 심리검사의 다른 축을 연결하는 3문장 — 같은 구성(한 문자열에 3문장)"]${answerNotesField}${chatNotesFields},
   "psychology_fact_heading": "이 사람의 패턴과 관련된 실제 심리학 개념/이론/연구자 이름을 정확히 인용한 소제목. 화면에 이미 '잠깐, 심리학 상식 하나'라는 라벨이 따로 표시되므로 그 문구를 다시 쓰지 말 것 — 개념 이름 자체로 시작 (예: '볼비와 불안-회피 애착')",
-  "psychology_fact_body": "그 개념을 1~2문장으로 정확하게 설명하고 이 사람 패턴과 연결",
-  "psychology_takeaway": "한 문장짜리 핵심 요약. 화면에 이미 '기억할 한 가지 ·' 라벨이 따로 붙으므로 '기억할 한 가지' 같은 말을 반복하지 말고 바로 요약 문장으로 시작",
-  "strengths": [{"title": "강점 제목 (2~6자)", "body": "1문장 설명 — 이 배열 항목은 정확히 4개, 각 항목이 화면 한 장씩 차지함"}],
-  "weaknesses": [{"title": "취약점 제목 (2~8자)", "body": "1문장 설명 — 이 배열 항목도 정확히 4개"}],
-  "fit_good": "이 사람에게 맞는 환경/일 스타일 1문장",
-  "fit_bad": "이 사람이 피해야 할 환경/일 스타일 1문장",
-  "behavior_guides": [{"title": "행동지침 제목 (2~10자)", "body": "구체적 실천 방법 1문장 — 이 배열 항목도 정확히 4개"}],
-  "mindset_guide": "사고방식 전환 조언 2~3문장 — 은유를 하나 써서. 화면 한 장 분량으로, 문장을 짧게 끊어서. 이 은유는 이번 심리테스트 모듈의 주제(돈/번아웃/애착/분노 등, 아래 데이터 참고)에서 자연스럽게 가져올 것 — 어느 모듈 리포트에 넣어도 어색하지 않을 만큼 범용적인 은유(파도, 그릇, 문턱 같은 것을 아무 맥락 없이 쓰는 식)는 피한다.",
+  "psychology_fact_body": "그 개념을 3~4문장으로 정확하게 설명하고 이 사람 패턴과 연결. 실제 연구자·연도·개념은 정확한 것만 쓰고 확실하지 않으면 개념만 쓴다",
+  "psychology_takeaway": "2문장짜리 핵심 요약 — 첫 문장은 기억에 남는 짧은 한 줄. 화면에 이미 '기억할 한 가지 ·' 라벨이 따로 붙으므로 '기억할 한 가지' 같은 말을 반복하지 말고 바로 요약 문장으로 시작",
+  "strengths": [{"title": "강점 제목 (2~6자)", "body": "3문장 설명 — 이 사람의 실제 데이터에서 나온 구체적 장면 하나 포함. 이 배열 항목은 정확히 4개, 각 항목이 화면 한 장씩 차지함"}],
+  "weaknesses": [{"title": "취약점 제목 (2~8자)", "body": "3문장 설명 — 비난이 아니라 이해로. 구체적 장면 하나 포함. 이 배열 항목도 정확히 4개"}],
+  "fit_good": "이 사람에게 맞는 환경/일 스타일 3문장 — 구체적인 하루의 모습으로",
+  "fit_bad": "이 사람이 피해야 할 환경/일 스타일 3문장 — 구체적인 하루의 모습으로",
+  "behavior_guides": [{"title": "행동지침 제목 (2~10자)", "body": "구체적 실천 방법 3문장 — 언제, 무엇을, 얼마나 하는지가 보이게. 이 배열 항목도 정확히 4개"}],
+  "mindset_guide": "사고방식 전환 조언 4문장 — 은유를 하나 써서. 문장을 짧게 끊어서. 이 은유는 이번 심리테스트 모듈의 주제(돈/번아웃/애착/분노 등, 아래 데이터 참고)에서 자연스럽게 가져올 것 — 어느 모듈 리포트에 넣어도 어색하지 않을 만큼 범용적인 은유(파도, 그릇, 문턱 같은 것을 아무 맥락 없이 쓰는 식)는 피한다.",
   "closing_title": "마무리 섹션 소제목 — 짧고 여운 있게",
-  "closing_body": "마무리 문단 1~2문장 — 희망적이되 과장하지 않게"
+  "closing_body": "마무리 문단 3문장 — 희망적이되 과장하지 않게. 이 리포트 전체에서 가장 저장하고 싶은 문장으로 끝낼 것"
 }
 `.trim();
 }
@@ -291,9 +307,10 @@ ${STYLE_EXCERPT}
    나이대를 추측하거나, 이미 지난 시기를 다가올 시기처럼 쓰지 마라 — 그 줄이 "정보 없음"
    이나 "범위를 벗어남"이라고 하면 숫자를 아예 언급하지 말고 일반적인 흐름으로만 쓴다.
 8. 모든 문장은 표준 맞춤법과 띄어쓰기(${FIELD_LANGUAGE_NAME[locale]}의 표준 정서법)를
-   정확히 지켜서 쓴다 — 붙여쓰기·오탈자 없이. 이 리포트는 이제 한 필드가 화면 한 장에
-   표시되므로, 필드마다 2~4개의 짧고 명확한 문장으로 끊어 쓰고 한 문장에 여러 생각을
-   욱여넣지 않는다 — 문장이 길어지면 마침표로 끊어서 여러 문장으로 나눌 것.
+   정확히 지켜서 쓴다 — 붙여쓰기·오탈자 없이. 이 리포트는 한 필드가 화면 한 장에 표시된다.
+   스키마에 "3문장"이라고 적힌 필드는 마침표로 끝나는 완결된 문장 3개 이상으로 쓴다 (한 문장을
+   억지로 늘이지 말고 문장을 나눠서). 한두 문장짜리 페이지는 실패다. 문장은 짧고 명확하게 끊어
+   쓰고 한 문장에 여러 생각을 욱여넣지 않는다.
 9. answer_notes는 아래 "실제로 답한 문항들" 데이터에 있는 항목 순서와 정확히 같은
    순서·개수로 작성한다. 각 노트는 그 문항의 질문이나 답을 그대로 되풀이하지 말고 —
    화면에 질문과 답은 이미 그대로 표시되므로 반복하면 중복이다 — 그 답이 이 사람에
@@ -307,6 +324,19 @@ ${STYLE_EXCERPT}
     장면·다른 소재가 나와야 하고, 어느 모듈에 붙여도 말이 되는 원소 해설·은유는 쓰지
     않는다. 이 사람의 다른 리포트를 실제로 본 적은 없지만, 그런 리포트가 존재한다고
     가정하고 그것과 겹치지 않게 쓰는 것이 목표다.
+
+11. 모든 페이지는 독자가 화면을 캡처해서 친구에게 보내고 싶을 만큼 "완전 내 얘기잖아"라는
+    느낌이어야 한다. 각 필드에 반드시 (a) 이 사람의 실제 데이터에서 온 구체적 디테일 하나
+    (오행 수치, 답한 문항, 상담에서 한 말, 구체적인 장면) (b) 이 사람을 직접 부르는 2인칭
+    (c) 캡처하고 싶은 짧고 선명한 한 문장(첫 문장이나 마지막 문장)을 넣는다. 다른 사람의 리포트에
+    그대로 붙여도 말이 되는 문장이 되면 그 필드는 다시 쓴다. 상투적 위로("괜찮아요",
+    "당신은 소중해요")와 사전식 정의로 페이지를 채우지 않는다.
+12. 출력에 데이터가 없다거나 지시를 받았다는 사실, 필드 이름, 이 프롬프트의 문구를 절대
+    언급하지 않는다 ("나이가 명시되지 않아서" 같은 메타 발언 금지). 데이터가 없으면 그 부분은
+    조용히 일반적인 흐름으로만 쓴다.
+13. 사주 용어는 이 언어의 용어집대로 쓰고(예: 대운은 영어 "10-year cycle", 스페인어 "ciclo de
+    diez años"), 한국어 단어나 한자를 다른 언어 출력에 섞지 않는다. 처음 나오는 용어는 같은
+    문장 안에서 짧게 풀어 준다.
 
 ## 이번 리포트의 데이터
 - 닉네임: ${context.nickname}
@@ -324,7 +354,7 @@ ${topAnswersLine ? `- 실제로 답한 문항들 (answer_notes는 이 순서 그
 ${chatSection}
 
 ## 출력 스키마
-${buildOutputSchema(context.topAnswers?.length ?? 0)}
+${buildOutputSchema(context.topAnswers?.length ?? 0, !!context.chatExtract)}
 ${outputLanguageDirective(locale, { en: "the JSON schema above", es: "esquema JSON anterior" })}
 `.trim();
 }

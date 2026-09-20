@@ -23,6 +23,10 @@ import { rateLimitOrResponse } from "@/lib/rateLimit";
 import { splitLocked, sealLocked } from "@/lib/reportLock";
 import { checkEntitlement } from "@/lib/revenuecat";
 
+// The report is generated, checked by code, reviewed by a second model pass and fixed where that
+// found something — up to ~2 minutes in the worst case. Quality matters more than speed here.
+export const maxDuration = 180;
+
 interface ReportRequestBody {
   sessionId?: string;
   moduleId?: string;

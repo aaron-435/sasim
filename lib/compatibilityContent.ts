@@ -73,27 +73,27 @@ const en: CompatibilityContent = {
 const es: CompatibilityContent = {
   relations: {
     mirror: {
-      headline: "Cortados por la misma tela",
-      body: "Comparten la misma corriente, así que mucho se entiende sin decirlo. Es cómodo; el riesgo es que se atascan justo en el mismo punto, y el mismo punto ciego puede escapárseles a los dos a la vez.",
+      headline: "De la misma madera",
+      body: "Entre los dos hay una misma corriente, así que mucho se entiende sin decirlo. Es cómodo; el riesgo es que ambos se atasquen justo en el mismo punto, y que el mismo punto ciego se les escape a la vez.",
     },
     selfNurturesOther: {
-      headline: "Tú eres quien la impulsa",
-      body: "Tu energía empuja la suya hacia adelante. Verla crecer se siente bien, pero si solo das, puede que no notes que tu propio lado se está vaciando — vale la pena practicar también el recibir.",
+      headline: "Eres quien impulsa",
+      body: "Tu energía empuja hacia adelante la de la otra persona. Ver cómo crece se siente bien, pero si solo das, puede que no notes que tu propio lado se está vaciando: conviene practicar también el recibir.",
     },
     otherNurturesSelf: {
-      headline: "Tú eres quien recibe el impulso",
-      body: "Su energía empuja la tuya hacia adelante. Estar cerca de ella te levanta de forma natural — el riesgo es que apoyarte así se vuelva costumbre y olvides cómo recargarte por tu cuenta.",
+      headline: "Eres quien recibe el impulso",
+      body: "La energía de la otra persona empuja la tuya hacia adelante. Estar a su lado te da fuerzas de forma natural; el riesgo es que apoyarte así se vuelva costumbre y olvides cómo recargarte por tu cuenta.",
     },
     selfChallengesOther: {
-      headline: "Tú eres quien la reta",
-      body: "Le das dirección aunque eso genere fricción. Esa fricción los hace crecer a los dos — solo cuida el momento en que empiece a sentirse como un regaño en vez de cuidado.",
+      headline: "Eres quien desafía",
+      body: "Marcas el rumbo aunque eso genere fricción. Esa fricción los hace crecer a los dos; solo cuida el momento en que empiece a sentirse como un sermón en vez de cuidado.",
     },
     otherChallengesSelf: {
-      headline: "Tú eres quien recibe el reto",
-      body: "Ella te mantiene alerta, incluso cuando incomoda. Por eso mismo te mueve — ayuda confirmar, a veces en voz alta, que esa presión viene del cariño.",
+      headline: "Eres quien recibe el desafío",
+      body: "La otra persona te mantiene alerta, incluso cuando resulta incómodo. Por eso mismo te mueve: ayuda confirmar, a veces en voz alta, que esa presión viene del cariño.",
     },
   },
-  bondNote: "Además, sus dos day-masters forman un vínculo clásico — esta combinación trae un tirón extra que no es fácil de explicar.",
+  bondNote: "Además, los dos Maestros del Día forman un vínculo clásico: esta combinación trae una atracción extra que no es fácil de explicar.",
 };
 
 export const COMPATIBILITY_CONTENT: Record<Locale, CompatibilityContent> = { ko, en, es };

@@ -10,6 +10,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import { getDailyLimit, getUsageToday, incrementUsageToday, PAID_DAILY_LIMIT } from "../lib/qaQuota";
 import { purchaseQaPro, restoreQaPro } from "../lib/purchases";
+import { useMonthlyPrice } from "../lib/useMonthlyPrice";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { saveLastQuestion } from "../lib/qaHistory";
 import type { NormalizedSajuResult } from "../lib/saju";
@@ -62,6 +63,8 @@ export default function QAScreen({
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
+  const monthlyPrice = useMonthlyPrice();
+  const priceLabel = monthlyPrice ? strings.qa.subscriptionPriceFor(monthlyPrice) : strings.qa.subscriptionPriceLabel;
   const scrollRef = useRef<ScrollView>(null);
   const mountedRef = useRef(true);
   const greetedRef = useRef(false);
@@ -78,9 +81,9 @@ export default function QAScreen({
   const pushCategoryPicker = useCallback(() => setMessages((m) => [...m, { role: "picker" }]), []);
   const pushLimitReachedMessage = useCallback(() => {
     pushBot(strings.qa.limitReached1);
-    pushBot(strings.qa.limitReached2(strings.qa.subscriptionPriceLabel, PAID_DAILY_LIMIT));
+    pushBot(strings.qa.limitReached2(priceLabel, PAID_DAILY_LIMIT));
     setMessages((m) => [...m, { role: "subscribe" }]);
-  }, [pushBot, strings]);
+  }, [pushBot, strings, priceLabel]);
 
   useEffect(() => {
     if (greetedRef.current) return;
@@ -241,7 +244,7 @@ export default function QAScreen({
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.header}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
           <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
         </Pressable>
         <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
@@ -273,7 +276,7 @@ export default function QAScreen({
                     onPress={handleSubscribe}
                   >
                     <Text style={styles.subscribeButtonText}>
-                      {purchasing ? strings.qa.subscribing : `${strings.qa.subscribeButton} · ${strings.qa.subscriptionPriceLabel}`}
+                      {purchasing ? strings.qa.subscribing : `${strings.qa.subscribeButton} · ${priceLabel}`}
                     </Text>
                   </Pressable>
                   <Pressable style={styles.restoreLink} disabled={purchasing || restoring} onPress={handleRestore}>
@@ -318,6 +321,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#1C1B24",
   },
   backButton: {
+    minHeight: 44,
     padding: 4,
     marginRight: 2,
   },

@@ -58,7 +58,7 @@ export default function TypeScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </Pressable>
@@ -187,6 +187,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   backButton: {
+    minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
     gap: 4,

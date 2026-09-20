@@ -10,7 +10,9 @@ export const COLORS = {
   ctaText: "#0F1A15",
   // 2026-09-19: was #756B54 (3.2:1 on background) and used for real text on
   // Home, Fortune and Report — raised to pass 4.5:1 on the background and on cards.
-  footer: "#968B70",
+  footer: "#A89D82",
+  // Error / destructive text: #CB6249 was 3.6-4.0:1 on cards; this passes 4.5:1.
+  danger: "#E58A70",
   border: "#26332B",
   inputBg: "rgba(255,255,255,0.03)",
   disabledBg: "rgba(255,255,255,0.06)",

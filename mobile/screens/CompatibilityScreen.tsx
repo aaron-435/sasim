@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { ArrowLeft, Share2 } from "lucide-react-native";
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import * as Sharing from "expo-sharing";
@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
+import { dobFieldOrder, dobSeparator } from "../lib/dobOrder";
 import { COMPATIBILITY_CONTENT } from "../lib/compatibilityContent";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { formatSajuTypeName } from "../lib/sajuTypeContent";
@@ -62,8 +63,15 @@ export default function CompatibilityScreen({
   const [sharing, setSharing] = useState(false);
   const shareCardRef = useRef<View>(null);
 
+  const yearRef = useRef<TextInput>(null);
   const monthRef = useRef<TextInput>(null);
   const dayRef = useRef<TextInput>(null);
+  const dobOrder = dobFieldOrder(locale);
+  const dobRefs = { year: yearRef, month: monthRef, day: dayRef };
+  const dobValues = { year, month, day };
+  const dobSetters = { year: setYear, month: setMonth, day: setDay };
+  const dobMaxLens = { year: 4, month: 2, day: 2 };
+  const dobPlaceholders = { year: strings.dob.yearPlaceholder, month: strings.dob.monthPlaceholder, day: strings.dob.dayPlaceholder };
 
   const canSubmit = !!selfDayMasterChar && isFemale !== null && year.length === 4 && month.length > 0 && day.length > 0;
 
@@ -166,7 +174,7 @@ export default function CompatibilityScreen({
     return (
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.content}>
-          <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+          <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
             <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
             <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
           </Pressable>
@@ -241,7 +249,7 @@ export default function CompatibilityScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </Pressable>
@@ -269,45 +277,26 @@ export default function CompatibilityScreen({
 
         <Text style={styles.fieldLabel}>{strings.compatibility.dobHeading}</Text>
         <View style={styles.row}>
-          <TextInput
-            style={[styles.input, styles.yearInput]}
-            placeholder={strings.dob.yearPlaceholder}
-            placeholderTextColor={COLORS.disabledText}
-            value={year}
-            onChangeText={(v) => {
-              const clean = digitsOnly(v).slice(0, 4);
-              setYear(clean);
-              if (clean.length === 4) monthRef.current?.focus();
-            }}
-            keyboardType="number-pad"
-            maxLength={4}
-          />
-          <Text style={styles.dot}>.</Text>
-          <TextInput
-            ref={monthRef}
-            style={[styles.input, styles.shortInput]}
-            placeholder={strings.dob.monthPlaceholder}
-            placeholderTextColor={COLORS.disabledText}
-            value={month}
-            onChangeText={(v) => {
-              const clean = digitsOnly(v).slice(0, 2);
-              setMonth(clean);
-              if (clean.length === 2) dayRef.current?.focus();
-            }}
-            keyboardType="number-pad"
-            maxLength={2}
-          />
-          <Text style={styles.dot}>.</Text>
-          <TextInput
-            ref={dayRef}
-            style={[styles.input, styles.shortInput]}
-            placeholder={strings.dob.dayPlaceholder}
-            placeholderTextColor={COLORS.disabledText}
-            value={day}
-            onChangeText={(v) => setDay(digitsOnly(v).slice(0, 2))}
-            keyboardType="number-pad"
-            maxLength={2}
-          />
+          {dobOrder.map((field, i) => (
+            <Fragment key={field}>
+              {i > 0 && <Text style={styles.dot}>{dobSeparator(locale)}</Text>}
+              <TextInput
+                ref={dobRefs[field]}
+                style={[styles.input, field === "year" ? styles.yearInput : styles.shortInput]}
+                placeholder={dobPlaceholders[field]}
+                placeholderTextColor={COLORS.disabledText}
+                value={dobValues[field]}
+                onChangeText={(v) => {
+                  const clean = digitsOnly(v).slice(0, dobMaxLens[field]);
+                  dobSetters[field](clean);
+                  const next = dobOrder[i + 1];
+                  if (next && clean.length === dobMaxLens[field]) dobRefs[next].current?.focus();
+                }}
+                keyboardType="number-pad"
+                maxLength={dobMaxLens[field]}
+              />
+            </Fragment>
+          ))}
         </View>
 
         <Text style={styles.fieldLabel}>{strings.compatibility.timeHeading}</Text>
@@ -383,7 +372,7 @@ export default function CompatibilityScreen({
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
-  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12 },
+  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },
   backLabel: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline },
   subtitle: { fontFamily: "Manrope_400Regular", fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 8, marginBottom: 20 },
@@ -436,7 +425,7 @@ const styles = StyleSheet.create({
   resultRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 13, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: COLORS.border },
   resultCity: { fontFamily: "Manrope_500Medium", fontSize: 14.5, color: COLORS.headline },
   resultCountry: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline },
-  error: { fontFamily: "Manrope_400Regular", fontSize: 12.5, color: "#CB6249", marginTop: 14 },
+  error: { fontFamily: "Manrope_400Regular", fontSize: 12.5, color: COLORS.danger, marginTop: 14 },
   submitButton: {
     alignItems: "center",
     justifyContent: "center",

@@ -13,6 +13,7 @@ import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
 import { hasQaProEntitlement, purchaseQaPro, restoreQaPro } from "../lib/purchases";
+import { useMonthlyPrice } from "../lib/useMonthlyPrice";
 import { comingSajuYear } from "../lib/sajuYear";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
@@ -180,6 +181,8 @@ export default function FortuneScreen({
   const [monthlyDomain, setMonthlyDomain] = useState<YearDomain>("overview");
 
   const [purchasing, setPurchasing] = useState(false);
+  const monthlyPrice = useMonthlyPrice();
+  const priceLabel = monthlyPrice ? strings.qa.subscriptionPriceFor(monthlyPrice) : strings.qa.subscriptionPriceLabel;
   const [restoring, setRestoring] = useState(false);
   const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
 
@@ -330,7 +333,7 @@ export default function FortuneScreen({
     return (
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.content}>
-          <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+          <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
             <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
             <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
           </Pressable>
@@ -351,7 +354,7 @@ export default function FortuneScreen({
             </View>
             <Pressable style={[styles.subscribeButton, purchasing && styles.buttonDisabled]} disabled={purchasing || restoring} onPress={handleSubscribe}>
               <Text style={styles.subscribeButtonText}>
-                {purchasing ? strings.qa.subscribing : `${strings.qa.subscribeButton} · ${strings.qa.subscriptionPriceLabel}`}
+                {purchasing ? strings.qa.subscribing : `${strings.qa.subscribeButton} · ${priceLabel}`}
               </Text>
             </Pressable>
             <Pressable style={styles.restoreLink} disabled={purchasing || restoring} onPress={handleRestore}>
@@ -396,7 +399,7 @@ export default function FortuneScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </Pressable>
@@ -692,7 +695,9 @@ export default function FortuneScreen({
                     <View key={m.monthIndex} style={styles.monthRow}>
                       <View style={styles.monthRowHeader}>
                         <Text style={styles.monthRowDate}>
-                          {m.calendarYear}.{String(m.calendarMonth).padStart(2, "0")}
+                          {locale === "ko"
+                            ? `${m.calendarYear}.${String(m.calendarMonth).padStart(2, "0")}`
+                            : `${strings.yearReport.monthName(m.calendarMonth)} ${m.calendarYear}`}
                         </Text>
                         <View style={styles.monthRowRight}>
                           {/* Each month has its own 12-stage name, so two months that share the
@@ -724,7 +729,7 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
   centerSpinner: { flex: 1, justifyContent: "center" },
   sectionSpinner: { marginTop: 32 },
-  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12 },
+  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },
   backLabel: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginBottom: 16 },
   lockedCard: {
@@ -834,7 +839,7 @@ const styles = StyleSheet.create({
     padding: 18,
     marginTop: 14,
   },
-  sectionLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 11, letterSpacing: 1.5, color: COLORS.gold, textTransform: "uppercase" },
+  sectionLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, letterSpacing: 1.5, color: COLORS.gold, textTransform: "uppercase" },
   sectionHeadline: { fontFamily: "Manrope_600SemiBold", fontSize: 16, color: COLORS.headline, marginTop: 8 },
   sectionBody: { fontFamily: "Manrope_400Regular", fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginTop: 8 },
   luckyRow: { flexDirection: "row", marginTop: 12, gap: 8 },
@@ -856,7 +861,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
   },
-  highlightLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 11, letterSpacing: 1, color: COLORS.gold, textTransform: "uppercase" },
+  highlightLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, letterSpacing: 1, color: COLORS.gold, textTransform: "uppercase" },
   highlightDate: { fontFamily: "Manrope_600SemiBold", fontSize: 15, color: COLORS.headline, marginTop: 6 },
   highlightHeadline: { fontFamily: "Manrope_400Regular", fontSize: 13.5, color: COLORS.subheadline, marginTop: 4 },
   weekList: { marginTop: 8, gap: 8 },
@@ -880,7 +885,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 8,
   },
-  todayBadgeText: { fontFamily: "Manrope_700Bold", fontSize: 11, color: COLORS.headline },
+  todayBadgeText: { fontFamily: "Manrope_700Bold", fontSize: 12, color: COLORS.headline },
   monthlySection: { marginTop: 22 },
   domainPickerRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 10, marginBottom: 14 },
   domainChip: {
@@ -910,5 +915,5 @@ const styles = StyleSheet.create({
   branchBadge: { borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 },
   branchBadgeHap: { backgroundColor: "rgba(111,169,139,0.15)" },
   branchBadgeChung: { borderWidth: 1, borderColor: "rgba(217,201,163,0.35)" },
-  branchBadgeText: { fontFamily: "Manrope_700Bold", fontSize: 10.5, color: COLORS.headline },
+  branchBadgeText: { fontFamily: "Manrope_700Bold", fontSize: 12, color: COLORS.headline },
 });

@@ -56,11 +56,18 @@ export type ReportContent = {
   opening_scene: string;
   case_tag: string;
   case_paragraphs: string[];
+  /** 2026-09-20: short reading under the element bar chart (absent in older saved reports). */
+  oheng_intro?: string;
   element_readings: Record<string, ElementReading>;
   upcoming_period_heading: string;
   upcoming_period_body: string;
   cross_analysis_quotes: string[];
   answer_notes: string[];
+  /** 2026-09-20: a written reading under each chat-derived page (absent in older saved reports). */
+  chat_snapshot_note?: string;
+  chat_trigger_note?: string;
+  chat_repeat_note?: string;
+  chat_fear_note?: string;
   psychology_fact_heading: string;
   psychology_fact_body: string;
   psychology_takeaway: string;
@@ -157,15 +164,16 @@ export default function ReportScreen({
 
   useEffect(() => {
     if (content) return;
-    const id = setInterval(() => setLoadingMsgIndex((i) => Math.min(i + 1, LOADING_MESSAGES.length - 1)), 2200);
+    const id = setInterval(() => setLoadingMsgIndex((i) => Math.min(i + 1, LOADING_MESSAGES.length - 1)), 7000);
     return () => clearInterval(id);
   }, [content]);
 
   async function fetchReport() {
     setErrorText(null);
-    // The report is a long GPT call — give up after 90s instead of spinning forever.
+    // The report is written, checked and reviewed before it is shown (up to ~2 minutes) — give up
+    // after 175s (the server stops at 180s) instead of spinning forever.
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 90_000);
+    const timeout = setTimeout(() => controller.abort(), 175_000);
     try {
       // Sent so the server can confirm a purchase and include the paid half right away; without
       // one (or if it can't confirm) that half comes back sealed instead.
@@ -359,14 +367,6 @@ export default function ReportScreen({
       node: <NarrativePage body={content.opening_scene} caption={`${nickname}${strings.report.nicknameSuffix}`} />,
     });
 
-    content.case_paragraphs.forEach((p, i) => {
-      body.push({
-        key: `case-${i}`,
-        tocLabel: i === 0 ? strings.report.sectionCaseStudy : undefined,
-        node: <CaseStudyPage tag={i === 0 ? content.case_tag : undefined} body={p} />,
-      });
-    });
-
     body.push({
       key: "quiz-analysis",
       tocLabel: strings.report.sectionQuizAnalysisToc,
@@ -383,10 +383,18 @@ export default function ReportScreen({
       ),
     });
 
+    content.case_paragraphs.forEach((p, i) => {
+      body.push({
+        key: `case-${i}`,
+        tocLabel: i === 0 ? strings.report.sectionCaseStudy : undefined,
+        node: <CaseStudyPage tag={i === 0 ? content.case_tag : undefined} body={p} />,
+      });
+    });
+
     body.push({
       key: "oheng-overview",
       tocLabel: strings.report.sectionSajuPatternSubtitle,
-      node: <OhengBarsPage title={strings.report.sectionSajuPattern} elements={resolvedElements} dominantKey={dominantKey} />,
+      node: <OhengBarsPage title={strings.report.sectionSajuPattern} elements={resolvedElements} dominantKey={dominantKey} intro={content.oheng_intro} />,
     });
 
     sortedKeys.forEach((key) => {
@@ -428,6 +436,7 @@ export default function ReportScreen({
               concern={typeof concern === "string" ? concern : ""}
               emotionLabel={strings.report.chatEmotionLabel}
               emotion={typeof emotion === "string" ? emotion : ""}
+              note={content.chat_snapshot_note}
             />
           ),
         });
@@ -438,7 +447,7 @@ export default function ReportScreen({
         body.push({
           key: "chat-trigger",
           locked: true,
-          node: <QuotePage eyebrow={strings.report.chatTriggerEyebrow} quote={trigger} />,
+          node: <QuotePage eyebrow={strings.report.chatTriggerEyebrow} quote={trigger} note={content.chat_trigger_note} />,
         });
       }
 
@@ -447,7 +456,7 @@ export default function ReportScreen({
         body.push({
           key: "chat-repeat-pattern",
           locked: true,
-          node: <QuotePage eyebrow={strings.report.chatRepeatPatternEyebrow} quote={repeatPattern} />,
+          node: <QuotePage eyebrow={strings.report.chatRepeatPatternEyebrow} quote={repeatPattern} note={content.chat_repeat_note} />,
         });
       }
 
@@ -456,7 +465,7 @@ export default function ReportScreen({
         body.push({
           key: "chat-core-fear",
           locked: true,
-          node: <QuotePage eyebrow={strings.report.chatCoreFearEyebrow} quote={coreFear} />,
+          node: <QuotePage eyebrow={strings.report.chatCoreFearEyebrow} quote={coreFear} note={content.chat_fear_note} />,
         });
       }
     }
@@ -482,7 +491,7 @@ export default function ReportScreen({
         key: `cross-${i}`,
         tocLabel: i === 0 ? strings.report.sectionCrossAnalysisToc : undefined,
         locked: true,
-        node: <QuotePage quote={q} />,
+        node: <QuotePage quote={q} leadOnly />,
       });
     });
 
@@ -662,10 +671,14 @@ export default function ReportScreen({
         <Pressable onPress={onBack} hitSlop={12} style={styles.chromeBack} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
         </Pressable>
-        <View style={styles.progressTrack}>
+        <View
+          style={styles.progressTrack}
+          accessibilityRole="progressbar"
+          accessibilityValue={{ min: 0, max: pages.length, now: pageIndex + 1 }}
+        >
           <View style={[styles.progressFill, { width: `${progressPct}%` }]} />
         </View>
-        <Text style={styles.progressCount}>
+        <Text style={styles.progressCount} accessibilityLiveRegion="polite">
           {String(pageIndex + 1).padStart(2, "0")}/{String(pages.length).padStart(2, "0")}
         </Text>
         {lockedOpen && (
@@ -864,7 +877,7 @@ function QuizAnalysisPage({
   );
 }
 
-function OhengBarsPage({ title, elements, dominantKey }: { title: string; elements: Record<string, number>; dominantKey: string }) {
+function OhengBarsPage({ title, elements, dominantKey, intro }: { title: string; elements: Record<string, number>; dominantKey: string; intro?: string }) {
   const strings = useStrings();
   return (
     <PageShell>
@@ -875,7 +888,6 @@ function OhengBarsPage({ title, elements, dominantKey }: { title: string; elemen
             <View style={pageStyles.barLabelRow}>
               <Text style={pageStyles.barLabel}>
                 {elementWithEmoji(key, strings.common.elementLabels[key])}
-                {key === dominantKey ? " ·" : ""}
               </Text>
               <Text style={pageStyles.barLabel}>{Math.round(elements[key] ?? 0)}%</Text>
             </View>
@@ -885,6 +897,7 @@ function OhengBarsPage({ title, elements, dominantKey }: { title: string; elemen
           </View>
         ))}
       </View>
+      {!!intro && <Text style={pageStyles.dataNote}>{sentenceLines(intro)}</Text>}
     </PageShell>
   );
 }
@@ -929,12 +942,23 @@ function ChatStoryPage({ chatExtract, strings }: { chatExtract: ChatExtract; str
   );
 }
 
-function QuotePage({ quote, eyebrow }: { quote: string; eyebrow?: string }) {
+/** The first sentence of `text` and everything after it. */
+function splitLead(text: string): { lead: string; rest: string } {
+  const m = text.match(/^(.+?[.!?…。]+)(\s+)([\s\S]+)$/);
+  return m ? { lead: m[1], rest: m[3] } : { lead: text, rest: "" };
+}
+
+/** A pull-quote page. `note` is a written reading underneath (the chat pages quote the user's
+ * own words, then say what they mean). `leadOnly` treats the text itself as "quote + reasoning":
+ * the first sentence is the big quotable line, the rest is body text. */
+function QuotePage({ quote, eyebrow, note, leadOnly }: { quote: string; eyebrow?: string; note?: string; leadOnly?: boolean }) {
+  const { lead, rest } = leadOnly ? splitLead(quote) : { lead: quote, rest: note ?? "" };
   return (
     <PageShell>
       {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
       <View style={pageStyles.quoteMid}>
-        <Text style={pageStyles.pullQuote}>{sentenceLines(quote)}</Text>
+        <Text style={pageStyles.pullQuote}>{sentenceLines(lead)}</Text>
+        {!!rest && <Text style={[pageStyles.caseBody, pageStyles.answerNote]}>{sentenceLines(rest)}</Text>}
       </View>
     </PageShell>
   );
@@ -967,12 +991,14 @@ function ConcernSnapshotPage({
   concern,
   emotionLabel,
   emotion,
+  note,
 }: {
   eyebrow: string;
   concernLabel: string;
   concern: string;
   emotionLabel: string;
   emotion: string;
+  note?: string;
 }) {
   return (
     <PageShell>
@@ -990,6 +1016,7 @@ function ConcernSnapshotPage({
             <Text style={pageStyles.snapshotValue}>{emotion}</Text>
           </>
         )}
+        {!!note && <Text style={[pageStyles.caseBody, pageStyles.answerNote]}>{sentenceLines(note)}</Text>}
       </View>
     </PageShell>
   );
@@ -1147,6 +1174,8 @@ function PaywallPage({
             {purchasing ? <ActivityIndicator color={COLORS.background} /> : <Text style={pageStyles.paywallBuyButtonLabel}>{strings.report.paywallBuyLabel(formatUsd(REPORT_PRICE))}</Text>}
           </Pressable>
 
+          <Text style={pageStyles.paywallOneTime}>{strings.report.paywallOneTimeNote}</Text>
+
           {ownedCount < TOTAL_MODULES && (
             <Pressable style={[pageStyles.paywallBundleButton, busy && pageStyles.paywallButtonDisabled]} onPress={onBuyBundle} disabled={busy}>
               <Text style={pageStyles.paywallBundleButtonLabel}>{strings.report.paywallBundleBuyLabel(formatUsd(BUNDLE_PRICE))}</Text>
@@ -1181,11 +1210,11 @@ const styles = StyleSheet.create({
   backLabel: { fontFamily: "Manrope_400Regular", fontSize: 12.5, color: COLORS.subheadline },
 
   chrome: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 18, paddingTop: 10, paddingBottom: 8 },
-  chromeBack: { padding: 4 },
-  chromePdf: { width: 36, height: 36, alignItems: "center", justifyContent: "center", marginRight: -6 },
+  chromeBack: { padding: 10, minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", marginLeft: -10 },
+  chromePdf: { width: 44, height: 44, alignItems: "center", justifyContent: "center", marginRight: -10 },
   progressTrack: { flex: 1, height: 3, borderRadius: 2, backgroundColor: "rgba(217,201,163,0.16)", overflow: "hidden" },
   progressFill: { height: "100%", borderRadius: 2, backgroundColor: COLORS.headline },
-  progressCount: { fontFamily: "Manrope_600SemiBold", fontSize: 11, color: COLORS.subheadline, letterSpacing: 0.5, minWidth: 44, textAlign: "right" },
+  progressCount: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: COLORS.subheadline, letterSpacing: 0.5, minWidth: 44, textAlign: "right" },
 
   pagerWrap: { flex: 1, position: "relative" },
   tapLeft: { position: "absolute", top: 0, bottom: 0, left: 0, width: "16%" },
@@ -1201,35 +1230,35 @@ const pageStyles = StyleSheet.create({
   shellPaper: { backgroundColor: PAPER_BG },
 
   brandRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 18 },
-  brandLabel: { fontFamily: "Manrope_700Bold", fontSize: 10, letterSpacing: 3, color: COLORS.gold, textTransform: "uppercase" },
+  brandLabel: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 3, color: COLORS.gold, textTransform: "uppercase" },
 
-  eyebrow: { fontFamily: "Manrope_700Bold", fontSize: 10.5, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 16 },
+  eyebrow: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 16 },
   eyebrowInk: { color: "#5C5237" },
 
   pageFoot: { marginTop: "auto", flexDirection: "row", justifyContent: "space-between" },
-  pageFootText: { fontFamily: "Manrope_600SemiBold", fontSize: 9.5, letterSpacing: 1.5, color: COLORS.footer, textTransform: "uppercase" },
+  pageFootText: { fontFamily: "Manrope_600SemiBold", fontSize: 12, letterSpacing: 1.5, color: COLORS.footer, textTransform: "uppercase" },
 
   coverMid: { flex: 1, justifyContent: "flex-start", paddingTop: "18%" },
   coverTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 27, lineHeight: 36, color: COLORS.headline, marginBottom: 4 },
   coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: 16 },
   coverSub: { fontFamily: "Manrope_500Medium", fontSize: 13, color: COLORS.headline },
 
-  tocEyebrow: { fontFamily: "Manrope_700Bold", fontSize: 10.5, letterSpacing: 2, textTransform: "uppercase", color: "#5C5237", marginTop: 24, marginBottom: 12 },
+  tocEyebrow: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: "#5C5237", marginTop: 24, marginBottom: 12 },
   tocTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 24, lineHeight: 31, color: "#22301F", marginBottom: 26 },
   tocList: { gap: 15 },
   tocRow: { flexDirection: "row", alignItems: "baseline", gap: 8 },
-  tocIdx: { fontFamily: "Manrope_600SemiBold", fontSize: 11, color: "#5C5237", width: 18 },
+  tocIdx: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: "#5C5237", width: 18 },
   tocName: { fontFamily: "Manrope_600SemiBold", fontSize: 13, color: "#22301F", flexShrink: 1 },
   tocDots: { flex: 1, borderBottomWidth: 1, borderBottomColor: "#B7A97D", borderStyle: "dotted", marginBottom: 3 },
   tocPage: { fontFamily: "Manrope_600SemiBold", fontSize: 11.5, color: "#5C5237" },
 
   narrativeMid: { flex: 1, justifyContent: "flex-start", paddingTop: "16%" },
   narrativeBody: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 19, lineHeight: 31, color: COLORS.headline },
-  narrativeCaption: { fontFamily: "Manrope_400Regular", fontSize: 11, lineHeight: 18, color: COLORS.footer, marginTop: 16 },
+  narrativeCaption: { fontFamily: "Manrope_400Regular", fontSize: 12, lineHeight: 18, color: COLORS.footer, marginTop: 16 },
 
   caseTag: {
     fontFamily: "Manrope_700Bold",
-    fontSize: 10,
+    fontSize: 12,
     letterSpacing: 0.5,
     color: COLORS.gold,
     backgroundColor: "rgba(111,169,139,0.1)",
@@ -1272,7 +1301,7 @@ const pageStyles = StyleSheet.create({
     paddingLeft: 16,
   },
   answerQuoteSpacing: { marginTop: 10 },
-  quotePrompt: { fontFamily: "Manrope_400Regular", fontSize: 11, lineHeight: 18, color: COLORS.footer },
+  quotePrompt: { fontFamily: "Manrope_400Regular", fontSize: 12, lineHeight: 18, color: COLORS.footer },
   answerNote: { marginTop: 18 },
   snapshotValue: {
     fontFamily: "CormorantGaramond_500Medium",
@@ -1286,7 +1315,7 @@ const pageStyles = StyleSheet.create({
 
   chatQuoteBox: { backgroundColor: "rgba(62,110,160,0.08)", borderWidth: 1, borderColor: "rgba(62,110,160,0.35)", borderRadius: 10, padding: 16, marginVertical: 14 },
   chatQuoteHeader: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 },
-  chatQuoteLabel: { fontFamily: "Manrope_700Bold", fontSize: 10.5, letterSpacing: 1, color: "#7FA8D6" },
+  chatQuoteLabel: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 1, color: "#7FA8D6" },
   chatQuoteText: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 15, lineHeight: 24, color: COLORS.headline },
 
   breatherLabelBox: {
@@ -1300,13 +1329,13 @@ const pageStyles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 16,
   },
-  breatherLabelText: { fontFamily: "Manrope_700Bold", fontSize: 10, letterSpacing: 1, textTransform: "uppercase", color: COLORS.gold },
+  breatherLabelText: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 1, textTransform: "uppercase", color: COLORS.gold },
   breatherTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 19, lineHeight: 25, color: COLORS.headline },
   takeawayBox: { marginTop: 18, backgroundColor: "rgba(255,255,255,0.03)", borderWidth: 1, borderColor: COLORS.border, borderRadius: 8, padding: 14 },
   takeawayText: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 20, color: "#C7C3D1" },
   takeawayBold: { fontFamily: "Manrope_700Bold", color: COLORS.gold },
 
-  cardIndex: { fontFamily: "Manrope_700Bold", fontSize: 10.5, letterSpacing: 1.5, textTransform: "uppercase", marginTop: 20 },
+  cardIndex: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", marginTop: 20 },
   cardMid: { flex: 1, justifyContent: "flex-start", paddingTop: "20%" },
   cardTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 30, color: COLORS.headline, marginBottom: 14 },
   cardBody: { fontFamily: "Manrope_400Regular", fontSize: 14, lineHeight: 23, color: "#C7C3D1" },
@@ -1315,7 +1344,7 @@ const pageStyles = StyleSheet.create({
 
   closingTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 25, lineHeight: 32, color: COLORS.headline, marginBottom: 4 },
   closingBrand: { paddingTop: 20, borderTopWidth: 1, borderTopColor: COLORS.border },
-  disclaimer: { fontFamily: "Manrope_400Regular", fontSize: 10.5, lineHeight: 17, color: COLORS.footer, marginTop: 10 },
+  disclaimer: { fontFamily: "Manrope_400Regular", fontSize: 12, lineHeight: 17, color: COLORS.footer, marginTop: 10 },
 
   paywallMid: { flex: 1, justifyContent: "center" },
   paywallCard: { alignItems: "center", backgroundColor: "rgba(111,169,139,0.06)", borderWidth: 1, borderColor: "rgba(111,169,139,0.3)", borderRadius: 16, padding: 26, gap: 10, width: "100%" },
@@ -1324,9 +1353,10 @@ const pageStyles = StyleSheet.create({
   paywallButtonDisabled: { opacity: 0.6 },
   paywallBuyButton: { width: "100%", backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 14, alignItems: "center", marginTop: 8 },
   paywallBuyButtonLabel: { fontFamily: "Manrope_700Bold", fontSize: 14, color: COLORS.background },
+  paywallOneTime: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 19, color: COLORS.footer, textAlign: "center" },
   paywallBundleButton: { width: "100%", borderWidth: 1, borderColor: "rgba(111,169,139,0.4)", borderRadius: 12, paddingVertical: 12, alignItems: "center", gap: 3 },
   paywallBundleButtonLabel: { fontFamily: "Manrope_700Bold", fontSize: 13, color: COLORS.headline },
-  paywallBundleSub: { fontFamily: "Manrope_400Regular", fontSize: 11, color: COLORS.subheadline, textAlign: "center" },
+  paywallBundleSub: { fontFamily: "Manrope_400Regular", fontSize: 12, color: COLORS.subheadline, textAlign: "center" },
   paywallLockedNote: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.gold, textAlign: "center" },
   paywallRestoreButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 8 },
   paywallDisclaimer: { fontFamily: "Manrope_400Regular", fontSize: 11.5, lineHeight: 17, color: COLORS.subheadline, textAlign: "center", marginTop: 14, paddingHorizontal: 6 },

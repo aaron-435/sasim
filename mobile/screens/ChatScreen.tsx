@@ -207,7 +207,7 @@ export default function ChatScreen({
     <SafeAreaView style={styles.root}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <View style={styles.header}>
-          <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+          <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
             <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
           </Pressable>
           <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
@@ -303,6 +303,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#1C1B24",
   },
   backButton: {
+    minHeight: 44,
     padding: 4,
     marginRight: 2,
   },
@@ -325,7 +326,7 @@ const styles = StyleSheet.create({
     color: COLORS.footer,
   },
   countdownLabelWarn: {
-    color: "#CB6249",
+    color: COLORS.danger,
   },
   scroll: {
     flex: 1,

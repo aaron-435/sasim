@@ -354,11 +354,16 @@ export interface DeepPdfContent {
   opening_scene: string;
   case_tag: string;
   case_paragraphs: string[];
+  oheng_intro?: string;
   element_readings: Record<string, { heading: string; body: string }>;
   upcoming_period_heading: string;
   upcoming_period_body: string;
   cross_analysis_quotes: string[];
   answer_notes: string[];
+  chat_snapshot_note?: string;
+  chat_trigger_note?: string;
+  chat_repeat_note?: string;
+  chat_fear_note?: string;
   psychology_fact_heading: string;
   psychology_fact_body: string;
   psychology_takeaway: string;
@@ -407,16 +412,6 @@ function DeepDocument({ locale, nickname, date, content, extras }: { locale: Loc
           <Text style={s.quote}>{content.opening_scene}</Text>
         </Section>
 
-        {content.case_paragraphs.length > 0 && (
-          <Section s={s} label={d.caseStudy} title={content.case_tag || d.caseStudy}>
-            {content.case_paragraphs.map((p, i) => (
-              <Text key={i} style={s.p}>
-                {p}
-              </Text>
-            ))}
-          </Section>
-        )}
-
         <Section s={s} label={d.quiz} title={extras.typeTitle}>
           {extras.typeHook ? <Text style={s.pMuted}>{extras.typeHook}</Text> : null}
           <Paragraphs s={s} text={extras.nuancedSummary} />
@@ -431,9 +426,20 @@ function DeepDocument({ locale, nickname, date, content, extras }: { locale: Loc
           ))}
         </Section>
 
+        {content.case_paragraphs.length > 0 && (
+          <Section s={s} label={d.caseStudy} title={content.case_tag || d.caseStudy}>
+            {content.case_paragraphs.map((p, i) => (
+              <Text key={i} style={s.p}>
+                {p}
+              </Text>
+            ))}
+          </Section>
+        )}
+
         {extras.elements && (
           <Section s={s} label={d.oheng} title={d.oheng}>
             <Bars s={s} labels={labels} elements={extras.elements} />
+            {content.oheng_intro ? <Paragraphs s={s} text={content.oheng_intro} /> : null}
           </Section>
         )}
         {sortedElements.map((key) => {
@@ -454,6 +460,9 @@ function DeepDocument({ locale, nickname, date, content, extras }: { locale: Loc
               value && value.trim() ? (
                 <Card key={label} s={s} title={label} body={value} />
               ) : null,
+            )}
+            {[content.chat_snapshot_note, content.chat_trigger_note, content.chat_repeat_note, content.chat_fear_note].map((note, i) =>
+              note && note.trim() ? <Paragraphs key={`note-${i}`} s={s} text={note} /> : null,
             )}
           </Section>
         )}

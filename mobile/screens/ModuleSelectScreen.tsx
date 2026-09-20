@@ -27,10 +27,15 @@ export default function ModuleSelectScreen({
   const orderedModules = preferredTrack
     ? [...MODULES].sort((a, b) => Number(b.track === preferredTrack) - Number(a.track === preferredTrack))
     : MODULES;
+  // "Recommended" only means something if it isn't on nearly every card: flag the top three
+  // modules of the user's own track.
+  const recommendedIds = new Set(
+    orderedModules.filter((m) => preferredTrack && m.track === preferredTrack).slice(0, 3).map((m) => m.id)
+  );
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </Pressable>
@@ -48,7 +53,7 @@ export default function ModuleSelectScreen({
             <View style={styles.cardText}>
               <View style={styles.cardTitleRow}>
                 <Text style={styles.cardTitle}>{m.title[locale] ?? m.title.ko}</Text>
-                {preferredTrack && m.track === preferredTrack && (
+                {recommendedIds.has(m.id) && (
                   <View style={styles.recommendedBadge}>
                     <Text style={styles.recommendedBadgeText}>{strings.moduleSelect.recommendedBadge}</Text>
                   </View>
@@ -75,6 +80,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   backButton: {
+    minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
@@ -140,14 +146,14 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
   },
   recommendedBadge: {
-    backgroundColor: "rgba(212,175,110,0.14)",
+    backgroundColor: "rgba(111,169,139,0.16)",
     borderRadius: 999,
     paddingVertical: 2,
     paddingHorizontal: 8,
   },
   recommendedBadgeText: {
     fontFamily: "Manrope_700Bold",
-    fontSize: 10,
+    fontSize: 12,
     color: COLORS.gold,
   },
   cardSubtitle: {

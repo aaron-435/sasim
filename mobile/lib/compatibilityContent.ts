@@ -93,37 +93,37 @@ const en: CompatibilityContent = {
 const es: CompatibilityContent = {
   relations: {
     mirror: {
-      headline: "Cortados por la misma tela",
-      body: "Comparten la misma corriente, así que mucho se entiende sin decirlo. Es cómodo; el riesgo es que se atascan justo en el mismo punto, y el mismo punto ciego puede escapárseles a los dos a la vez.",
-      goodPoint: "Comparten la misma corriente, así que mucho se entiende sin decirlo — estar juntos se siente fácil.",
-      caution: "Tienden a atascarse justo en el mismo punto, así que ayuda tener una tercera mirada que vea lo que a ustedes se les escapa.",
+      headline: "De la misma madera",
+      body: "Entre los dos hay una misma corriente, así que mucho se entiende sin decirlo. Es cómodo; el riesgo es que ambos se atasquen justo en el mismo punto, y que el mismo punto ciego se les escape a la vez.",
+      goodPoint: "Entre los dos hay una misma corriente, así que mucho se entiende sin decirlo y estar juntos resulta fácil.",
+      caution: "Es fácil que ambos se atasquen en el mismo punto, así que ayuda contar con una tercera mirada que vea lo que ninguno de los dos alcanza a ver.",
     },
     selfNurturesOther: {
-      headline: "Tú eres quien la impulsa",
-      body: "Tu energía empuja la suya hacia adelante. Verla crecer se siente bien, pero si solo das, puede que no notes que tu propio lado se está vaciando — vale la pena practicar también el recibir.",
-      goodPoint: "Tu energía empuja la suya hacia adelante, y verla crecer se convierte en una verdadera alegría.",
-      caution: "Si solo das, tu propio lado puede vaciarse en silencio — practica también el recibir.",
+      headline: "Eres quien impulsa",
+      body: "Tu energía empuja hacia adelante la de la otra persona. Ver cómo crece se siente bien, pero si solo das, puede que no notes que tu propio lado se está vaciando: conviene practicar también el recibir.",
+      goodPoint: "Tu energía empuja hacia adelante la de la otra persona, y ver cómo crece se convierte en una verdadera alegría.",
+      caution: "Si solo das, tu propio lado puede vaciarse sin que lo notes: practica también el recibir.",
     },
     otherNurturesSelf: {
-      headline: "Tú eres quien recibe el impulso",
-      body: "Su energía empuja la tuya hacia adelante. Estar cerca de ella te levanta de forma natural — el riesgo es que apoyarte así se vuelva costumbre y olvides cómo recargarte por tu cuenta.",
-      goodPoint: "Su energía empuja la tuya hacia adelante, así que estar cerca de ella te levanta de forma natural.",
-      caution: "Apoyarte así puede volverse costumbre — asegúrate de saber recargarte también por tu cuenta.",
+      headline: "Eres quien recibe el impulso",
+      body: "La energía de la otra persona empuja la tuya hacia adelante. Estar a su lado te da fuerzas de forma natural; el riesgo es que apoyarte así se vuelva costumbre y olvides cómo recargarte por tu cuenta.",
+      goodPoint: "La energía de la otra persona empuja la tuya hacia adelante, así que estar a su lado te da fuerzas de forma natural.",
+      caution: "Apoyarte así puede volverse costumbre: asegúrate de saber recargarte también por tu cuenta.",
     },
     selfChallengesOther: {
-      headline: "Tú eres quien la reta",
-      body: "Le das dirección aunque eso genere fricción. Esa fricción los hace crecer a los dos — solo cuida el momento en que empiece a sentirse como un regaño en vez de cuidado.",
-      goodPoint: "Le das dirección, y esa fricción realmente los hace crecer a los dos.",
-      caution: "Cuida el momento en que empiece a sentirse como un regaño en vez de cuidado, y dilo en voz alta.",
+      headline: "Eres quien desafía",
+      body: "Marcas el rumbo aunque eso genere fricción. Esa fricción los hace crecer a los dos; solo cuida el momento en que empiece a sentirse como un sermón en vez de cuidado.",
+      goodPoint: "Marcas el rumbo, y esa fricción los hace crecer a los dos.",
+      caution: "Cuida el momento en que empiece a sentirse como un sermón en vez de cuidado, y di en voz alta que viene del cariño.",
     },
     otherChallengesSelf: {
-      headline: "Tú eres quien recibe el reto",
-      body: "Ella te mantiene alerta, incluso cuando incomoda. Por eso mismo te mueve — ayuda confirmar, a veces en voz alta, que esa presión viene del cariño.",
-      goodPoint: "Ella te mantiene alerta — por eso mismo te mueve.",
-      caution: "La presión no siempre es cómoda, así que ayuda confirmar, en voz alta, que viene del cariño.",
+      headline: "Eres quien recibe el desafío",
+      body: "La otra persona te mantiene alerta, incluso cuando resulta incómodo. Por eso mismo te mueve: ayuda confirmar, a veces en voz alta, que esa presión viene del cariño.",
+      goodPoint: "Esa persona te mantiene alerta, y por eso mismo te mueve.",
+      caution: "La presión no siempre es cómoda, así que ayuda confirmar en voz alta que viene del cariño.",
     },
   },
-  bondNote: "Además, sus dos day-masters forman un vínculo clásico — esta combinación trae un tirón extra que no es fácil de explicar.",
+  bondNote: "Además, los dos Maestros del Día forman un vínculo clásico: esta combinación trae una atracción extra que no es fácil de explicar.",
 };
 
 export const COMPATIBILITY_CONTENT: Record<Locale, CompatibilityContent> = { ko, en, es };

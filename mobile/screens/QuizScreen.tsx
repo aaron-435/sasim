@@ -199,7 +199,7 @@ export default function QuizScreen({
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.header}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
         </Pressable>
         <View style={styles.progressTrack}>
@@ -264,6 +264,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   backButton: {
+    minHeight: 44,
     padding: 8,
     marginLeft: -8,
   },

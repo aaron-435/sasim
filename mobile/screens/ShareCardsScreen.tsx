@@ -37,7 +37,7 @@ const YEAR_SPOTLIGHT: Record<CompatibilityResult["relation"], YearDomain> = {
   selfNurturesOther: "love",
   otherNurturesSelf: "career",
   selfChallengesOther: "wealth",
-  otherChallengesSelf: "health",
+  otherChallengesSelf: "career",
 };
 
 type YearData = { year: number; relation: CompatibilityResult["relation"] };
@@ -180,7 +180,10 @@ export default function ShareCardsScreen({
               accessibilityRole="tab"
               accessibilityState={{ selected: kind === t.key }}
             >
-              <Text style={[styles.tabLabel, kind === t.key && styles.tabLabelActive]}>{t.label}</Text>
+              <View style={styles.tabInner}>
+                {t.key === "year" && entitled === false && <Lock size={12} strokeWidth={2} color={kind === t.key ? COLORS.gold : COLORS.subheadline} />}
+                <Text style={[styles.tabLabel, kind === t.key && styles.tabLabelActive]}>{t.label}</Text>
+              </View>
             </Pressable>
           ))}
         </View>
@@ -262,8 +265,9 @@ const styles = StyleSheet.create({
   heading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginTop: 4 },
   subtitle: { fontFamily: "Manrope_400Regular", fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginTop: 6, marginBottom: 16 },
   tabRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 20 },
-  tab: { minHeight: 40, justifyContent: "center", paddingHorizontal: 14, borderRadius: 999, backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border },
+  tab: { minHeight: 44, justifyContent: "center", paddingHorizontal: 14, borderRadius: 999, backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border },
   tabActive: { backgroundColor: "rgba(111,169,139,0.12)", borderColor: "rgba(111,169,139,0.4)" },
+  tabInner: { flexDirection: "row", alignItems: "center", gap: 5 },
   tabLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 13, color: COLORS.subheadline },
   tabLabelActive: { color: COLORS.gold },
   spinner: { marginVertical: 40 },

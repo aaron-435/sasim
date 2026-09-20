@@ -97,24 +97,34 @@ export function qaPersonaKeys(): string[] {
   return Object.keys(loadData()?.QA_PERSONAS ?? {});
 }
 
-// The fixtures were generated for one fictional person per language; swap that name for the
-// active persona's nickname so the report reads as theirs.
-const FIXTURE_NAMES: Record<Locale, { year: string; deep: string }> = {
-  ko: { year: "지수", deep: "지수" },
-  en: { year: "Jisoo", deep: "Mia" },
-  es: { year: "Jisoo", deep: "Lucía" },
-};
-
+// Fixtures are generated per persona (see qaData.ts). With `?persona=` the persona's own report is
+// used; without one (or with a `?lang=` override) the first persona speaking that language stands
+// in, and its name is swapped for the active nickname so the report still reads as theirs.
 function renameIn<T>(value: T, from: string, to: string | undefined): T {
   if (!to || to === from) return value;
   return JSON.parse(JSON.stringify(value).split(from).join(to.replace(/["\\]/g, ""))) as T;
 }
 
-/** A generated year-ahead report in `locale`, or null when the mode is off. */
+function pickFixture<T>(table: Record<string, T>, locale: Locale, nickname?: string): T | null {
+  const data = loadData();
+  const mode = getQaMode();
+  if (!data || !mode) return null;
+  const own = mode.persona && data.QA_PERSONAS[mode.persona]?.locale === locale ? mode.persona : null;
+  const key = own ?? Object.keys(table).find((k) => data.QA_PERSONAS[k]?.locale === locale);
+  if (!key || !table[key]) return null;
+  return own ? table[key] : renameIn(table[key], data.QA_PERSONAS[key].nickname, nickname);
+}
+
+/** A generated year-ahead report in LANG=""
+LC_COLLATE="C"
+LC_CTYPE="C"
+LC_MESSAGES="C"
+LC_MONETARY="C"
+LC_NUMERIC="C"
+LC_TIME="C"
+LC_ALL=, or null when the mode is off. */
 export function qaYearReport(locale: Locale, nickname?: string): unknown | null {
-  if (!getQaMode()) return null;
-  const fixture = loadData()?.QA_YEAR_REPORT[locale] ?? null;
-  return fixture && renameIn(fixture, FIXTURE_NAMES[locale].year, nickname);
+  return pickFixture(loadData()?.QA_YEAR_REPORT ?? {}, locale, nickname);
 }
 
 /** A generated deep report with the diagnosis and chat it was written from. */
@@ -122,7 +132,5 @@ export function qaDeepReport(
   locale: Locale,
   nickname?: string
 ): { content: unknown; quizDiagnosis: unknown; chatExtract: unknown } | null {
-  if (!getQaMode()) return null;
-  const fixture = loadData()?.QA_DEEP_REPORT[locale] ?? null;
-  return fixture && renameIn(fixture, FIXTURE_NAMES[locale].deep, nickname);
+  return pickFixture(loadData()?.QA_DEEP_REPORT ?? {}, locale, nickname);
 }

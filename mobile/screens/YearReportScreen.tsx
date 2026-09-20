@@ -301,6 +301,7 @@ export default function YearReportScreen({
           ))}
 
           <Text style={[styles.chapterHeading, styles.sectionGap]}>{strings.yearReport.timelineHeading}</Text>
+          <Text style={styles.timelineNote}>{strings.yearReport.timelineNote}</Text>
           <View style={styles.list}>
             {report.months.map((m, i) => {
               const calendarMonth = ((i + 1) % 12) + 1; // saju months run from 입춘 (Feb) to the next January
@@ -370,7 +371,7 @@ export default function YearReportScreen({
         >
           {purchasing ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.buyLabel}>{strings.yearReport.buyButton(price)}</Text>}
         </Pressable>
-        <Text style={styles.oneTime}>{strings.yearReport.oneTimeNote}</Text>
+        <Text style={styles.oneTime}>{price ? strings.yearReport.oneTimeNote : `${strings.yearReport.priceAtCheckout} ${strings.yearReport.oneTimeNote}`}</Text>
         <Pressable style={styles.restoreButton} onPress={handleRestore} disabled={purchasing || restoring} accessibilityRole="button">
           <Text style={styles.restoreLabel}>{restoring ? strings.yearReport.restoring : strings.yearReport.restore}</Text>
         </Pressable>
@@ -404,6 +405,7 @@ const styles = StyleSheet.create({
   previewLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: COLORS.subheadline, marginBottom: 6 },
   list: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, overflow: "hidden" },
   rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: COLORS.border },
+  timelineNote: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: -4, marginBottom: 10 },
   monthRow: { flexDirection: "row", gap: 14, paddingVertical: 12, paddingHorizontal: 16 },
   monthName: { width: 40, fontFamily: "Manrope_600SemiBold", fontSize: 13, color: COLORS.gold },
   monthText: { flex: 1, gap: 2 },

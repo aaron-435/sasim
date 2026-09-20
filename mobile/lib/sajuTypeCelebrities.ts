@@ -53,7 +53,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "테슬라와 스페이스X를 동시에 밀어붙여 전기차와 로켓의 기준을 바꿨습니다.",
         "Pushed Tesla and SpaceX forward at the same time, resetting the bar for electric cars and rockets.",
-        "Impulsó Tesla y SpaceX al mismo tiempo, cambiando el estándar de los autos eléctricos y los cohetes."
+        "Impulsó Tesla y SpaceX al mismo tiempo, cambiando el estándar de los vehículos eléctricos y los cohetes."
       ),
     },
     {
@@ -141,7 +141,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "'성 대결' 경기에서 이기며 테니스의 남녀 상금 평등을 이끌어냈습니다.",
         "Won the 'Battle of the Sexes' and fought for equal pay in tennis.",
-        "Ganó la 'Batalla de los Sexos' y luchó por la igualdad salarial en el tenis."
+        "Ganó la «Batalla de los Sexos» y luchó por la igualdad salarial en el tenis."
       ),
     },
     {
@@ -185,7 +185,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "35세에 세상을 떠나기까지 600곡이 넘는 작품을 남겼습니다.",
         "Composed over 600 works before dying at 35.",
-        "Compuso más de 600 obras antes de morir a los 35 años."
+        "Compuso más de 600 obras en apenas 35 años de vida."
       ),
     },
     {
@@ -747,7 +747,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "영국 최초의 여성 총리가 됐습니다.",
         "Became Britain's first female prime minister.",
-        "Se convirtió en la primera ministra de Gran Bretaña."
+        "Fue la primera mujer en ocupar el cargo de primera ministra de Gran Bretaña."
       ),
     },
   ],
@@ -913,7 +913,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "익명의 믹스테이프로 시작해 슈퍼볼 할프타임 무대에 섰습니다.",
         "Rose from anonymous mixtapes to headline the Super Bowl halftime show.",
-        "Surgió de mixtapes anónimos para encabezar el show de medio tiempo del Super Bowl."
+        "Surgió de sus primeras grabaciones anónimas en internet para encabezar el show de medio tiempo del Super Bowl."
       ),
     },
     {
@@ -923,7 +923,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "동세대에서 가장 젊은 나이에 오스카 남우주연상 후보에 올랐습니다.",
         "Became one of the youngest Best Actor Oscar nominees of his era.",
-        "Se convirtió en uno de los nominados más jóvenes a Mejor Actor en los Óscar."
+        "Se convirtió en uno de los actores más jóvenes nominados al Óscar al mejor actor."
       ),
     },
   ],
@@ -935,7 +935,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "잔지바르에서 이주해 록 역사상 최고의 쇼맨 중 한 명이 됐습니다.",
         "Immigrated from Zanzibar to become one of rock's greatest showmen.",
-        "Emigró desde Zanzíbar para convertirse en uno de los mejores showmen del rock."
+        "Emigró desde Zanzíbar para convertirse en uno de los grandes artistas de escenario del rock."
       ),
     },
     {
@@ -957,7 +957,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "큐비즘을 공동 창시하고 75년간 왕성하게 활동했습니다.",
         "Co-founded Cubism and remained prolific for 75 years.",
-        "Cofundó el Cubismo y se mantuvo prolífico durante 75 años."
+        "Cofundó el cubismo y siguió creando sin descanso durante 75 años."
       ),
     },
     {
@@ -979,7 +979,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "미국 최초의 여성이자 흑인 여성 부통령이 됐습니다.",
         "Became the first woman and first Black woman US vice president.",
-        "Se convirtió en la primera mujer y primera mujer afroamericana vicepresidenta de EE. UU."
+        "Fue la primera mujer, y la primera mujer afroamericana, en ocupar la vicepresidencia de EE. UU."
       ),
     },
     {
@@ -1011,7 +1011,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "2010년대 최연소 여우주연상 수상자가 됐습니다.",
         "Became the youngest Best Actress winner of the 2010s.",
-        "Se convirtió en la ganadora más joven a Mejor Actriz de la década de 2010."
+        "Se convirtió en la ganadora más joven del Óscar a la mejor actriz de la década de 2010."
       ),
     },
   ],
@@ -1023,7 +1023,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "초기의 거절들을 딛고 최고의 베스트셀러 공포소설 작가가 됐습니다.",
         "Became the best-selling horror author after early rejection.",
-        "Se convirtió en el autor de terror más vendido tras rechazos iniciales."
+        "Se convirtió en el autor de terror más vendido tras los rechazos de sus inicios."
       ),
     },
     {
@@ -1111,7 +1111,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "콜카타의 가장 가난한 이들을 돌보는 데 평생을 바쳤습니다.",
         "Devoted her life to caring for the poorest of the poor in Calcutta.",
-        "Dedicó su vida a cuidar a los más pobres de Calcuta."
+        "Dedicó su vida a cuidar a las personas más pobres de Calcuta."
       ),
     },
     {

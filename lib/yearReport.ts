@@ -70,12 +70,14 @@ function parseYearReport(raw: unknown, year: number): YearReportContent {
   const monthsOk = content.months.length === 12 && content.months.every((m) => m.headline && m.body);
   const planOk = content.action_plan.length === 4 && content.action_plan.every((a) => a.title && a.body);
   if (!content.title || !content.overview || !chaptersOk || !monthsOk || !planOk || !content.closing) {
-    throw new Error("year report response was incomplete");
+    throw new Error(`year report response was incomplete (title=${!!content.title} overview=${!!content.overview} chapters=${chaptersOk} months=${monthsOk}/${content.months.length} plan=${planOk}/${content.action_plan.length} closing=${!!content.closing})`);
   }
   return content;
 }
 
-export async function getYearReportContent(ctx: YearReportContext, sessionId?: string): Promise<YearReportContent> {
+class IncompleteYearReport extends Error {}
+
+async function generateYearReportOnce(ctx: YearReportContext, sessionId?: string): Promise<YearReportContent> {
   const completion = await client.chat.completions.create({
     model: YEAR_REPORT_MODEL,
     temperature: 0.8,
@@ -94,6 +96,26 @@ export async function getYearReportContent(ctx: YearReportContext, sessionId?: s
   }
 
   const content = completion.choices[0]?.message?.content?.trim();
-  if (!content) throw new Error("OpenAI가 빈 응답을 반환했습니다.");
-  return parseYearReport(JSON.parse(content), ctx.year);
+  if (!content) throw new IncompleteYearReport("OpenAI가 빈 응답을 반환했습니다.");
+  try {
+    return parseYearReport(JSON.parse(content), ctx.year);
+  } catch (err) {
+    throw new IncompleteYearReport(err instanceof Error ? err.message : "year report response was incomplete");
+  }
+}
+
+/** The model now writes longer month entries, so an occasional response comes back with a missing
+ * month or chapter. That is a generation hiccup, not the user's problem: try up to three times before
+ * surfacing an error (the route turns a thrown error into a retryable message). */
+export async function getYearReportContent(ctx: YearReportContext, sessionId?: string): Promise<YearReportContent> {
+  let last: unknown;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await generateYearReportOnce(ctx, sessionId);
+    } catch (err) {
+      if (!(err instanceof IncompleteYearReport)) throw err;
+      last = err;
+    }
+  }
+  throw last;
 }

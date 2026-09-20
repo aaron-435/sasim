@@ -25,19 +25,19 @@
               "id": "love_new_02",
               "text_ko": "나에게 어울리는 사람은 어떤 성격일까?",
               "text_en": "What personality would suit me well?",
-              "text_es": "¿Qué personalidad me convendría bien?"
+              "text_es": "¿Qué personalidad tiene la persona que mejor encaja conmigo?"
             },
             {
               "id": "love_new_03",
               "text_ko": "나는 왜 자꾸 비슷한 사람에게 끌릴까?",
               "text_en": "Why do I keep being drawn to the same type of person?",
-              "text_es": "¿Por qué sigo sintiéndome atraído/a por el mismo tipo de persona?"
+              "text_es": "¿Por qué me atrae siempre el mismo tipo de persona?"
             },
             {
               "id": "love_new_04",
               "text_ko": "첫눈에 반하는 사랑이 나에게도 올까?",
               "text_en": "Will love at first sight happen to me too?",
-              "text_es": "¿Me pasará a mí también el amor a primera vista?"
+              "text_es": "¿Viviré alguna vez un amor a primera vista?"
             },
             {
               "id": "love_new_05",
@@ -49,13 +49,13 @@
               "id": "love_new_06",
               "text_ko": "지금 솔로인 이유가 사주에도 나와 있을까?",
               "text_en": "Does my saju show why I'm single right now?",
-              "text_es": "¿Muestra mi saju por qué estoy soltero/a ahora mismo?"
+              "text_es": "¿Muestra mi saju por qué sigo sin pareja ahora mismo?"
             },
             {
               "id": "love_new_07",
               "text_ko": "나에게 호감을 갖고 있는 사람이 주변에 있을까?",
               "text_en": "Is there someone nearby who's interested in me?",
-              "text_es": "¿Hay alguien cerca que esté interesado/a en mí?"
+              "text_es": "¿Hay cerca de mí alguien a quien le intereso?"
             },
             {
               "id": "love_new_08",
@@ -73,7 +73,7 @@
               "id": "love_new_10",
               "text_ko": "소개팅이나 새로운 만남이 잘 풀릴 시기가 있을까?",
               "text_en": "Is there a good period coming up for a blind date or new meeting?",
-              "text_es": "¿Hay un buen período por venir para una cita a ciegas o un nuevo encuentro?"
+              "text_es": "¿Se acerca un buen momento para una cita a ciegas o para conocer a alguien nuevo?"
             },
             {
               "id": "love_new_11",
@@ -85,7 +85,7 @@
               "id": "love_new_12",
               "text_ko": "나와 잘 맞는 사람의 특징은 무엇일까?",
               "text_en": "What traits does someone who's a good match for me have?",
-              "text_es": "¿Qué características tiene alguien que sería un buen partido para mí?"
+              "text_es": "¿Cómo es la persona que sería una buena pareja para mí?"
             },
             {
               "id": "love_new_13",
@@ -97,13 +97,13 @@
               "id": "love_new_14",
               "text_ko": "나의 이상형과 실제로 잘 맞는 사람은 다를까?",
               "text_en": "Is the person who's actually right for me different from my ideal type?",
-              "text_es": "¿Es la persona que realmente me conviene diferente de mi tipo ideal?"
+              "text_es": "¿Es distinta de mi tipo ideal la persona que de verdad me conviene?"
             },
             {
               "id": "love_new_15",
               "text_ko": "온라인에서 만난 인연도 잘 이어질 수 있을까?",
               "text_en": "Can a connection made online actually work out?",
-              "text_es": "¿Puede funcionar de verdad una conexión hecha en línea?"
+              "text_es": "¿Puede funcionar una relación que empieza en línea?"
             },
             {
               "id": "love_new_16",
@@ -121,13 +121,13 @@
               "id": "love_new_18",
               "text_ko": "나는 왜 마음에 드는 사람 앞에서 소극적으로 변할까?",
               "text_en": "Why do I become passive around someone I like?",
-              "text_es": "¿Por qué me vuelvo pasivo/a frente a alguien que me gusta?"
+              "text_es": "¿Por qué me retraigo ante alguien que me gusta?"
             },
             {
               "id": "love_new_19",
               "text_ko": "지금 내 곁에 좋은 인연이 다가오고 있을까?",
               "text_en": "Is a good connection approaching me right now?",
-              "text_es": "¿Se está acercando una buena conexión a mí en este momento?"
+              "text_es": "¿Se me acerca una buena conexión en este momento?"
             },
             {
               "id": "love_new_20",
@@ -137,7 +137,7 @@
             }
           ],
           "name_en": "New Love",
-          "name_es": "Nuevo Amor"
+          "name_es": "Nuevo amor"
         },
         {
           "id": "love_marriage",
@@ -171,7 +171,7 @@
               "id": "love_marriage_05",
               "text_ko": "나는 결혼을 서두르는 게 좋을까, 천천히 하는 게 좋을까?",
               "text_en": "Should I rush into marriage, or take it slow?",
-              "text_es": "¿Debería apresurarme a casarme, o tomarlo con calma?"
+              "text_es": "¿Debería darme prisa en casarme, o tomármelo con calma?"
             },
             {
               "id": "love_marriage_06",
@@ -189,13 +189,13 @@
               "id": "love_marriage_08",
               "text_ko": "결혼 상대를 이미 알고 지내는 사이일 수도 있을까?",
               "text_en": "Could I already know the person I'll marry?",
-              "text_es": "¿Podría ya conocer a la persona con la que me voy a casar?"
+              "text_es": "¿Es posible que ya haya conocido a la persona con la que me voy a casar?"
             },
             {
               "id": "love_marriage_09",
               "text_ko": "나에게 결혼하기 좋은 시기는 언제일까?",
               "text_en": "When's a good time for me to get married?",
-              "text_es": "¿Cuándo es un buen momento para que me case?"
+              "text_es": "¿Cuándo sería un buen momento para casarme?"
             },
             {
               "id": "love_marriage_10",
@@ -207,7 +207,7 @@
               "id": "love_marriage_11",
               "text_ko": "나의 배우자는 나에게 어떤 존재가 되어줄까?",
               "text_en": "What will my spouse become to me?",
-              "text_es": "¿Qué llegará a ser mi pareja para mí?"
+              "text_es": "¿Qué papel tendrá mi pareja en mi vida?"
             },
             {
               "id": "love_marriage_12",
@@ -219,7 +219,7 @@
               "id": "love_marriage_13",
               "text_ko": "청혼을 받게 된다면 그 시기는 언제쯤일까?",
               "text_en": "If I get a proposal, around when might that be?",
-              "text_es": "Si recibo una propuesta de matrimonio, ¿aproximadamente cuándo sería?"
+              "text_es": "Si me proponen matrimonio, ¿más o menos cuándo sería?"
             },
             {
               "id": "love_marriage_14",
@@ -231,7 +231,7 @@
               "id": "love_marriage_15",
               "text_ko": "나와 배우자는 경제적으로 잘 맞을까?",
               "text_en": "Will my spouse and I be financially compatible?",
-              "text_es": "¿Seremos mi pareja y yo compatibles económicamente?"
+              "text_es": "¿Nos llevaremos bien mi pareja y yo en temas de dinero?"
             },
             {
               "id": "love_marriage_16",
@@ -243,29 +243,29 @@
               "id": "love_marriage_17",
               "text_ko": "나는 결혼을 통해 어떤 변화를 겪게 될까?",
               "text_en": "What changes will I go through because of marriage?",
-              "text_es": "¿Qué cambios experimentaré por el matrimonio?"
+              "text_es": "¿Qué cambios traerá el matrimonio a mi vida?"
             },
             {
               "id": "love_marriage_18",
               "text_ko": "지금 만나는 사람과 결혼까지 이어질 가능성이 있을까?",
               "text_en": "Is there a chance my current relationship leads to marriage?",
-              "text_es": "¿Hay una posibilidad de que mi relación actual lleve al matrimonio?"
+              "text_es": "¿Podría mi relación actual llevar al matrimonio?"
             },
             {
               "id": "love_marriage_19",
               "text_ko": "나에게 잘 맞는 결혼 상대의 나이대나 배경이 있을까?",
               "text_en": "Is there an age range or background that suits my future spouse?",
-              "text_es": "¿Hay un rango de edad o trasfondo que le convenga a mi futuro/a cónyuge?"
+              "text_es": "¿Hay una franja de edad o un entorno que le convenga a mi futura pareja?"
             },
             {
               "id": "love_marriage_20",
               "text_ko": "나는 나중에 배우자와 어떤 모습으로 살아가게 될까?",
               "text_en": "What will my life with my spouse look like later on?",
-              "text_es": "¿Cómo se verá mi vida con mi pareja más adelante?"
+              "text_es": "¿Cómo será mi vida junto a mi pareja más adelante?"
             }
           ],
           "name_en": "Marriage & the Future",
-          "name_es": "Matrimonio y Futuro"
+          "name_es": "Matrimonio y futuro"
         },
         {
           "id": "love_current",
@@ -275,7 +275,7 @@
               "id": "love_current_01",
               "text_ko": "지금 만나는 사람과 나는 얼마나 잘 맞을까?",
               "text_en": "How compatible am I with the person I'm seeing now?",
-              "text_es": "¿Qué tan compatible soy con la persona que estoy conociendo ahora?"
+              "text_es": "¿Hasta qué punto somos compatibles la persona con la que estoy y yo?"
             },
             {
               "id": "love_current_02",
@@ -299,13 +299,13 @@
               "id": "love_current_05",
               "text_ko": "나는 이 관계에서 무엇을 놓치고 있을까?",
               "text_en": "What am I missing in this relationship?",
-              "text_es": "¿Qué me estoy perdiendo en esta relación?"
+              "text_es": "¿Qué estoy pasando por alto en esta relación?"
             },
             {
               "id": "love_current_06",
               "text_ko": "우리가 자주 다투는 이유는 무엇일까?",
               "text_en": "Why do we argue so often?",
-              "text_es": "¿Por qué discutimos tan seguido?"
+              "text_es": "¿Por qué discutimos tanto?"
             },
             {
               "id": "love_current_07",
@@ -317,7 +317,7 @@
               "id": "love_current_08",
               "text_ko": "상대방과 나는 서로에게 얼마나 솔직할까?",
               "text_en": "How honest are we with each other?",
-              "text_es": "¿Qué tan honestos somos el uno con el otro?"
+              "text_es": "¿Cuánta honestidad hay entre nosotros?"
             },
             {
               "id": "love_current_09",
@@ -359,7 +359,7 @@
               "id": "love_current_15",
               "text_ko": "상대방과 함께 있을 때 나는 나답게 지내고 있을까?",
               "text_en": "Am I being myself when I'm with them?",
-              "text_es": "¿Estoy siendo yo mismo/a cuando estoy con esta persona?"
+              "text_es": "¿Me muestro tal como soy cuando estoy con esta persona?"
             },
             {
               "id": "love_current_16",
@@ -383,7 +383,7 @@
               "id": "love_current_19",
               "text_ko": "상대방이 나에게 서운함을 느끼고 있진 않을까?",
               "text_en": "Could they be feeling hurt by me?",
-              "text_es": "¿Podría sentirse esta persona dolida por mí?"
+              "text_es": "¿Es posible que esta persona sienta que le he fallado?"
             },
             {
               "id": "love_current_20",
@@ -393,7 +393,7 @@
             }
           ],
           "name_en": "The Person I'm Seeing Now",
-          "name_es": "La Persona que Estoy Conociendo Ahora"
+          "name_es": "La persona con la que salgo"
         },
         {
           "id": "love_crush",
@@ -403,31 +403,31 @@
               "id": "love_crush_01",
               "text_ko": "그 사람도 나에게 관심이 있을까?",
               "text_en": "Is this person interested in me too?",
-              "text_es": "¿Está esta persona interesada en mí también?"
+              "text_es": "¿Le intereso yo también a esta persona?"
             },
             {
               "id": "love_crush_02",
               "text_ko": "이 마음을 고백하면 어떻게 될까?",
               "text_en": "What would happen if I confessed my feelings?",
-              "text_es": "¿Qué pasaría si le confieso mis sentimientos?"
+              "text_es": "¿Qué pasaría si le confesara mis sentimientos?"
             },
             {
               "id": "love_crush_03",
               "text_ko": "지금 이 애매한 관계는 앞으로 어떻게 될까?",
               "text_en": "Where is this ambiguous relationship headed?",
-              "text_es": "¿Hacia dónde va esta relación ambigua?"
+              "text_es": "¿Hacia dónde va esta relación sin definir?"
             },
             {
               "id": "love_crush_04",
               "text_ko": "나는 왜 자꾸 이 사람에게 마음이 갈까?",
               "text_en": "Why do I keep being drawn to this person?",
-              "text_es": "¿Por qué sigo sintiéndome atraído/a por esta persona?"
+              "text_es": "¿Por qué me sigue atrayendo esta persona?"
             },
             {
               "id": "love_crush_05",
               "text_ko": "이 사람과 나는 정말 인연이 있을까?",
               "text_en": "Do this person and I really have a connection?",
-              "text_es": "¿Tenemos esta persona y yo realmente una conexión?"
+              "text_es": "¿De verdad hay una conexión entre esta persona y yo?"
             },
             {
               "id": "love_crush_06",
@@ -457,7 +457,7 @@
               "id": "love_crush_10",
               "text_ko": "지금 썸 타는 상대와 잘 될 가능성이 있을까?",
               "text_en": "Is there a real chance with the person I'm \"talking to\" right now?",
-              "text_es": "¿Hay una posibilidad real con la persona con la que estoy \"saliendo\" ahora?"
+              "text_es": "¿Tengo posibilidades reales con la persona con la que estoy ahora, sin nada definido?"
             },
             {
               "id": "love_crush_11",
@@ -469,37 +469,37 @@
               "id": "love_crush_12",
               "text_ko": "그 사람과 나 사이에 흐르는 미묘한 감정은 무엇일까?",
               "text_en": "What's this subtle feeling flowing between us?",
-              "text_es": "¿Qué es este sentimiento sutil que fluye entre nosotros?"
+              "text_es": "¿Qué es esa sensación sutil que hay entre nosotros?"
             },
             {
               "id": "love_crush_13",
               "text_ko": "고백 타이밍을 놓친 건 아닐까?",
               "text_en": "Did I miss my window to confess?",
-              "text_es": "¿Perdí mi oportunidad de confesar mis sentimientos?"
+              "text_es": "¿Se me pasó el momento de confesar mis sentimientos?"
             },
             {
               "id": "love_crush_14",
               "text_ko": "나는 이 사람에게 어떤 인상으로 남아 있을까?",
               "text_en": "What kind of impression have I left on this person?",
-              "text_es": "¿Qué tipo de impresión le he dejado a esta persona?"
+              "text_es": "¿Qué impresión le he dejado a esta persona?"
             },
             {
               "id": "love_crush_15",
               "text_ko": "그 사람이 나를 밀어내는 이유가 있을까?",
               "text_en": "Is there a reason they're pushing me away?",
-              "text_es": "¿Hay una razón por la que me está alejando esta persona?"
+              "text_es": "¿Hay una razón por la que esta persona me mantiene a distancia?"
             },
             {
               "id": "love_crush_16",
               "text_ko": "우리 사이가 애매한 채로 계속 이어지는 이유는 뭘까?",
               "text_en": "Why does this stay stuck in this ambiguous state?",
-              "text_es": "¿Por qué se queda esto atascado en este estado ambiguo?"
+              "text_es": "¿Por qué esto no termina de definirse?"
             },
             {
               "id": "love_crush_17",
               "text_ko": "나는 이 감정을 어떻게 정리하면 좋을까?",
               "text_en": "How should I go about sorting out this feeling?",
-              "text_es": "¿Cómo debería resolver este sentimiento?"
+              "text_es": "¿Qué debería hacer con este sentimiento?"
             },
             {
               "id": "love_crush_18",
@@ -517,11 +517,11 @@
               "id": "love_crush_20",
               "text_ko": "나는 이 관계에서 상처받지 않을 수 있을까?",
               "text_en": "Can I avoid getting hurt in this situation?",
-              "text_es": "¿Puedo evitar salir herido/a de esta situación?"
+              "text_es": "¿Puedo evitar que esta situación me haga daño?"
             }
           ],
           "name_en": "Crushes & Almost-Relationships",
-          "name_es": "Enamoramientos y Casi-Relaciones"
+          "name_es": "Enamoramientos y relaciones sin definir"
         },
         {
           "id": "love_breakup",
@@ -543,7 +543,7 @@
               "id": "love_breakup_03",
               "text_ko": "헤어진 이유가 정말 나 때문이었을까?",
               "text_en": "Was the breakup really my fault?",
-              "text_es": "¿Fue la ruptura realmente mi culpa?"
+              "text_es": "¿Fue mía la culpa de la ruptura?"
             },
             {
               "id": "love_breakup_04",
@@ -591,25 +591,25 @@
               "id": "love_breakup_11",
               "text_ko": "전 연인과 다시 좋은 관계로 지낼 수 있을까?",
               "text_en": "Can my ex and I stay on good terms?",
-              "text_es": "¿Podemos mi ex y yo mantener una buena relación?"
+              "text_es": "¿Podremos mi ex y yo llevarnos bien?"
             },
             {
               "id": "love_breakup_12",
               "text_ko": "이별이 나에게 남긴 가장 큰 교훈은 무엇일까?",
               "text_en": "What's the biggest lesson this breakup has left me?",
-              "text_es": "¿Cuál es la lección más grande que me dejó esta ruptura?"
+              "text_es": "¿Cuál es la lección más importante que me deja esta ruptura?"
             },
             {
               "id": "love_breakup_13",
               "text_ko": "나는 왜 자꾸 지난 관계를 되돌아보게 될까?",
               "text_en": "Why do I keep looking back on this past relationship?",
-              "text_es": "¿Por qué sigo mirando atrás a esta relación pasada?"
+              "text_es": "¿Por qué sigo mirando atrás, a esa relación?"
             },
             {
               "id": "love_breakup_14",
               "text_ko": "새로운 사람을 만날 준비가 되었을까?",
               "text_en": "Am I ready to meet someone new?",
-              "text_es": "¿Estoy listo/a para conocer a alguien nuevo?"
+              "text_es": "¿Ya puedo abrirme a conocer a alguien nuevo?"
             },
             {
               "id": "love_breakup_15",
@@ -645,15 +645,15 @@
               "id": "love_breakup_20",
               "text_ko": "시간이 지나면 이 관계를 어떻게 기억하게 될까?",
               "text_en": "How will I remember this relationship once time has passed?",
-              "text_es": "¿Cómo recordaré esta relación cuando pase el tiempo?"
+              "text_es": "¿Cómo recordaré esta relación con el paso del tiempo?"
             }
           ],
           "name_en": "Breakups & Reunions",
-          "name_es": "Rupturas y Reencuentros"
+          "name_es": "Rupturas y reencuentros"
         }
       ],
       "name_en": "Love & Relationships",
-      "name_es": "Amor y Relaciones"
+      "name_es": "Amor y relaciones"
     },
     {
       "id": "wealth",
@@ -679,7 +679,7 @@
               "id": "wealth_money_03",
               "text_ko": "나에게 재물운이 강하게 들어오는 시기는 언제일까?",
               "text_en": "When is a period of strong financial luck coming for me?",
-              "text_es": "¿Cuándo llega un período de suerte financiera fuerte para mí?"
+              "text_es": "¿Cuándo llegará un período de mucha suerte con el dinero?"
             },
             {
               "id": "wealth_money_04",
@@ -697,7 +697,7 @@
               "id": "wealth_money_06",
               "text_ko": "갑자기 큰돈이 생길 가능성이 있을까?",
               "text_en": "Is there a chance a large sum of money comes to me suddenly?",
-              "text_es": "¿Hay una posibilidad de que me llegue de repente una gran cantidad de dinero?"
+              "text_es": "¿Podría llegarme de pronto una gran cantidad de dinero?"
             },
             {
               "id": "wealth_money_07",
@@ -715,19 +715,19 @@
               "id": "wealth_money_09",
               "text_ko": "나는 돈에 대해 어떤 태도를 갖고 있을까?",
               "text_en": "What kind of attitude do I have toward money?",
-              "text_es": "¿Qué tipo de actitud tengo hacia el dinero?"
+              "text_es": "¿Qué actitud tengo ante el dinero?"
             },
             {
               "id": "wealth_money_10",
               "text_ko": "나에게 숨겨진 재물운이 있을까?",
               "text_en": "Is there hidden financial luck in my chart?",
-              "text_es": "¿Hay suerte financiera oculta en mi carta?"
+              "text_es": "¿Hay suerte financiera oculta en mi saju?"
             },
             {
               "id": "wealth_money_11",
               "text_ko": "나는 돈 때문에 스트레스를 받는 시기가 있을까?",
               "text_en": "Is there a period when money causes me a lot of stress?",
-              "text_es": "¿Hay un período en el que el dinero me causa mucho estrés?"
+              "text_es": "¿Hay un período en el que el dinero me cause mucho estrés?"
             },
             {
               "id": "wealth_money_12",
@@ -739,7 +739,7 @@
               "id": "wealth_money_13",
               "text_ko": "나는 부수입을 만들기에 유리한 사주일까?",
               "text_en": "Is my saju favorable for building a side income?",
-              "text_es": "¿Es mi saju favorable para generar un ingreso adicional?"
+              "text_es": "¿Favorece mi saju que genere ingresos extra?"
             },
             {
               "id": "wealth_money_14",
@@ -781,11 +781,11 @@
               "id": "wealth_money_20",
               "text_ko": "나에게 재물이 들어오는 통로는 일인지, 다른 무엇인지 궁금해.",
               "text_en": "I'm curious whether money mainly comes to me through work, or some other path.",
-              "text_es": "Tengo curiosidad de si el dinero me llega principalmente a través del trabajo, o de algún otro camino."
+              "text_es": "¿Me llega el dinero sobre todo a través del trabajo, o por algún otro camino?"
             }
           ],
           "name_en": "Money & Financial Luck",
-          "name_es": "Dinero y Suerte Financiera"
+          "name_es": "Dinero y suerte financiera"
         },
         {
           "id": "wealth_invest",
@@ -795,7 +795,7 @@
               "id": "wealth_invest_01",
               "text_ko": "지금이 나에게 투자하기 좋은 시기일까?",
               "text_en": "Is now a good time for me to invest?",
-              "text_es": "¿Es este un buen momento para que invierta?"
+              "text_es": "¿Es este un buen momento para invertir?"
             },
             {
               "id": "wealth_invest_02",
@@ -843,7 +843,7 @@
               "id": "wealth_invest_09",
               "text_ko": "나에게 금전적으로 위험한 시기가 있을까?",
               "text_en": "Is there a financially risky period ahead for me?",
-              "text_es": "¿Hay un período financieramente riesgoso por delante para mí?"
+              "text_es": "¿Hay por delante un período delicado para mis finanzas?"
             },
             {
               "id": "wealth_invest_10",
@@ -855,13 +855,13 @@
               "id": "wealth_invest_11",
               "text_ko": "나의 사주에서 투자운이 특히 강한 분야가 있을까?",
               "text_en": "Is there a field where my investment luck is especially strong?",
-              "text_es": "¿Hay un campo donde mi suerte de inversión es especialmente fuerte?"
+              "text_es": "¿Hay algún campo en el que mi suerte para invertir sea especialmente buena?"
             },
             {
               "id": "wealth_invest_12",
               "text_ko": "지금처럼 저축하는 방식이 나에게 맞는 방법일까?",
               "text_en": "Is saving the way I currently do it the right approach for me?",
-              "text_es": "¿Es ahorrar de la forma en que lo hago ahora el enfoque correcto para mí?"
+              "text_es": "¿Me conviene la forma en que ahorro ahora?"
             },
             {
               "id": "wealth_invest_13",
@@ -885,35 +885,35 @@
               "id": "wealth_invest_16",
               "text_ko": "나는 빚을 지는 것에 대해 얼마나 신중해야 할까?",
               "text_en": "How cautious should I be about taking on debt?",
-              "text_es": "¿Qué tan cauteloso/a debería ser respecto a endeudarme?"
+              "text_es": "¿Cuánta cautela debería tener a la hora de endeudarme?"
             },
             {
               "id": "wealth_invest_17",
               "text_ko": "지금의 경제적 결정이 몇 년 뒤 어떤 결과로 이어질까?",
               "text_en": "Where will today's financial decisions lead a few years from now?",
-              "text_es": "¿A dónde llevarán las decisiones financieras de hoy dentro de unos años?"
+              "text_es": "¿Adónde me llevarán las decisiones financieras de hoy dentro de unos años?"
             },
             {
               "id": "wealth_invest_18",
               "text_ko": "나는 여러 수입원을 만드는 데 유리한 편일까?",
               "text_en": "Am I well-suited to building multiple income streams?",
-              "text_es": "¿Tengo facilidad para generar múltiples fuentes de ingreso?"
+              "text_es": "¿Tengo facilidad para generar varias fuentes de ingresos?"
             },
             {
               "id": "wealth_invest_19",
               "text_ko": "나에게 금전적으로 조언을 구해도 좋은 시기가 있을까?",
               "text_en": "Is there a good time for me to seek financial advice?",
-              "text_es": "¿Hay un buen momento para que busque consejo financiero?"
+              "text_es": "¿Hay un buen momento para buscar asesoramiento financiero?"
             },
             {
               "id": "wealth_invest_20",
               "text_ko": "나의 재테크 방식은 나의 성향과 잘 맞을까?",
               "text_en": "Does my approach to building wealth suit my personality?",
-              "text_es": "¿Se ajusta mi forma de generar riqueza a mi personalidad?"
+              "text_es": "¿Se adapta mi forma de generar patrimonio a mi personalidad?"
             }
           ],
           "name_en": "Investing & Building Wealth",
-          "name_es": "Inversión y Generación de Riqueza"
+          "name_es": "Inversión y patrimonio"
         },
         {
           "id": "wealth_opportunity",
@@ -923,13 +923,13 @@
               "id": "wealth_opportunity_01",
               "text_ko": "나에게 인생을 바꿀 만한 기회가 다가오고 있을까?",
               "text_en": "Is a life-changing opportunity approaching me?",
-              "text_es": "¿Se está acercando a mí una oportunidad que puede cambiarme la vida?"
+              "text_es": "¿Se me acerca una oportunidad que pueda cambiarme la vida?"
             },
             {
               "id": "wealth_opportunity_02",
               "text_ko": "나는 큰 기회를 알아볼 준비가 되어 있을까?",
               "text_en": "Am I ready to recognize a big opportunity when it comes?",
-              "text_es": "¿Estoy listo/a para reconocer una gran oportunidad cuando llegue?"
+              "text_es": "¿Sabré reconocer una gran oportunidad cuando llegue?"
             },
             {
               "id": "wealth_opportunity_03",
@@ -971,7 +971,7 @@
               "id": "wealth_opportunity_09",
               "text_ko": "나는 위험을 감수할 준비가 된 사주일까?",
               "text_en": "Does my saju show I'm ready to take on risk?",
-              "text_es": "¿Muestra mi saju que estoy listo/a para asumir riesgos?"
+              "text_es": "¿Indica mi saju que estoy en condiciones de asumir riesgos?"
             },
             {
               "id": "wealth_opportunity_10",
@@ -983,13 +983,13 @@
               "id": "wealth_opportunity_11",
               "text_ko": "나는 지금보다 더 큰 무대로 나아갈 수 있을까?",
               "text_en": "Can I move on to a bigger stage than where I am now?",
-              "text_es": "¿Puedo pasar a un escenario más grande que el actual?"
+              "text_es": "¿Puedo dar el salto a un ámbito más grande que el actual?"
             },
             {
               "id": "wealth_opportunity_12",
               "text_ko": "나에게 뜻밖의 좋은 소식이 찾아올 시기가 있을까?",
               "text_en": "Is there a period ahead when unexpectedly good news comes my way?",
-              "text_es": "¿Hay un período por delante en el que me llegue una noticia inesperadamente buena?"
+              "text_es": "¿Hay un período por delante en el que me llegue una buena noticia inesperada?"
             },
             {
               "id": "wealth_opportunity_13",
@@ -1001,13 +1001,13 @@
               "id": "wealth_opportunity_14",
               "text_ko": "나의 인생 전체를 놓고 봤을 때 지금은 어떤 시기일까?",
               "text_en": "Looking at my life as a whole, what kind of period is this right now?",
-              "text_es": "Mirando mi vida en su conjunto, ¿qué tipo de período es este ahora mismo?"
+              "text_es": "Si miro mi vida en su conjunto, ¿en qué etapa estoy ahora?"
             },
             {
               "id": "wealth_opportunity_15",
               "text_ko": "나는 남들보다 늦게 빛을 보는 사주일까, 일찍 빛을 보는 사주일까?",
               "text_en": "Does my saju suggest I'll find success later in life, or earlier?",
-              "text_es": "¿Sugiere mi saju que voy a encontrar el éxito más tarde en la vida, o más temprano?"
+              "text_es": "Según mi saju, ¿el éxito me llegará pronto o más adelante en la vida?"
             },
             {
               "id": "wealth_opportunity_16",
@@ -1019,7 +1019,7 @@
               "id": "wealth_opportunity_17",
               "text_ko": "나는 지금의 어려움을 통해 무엇을 얻게 될까?",
               "text_en": "What will I gain from the difficulty I'm going through right now?",
-              "text_es": "¿Qué voy a ganar de la dificultad que estoy atravesando ahora?"
+              "text_es": "¿Qué me dejará la dificultad que estoy atravesando ahora?"
             },
             {
               "id": "wealth_opportunity_18",
@@ -1041,11 +1041,11 @@
             }
           ],
           "name_en": "Life Opportunities",
-          "name_es": "Oportunidades de Vida"
+          "name_es": "Oportunidades en la vida"
         }
       ],
       "name_en": "Money & Success",
-      "name_es": "Dinero y Éxito"
+      "name_es": "Dinero y éxito"
     },
     {
       "id": "career",
@@ -1059,25 +1059,25 @@
               "id": "career_current_01",
               "text_ko": "지금 하는 일이 나에게 정말 잘 맞을까?",
               "text_en": "Is what I'm doing now really the right fit for me?",
-              "text_es": "¿Es lo que estoy haciendo ahora realmente lo que me conviene?"
+              "text_es": "¿Lo que hago ahora es de verdad lo que me conviene?"
             },
             {
               "id": "career_current_02",
               "text_ko": "나는 지금 직장에서 인정받고 있을까?",
               "text_en": "Am I being recognized at my current job?",
-              "text_es": "¿Me están reconociendo en mi trabajo actual?"
+              "text_es": "¿Me reconocen en mi trabajo actual?"
             },
             {
               "id": "career_current_03",
               "text_ko": "나의 사주는 지금 업무 방식과 얼마나 잘 맞을까?",
               "text_en": "How well does my saju match my current way of working?",
-              "text_es": "¿Qué tan bien encaja mi saju con mi forma actual de trabajar?"
+              "text_es": "¿Hasta qué punto encaja mi saju con mi forma actual de trabajar?"
             },
             {
               "id": "career_current_04",
               "text_ko": "나는 지금 자리에서 얼마나 더 성장할 수 있을까?",
               "text_en": "How much more can I grow in my current position?",
-              "text_es": "¿Cuánto más puedo crecer en mi posición actual?"
+              "text_es": "¿Cuánto más puedo crecer en mi puesto actual?"
             },
             {
               "id": "career_current_05",
@@ -1089,7 +1089,7 @@
               "id": "career_current_06",
               "text_ko": "나는 동료들과의 관계에서 어떤 포지션에 있을까?",
               "text_en": "Where do I stand in my relationships with coworkers?",
-              "text_es": "¿Cuál es mi posición en mis relaciones con mis compañeros de trabajo?"
+              "text_es": "¿Qué lugar ocupo entre mis compañeros de trabajo?"
             },
             {
               "id": "career_current_07",
@@ -1113,7 +1113,7 @@
               "id": "career_current_10",
               "text_ko": "나는 상사와의 관계에서 무엇을 조심해야 할까?",
               "text_en": "What should I be careful about in my relationship with my boss?",
-              "text_es": "¿De qué debería tener cuidado en mi relación con mi jefe?"
+              "text_es": "¿De qué debería tener cuidado en la relación con mis superiores?"
             },
             {
               "id": "career_current_11",
@@ -1155,19 +1155,19 @@
               "id": "career_current_17",
               "text_ko": "나는 지금 조직에 계속 남아야 할까, 떠나야 할까?",
               "text_en": "Should I stay with my current organization, or leave?",
-              "text_es": "¿Debería quedarme en mi organización actual, o irme?"
+              "text_es": "¿Debería quedarme en mi empresa actual, o irme?"
             },
             {
               "id": "career_current_18",
               "text_ko": "나에게 지금 필요한 동료나 인맥이 있을까?",
               "text_en": "Is there a colleague or connection I need right now?",
-              "text_es": "¿Hay un colega o una conexión que necesito ahora mismo?"
+              "text_es": "¿Hay algún colega o contacto que me haga falta ahora mismo?"
             },
             {
               "id": "career_current_19",
               "text_ko": "나는 일과 삶의 균형을 잘 맞추고 있을까?",
               "text_en": "Am I keeping a good balance between work and life?",
-              "text_es": "¿Estoy manteniendo un buen equilibrio entre el trabajo y la vida?"
+              "text_es": "¿Estoy manteniendo un buen equilibrio entre el trabajo y la vida personal?"
             },
             {
               "id": "career_current_20",
@@ -1177,7 +1177,7 @@
             }
           ],
           "name_en": "My Current Job",
-          "name_es": "Mi Trabajo Actual"
+          "name_es": "Mi trabajo actual"
         },
         {
           "id": "career_change",
@@ -1187,19 +1187,19 @@
               "id": "career_change_01",
               "text_ko": "지금이 이직하기에 좋은 시기일까?",
               "text_en": "Is now a good time for me to change jobs?",
-              "text_es": "¿Es este un buen momento para que cambie de trabajo?"
+              "text_es": "¿Es este un buen momento para cambiar de trabajo?"
             },
             {
               "id": "career_change_02",
               "text_ko": "나는 새로운 분야로 옮기는 게 맞을까?",
               "text_en": "Is it right for me to move into a new field?",
-              "text_es": "¿Es correcto para mí pasarme a un campo nuevo?"
+              "text_es": "¿Me conviene pasarme a un campo nuevo?"
             },
             {
               "id": "career_change_03",
               "text_ko": "이직을 준비한다면 무엇을 조심해야 할까?",
               "text_en": "What should I watch out for if I prepare to change jobs?",
-              "text_es": "¿De qué debería cuidarme si me preparo para cambiar de trabajo?"
+              "text_es": "¿De qué debería cuidarme al prepararme para cambiar de trabajo?"
             },
             {
               "id": "career_change_04",
@@ -1211,19 +1211,19 @@
               "id": "career_change_05",
               "text_ko": "나는 지금 회사를 떠나야 할 신호를 놓치고 있는 건 아닐까?",
               "text_en": "Am I missing a sign that it's time to leave my current company?",
-              "text_es": "¿Se me está pasando una señal de que es hora de dejar mi empresa actual?"
+              "text_es": "¿Estoy pasando por alto una señal de que es hora de dejar mi empresa actual?"
             },
             {
               "id": "career_change_06",
               "text_ko": "새로운 곳으로 옮기면 지금보다 나아질까?",
               "text_en": "Would moving somewhere new actually be better than now?",
-              "text_es": "¿Sería mudarme a un lugar nuevo realmente mejor que ahora?"
+              "text_es": "¿Me iría mejor en un lugar de trabajo nuevo que ahora?"
             },
             {
               "id": "career_change_07",
               "text_ko": "나는 완전히 다른 커리어로 전환해도 괜찮을까?",
               "text_en": "Is it okay for me to switch to a completely different career?",
-              "text_es": "¿Está bien que me pase a una carrera completamente diferente?"
+              "text_es": "¿Está bien que me pase a un camino profesional completamente distinto?"
             },
             {
               "id": "career_change_08",
@@ -1235,13 +1235,13 @@
               "id": "career_change_09",
               "text_ko": "나는 지금의 경력을 살려서 옮기는 게 좋을까, 새로 시작하는 게 좋을까?",
               "text_en": "Should I move using my current experience, or start fresh?",
-              "text_es": "¿Debería mudarme usando mi experiencia actual, o empezar de cero?"
+              "text_es": "¿Debería cambiar de trabajo aprovechando mi experiencia actual, o empezar de cero?"
             },
             {
               "id": "career_change_10",
               "text_ko": "나의 다음 커리어는 어떤 모습일까?",
               "text_en": "What will my next career look like?",
-              "text_es": "¿Cómo se verá mi próxima carrera?"
+              "text_es": "¿Cómo será mi próxima etapa profesional?"
             },
             {
               "id": "career_change_11",
@@ -1253,59 +1253,59 @@
               "id": "career_change_12",
               "text_ko": "지금 고민 중인 이직이 나에게 좋은 선택일까?",
               "text_en": "Is the job change I'm currently considering a good choice for me?",
-              "text_es": "¿Es el cambio de trabajo que estoy considerando ahora una buena decisión para mí?"
+              "text_es": "¿Es una buena decisión para mí el cambio de trabajo que estoy considerando?"
             },
             {
               "id": "career_change_13",
               "text_ko": "나에게 맞는 회사나 조직의 분위기는 어떤 곳일까?",
               "text_en": "What kind of company or organizational culture would suit me?",
-              "text_es": "¿Qué tipo de empresa o cultura organizacional me convendría?"
+              "text_es": "¿Qué tipo de empresa o cultura de trabajo me convendría?"
             },
             {
               "id": "career_change_14",
               "text_ko": "나는 프리랜서나 독립적인 일에도 잘 맞을까?",
               "text_en": "Would freelance or independent work suit me well too?",
-              "text_es": "¿Me convendría bien también el trabajo independiente o freelance?"
+              "text_es": "¿Me iría bien trabajar por cuenta propia?"
             },
             {
               "id": "career_change_15",
               "text_ko": "나의 커리어에서 다음 단계는 무엇이 될까?",
               "text_en": "What will be the next step in my career?",
-              "text_es": "¿Cuál será el siguiente paso en mi carrera?"
+              "text_es": "¿Cuál será el siguiente paso en mi trayectoria profesional?"
             },
             {
               "id": "career_change_16",
               "text_ko": "나는 지금보다 더 큰 책임을 맡을 준비가 되어 있을까?",
               "text_en": "Am I ready to take on more responsibility than I have now?",
-              "text_es": "¿Estoy listo/a para asumir más responsabilidad de la que tengo ahora?"
+              "text_es": "¿Estoy en condiciones de asumir más responsabilidad de la que tengo ahora?"
             },
             {
               "id": "career_change_17",
               "text_ko": "이직을 망설이고 있다면 그 이유는 무엇일까?",
               "text_en": "If I'm hesitating about changing jobs, what's the reason?",
-              "text_es": "Si estoy dudando sobre cambiar de trabajo, ¿cuál es la razón?"
+              "text_es": "Si dudo en cambiar de trabajo, ¿a qué se debe?"
             },
             {
               "id": "career_change_18",
               "text_ko": "나에게 커리어의 전환점이 다가오고 있을까?",
               "text_en": "Is a career turning point approaching me?",
-              "text_es": "¿Se me acerca un punto de inflexión en mi carrera?"
+              "text_es": "¿Se me acerca un punto de inflexión en mi vida profesional?"
             },
             {
               "id": "career_change_19",
               "text_ko": "나는 지금의 불안정함을 어떻게 받아들여야 할까?",
               "text_en": "How should I make peace with the instability I'm feeling right now?",
-              "text_es": "¿Cómo debería hacer las paces con la inestabilidad que siento ahora?"
+              "text_es": "¿Cómo puedo aceptar la inestabilidad que siento ahora?"
             },
             {
               "id": "career_change_20",
               "text_ko": "새로운 시작을 하기에 지금이 맞는 때일까?",
               "text_en": "Is now the right time for a fresh start?",
-              "text_es": "¿Es este el momento correcto para un nuevo comienzo?"
+              "text_es": "¿Es este el momento de empezar de nuevo?"
             }
           ],
           "name_en": "Changing Jobs & Careers",
-          "name_es": "Cambio de Trabajo y de Carrera"
+          "name_es": "Cambio de trabajo o de rumbo profesional"
         },
         {
           "id": "career_business",
@@ -1321,7 +1321,7 @@
               "id": "career_business_02",
               "text_ko": "지금이 창업하기에 좋은 시기일까?",
               "text_en": "Is now a good time for me to start a business?",
-              "text_es": "¿Es este un buen momento para que empiece un negocio?"
+              "text_es": "¿Es este un buen momento para empezar un negocio?"
             },
             {
               "id": "career_business_03",
@@ -1333,7 +1333,7 @@
               "id": "career_business_04",
               "text_ko": "나는 혼자 시작하는 게 좋을까, 파트너와 함께하는 게 좋을까?",
               "text_en": "Is it better for me to start alone, or with a partner?",
-              "text_es": "¿Es mejor para mí empezar solo/a, o con un socio?"
+              "text_es": "¿Me conviene más empezar por mi cuenta, o con un socio?"
             },
             {
               "id": "career_business_05",
@@ -1345,13 +1345,13 @@
               "id": "career_business_06",
               "text_ko": "함께 사업할 사람이 나와 잘 맞을지 궁금해.",
               "text_en": "I'm curious whether the person I'd go into business with is a good match for me.",
-              "text_es": "Tengo curiosidad de si la persona con la que emprendería el negocio es un buen compañero/a para mí."
+              "text_es": "¿Encajo bien con la persona con la que emprendería el negocio?"
             },
             {
               "id": "career_business_07",
               "text_ko": "나는 실패를 두려워하지 않고 도전할 수 있는 사주일까?",
               "text_en": "Does my saju show I can take risks without fearing failure?",
-              "text_es": "¿Muestra mi saju que puedo asumir riesgos sin temerle al fracaso?"
+              "text_es": "¿Indica mi saju que puedo asumir riesgos sin miedo al fracaso?"
             },
             {
               "id": "career_business_08",
@@ -1369,19 +1369,19 @@
               "id": "career_business_10",
               "text_ko": "나에게 사업 자금이 필요한 시기가 있을까?",
               "text_en": "Is there a period when I'll need business funding?",
-              "text_es": "¿Hay un período en el que voy a necesitar financiamiento para el negocio?"
+              "text_es": "¿Habrá un momento en que necesite financiar el negocio?"
             },
             {
               "id": "career_business_11",
               "text_ko": "나는 이미 두 번의 사업 실패를 겪었는데, 계속해도 될까?",
               "text_en": "I've already gone through two failed businesses — should I keep going?",
-              "text_es": "Ya he pasado por dos negocios fallidos, ¿debería seguir intentando?"
+              "text_es": "Ya han fracasado dos de mis negocios, ¿debería seguir intentándolo?"
             },
             {
               "id": "career_business_12",
               "text_ko": "나의 사업은 언제쯤 안정 궤도에 오를까?",
               "text_en": "When will my business reach a stable footing?",
-              "text_es": "¿Cuándo alcanzará mi negocio una base estable?"
+              "text_es": "¿Cuándo se estabilizará mi negocio?"
             },
             {
               "id": "career_business_13",
@@ -1393,37 +1393,37 @@
               "id": "career_business_14",
               "text_ko": "나에게 사업 파트너가 되어달라는 제안이 있는데 받아들여도 될까?",
               "text_en": "I've been offered a business partnership — should I accept it?",
-              "text_es": "Me han ofrecido una sociedad de negocios, ¿debería aceptarla?"
+              "text_es": "Me han propuesto asociarme en un negocio, ¿debería aceptar?"
             },
             {
               "id": "career_business_15",
               "text_ko": "나는 지금의 아이디어를 실행에 옮겨도 될까?",
               "text_en": "Is it okay for me to put my current idea into action?",
-              "text_es": "¿Está bien que ponga en acción mi idea actual?"
+              "text_es": "¿Está bien que ponga en marcha mi idea actual?"
             },
             {
               "id": "career_business_16",
               "text_ko": "나의 사업 운은 몇 살쯤부터 강해질까?",
               "text_en": "Around what age will my luck in business get stronger?",
-              "text_es": "¿Alrededor de qué edad se fortalecerá mi suerte en los negocios?"
+              "text_es": "¿Hacia qué edad tendré más suerte en los negocios?"
             },
             {
               "id": "career_business_17",
               "text_ko": "나는 사업을 확장해야 할까, 지금 규모를 유지해야 할까?",
               "text_en": "Should I expand my business, or keep it at its current size?",
-              "text_es": "¿Debería expandir mi negocio, o mantenerlo en su tamaño actual?"
+              "text_es": "¿Debería hacer crecer mi negocio, o mantenerlo en su tamaño actual?"
             },
             {
               "id": "career_business_18",
               "text_ko": "나에게 어울리는 사업 파트너의 특징은 무엇일까?",
               "text_en": "What traits would suit a good business partner for me?",
-              "text_es": "¿Qué características tendría un buen socio de negocios para mí?"
+              "text_es": "¿Cómo sería un buen socio para mi negocio?"
             },
             {
               "id": "career_business_19",
               "text_ko": "나는 큰 위험을 감수하고서라도 도전해야 할까?",
               "text_en": "Should I take on a big risk even if it means a challenge?",
-              "text_es": "¿Debería asumir un gran riesgo aunque implique un desafío?"
+              "text_es": "¿Debería lanzarme a un gran reto aunque implique un riesgo grande?"
             },
             {
               "id": "career_business_20",
@@ -1433,7 +1433,7 @@
             }
           ],
           "name_en": "Starting a Business",
-          "name_es": "Emprender un Negocio"
+          "name_es": "Emprender un negocio"
         },
         {
           "id": "career_study",
@@ -1443,13 +1443,13 @@
               "id": "career_study_01",
               "text_ko": "나는 지금 준비 중인 시험에서 좋은 결과를 얻을 수 있을까?",
               "text_en": "Can I get a good result on the exam I'm preparing for now?",
-              "text_es": "¿Puedo obtener un buen resultado en el examen que estoy preparando ahora?"
+              "text_es": "¿Me irá bien en el examen que estoy preparando?"
             },
             {
               "id": "career_study_02",
               "text_ko": "나에게 공부가 잘 되는 시기는 언제일까?",
               "text_en": "When is a period when studying comes easily to me?",
-              "text_es": "¿Cuándo es un período en el que estudiar se me da fácil?"
+              "text_es": "¿En qué período me resultará más fácil estudiar?"
             },
             {
               "id": "career_study_03",
@@ -1461,7 +1461,7 @@
               "id": "career_study_04",
               "text_ko": "나는 지금 선택을 앞둔 진로 중 무엇이 더 잘 맞을까?",
               "text_en": "Between the career paths I'm choosing between now, which suits me better?",
-              "text_es": "Entre los caminos profesionales que estoy eligiendo ahora, ¿cuál me conviene más?"
+              "text_es": "Entre los caminos profesionales que estoy valorando, ¿cuál me conviene más?"
             },
             {
               "id": "career_study_05",
@@ -1497,7 +1497,7 @@
               "id": "career_study_10",
               "text_ko": "나에게 지금 필요한 건 더 많은 노력일까, 방향 전환일까?",
               "text_en": "What do I need right now — more effort, or a change in direction?",
-              "text_es": "¿Qué necesito ahora mismo: más esfuerzo, o un cambio de dirección?"
+              "text_es": "¿Qué necesito ahora mismo: más esfuerzo, o un cambio de rumbo?"
             },
             {
               "id": "career_study_11",
@@ -1515,13 +1515,13 @@
               "id": "career_study_13",
               "text_ko": "나는 어떤 분야를 공부할 때 재능을 발휘할 수 있을까?",
               "text_en": "In which field could I show real talent when studying it?",
-              "text_es": "¿En qué campo podría mostrar verdadero talento al estudiarlo?"
+              "text_es": "¿En qué campo destacaría de verdad si lo estudiara?"
             },
             {
               "id": "career_study_14",
               "text_ko": "나에게 좋은 스승이나 멘토를 만날 기회가 있을까?",
               "text_en": "Will I get the chance to meet a good teacher or mentor?",
-              "text_es": "¿Tendré la oportunidad de conocer a un buen maestro o mentor?"
+              "text_es": "¿Conoceré a un buen profesor o mentor?"
             },
             {
               "id": "career_study_15",
@@ -1533,7 +1533,7 @@
               "id": "career_study_16",
               "text_ko": "나는 다시 공부를 시작해도 괜찮을까?",
               "text_en": "Is it okay for me to start studying again?",
-              "text_es": "¿Está bien que vuelva a empezar a estudiar?"
+              "text_es": "¿Es buena idea que retome los estudios?"
             },
             {
               "id": "career_study_17",
@@ -1545,7 +1545,7 @@
               "id": "career_study_18",
               "text_ko": "나는 준비하고 있는 자격증이나 시험을 통과할 수 있을까?",
               "text_en": "Can I pass the certification or exam I'm preparing for?",
-              "text_es": "¿Puedo aprobar la certificación o el examen que estoy preparando?"
+              "text_es": "¿Aprobaré la certificación o el examen que estoy preparando?"
             },
             {
               "id": "career_study_19",
@@ -1561,11 +1561,11 @@
             }
           ],
           "name_en": "Studies & Exams",
-          "name_es": "Estudios y Exámenes"
+          "name_es": "Estudios y exámenes"
         }
       ],
       "name_en": "Career & Studies",
-      "name_es": "Carrera y Estudios"
+      "name_es": "Trabajo y estudios"
     },
     {
       "id": "family",
@@ -1591,7 +1591,7 @@
               "id": "family_parents_03",
               "text_ko": "나는 부모님께 서운한 감정을 어떻게 풀어야 할까?",
               "text_en": "How should I work through the hurt I feel toward my parents?",
-              "text_es": "¿Cómo debería resolver el dolor que siento hacia mis padres?"
+              "text_es": "¿Cómo puedo sanar el dolor que siento hacia mis padres?"
             },
             {
               "id": "family_parents_04",
@@ -1609,7 +1609,7 @@
               "id": "family_parents_06",
               "text_ko": "부모님과 떨어져 지내는 게 관계에 도움이 될까?",
               "text_en": "Would living apart from my parents help our relationship?",
-              "text_es": "¿Ayudaría vivir separado/a de mis padres a nuestra relación?"
+              "text_es": "¿Ayudaría a nuestra relación vivir por separado de mis padres?"
             },
             {
               "id": "family_parents_07",
@@ -1621,7 +1621,7 @@
               "id": "family_parents_08",
               "text_ko": "부모님과의 갈등은 언제쯤 풀릴 수 있을까?",
               "text_en": "When can the conflict with my parents get resolved?",
-              "text_es": "¿Cuándo se puede resolver el conflicto con mis padres?"
+              "text_es": "¿Cuándo se resolverá el conflicto con mis padres?"
             },
             {
               "id": "family_parents_09",
@@ -1633,7 +1633,7 @@
               "id": "family_parents_10",
               "text_ko": "부모님과 나의 성향은 얼마나 다를까?",
               "text_en": "How different are my parents' personalities from mine?",
-              "text_es": "¿Qué tan diferentes son las personalidades de mis padres de la mía?"
+              "text_es": "¿Cuánto se diferencian las personalidades de mis padres de la mía?"
             },
             {
               "id": "family_parents_11",
@@ -1657,13 +1657,13 @@
               "id": "family_parents_14",
               "text_ko": "부모님과 나 사이에 오해가 쌓여 있는 걸까?",
               "text_en": "Has misunderstanding built up between my parents and me?",
-              "text_es": "¿Se ha acumulado un malentendido entre mis padres y yo?"
+              "text_es": "¿Se ha ido acumulando algún malentendido entre mis padres y yo?"
             },
             {
               "id": "family_parents_15",
               "text_ko": "나는 부모님께 인정받고 싶은 마음이 큰 편일까?",
               "text_en": "Do I have a strong need to be recognized by my parents?",
-              "text_es": "¿Tengo una gran necesidad de ser reconocido/a por mis padres?"
+              "text_es": "¿Necesito mucho que mis padres me reconozcan?"
             },
             {
               "id": "family_parents_16",
@@ -1697,7 +1697,7 @@
             }
           ],
           "name_en": "My Relationship with My Parents",
-          "name_es": "Mi Relación con Mis Padres"
+          "name_es": "Mi relación con mis padres"
         },
         {
           "id": "family_children",
@@ -1707,31 +1707,31 @@
               "id": "family_children_01",
               "text_ko": "나는 언제쯤 아이를 갖게 될까?",
               "text_en": "When will I have a child?",
-              "text_es": "¿Cuándo voy a tener un hijo/a?"
+              "text_es": "¿Cuándo voy a tener hijos?"
             },
             {
               "id": "family_children_02",
               "text_ko": "나에게 아이와의 인연이 있을까?",
               "text_en": "Do I have a connection with a child in my future?",
-              "text_es": "¿Tengo una conexión con un hijo/a en mi futuro?"
+              "text_es": "¿Tengo un vínculo con algún hijo o hija en mi futuro?"
             },
             {
               "id": "family_children_03",
               "text_ko": "나는 좋은 부모가 될 수 있을까?",
               "text_en": "Can I become a good parent?",
-              "text_es": "¿Puedo llegar a ser un buen padre/una buena madre?"
+              "text_es": "¿Podré ser un buen padre o una buena madre?"
             },
             {
               "id": "family_children_04",
               "text_ko": "나의 자녀는 어떤 성향을 갖게 될까?",
               "text_en": "What kind of personality will my child have?",
-              "text_es": "¿Qué tipo de personalidad tendrá mi hijo/a?"
+              "text_es": "¿Qué personalidad tendrán mis hijos?"
             },
             {
               "id": "family_children_05",
               "text_ko": "나는 자녀와 어떤 관계를 맺게 될까?",
               "text_en": "What kind of relationship will I build with my child?",
-              "text_es": "¿Qué tipo de relación construiré con mi hijo/a?"
+              "text_es": "¿Qué tipo de relación construiré con mis hijos?"
             },
             {
               "id": "family_children_06",
@@ -1743,13 +1743,13 @@
               "id": "family_children_07",
               "text_ko": "나는 자녀에게 어떤 부모로 기억될까?",
               "text_en": "How will my child remember me as a parent?",
-              "text_es": "¿Cómo me recordará mi hijo/a como padre/madre?"
+              "text_es": "¿Cómo me recordarán mis hijos?"
             },
             {
               "id": "family_children_08",
               "text_ko": "나의 자녀는 어떤 분야에 재능을 보일까?",
               "text_en": "In what field will my child show talent?",
-              "text_es": "¿En qué campo mostrará talento mi hijo/a?"
+              "text_es": "¿En qué campo destacarán mis hijos?"
             },
             {
               "id": "family_children_09",
@@ -1761,19 +1761,19 @@
               "id": "family_children_10",
               "text_ko": "나에게 자녀와 관련된 걱정거리가 해소될 시기가 있을까?",
               "text_en": "Is there a period when my worries about my child will ease?",
-              "text_es": "¿Hay un período en el que se aliviarán mis preocupaciones sobre mi hijo/a?"
+              "text_es": "¿Llegará un período en que se alivien mis preocupaciones por mis hijos?"
             },
             {
               "id": "family_children_11",
               "text_ko": "나는 자녀에게 무엇을 물려주고 싶어 할까?",
               "text_en": "What do I want to pass on to my child?",
-              "text_es": "¿Qué quiero transmitirle a mi hijo/a?"
+              "text_es": "¿Qué quiero transmitir a mis hijos?"
             },
             {
               "id": "family_children_12",
               "text_ko": "나의 자녀는 나와 얼마나 비슷하거나 다를까?",
               "text_en": "How similar or different will my child be from me?",
-              "text_es": "¿Qué tan parecido o diferente será mi hijo/a de mí?"
+              "text_es": "¿Se parecerán mis hijos a mí, o serán distintos?"
             },
             {
               "id": "family_children_13",
@@ -1785,19 +1785,19 @@
               "id": "family_children_14",
               "text_ko": "자녀와의 관계에서 내가 신경 써야 할 부분이 있을까?",
               "text_en": "Is there something I should pay attention to in my relationship with my child?",
-              "text_es": "¿Hay algo a lo que debería prestar atención en mi relación con mi hijo/a?"
+              "text_es": "¿Hay algo a lo que debería prestar atención en mi relación con mis hijos?"
             },
             {
               "id": "family_children_15",
               "text_ko": "나는 부모가 되는 것에 대해 어떤 마음의 준비가 필요할까?",
               "text_en": "What kind of mental preparation do I need for becoming a parent?",
-              "text_es": "¿Qué tipo de preparación mental necesito para convertirme en padre/madre?"
+              "text_es": "¿Cómo debería prepararme mentalmente para ser padre o madre?"
             },
             {
               "id": "family_children_16",
               "text_ko": "나의 자녀는 앞으로 어떤 삶을 살게 될까?",
               "text_en": "What kind of life will my child go on to live?",
-              "text_es": "¿Qué tipo de vida llegará a vivir mi hijo/a?"
+              "text_es": "¿Qué vida tendrán mis hijos?"
             },
             {
               "id": "family_children_17",
@@ -1809,23 +1809,23 @@
               "id": "family_children_18",
               "text_ko": "나에게 조카나 다음 세대와의 특별한 인연이 있을까?",
               "text_en": "Do I have a special connection with a niece, nephew, or the next generation?",
-              "text_es": "¿Tengo una conexión especial con un sobrino/a o con la próxima generación?"
+              "text_es": "¿Tengo un vínculo especial con mis sobrinos o con la próxima generación?"
             },
             {
               "id": "family_children_19",
               "text_ko": "나는 가족을 이루는 것에 대해 어떤 마음을 갖고 있을까?",
               "text_en": "How do I feel about starting a family?",
-              "text_es": "¿Cómo me siento respecto a formar una familia?"
+              "text_es": "¿Qué siento realmente ante la idea de formar una familia?"
             },
             {
               "id": "family_children_20",
               "text_ko": "나의 삶에서 다음 세대를 향한 역할은 무엇일까?",
               "text_en": "What role am I meant to play toward the next generation in my life?",
-              "text_es": "¿Qué papel estoy destinado/a a jugar hacia la próxima generación en mi vida?"
+              "text_es": "¿Qué papel me toca desempeñar con las generaciones que vienen?"
             }
           ],
           "name_en": "Children & the Next Generation",
-          "name_es": "Hijos y la Próxima Generación"
+          "name_es": "Hijos y próxima generación"
         },
         {
           "id": "family_siblings",
@@ -1835,7 +1835,7 @@
               "id": "family_siblings_01",
               "text_ko": "나는 형제자매와 왜 이렇게 다를까?",
               "text_en": "Why am I so different from my siblings?",
-              "text_es": "¿Por qué soy tan diferente de mis hermanos?"
+              "text_es": "¿Por qué me diferencio tanto de mis hermanos?"
             },
             {
               "id": "family_siblings_02",
@@ -1853,7 +1853,7 @@
               "id": "family_siblings_04",
               "text_ko": "나는 형제자매에게 서운함을 느끼고 있는 걸까?",
               "text_en": "Am I feeling hurt by my siblings?",
-              "text_es": "¿Me siento dolido/a por mis hermanos?"
+              "text_es": "¿Hay algo que me duela de la relación con mis hermanos?"
             },
             {
               "id": "family_siblings_05",
@@ -1889,7 +1889,7 @@
               "id": "family_siblings_10",
               "text_ko": "나는 가족에게 얼마나 의지해도 될까?",
               "text_en": "How much can I rely on my family?",
-              "text_es": "¿Cuánto puedo depender de mi familia?"
+              "text_es": "¿Cuánto puedo contar con mi familia?"
             },
             {
               "id": "family_siblings_11",
@@ -1907,13 +1907,13 @@
               "id": "family_siblings_13",
               "text_ko": "나는 어린 시절 가족 안에서 어떤 영향을 받았을까?",
               "text_en": "How was I shaped by my family growing up?",
-              "text_es": "¿Cómo me formó mi familia mientras crecía?"
+              "text_es": "¿Cómo me marcó mi familia al crecer?"
             },
             {
               "id": "family_siblings_14",
               "text_ko": "나에게 힘이 되어주는 가족 구성원이 있을까?",
               "text_en": "Is there a family member who's a source of strength for me?",
-              "text_es": "¿Hay un familiar que sea una fuente de fortaleza para mí?"
+              "text_es": "¿Hay algún familiar que sea un apoyo para mí?"
             },
             {
               "id": "family_siblings_15",
@@ -1925,19 +1925,19 @@
               "id": "family_siblings_16",
               "text_ko": "나의 가족 관계는 나의 다른 관계에 어떤 영향을 줄까?",
               "text_en": "How does my family relationship affect my other relationships?",
-              "text_es": "¿Cómo afecta mi relación familiar a mis otras relaciones?"
+              "text_es": "¿Cómo influye la relación con mi familia en mis otras relaciones?"
             },
             {
               "id": "family_siblings_17",
               "text_ko": "나는 가족 중 누군가를 책임져야 하는 상황이 올까?",
               "text_en": "Will a situation come up where I need to take responsibility for someone in my family?",
-              "text_es": "¿Se presentará una situación en la que necesite hacerme responsable de alguien en mi familia?"
+              "text_es": "¿Llegará una situación en la que tenga que hacerme cargo de alguien de mi familia?"
             },
             {
               "id": "family_siblings_18",
               "text_ko": "나는 가족과 다른 삶의 방향을 선택해도 괜찮을까?",
               "text_en": "Is it okay for me to choose a different path in life from my family?",
-              "text_es": "¿Está bien que elija un camino diferente en la vida al de mi familia?"
+              "text_es": "¿Está bien que elija un camino de vida distinto del de mi familia?"
             },
             {
               "id": "family_siblings_19",
@@ -1949,11 +1949,11 @@
               "id": "family_siblings_20",
               "text_ko": "나는 가족 안에서 더 솔직해져도 괜찮을까?",
               "text_en": "Is it okay for me to be more honest within my family?",
-              "text_es": "¿Está bien que sea más honesto/a dentro de mi familia?"
+              "text_es": "¿Está bien que hable con más sinceridad dentro de mi familia?"
             }
           ],
           "name_en": "Siblings & Relatives",
-          "name_es": "Hermanos y Familiares"
+          "name_es": "Hermanos y familiares"
         },
         {
           "id": "family_friends",
@@ -1981,19 +1981,19 @@
               "id": "family_friends_04",
               "text_ko": "나에게 힘이 되어줄 새로운 인연이 나타날까?",
               "text_en": "Will a new connection appear that becomes a source of strength for me?",
-              "text_es": "¿Aparecerá una nueva conexión que se convierta en una fuente de fortaleza para mí?"
+              "text_es": "¿Aparecerá alguien nuevo que sea un apoyo para mí?"
             },
             {
               "id": "family_friends_05",
               "text_ko": "나는 모임에서 어떤 역할을 맡게 되는 편일까?",
               "text_en": "What role do I tend to take on in group settings?",
-              "text_es": "¿Qué papel tiendo a asumir en entornos grupales?"
+              "text_es": "¿Qué papel tiendo a asumir en los grupos?"
             },
             {
               "id": "family_friends_06",
               "text_ko": "지금의 친구 관계는 나에게 좋은 영향을 주고 있을까?",
               "text_en": "Is my current circle of friends having a good effect on me?",
-              "text_es": "¿Está teniendo mi círculo de amigos actual un buen efecto en mí?"
+              "text_es": "¿Me está haciendo bien mi círculo de amigos actual?"
             },
             {
               "id": "family_friends_07",
@@ -2029,7 +2029,7 @@
               "id": "family_friends_12",
               "text_ko": "지금 멀어진 친구와 다시 가까워질 수 있을까?",
               "text_en": "Can I grow close again with a friend I've drifted from?",
-              "text_es": "¿Puedo volver a acercarme a un amigo/a del que me he distanciado?"
+              "text_es": "¿Puedo volver a acercarme a una amistad de la que me he distanciado?"
             },
             {
               "id": "family_friends_13",
@@ -2041,13 +2041,13 @@
               "id": "family_friends_14",
               "text_ko": "나에게 중요한 인맥을 만날 시기가 있을까?",
               "text_en": "Is there a period coming when I'll meet an important connection?",
-              "text_es": "¿Hay un período por venir en el que conozca una conexión importante?"
+              "text_es": "¿Se acerca un período en el que conoceré a alguien importante para mí?"
             },
             {
               "id": "family_friends_15",
               "text_ko": "나는 사람들 앞에서 나답게 지내고 있을까?",
               "text_en": "Am I being myself around other people?",
-              "text_es": "¿Estoy siendo yo mismo/a frente a otras personas?"
+              "text_es": "¿Me muestro tal como soy ante los demás?"
             },
             {
               "id": "family_friends_16",
@@ -2065,27 +2065,27 @@
               "id": "family_friends_18",
               "text_ko": "나에게 도움을 줄 귀인이 나타날 시기가 있을까?",
               "text_en": "Is there a period when a helpful benefactor will appear for me?",
-              "text_es": "¿Hay un período en el que aparecerá para mí un benefactor útil?"
+              "text_es": "¿Habrá un período en el que aparezca alguien que me ayude de verdad?"
             },
             {
               "id": "family_friends_19",
               "text_ko": "나는 갈등이 생겼을 때 어떻게 대처하는 게 좋을까?",
               "text_en": "How should I handle it when conflict comes up?",
-              "text_es": "¿Cómo debería manejarlo cuando surge un conflicto?"
+              "text_es": "¿Cómo debería afrontar un conflicto cuando surge?"
             },
             {
               "id": "family_friends_20",
               "text_ko": "나의 사교성은 어떤 방식으로 발휘될 때 가장 좋을까?",
               "text_en": "In what way does my sociability come across best?",
-              "text_es": "¿De qué forma se muestra mejor mi sociabilidad?"
+              "text_es": "¿De qué manera se nota más mi lado sociable?"
             }
           ],
           "name_en": "Friends & Connections",
-          "name_es": "Amigos y Conexiones"
+          "name_es": "Amigos y contactos"
         }
       ],
       "name_en": "Family & Relationships",
-      "name_es": "Familia y Relaciones"
+      "name_es": "Familia y relaciones"
     },
     {
       "id": "self",
@@ -2099,7 +2099,7 @@
               "id": "self_personality_01",
               "text_ko": "나는 정말 어떤 사람일까?",
               "text_en": "Who am I, really?",
-              "text_es": "¿Quién soy yo, realmente?"
+              "text_es": "¿Quién soy realmente?"
             },
             {
               "id": "self_personality_02",
@@ -2123,13 +2123,13 @@
               "id": "self_personality_05",
               "text_ko": "나는 겉모습과 속마음이 얼마나 다를까?",
               "text_en": "How different are my outward appearance and my inner feelings?",
-              "text_es": "¿Qué tan diferentes son mi apariencia externa y mis sentimientos internos?"
+              "text_es": "¿Cuánto se diferencia lo que muestro por fuera de lo que siento por dentro?"
             },
             {
               "id": "self_personality_06",
               "text_ko": "나는 스트레스를 받을 때 어떤 방식으로 반응할까?",
               "text_en": "How do I tend to react when I'm stressed?",
-              "text_es": "¿Cómo tiendo a reaccionar cuando estoy estresado/a?"
+              "text_es": "¿Cómo tiendo a reaccionar cuando estoy bajo estrés?"
             },
             {
               "id": "self_personality_07",
@@ -2141,25 +2141,25 @@
               "id": "self_personality_08",
               "text_ko": "나는 사람들에게 어떤 인상을 주는 편일까?",
               "text_en": "What kind of impression do I tend to give people?",
-              "text_es": "¿Qué tipo de impresión tiendo a darle a la gente?"
+              "text_es": "¿Qué impresión suelo dar a los demás?"
             },
             {
               "id": "self_personality_09",
               "text_ko": "나는 왜 이런 성격을 갖게 되었을까?",
               "text_en": "Why did I end up with this personality?",
-              "text_es": "¿Por qué terminé con esta personalidad?"
+              "text_es": "¿Por qué desarrollé esta personalidad?"
             },
             {
               "id": "self_personality_10",
               "text_ko": "나의 성격은 나이가 들면서 어떻게 변할까?",
               "text_en": "How will my personality change as I get older?",
-              "text_es": "¿Cómo cambiará mi personalidad a medida que envejezco?"
+              "text_es": "¿Cómo cambiará mi personalidad con los años?"
             },
             {
               "id": "self_personality_11",
               "text_ko": "나는 감정을 표현하는 데 서툰 편일까?",
               "text_en": "Am I not very good at expressing my emotions?",
-              "text_es": "¿No se me da muy bien expresar mis emociones?"
+              "text_es": "¿Me cuesta expresar mis emociones?"
             },
             {
               "id": "self_personality_12",
@@ -2195,7 +2195,7 @@
               "id": "self_personality_17",
               "text_ko": "나는 왜 사람들 앞에서 가면을 쓰게 될까?",
               "text_en": "Why do I end up wearing a mask in front of people?",
-              "text_es": "¿Por qué termino usando una máscara frente a la gente?"
+              "text_es": "¿Por qué acabo poniéndome una máscara ante los demás?"
             },
             {
               "id": "self_personality_18",
@@ -2207,7 +2207,7 @@
               "id": "self_personality_19",
               "text_ko": "나는 나 자신을 얼마나 잘 알고 있을까?",
               "text_en": "How well do I really know myself?",
-              "text_es": "¿Qué tan bien me conozco realmente a mí mismo/a?"
+              "text_es": "¿Cuánto me conozco de verdad?"
             },
             {
               "id": "self_personality_20",
@@ -2217,7 +2217,7 @@
             }
           ],
           "name_en": "My Personality & Temperament",
-          "name_es": "Mi Personalidad y Temperamento"
+          "name_es": "Mi personalidad y temperamento"
         },
         {
           "id": "self_strength",
@@ -2233,7 +2233,7 @@
               "id": "self_strength_02",
               "text_ko": "나는 어떤 일을 할 때 가장 나답다고 느낄까?",
               "text_en": "When do I feel most like myself?",
-              "text_es": "¿Cuándo me siento más yo mismo/a?"
+              "text_es": "¿En qué momentos siento que soy más yo?"
             },
             {
               "id": "self_strength_03",
@@ -2251,13 +2251,13 @@
               "id": "self_strength_05",
               "text_ko": "나에게 잘 맞는 환경은 어떤 곳일까?",
               "text_en": "What kind of environment suits me well?",
-              "text_es": "¿Qué tipo de ambiente me conviene bien?"
+              "text_es": "¿Qué tipo de ambiente me conviene?"
             },
             {
               "id": "self_strength_06",
               "text_ko": "나는 다른 사람보다 유독 뛰어난 부분이 있을까?",
               "text_en": "Is there something I'm noticeably better at than other people?",
-              "text_es": "¿Hay algo en lo que soy notablemente mejor que otras personas?"
+              "text_es": "¿Hay algo en lo que destaque claramente sobre los demás?"
             },
             {
               "id": "self_strength_07",
@@ -2287,13 +2287,13 @@
               "id": "self_strength_11",
               "text_ko": "나의 약점이 오히려 강점이 될 수 있을까?",
               "text_en": "Could my weakness actually become a strength?",
-              "text_es": "¿Podría mi debilidad convertirse en realidad en una fortaleza?"
+              "text_es": "¿Podría mi debilidad acabar siendo una fortaleza?"
             },
             {
               "id": "self_strength_12",
               "text_ko": "나는 나 자신을 과소평가하고 있는 건 아닐까?",
               "text_en": "Am I underestimating myself?",
-              "text_es": "¿Me estoy subestimando a mí mismo/a?"
+              "text_es": "¿Me estoy subestimando?"
             },
             {
               "id": "self_strength_13",
@@ -2305,7 +2305,7 @@
               "id": "self_strength_14",
               "text_ko": "나는 어떤 상황에서 가장 흔들리는 편일까?",
               "text_en": "In what situations am I most likely to waver?",
-              "text_es": "¿En qué situaciones es más probable que titubee?"
+              "text_es": "¿En qué situaciones me cuesta más mantenerme firme?"
             },
             {
               "id": "self_strength_15",
@@ -2317,7 +2317,7 @@
               "id": "self_strength_16",
               "text_ko": "나는 완벽하지 않아도 괜찮은 부분이 있을까?",
               "text_en": "Is there something it's okay for me not to be perfect at?",
-              "text_es": "¿Hay algo en lo que está bien que no sea perfecto/a?"
+              "text_es": "¿Hay algo en lo que no pasa nada si no llego a la perfección?"
             },
             {
               "id": "self_strength_17",
@@ -2335,7 +2335,7 @@
               "id": "self_strength_19",
               "text_ko": "나의 진짜 잠재력은 아직 발휘되지 않은 걸까?",
               "text_en": "Has my true potential not yet been realized?",
-              "text_es": "¿Todavía no se ha realizado mi verdadero potencial?"
+              "text_es": "¿Todavía no he desplegado mi verdadero potencial?"
             },
             {
               "id": "self_strength_20",
@@ -2345,7 +2345,7 @@
             }
           ],
           "name_en": "Strengths & Weaknesses",
-          "name_es": "Fortalezas y Debilidades"
+          "name_es": "Fortalezas y debilidades"
         },
         {
           "id": "self_purpose",
@@ -2355,13 +2355,13 @@
               "id": "self_purpose_01",
               "text_ko": "나는 무엇을 위해 살아가고 있을까?",
               "text_en": "What am I living for?",
-              "text_es": "¿Para qué estoy viviendo?"
+              "text_es": "¿Para qué vivo?"
             },
             {
               "id": "self_purpose_02",
               "text_ko": "나에게 진짜 행복은 무엇일까?",
               "text_en": "What does real happiness mean for me?",
-              "text_es": "¿Qué significa la felicidad real para mí?"
+              "text_es": "¿Qué significa para mí la verdadera felicidad?"
             },
             {
               "id": "self_purpose_03",
@@ -2379,13 +2379,13 @@
               "id": "self_purpose_05",
               "text_ko": "나는 지금의 삶에 만족하고 있을까?",
               "text_en": "Am I satisfied with my life right now?",
-              "text_es": "¿Estoy satisfecho/a con mi vida ahora mismo?"
+              "text_es": "¿Me siento a gusto con mi vida ahora mismo?"
             },
             {
               "id": "self_purpose_06",
               "text_ko": "나는 무엇을 할 때 가장 살아있다고 느낄까?",
               "text_en": "When do I feel most alive?",
-              "text_es": "¿Cuándo me siento más vivo/a?"
+              "text_es": "¿En qué momentos siento más vitalidad?"
             },
             {
               "id": "self_purpose_07",
@@ -2415,7 +2415,7 @@
               "id": "self_purpose_11",
               "text_ko": "나는 지금 나 자신에게 솔직하게 살고 있을까?",
               "text_en": "Am I living honestly with myself right now?",
-              "text_es": "¿Estoy viviendo honestamente conmigo mismo/a ahora mismo?"
+              "text_es": "¿Estoy viviendo con honestidad conmigo ahora mismo?"
             },
             {
               "id": "self_purpose_12",
@@ -2433,7 +2433,7 @@
               "id": "self_purpose_14",
               "text_ko": "나는 남들의 기준과 나의 기준 중 무엇을 따라야 할까?",
               "text_en": "Should I follow others' standards, or my own?",
-              "text_es": "¿Debería seguir los estándares de otros, o los míos propios?"
+              "text_es": "¿Debería seguir los criterios de los demás, o los míos propios?"
             },
             {
               "id": "self_purpose_15",
@@ -2451,19 +2451,19 @@
               "id": "self_purpose_17",
               "text_ko": "나에게 인생의 큰 그림은 어떤 모습일까?",
               "text_en": "What does the big picture of my life look like?",
-              "text_es": "¿Cómo se ve el panorama general de mi vida?"
+              "text_es": "¿Cómo es el panorama general de mi vida?"
             },
             {
               "id": "self_purpose_18",
               "text_ko": "나는 지금 나답게 살고 있는 걸까?",
               "text_en": "Am I living true to myself right now?",
-              "text_es": "¿Estoy viviendo fiel a mí mismo/a ahora mismo?"
+              "text_es": "¿Estoy viviendo de acuerdo con lo que soy?"
             },
             {
               "id": "self_purpose_19",
               "text_ko": "나의 삶에서 반복되는 고민의 뿌리는 무엇일까?",
               "text_en": "What's at the root of the worry that keeps recurring in my life?",
-              "text_es": "¿Qué hay en la raíz de la preocupación que se repite en mi vida?"
+              "text_es": "¿Cuál es la raíz de la preocupación que se repite en mi vida?"
             },
             {
               "id": "self_purpose_20",
@@ -2473,11 +2473,11 @@
             }
           ],
           "name_en": "Life Direction & Purpose",
-          "name_es": "Dirección y Propósito de Vida"
+          "name_es": "Rumbo y propósito en la vida"
         }
       ],
       "name_en": "Myself",
-      "name_es": "Yo Mismo"
+      "name_es": "Sobre ti"
     },
     {
       "id": "timing",
@@ -2491,19 +2491,19 @@
               "id": "timing_year_01",
               "text_ko": "올해 나에게 가장 중요한 시기는 언제일까?",
               "text_en": "When is the most important period for me this year?",
-              "text_es": "¿Cuándo es el período más importante para mí este año?"
+              "text_es": "¿Cuál es el período más importante para mí este año?"
             },
             {
               "id": "timing_year_02",
               "text_ko": "올해 나는 어떤 흐름을 타게 될까?",
               "text_en": "What kind of flow will I be in this year?",
-              "text_es": "¿En qué tipo de flujo estaré este año?"
+              "text_es": "¿Cómo será este año para mí?"
             },
             {
               "id": "timing_year_03",
               "text_ko": "올해 나에게 조심해야 할 시기가 있을까?",
               "text_en": "Is there a period I should be careful during this year?",
-              "text_es": "¿Hay un período del que debería tener cuidado este año?"
+              "text_es": "¿Hay algún período este año en el que deba ir con más cuidado?"
             },
             {
               "id": "timing_year_04",
@@ -2515,7 +2515,7 @@
               "id": "timing_year_05",
               "text_ko": "올해 나의 전반적인 운의 흐름은 어떨까?",
               "text_en": "What's the overall flow of my luck this year?",
-              "text_es": "¿Cuál es el flujo general de mi suerte este año?"
+              "text_es": "¿Cómo se presenta mi suerte este año, en general?"
             },
             {
               "id": "timing_year_06",
@@ -2539,13 +2539,13 @@
               "id": "timing_year_09",
               "text_ko": "올해 하반기 나의 흐름은 어떻게 달라질까?",
               "text_en": "How will my flow shift in the second half of this year?",
-              "text_es": "¿Cómo cambiará mi flujo en la segunda mitad de este año?"
+              "text_es": "¿Cómo cambiará mi panorama en la segunda mitad de este año?"
             },
             {
               "id": "timing_year_10",
               "text_ko": "올해 나에게 뜻밖의 일이 생길 가능성이 있을까?",
               "text_en": "Is there a chance something unexpected happens to me this year?",
-              "text_es": "¿Hay una posibilidad de que me pase algo inesperado este año?"
+              "text_es": "¿Podría pasarme algo inesperado este año?"
             },
             {
               "id": "timing_year_11",
@@ -2557,13 +2557,13 @@
               "id": "timing_year_12",
               "text_ko": "올해 나에게 힘든 시기가 지나가고 있을까?",
               "text_en": "Is a difficult period passing for me this year?",
-              "text_es": "¿Está pasando un período difícil para mí este año?"
+              "text_es": "¿Estoy atravesando un período difícil este año?"
             },
             {
               "id": "timing_year_13",
               "text_ko": "올해 나의 노력이 결실을 맺을 수 있을까?",
               "text_en": "Can my efforts pay off this year?",
-              "text_es": "¿Pueden dar frutos mis esfuerzos este año?"
+              "text_es": "¿Darán fruto mis esfuerzos este año?"
             },
             {
               "id": "timing_year_14",
@@ -2581,35 +2581,35 @@
               "id": "timing_year_16",
               "text_ko": "올해 나에게 휴식이 필요한 시기가 있을까?",
               "text_en": "Is there a period this year when I'll need rest?",
-              "text_es": "¿Hay un período este año en el que voy a necesitar descanso?"
+              "text_es": "¿Hay un período este año en el que necesitaré descansar?"
             },
             {
               "id": "timing_year_17",
               "text_ko": "올해 나의 에너지가 가장 강한 시기는 언제일까?",
               "text_en": "When is my energy at its strongest this year?",
-              "text_es": "¿Cuándo está mi energía en su punto más fuerte este año?"
+              "text_es": "¿Cuándo tendré más energía este año?"
             },
             {
               "id": "timing_year_18",
               "text_ko": "올해 나는 어떤 것을 새로 시작하기에 좋을까?",
               "text_en": "What's a good thing for me to start fresh this year?",
-              "text_es": "¿Qué es algo bueno para que empiece de nuevo este año?"
+              "text_es": "¿Qué sería bueno empezar este año?"
             },
             {
               "id": "timing_year_19",
               "text_ko": "올해 나에게 마무리해야 할 일이 있을까?",
               "text_en": "Is there something I need to wrap up this year?",
-              "text_es": "¿Hay algo que necesito terminar este año?"
+              "text_es": "¿Hay algo que deba cerrar este año?"
             },
             {
               "id": "timing_year_20",
               "text_ko": "올해 나의 전체적인 방향은 어디를 향하고 있을까?",
               "text_en": "Where is my overall direction headed this year?",
-              "text_es": "¿Hacia dónde se dirige mi dirección general este año?"
+              "text_es": "¿Cuál es el rumbo general de mi año?"
             }
           ],
           "name_en": "This Year's Flow",
-          "name_es": "El Flujo de Este Año"
+          "name_es": "Panorama de este año"
         },
         {
           "id": "timing_decision",
@@ -2625,13 +2625,13 @@
               "id": "timing_decision_02",
               "text_ko": "나는 이 선택을 서두르는 게 좋을까, 미루는 게 좋을까?",
               "text_en": "Should I rush this choice, or put it off?",
-              "text_es": "¿Debería apresurar esta decisión, o posponerla?"
+              "text_es": "¿Debería darme prisa en tomar esta decisión, o posponerla?"
             },
             {
               "id": "timing_decision_03",
               "text_ko": "나에게 중요한 결정을 내리기 좋은 시기가 따로 있을까?",
               "text_en": "Is there a particular time that's good for me to make important decisions?",
-              "text_es": "¿Hay un momento en particular que sea bueno para que tome decisiones importantes?"
+              "text_es": "¿Hay un momento especialmente bueno para tomar decisiones importantes?"
             },
             {
               "id": "timing_decision_04",
@@ -2655,7 +2655,7 @@
               "id": "timing_decision_07",
               "text_ko": "나는 신중해야 할 때와 과감해야 할 때를 잘 구분하고 있을까?",
               "text_en": "Am I good at telling when to be cautious and when to be bold?",
-              "text_es": "¿Se me da bien distinguir cuándo ser cauteloso/a y cuándo ser audaz?"
+              "text_es": "¿Sé distinguir cuándo conviene la cautela y cuándo la audacia?"
             },
             {
               "id": "timing_decision_08",
@@ -2667,19 +2667,19 @@
               "id": "timing_decision_09",
               "text_ko": "나는 이 결정을 누구와 상의해야 할까?",
               "text_en": "Who should I discuss this decision with?",
-              "text_es": "¿Con quién debería discutir esta decisión?"
+              "text_es": "¿Con quién debería hablar de esta decisión?"
             },
             {
               "id": "timing_decision_10",
               "text_ko": "나에게 지금 필요한 건 결단력일까, 인내심일까?",
               "text_en": "What do I need right now — decisiveness, or patience?",
-              "text_es": "¿Qué necesito ahora mismo: decisión, o paciencia?"
+              "text_es": "¿Qué necesito ahora: decidir, o tener paciencia?"
             },
             {
               "id": "timing_decision_11",
               "text_ko": "이 선택이 나중에 후회로 남지 않을까?",
               "text_en": "Will this choice end up as a regret later?",
-              "text_es": "¿Terminará siendo esta decisión un arrepentimiento más adelante?"
+              "text_es": "¿Me arrepentiré más adelante de esta decisión?"
             },
             {
               "id": "timing_decision_12",
@@ -2697,25 +2697,25 @@
               "id": "timing_decision_14",
               "text_ko": "지금 이 타이밍에 변화를 주는 게 맞을까?",
               "text_en": "Is now the right timing to make a change?",
-              "text_es": "¿Es este el momento correcto para hacer un cambio?"
+              "text_es": "¿Es este el momento de hacer un cambio?"
             },
             {
               "id": "timing_decision_15",
               "text_ko": "나는 이 결정을 내리기에 아직 준비가 안 된 걸까?",
               "text_en": "Am I just not ready yet to make this decision?",
-              "text_es": "¿Simplemente no estoy listo/a todavía para tomar esta decisión?"
+              "text_es": "¿Aún me falta preparación para tomar esta decisión?"
             },
             {
               "id": "timing_decision_16",
               "text_ko": "나에게 결정적인 신호가 나타날 시기가 있을까?",
               "text_en": "Is there a period ahead when a decisive sign will appear for me?",
-              "text_es": "¿Hay un período por delante en el que me aparecerá una señal decisiva?"
+              "text_es": "¿Llegará un período en el que aparezca una señal decisiva?"
             },
             {
               "id": "timing_decision_17",
               "text_ko": "지금 포기하려는 이 일, 정말 그만두어도 될까?",
               "text_en": "This thing I'm about to give up on — should I really quit it?",
-              "text_es": "Esto que estoy a punto de abandonar, ¿debería realmente dejarlo?"
+              "text_es": "Estoy a punto de abandonar algo, ¿de verdad debería dejarlo?"
             },
             {
               "id": "timing_decision_18",
@@ -2733,11 +2733,11 @@
               "id": "timing_decision_20",
               "text_ko": "나는 이 결정을 나 자신을 위해 내리고 있는 걸까?",
               "text_en": "Am I making this decision for myself?",
-              "text_es": "¿Estoy tomando esta decisión por mí mismo/a?"
+              "text_es": "¿Es esta decisión realmente mía?"
             }
           ],
           "name_en": "Timing for Important Decisions",
-          "name_es": "El Momento para Decisiones Importantes"
+          "name_es": "El momento de las decisiones importantes"
         },
         {
           "id": "timing_move",
@@ -2837,13 +2837,13 @@
               "id": "timing_move_16",
               "text_ko": "나는 변화를 받아들일 준비가 되어 있을까?",
               "text_en": "Am I ready to embrace change?",
-              "text_es": "¿Estoy listo/a para aceptar el cambio?"
+              "text_es": "¿Estoy en condiciones de aceptar el cambio?"
             },
             {
               "id": "timing_move_17",
               "text_ko": "나의 삶에서 다음 챕터는 어떤 모습일까?",
               "text_en": "What will the next chapter of my life look like?",
-              "text_es": "¿Cómo se verá el próximo capítulo de mi vida?"
+              "text_es": "¿Cómo será el próximo capítulo de mi vida?"
             },
             {
               "id": "timing_move_18",
@@ -2865,11 +2865,11 @@
             }
           ],
           "name_en": "Moving & Life Changes",
-          "name_es": "Mudanzas y Cambios de Vida"
+          "name_es": "Mudanzas y cambios de vida"
         }
       ],
       "name_en": "Timing & Change",
-      "name_es": "Momento y Cambio"
+      "name_es": "Momento y cambio"
     },
     {
       "id": "wellbeing",
@@ -2883,13 +2883,13 @@
               "id": "wellbeing_energy_01",
               "text_ko": "나는 요즘 왜 이렇게 쉽게 지칠까?",
               "text_en": "Why do I get tired so easily these days?",
-              "text_es": "¿Por qué me canso tan fácilmente estos días?"
+              "text_es": "¿Por qué me canso tan fácilmente últimamente?"
             },
             {
               "id": "wellbeing_energy_02",
               "text_ko": "나의 에너지가 가장 좋은 시간대나 계절은 언제일까?",
               "text_en": "What time of day or season is my energy at its best?",
-              "text_es": "¿En qué momento del día o estación está mi energía en su mejor punto?"
+              "text_es": "¿En qué momento del día o del año tengo más energía?"
             },
             {
               "id": "wellbeing_energy_03",
@@ -2913,7 +2913,7 @@
               "id": "wellbeing_energy_06",
               "text_ko": "나의 컨디션이 자주 떨어지는 이유가 있을까?",
               "text_en": "Is there a reason my condition drops so often?",
-              "text_es": "¿Hay una razón por la que mi condición baja tan seguido?"
+              "text_es": "¿Hay una razón por la que mi energía baje tan a menudo?"
             },
             {
               "id": "wellbeing_energy_07",
@@ -2925,19 +2925,19 @@
               "id": "wellbeing_energy_08",
               "text_ko": "나에게 잘 맞는 활력 회복 방법은 무엇일까?",
               "text_en": "What way of recovering my energy would suit me well?",
-              "text_es": "¿Qué forma de recuperar mi energía me convendría bien?"
+              "text_es": "¿Qué forma de recuperar energía me iría bien?"
             },
             {
               "id": "wellbeing_energy_09",
               "text_ko": "나는 무리하고 있다는 신호를 놓치고 있는 건 아닐까?",
               "text_en": "Am I missing signs that I'm overdoing it?",
-              "text_es": "¿Se me están escapando señales de que me estoy excediendo?"
+              "text_es": "¿Estoy pasando por alto señales de que me estoy excediendo?"
             },
             {
               "id": "wellbeing_energy_10",
               "text_ko": "나의 체력을 관리하기에 좋은 습관은 무엇일까?",
               "text_en": "What habit would be good for managing my stamina?",
-              "text_es": "¿Qué hábito sería bueno para manejar mi resistencia física?"
+              "text_es": "¿Qué hábito me ayudaría a cuidar mi resistencia física?"
             },
             {
               "id": "wellbeing_energy_11",
@@ -2949,19 +2949,19 @@
               "id": "wellbeing_energy_12",
               "text_ko": "나에게 균형 잡힌 삶이란 어떤 모습일까?",
               "text_en": "What does a balanced life look like for me?",
-              "text_es": "¿Cómo se ve una vida equilibrada para mí?"
+              "text_es": "¿Cómo sería una vida equilibrada para mí?"
             },
             {
               "id": "wellbeing_energy_13",
               "text_ko": "나는 나 자신을 얼마나 잘 돌보고 있을까?",
               "text_en": "How well am I taking care of myself?",
-              "text_es": "¿Qué tan bien me estoy cuidando a mí mismo/a?"
+              "text_es": "¿Me estoy cuidando lo suficiente?"
             },
             {
               "id": "wellbeing_energy_14",
               "text_ko": "나의 에너지를 소모시키는 것은 무엇일까?",
               "text_en": "What's draining my energy?",
-              "text_es": "¿Qué me está drenando la energía?"
+              "text_es": "¿Qué me está quitando la energía?"
             },
             {
               "id": "wellbeing_energy_15",
@@ -2985,13 +2985,13 @@
               "id": "wellbeing_energy_18",
               "text_ko": "나의 몸이 보내는 신호에 더 귀 기울여야 할까?",
               "text_en": "Should I listen more closely to the signals my body is sending?",
-              "text_es": "¿Debería escuchar más de cerca las señales que envía mi cuerpo?"
+              "text_es": "¿Debería prestar más atención a las señales de mi cuerpo?"
             },
             {
               "id": "wellbeing_energy_19",
               "text_ko": "나는 컨디션 관리를 위해 무엇을 바꿔야 할까?",
               "text_en": "What do I need to change to manage my condition better?",
-              "text_es": "¿Qué necesito cambiar para manejar mejor mi condición?"
+              "text_es": "¿Qué necesito cambiar para cuidar mejor mi estado físico?"
             },
             {
               "id": "wellbeing_energy_20",
@@ -3001,7 +3001,7 @@
             }
           ],
           "name_en": "Condition & Energy Management",
-          "name_es": "Condición y Manejo de la Energía"
+          "name_es": "Estado físico y energía"
         },
         {
           "id": "wellbeing_mind",
@@ -3011,7 +3011,7 @@
               "id": "wellbeing_mind_01",
               "text_ko": "나는 요즘 왜 이렇게 마음이 무거울까?",
               "text_en": "Why does my heart feel so heavy these days?",
-              "text_es": "¿Por qué siento el corazón tan pesado estos días?"
+              "text_es": "¿Por qué siento el corazón tan pesado últimamente?"
             },
             {
               "id": "wellbeing_mind_02",
@@ -3041,13 +3041,13 @@
               "id": "wellbeing_mind_06",
               "text_ko": "나의 마음이 편안해지는 시기는 언제일까?",
               "text_en": "When does my mind feel most at ease?",
-              "text_es": "¿Cuándo se siente mi mente más tranquila?"
+              "text_es": "¿Cuándo está más tranquila mi mente?"
             },
             {
               "id": "wellbeing_mind_07",
               "text_ko": "나는 스트레스를 받을 때 어떻게 대처해야 할까?",
               "text_en": "How should I cope when I'm feeling stressed?",
-              "text_es": "¿Cómo debería afrontarlo cuando me siento estresado/a?"
+              "text_es": "¿Cómo debería afrontar el estrés cuando lo siento?"
             },
             {
               "id": "wellbeing_mind_08",
@@ -3059,7 +3059,7 @@
               "id": "wellbeing_mind_09",
               "text_ko": "나는 나 자신에게 너무 엄격한 편일까?",
               "text_en": "Am I too strict with myself?",
-              "text_es": "¿Soy demasiado estricto/a conmigo mismo/a?"
+              "text_es": "¿Me exijo demasiado?"
             },
             {
               "id": "wellbeing_mind_10",
@@ -3083,7 +3083,7 @@
               "id": "wellbeing_mind_13",
               "text_ko": "나는 왜 마음을 놓지 못하고 계속 긴장하고 있을까?",
               "text_en": "Why can't I let my guard down and keep staying tense?",
-              "text_es": "¿Por qué no puedo bajar la guardia y sigo tenso/a?"
+              "text_es": "¿Por qué no consigo relajarme y sigo en tensión?"
             },
             {
               "id": "wellbeing_mind_14",
@@ -3095,19 +3095,19 @@
               "id": "wellbeing_mind_15",
               "text_ko": "나는 스스로를 더 아껴줘도 괜찮을까?",
               "text_en": "Is it okay for me to be kinder to myself?",
-              "text_es": "¿Está bien que sea más amable conmigo mismo/a?"
+              "text_es": "¿Está bien que sea más amable conmigo?"
             },
             {
               "id": "wellbeing_mind_16",
               "text_ko": "나에게 지금 힘이 되어줄 존재는 무엇일까?",
               "text_en": "What can be a source of strength for me right now?",
-              "text_es": "¿Qué puede ser una fuente de fortaleza para mí ahora mismo?"
+              "text_es": "¿Qué puede darme fuerza ahora mismo?"
             },
             {
               "id": "wellbeing_mind_17",
               "text_ko": "나는 과거의 일에서 얼마나 자유로워졌을까?",
               "text_en": "How free have I become from things in my past?",
-              "text_es": "¿Qué tan libre me he vuelto de cosas de mi pasado?"
+              "text_es": "¿Cuánto me he liberado de cosas de mi pasado?"
             },
             {
               "id": "wellbeing_mind_18",
@@ -3119,17 +3119,17 @@
               "id": "wellbeing_mind_19",
               "text_ko": "나는 지금 이 감정을 누구에게도 말하지 못하고 있는 걸까?",
               "text_en": "Am I unable to tell anyone about this feeling I have right now?",
-              "text_es": "¿No puedo contarle a nadie este sentimiento que tengo ahora mismo?"
+              "text_es": "¿Estoy callando este sentimiento sin poder contárselo a nadie?"
             },
             {
               "id": "wellbeing_mind_20",
               "text_ko": "나에게 마음의 여유가 찾아오는 시기가 있을까?",
               "text_en": "Is there a period coming when peace of mind will find me?",
-              "text_es": "¿Se acerca un período en el que la tranquilidad mental me encontrará?"
+              "text_es": "¿Se acerca un período de tranquilidad mental?"
             }
           ],
           "name_en": "Mental Wellbeing",
-          "name_es": "Bienestar Mental"
+          "name_es": "Bienestar mental"
         },
         {
           "id": "wellbeing_habit",
@@ -3139,19 +3139,19 @@
               "id": "wellbeing_habit_01",
               "text_ko": "나는 어떤 습관을 새로 만들면 좋을까?",
               "text_en": "What new habit would be good for me to build?",
-              "text_es": "¿Qué hábito nuevo sería bueno que construyera?"
+              "text_es": "¿Qué hábito nuevo me convendría crear?"
             },
             {
               "id": "wellbeing_habit_02",
               "text_ko": "나에게 잘 맞는 하루 루틴은 어떤 모습일까?",
               "text_en": "What does a daily routine that suits me well look like?",
-              "text_es": "¿Cómo se ve una rutina diaria que me convenga bien?"
+              "text_es": "¿Cómo sería una rutina diaria que me convenga?"
             },
             {
               "id": "wellbeing_habit_03",
               "text_ko": "나는 왜 좋은 습관을 오래 유지하지 못할까?",
               "text_en": "Why can't I keep good habits going for long?",
-              "text_es": "¿Por qué no puedo mantener buenos hábitos por mucho tiempo?"
+              "text_es": "¿Por qué no logro mantener los buenos hábitos mucho tiempo?"
             },
             {
               "id": "wellbeing_habit_04",
@@ -3163,7 +3163,7 @@
               "id": "wellbeing_habit_05",
               "text_ko": "나는 아침형 인간일까, 저녁형 인간일까?",
               "text_en": "Am I a morning person, or a night owl?",
-              "text_es": "¿Soy una persona de mañana, o de noche?"
+              "text_es": "¿Rindo más por la mañana, o por la noche?"
             },
             {
               "id": "wellbeing_habit_06",
@@ -3175,7 +3175,7 @@
               "id": "wellbeing_habit_07",
               "text_ko": "나는 작은 습관으로 큰 변화를 만들 수 있을까?",
               "text_en": "Can small habits create a big change for me?",
-              "text_es": "¿Pueden los pequeños hábitos crear un gran cambio para mí?"
+              "text_es": "¿Pueden unos pequeños hábitos traer un gran cambio a mi vida?"
             },
             {
               "id": "wellbeing_habit_08",
@@ -3199,13 +3199,13 @@
               "id": "wellbeing_habit_11",
               "text_ko": "나는 지금의 생활 패턴을 바꿔야 할까?",
               "text_en": "Should I change my current lifestyle pattern?",
-              "text_es": "¿Debería cambiar mi patrón de estilo de vida actual?"
+              "text_es": "¿Debería cambiar mi estilo de vida actual?"
             },
             {
               "id": "wellbeing_habit_12",
               "text_ko": "나에게 새로운 루틴을 시작하기 좋은 시기가 있을까?",
               "text_en": "Is there a good time for me to start a new routine?",
-              "text_es": "¿Hay un buen momento para que empiece una nueva rutina?"
+              "text_es": "¿Hay un buen momento para empezar una nueva rutina?"
             },
             {
               "id": "wellbeing_habit_13",
@@ -3217,13 +3217,13 @@
               "id": "wellbeing_habit_14",
               "text_ko": "나의 습관은 나의 성격과 얼마나 관련이 있을까?",
               "text_en": "How much are my habits connected to my personality?",
-              "text_es": "¿Qué tan relacionados están mis hábitos con mi personalidad?"
+              "text_es": "¿Cuánto tienen que ver mis hábitos con mi personalidad?"
             },
             {
               "id": "wellbeing_habit_15",
               "text_ko": "나는 무엇을 반복할 때 가장 안정감을 느낄까?",
               "text_en": "What repeated action makes me feel most at ease?",
-              "text_es": "¿Qué acción repetida me hace sentir más tranquilo/a?"
+              "text_es": "¿Qué acción repetida me da más tranquilidad?"
             },
             {
               "id": "wellbeing_habit_16",
@@ -3235,19 +3235,19 @@
               "id": "wellbeing_habit_17",
               "text_ko": "나는 지금의 루틴이 나에게 맞는지 다시 살펴봐야 할까?",
               "text_en": "Should I take another look at whether my current routine suits me?",
-              "text_es": "¿Debería volver a evaluar si mi rutina actual me conviene?"
+              "text_es": "¿Debería revisar si mi rutina actual me conviene?"
             },
             {
               "id": "wellbeing_habit_18",
               "text_ko": "나의 하루를 더 의미 있게 만들려면 무엇이 필요할까?",
               "text_en": "What do I need to make my day more meaningful?",
-              "text_es": "¿Qué necesito para hacer mi día más significativo?"
+              "text_es": "¿Qué necesito para que mi día tenga más sentido?"
             },
             {
               "id": "wellbeing_habit_19",
               "text_ko": "나는 꾸준히 하고 싶은 일을 끝까지 해낼 수 있을까?",
               "text_en": "Can I follow through to the end with something I want to do consistently?",
-              "text_es": "¿Puedo llevar a cabo hasta el final algo que quiero hacer de forma constante?"
+              "text_es": "¿Podré mantener hasta el final algo que quiero hacer con constancia?"
             },
             {
               "id": "wellbeing_habit_20",
@@ -3257,11 +3257,11 @@
             }
           ],
           "name_en": "Habits & Routines",
-          "name_es": "Hábitos y Rutinas"
+          "name_es": "Hábitos y rutinas"
         }
       ],
       "name_en": "Condition & Mind",
-      "name_es": "Condición y Mente"
+      "name_es": "Cuerpo y mente"
     },
     {
       "id": "daily",
@@ -3276,7 +3276,7 @@
               "id": "daily_quick_01",
               "text_ko": "오늘 나에게 필요한 한마디는 무엇일까?",
               "text_en": "What's a phrase I need to hear today?",
-              "text_es": "¿Cuál es una frase que necesito escuchar hoy?"
+              "text_es": "¿Qué frase necesito escuchar hoy?"
             },
             {
               "id": "daily_quick_02",
@@ -3294,7 +3294,7 @@
               "id": "daily_quick_04",
               "text_ko": "오늘 나의 기분은 어떤 흐름일까?",
               "text_en": "What's the flow of my mood like today?",
-              "text_es": "¿Cómo es el flujo de mi ánimo hoy?"
+              "text_es": "¿Cómo estará mi ánimo hoy?"
             },
             {
               "id": "daily_quick_05",
@@ -3312,7 +3312,7 @@
               "id": "daily_quick_07",
               "text_ko": "오늘 나에게 어울리는 색깔은 무엇일까?",
               "text_en": "What color suits me today?",
-              "text_es": "¿Qué color me queda bien hoy?"
+              "text_es": "¿Qué color me favorece hoy?"
             },
             {
               "id": "daily_quick_08",
@@ -3330,13 +3330,13 @@
               "id": "daily_quick_10",
               "text_ko": "이번 주 나에게 중요한 날은 언제일까?",
               "text_en": "What's an important day for me this week?",
-              "text_es": "¿Cuál es un día importante para mí esta semana?"
+              "text_es": "¿Qué día de esta semana es importante para mí?"
             },
             {
               "id": "daily_quick_11",
               "text_ko": "오늘 대화를 나누면 좋은 사람이 있을까?",
               "text_en": "Is there someone good to talk to today?",
-              "text_es": "¿Hay alguien bueno con quien hablar hoy?"
+              "text_es": "¿Hay alguien con quien me convenga hablar hoy?"
             },
             {
               "id": "daily_quick_12",
@@ -3372,7 +3372,7 @@
               "id": "daily_quick_17",
               "text_ko": "오늘 나의 컨디션은 어떨까?",
               "text_en": "How's my condition today?",
-              "text_es": "¿Cómo está mi condición hoy?"
+              "text_es": "¿Cómo estará mi energía hoy?"
             },
             {
               "id": "daily_quick_18",
@@ -3396,7 +3396,7 @@
               "id": "daily_quick_21",
               "text_ko": "오늘 나에게 좋은 인연을 만날 가능성이 있을까?",
               "text_en": "Is there a chance I meet a good connection today?",
-              "text_es": "¿Hay una posibilidad de que conozca una buena conexión hoy?"
+              "text_es": "¿Podría conocer hoy a alguien con quien conecte bien?"
             },
             {
               "id": "daily_quick_22",
@@ -3426,13 +3426,13 @@
               "id": "daily_quick_26",
               "text_ko": "오늘 무리하지 않는 게 좋을까?",
               "text_en": "Is it better for me not to overdo it today?",
-              "text_es": "¿Es mejor que no me exceda hoy?"
+              "text_es": "¿Es mejor no excederme hoy?"
             },
             {
               "id": "daily_quick_27",
               "text_ko": "오늘 나에게 필요한 마음가짐은 무엇일까?",
               "text_en": "What mindset do I need today?",
-              "text_es": "¿Qué mentalidad necesito hoy?"
+              "text_es": "¿Qué actitud me conviene hoy?"
             },
             {
               "id": "daily_quick_28",
@@ -3454,11 +3454,11 @@
             }
           ],
           "name_en": "Today & This Week",
-          "name_es": "Hoy y Esta Semana"
+          "name_es": "Hoy y esta semana"
         }
       ],
       "name_en": "Today's Questions",
-      "name_es": "Preguntas de Hoy"
+      "name_es": "Preguntas de hoy"
     }
   ]
 }

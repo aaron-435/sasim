@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import React, { Fragment, useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { Calendar, Clock, MapPin, ArrowRight, ArrowLeft, HelpCircle, Sparkles } from "lucide-react";
 import LoadingReveal from "./LoadingReveal";
 import ErrorNotice from "./ErrorNotice";
 import { useStrings, useLocale, LOCALES } from "@/lib/i18n";
+import { dobFieldOrder, dobSeparator } from "@/lib/dobOrder";
 
 const LOCALE_LABELS = { ko: "한국어", en: "English", es: "Español" };
 
@@ -154,9 +155,13 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
   // this, typing the date continuously (the natural way to fill a date
   // field) silently loses every keystroke typed after YYYY hits 4 digits,
   // since focus never leaves that field.
+  const dobYearRef = useRef(null);
   const dobMonthRef = useRef(null);
   const dobDayRef = useRef(null);
   const minuteRef = useRef(null);
+
+  // Display order only (es: DD/MM/AAAA); state and the submitted ISO date stay year/month/day.
+  const dobOrder = useMemo(() => dobFieldOrder(locale), [locale]);
 
   const dob = useMemo(() => toISODateString(dobYear, dobMonth, dobDay), [dobYear, dobMonth, dobDay]);
   const parsedDate = useMemo(() => {
@@ -431,39 +436,54 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
             <div style={{ marginTop: "6vh" }}>
               <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#D9C9A3", margin: 0 }}>{t.onboarding.labelDob}</h2>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "24px" }}>
-                <div style={{ position: "relative", flex: 2.3 }}>
-                  <Calendar size={17} strokeWidth={1.75} className="ob-field-icon" />
-                  <input type="text" inputMode="numeric" className="ob-input ob-mono" autoFocus
-                    placeholder={t.onboarding.yearPlaceholder} value={dobYear} maxLength={4}
-                    onChange={(e) => {
-                      const v = e.target.value.replace(/[^0-9]/g, "");
-                      setDobYear(v);
-                      if (v.length === 4) dobMonthRef.current?.focus();
-                    }}
-                    onKeyDown={handleEnter}
-                    style={{ textAlign: "center", paddingLeft: "38px", paddingRight: "6px" }} />
-                </div>
-                <span className="ob-mono" style={{ color: "#756B54", fontSize: "18px" }}>.</span>
-                <input ref={dobMonthRef} type="text" inputMode="numeric" className="ob-input ob-mono"
-                  placeholder={t.onboarding.monthPlaceholder} value={dobMonth} maxLength={2}
-                  onChange={(e) => {
-                    const v = e.target.value.replace(/[^0-9]/g, "");
-                    if (v === "" || (Number(v) >= 1 && Number(v) <= 12) || v.length < 2) {
-                      setDobMonth(v);
-                      if (v.length === 2) dobDayRef.current?.focus();
-                    }
-                  }}
-                  onKeyDown={handleEnter}
-                  style={{ flex: 0.85, textAlign: "center", paddingLeft: "10px", paddingRight: "10px" }} />
-                <span className="ob-mono" style={{ color: "#756B54", fontSize: "18px" }}>.</span>
-                <input ref={dobDayRef} type="text" inputMode="numeric" className="ob-input ob-mono"
-                  placeholder={t.onboarding.dayPlaceholder} value={dobDay} maxLength={2}
-                  onChange={(e) => {
-                    const v = e.target.value.replace(/[^0-9]/g, "");
-                    if (v === "" || (Number(v) >= 1 && Number(v) <= 31) || v.length < 2) setDobDay(v);
-                  }}
-                  onKeyDown={handleEnter}
-                  style={{ flex: 0.85, textAlign: "center", paddingLeft: "10px", paddingRight: "10px" }} />
+                {dobOrder.map((field, i) => (
+                  <Fragment key={field}>
+                    {i > 0 && <span className="ob-mono" style={{ color: "#756B54", fontSize: "18px" }}>{dobSeparator(locale)}</span>}
+                    {field === "year" && (
+                      <div style={{ position: "relative", flex: 2.3 }}>
+                        <Calendar size={17} strokeWidth={1.75} className="ob-field-icon" />
+                        <input ref={dobYearRef} type="text" inputMode="numeric" className="ob-input ob-mono" autoFocus={i === 0}
+                          placeholder={t.onboarding.yearPlaceholder} value={dobYear} maxLength={4}
+                          onChange={(e) => {
+                            const v = e.target.value.replace(/[^0-9]/g, "");
+                            setDobYear(v);
+                            const next = dobOrder[i + 1];
+                            if (v.length === 4 && next) (next === "month" ? dobMonthRef : dobDayRef).current?.focus();
+                          }}
+                          onKeyDown={handleEnter}
+                          style={{ textAlign: "center", paddingLeft: "38px", paddingRight: "6px" }} />
+                      </div>
+                    )}
+                    {field === "month" && (
+                      <input ref={dobMonthRef} type="text" inputMode="numeric" className="ob-input ob-mono" autoFocus={i === 0}
+                        placeholder={t.onboarding.monthPlaceholder} value={dobMonth} maxLength={2}
+                        onChange={(e) => {
+                          const v = e.target.value.replace(/[^0-9]/g, "");
+                          if (v === "" || (Number(v) >= 1 && Number(v) <= 12) || v.length < 2) {
+                            setDobMonth(v);
+                            const next = dobOrder[i + 1];
+                            if (v.length === 2 && next) (next === "year" ? dobYearRef : dobDayRef).current?.focus();
+                          }
+                        }}
+                        onKeyDown={handleEnter}
+                        style={{ flex: 0.85, textAlign: "center", paddingLeft: "10px", paddingRight: "10px" }} />
+                    )}
+                    {field === "day" && (
+                      <input ref={dobDayRef} type="text" inputMode="numeric" className="ob-input ob-mono" autoFocus={i === 0}
+                        placeholder={t.onboarding.dayPlaceholder} value={dobDay} maxLength={2}
+                        onChange={(e) => {
+                          const v = e.target.value.replace(/[^0-9]/g, "");
+                          if (v === "" || (Number(v) >= 1 && Number(v) <= 31) || v.length < 2) {
+                            setDobDay(v);
+                            const next = dobOrder[i + 1];
+                            if (v.length === 2 && next) (next === "year" ? dobYearRef : dobMonthRef).current?.focus();
+                          }
+                        }}
+                        onKeyDown={handleEnter}
+                        style={{ flex: 0.85, textAlign: "center", paddingLeft: "10px", paddingRight: "10px" }} />
+                    )}
+                  </Fragment>
+                ))}
               </div>
               {zodiac && (
                 <div className="ob-fade-in" style={{ marginTop: "16px", display: "flex", alignItems: "center", gap: "12px", background: "rgba(111,169,139,0.06)", border: "1px solid rgba(111,169,139,0.25)", borderRadius: "12px", padding: "13px 16px" }}>

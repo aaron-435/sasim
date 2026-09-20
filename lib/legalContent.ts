@@ -619,7 +619,7 @@ const privacyEs: LegalDocument = {
     {
       heading: "1. Información que Recopilamos",
       body: [
-        { type: "p", text: "Para calcular tu carta saju, evaluar tu test de personalidad y generar respuestas de consejería con IA, el Servicio recopila la siguiente información." },
+        { type: "p", text: "Para calcular tu mapa de saju, evaluar tu test de personalidad y generar respuestas de consejería con IA, el Servicio recopila la siguiente información." },
         {
           type: "list",
           items: [
@@ -640,7 +640,7 @@ const privacyEs: LegalDocument = {
         {
           type: "list",
           items: [
-            "Calcular tu carta saju y analizar la distribución de tus Cinco Elementos",
+            "Calcular tu mapa de saju y analizar la distribución de tus Cinco Elementos",
             "Evaluar tu test y analizar tu tipo de personalidad",
             "Generar respuestas de consejería del chatbot con IA",
             "Elaborar un informe que combina tu saju, tu test y el contenido de la consejería",
@@ -670,7 +670,7 @@ const privacyEs: LegalDocument = {
           type: "list",
           items: [
             "**OpenAI, L.L.C. (Estados Unidos)** — para generar respuestas de consejería con IA, el texto que ingresas en el chatbot y el contexto mínimo necesario para la consejería (un resumen del resultado de tu test y la distribución de tus Cinco Elementos) se transmiten en tiempo real a través de la red a servidores ubicados en Estados Unidos en el momento de cada intercambio de consejería. La conservación sigue la propia política de manejo de datos de la API de OpenAI; consulta la política de privacidad de OpenAI para más detalles.",
-            "**Proveedor de la API SAZU** — para calcular tu carta saju y la distribución de tus Cinco Elementos, tu fecha de nacimiento, hora de nacimiento, género y ciudad de nacimiento se transmiten y procesan en el momento de la solicitud de cálculo.",
+            "**Proveedor de la API SAZU** — para calcular tu mapa de saju y la distribución de tus Cinco Elementos, tu fecha de nacimiento, hora de nacimiento, género y ciudad de nacimiento se transmiten y procesan en el momento de la solicitud de cálculo.",
             "**Supabase, Inc. (Estados Unidos)** — para que puedas volver a ver tus resultados en una futura visita, la información de la Sección 1 (incluido tu identificador de sesión anónimo) se almacena en servidores de base de datos ubicados en Estados Unidos. La conservación sigue lo indicado en la Sección 3.",
           ],
         },
@@ -786,7 +786,7 @@ const termsEs: LegalDocument = {
         {
           type: "list",
           items: [
-            "Cálculo de la carta saju y la distribución de los Cinco Elementos según tu fecha de nacimiento",
+            "Cálculo de el mapa de saju y la distribución de los Cinco Elementos según tu fecha de nacimiento",
             "Evaluación de un test de personalidad de 30 preguntas y análisis de tu tipo",
             "Consejería conversacional con un chatbot de IA",
             "Un informe que integra todo lo anterior",

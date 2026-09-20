@@ -1,10 +1,11 @@
-import { useMemo, useRef } from "react";
+import { Fragment, useMemo, useRef } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import { calculateAge, MIN_AGE } from "../lib/age";
-import { useStrings } from "../lib/i18n";
+import { useLocale, useStrings } from "../lib/i18n";
+import { dobFieldOrder, dobSeparator } from "../lib/dobOrder";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { getZodiac, toISODateString } from "../lib/zodiac";
@@ -29,8 +30,16 @@ export default function DobScreen({
   onBack: () => void;
 }) {
   const strings = useStrings();
+  const { locale } = useLocale();
+  const yearRef = useRef<TextInput>(null);
   const monthRef = useRef<TextInput>(null);
   const dayRef = useRef<TextInput>(null);
+  const order = dobFieldOrder(locale);
+  const refs = { year: yearRef, month: monthRef, day: dayRef };
+  const values = { year, month, day };
+  const setters = { year: onChangeYear, month: onChangeMonth, day: onChangeDay };
+  const maxLens = { year: 4, month: 2, day: 2 };
+  const placeholders = { year: strings.dob.yearPlaceholder, month: strings.dob.monthPlaceholder, day: strings.dob.dayPlaceholder };
 
   const iso = toISODateString(year, month, day);
   const age = useMemo(() => calculateAge(iso), [iso]);
@@ -47,46 +56,27 @@ export default function DobScreen({
       <View style={styles.top}>
         <Text style={styles.heading}>{strings.dob.heading}</Text>
         <View style={styles.row}>
-          <TextInput
-            style={[styles.input, styles.yearInput]}
-            placeholder={strings.dob.yearPlaceholder}
-            placeholderTextColor={COLORS.disabledText}
-            value={year}
-            onChangeText={(v) => {
-              const clean = digitsOnly(v).slice(0, 4);
-              onChangeYear(clean);
-              if (clean.length === 4) monthRef.current?.focus();
-            }}
-            keyboardType="number-pad"
-            maxLength={4}
-            autoFocus
-          />
-          <Text style={styles.dot}>.</Text>
-          <TextInput
-            ref={monthRef}
-            style={[styles.input, styles.shortInput]}
-            placeholder={strings.dob.monthPlaceholder}
-            placeholderTextColor={COLORS.disabledText}
-            value={month}
-            onChangeText={(v) => {
-              const clean = digitsOnly(v).slice(0, 2);
-              onChangeMonth(clean);
-              if (clean.length === 2) dayRef.current?.focus();
-            }}
-            keyboardType="number-pad"
-            maxLength={2}
-          />
-          <Text style={styles.dot}>.</Text>
-          <TextInput
-            ref={dayRef}
-            style={[styles.input, styles.shortInput]}
-            placeholder={strings.dob.dayPlaceholder}
-            placeholderTextColor={COLORS.disabledText}
-            value={day}
-            onChangeText={(v) => onChangeDay(digitsOnly(v).slice(0, 2))}
-            keyboardType="number-pad"
-            maxLength={2}
-          />
+          {order.map((field, i) => (
+            <Fragment key={field}>
+              {i > 0 && <Text style={styles.dot}>{dobSeparator(locale)}</Text>}
+              <TextInput
+                ref={refs[field]}
+                style={[styles.input, field === "year" ? styles.yearInput : styles.shortInput]}
+                placeholder={placeholders[field]}
+                placeholderTextColor={COLORS.disabledText}
+                value={values[field]}
+                onChangeText={(v) => {
+                  const clean = digitsOnly(v).slice(0, maxLens[field]);
+                  setters[field](clean);
+                  const next = order[i + 1];
+                  if (next && clean.length === maxLens[field]) refs[next].current?.focus();
+                }}
+                keyboardType="number-pad"
+                maxLength={maxLens[field]}
+                autoFocus={i === 0}
+              />
+            </Fragment>
+          ))}
         </View>
 
         {zodiac && (
@@ -172,7 +162,7 @@ const styles = StyleSheet.create({
   ageWarning: {
     fontFamily: "Manrope_400Regular",
     fontSize: 12.5,
-    color: "#CB6249",
+    color: COLORS.danger,
     marginTop: 14,
   },
   middle: {

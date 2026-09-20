@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   error: {
     fontFamily: "Manrope_400Regular",
     fontSize: 12.5,
-    color: "#CB6249",
+    color: COLORS.danger,
     marginTop: 10,
   },
   middle: {

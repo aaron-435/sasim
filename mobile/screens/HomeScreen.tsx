@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
   },
   brandLabel: {
     fontFamily: "Manrope_600SemiBold",
-    fontSize: 11,
+    fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
   },
