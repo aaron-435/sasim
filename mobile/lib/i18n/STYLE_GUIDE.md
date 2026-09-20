@@ -35,7 +35,7 @@ below, a `LOCALE_STYLE` entry, and run a native-reader pass with the persona tes
 | --- | --- | --- | --- |
 | Four Pillars / saju | 사주 | Four Pillars (saju) | Cuatro Pilares (saju) |
 | Day Master (일간) | 일간 | Day Master | Maestro del Día |
-| Five elements | 오행 | Five Elements | Cinco Elementos |
+| Five elements | 오행 | Five Elements | cinco elementos (lowercase in running text; "Fuego/Agua…" capitalized only as labels) |
 | Elements | 목화토금수 | Wood, Fire, Earth, Metal, Water | Madera, Fuego, Tierra, Metal, Agua |
 | Decade fortune (대운) | 대운 | 10-year cycle ("Great Fortune" only when explained) | ciclo de diez años |
 | Year fortune (세운) | 세운 | year energy | energía del año |

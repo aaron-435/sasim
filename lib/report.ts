@@ -11,8 +11,7 @@
 
 import OpenAI from "openai";
 import { buildReportPrompt, type ReportContext } from "./reportPrompts";
-import { FIELD_LANGUAGE_NAME } from "./promptLocale";
-import { buildReviewPrompt, checkReportDeterministic } from "./reportQuality";
+import { buildReviewPrompt, checkReportDeterministic, makeRewriter, repairStringFindings } from "./reportQuality";
 import { logLlmUsage } from "./llmUsage";
 
 const client = new OpenAI({
@@ -42,6 +41,8 @@ export interface ReportContent {
   case_paragraphs: string[];
   /** Free-half note under the five-element bar chart. Absent in reports saved before 2026-09-20. */
   oheng_intro?: string;
+  /** Free-half reading under the psych-test bars. Absent in reports saved before 2026-09-21. */
+  quiz_reading?: string;
   element_readings: Record<(typeof ELEMENT_KEYS)[number], ElementReading>;
   upcoming_period_heading: string;
   upcoming_period_body: string;
@@ -102,6 +103,7 @@ function parseReport(parsed: Record<string, unknown>): ReportContent {
     case_tag: String(parsed.case_tag ?? ""),
     case_paragraphs: asStringList(parsed.case_paragraphs),
     oheng_intro: String(parsed.oheng_intro ?? ""),
+    quiz_reading: String(parsed.quiz_reading ?? ""),
     element_readings: asElementReadings(parsed.element_readings),
     upcoming_period_heading: String(parsed.upcoming_period_heading ?? ""),
     upcoming_period_body: String(parsed.upcoming_period_body ?? ""),
@@ -196,64 +198,8 @@ async function reviewReport(context: ReportContext, content: ReportContent, sess
 }
 
 
-/** Path helpers for "strengths[1].body"-style locations. */
-function pathParts(path: string): (string | number)[] {
-  return path
-    .replace(/\[(\d+)\]/g, ".$1")
-    .split(".")
-    .filter(Boolean)
-    .map((k) => (/^\d+$/.test(k) ? Number(k) : k));
-}
-function getAt(root: unknown, path: string): unknown {
-  return pathParts(path).reduce<unknown>((o, k) => (o == null ? undefined : (o as Record<string | number, unknown>)[k]), root);
-}
-function setAt(root: unknown, path: string, value: string): boolean {
-  const parts = pathParts(path);
-  const last = parts.pop();
-  const parent = parts.reduce<unknown>((o, k) => (o == null ? undefined : (o as Record<string | number, unknown>)[k]), root);
-  if (parent == null || last == null || typeof (parent as Record<string | number, unknown>)[last] !== "string") return false;
-  (parent as Record<string | number, unknown>)[last] = value;
-  return true;
-}
-
-/** Last resort for a finding the full-report fixes could not clear (typically one stubborn word):
- * rewrite just that one string. Only string-level problems are repaired this way; missing
- * sentences or numbers stay with the full rewrite loop. */
 async function repairStrings(context: ReportContext, content: ReportContent, problems: string[], sessionId?: string): Promise<ReportContent> {
-  const fixed: ReportContent = JSON.parse(JSON.stringify(content));
-  const languageName = FIELD_LANGUAGE_NAME[context.locale ?? "ko"];
-  const targets = new Map<string, string>();
-  for (const p of problems) {
-    const i = p.indexOf(": ");
-    if (i < 0 || /문장 이상|퍼센트|나이/.test(p)) continue;
-    const path = p.slice(0, i);
-    if (typeof getAt(fixed, path) === "string" && !targets.has(path)) targets.set(path, p.slice(i + 2));
-  }
-  for (const [path, issue] of Array.from(targets).slice(0, 6)) {
-    try {
-      const original = getAt(fixed, path) as string;
-      const completion = await client.chat.completions.create({
-        model: REPORT_MODEL,
-        temperature: 0.3,
-        messages: [
-          {
-            role: "system",
-            content: `다음 문장을 ${languageName}로 고쳐 써라. 고칠 점: ${issue}. 뜻, 분량(문장 수), 어조는 그대로 유지하고 그 문제만 없애라. 독자 성별을 드러내는 형용사·분사는 명사나 동사로 바꿔라. JSON 객체 {"text": "..."} 하나만 출력.`,
-          },
-          { role: "user", content: original },
-        ],
-        response_format: { type: "json_object" },
-      });
-      if (completion.usage) {
-        await logLlmUsage({ sessionId, endpoint: "report", model: REPORT_MODEL, promptTokens: completion.usage.prompt_tokens, completionTokens: completion.usage.completion_tokens });
-      }
-      const text = (JSON.parse(completion.choices[0]?.message?.content ?? "{}") as { text?: unknown }).text;
-      if (typeof text === "string" && text.trim()) setAt(fixed, path, text.trim());
-    } catch (err) {
-      console.error("[report] string repair failed (non-fatal)", err);
-    }
-  }
-  return fixed;
+  return repairStringFindings(content, problems, makeRewriter(client, REPORT_MODEL, context.locale ?? "ko", sessionId));
 }
 
 export async function getReportContent(context: ReportContext, sessionId?: string): Promise<ReportContent> {

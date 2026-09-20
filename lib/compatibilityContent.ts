@@ -78,7 +78,7 @@ const es: CompatibilityContent = {
     },
     selfNurturesOther: {
       headline: "Eres quien impulsa",
-      body: "Tu energía empuja hacia adelante la de la otra persona. Ver cómo crece se siente bien, pero si solo das, puede que no notes que tu propio lado se está vaciando: conviene practicar también el recibir.",
+      body: "Tu energía impulsa a la de la otra persona. Ver cómo crece se siente bien, pero si solo das, puede que no notes que te estás vaciando: conviene practicar también el recibir.",
     },
     otherNurturesSelf: {
       headline: "Eres quien recibe el impulso",

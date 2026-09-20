@@ -355,6 +355,7 @@ export interface DeepPdfContent {
   case_tag: string;
   case_paragraphs: string[];
   oheng_intro?: string;
+  quiz_reading?: string;
   element_readings: Record<string, { heading: string; body: string }>;
   upcoming_period_heading: string;
   upcoming_period_body: string;
@@ -415,6 +416,7 @@ function DeepDocument({ locale, nickname, date, content, extras }: { locale: Loc
         <Section s={s} label={d.quiz} title={extras.typeTitle}>
           {extras.typeHook ? <Text style={s.pMuted}>{extras.typeHook}</Text> : null}
           <Paragraphs s={s} text={extras.nuancedSummary} />
+          {content.quiz_reading ? <Paragraphs s={s} text={content.quiz_reading} /> : null}
           {extras.dimensions.map((dim) => (
             <View key={dim.name} style={s.barRow} wrap={false}>
               <Text style={[s.barName, { width: 90 }]}>{dim.name}</Text>

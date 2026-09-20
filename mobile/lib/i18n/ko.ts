@@ -532,5 +532,8 @@ export const ko = {
     paywallBundleSubOwned: (owned: number, fullPrice: string) => `이미 산 리포트 ${owned}개 포함 · 따로 사면 ${fullPrice}`,
     paywallLockedNote: (locked: number, total: number) => `전체 ${total}페이지 중 ${locked}페이지가 잠겨 있어요`,
     paywallOneTimeNote: "한 번 결제로 이 리포트 전체를 계속 다시 볼 수 있어요. 구독이 아니에요.",
+    strengthIndex: (n: number, total: number) => `강점 · ${String(n).padStart(2, "0")} / ${String(total).padStart(2, "0")}`,
+    weaknessIndex: (n: number, total: number) => `약점 · ${String(n).padStart(2, "0")} / ${String(total).padStart(2, "0")}`,
+    guideIndex: (n: number, total: number) => `행동 지침 · ${String(n).padStart(2, "0")} / ${String(total).padStart(2, "0")}`,
   },
 };

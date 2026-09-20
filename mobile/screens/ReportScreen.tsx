@@ -28,14 +28,14 @@ const DIMENSION_BAR_COLORS = ["#C1503B", "#3E6EA0", "#B98A4E", "#4E8368", "#8B6B
 const DEFAULT_ELEMENTS: Record<string, number> = { fire: 20, earth: 20, wood: 20, metal: 20, water: 20 };
 const PAPER_BG = "#EFE7D8";
 
-/** Breaks generated body copy at sentence/clause boundaries (마침표, 쉼표) instead of
- * leaving RN's own line-wrap to land wherever the container width happens to cut —
- * one clause per line reads as deliberate short beats instead of one dense wrapped
- * block. A clause that's still too long for one line keeps wrapping normally within
- * itself. No space follows the "." in a decimal (e.g. "14.99"), so numbers are safe. */
+/** Puts each sentence on its own line so a page reads as short deliberate beats instead of one
+ * dense block. It breaks at sentence ends only — an earlier version also broke at every comma,
+ * which chopped longer 3-sentence pages into a ragged, poem-like column. A sentence that is
+ * still too long for one line wraps normally. No space follows the "." in a decimal
+ * (e.g. "14.99"), so numbers are safe. */
 function sentenceLines(text: string): string {
   return text
-    .split(/(?<=[.,!?])\s+/)
+    .split(/(?<=[.!?…。])\s+/)
     .map((s) => s.trim())
     .filter(Boolean)
     .join("\n");
@@ -58,6 +58,8 @@ export type ReportContent = {
   case_paragraphs: string[];
   /** 2026-09-20: short reading under the element bar chart (absent in older saved reports). */
   oheng_intro?: string;
+  /** 2026-09-20: short reading under the psych-test bars (absent in older saved reports). */
+  quiz_reading?: string;
   element_readings: Record<string, ElementReading>;
   upcoming_period_heading: string;
   upcoming_period_body: string;
@@ -378,6 +380,7 @@ export default function ReportScreen({
           dimensionResults={quizDiagnosis.dimensionResults}
           dimensionShortNames={quizDiagnosis.dimensionShortNames}
           nuancedSummary={quizDiagnosis.nuancedSummary}
+          reading={content.quiz_reading}
           locale={locale}
         />
       ),
@@ -514,7 +517,7 @@ export default function ReportScreen({
         key: `strength-${i}`,
         tocLabel: i === 0 ? strings.report.sectionStrengthsWeaknessesToc : undefined,
         locked: true,
-        node: <CardPage kind="jade" indexLabel={`STRENGTH · ${String(i + 1).padStart(2, "0")} OF ${String(strengthsList.length).padStart(2, "0")}`} title={s.title} body={s.body} />,
+        node: <CardPage kind="jade" indexLabel={strings.report.strengthIndex(i + 1, strengthsList.length)} title={s.title} body={s.body} />,
       });
     });
 
@@ -522,7 +525,7 @@ export default function ReportScreen({
       body.push({
         key: `weakness-${i}`,
         locked: true,
-        node: <CardPage kind="warm" indexLabel={`WEAKNESS · ${String(i + 1).padStart(2, "0")} OF ${String(weaknessesList.length).padStart(2, "0")}`} title={w.title} body={w.body} />,
+        node: <CardPage kind="warm" indexLabel={strings.report.weaknessIndex(i + 1, weaknessesList.length)} title={w.title} body={w.body} />,
       });
     });
 
@@ -534,7 +537,7 @@ export default function ReportScreen({
         key: `behavior-${i}`,
         tocLabel: i === 0 ? strings.report.sectionBehaviorMindsetToc : undefined,
         locked: true,
-        node: <CardPage kind="blue" indexLabel={`GUIDE · ${String(i + 1).padStart(2, "0")} OF ${String(guidesList.length).padStart(2, "0")}`} title={g.title} body={g.body} />,
+        node: <CardPage kind="blue" indexLabel={strings.report.guideIndex(i + 1, guidesList.length)} title={g.title} body={g.body} />,
       });
     });
 
@@ -586,7 +589,7 @@ export default function ReportScreen({
     const total = body.length + 2;
 
     return [
-      { key: "cover", node: <CoverPage title1={content.title_line1} title2={content.title_line2} subtitle={content.subtitle} nickname={`${nickname}${strings.report.nicknameSuffix}`} previewLabel={strings.report.previewLabel} totalPagesLabel={strings.report.totalPagesLabel(total)} /> },
+      { key: "cover", node: <CoverPage title1={content.title_line1} title2={content.title_line2} subtitle={content.subtitle} nickname={`${nickname}${strings.report.nicknameSuffix}`} previewLabel={lockedOpen ? "" : strings.report.previewLabel} totalPagesLabel={strings.report.totalPagesLabel(total)} /> },
       { key: "toc", node: <TocPage eyebrow={strings.report.tocEyebrow} title={strings.report.tocTitle} entries={tocEntries} /> },
       ...gated,
     ];
@@ -842,6 +845,7 @@ function QuizAnalysisPage({
   dimensionResults,
   dimensionShortNames,
   nuancedSummary,
+  reading,
   locale,
 }: {
   title: string;
@@ -850,6 +854,7 @@ function QuizAnalysisPage({
   dimensionResults?: QuizDiagnosis["dimensionResults"];
   dimensionShortNames?: Record<string, string>;
   nuancedSummary?: string;
+  reading?: string;
   locale: ReturnType<typeof useLocale>["locale"];
 }) {
   return (
@@ -873,6 +878,7 @@ function QuizAnalysisPage({
         ))}
       </View>
       {!!nuancedSummary && <Text style={pageStyles.dataNote}>{sentenceLines(nuancedSummary)}</Text>}
+      {!!reading && <Text style={[pageStyles.dataNote, pageStyles.readingNote]}>{sentenceLines(reading)}</Text>}
     </PageShell>
   );
 }
@@ -1276,7 +1282,8 @@ const pageStyles = StyleSheet.create({
 
   dataTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 22, color: COLORS.headline, marginTop: 20, marginBottom: 6 },
   dataSubtitle: { fontFamily: "Manrope_400Regular", fontSize: 11.5, color: COLORS.footer, marginBottom: 18 },
-  dataNote: { fontFamily: "Manrope_400Regular", fontSize: 11.5, lineHeight: 18, color: COLORS.footer, marginTop: 18 },
+  dataNote: { fontFamily: "Manrope_400Regular", fontSize: 13.5, lineHeight: 22, color: "#C7C3D1", marginTop: 18 },
+  readingNote: { marginTop: 14 },
   bars: { gap: 14, marginVertical: 10 },
   barRow: { gap: 5 },
   barLabelRow: { flexDirection: "row", justifyContent: "space-between" },

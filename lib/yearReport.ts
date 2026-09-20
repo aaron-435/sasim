@@ -9,6 +9,7 @@
 import OpenAI from "openai";
 import { logLlmUsage } from "./llmUsage";
 import { buildYearReportPrompt, type YearReportContext } from "./yearReportPrompts";
+import { checkYearReportDeterministic, makeRewriter, repairStringFindings } from "./reportQuality";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
@@ -77,6 +78,17 @@ function parseYearReport(raw: unknown, year: number): YearReportContent {
 
 class IncompleteYearReport extends Error {}
 
+/** Same care as the deep report, lighter: check the finished report in code (leftover Korean,
+ * leaked instructions, Spanish gender/register slips, thin months) and rewrite only the strings
+ * that failed, so a buyer never reads them. */
+async function polishYearReport(content: YearReportContent, ctx: YearReportContext, sessionId?: string): Promise<YearReportContent> {
+  const problems = checkYearReportDeterministic(content, ctx.locale);
+  if (problems.length === 0) return content;
+  console.info(`[yearReport] ${problems.length} finding(s) — ${problems.slice(0, 3).join(" | ").slice(0, 300)}`);
+  const repaired = await repairStringFindings(content, problems, makeRewriter(client, YEAR_REPORT_MODEL, ctx.locale, sessionId));
+  return checkYearReportDeterministic(repaired, ctx.locale).length <= problems.length ? repaired : content;
+}
+
 async function generateYearReportOnce(ctx: YearReportContext, sessionId?: string): Promise<YearReportContent> {
   const completion = await client.chat.completions.create({
     model: YEAR_REPORT_MODEL,
@@ -111,7 +123,7 @@ export async function getYearReportContent(ctx: YearReportContext, sessionId?: s
   let last: unknown;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      return await generateYearReportOnce(ctx, sessionId);
+      return await polishYearReport(await generateYearReportOnce(ctx, sessionId), ctx, sessionId);
     } catch (err) {
       if (!(err instanceof IncompleteYearReport)) throw err;
       last = err;

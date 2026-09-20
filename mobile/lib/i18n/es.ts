@@ -189,7 +189,7 @@ export const es: typeof ko = {
     todayFullCta: "Ver la lectura completa",
     todayProNote: "Tu día, tu semana, tu mes y el año que viene, completos, se abren con Pro",
     proChip: (price: string) => `Pro · ${price}`,
-    myChartTitle: "Mis Cinco Elementos",
+    myChartTitle: "Mis cinco elementos",
     featuresTitle: "Explora más",
     featureQaLabel: "Preguntas de saju",
     featureQaDescription: "¿Tienes una duda? Pregúntala ahora mismo",
@@ -222,7 +222,7 @@ export const es: typeof ko = {
       "Empieza por la pregunta que más te ronda ahora mismo: hazla en las preguntas de saju. Después haz el test psicológico para ver tus tendencias y tus patrones; si combinas los datos de tus elementos con los psicológicos, obtienes una imagen mucho más completa. Al terminar el test pasarás, de forma natural, a una conversación con IA y, al final, recibirás tu propio informe profundo, que reúne todo lo que has compartido.",
     introHeading: "¿Qué es el saju (Cuatro Pilares)?",
     introBody:
-      "El saju es un método coreano para leer un mapa natal construido con el año, el mes, el día y la hora en que naciste. Una lectura suele hablar de tu temperamento natural, de los entornos en los que sueles florecer, de dónde tiende a aparecer la fricción emocional o en las relaciones, y de cómo cambia el enfoque de tu vida con el paso del tiempo.",
+      "El saju es un método coreano para leer un mapa natal construido con el año, el mes, el día y la hora en que naciste. Una lectura suele hablar de tu temperamento natural, de los entornos en los que sueles florecer, de dónde tiende a aparecer la fricción, en lo emocional o en las relaciones, y de cómo cambia el enfoque de tu vida con el paso del tiempo.",
     termsHeading: "Tres términos que conviene conocer",
     terms: [
       { label: "Cuatro Pilares", body: "Las cuatro columnas que salen del año, el mes, el día y la hora de tu nacimiento. Cada una combina un tronco celeste con una rama terrestre." },
@@ -231,10 +231,10 @@ export const es: typeof ko = {
     ],
     elementsHeading: "Por qué importan los Cinco Elementos",
     elementsBody:
-      "No se trata de tener los cinco elementos perfectamente equilibrados; casi nadie los tiene. Lo que importa es cuáles son fuertes y cuáles son débiles, y qué suele significar ese patrón. Un mapa con mucho Fuego suele leerse como expresiva y visible; con mucha Agua, como perceptiva y adaptable. Un elemento débil suele señalar algo que conviene reforzar de forma consciente, no un defecto.",
+      "No se trata de tener los cinco elementos perfectamente equilibrados; casi nadie los tiene. Lo que importa es cuáles son fuertes y cuáles son débiles, y qué suele significar ese patrón. Un mapa con mucho Fuego suele leerse como expresivo y visible; con mucha Agua, como perceptivo y adaptable. Un elemento débil suele señalar algo que conviene reforzar de forma consciente, no un defecto.",
     cyclesHeading: "Lo que aportan los ciclos largos",
     cyclesBody:
-      "Tu mapa por sí solo muestra un patrón fijo, pero el saju también sigue los ciclos de diez años: tramos que cambian para qué está más o menos preparado tu mapa en cada momento (estabilidad, visibilidad, responsabilidad, cambio, relaciones). Por eso una lectura se parece menos a una etiqueta de personalidad fija y más a un camino que va cambiando mientras avanzas. La función de ciclos de diez años de Fatesaid se basa justo en esta idea.",
+      "Tu mapa por sí solo muestra un patrón fijo, pero el saju también sigue los ciclos de diez años: tramos que cambian aquello para lo que tu mapa está más o menos preparado en cada momento (estabilidad, visibilidad, responsabilidad, cambio, relaciones). Por eso una lectura se parece menos a una etiqueta de personalidad fija y más a un camino que va cambiando mientras avanzas. Los ciclos de diez años de Fatesaid se basan justo en esta idea.",
   },
 
   decadeNotification: {
@@ -292,7 +292,7 @@ export const es: typeof ko = {
     errorDefault: "No pudimos calcular la compatibilidad.",
     errorNetwork: "Un problema de conexión impidió el cálculo.",
     scoreLabel: "Puntos de compatibilidad",
-    otherTypeLabel: (name: string, typeName: string) => `Tipo de ${name} · ${typeName}`,
+    otherTypeLabel: (name: string, typeName: string) => `Perfil de ${name} · ${typeName}`,
     shareCardEyebrow: "Compatibilidad de saju",
     shareCardGoodPointLabel: "Lo que funciona bien",
     shareCardCautionLabel: "Lo que conviene cuidar",
@@ -506,5 +506,8 @@ export const es: typeof ko = {
     paywallBundleSubOwned: (owned: number, fullPrice: string) => `Incluye los ${owned} que ya tienes · ${fullPrice} por separado`,
     paywallLockedNote: (locked: number, total: number) => `${locked} de ${total} páginas están bloqueadas`,
     paywallOneTimeNote: "Con una sola compra puedes volver a abrir todo este informe cuando quieras. No es una suscripción.",
+    strengthIndex: (n: number, total: number) => `FORTALEZA · ${String(n).padStart(2, "0")} DE ${String(total).padStart(2, "0")}`,
+    weaknessIndex: (n: number, total: number) => `PUNTO DÉBIL · ${String(n).padStart(2, "0")} DE ${String(total).padStart(2, "0")}`,
+    guideIndex: (n: number, total: number) => `PAUTA · ${String(n).padStart(2, "0")} DE ${String(total).padStart(2, "0")}`,
   },
 };

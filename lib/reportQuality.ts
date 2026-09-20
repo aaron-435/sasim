@@ -15,9 +15,13 @@
  * ------------------------------------------------------------------
  */
 
+import type OpenAI from "openai";
 import type { ReportContent } from "./report";
+import type { YearReportContent } from "./yearReport";
+import { logLlmUsage } from "./llmUsage";
+import type { Locale } from "./i18n/types";
 import { describeUpcomingPeriod, type ReportContext } from "./reportPrompts";
-import { ELEMENT_LABEL } from "./promptLocale";
+import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME } from "./promptLocale";
 import type { ElementKey } from "./sajuScore";
 
 const ELEMENT_KEYS: ElementKey[] = ["wood", "fire", "earth", "metal", "water"];
@@ -46,9 +50,9 @@ export function flattenStrings(value: unknown, path = "report", out: [string, st
 }
 
 const ES_GENDERED_READER =
-  /(?<!\b(?:he|has|ha|hemos|han|había|habías|habrás)\s)\b(atrapad|agotad|cansad|abrumad|sobrecargad|desbordad|preocupad|ansios|estresad|frustrad|aislad|agobiad|vaciad|quemad|inquiet|conectad|desconectad)[ao]s?\b/i;
+  /(?<!\b(?:he|has|ha|hemos|han|había|habías|habrás)\s)\b(atrapad|agotad|cansad|abrumad|sobrecargad|desbordad|preocupad|ansios|estresad|frustrad|aislad|agobiad|vaciad|quemad|inquiet|conectad|desconectad|bloquead|desorientad|saturad|exhaust|sobrepasad)[ao]s?\b/i;
 const ES_STYLE_SLIP = /\busted(es)?\b|\bsu carta\b|\btu carta\b|\bla carta\b|\bvuestr/i;
-const META_LEAK = /\b(prompt|json|schema)\b|no (future )?age range|age range (is )?(not|un)specified|not specified|no se especifica|edad no (está )?especificad/i;
+const META_LEAK = /\b(prompt|json|schema)\b|named here|(only|sole) (supporting )?(relationship|relation) (named|given|provided|listed)|(único|única) (relación|apoyo) (nombrad|indicad|dad)[ao]|no (future )?age range|age range (is )?(not|un)specified|not specified|no se especifica|edad no (está )?especificad/i;
 const HANGUL_OR_HANJA = /[ㄱ-ㆎ가-힣一-鿿]/;
 
 /** Minimum sentences per field — the "no thin page" product rule. */
@@ -62,6 +66,7 @@ function checkDensity(c: ReportContent, hasChat: boolean): string[] {
   need("opening_scene", c.opening_scene, 4);
   c.case_paragraphs.forEach((t, i) => need(`case_paragraphs[${i}]`, t));
   need("oheng_intro", c.oheng_intro);
+  need("quiz_reading", c.quiz_reading);
   for (const k of ELEMENT_KEYS) need(`element_readings.${k}.body`, c.element_readings[k].body);
   need("upcoming_period_body", c.upcoming_period_body);
   c.cross_analysis_quotes.forEach((t, i) => need(`cross_analysis_quotes[${i}]`, t));
@@ -173,4 +178,93 @@ export function buildReviewPrompt(ctx: ReportContext): string {
 ## 출력
 JSON 객체 하나만: {"problems":[{"field":"필드 경로(예: strengths[1].body)","issue":"무엇이 왜 문제인지 한 문장, 고쳐야 할 방향 포함"}]}
 최대 6개, 가장 중요한 것부터. 확실한 것만 적을 것.`;
+}
+
+/** Checks for the year-ahead report: the same language rules as the deep report (no leftover
+ * Korean, no leaked instructions, Spanish style slips) plus thin month entries. */
+export function checkYearReportDeterministic(c: YearReportContent, locale: Locale): string[] {
+  const problems: string[] = [];
+  c.months.forEach((m, i) => {
+    if (countSentences(m.body) < 2) problems.push(`months[${i}].body: 2문장 이상이어야 하는데 ${countSentences(m.body)}문장`);
+  });
+  for (const [path, text] of flattenStrings(c)) {
+    if (locale !== "ko" && HANGUL_OR_HANJA.test(text)) problems.push(`${path}: 한국어/한자가 섞여 있음`);
+    if (META_LEAK.test(text)) problems.push(`${path}: 지시문/데이터 누락을 언급하는 메타 발언`);
+    if (locale === "es") {
+      const m = text.match(ES_GENDERED_READER) ?? text.match(ES_STYLE_SLIP);
+      if (m) problems.push(`${path}: 스페인어 스타일 위반 ("${m[0]}") — 독자 성별 표지·usted·carta 금지`);
+    }
+  }
+  return Array.from(new Set(problems));
+}
+
+/** Path helpers for "strengths[1].body"-style locations. */
+function pathParts(path: string): (string | number)[] {
+  return path
+    .replace(/\[(\d+)\]/g, ".$1")
+    .split(".")
+    .filter(Boolean)
+    .map((k) => (/^\d+$/.test(k) ? Number(k) : k));
+}
+function getAt(root: unknown, path: string): unknown {
+  return pathParts(path).reduce<unknown>((o, k) => (o == null ? undefined : (o as Record<string | number, unknown>)[k]), root);
+}
+function setAt(root: unknown, path: string, value: string): boolean {
+  const parts = pathParts(path);
+  const last = parts.pop();
+  const parent = parts.reduce<unknown>((o, k) => (o == null ? undefined : (o as Record<string | number, unknown>)[k]), root);
+  if (parent == null || last == null || typeof (parent as Record<string | number, unknown>)[last] !== "string") return false;
+  (parent as Record<string | number, unknown>)[last] = value;
+  return true;
+}
+
+/** Rewrites one string so a single named problem disappears. Returns null on any failure. */
+export function makeRewriter(client: OpenAI, model: string, locale: Locale, sessionId?: string) {
+  return async (original: string, issue: string): Promise<string | null> => {
+    try {
+      const completion = await client.chat.completions.create({
+        model,
+        temperature: 0.3,
+        messages: [
+          {
+            role: "system",
+            content: `다음 문장을 ${FIELD_LANGUAGE_NAME[locale]}로 고쳐 써라. 고칠 점: ${issue}. 뜻, 분량(문장 수), 어조는 그대로 유지하고 그 문제만 없애라. 독자 성별을 드러내는 형용사·분사는 명사나 동사로 바꿔라. JSON 객체 {"text": "..."} 하나만 출력.`,
+          },
+          { role: "user", content: original },
+        ],
+        response_format: { type: "json_object" },
+      });
+      if (completion.usage) {
+        await logLlmUsage({ sessionId, endpoint: "report", model, promptTokens: completion.usage.prompt_tokens, completionTokens: completion.usage.completion_tokens });
+      }
+      const text = (JSON.parse(completion.choices[0]?.message?.content ?? "{}") as { text?: unknown }).text;
+      return typeof text === "string" && text.trim() ? text.trim() : null;
+    } catch (err) {
+      console.error("[quality] string rewrite failed (non-fatal)", err);
+      return null;
+    }
+  };
+}
+
+/** Last resort for a finding the full rewrite could not clear (typically one stubborn word):
+ * rewrite just that one string. Only string-level problems qualify; missing sentences or numbers
+ * stay with the full rewrite loop. Returns a repaired copy. */
+export async function repairStringFindings<T>(
+  content: T,
+  problems: string[],
+  rewrite: (original: string, issue: string) => Promise<string | null>
+): Promise<T> {
+  const fixed: T = JSON.parse(JSON.stringify(content));
+  const targets = new Map<string, string>();
+  for (const p of problems) {
+    const i = p.indexOf(": ");
+    if (i < 0 || /문장 이상|퍼센트|나이/.test(p)) continue;
+    const path = p.slice(0, i);
+    if (typeof getAt(fixed, path) === "string" && !targets.has(path)) targets.set(path, p.slice(i + 2));
+  }
+  for (const [path, issue] of Array.from(targets).slice(0, 8)) {
+    const text = await rewrite(getAt(fixed, path) as string, issue);
+    if (text) setAt(fixed, path, text);
+  }
+  return fixed;
 }

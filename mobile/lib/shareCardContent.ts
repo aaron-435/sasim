@@ -90,7 +90,7 @@ const es: ShareCardContent = {
     steel: { headline: "Decide rápido", body: "Juzgas y actúas con rapidez, y eso te ayuda a aprovechar las oportunidades pronto. Pero hablar con demasiada franqueza puede costarte en una negociación.", tip: "Haz una pausa antes de hablar de cifras" },
     gem: { headline: "Gana valor al pulirse", body: "Añades valor con el detalle y la calidad. Tu ojo para lo bueno puede convertirse en ingresos, pero también, con la misma facilidad, en gasto.", tip: "Vuelve a mirar en 3 días lo que quieres comprar" },
     ocean: { headline: "Recibe a lo grande y fluye a lo grande", body: "El dinero se mueve a lo grande donde se reúnen personas e información. Un recipiente grande también pierde a lo grande, así que ayuda anotar tu flujo.", tip: "Repasa una vez tus gastos fijos" },
-    dew: { headline: "Acumula en silencio", body: "Tienes talento para ahorrar sin hacer ruido. Tu observación atenta te ayuda a detectar oportunidades, y preocuparte por la situación de los demás puede abrirte la cartera.", tip: "Deja reposar cualquier petición de dinero antes de responder" },
+    dew: { headline: "Acumula en silencio", body: "Tienes talento para ahorrar sin hacer ruido. Tu observación atenta te ayuda a detectar oportunidades, y preocuparte por la situación de los demás puede llevarte a compartir con generosidad lo que tienes.", tip: "Deja reposar cualquier petición de dinero antes de responder" },
   },
   love: {
     oak: { headline: "Cuando la dirección da confianza", body: "Tu corazón se abre a quien es coherente entre lo que dice y lo que hace. Cuando te entregas, vas en línea recta, pero una forma de expresarte algo seca puede malinterpretarse.", tip: "Di en voz alta lo bonito una vez más" },

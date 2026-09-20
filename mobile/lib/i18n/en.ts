@@ -459,7 +459,7 @@ export const en: typeof ko = {
     sectionSajuPattern: "What Shaped This Pattern",
     sectionSajuPatternSubtitle: "Saju Chart Analysis",
     sectionUpcomingPeriod: "What's Coming",
-    upcomingPeriodNote: "Based on your decade-fortune (대운) data — your saju chart's long-term, 10-year cycles.",
+    upcomingPeriodNote: "Based on your 10-year cycles — the long-term rhythm of your saju chart.",
     sectionCrossAnalysisToc: "Cross-Analysis",
     sectionStrengthsWeaknessesToc: "Strengths & Weaknesses",
     sectionBehaviorMindsetToc: "Behavior Guides & Mindset",
@@ -506,5 +506,8 @@ export const en: typeof ko = {
     paywallBundleSubOwned: (owned: number, fullPrice: string) => `Includes the ${owned} you already own · ${fullPrice} if bought separately`,
     paywallLockedNote: (locked: number, total: number) => `${locked} of ${total} pages are locked`,
     paywallOneTimeNote: "One purchase opens this whole report for good. It isn't a subscription.",
+    strengthIndex: (n: number, total: number) => `STRENGTH · ${String(n).padStart(2, "0")} OF ${String(total).padStart(2, "0")}`,
+    weaknessIndex: (n: number, total: number) => `WEAKNESS · ${String(n).padStart(2, "0")} OF ${String(total).padStart(2, "0")}`,
+    guideIndex: (n: number, total: number) => `GUIDE · ${String(n).padStart(2, "0")} OF ${String(total).padStart(2, "0")}`,
   },
 };
