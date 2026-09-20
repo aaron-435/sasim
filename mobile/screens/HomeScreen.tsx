@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "../components/PatternBackground";
 import { DAILY_FORTUNE_CONTENT, getOverview } from "../lib/dailyFortuneContent";
 import { ELEMENT_COLORS, ELEMENT_ORDER, elementWithEmoji } from "../lib/elements";
-import { getFortuneStreak, isFortuneOpened } from "../lib/fortuneOpenState";
+import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
 import { useLocale, useStrings } from "../lib/i18n";
 import { getDailyInsight } from "../lib/i18n/dailyInsight";
 import { hasQaProEntitlement } from "../lib/purchases";
@@ -35,7 +35,7 @@ import { COLORS } from "../theme/colors";
 type TodayState =
   | { kind: "loading" }
   | { kind: "error" }
-  | { kind: "sealed"; streak: number }
+  | { kind: "sealed"; date: string; streak: number }
   | { kind: "opened"; fortune: TodayFortune; streak: number }
   | { kind: "teaser"; relation: CompatibilityResult["relation"] | null };
 
@@ -78,6 +78,7 @@ export default function HomeScreen({
   onOpenMyReports,
   onOpenShareCards,
   onOpenYearReport,
+  qa,
   onOpenSajuLearn,
   onOpenSettings,
 }: {
@@ -96,6 +97,8 @@ export default function HomeScreen({
   onOpenMyReports: () => void;
   onOpenShareCards: () => void;
   onOpenYearReport: () => void;
+  /** Persona test mode (dev web only) — see dev/README.md. Null in every real build. */
+  qa?: { level: string; persona: string | null; onOpenSampleReport: () => void } | null;
   onOpenSajuLearn: () => void;
   onOpenSettings: () => void;
 }) {
@@ -143,7 +146,7 @@ export default function HomeScreen({
       }
       const [opened, streak] = await Promise.all([isFortuneOpened(fortune.date), getFortuneStreak(fortune.date)]);
       if (!alive) return;
-      setToday(opened ? { kind: "opened", fortune, streak } : { kind: "sealed", streak });
+      setToday(opened ? { kind: "opened", fortune, streak } : { kind: "sealed", date: fortune.date, streak });
     })();
     return () => {
       alive = false;
@@ -219,8 +222,22 @@ export default function HomeScreen({
       : today.kind === "opened" && today.streak > 1
         ? strings.fortune.streakBadge(today.streak)
         : null;
+  // Tapping the sealed card IS the reveal: mark the day opened here so the Fortune screen opens
+  // already revealed. It used to open onto a second seal card, making the daily ritual two
+  // taps on two screens.
   const heroPress_ =
-    today.kind === "error" ? () => setReloadKey((k) => k + 1) : today.kind === "loading" ? undefined : onOpenFortune;
+    today.kind === "error"
+      ? () => setReloadKey((k) => k + 1)
+      : today.kind === "loading"
+        ? undefined
+        : today.kind === "sealed"
+          ? () => {
+              // Wait for the write so the Fortune screen can't read the day as still unopened.
+              markFortuneOpened(today.date)
+                .catch(() => {})
+                .finally(() => onOpenFortune());
+            }
+          : onOpenFortune;
 
   const featureMeta: Record<FeatureKey, { label: string; description: string; onPress: () => void; available: boolean }> = {
     qa: {
@@ -406,6 +423,17 @@ export default function HomeScreen({
               })}
             </View>
           </View>
+
+          {qa && (
+            <View style={styles.qaPanel}>
+              <Text style={styles.qaTitle}>
+                QA MODE · {qa.level} · persona: {qa.persona ?? "—"}
+              </Text>
+              <Pressable onPress={qa.onOpenSampleReport} style={styles.qaButton} accessibilityRole="button">
+                <Text style={styles.qaButtonLabel}>Open sample deep report</Text>
+              </Pressable>
+            </View>
+          )}
 
           <View style={styles.footer}>
             <Text style={[styles.philosophyLine, locale === "ko" && styles.philosophyLineKo]}>{strings.home.philosophyLine}</Text>
@@ -651,6 +679,10 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.subheadline,
   },
+  qaPanel: { marginTop: 24, borderWidth: 1, borderStyle: "dashed", borderColor: "rgba(224,162,150,0.6)", borderRadius: 12, padding: 14, gap: 8 },
+  qaTitle: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: "#E0A296" },
+  qaButton: { minHeight: 44, justifyContent: "center", alignSelf: "flex-start" },
+  qaButtonLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 13.5, color: COLORS.gold, textDecorationLine: "underline" },
   footer: {
     marginTop: 30,
     gap: 4,

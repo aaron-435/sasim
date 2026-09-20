@@ -7,6 +7,7 @@ import Purchases, {
   type PurchasesPackage,
 } from "react-native-purchases";
 import { REVENUECAT_API_KEY_ANDROID, REVENUECAT_API_KEY_IOS } from "../config";
+import { qaHasAllPurchases, qaHasSubscription } from "../dev/qaMode";
 
 /**
  * lib/purchases.ts
@@ -73,6 +74,7 @@ export async function getCustomerInfo(): Promise<CustomerInfo | null> {
 }
 
 export async function hasQaProEntitlement(): Promise<boolean> {
+  if (qaHasSubscription()) return true; // persona test mode (dev web only, see dev/qaMode.ts)
   const info = await getCustomerInfo();
   return !!info?.entitlements.active[QA_PRO_ENTITLEMENT_ID];
 }
@@ -163,6 +165,7 @@ export function yearReportId(year: number): string {
 }
 
 export async function hasYearReportEntitlement(year: number): Promise<boolean> {
+  if (qaHasAllPurchases()) return true; // persona test mode (dev web only)
   const info = await getCustomerInfo();
   return !!info?.entitlements.active[yearReportId(year)];
 }

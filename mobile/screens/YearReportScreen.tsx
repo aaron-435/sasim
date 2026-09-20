@@ -8,6 +8,7 @@ import type { CompatibilityResult } from "../lib/compatibility";
 import { useLocale, useStrings } from "../lib/i18n";
 import { exportReportPdf, pdfErrorMessage } from "../lib/reportPdf";
 import { getRevenueCatUserId, getYearReportPackage, hasYearReportEntitlement, purchaseYearReport, restoreReports } from "../lib/purchases";
+import { qaYearReport } from "../dev/qaMode";
 import { getSavedYearReport, saveYearReport, type YearReportContent } from "../lib/yearReportStorage";
 import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import { COLORS } from "../theme/colors";
@@ -72,6 +73,14 @@ export default function YearReportScreen({
 
   const generate = useCallback(
     async (forYear: number) => {
+      // Persona test mode (dev web only): show a pre-generated report instead of calling the
+      // paid endpoint. Null in every real build.
+      const qaFixture = qaYearReport(locale, nickname) as YearReportContent | null;
+      if (qaFixture) {
+        setReport({ ...qaFixture, year: forYear });
+        setPhase("reader");
+        return;
+      }
       setPhase("generating");
       setErrorText(null);
       const appUserId = await getRevenueCatUserId();

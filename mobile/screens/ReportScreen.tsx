@@ -5,7 +5,7 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
-import { purchaseReportBundle, purchaseReportModule, restoreReports } from "../lib/purchases";
+import { getRevenueCatUserId, purchaseReportBundle, purchaseReportModule, restoreReports } from "../lib/purchases";
 import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
 import { elementWithEmoji } from "../lib/elements";
@@ -44,6 +44,12 @@ function sentenceLines(text: string): string {
 type ElementReading = { heading: string; body: string };
 
 export type ReportContent = {
+  /** Present while the paid half is still sealed on the server (2026-09-20): the fields
+   * below that belong to the paid pages come back empty until /api/report/unlock opens them
+   * for a confirmed purchase. */
+  locked_token?: string;
+  /** Item counts of the sealed half, sent with the token so page counts don't change on unlock. */
+  locked_shape?: { cross_analysis_quotes: number; strengths: number; weaknesses: number; behavior_guides: number };
   title_line1: string;
   title_line2: string;
   subtitle: string;
@@ -113,6 +119,7 @@ export default function ReportScreen({
   const [loadingMsgIndex, setLoadingMsgIndex] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [unlocked, setUnlocked] = useState(false);
+  const [unlockState, setUnlockState] = useState<"idle" | "working" | "failed">("idle");
   const [ownedCount, setOwnedCount] = useState(0);
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
@@ -160,12 +167,17 @@ export default function ReportScreen({
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 90_000);
     try {
+      // Sent so the server can confirm a purchase and include the paid half right away; without
+      // one (or if it can't confirm) that half comes back sealed instead.
+      const appUserId = await getRevenueCatUserId();
       const res = await fetch(`${API_BASE_URL}/api/report`, {
         signal: controller.signal,
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sessionId,
+          moduleId: quizDiagnosis.moduleId,
+          appUserId,
           context: {
             nickname,
             track: quizDiagnosis.track,
@@ -213,6 +225,52 @@ export default function ReportScreen({
     fetchReport();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // The paid half is complete only once there is no sealed token left.
+  const lockedOpen = unlocked && !!content && !content.locked_token;
+
+  // Bought (or restored) but the paid half is still sealed → ask the server to open it. It
+  // re-checks the purchase itself, so this can't be talked into opening anything early.
+  async function unlockReport() {
+    if (!content?.locked_token) return;
+    setUnlockState("working");
+    const appUserId = await getRevenueCatUserId();
+    if (!appUserId) {
+      setUnlockState("failed");
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/report/unlock`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: content.locked_token, appUserId }),
+      });
+      const json = await res.json();
+      if (!mountedRef.current) return;
+      if (res.ok) {
+        const { locked_token: _sealed, ...rest } = content;
+        const merged = { ...rest, ...json.locked } as ReportContent;
+        setContent(merged);
+        setUnlockState("idle");
+        saveReport({ moduleId: quizDiagnosis.moduleId, moduleTitle: quizDiagnosis.moduleTitle, quizDiagnosis, chatExtract: chatExtract ?? null, content: merged });
+      } else if (json?.code === "invalid_token") {
+        // A token we can no longer open (server key rotated): regenerate — a confirmed buyer
+        // gets the full report straight away.
+        setUnlockState("idle");
+        setContent(null);
+        fetchReport();
+      } else {
+        setUnlockState("failed");
+      }
+    } catch {
+      if (mountedRef.current) setUnlockState("failed");
+    }
+  }
+
+  useEffect(() => {
+    if (unlocked && content?.locked_token && unlockState === "idle") unlockReport();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unlocked, content?.locked_token, unlockState]);
 
   const refreshEntitlement = useCallback(async () => {
     const [u, c] = await Promise.all([isReportUnlocked(quizDiagnosis.moduleId), ownedReportCount()]);
@@ -279,6 +337,17 @@ export default function ReportScreen({
 
   const pages = useMemo<PageDef[]>(() => {
     if (!content) return [];
+    // While the paid half is sealed its arrays arrive empty; lay the pages out from the sealed
+    // half's item counts instead so the TOC, page totals and the paywall note are the same
+    // before and after buying (the placeholder pages are replaced by the paywall anyway).
+    const shape = content.locked_shape;
+    const placeholders = <T,>(real: T[], count: number | undefined, blank: T): T[] =>
+      real.length > 0 ? real : Array.from({ length: count ?? 0 }, () => blank);
+    const crossList = placeholders(content.cross_analysis_quotes, shape?.cross_analysis_quotes, "");
+    const strengthsList = placeholders(content.strengths, shape?.strengths, { title: "", body: "" });
+    const weaknessesList = placeholders(content.weaknesses, shape?.weaknesses, { title: "", body: "" });
+    const guidesList = placeholders(content.behavior_guides, shape?.behavior_guides, { title: "", body: "" });
+
     const sortedKeys = ELEMENT_KEYS.slice().sort((a, b) => (resolvedElements[b] ?? 0) - (resolvedElements[a] ?? 0));
     const dominantKey = sortedKeys[0];
 
@@ -408,7 +477,7 @@ export default function ReportScreen({
       });
     });
 
-    content.cross_analysis_quotes.forEach((q, i) => {
+    crossList.forEach((q, i) => {
       body.push({
         key: `cross-${i}`,
         tocLabel: i === 0 ? strings.report.sectionCrossAnalysisToc : undefined,
@@ -431,32 +500,32 @@ export default function ReportScreen({
       ),
     });
 
-    content.strengths.forEach((s, i) => {
+    strengthsList.forEach((s, i) => {
       body.push({
         key: `strength-${i}`,
         tocLabel: i === 0 ? strings.report.sectionStrengthsWeaknessesToc : undefined,
         locked: true,
-        node: <CardPage kind="jade" indexLabel={`STRENGTH · ${String(i + 1).padStart(2, "0")} OF ${String(content.strengths.length).padStart(2, "0")}`} title={s.title} body={s.body} />,
+        node: <CardPage kind="jade" indexLabel={`STRENGTH · ${String(i + 1).padStart(2, "0")} OF ${String(strengthsList.length).padStart(2, "0")}`} title={s.title} body={s.body} />,
       });
     });
 
-    content.weaknesses.forEach((w, i) => {
+    weaknessesList.forEach((w, i) => {
       body.push({
         key: `weakness-${i}`,
         locked: true,
-        node: <CardPage kind="warm" indexLabel={`WEAKNESS · ${String(i + 1).padStart(2, "0")} OF ${String(content.weaknesses.length).padStart(2, "0")}`} title={w.title} body={w.body} />,
+        node: <CardPage kind="warm" indexLabel={`WEAKNESS · ${String(i + 1).padStart(2, "0")} OF ${String(weaknessesList.length).padStart(2, "0")}`} title={w.title} body={w.body} />,
       });
     });
 
     body.push({ key: "fit-good", locked: true, node: <FitPage kind="good" label={strings.report.fitGoodLabel} body={content.fit_good} /> });
     body.push({ key: "fit-bad", locked: true, node: <FitPage kind="bad" label={strings.report.fitBadLabel} body={content.fit_bad} /> });
 
-    content.behavior_guides.forEach((g, i) => {
+    guidesList.forEach((g, i) => {
       body.push({
         key: `behavior-${i}`,
         tocLabel: i === 0 ? strings.report.sectionBehaviorMindsetToc : undefined,
         locked: true,
-        node: <CardPage kind="blue" indexLabel={`GUIDE · ${String(i + 1).padStart(2, "0")} OF ${String(content.behavior_guides.length).padStart(2, "0")}`} title={g.title} body={g.body} />,
+        node: <CardPage kind="blue" indexLabel={`GUIDE · ${String(i + 1).padStart(2, "0")} OF ${String(guidesList.length).padStart(2, "0")}`} title={g.title} body={g.body} />,
       });
     });
 
@@ -470,7 +539,7 @@ export default function ReportScreen({
     });
 
     const tocEntries = body
-      .map((p, i) => (p.tocLabel ? { label: p.tocLabel, pageNumber: i + 3, locked: !unlocked && !!p.locked } : null))
+      .map((p, i) => (p.tocLabel ? { label: p.tocLabel, pageNumber: i + 3, locked: !lockedOpen && !!p.locked } : null))
       .filter((x): x is { label: string; pageNumber: number; locked: boolean } => !!x);
 
     const lockedTotal = body.filter((p) => p.locked).length;
@@ -478,13 +547,16 @@ export default function ReportScreen({
     // through). The full page count still shows on the cover and in the paywall note.
     let paywallPlaced = false;
     const gated = body.flatMap((p): PageDef[] => {
-      if (unlocked || !p.locked) return [p];
+      if (lockedOpen || !p.locked) return [p];
       if (paywallPlaced) return [];
       paywallPlaced = true;
       return [
         {
           ...p,
-          node: (
+          node: unlocked ? (
+            // Bought, but the sealed half hasn't been opened yet (or opening failed).
+            <UnlockingPage strings={strings} failed={unlockState === "failed"} onRetry={() => setUnlockState("idle")} />
+          ) : (
             <PaywallPage
               ownedCount={ownedCount}
               lockedCount={lockedTotal}
@@ -510,7 +582,7 @@ export default function ReportScreen({
       ...gated,
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, resolvedElements, chatExtract, unlocked, ownedCount, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, topAnswers]);
+  }, [content, resolvedElements, chatExtract, unlocked, lockedOpen, unlockState, ownedCount, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, topAnswers]);
 
   // PDF of the whole report — only offered once it's unlocked. The server re-verifies the
   // purchase (app/api/report-pdf), so this button is a convenience, not the gate.
@@ -582,7 +654,7 @@ export default function ReportScreen({
   }
 
   const progressPct = ((pageIndex + 1) / pages.length) * 100;
-  const onPaywall = !unlocked && !!pages[pageIndex]?.locked;
+  const onPaywall = !lockedOpen && !!pages[pageIndex]?.locked;
 
   return (
     <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
@@ -596,7 +668,7 @@ export default function ReportScreen({
         <Text style={styles.progressCount}>
           {String(pageIndex + 1).padStart(2, "0")}/{String(pages.length).padStart(2, "0")}
         </Text>
-        {unlocked && (
+        {lockedOpen && (
           <Pressable
             onPress={handleExportPdf}
             disabled={exporting}
@@ -1014,6 +1086,30 @@ function ClosingPage({ title, body, disclaimer1, disclaimer2 }: { title: string;
 // (all 11 at a fixed price) is only offered while the user owns none of them yet, since
 // neither store supports charging a price that depends on what's already owned — see
 // lib/reportPricing.ts's header comment.
+function UnlockingPage({ strings, failed, onRetry }: { strings: Dictionary; failed: boolean; onRetry: () => void }) {
+  return (
+    <PageShell>
+      <View style={pageStyles.paywallMid}>
+        <View style={pageStyles.paywallCard}>
+          {failed ? (
+            <>
+              <Text style={pageStyles.paywallBody}>{strings.report.unlockFailed}</Text>
+              <Pressable onPress={onRetry} style={pageStyles.paywallRestoreButton} accessibilityRole="button">
+                <Text style={pageStyles.paywallRestoreLabel}>{strings.common.retryLabel}</Text>
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <ActivityIndicator color={COLORS.gold} />
+              <Text style={pageStyles.paywallBody}>{strings.report.unlocking}</Text>
+            </>
+          )}
+        </View>
+      </View>
+    </PageShell>
+  );
+}
+
 function PaywallPage({
   ownedCount,
   lockedCount,

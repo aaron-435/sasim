@@ -460,6 +460,8 @@ export const ko = {
   },
 
   report: {
+    unlocking: "리포트를 여는 중이에요...",
+    unlockFailed: "리포트를 열지 못했어요. 연결을 확인한 뒤 다시 시도해 주세요.",
     previousPageLabel: "이전 페이지",
     nextPageLabel: "다음 페이지",
     loadingMessages: ["사주와 심리검사를 통합하고 있어요...", "당신만의 이야기를 쓰고 있어요...", "아직 쓰는 중이에요. 1분 정도 걸릴 수 있어요..."],

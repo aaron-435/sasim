@@ -5,8 +5,12 @@
  * report body. Keeps OPENAI_API_KEY server-side only. Mirrors
  * app/api/chat/route.ts's shape and error handling.
  *
- * Request body: { sessionId, context: ReportContext }
- * Response body: ReportContent | { error: string }
+ * Request body: { sessionId, moduleId, appUserId?, context: ReportContext }
+ * Response body: ReportContent (+ locked_token when the paid half is withheld) | { error: string }
+ *
+ * 2026-09-20: the paid half of the report is no longer sent to non-buyers (see
+ * lib/reportLock.ts). A caller whose purchase RevenueCat confirms gets the full report; anyone
+ * else gets the free half plus a sealed token, opened by /api/report/unlock after they buy.
  * ------------------------------------------------------------------
  */
 
@@ -16,9 +20,13 @@ import { getReportContent } from "@/lib/report";
 import type { ReportContext } from "@/lib/reportPrompts";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
+import { splitLocked, sealLocked } from "@/lib/reportLock";
+import { checkEntitlement } from "@/lib/revenuecat";
 
 interface ReportRequestBody {
   sessionId?: string;
+  moduleId?: string;
+  appUserId?: string;
   context?: ReportContext;
 }
 
@@ -43,16 +51,39 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { sessionId, context } = body ?? {};
+  const { sessionId, context, moduleId, appUserId } = body ?? {};
 
   if (!context || !context.elements || !context.moduleTitle) {
     return NextResponse.json({ error: "context는 필수입니다." }, { status: 400 });
   }
 
+  // The module decides which purchase unlocks this report. App versions from before this fix
+  // don't send one: they still get the free half (they show their own paywall over the rest),
+  // but nothing the paid half is sealed under, so it simply never leaves the server.
+  const validModule = typeof moduleId === "string" && /^module\d{1,2}$/.test(moduleId) ? moduleId : null;
+
   try {
     const content = await getReportContent(context, sessionId);
     await saveReportResult(sessionId, content);
-    return NextResponse.json(content);
+
+    // Only a purchase RevenueCat confirms gets the paid half. Any other outcome — no id, not
+    // purchased, key not configured, RevenueCat unreachable — withholds it (fail closed).
+    const entitled =
+      validModule !== null && typeof appUserId === "string" && appUserId.length > 0 && (await checkEntitlement(appUserId, `report_${validModule}`)) === "active";
+    if (entitled) return NextResponse.json(content);
+
+    const { open, locked } = splitLocked(content);
+    const token = validModule ? sealLocked(validModule, locked) : null;
+    if (!token) return NextResponse.json(open);
+    // How many pages the sealed half holds, so the reader can lay out the table of contents,
+    // page totals and paywall note the same before and after a purchase.
+    const locked_shape = {
+      cross_analysis_quotes: locked.cross_analysis_quotes.length,
+      strengths: locked.strengths.length,
+      weaknesses: locked.weaknesses.length,
+      behavior_guides: locked.behavior_guides.length,
+    };
+    return NextResponse.json({ ...open, locked_token: token, locked_shape });
   } catch (err) {
     if (err instanceof OpenAI.APIError) {
       if (err.status === 401) {

@@ -434,6 +434,8 @@ export const es: typeof ko = {
   },
 
   report: {
+    unlocking: "Abriendo tu informe...",
+    unlockFailed: "No pudimos abrir tu informe. Revisa tu conexión e inténtalo de nuevo.",
     previousPageLabel: "Página anterior",
     nextPageLabel: "Página siguiente",
     loadingMessages: ["Integrando tu saju y tu test psicológico...", "Escribiendo tu propia historia...", "Sigo escribiendo — puede tardar hasta un minuto..."],

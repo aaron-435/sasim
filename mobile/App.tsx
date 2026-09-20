@@ -18,6 +18,8 @@ import LanguageScreen from "./screens/LanguageScreen";
 import ModuleSelectScreen from "./screens/ModuleSelectScreen";
 import ShareCardsScreen from "./screens/ShareCardsScreen";
 import YearReportScreen from "./screens/YearReportScreen";
+import { getQaMode, qaDeepReport } from "./dev/qaMode";
+import type { ReportContent } from "./screens/ReportScreen";
 import { formatSajuTypeName } from "./lib/sajuTypeContent";
 import MyReportsScreen from "./screens/MyReportsScreen";
 import NicknameScreen from "./screens/NicknameScreen";
@@ -50,7 +52,7 @@ import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } f
 // pipeline — chained, not independently reachable from Home, since chat needs a quiz
 // diagnosis and report needs both quiz+chat context — same dependency web's
 // components/AppFlow.jsx has).
-type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings" | "myReports" | "shareCards" | "yearReport";
+type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings" | "myReports" | "shareCards" | "yearReport" | "qaReport";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
@@ -77,6 +79,7 @@ const BACK_TARGET: Partial<Record<StepId, StepId>> = {
   myReports: "home",
   shareCards: "home",
   yearReport: "home",
+  qaReport: "home",
 };
 
 // The day master (일간) char and day branch (일지) the fortune/compatibility APIs key on —
@@ -380,10 +383,34 @@ function AppContent() {
           onOpenMyReports={() => setStep("myReports")}
           onOpenShareCards={() => setStep("shareCards")}
           onOpenYearReport={() => setStep("yearReport")}
+          qa={(() => {
+            const mode = getQaMode();
+            return mode ? { level: mode.level, persona: mode.persona, onOpenSampleReport: () => setStep("qaReport") } : null;
+          })()}
           onOpenSajuLearn={() => setStep("sajuLearn")}
           onOpenSettings={() => setStep("settings")}
         />
       )}
+
+      {step === "qaReport" && homeData && (() => {
+        // Persona test mode only (dev web, opted in): a generated deep report opened directly,
+        // skipping the paid quiz + chat flow. See dev/README.md.
+        const fixture = qaDeepReport(locale, homeData.nickname);
+        if (!fixture) return null;
+        return (
+          <ReportScreen
+            nickname={homeData.nickname}
+            elements={homeData.sajuResult.elements}
+            decadeFortune={homeData.sajuResult.decadeFortune}
+            currentAge={homeData.sajuResult.currentAge}
+            quizDiagnosis={fixture.quizDiagnosis as QuizDiagnosis}
+            chatExtract={fixture.chatExtract as ChatExtract}
+            sessionId={sessionId}
+            savedContent={fixture.content as ReportContent}
+            onBack={() => setStep("home")}
+          />
+        );
+      })()}
 
       {step === "yearReport" && homeData && (
         <YearReportScreen

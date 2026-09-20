@@ -4,8 +4,9 @@
  * Server-side purchase check against RevenueCat's REST API, for content that must not be
  * handed out to non-buyers. The app gates paid screens on the client only
  * (RevenueCat SDK), which is fine for content that ships inside the app but NOT for
- * anything the server generates on demand: /api/report returns a full report to anyone who
- * asks. The year report (lib/yearReport.ts) is generated only after this check passes.
+ * anything the server generates on demand. Used by /api/yearReport and /api/report-pdf (refuse
+ * unless purchased) and by /api/report + /api/report/unlock (the deep report's paid half is
+ * withheld / sealed until this check passes — see lib/reportLock.ts).
  *
  * Needs REVENUECAT_SECRET_KEY — a *secret* API key (RevenueCat dashboard → Project settings
  * → API keys → "Secret API key", read access to customer info is enough). NEVER the public
