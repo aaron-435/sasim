@@ -9,7 +9,7 @@ import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import { getDailyLimit, getUsageToday, incrementUsageToday, PAID_DAILY_LIMIT } from "../lib/qaQuota";
-import { purchaseQaPro, restoreQaPro } from "../lib/purchases";
+import { isUnavailableMessage, purchaseIssueDetail, purchaseQaPro, restoreQaPro } from "../lib/purchases";
 import { useMonthlyPrice } from "../lib/useMonthlyPrice";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { saveLastQuestion } from "../lib/qaHistory";
@@ -214,7 +214,7 @@ export default function QAScreen({
       pushBot(strings.qa.subscribeSuccess(PAID_DAILY_LIMIT));
       await unlockAfterEntitlementChange();
     } else if (outcome.status === "error") {
-      setPurchaseNotice(strings.qa.purchaseErrorDefault);
+      setPurchaseNotice(`${strings.qa.purchaseErrorDefault}${(isUnavailableMessage(outcome.message) ? purchaseIssueDetail(outcome.message) : outcome.message) ? `\n(${(isUnavailableMessage(outcome.message) ? purchaseIssueDetail(outcome.message) : outcome.message).slice(0, 200)})` : ""}`);
     }
     // "cancelled" — the user backed out of the store sheet, nothing to say.
   }

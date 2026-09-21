@@ -85,8 +85,16 @@ export async function getMonthlyPackage(): Promise<PurchasesPackage | null> {
   if (!isSupportedPlatform()) return null;
   try {
     const offerings = await Purchases.getOfferings();
-    return offerings.current?.monthly ?? null;
+    const monthly = offerings.current?.monthly ?? null;
+    if (!monthly) {
+      lastOfferingsIssue = offerings.current
+        ? `no monthly package in offering "${offerings.current.identifier}" (has: ${offerings.current.availablePackages.map((p) => p.identifier).join(", ") || "none"})`
+        : `no current offering (offerings: ${Object.keys(offerings.all).join(", ") || "none"})`;
+    }
+    return monthly;
   } catch (err) {
+    const e = err as PurchasesError & { underlyingErrorMessage?: string };
+    lastOfferingsIssue = `${e?.code ?? "?"} ${e?.message ?? ""} ${e?.underlyingErrorMessage ?? ""}`.trim().slice(0, 220);
     console.error("[purchases] failed to fetch offerings", err);
     return null;
   }
@@ -110,7 +118,7 @@ async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseOutcome> 
 
 export async function purchaseQaPro(): Promise<PurchaseOutcome> {
   const pkg = await getMonthlyPackage();
-  if (!pkg) return { status: "error", message: "no offering available" };
+  if (!pkg) return unavailable();
   return purchasePackage(pkg);
 }
 

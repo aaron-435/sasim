@@ -12,7 +12,7 @@ import { TWELVE_STAGES_CONTENT } from "../lib/twelveStagesContent";
 import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
-import { hasQaProEntitlement, purchaseQaPro, restoreQaPro } from "../lib/purchases";
+import { hasQaProEntitlement, isUnavailableMessage, purchaseIssueDetail, purchaseQaPro, restoreQaPro } from "../lib/purchases";
 import { useMonthlyPrice } from "../lib/useMonthlyPrice";
 import { comingSajuYear } from "../lib/sajuYear";
 import { refreshRoutineNotification } from "../lib/routineNotification";
@@ -323,7 +323,7 @@ export default function FortuneScreen({
       setEntitled(true);
       refreshRoutineNotification(strings).catch(() => {});
     } else if (outcome.status === "error") {
-      setPurchaseNotice(strings.qa.purchaseErrorDefault);
+      setPurchaseNotice(`${strings.qa.purchaseErrorDefault}${(isUnavailableMessage(outcome.message) ? purchaseIssueDetail(outcome.message) : outcome.message) ? `\n(${(isUnavailableMessage(outcome.message) ? purchaseIssueDetail(outcome.message) : outcome.message).slice(0, 200)})` : ""}`);
     }
   }
 
