@@ -12,6 +12,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import type { Locale } from "../lib/i18n/types";
 import { DAILY_FORTUNE_CONTENT, LUCKY_NUMBERS, LUCKY_POINTS, getOverview } from "../lib/dailyFortuneContent";
 import { TWELVE_STAGES_CONTENT } from "../lib/twelveStagesContent";
+import { reconciledBody } from "../lib/reconciledCards";
 import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
@@ -535,14 +536,14 @@ export default function FortuneScreen({
             <Animated.View style={[styles.sectionCard, sectionStyle(5)]}>
               <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.lifeStageLabel}</Text>
               <Text style={styles.sectionHeadline}>{stagesContent.lifeStages[daily.lifeStageIndex]?.name}</Text>
-              <Text style={styles.sectionBody}>{stagesContent.lifeStages[daily.lifeStageIndex]?.body}</Text>
+              <Text style={styles.sectionBody}>{reconciledBody(locale, "stage", daily.lifeStageIndex, daily.compatibility.relation) ?? stagesContent.lifeStages[daily.lifeStageIndex]?.body}</Text>
             </Animated.View>
 
             {daily.sinsalIndex !== null && (
               <Animated.View style={[styles.sectionCard, sectionStyle(6)]}>
                 <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.sinsalLabel}</Text>
                 <Text style={styles.sectionHeadline}>{stagesContent.sinsal[daily.sinsalIndex]?.name}</Text>
-                <Text style={styles.sectionBody}>{stagesContent.sinsal[daily.sinsalIndex]?.body}</Text>
+                <Text style={styles.sectionBody}>{reconciledBody(locale, "sinsal", daily.sinsalIndex, daily.compatibility.relation) ?? stagesContent.sinsal[daily.sinsalIndex]?.body}</Text>
               </Animated.View>
             )}
 
