@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "./PatternBackground";

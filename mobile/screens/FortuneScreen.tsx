@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, Check, Sparkles } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import Check from "lucide-react-native/icons/check";
+import Sparkles from "lucide-react-native/icons/sparkles";
 import { AccessibilityInfo, ActivityIndicator, Animated, Easing, Linking, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";

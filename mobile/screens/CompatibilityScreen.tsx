@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from "react";
-import { ArrowLeft, Share2 } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import Share2 from "lucide-react-native/icons/share-2";
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";

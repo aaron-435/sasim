@@ -1,5 +1,8 @@
 import Slider from "@react-native-community/slider";
-import { ArrowLeft, ArrowRight, RotateCcw, Sparkles } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import ArrowRight from "lucide-react-native/icons/arrow-right";
+import RotateCcw from "lucide-react-native/icons/rotate-ccw";
+import Sparkles from "lucide-react-native/icons/sparkles";
 import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";

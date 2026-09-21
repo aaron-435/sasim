@@ -1,4 +1,6 @@
-import { ArrowLeft, Download, Lock } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import Download from "lucide-react-native/icons/download";
+import Lock from "lucide-react-native/icons/lock";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";

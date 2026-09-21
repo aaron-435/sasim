@@ -1,4 +1,6 @@
-import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import ArrowRight from "lucide-react-native/icons/arrow-right";
+import Sparkles from "lucide-react-native/icons/sparkles";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";

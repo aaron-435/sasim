@@ -1,4 +1,6 @@
-import { ArrowLeft, ChevronRight, FileText } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import ChevronRight from "lucide-react-native/icons/chevron-right";
+import FileText from "lucide-react-native/icons/file-text";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
