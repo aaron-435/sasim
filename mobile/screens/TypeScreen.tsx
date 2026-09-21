@@ -1,5 +1,11 @@
 import { useRef, useState } from "react";
-import { ArrowLeft, Droplets, Flame, Gem, Mountain, Share2, TreePine } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import Droplets from "lucide-react-native/icons/droplets";
+import Flame from "lucide-react-native/icons/flame";
+import Gem from "lucide-react-native/icons/gem";
+import Mountain from "lucide-react-native/icons/mountain";
+import Share2 from "lucide-react-native/icons/share-2";
+import TreePine from "lucide-react-native/icons/tree-pine";
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";

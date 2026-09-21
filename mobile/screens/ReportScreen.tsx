@@ -1,4 +1,8 @@
-import { ArrowLeft, BookOpen, Download, Lock, Sparkles } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import BookOpen from "lucide-react-native/icons/book-open";
+import Download from "lucide-react-native/icons/download";
+import Lock from "lucide-react-native/icons/lock";
+import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import Text from "../components/AppText";

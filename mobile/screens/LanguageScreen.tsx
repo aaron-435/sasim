@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react-native";
+import Sparkles from "lucide-react-native/icons/sparkles";
 import { Pressable, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";

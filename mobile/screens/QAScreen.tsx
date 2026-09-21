@@ -1,4 +1,6 @@
-import { ArrowLeft, RefreshCw, Sparkles } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import RefreshCw from "lucide-react-native/icons/refresh-cw";
+import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BackHandler, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";

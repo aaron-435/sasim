@@ -1,4 +1,13 @@
-import { ArrowRight, Brain, CalendarDays, ChevronRight, FileText, HelpCircle, Settings, Share2, Sparkles, Users } from "lucide-react-native";
+import ArrowRight from "lucide-react-native/icons/arrow-right";
+import Brain from "lucide-react-native/icons/brain";
+import CalendarDays from "lucide-react-native/icons/calendar-days";
+import ChevronRight from "lucide-react-native/icons/chevron-right";
+import FileText from "lucide-react-native/icons/file-text";
+import HelpCircle from "lucide-react-native/icons/circle-question-mark";
+import Settings from "lucide-react-native/icons/settings";
+import Share2 from "lucide-react-native/icons/share-2";
+import Sparkles from "lucide-react-native/icons/sparkles";
+import Users from "lucide-react-native/icons/users";
 import { useEffect, useRef, useState } from "react";
 import { AccessibilityInfo, AppState, Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";

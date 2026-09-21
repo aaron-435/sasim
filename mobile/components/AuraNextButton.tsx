@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react-native";
+import ArrowRight from "lucide-react-native/icons/arrow-right";
 import { Pressable, StyleSheet } from "react-native";
 import { COLORS } from "../theme/colors";
 import GoldAura from "./GoldAura";

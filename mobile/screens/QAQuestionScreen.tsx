@@ -1,4 +1,5 @@
-import { ArrowLeft, MessageCircleQuestion } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import MessageCircleQuestion from "lucide-react-native/icons/message-circle-question-mark";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";

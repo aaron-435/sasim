@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, Check } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import Check from "lucide-react-native/icons/check";
 import { ActivityIndicator, Alert, Linking, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { API_BASE_URL } from "../config";
 import Text from "../components/AppText";

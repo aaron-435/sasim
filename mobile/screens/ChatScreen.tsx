@@ -1,4 +1,8 @@
-import { ArrowLeft, Clock, Send, ShieldCheck, Sparkles } from "lucide-react-native";
+import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import Clock from "lucide-react-native/icons/clock";
+import Send from "lucide-react-native/icons/send";
+import ShieldCheck from "lucide-react-native/icons/shield-check";
+import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
