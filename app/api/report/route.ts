@@ -6,7 +6,7 @@
  * app/api/chat/route.ts's shape and error handling.
  *
  * Request body: { sessionId, moduleId, appUserId?, context: ReportContext }
- * Response body: ReportContent (+ locked_token when the paid half is withheld) | { error: string }
+ * Response body: ReportContent (the front half + locked_pending when the back half is not yet written) | { error: string }
  *
  * 2026-09-20: the paid half of the report is no longer sent to non-buyers (see
  * lib/reportLock.ts). A caller whose purchase RevenueCat confirms gets the full report; anyone
@@ -20,7 +20,6 @@ import { getReportContent } from "@/lib/report";
 import type { ReportContext } from "@/lib/reportPrompts";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
-import { splitLocked, sealLocked } from "@/lib/reportLock";
 import { checkEntitlement } from "@/lib/revenuecat";
 
 // The report is generated, checked by code, reviewed by a second model pass and fixed where that
@@ -70,27 +69,25 @@ export async function POST(req: NextRequest) {
   const validModule = typeof moduleId === "string" && /^module\d{1,2}$/.test(moduleId) ? moduleId : null;
 
   try {
-    const content = await getReportContent({ ...context, includeCase: validModule !== null && CASE_MODULES.has(validModule) }, sessionId);
-    await saveReportResult(sessionId, content);
-
-    // Only a purchase RevenueCat confirms gets the paid half. Any other outcome — no id, not
-    // purchased, key not configured, RevenueCat unreachable — withholds it (fail closed).
+    // Only a purchase RevenueCat confirms gets the whole report. Everyone else gets just the front
+    // half: the back half is not even written until they buy (POST /api/report/paid), which keeps it
+    // off the wire entirely and spares the cost of writing pages most readers never unlock.
+    // Any other outcome — no id, not purchased, key not configured, RevenueCat unreachable — is
+    // treated as "not purchased" (fail closed).
     const entitled =
       validModule !== null && typeof appUserId === "string" && appUserId.length > 0 && (await checkEntitlement(appUserId, `report_${validModule}`)) === "active";
+
+    const content = await getReportContent(
+      { ...context, includeCase: validModule !== null && CASE_MODULES.has(validModule), part: entitled ? "full" : "free" },
+      sessionId
+    );
+    await saveReportResult(sessionId, content);
     if (entitled) return NextResponse.json(content);
 
-    const { open, locked } = splitLocked(content);
-    const token = validModule ? sealLocked(validModule, locked) : null;
-    if (!token) return NextResponse.json(open);
-    // How many pages the sealed half holds, so the reader can lay out the table of contents,
-    // page totals and paywall note the same before and after a purchase.
-    const locked_shape = {
-      cross_analysis_quotes: locked.cross_analysis_quotes.length,
-      strengths: locked.strengths.length,
-      weaknesses: locked.weaknesses.length,
-      behavior_guides: locked.behavior_guides.length,
-    };
-    return NextResponse.json({ ...open, locked_token: token, locked_shape });
+    // How many pages the back half holds, so the reader can lay out the table of contents, page
+    // totals and paywall note before it exists. Matches the counts the back half's schema demands.
+    const locked_shape = { cross_analysis_quotes: 2, strengths: 4, weaknesses: 4, behavior_guides: 4 };
+    return NextResponse.json({ ...content, locked_pending: true, locked_shape });
   } catch (err) {
     if (err instanceof OpenAI.APIError) {
       if (err.status === 401) {

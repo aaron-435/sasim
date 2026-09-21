@@ -57,6 +57,9 @@ export type ReportContent = {
    * below that belong to the paid pages come back empty until /api/report/unlock opens them
    * for a confirmed purchase. */
   locked_token?: string;
+  /** 2026-09-22: the back half has not been written yet — it is generated on the server after a
+   * purchase is confirmed (POST /api/report/paid), so non-buyers never pay for pages they don't unlock. */
+  locked_pending?: boolean;
   /** Item counts of the sealed half, sent with the token so page counts don't change on unlock. */
   locked_shape?: { cross_analysis_quotes: number; strengths: number; weaknesses: number; behavior_guides: number };
   title_line1: string;
@@ -182,6 +185,32 @@ export default function ReportScreen({
     return () => clearInterval(id);
   }, [content]);
 
+  /** The request context both /api/report and /api/report/paid receive. */
+  function buildReportContext() {
+    return {
+      nickname,
+      track: quizDiagnosis.track,
+      elements: resolvedElements,
+      decadeFortune,
+      currentAge,
+      dayMaster: dayMaster ?? undefined,
+      moduleTitle: quizDiagnosis.moduleTitle,
+      psychTestTypeTitle: quizDiagnosis.typeInfo?.title ?? "",
+      psychTestTypeHook: quizDiagnosis.typeInfo?.hook ?? "",
+      dimensionResults: (quizDiagnosis.dimensionResults ?? []).map((r) => ({
+        dimension: r.dimension,
+        direction: r.direction,
+        percentOfMax: r.percentOfMax,
+        intensity: r.intensity,
+      })),
+      dimensionShortNames: quizDiagnosis.dimensionShortNames ?? {},
+      nuancedSummary: quizDiagnosis.nuancedSummary ?? "",
+      topAnswers,
+      chatExtract: chatExtract ?? null,
+      locale,
+    };
+  }
+
   async function fetchReport() {
     setErrorText(null);
     // The report is written, checked and reviewed before it is shown (up to ~2 minutes) — give up
@@ -200,28 +229,7 @@ export default function ReportScreen({
           sessionId,
           moduleId: quizDiagnosis.moduleId,
           appUserId,
-          context: {
-            nickname,
-            track: quizDiagnosis.track,
-            elements: resolvedElements,
-            decadeFortune,
-            currentAge,
-            dayMaster: dayMaster ?? undefined,
-            moduleTitle: quizDiagnosis.moduleTitle,
-            psychTestTypeTitle: quizDiagnosis.typeInfo?.title ?? "",
-            psychTestTypeHook: quizDiagnosis.typeInfo?.hook ?? "",
-            dimensionResults: (quizDiagnosis.dimensionResults ?? []).map((r) => ({
-              dimension: r.dimension,
-              direction: r.direction,
-              percentOfMax: r.percentOfMax,
-              intensity: r.intensity,
-            })),
-            dimensionShortNames: quizDiagnosis.dimensionShortNames ?? {},
-            nuancedSummary: quizDiagnosis.nuancedSummary ?? "",
-            topAnswers,
-            chatExtract: chatExtract ?? null,
-            locale,
-          },
+          context: buildReportContext(),
         }),
       });
       const json = await res.json();
@@ -250,16 +258,55 @@ export default function ReportScreen({
   }, []);
 
   // The paid half is complete only once there is no sealed token left.
-  const lockedOpen = unlocked && !!content && !content.locked_token;
+  const lockedOpen = unlocked && !!content && !content.locked_token && !content.locked_pending;
 
   // Bought (or restored) but the paid half is still sealed → ask the server to open it. It
   // re-checks the purchase itself, so this can't be talked into opening anything early.
   async function unlockReport() {
-    if (!content?.locked_token) return;
+    if (!content?.locked_token && !content?.locked_pending) return;
     setUnlockState("working");
     const appUserId = await getRevenueCatUserId();
     if (!appUserId) {
       setUnlockState("failed");
+      return;
+    }
+    if (content.locked_pending) {
+      // The back half is written now, after the purchase — continuing the front half the reader saw.
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 115_000);
+      try {
+        const freePart = {
+          title_line1: content.title_line1,
+          title_line2: content.title_line2,
+          subtitle: content.subtitle,
+          opening_scene: content.opening_scene,
+          case_tag: content.case_tag,
+          oheng_intro: content.oheng_intro,
+          quiz_reading: content.quiz_reading,
+          element_readings: Object.fromEntries(Object.entries(content.element_readings ?? {}).map(([k, v]) => [k, { heading: v?.heading ?? "" }])),
+        };
+        const res = await fetch(`${API_BASE_URL}/api/report/paid`, {
+          signal: controller.signal,
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ moduleId: quizDiagnosis.moduleId, appUserId, context: buildReportContext(), freePart }),
+        });
+        const json = await res.json();
+        if (!mountedRef.current) return;
+        if (res.ok && json?.locked) {
+          const { locked_pending: _pending, ...rest } = content;
+          const merged = { ...rest, ...json.locked } as ReportContent;
+          setContent(merged);
+          setUnlockState("idle");
+          saveReport({ moduleId: quizDiagnosis.moduleId, moduleTitle: quizDiagnosis.moduleTitle, quizDiagnosis, chatExtract: chatExtract ?? null, content: merged });
+        } else {
+          setUnlockState("failed");
+        }
+      } catch {
+        if (mountedRef.current) setUnlockState("failed");
+      } finally {
+        clearTimeout(timeout);
+      }
       return;
     }
     try {
@@ -291,9 +338,9 @@ export default function ReportScreen({
   }
 
   useEffect(() => {
-    if (unlocked && content?.locked_token && unlockState === "idle") unlockReport();
+    if (unlocked && (content?.locked_token || content?.locked_pending) && unlockState === "idle") unlockReport();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [unlocked, content?.locked_token, unlockState]);
+  }, [unlocked, content?.locked_token, content?.locked_pending, unlockState]);
 
   const refreshEntitlement = useCallback(async () => {
     const [u, c] = await Promise.all([isReportUnlocked(quizDiagnosis.moduleId), ownedReportCount()]);

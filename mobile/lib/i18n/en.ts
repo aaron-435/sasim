@@ -446,7 +446,7 @@ export const en: typeof ko = {
   },
 
   report: {
-    unlocking: "Opening your report...",
+    unlocking: "Writing the rest of your report. This takes up to a minute...",
     unlockFailed: "We couldn't open your report. Check your connection and try again.",
     previousPageLabel: "Previous page",
     nextPageLabel: "Next page",

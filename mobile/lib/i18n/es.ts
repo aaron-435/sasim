@@ -446,7 +446,7 @@ export const es: typeof ko = {
   },
 
   report: {
-    unlocking: "Abriendo tu informe...",
+    unlocking: "Escribiendo el resto de tu informe. Tarda hasta un minuto...",
     unlockFailed: "No pudimos abrir tu informe. Revisa tu conexión e inténtalo de nuevo.",
     previousPageLabel: "Página anterior",
     nextPageLabel: "Página siguiente",

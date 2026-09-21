@@ -158,6 +158,13 @@ export interface ReportContext {
   /** Set by the server (never trusted from the client): whether this module's report carries the
    * short "someone like you" case. Only a few modules do, so the reports don't all read alike. */
   includeCase?: boolean;
+  /** Which half of the report to write. "full" = everything (a buyer, or the legacy flow); "free" =
+   * the front half every reader sees; "paid" = the back half, written only after a purchase is
+   * confirmed. Set by the server, never trusted from the client. */
+  part?: ReportPart;
+  /** For part "paid": the front half the reader has already read, so the back half continues it
+   * instead of repeating it. Only a few known text fields are used (see describeFreePart). */
+  freePart?: Record<string, unknown>;
 }
 
 // A trimmed excerpt of the original hand-written Module 3 report (see git
@@ -196,7 +203,9 @@ const STYLE_EXCERPT = `
 /** answer_notes' array-length rule has to name the exact count, so the schema is built per
  * request instead of being one static string — see ReportTopAnswer's header comment for why
  * this field exists at all (a literal Q&A pair alone read as flat with no interpretation). */
-function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase: boolean): string {
+export type ReportPart = "full" | "free" | "paid";
+
+function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase: boolean, part: ReportPart): string {
   // Only some modules carry a "someone like you" story; a report for the others goes straight from
   // the psych-test page to the saju chart. Empty values keep the shape the app expects.
   const caseFields = includeCase
@@ -216,8 +225,7 @@ function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase
   "chat_repeat_note": "상담에서 나온 '반복 패턴'(아래 데이터)을 다시 비춰 주는 3문장. 그 패턴이 어떻게 굴러가는지(1), 그 안에서 이 사람이 하는 선택(1), 그 패턴을 살짝 벗어나는 작은 방법(1). 반복 패턴 데이터가 '(없음)'이면 빈 문자열",
   "chat_fear_note": "상담에서 나온 '핵심 두려움/의미'(아래 데이터)를 따뜻하게 받아 주는 3문장. 두려움을 부풀리지 말고, 그 아래 있는 바람을 읽어 줄 것"`
     : "";
-  return `
-{
+  const freeFields = `
   "title_line1": "리포트 제목 1행 — 시적이고 은유적, 이 사람의 핵심 패턴을 압축",
   "title_line2": "리포트 제목 2행 — 1행과 이어지는 한 문장",
   "subtitle": "부제 — '~ 심층 리포트 — 사주 × 심리검사 × 상담 통합' 형식, 모듈명을 자연스럽게 녹여서. 모듈 번호는 아래 데이터의 '심리테스트 모듈' 값에 나온 숫자·표기 그대로 쓰고, '삼'/'사' 같은 한글 숫자로 풀어 쓰지 말 것 (예: '모듈 3', '모듈 9'처럼 아라비아 숫자 그대로)",
@@ -232,7 +240,8 @@ ${caseFields}
     "earth": {"heading": "토 ⛰️에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
     "metal": {"heading": "금 💎에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
     "water": {"heading": "수 💧에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"}
-  },
+  }`;
+  const paidFields = `
   "upcoming_period_heading": "'다가오는 시기' 섹션 소제목 — 아래 데이터의 '다가오는 대운 시기' 줄에 나온 나이대와 원소를 반드시 그대로 반영해서, 예를 들면 '32세부터, 물의 계절이 옵니다' 같은 형식으로. 그 줄이 '정보 없음'이면 나이 없이 '다가오는 흐름' 정도의 일반적인 제목",
   "upcoming_period_body": "3~4문장. 아래 '다가오는 대운 시기' 데이터에 근거해서, 그 시기에 어떤 변화나 기회가 자연스럽게 따라오는지, 그리고 지금부터 무엇을 준비해 두면 좋은지 서술. 나이 숫자는 그 데이터 줄에 있는 그대로만 쓰고 절대 새로 만들어내지 말 것 — 정보가 없다고 나오면 숫자 없이 일반적인 흐름으로만 쓰되, 정보가 없다는 사실 자체를 문장에 쓰지 말 것. 이미 지난 시기를 다루지 말고 반드시 앞으로 올 시기만 다룰 것.",
   "cross_analysis_quotes": ["우세 원소와 심리검사 주요 축을 명시적으로 연결하는 3문장이 한 문자열 안에 모두 들어간 항목 — 첫 문장은 캡처해서 공유하고 싶은 짧고 강한 한 줄, 나머지 두 문장은 그 근거. 배열 원소는 정확히 2개이고, 첫 문장만 따로 배열 원소로 빼지 말 것", "약한 원소와 심리검사의 다른 축을 연결하는 3문장 — 같은 구성(한 문자열에 3문장)"]${answerNotesField}${chatNotesFields},
@@ -246,9 +255,9 @@ ${caseFields}
   "behavior_guides": [{"title": "행동지침 제목 (짧은 명사구, 한국어는 띄어쓰기를 지킨 자연스러운 말 2~10자)", "body": "구체적 실천 방법 3문장 — 언제, 무엇을, 얼마나 하는지가 보이게. 이 배열 항목도 정확히 4개"}],
   "mindset_guide": "사고방식 전환 조언 4문장 — 은유를 하나 써서. 문장을 짧게 끊어서. 이 은유는 이번 심리테스트 모듈의 주제(돈/번아웃/애착/분노 등, 아래 데이터 참고)에서 자연스럽게 가져올 것 — 어느 모듈 리포트에 넣어도 어색하지 않을 만큼 범용적인 은유(파도, 그릇, 문턱 같은 것을 아무 맥락 없이 쓰는 식)는 피한다.",
   "closing_title": "마무리 섹션 소제목 — 짧고 여운 있게",
-  "closing_body": "마무리 문단 3문장 — 희망적이되 과장하지 않게. 이 리포트 전체에서 가장 저장하고 싶은 문장으로 끝낼 것"
-}
-`.trim();
+  "closing_body": "마무리 문단 3문장 — 희망적이되 과장하지 않게. 이 리포트 전체에서 가장 저장하고 싶은 문장으로 끝낼 것"`;
+  const body = part === "free" ? freeFields : part === "paid" ? paidFields : `${freeFields},\n${paidFields}`;
+  return `{${body}\n}`.trim();
 }
 
 const PRODUCES: Record<ElementKey, ElementKey> = { wood: "fire", fire: "earth", earth: "metal", metal: "water", water: "wood" };
@@ -264,6 +273,24 @@ export function relationToDayMaster(day: ElementKey, other: ElementKey): string 
   return "나를 누르는 기운(규칙·책임·압박 같은 기운)";
 }
 
+const FREE_PART_TEXT_FIELDS = ["title_line1", "title_line2", "subtitle", "opening_scene", "case_tag", "oheng_intro", "quiz_reading"] as const;
+
+/** The already-written front half as compact lines for the "paid" prompt (untrusted client text:
+ * only known fields, each length-capped). */
+function describeFreePart(free?: Record<string, unknown>): string {
+  if (!free) return "(없음)";
+  const cap = (v: unknown, n: number) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, n) : "");
+  const lines: string[] = [];
+  for (const k of FREE_PART_TEXT_FIELDS) {
+    const t = cap(free[k], k === "opening_scene" ? 700 : 400);
+    if (t) lines.push(`- ${k}: ${t}`);
+  }
+  const els = (free.element_readings ?? {}) as Record<string, { heading?: unknown }>;
+  const headings = Object.entries(els).map(([k, v]) => `${k}: ${cap(v?.heading, 80)}`).filter((x) => !x.endsWith(": "));
+  if (headings.length) lines.push(`- element_readings 제목: ${headings.join(" / ")}`);
+  return lines.join("\n") || "(없음)";
+}
+
 export function buildReportPrompt(context: ReportContext): string {
   const locale: Locale = context.locale ?? "ko";
   const elementsLine = (Object.keys(context.elements) as ElementKey[])
@@ -276,6 +303,13 @@ export function buildReportPrompt(context: ReportContext): string {
   const dominantKey = sortedElements[0];
   const weakKey = sortedElements[sortedElements.length - 1];
   const weakGeneratorRelation = buildGeneratorRelationLabel(locale, weakKey);
+  const part: ReportPart = context.part ?? "full";
+  const scopeNote =
+    part === "free"
+      ? "리포트 앞부분(모두가 읽는 무료 구간)만 쓴다. 아래 스키마의 필드만 채우고, 뒷부분(다가오는 시기, 교차분석, 강점·약점, 행동 지침, 마무리 등)은 구매 후 따로 쓰이므로 여기서 미리 다루거나 결론을 앞당겨 쓰지 않는다."
+      : part === "paid"
+        ? `리포트 뒷부분만 쓴다. 독자는 이미 앞부분을 읽었다 — 같은 이름·톤으로 이어 쓰되 앞부분의 문장·표현·사례·은유를 반복하지 않는다.\n\n이미 쓰인 앞부분:\n${describeFreePart(context.freePart)}`
+        : "리포트 전체를 쓴다.";
   const dm = context.dayMaster;
   const dayMasterLine = dm
     ? `- 나의 일간(사주의 중심 기운): ${dm.char} (${ELEMENT_LABEL[locale][dm.element]}). 일간을 기준으로 보면 우세 원소 ${ELEMENT_LABEL[locale][dominantKey]}는 "${relationToDayMaster(dm.element, dominantKey)}", 약한 원소 ${ELEMENT_LABEL[locale][weakKey]}는 "${relationToDayMaster(dm.element, weakKey)}"이다 — oheng_intro와 element_readings의 우세·약한 원소 항목에서 이 관계를 한 문장씩 반드시 풀어 쓸 것(전문용어 없이, 위 괄호 속 쉬운 말로). 일간은 계산된 사실이므로 가정법 없이 말한다.\n`
@@ -332,8 +366,11 @@ ${STYLE_EXCERPT}
 13. (한국어) 앱 화면과 같은 해요체("~예요", "~해요")로 통일하고 독자는 항상 "${context.nickname}님"으로 부른다. 위 문체 예시의 합쇼체 어미는 따라 하지 말고 밀도와 장면 묘사 방식만 따른다. 입말로 자연스럽게 쓴다("남기고 싶은 문장은 이거예요").
 14. 스키마의 설명문을 값으로 베끼거나 번역하지 말고 이 사람의 데이터에 맞는 새 문장을 직접 쓴다. 출력은 아래 스키마와 정확히 일치하는 JSON 객체 하나만(다른 텍스트 금지).
 
+## 이번 요청의 범위
+${scopeNote}
+
 ## 출력 스키마
-${buildOutputSchema(context.topAnswers?.length ?? 0, !!context.chatExtract, !!context.includeCase)}
+${buildOutputSchema(context.topAnswers?.length ?? 0, !!context.chatExtract, !!context.includeCase, part)}
 
 ## 이번 리포트의 데이터
 - 닉네임: ${context.nickname}

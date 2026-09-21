@@ -12,6 +12,7 @@
 import OpenAI from "openai";
 import { buildReportPrompt, type ReportContext } from "./reportPrompts";
 import { FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
+import { LOCKED_KEYS } from "./reportLock";
 import { buildReviewPrompt, checkReportDeterministic, describeReportData, getAt, setAt, stripHanja } from "./reportQuality";
 import { logLlmUsage } from "./llmUsage";
 
@@ -250,32 +251,61 @@ JSON 객체 하나만: {"fixes": {"<필드 경로>": "<다시 쓴 문장>"}} —
   }
 }
 
-/** Generate once, then fix only what is wrong:
+const PAID_ROOTS: ReadonlySet<string> = new Set(LOCKED_KEYS);
+const rootOf = (path: string) => path.split(/[.[]/)[0];
+
+/** Generate the requested part, then fix only what is wrong:
  *   1. code checks (free) → one targeted fix call for what they found
  *   2. ONE editor review of the result → one targeted fix call for what it found
  *   3. code checks again as the last gate; a fix that made things worse is discarded.
- * Typically 2–4 calls (~$0.035) instead of rewriting the whole report for every finding (~$0.10). */
-export async function getReportContent(context: ReportContext, sessionId?: string): Promise<ReportContent> {
+ * Typically 2–4 calls instead of rewriting the whole report for every finding.
+ *
+ * part "paid": the model writes only the back half (given the front half the reader already saw);
+ * checks and fixes run over the merged report but only ever touch the back half's fields. */
+async function runReport(context: ReportContext, sessionId?: string): Promise<ReportContent> {
+  const part = context.part ?? "full";
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [{ role: "system", content: buildReportPrompt(context) }];
-  let current = (await generateOnce(messages, sessionId)).content;
+  const generated = (await generateOnce(messages, sessionId)).content;
+  let current: ReportContent = part === "paid" ? { ...parseReport((context.freePart ?? {}) as Record<string, unknown>), ...pickPaid(generated) } : generated;
+
+  const relevant = (p: string) => part !== "paid" || PAID_ROOTS.has(rootOf(p.split(": ")[0]));
+  const check = (c: ReportContent) => checkReportDeterministic(c, context).filter(relevant);
 
   const fixOnce = async (problems: string[], label: string) => {
+    problems = problems.filter(relevant);
     if (problems.length === 0) return;
-    const before = checkReportDeterministic(current, context).length;
+    const before = check(current).length;
     const patched = await patchFields(context, current, problems, sessionId);
-    const after = checkReportDeterministic(patched, context).length;
-    console.info(`[report] ${label}: ${problems.length} finding(s), code findings ${before} → ${after}`);
+    const after = check(patched).length;
+    console.info(`[report:${part}] ${label}: ${problems.length} finding(s), code findings ${before} → ${after}`);
     if (after <= before) current = patched;
   };
 
-  await fixOnce(checkReportDeterministic(current, context), "code checks");
+  await fixOnce(check(current), "code checks");
   await fixOnce(await reviewReport(context, current, sessionId), "editor review");
 
-  const remaining = checkReportDeterministic(current, context);
+  const remaining = check(current);
   if (remaining.length > 0) {
     await fixOnce(remaining, "final gate");
-    const left = checkReportDeterministic(current, context).length;
-    if (left > 0) console.warn(`[report] shipped with ${left} unresolved code finding(s)`);
+    const left = check(current).length;
+    if (left > 0) console.warn(`[report:${part}] shipped with ${left} unresolved code finding(s)`);
   }
   return context.locale === "ko" ? stripHanja(current) : current;
+}
+
+function pickPaid(c: ReportContent): Pick<ReportContent, (typeof LOCKED_KEYS)[number]> {
+  const out: Record<string, unknown> = {};
+  for (const k of LOCKED_KEYS) out[k] = c[k];
+  return out as Pick<ReportContent, (typeof LOCKED_KEYS)[number]>;
+}
+
+/** The report (or, for context.part "free", its front half). */
+export async function getReportContent(context: ReportContext, sessionId?: string): Promise<ReportContent> {
+  return runReport({ ...context, part: context.part === "paid" ? "full" : (context.part ?? "full") }, sessionId);
+}
+
+/** The back half only — written after a purchase is confirmed, continuing the front half the reader saw. */
+export async function getPaidPart(context: ReportContext, freePart: Record<string, unknown>, sessionId?: string) {
+  const merged = await runReport({ ...context, part: "paid", freePart }, sessionId);
+  return pickPaid(merged);
 }
