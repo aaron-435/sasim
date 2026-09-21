@@ -1,3 +1,4 @@
+import { useReplyScroll } from "../lib/useReplyScroll";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import Clock from "lucide-react-native/icons/clock";
 import Send from "lucide-react-native/icons/send";
@@ -81,9 +82,7 @@ export default function ChatScreen({
     return () => clearInterval(id);
   }, [done]);
 
-  useEffect(() => {
-    scrollRef.current?.scrollToEnd({ animated: true });
-  }, [messages, isTyping]);
+  const onBubbleLayout = useReplyScroll(scrollRef, messages.map((m) => m.role));
 
   const revealLines = useCallback(async (lines: string[]) => {
     for (const line of lines) {
@@ -226,7 +225,9 @@ export default function ChatScreen({
 
         <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           {messages.map((m, i) => (
-            <ChatBubble key={i} role={m.role} text={m.text} />
+            <View key={i} onLayout={onBubbleLayout(i)}>
+              <ChatBubble role={m.role} text={m.text} />
+            </View>
           ))}
 
           {isTyping && <TypingDots />}

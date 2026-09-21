@@ -1,3 +1,4 @@
+import { useReplyScroll } from "../lib/useReplyScroll";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import RefreshCw from "lucide-react-native/icons/refresh-cw";
 import Sparkles from "lucide-react-native/icons/sparkles";
@@ -114,9 +115,7 @@ export default function QAScreen({
     })();
   }, [nickname, pushBot, pushCategoryPicker, pushLimitReachedMessage, strings]);
 
-  useEffect(() => {
-    scrollRef.current?.scrollToEnd({ animated: true });
-  }, [messages, busy, view]);
+  const onBubbleLayout = useReplyScroll(scrollRef, messages.map((m) => m.role));
 
   // Android hardware back inside the category/question pickers steps back one level,
   // same as their on-screen back buttons, instead of App.tsx's handler dropping the
@@ -289,7 +288,11 @@ export default function QAScreen({
               </View>
             );
           }
-          return <ChatBubble key={i} role={m.role} text={m.text} />;
+          return (
+            <View key={i} onLayout={onBubbleLayout(i)}>
+              <ChatBubble role={m.role} text={m.text} />
+            </View>
+          );
         })}
 
         {busy && !errorText && <TypingDots />}
