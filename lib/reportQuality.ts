@@ -51,8 +51,9 @@ export function flattenStrings(value: unknown, path = "report", out: [string, st
 
 const ES_GENDERED_READER =
   /(?<!\b(?:he|has|ha|hemos|han|había|habías|habrás)\s)\b(atrapad|agotad|cansad|abrumad|sobrecargad|desbordad|preocupad|ansios|estresad|frustrad|aislad|agobiad|vaciad|quemad|inquiet|conectad|desconectad|bloquead|desorientad|saturad|exhaust|sobrepasad)[ao]s?\b/i;
-const ES_STYLE_SLIP = /\busted(es)?\b|\bsu carta\b|\btu carta\b|\bla carta\b|\bvuestr/i;
-const META_LEAK = /\b(prompt|json|schema)\b|named here|(only|sole) (supporting )?(relationship|relation) (named|given|provided|listed)|(único|única) (relación|apoyo) (nombrad|indicad|dad)[ao]|no (future )?age range|age range (is )?(not|un)specified|not specified|no se especifica|edad no (está )?especificad/i;
+const ES_STYLE_SLIP = /\busted(es)?\b|\b[a-záéíóúñ]{3,}x\b|\bcargarse\b|\bdescolocar|\bsu carta\b|\btu carta\b|\bla carta\b|\bvuestr/i;
+const ES_CAPITALIZED_ELEMENTS = /\bCinco Elementos\b/; // running text uses lowercase "cinco elementos"
+const META_LEAK = /\b(prompt|json|schema)\b|(se describe|se indica|se menciona|se da) aquí|named here|(only|sole|one) (supporting |direct )?relationship (that|which|here|named)|the only relationship|(único|única) relación|(only|sole) (supporting )?(relationship|relation) (named|given|provided|listed)|(único|única) (relación|apoyo) (nombrad|indicad|dad)[ao]|no (future )?age range|age range (is )?(not|un)specified|not specified|no se especifica|edad no (está )?especificad/i;
 const HANGUL_OR_HANJA = /[ㄱ-ㆎ가-힣一-鿿]/;
 
 /** Minimum sentences per field — the "no thin page" product rule. */
@@ -110,12 +111,18 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
   for (const m of Array.from(upcoming.matchAll(/\d+/g))) allowedAges.add(Number(m[0]));
   if (ctx.currentAge != null) allowedAges.add(ctx.currentAge);
 
+  // The cover subtitle must carry the module number exactly as given ("Module 3", not "Module 1").
+  const moduleNumber = ctx.moduleTitle.match(/\d+/)?.[0];
+  if (moduleNumber && c.subtitle && !new RegExp(`(?<!\\d)${moduleNumber}(?!\\d)`).test(c.subtitle)) {
+    problems.push(`subtitle: 모듈 번호는 데이터의 "${ctx.moduleTitle}"에 나온 ${moduleNumber} 그대로 써야 함`);
+  }
+
   for (const [path, text] of strings) {
     const fictional = FICTIONAL_FIELDS.some((f) => path === f || path.startsWith(`${f}[`));
     if (locale !== "ko" && HANGUL_OR_HANJA.test(text)) problems.push(`${path}: 한국어/한자가 섞여 있음`);
     if (META_LEAK.test(text)) problems.push(`${path}: 지시문/데이터 누락을 언급하는 메타 발언`);
     if (locale === "es") {
-      const m = text.match(ES_GENDERED_READER) ?? text.match(ES_STYLE_SLIP);
+      const m = text.match(ES_GENDERED_READER) ?? text.match(ES_STYLE_SLIP) ?? text.match(ES_CAPITALIZED_ELEMENTS);
       if (m) problems.push(`${path}: 스페인어 스타일 위반 ("${m[0]}") — 독자 성별 표지·usted·carta 금지`);
     }
     if (fictional) continue;
@@ -191,7 +198,7 @@ export function checkYearReportDeterministic(c: YearReportContent, locale: Local
     if (locale !== "ko" && HANGUL_OR_HANJA.test(text)) problems.push(`${path}: 한국어/한자가 섞여 있음`);
     if (META_LEAK.test(text)) problems.push(`${path}: 지시문/데이터 누락을 언급하는 메타 발언`);
     if (locale === "es") {
-      const m = text.match(ES_GENDERED_READER) ?? text.match(ES_STYLE_SLIP);
+      const m = text.match(ES_GENDERED_READER) ?? text.match(ES_STYLE_SLIP) ?? text.match(ES_CAPITALIZED_ELEMENTS);
       if (m) problems.push(`${path}: 스페인어 스타일 위반 ("${m[0]}") — 독자 성별 표지·usted·carta 금지`);
     }
   }

@@ -229,7 +229,7 @@ export default function YearReportScreen({
   ];
 
   const backButton = (
-    <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button">
+    <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
       <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
       <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
     </Pressable>

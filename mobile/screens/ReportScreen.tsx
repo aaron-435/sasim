@@ -100,6 +100,7 @@ export default function ReportScreen({
   elements,
   decadeFortune,
   currentAge,
+  dayMaster,
   quizDiagnosis,
   chatExtract,
   sessionId,
@@ -109,6 +110,8 @@ export default function ReportScreen({
   nickname: string;
   elements: Record<string, number> | null;
   decadeFortune?: unknown;
+  /** The reader's Day Master from the engine; lets the report explain how their elements relate to it. */
+  dayMaster?: { char: string; element: string } | null;
   currentAge?: number;
   quizDiagnosis: QuizDiagnosis;
   chatExtract: ChatExtract | null;
@@ -194,6 +197,7 @@ export default function ReportScreen({
             elements: resolvedElements,
             decadeFortune,
             currentAge,
+            dayMaster: dayMaster ?? undefined,
             moduleTitle: quizDiagnosis.moduleTitle,
             psychTestTypeTitle: quizDiagnosis.typeInfo?.title ?? "",
             psychTestTypeHook: quizDiagnosis.typeInfo?.hook ?? "",

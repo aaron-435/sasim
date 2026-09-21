@@ -131,6 +131,9 @@ export interface ReportTopAnswer {
 
 export interface ReportContext {
   nickname: string;
+  /** The reader's Day Master (일간) as the engine computed it — sent by app versions from 2026-09-22
+   * on; absent from older ones, in which case the day-master line is simply left out. */
+  dayMaster?: { char: string; element: ElementKey };
   track: "romance" | "career";
   elements: Record<ElementKey, number>;
   moduleTitle: string;
@@ -197,7 +200,7 @@ function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase
   // Only some modules carry a "someone like you" story; a report for the others goes straight from
   // the psych-test page to the saju chart. Empty values keep the shape the app expects.
   const caseFields = includeCase
-    ? `  "case_tag": "'[사례] — [가명], [연령대], [상황]' 형식의 짧은 태그. 맨 앞 단어는 반드시 이 언어의 말로(한국어 '사례', 영어 'CASE', 스페인어 'CASO'), 가명은 이 사람의 언어권에서 자연스러운 이름. 연령대는 '30대 초반'처럼 대략으로 쓰고 구체적 나이 숫자는 쓰지 말 것",
+    ? `  "case_tag": "'[가상 사례] — [가명], [연령대], [상황]' 형식의 짧은 태그. 맨 앞 표기는 반드시 이 언어의 말로 가상의 인물임을 밝힌다(한국어 '가상 사례', 영어 'EXAMPLE CASE', 스페인어 'CASO DE EJEMPLO'), 가명은 이 사람의 언어권에서 자연스러운 이름. 연령대는 '30대 초반'처럼 대략으로 쓰고 구체적 나이 숫자는 쓰지 말 것",
   "case_paragraphs": ["이 사람과 닮은 가상 인물의 짧은 요약 — 배열 원소는 정확히 1개, 4문장. 가상 인물이 이 사람과 같은 패턴 때문에 겪는 구체적인 하루를 보여 주고, 사주도 비슷한 원소 불균형이 있다는 점을 한 문장으로 연결하며, 마지막 문장은 반드시 '당신도'처럼 이 사람에게 돌아오는 문장. 이 사례는 이 사람의 이야기로 가는 짧은 다리일 뿐이니 길게 끌지 말 것"],`
     : `  "case_tag": "",
   "case_paragraphs": [],`;
@@ -236,16 +239,29 @@ ${caseFields}
   "psychology_fact_heading": "이 사람의 패턴과 관련된 실제 심리학 개념/이론/연구자 이름을 정확히 인용한 소제목. 화면에 이미 '잠깐, 심리학 상식 하나'라는 라벨이 따로 표시되므로 그 문구를 다시 쓰지 말 것 — 개념 이름 자체로 시작 (예: '볼비와 불안-회피 애착')",
   "psychology_fact_body": "그 개념을 3~4문장으로 정확하게 설명하고 이 사람 패턴과 연결. 실제 연구자·연도·개념은 정확한 것만 쓰고 확실하지 않으면 개념만 쓴다",
   "psychology_takeaway": "2문장짜리 핵심 요약 — 첫 문장은 기억에 남는 짧은 한 줄. 화면에 이미 '기억할 한 가지 ·' 라벨이 따로 붙으므로 '기억할 한 가지' 같은 말을 반복하지 말고 바로 요약 문장으로 시작",
-  "strengths": [{"title": "강점 제목 (2~6자)", "body": "3문장 설명 — 이 사람의 실제 데이터에서 나온 구체적 장면 하나 포함. 이 배열 항목은 정확히 4개, 각 항목이 화면 한 장씩 차지함"}],
-  "weaknesses": [{"title": "취약점 제목 (2~8자)", "body": "3문장 설명 — 비난이 아니라 이해로. 구체적 장면 하나 포함. 이 배열 항목도 정확히 4개"}],
+  "strengths": [{"title": "강점 제목 (짧은 명사구, 한국어는 띄어쓰기를 지킨 자연스러운 말 2~8자 — '휴식불편' 같은 붙임말 금지)", "body": "3문장 설명 — 이 사람의 실제 데이터에서 나온 구체적 장면 하나 포함. 이 배열 항목은 정확히 4개, 각 항목이 화면 한 장씩 차지함"}],
+  "weaknesses": [{"title": "취약점 제목 (짧은 명사구, 한국어는 띄어쓰기를 지킨 자연스러운 말 2~8자)", "body": "3문장 설명 — 비난이 아니라 이해로. 구체적 장면 하나 포함. 이 배열 항목도 정확히 4개"}],
   "fit_good": "이 사람에게 맞는 환경/일 스타일 3문장 — 구체적인 하루의 모습으로",
   "fit_bad": "이 사람이 피해야 할 환경/일 스타일 3문장 — 구체적인 하루의 모습으로",
-  "behavior_guides": [{"title": "행동지침 제목 (2~10자)", "body": "구체적 실천 방법 3문장 — 언제, 무엇을, 얼마나 하는지가 보이게. 이 배열 항목도 정확히 4개"}],
+  "behavior_guides": [{"title": "행동지침 제목 (짧은 명사구, 한국어는 띄어쓰기를 지킨 자연스러운 말 2~10자)", "body": "구체적 실천 방법 3문장 — 언제, 무엇을, 얼마나 하는지가 보이게. 이 배열 항목도 정확히 4개"}],
   "mindset_guide": "사고방식 전환 조언 4문장 — 은유를 하나 써서. 문장을 짧게 끊어서. 이 은유는 이번 심리테스트 모듈의 주제(돈/번아웃/애착/분노 등, 아래 데이터 참고)에서 자연스럽게 가져올 것 — 어느 모듈 리포트에 넣어도 어색하지 않을 만큼 범용적인 은유(파도, 그릇, 문턱 같은 것을 아무 맥락 없이 쓰는 식)는 피한다.",
   "closing_title": "마무리 섹션 소제목 — 짧고 여운 있게",
   "closing_body": "마무리 문단 3문장 — 희망적이되 과장하지 않게. 이 리포트 전체에서 가장 저장하고 싶은 문장으로 끝낼 것"
 }
 `.trim();
+}
+
+const PRODUCES: Record<ElementKey, ElementKey> = { wood: "fire", fire: "earth", earth: "metal", metal: "water", water: "wood" };
+const CONTROLS: Record<ElementKey, ElementKey> = { wood: "earth", earth: "water", water: "fire", fire: "metal", metal: "wood" };
+
+/** How an element stands to the Day Master, in plain words (the classical relations without the
+ * technical names), computed here so the model never has to derive — or invent — it. */
+function relationToDayMaster(day: ElementKey, other: ElementKey): string {
+  if (other === day) return "나와 같은 기운(스스로의 힘·동료 같은 기운)";
+  if (PRODUCES[other] === day) return "나를 살려 주는 기운(지원·배움·보호 같은 기운)";
+  if (PRODUCES[day] === other) return "내가 쏟아내는 기운(표현·재능·에너지를 내보내는 기운)";
+  if (CONTROLS[day] === other) return "내가 다루는 기운(현실·재물·일을 붙잡는 기운)";
+  return "나를 누르는 기운(규칙·책임·압박 같은 기운)";
 }
 
 export function buildReportPrompt(context: ReportContext): string {
@@ -260,6 +276,10 @@ export function buildReportPrompt(context: ReportContext): string {
   const dominantKey = sortedElements[0];
   const weakKey = sortedElements[sortedElements.length - 1];
   const weakGeneratorRelation = buildGeneratorRelationLabel(locale, weakKey);
+  const dm = context.dayMaster;
+  const dayMasterLine = dm
+    ? `- 나의 일간(사주의 중심 기운): ${dm.char} (${ELEMENT_LABEL[locale][dm.element]}). 일간을 기준으로 보면 우세 원소 ${ELEMENT_LABEL[locale][dominantKey]}는 "${relationToDayMaster(dm.element, dominantKey)}", 약한 원소 ${ELEMENT_LABEL[locale][weakKey]}는 "${relationToDayMaster(dm.element, weakKey)}"이다 — oheng_intro와 element_readings의 우세·약한 원소 항목에서 이 관계를 한 문장씩 반드시 풀어 쓸 것(전문용어 없이, 위 괄호 속 쉬운 말로). 일간은 계산된 사실이므로 가정법 없이 말한다.\n`
+    : "";
   const upcomingPeriodLine = describeUpcomingPeriod(context.decadeFortune, context.currentAge, locale);
 
   const dimensionLines = context.dimensionResults
@@ -345,7 +365,10 @@ ${STYLE_EXCERPT}
     언급하지 않는다 ("나이가 명시되지 않아서" 같은 메타 발언 금지). 데이터가 없으면 그 부분은
     조용히 일반적인 흐름으로만 쓴다.
 13. "이 모듈에서는", "in this module" 같은 표현은 리포트 전체에서 한 번을 넘기지 말고, 그 대신 주제 자체(번아웃, 돈, 애착 등)를 직접 말한다. 데이터에서 온 라벨·지시문 표현("여기에 명시된 유일한 관계", "the only relationship named here" 등)을 문장에 그대로 옮기지 말고 자연스러운 설명으로 풀어 쓴다.
-14. 사주 용어는 이 언어의 용어집대로 쓰고(예: 대운은 영어 "10-year cycle", 스페인어 "ciclo de
+14. 수치를 말로 옮길 때 기준을 일관되게 쓴다: 오행은 30% 이상 "강하다/우세", 15~29% "보통", 14% 이하 "약하다/적다"이고 같은 값은 어느 페이지에서나 같은 말로 부른다. 심리검사 축은 데이터에 적힌 방향(높음/낮음)과 강도 표기와 모순되는 강도어를 쓰지 않는다.
+15. strengths 항목은 정말 강점만 쓴다: "~가 적어서/약해서 ~하지 못한다" 같은 결핍·약점 서술로 시작하거나 채우지 말고, 그 데이터가 가져다주는 힘(버티는 힘, 민감하게 알아채는 감각 등)으로 풀어 쓴다.
+16. (한국어일 때) 문체는 앱 화면과 같은 해요체("~예요", "~해요", "~이에요")로 처음부터 끝까지 통일한다. 위 문체 예시가 합쇼체("~입니다")인 것은 밀도와 장면 묘사 방식을 보여 주려는 것일 뿐이니 어미는 따라 하지 말 것. 독자는 항상 "${context.nickname}님"으로 부르고 "님"을 빼지 않는다. "~하지 않으신가요"보다 "~ 아니세요?", "가장 저장할 문장은 이겁니다"보다 "남기고 싶은 문장은 이거예요"처럼 자연스러운 입말로 쓴다.
+17. 사주 용어는 이 언어의 용어집대로 쓰고(예: 대운은 영어 "10-year cycle", 스페인어 "ciclo de
     diez años"), 한국어 단어나 한자를 다른 언어 출력에 섞지 않는다. 처음 나오는 용어는 같은
     문장 안에서 짧게 풀어 준다.
 
@@ -354,9 +377,9 @@ ${STYLE_EXCERPT}
 - track: ${context.track}
 - 사주 오행 분포: ${elementsLine}
 - 우세 원소: ${ELEMENT_LABEL[locale][dominantKey]} / 약한 원소: ${ELEMENT_LABEL[locale][weakKey]}
-- 약한 원소(${ELEMENT_LABEL[locale][weakKey]})를 채워주는 유일한 상생 관계: ${weakGeneratorRelation} — element_readings의 약한 원소 항목에서 이것만 쓸 것
+- 약한 원소(${ELEMENT_LABEL[locale][weakKey]})를 채워주는 상생 관계: ${weakGeneratorRelation} — element_readings의 약한 원소 항목에서는 이 관계만 언급하되, "유일한/the only/el único" 같은 말 없이 "금이 수를 살려 준다" 식으로 자연스럽게 풀어 쓸 것
 - ${upcomingPeriodLine}
-- 심리테스트 모듈: ${context.moduleTitle}
+${dayMasterLine}- 심리테스트 모듈: ${context.moduleTitle}
 - 심리테스트 유형: ${context.psychTestTypeTitle} — ${context.psychTestTypeHook}
 - 심리테스트 세부 축: ${dimensionLines}
 - 심리테스트 서술: ${context.nuancedSummary}

@@ -45,7 +45,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
     {
       name: "Elon Musk",
       birthYear: 1971,
-      field: t("기업가", "Entrepreneur", "Empresario"),
+      field: t("기업가", "Entrepreneur", "Persona emprendedora"),
       blurb: t(
         "테슬라와 스페이스X를 동시에 밀어붙여 전기차와 로켓의 기준을 바꿨습니다.",
         "Pushed Tesla and SpaceX forward at the same time, resetting the bar for electric cars and rockets.",
@@ -331,7 +331,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
     {
       name: "Steve Jobs",
       birthYear: 1955,
-      field: t("기업가", "Entrepreneur", "Empresario"),
+      field: t("기업가", "Entrepreneur", "Persona emprendedora"),
       blurb: t(
         "애플을 공동창업하며 개인용 기술의 판도를 바꿨습니다.",
         "Co-founded Apple and revolutionized personal technology.",
@@ -365,7 +365,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
     {
       name: "Walt Disney",
       birthYear: 1901,
-      field: t("기업가", "Entrepreneur", "Empresario"),
+      field: t("기업가", "Entrepreneur", "Persona emprendedora"),
       blurb: t(
         "손으로 그린 만화 한 편에서 시작해 거대한 엔터테인먼트 제국을 세웠습니다.",
         "Built an entertainment empire from hand-drawn cartoons.",
@@ -465,7 +465,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
     {
       name: "Mark Zuckerberg",
       birthYear: 1984,
-      field: t("기업가", "Entrepreneur", "Empresario"),
+      field: t("기업가", "Entrepreneur", "Persona emprendedora"),
       blurb: t(
         "기숙사 방에서 시작한 페이스북을 세계적인 플랫폼으로 키웠습니다.",
         "Built Facebook from a dorm room into a global platform.",
@@ -707,7 +707,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
     {
       name: "Jeff Bezos",
       birthYear: 1964,
-      field: t("기업가", "Entrepreneur", "Empresario"),
+      field: t("기업가", "Entrepreneur", "Persona emprendedora"),
       blurb: t(
         "온라인 서점을 세계적인 대기업으로 키웠습니다.",
         "Built Amazon from an online bookstore into a global giant.",
@@ -959,7 +959,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
     {
       name: "Bill Gates",
       birthYear: 1955,
-      field: t("기업가", "Entrepreneur", "Empresario"),
+      field: t("기업가", "Entrepreneur", "Persona emprendedora"),
       blurb: t(
         "마이크로소프트를 공동창업하고 세계적인 자선사업가가 됐습니다.",
         "Co-founded Microsoft and became a leading global philanthropist.",

@@ -1269,118 +1269,122 @@ export const QA_PERSONAS: Record<string, { nickname: string; locale: "ko" | "en"
 export const QA_DEEP_REPORT: Record<string, { content: any; quizDiagnosis: any; chatExtract: any }> = {
  "jordan": {
   "content": {
-   "title_line1": "You finish the work, but your mind keeps the ledger open.",
-   "title_line2": "That is why rest keeps feeling unfinished.",
-   "subtitle": "Burnout deep dive report — five elements × psychology × counseling, module 1",
-   "opening_scene": "It is late enough that your body is asking for sleep, but your mind is still reading Monday morning messages as if they just arrived. You put the work down, then reach back for it again, checking one more thing and then one more after that. By the time you finally stop, the relief never quite lands, because the next round of checking is already waiting in your head. Jordan, does this feel like the kind of night your mind keeps trying to create?",
-   "case_tag": "CASE — Evan, early 30s, a work rhythm that never fully clocks out",
+   "title_line1": "You keep finishing the day",
+   "title_line2": "and your mind keeps asking for one more check.",
+   "subtitle": "Module 3 Burnout deep report — Saju x psychology x counseling integrated",
+   "opening_scene": "It is late, and your phone is still in your hand after the work is already done. Monday-morning messages light up the screen, and your mind starts running back through what you finished, what you might have missed, and what still needs checking. You tell yourself you are resting, but the rest never lands. You push through in a rush, then feel the drop all at once. Jordan, isn't this what your recent nights have been looking like?",
+   "case_tag": "EXAMPLE CASE — Mina, early 30s, a work deadline spiral",
    "case_paragraphs": [
-    "Evan clears the last task on his list, then spends another twenty minutes reopening files and rereading the same lines. He tells himself it is only to be safe, but the real cost shows up later, when the crash hits all at once. His chart also leans heavily on Earth and Metal, with Wood left at zero, so the pressure to hold shape outruns the ease of growth. You can see yourself in that loop too."
+    "Mina leaves the office with her laptop closed, but her mind keeps reopening the same task on the ride home. She has the same Earth-heavy pressure in her chart, and the result is a day that feels fully carried before it ever feels complete. By the time she sits down, she is already scanning for what could still be improved. You would recognize that loop immediately, because it is the same shape as your own.",
+    "She does not stop at finishing the report once. She checks the numbers again, then checks the formatting, then checks the message she is about to send. That extra round of checking looks small from the outside, but it is the part that drains her most. You would be looking at your own habit if you saw it on her desk.",
+    "By evening she is exhausted, yet still uneasy enough to reopen the file one more time. Her day looks productive, but the feeling underneath is strain, not relief. That is why her body is tired while her mind stays on duty. You would feel that same mismatch in yourself.",
+    "Mina is not failing to rest. She is carrying too much of the day into the night, and that is exactly why your own pattern feels so familiar to her. The work may already be done, but she cannot let the day end cleanly. So the pause never becomes rest, and the next morning starts with the same unfinished tension."
    ],
-   "oheng_intro": "Your Earth and Metal are both at 38 percent, while Wood sits at 0 percent. In a Burnout pattern, that often looks like holding, sorting, and refining so hard that there is little room left for fresh movement. The result is a workday that keeps its shape, but does not release you when the work is done.",
-   "quiz_reading": "Your Perfectionism score sits at 82 percent, and your Recovery score sits at 34 percent. That combination explains why finishing something does not let your nervous system stand down; it sends you back to check, tighten, and polish instead. In a Burnout profile called Finisher's Drain, you are not short on effort — you are spending it faster than rest can replenish it.",
+   "oheng_intro": "Earth is 38 percent, and that is the strongest force in your chart. Wood is 0 percent, so the part that would normally spill outward as expression, momentum, and forward growth is the weakest. In this burnout pattern, that looks like carrying responsibility hard, finishing things fully, and then having little ease left for recovery.",
+   "quiz_reading": "Your Finisher's Drain pattern shows up clearly in the 82 percent perfectionism score and the 34 percent recovery score. That combination means the work does not only need to be done; it also needs to be mentally verified again before your mind lets go. So even an off day can still feel like a workday in disguise, especially when unfinished tension gets reactivated by Monday-morning messages.",
    "element_readings": {
     "wood": {
-     "heading": "Wood at 0% — the branch that never got to stretch",
-     "body": "Wood is missing here, so forward motion does not come easily on its own. That shows up in the way you keep circling back after a task is finished, as if starting the next step needs a bigger internal push than you naturally get. Water is the one element that can nourish Wood, and that makes quiet recovery matter more than another round of self-editing. When rest feels uneasy even on a day off, that is Wood asking for room to grow instead of another checkmark."
+     "heading": "Wood is absent — the part that should push outward is running dry",
+     "body": "Wood sits at 0 percent, so the energy that should turn effort into movement and expression is not showing up on its own. In your burnout pattern, that is why finishing the task can feel heavier than starting it. Water is the one element that can feed Wood, so the path back is not more force; it is more replenishment first. When you skip that, you end up cramming, then crashing, exactly the way you described."
     },
     "fire": {
-     "heading": "Fire at 13% — a brief flare that burns through the day",
-     "body": "Fire is present, but only in a lighter amount, so your energy does not stay bright for long. It helps explain the Monday-morning jolt: a message comes in, the system lights up, and your whole pace shifts at once. Then, because the flame is not large enough to sustain itself, you crash after the push instead of easing out of it. That is not laziness; it is what short, sharp effort looks like when recovery is thin."
+     "heading": "Fire is light — the spark is there, but it burns fast",
+     "body": "Fire is 13 percent, which is low enough that it does not stay bright for long under pressure. That matches the way your energy spikes when a deadline or Monday-morning message hits, then drops once the push is over. The spark is real, but it is not built to carry the whole week alone. So the hard part is not getting started; it is keeping enough warmth left for recovery after the rush."
     },
     "earth": {
-     "heading": "Earth at 38% — the weight that keeps everything in place",
-     "body": "Earth is one of your strongest elements, and it shows in how hard you hold responsibility once you have it in your hands. You do not leave things half-finished, and even after the work is technically done, you keep weighing whether it is solid enough. In a Burnout pattern, that becomes the habit of cramming until the deadline and then sinking afterward. Earth gives you reliability, but right now it also makes it hard to set the load down."
+     "heading": "Earth is strong — pressure becomes responsibility",
+     "body": "Earth is 38 percent, so the weight of duty and structure sits high in your system. In a burnout module, that looks like not being able to leave a task half-checked, even after the work is technically done. You keep returning to the details because your mind treats completion as something that still needs guarding. That is why rest can feel unfinished even when nothing is left on the list."
     },
     "metal": {
-     "heading": "Metal at 38% — the sharp edge that keeps checking",
-     "body": "Metal is also strong, which fits the way you return to the same task and inspect it again. There is precision in that, and there is also strain, because precision becomes expensive when it never gets a stopping point. Monday morning messages hit this part of you hard, because they reactivate the part that wants to be certain before it can relax. Metal helps you refine, but here it also keeps the door to rest only half open."
+     "heading": "Metal is strong — standards stay sharp",
+     "body": "Metal is also 38 percent, and that gives you a sharp internal standard. In practice, that shows up as the urge to review, correct, and tighten the edges before you let anything go. It can make your work strong, but it also makes Monday-morning messages feel like a test you have to pass again. When the standard stays this high, the body may stop, but the mind keeps auditing."
     },
     "water": {
-     "heading": "Water at 13% — the quiet reserve that should refill you",
-     "body": "Water is present, but not in a way that naturally restores you for long. That matters because Water is the element that can feed Wood, and your chart needs that support more than another burst of force. Your body wants stillness, but your mind keeps treating stillness like a threat, so recovery never fully takes hold. The more you let yourself pause without immediately checking again, the more this part can start doing its real work."
+     "heading": "Water is light — the inner tide needs room to settle",
+     "body": "Water is 13 percent, so the part of you that should cool, restore, and soften after effort is not staying steady for long. That fits the line you gave so directly: you rest, but it never feels like resting. In a burnout cycle, that means your nervous system stays half-alert even when the work is over. A quieter close to the day matters here, because your recovery is not getting enough space to finish its job."
     }
    },
-   "upcoming_period_heading": "From age 31 to 40, a stronger Fire cycle arrives",
-   "upcoming_period_body": "That coming period is likely to make your pace more visible. Fire brings momentum, urgency, and the sense that you want to act before the moment passes. For you, that can turn into clearer leadership and faster decisions, but only if you are not already running on empty. The best preparation now is to practice stopping before exhaustion makes the decision for you.",
+   "upcoming_period_heading": "From age 31 to 40, a stronger Fire 10-year cycle arrives",
+   "upcoming_period_body": "That coming stretch should bring more visibility, momentum, and pressure to act quickly. For you, Fire can make effort feel more immediate and more public, so the pace of work may rise and the urge to prove yourself may rise with it. If you prepare now, the biggest help will be building recovery before the heat turns up, not after. The more you practice ending the day cleanly now, the less that future pace will decide for you.",
    "cross_analysis_quotes": [
-    "Your strong Earth and Metal show why perfectionism feels so automatic. You hold, sort, and recheck because those elements want things stable, exact, and complete. In a Burnout pattern, that becomes the habit of doing one more pass even after the work is already done.",
-    "Your weak Wood helps explain why recovery feels uneasy. Wood needs room to move forward, and when it is low, rest can feel less like replenishment and more like a pause that should be filled immediately. That is why low recovery and a zero Wood reading point to the same inner pressure from two different angles."
+    "Your strongest pattern is not laziness; it is over-control that keeps the work alive after it is already done. With Earth at 38 percent and perfectionism at 82 percent, you do not just complete tasks — you keep carrying them in your head. That is why finishing can still feel like unfinished business.",
+    "Recovery at 34 percent is the softer side of the same story. With Water at 13 percent, your system does not settle quickly, so rest can start physically while your mind keeps auditing the day. That is why a day off can still feel tense, even when nothing is being asked of you."
    ],
    "answer_notes": [
-    "Going back and rechecking everything shows that you trust precision more than relief. It means your confidence arrives after the work, not before it. You do not need to become careless; you need a point where enough is actually enough.",
-    "Feeling uneasy even when you rest shows that your system has trouble recognizing pause as safety. On a day off, your mind still keeps a hand on the task list, which is why rest does not land cleanly. You are allowed to let quiet stay quiet without earning it first."
+    "Going back to re-check everything shows a mind that does not trust completion to stay complete on its own. In daily life, that becomes the extra scan before you close the laptop, the second look at a message, and the third pass over work that was already good enough. You are not careless; you are trying to feel safe through certainty.",
+    "Feeling uneasy even when you rest shows that recovery is not just about time off for you. It becomes a state your body has to enter, and right now it takes more than a pause to get there. That answer names the exact gap between stopping and actually recovering, and it is worth listening to.",
+    "You are showing how tightly your mind links stillness with risk. That is why a quiet day can feel strangely exposed, as if something important might slip by while you are not watching. The answer points to a part of you that needs recovery to feel secure, not guilty."
    ],
-   "chat_snapshot_note": "You said you rest, but it never feels like resting, and that matches the tired, slightly anxious feeling you brought into the room. The work may be done, but your mind keeps checking anyway, so the body never gets the message that the shift is over. That is the line I would save for you: you are not failing to rest, you are being interrupted inside the rest.",
-   "chat_trigger_note": "Monday morning messages hit you so hard because they do not just bring information; they switch your whole internal alarm back on. For a person with high perfectionism, that kind of message feels like a test you have not finished studying for. The moment the alert appears, your nervous system acts as if falling behind is already happening.",
-   "chat_repeat_note": "The cramming-then-crashing cycle shows that you can push hard enough to get through, but not gently enough to stay steady. You choose speed when pressure rises, then pay for it when the pressure drops. A smaller step before the pile-up would change the shape of the whole day.",
-   "chat_fear_note": "Your fear is not really about being busy. It is about what stopping might mean to you. Under that fear is a very plain wish: you want to keep your place without having to run yourself into the ground to prove it.",
-   "psychology_fact_heading": "Perfectionism and recovery in burnout",
-   "psychology_fact_body": "Your scores point to a simple report-specific pattern: 82 percent perfectionism keeps you reaching for one more check, while 34 percent recovery leaves too little internal reset after the work is done. That is why completion does not feel like completion for you. The task ends on paper, but your attention keeps auditing it. In your case, the mismatch between those two scores is exactly what keeps rest from landing.",
-   "psychology_takeaway": "If stopping feels risky, your system will keep treating rest like unfinished work. Your job is not to do less carelessly; it is to let completion count the first time.",
+   "chat_snapshot_note": "You said, \"I rest but it never feels like resting,\" and that line sits right next to the tired, a little anxious feeling you brought in. Those two facts belong together here, because your body is asking for a pause while your mind keeps standing guard. The sentence I would save is this: you are not failing to rest, you are still being asked to feel safe inside it.",
+   "chat_trigger_note": "Monday-morning messages hit you so hard because they do not feel like simple communication. They switch the whole system back on, and for someone with strong Earth and high perfectionism, that means responsibility comes rushing back before your body has caught up. The message itself is not the whole problem; it is the way it reopens the loop of checking and pressure.",
+   "chat_repeat_note": "Your pattern is clear: you cram hard, then crash hard. The first part gives you a burst of control, and the second part is the cost of carrying too much without enough recovery. A smaller way forward is to stop once before the crash, even if the task still feels unfinished, and let that pause count.",
+   "chat_fear_note": "The fear underneath this is not really about falling behind on one task. It is about what it would mean if stopping made you lose your place. That tells me you care deeply about staying responsible, and you want your effort to keep you safe rather than cost you sleep.",
+   "psychology_fact_heading": "Perfectionism and recovery imbalance",
+   "psychology_fact_body": "Perfectionism tends to push a person to keep checking, refining, and tightening even after a task is done. When recovery is low, the body does not get the full signal that the workday is over, so rest stays fragile. Your scores fit that pattern closely: 82 percent perfectionism keeps the mind active, while 34 percent recovery leaves less room for the system to settle. That is why your evenings can still feel supervised by work.",
+   "psychology_takeaway": "You do not just need more time off; you need a cleaner landing. Your mind will relax faster when the day ends in one place instead of being reopened five more times.",
    "strengths": [
     {
-     "title": "Follow-through",
-     "body": "You do not abandon a task halfway through. That is clear in the way you keep checking after the work is done, even when your energy is already thin. In a busy week, that makes you the person who notices what others miss and closes the loop."
+     "title": "Strong follow-through",
+     "body": "You finish what you start, and that matters in the way you work every day. The same energy that leaves you tired also helps you complete tasks instead of letting them drift. When Monday-morning messages arrive, you are the person who has already thought two steps ahead."
     },
     {
-     "title": "Standards",
-     "body": "Your 82 percent perfectionism shows that you care about the quality of what leaves your hands. You are not satisfied with a quick finish if it leaves loose ends behind. That same standard is why Monday morning messages can hook you so fast."
+     "title": "Sharp standards",
+     "body": "Your 38 percent Metal gives you a clear eye for what does not fit. That can make your work neat, accurate, and hard to dismiss. It also explains why you notice the tiny things that others would let slide."
     },
     {
-     "title": "Endurance",
-     "body": "You can push through a heavy stretch and still keep going until the work is complete. The cramming part of your pattern proves that you have stamina, even if it costs you later. The challenge is not effort; it is pacing."
+     "title": "Responsibility grip",
+     "body": "Your 38 percent Earth gives you staying power under pressure. You can hold a lot, keep going, and keep the structure standing when others would already have let it wobble. That is a real strength, especially when deadlines pile up."
     },
     {
-     "title": "Responsibility",
-     "body": "Earth at 38 percent shows up as a strong instinct to hold what is yours. You take the load seriously, and that is why unfinished work does not sit lightly with you. In practice, that means you often become the person who carries the last mile."
+     "title": "Self-monitoring",
+     "body": "Your 82 percent perfectionism means you do not drift through your work blindly. You check, adjust, and care about the result, which is part of why people can rely on you. Even the habit of re-checking everything shows how much you want to get it right."
     }
    ],
    "weaknesses": [
     {
-     "title": "Overchecking",
-     "body": "You return to the same task because certainty feels safer than relief. That is why finished work can still keep you mentally occupied long after the screen is closed. The cost is that your attention never fully gets to come home."
+     "title": "Unfinished rest",
+     "body": "Your recovery score of 34 percent shows up as rest that does not fully land. You may stop working, but your mind keeps one hand on the task. That is why a break can feel like a pause without relief."
     },
     {
-     "title": "Poor recovery",
-     "body": "Your recovery score of 34 percent explains why rest does not register as rest. Even on a day off, some part of you stays uneasy and ready to resume. That leaves you tired in a way that sleep alone does not fix."
+     "title": "Overchecking loop",
+     "body": "You tend to return to work after it is already done, just to make sure nothing slipped through. That habit can protect quality, but it also keeps your system from ever really closing the file. The result is more mental traffic, not more peace."
     },
     {
-     "title": "Crash pattern",
-     "body": "You can hold it together through the push, then drop hard once the pressure lifts. The pattern is visible in your own words: cramming, then crashing. It is not a lack of discipline; it is a system that spends itself too fast."
+     "title": "Crash after push",
+     "body": "Your pattern of cramming and then crashing is not random. It is what happens when strong effort is followed by too little recovery. One hard push can carry the day, but it also leaves you empty when the rush is over."
     },
     {
-     "title": "Fear of delay",
-     "body": "You are afraid that if you stop, you will fall behind. That fear keeps you moving even when the better choice would be to pause. It also makes ordinary messages feel bigger than they are, because they seem to confirm the fear."
+     "title": "Pressure sensitivity",
+     "body": "Monday-morning messages can reopen the whole load at once. That tells me your stress is not only about volume; it is about how quickly responsibility returns to the front of your mind. When that happens, even a small message can feel much bigger than it looks."
     }
    ],
-   "fit_good": "You fit best in work that has clear finish lines and fewer surprise interruptions. A day with one main deliverable, a quiet block for deep focus, and a real stop time will suit you better than a stream of pings that keeps resetting your nervous system. You do best when the end of the workday can actually stay ended.",
-   "fit_bad": "You struggle most when a Monday morning message opens the door to immediate rechecking. If the day starts with one alert that keeps pulling you back into the same file, your attention never gets a clean stop. You do better when the first message can be triaged once, then left alone.",
+   "fit_good": "You do best in work that has a clear finish line and a clear handoff. A day with defined tasks, one final review, and a real end-of-day cutoff will suit you far better than a job that expects you to stay mentally open all night. You also do well when the pace is steady enough that recovery can happen before the next push.",
+   "fit_bad": "You struggle most in environments that keep the door half open all the time. If messages arrive at every hour and every task can be reopened endlessly, your mind never gets to stand down. A setting that rewards constant availability will keep your checking loop alive.",
    "behavior_guides": [
     {
-     "title": "One more pass",
-     "body": "When you finish a task, wait ten minutes before reviewing it again. If it still needs attention after that, make only one more pass and stop there. Use a timer so the check has a boundary, not an open door."
+     "title": "Close the loop",
+     "body": "Pick one exact time each day to do your final check, and make it the last one. Spend ten minutes on it, then close the file and leave the desk. When the urge returns later, write the thought down instead of reopening the work."
     },
     {
-     "title": "Hard stop",
-     "body": "Pick one end time each workday and protect it for five days in a row. At that time, close the laptop, silence the inbox, and do not reopen work messages until the next scheduled block. This trains your system to recognize that stopping is allowed."
+     "title": "Protect the landing",
+     "body": "After a heavy workday, give yourself a 20-minute transition before you answer anything else. Walk, shower, or sit without the phone in your hand. The goal is to let your system notice that the work is over before the next message arrives."
     },
     {
-     "title": "Recovery block",
-     "body": "Schedule twenty minutes after work with no output at all. No polishing, no planning, no extra reading. Let that time be plain recovery, because your 34 percent recovery score needs practice, not permission."
+     "title": "Separate checking from doing",
+     "body": "Keep one list for active tasks and one list for things you have already finished. When you feel the pull to re-check, look at the finished list first and let it remind you that completion already happened. Use that list once a day, not every hour."
     },
     {
-     "title": "Monday buffer",
-     "body": "On Monday mornings, begin with fifteen minutes of inbox triage before answering anything. Sort messages into urgent, later, and done, then stop. That small buffer keeps one alert from taking over your whole day."
+     "title": "Set a hard stop",
+     "body": "Choose one evening boundary and protect it for a full week. If Monday-morning messages are your trigger, start by making the first message response deliberate instead of immediate. A small delay can teach your body that urgency is not the same as danger."
     }
    ],
-   "mindset_guide": "Think of your day as a workbench, not a conveyor belt. A workbench lets you set something down, look at it, and then stop when the piece is finished. A conveyor belt keeps moving whether you are ready or not, and that is what exhausts you. You need more workbench and less belt so your effort can end where it should.",
-   "closing_title": "When enough can stay enough",
-   "closing_body": "You are not short on commitment. You are carrying too much of it past the point where your body can return the favor. The shift starts when you let one finished task stay finished, and that can begin today."
+   "mindset_guide": "Think of your workday like a stove burner, not a bonfire. It needs heat to cook, but it also needs a knob that turns all the way down. Right now your mind keeps turning the knob back up after the meal is already done. Recovery is not wasted time here; it is the part that keeps the next day from burning over.",
+   "closing_title": "When the day can end",
+   "closing_body": "You are not asking for less care; you are asking for a way to let care stop on time. That is a different skill, and it can be learned one clean ending at a time. Save this: you do not have to earn rest by checking one more time."
   },
   "quizDiagnosis": {
    "moduleId": "module3",
-   "moduleTitle": "Burnout",
+   "moduleTitle": "Module 3 · Burnout",
    "track": "career",
    "answers": [
     {
@@ -1453,306 +1457,120 @@ export const QA_DEEP_REPORT: Record<string, { content: any; quizDiagnosis: any; 
    "integrated_summary": "Even when the work is done, your mind keeps checking, and Monday-morning messages switch that tension back on. You push through, then crash all at once, and underneath sits the fear that stopping means falling behind."
   }
  },
- "mia": {
-  "content": {
-   "title_line1": "You keep finishing the day before your mind does.",
-   "title_line2": "Then Monday messages pull you back into the loop.",
-   "subtitle": "Burnout deep dive — Saju x psychology x counseling integration",
-   "opening_scene": "It is late, and your phone is still close enough to reach without thinking. You have already finished what needed finishing, but your mind goes back to check the edges again. The next morning, Monday messages land, and the whole tension snaps back on as if rest never happened. By the time you notice how tired you are, you are already bracing for the next round. Mia, isn't this what your recent nights have been looking like?",
-   "case_tag": "CASE — Nora, early 30s, always rechecking work before she can let herself stop",
-   "case_paragraphs": [
-    "Nora clears her desk at night, then opens the same files again to make sure nothing was missed. She tells herself it will only take a minute, but the minute stretches until her shoulders are tight and the room feels smaller. Her Five Elements pattern is also weighted toward Wood, with Water running low, so her energy keeps pushing forward while recovery stays thin. You can hear your own rhythm in hers, can't you?"
-   ],
-   "oheng_intro": "Your Wood is the dominant element at 38%, and your Water sits at 13%. In a burnout pattern, that means the push to keep going is louder than the part that knows how to settle. So even when the work is done, the system can still feel like it is on alert.",
-   "quiz_reading": "Your 82% Perfectionism shows up as the urge to go back and inspect what is already done. Your 34% Recovery means the break itself does not fully register as safe, so even a day off can feel unfinished. That is why the Finisher's Drain pattern looks like cramming hard, then crashing hard, with no clean landing in between.",
-   "element_readings": {
-    "wood": {
-     "heading": "Wood overfull — always reaching for the next branch",
-     "body": "Your Wood at 38% points to a strong forward pull in the chart. In burnout, that can look like finishing the task and then immediately looking for the flaw, the gap, or the part that could still be improved. When Monday messages arrive, that same forward pull can turn one more reply into a whole new round of mental momentum. You are not short on drive; you are living with a drive that has trouble stopping at the edge."
-    },
-    "fire": {
-     "heading": "Fire moderate — bright enough to burn, not wide enough to warm for long",
-     "body": "Your Fire at 13% is not absent, but it is not the element carrying the room. That matters in burnout, because you can still sprint when the pressure spikes, but the heat does not spread evenly across the day. The result is a quick flare of effort, then a sudden drop when the body finally collects the bill. You may look energized from the outside while feeling hollow by the time the work is done."
-    },
-    "earth": {
-     "heading": "Earth moderate — enough structure to hold, not enough to fully soften the pace",
-     "body": "Your Earth at 13% gives you some capacity to organize, contain, and make sense of what needs to be done. But in a burnout rhythm, that structure can become a container for overpacking rather than for resting. You cram the day full, then wonder why the evening still feels unstable. The shape is there, but it is being used to carry too much too fast."
-    },
-    "metal": {
-     "heading": "Metal strong — sharp standards, clean boundaries, exacting eyes",
-     "body": "Your Metal at 25% gives you a strong instinct for precision, and that shows up in the way you go back to check everything after finishing a task. In a burnout week, that sharpness can be useful at first, then turn into a second job of reviewing the first job. It is also the part of you that can notice what is off before anyone else does. But when it keeps running after the work is already done, it turns rest into another review cycle."
-    },
-    "water": {
-     "heading": "Water low — the basin runs thin, so rest does not hold as long as work",
-     "body": "Your Water at 13% is the weak point in the chart, and that shows up as a harder time letting recovery sink in. The only relationship that directly helps Water here is Metal supporting it, so your precision can help refill you only when it is used to protect rest instead of police it. That is why a day off can still feel uneasy, even when nothing is being asked of you. You are not failing to rest; your system is simply not holding the rest for long enough."
-    }
-   },
-   "upcoming_period_heading": "From age 33 to 42, the Water years arrive",
-   "upcoming_period_body": "That later stretch should feel less like constant pushing and more like learning how to keep what you have already built. With Water strengthening, the pace can become more sustainable, and emotional recovery may stop feeling like such a fragile afterthought. This is a good time to practice pausing before exhaustion does it for you. If you start now, you will be meeting that period with habits that know how to land.",
-   "cross_analysis_quotes": [
-    "Your 38% Wood and 82% Perfectionism are speaking the same language. Both keep you reaching past the finish line, as if the real safety comes only after one more check. That is why your mind stays awake even when the work is done.",
-    "Your 13% Water and 34% Recovery explain the uneasy rest. The problem is not that you never stop; it is that stopping does not yet feel stable inside you. So the body sits down while the mind keeps standing guard."
-   ],
-   "answer_notes": [
-    "Going back to re-check everything shows that you trust accuracy more than completion. In daily life, that can look like reopening a finished task just to quiet the doubt for a few more minutes. You are allowed to notice the urge without obeying it every time.",
-    "Feeling uneasy even when you rest shows that your system reads stillness as unfinished business. That can turn a quiet day into a restless one, even when nothing urgent is happening. You do not need to earn the right to be at ease."
-   ],
-   "chat_snapshot_note": "You said you rest, but it never feels like resting. That sits right next to feeling tired and a little anxious, which tells me this is not simple laziness or a lack of effort. It is the strain of a mind that keeps checking even after the body has already sat down.",
-   "chat_trigger_note": "Monday-morning messages hit so hard because they reactivate the part of you that believes the pause was never fully safe. For a mind shaped by high perfectionism, a message on Monday can feel like proof that the work is already waiting again. Your system does not just read the message; it reads the pressure behind it.",
-   "chat_repeat_note": "Cramming, then crashing means you are spending energy in one long burst instead of distributing it across the week. In that cycle, you push through until your reserves are thin, then the drop feels sudden and total. A smaller step before the pile-up can interrupt the pattern before it turns into collapse.",
-   "chat_fear_note": "The fear of falling behind is really a fear of losing your place. Under that fear is a very understandable wish to stay steady, valued, and ahead enough to feel safe. You are not asking for less meaning; you are asking for a pace that does not punish you for stopping.",
-   "psychology_fact_heading": "Perfectionism and recovery in burnout research",
-   "psychology_fact_body": "Perfectionism is often linked to setting standards so high that finishing does not end the inner evaluation. Recovery is the process by which stress leaves the system and the person feels restored rather than merely paused. When perfectionism stays high and recovery stays low, the mind can keep auditing the day long after the body has tried to rest. That is exactly the shape your results describe.",
-   "psychology_takeaway": "You are not just tired; you are still checking. The work ends, but your mind keeps asking whether it was enough.",
-   "strengths": [
-    {
-     "title": "Precision",
-     "body": "Your 25% Metal gives you a sharp eye for what needs fixing, and that is why you notice the loose end before it grows into a bigger problem. In practice, that can look like reopening a task after dinner because one detail still feels unsteady. Used well, this keeps your work clean and your standards clear."
-    },
-    {
-     "title": "Drive",
-     "body": "Your 38% Wood keeps you moving even when the day is already full. That is the part of you that can power through a heavy Monday and still keep the next step in view. It is a real strength, as long as it is not asked to carry every hour by itself."
-    },
-    {
-     "title": "Containment",
-     "body": "Your 13% Earth gives you enough structure to hold a plan together when the pressure rises. That matters on days when the inbox starts stacking and you need a shape to work inside. Even if it is not effortless, you do have some ability to make order out of noise."
-    },
-    {
-     "title": "Endurance",
-     "body": "Your Water is only 13%, so it does not give you an easy reservoir to lean on. That matches the low 34% Recovery score and the way you said a day off still feels uneasy. What this shows is not a lack of effort, but a system that does not settle quickly after it has been asked to keep going."
-    }
-   ],
-   "weaknesses": [
-    {
-     "title": "Overchecking",
-     "body": "Your perfectionism makes it hard to let a finished task stay finished. That can turn one completed piece of work into another round of review, especially when you are already tired. The cost is not carelessness; it is the extra drain from never really exiting the task."
-    },
-    {
-     "title": "Thin Recovery",
-     "body": "Your low Water means rest does not settle in quickly. A day off can still feel slightly tense, as if something important is waiting just outside the frame. That makes recovery feel like a task instead of a release."
-    },
-    {
-     "title": "Crash After Push",
-     "body": "Your pattern of cramming, then crashing shows a body that can spend a lot in a short burst. You may look composed while the work is happening, then feel the drop all at once afterward. The swing itself is exhausting, even when the output is good."
-    },
-    {
-     "title": "Monday Alarm",
-     "body": "Monday-morning messages do more than interrupt your schedule; they restart your nervous system. That is why one notification can feel bigger than it should, especially when you were just beginning to rest. The alarm is not the message itself, but the pressure it carries for you."
-    }
-   ],
-   "fit_good": "You do best in a relationship rhythm that does not demand instant replies every minute of the day. A partner who is calm about response times gives your mind room to stop scanning the phone and start actually being present. Shared routines that include clear start and stop points will feel safer than vague, always-on availability.",
-   "fit_bad": "You will struggle in a relationship culture that treats constant checking as proof of care. If every pause gets interpreted as distance, your mind will never get to power down. A weekend that turns into repeated message monitoring will leave you more tired, not more connected.",
-   "behavior_guides": [
-    {
-     "title": "Stop once",
-     "body": "When you finish a task, set one 2-minute review and then close the file. Do it at the same time every day so your mind learns that checking has a boundary. After that, write down the next action instead of reopening the whole task."
-    },
-    {
-     "title": "Protect rest",
-     "body": "Choose one off-hour block, even 30 minutes, with notifications off and no reply window. Use that block for something that does not produce a result, like sitting outside or stretching. The point is to let rest be unproductive on purpose."
-    },
-    {
-     "title": "Slow the Monday",
-     "body": "On Monday mornings, read messages only after you have finished one grounding action, such as coffee, water, or a short walk. That creates a small buffer before the pressure gets in. You are teaching your system that a message is not the same as an emergency."
-    },
-    {
-     "title": "Name the finish",
-     "body": "At the end of the workday, say out loud that the task is done. Then write one sentence about what is complete and one sentence about what can wait. This gives your mind a clear ending instead of letting it keep searching for a loose thread."
-    }
-   ],
-   "mindset_guide": "Think of your energy like a battery that keeps being charged and drained in the same hour. If you never let it rest at full stop, it starts to feel like the charger is part of the problem. You do not need to prove worth by staying plugged in all the time. You need a clean disconnection long enough for the system to recognize that nothing is chasing you.",
-   "closing_title": "The work can end before the worry does",
-   "closing_body": "You are already carrying enough by finishing what you finish and still caring this much about the result. The next step is not becoming less exact; it is letting your exactness stop before it eats the rest of your day. Keep the part of you that cares, but give it a door it can close."
-  },
-  "quizDiagnosis": {
-   "moduleId": "module3",
-   "moduleTitle": "Burnout",
-   "track": "romance",
-   "answers": [
-    {
-     "qId": "qa-0",
-     "prompt": "After finishing a task I…",
-     "label": "Go back and re-check everything",
-     "dimension": "perfectionism",
-     "score": 3
-    },
-    {
-     "qId": "qa-1",
-     "prompt": "On a day off I…",
-     "label": "Feel uneasy even when I rest",
-     "dimension": "recovery",
-     "score": 0
-    }
-   ],
-   "dimensionResults": [
-    {
-     "dimension": "perfectionism",
-     "rawScore": 24.6,
-     "maxScore": 30,
-     "percentOfMax": 82,
-     "distanceFromMid": 64,
-     "direction": "high",
-     "intensity": "강함"
-    },
-    {
-     "dimension": "recovery",
-     "rawScore": 10.2,
-     "maxScore": 30,
-     "percentOfMax": 34,
-     "distanceFromMid": 32,
-     "direction": "low",
-     "intensity": "보통"
-    }
-   ],
-   "classification": {
-    "activeDimensions": [
-     "perfectionism"
-    ],
-    "kind": "single",
-    "typeKey": "perfectionism"
-   },
-   "typeInfo": {
-    "title": "Finisher's Drain",
-    "hook": "Finishes everything, and is finished by it"
-   },
-   "nuancedSummary": "Perfectionism runs high and recovery runs low.",
-   "dimensionShortNames": {
-    "perfectionism": "Perfectionism",
-    "recovery": "Recovery"
-   },
-   "elements": {
-    "wood": 37.5,
-    "fire": 12.5,
-    "earth": 12.5,
-    "metal": 25,
-    "water": 12.5
-   },
-   "dominantElement": "wood"
-  },
-  "chatExtract": {
-   "primary_concern": "I rest but it never feels like resting",
-   "emotional_state": "Tired and a little anxious",
-   "trigger_point": "Monday-morning messages",
-   "repeat_pattern": "Cramming, then crashing",
-   "core_fear_or_meaning": "I'm afraid that if I stop I'll fall behind",
-   "summary_quote": "I rest but it never feels like resting",
-   "integrated_summary": "Even when the work is done, your mind keeps checking, and Monday-morning messages switch that tension back on. You push through, then crash all at once, and underneath sits the fear that stopping means falling behind."
-  }
- },
  "riley": {
   "content": {
-   "title_line1": "You keep finishing, but your mind never clocks out.",
-   "title_line2": "The work ends before the checking does.",
-   "subtitle": "Burnout deep dive report - saju x psychological test x counseling integration",
-   "opening_scene": "It is late, and your phone lights up with Monday-morning messages before the week has even properly begun. You have already worked hard enough to feel tired, but your mind is still replaying what was done, what was missed, and what might need one more check. Even on the nights when you lie down, rest does not arrive cleanly; it comes with a hand still hovering over the screen. Riley, doesn't your recent life look exactly like this?",
-   "case_tag": "CASE - Nora, early 30s, always double-checking after work",
+   "title_line1": "When the mind keeps checking, the heart never gets to rest",
+   "title_line2": "You finish the day, but the day still follows you home",
+   "subtitle": "Module 3 Burnout deep report — Saju x psychological test x counseling integration",
+   "opening_scene": "It is late, and your phone still feels warm in your hand from the Monday-morning messages that pulled your attention back on. You tell yourself the work is done, but your eyes keep scanning, and the fear that you might fall behind will not stay quiet. You cram, you push, and then you crash all at once. Even your rest starts to feel like another task you have to get right, Riley.",
+   "case_tag": "EXAMPLE CASE — Mina, early 30s, always checking after work",
    "case_paragraphs": [
-    "Nora finishes her day late, then opens the same file again because she cannot trust the version she already closed. Her schedule looks full, but the real strain comes from the extra round of checking she does after everyone else has already logged off. Her Five Elements pattern also leans heavily toward wood with very little metal, so the urge to push ahead arrives faster than the sense of clean closure. You may recognize yourself in that same loop."
+    "Mina leaves her desk at night, but her mind stays behind and reopens every detail one more time. She keeps rereading what she sent, then checks the next morning message before she has even taken her coat off. Her Five Elements pattern is also heavy on Wood and light on Metal, so the same push that helps her move forward also makes it hard for her to feel settled. You can hear your own rhythm in hers, and that is exactly the point, because this is the kind of loop you live in too."
    ],
-   "oheng_intro": "Your Five Elements spread is not evenly settled: wood is 50 percent, while metal is only 0 percent. In a burnout pattern, that often looks like pushing, deciding, and moving before there is any natural pause or clean boundary. The result is a mind that keeps going after the body has already started asking for a stop.",
-   "quiz_reading": "Your score pattern is not subtle: perfectionism sits at 82 percent, while recovery stays at 34 percent. That is the shape of Finisher's Drain, where getting things done and letting yourself recover never seem to happen at the same speed. It shows up in your life as cramming hard, then crashing, with Monday-morning messages flipping the switch back on before you have fully come down.",
+   "oheng_intro": "Your Five Elements are led by Wood at 50 percent, while Metal sits at 0 percent. In a Burnout pattern, that looks like constant forward motion with very little inner permission to stop, so the work keeps getting extended in your head even after it is complete. The part of you that pushes is loud, and the part that draws a clean boundary is almost absent, which is why Monday morning can switch the whole system back on so fast.",
+   "quiz_reading": "Your 82 percent perfectionism and 34 percent recovery fit the Finisher's Drain pattern with painful clarity. You do not just want things done; you want them sealed, checked, and safe before your mind will let them go. That is why a finished task still leaves you reaching back for one more look, and why a day off can still feel uneasy instead of restful.",
    "element_readings": {
     "wood": {
-     "heading": "Wood - dominant, like a branch that keeps reaching",
-     "body": "Wood at 50 percent is the part of you that keeps moving even when you are already tired. In your burnout pattern, that becomes the person who says, 'I'll just fix one more thing,' and then checks the work again after it is supposedly done. That same force is why Monday-morning messages can pull your nervous system back online so quickly. You do not lack drive; you have too much forward motion for your own recovery."
+     "heading": "Wood — strong and always reaching",
+     "body": "Your Wood is at 50 percent, so the strongest current in you is the one that keeps moving, deciding, and pushing ahead. In Burnout, that shows up as the version of you that keeps going even after the task is finished, because stopping feels like losing your place. It also explains why Monday-morning messages hit so hard: they meet the part of you that is already leaning forward. You are not lazy when you keep checking; you are over-driven by the same energy that helps you finish."
     },
     "fire": {
-     "heading": "Fire - absent, like a lamp that never fully catches",
-     "body": "Fire is at 0 percent, so the quick spark that helps a day feel warm and finished is not the part leading here. In your burnout pattern, that can look like working hard without the emotional reward that usually says, 'Enough for today.' You can keep pushing through the task, but the inner glow that makes rest feel real is hard to access. That is why even a break can still feel unfinished in your hands."
+     "heading": "Fire — missing the spark that softens the day",
+     "body": "Your Fire is at 0 percent, so there is very little built-in warmth for easing off once the work is done. In this Burnout pattern, that can feel like finishing a task without the emotional lightness that should come after it. The result is a day that gets completed on paper, but never really lands in your body. That is why even rest can stay mentally cold and unfinished."
     },
     "earth": {
-     "heading": "Earth - steady, but still waiting to be trusted",
-     "body": "Earth sits at 25 percent, and it is the part of you that could hold things more slowly if you let it set the pace. Right now, though, it often gets recruited only after the rush is already over, when you are trying to patch yourself back together after a crash. Your upcoming 10-year cycle from age 46 to 55 may be a time when Earth grows stronger, which suggests a future period with more structure, steadier pacing, and less need to force every ending by sheer effort. If you start practicing cleaner stopping now, you will be ready to use that steadier ground when it arrives."
+     "heading": "Earth — enough to hold, not enough to fully settle",
+     "body": "Your Earth is at 25 percent, which gives you some capacity to hold things together, but not enough to make the whole system feel grounded on its own. In Burnout, that can look like cramming until the structure holds, then feeling the collapse once the pressure drops. You can keep the day organized for a while, but the strain shows up later as a hard crash. Your Earth is present, but it is carrying more than it can comfortably absorb."
     },
     "metal": {
-     "heading": "Metal - weak, like a boundary that has not been drawn yet",
-     "body": "Metal is at 0 percent, and that shows up as a difficulty with clean edges, clean endings, and clean permission to stop. Earth can support Metal, so your steadiness has to come from slower structure rather than from pressure. In your burnout pattern, that is the difference between finishing a task and truly closing it. You keep re-checking because the line that says 'done' does not feel solid yet."
+     "heading": "Metal — thin, pressured, and hard to feel",
+     "body": "Your Metal is at 0 percent, so the part that should draw lines, name limits, and say enough is very quiet. Metal is the pressure-bearing side of you, the part that has to face rules, responsibility, and the weight of what must be done, and here it is almost missing. That is why recovery feels uneasy: without that firm boundary, rest does not close the file in your head. Earth can help lift Metal here, and in your pattern that support matters because it gives the boundary some structure to stand on."
     },
     "water": {
-     "heading": "Water - present, but used up by the end of the day",
-     "body": "Water is at 25 percent, so there is some capacity for rest, reflection, and inward movement. But in your current pattern, that capacity gets drained by cramming until the crash arrives all at once. Water should soften the system, yet here it is often the part that feels tired and a little anxious after the work is over. That is why rest can happen on the outside without landing on the inside."
+     "heading": "Water — present, but kept in alert mode",
+     "body": "Your Water is at 25 percent, so reflection and inner awareness are there, but they are not soothing you very much right now. In Burnout, that can become a mind that keeps checking in the dark, replaying what was done and what might still be waiting. It is the part of you that notices the tension before anyone else does, which is useful, but it also means you rarely get to drift fully out of work mode. Your Water is not gone; it is just staying watchful."
     }
    },
-   "upcoming_period_heading": "From age 46 to 55, Earth gets louder",
-   "upcoming_period_body": "From age 46 to 55, the stronger Earth period can make your days feel more organized and less frantic. That kind of timing often supports steadier pacing, better boundaries, and a clearer sense of when enough is enough. For you, the best preparation is to practice ending work without reopening it, so your system learns that closure can be safe. If you build that habit now, the later Earth period will feel less like pressure and more like support.",
+   "upcoming_period_heading": "From 46 to 55, Earth gets stronger",
+   "upcoming_period_body": "From 46 to 55, the Earth current becomes stronger, and that usually makes it easier to build steadier footing than you have now. For someone who has been living with 50 percent Wood and 0 percent Metal, this can feel like the first stretch where structure starts to support you instead of only being something you push against. It is a good time to simplify how you carry work, so your effort stops spilling into every corner of the day. If you prepare now by practicing cleaner stopping points, that later period can feel less like survival and more like support.",
    "cross_analysis_quotes": [
-    "Your 50 percent wood and 82 percent perfectionism are speaking the same language. You keep reaching for one more correction because forward motion feels safer than leaving something imperfect. That is why the work gets finished, but your mind does not.",
-    "Your 0 percent metal and 34 percent recovery also line up too neatly to ignore. When boundaries are thin, rest turns into a room you sit in without truly entering it. That is why even a day off can still feel uneasy."
+    "Your 50 percent Wood and 82 percent perfectionism are speaking the same language. Wood keeps reaching for the next step, and perfectionism keeps refusing to call anything finished too early. That is why one more check can feel necessary even when the job is already done.",
+    "Your 0 percent Metal matches the uneasy recovery score of 34 percent in a way that is hard to ignore. When the part that draws boundaries is this quiet, even rest can feel unfinished and slightly exposed. You are not failing at resting; your system just does not fully trust the stop yet."
    ],
    "answer_notes": [
-    "Going back to check everything shows that your inner standard stays active after the task is already complete. In daily life, that can look like reopening a file, rereading a message, or mentally reviewing a conversation long after it ended. You are not careless; you are trying to feel safe through certainty.",
-    "Feeling uneasy even when you rest shows that recovery does not automatically register as recovery for you. In practice, that can look like lying down while still scanning your phone or thinking about what should have been done instead. You are allowed to let rest count even before it feels perfect."
+    "Going back to check everything shows that completion does not feel like completion to you until it has been re-verified. That points to a mind that protects itself by staying alert after the job is done. You can keep the standard, but you do not have to let the standard keep you hostage.",
+    "Feeling uneasy on a day off shows that your recovery system does not switch off cleanly once work stops. That means rest is not just about time off for you; it is about learning that nothing bad starts just because you pause. You are allowed to let the quiet stay quiet for a little longer."
    ],
-   "chat_snapshot_note": "You said you rest, but it never feels like resting, and that matches the tired, a little anxious feeling you named. The problem is not that you never stop; it is that stopping does not switch your mind off. That is why the fatigue feels mental as much as physical. Your quietest line is the one that says the most.",
-   "chat_trigger_note": "Monday-morning messages hit so hard because they do not just bring tasks; they restart the whole internal pressure system. For you, that kind of message acts like a trigger for perfectionism, and the body reacts before the week has even begun. It makes sense that your tension returns so fast when the signal arrives early and without warning. Your mind hears 'begin again' as 'catch up now.'",
-   "chat_repeat_note": "You cram, then crash, and that pattern has a very specific rhythm. First you override your own limits, then the body collects the bill all at once. A smaller step would be to stop once before the finish line and leave one thing unpolished on purpose. That is not sloppiness; it is practice for recovery.",
-   "chat_fear_note": "The fear that stopping will make you fall behind is not laziness in disguise. It is the fear of losing momentum in a life where momentum has become your proof that you are doing enough. Under that fear is a simple wish: you want to rest without feeling punished for it. That wish is already a good place to begin.",
-   "psychology_fact_heading": "Perfectionism and recovery in burnout",
-   "psychology_fact_body": "In burnout research, perfectionism is often linked with overcontrol, self-criticism, and difficulty disengaging after work ends. Low recovery means the body and mind do not get enough time to reset between demands, so fatigue keeps accumulating instead of clearing out. Your pattern fits that combination closely: you keep checking because stopping does not yet feel metabolically or emotionally safe. The result is not just hard work, but hard work that never fully releases its grip.",
-   "psychology_takeaway": "You are not bad at resting; your system has learned to treat stopping like a risk. Recovery gets easier when closure feels real.",
+   "chat_snapshot_note": "You said that you rest, but it never feels like resting, and that lands right next to the tired, slightly anxious feeling you brought into the conversation. The problem is not that you do not stop; it is that your mind keeps reopening the task even after your body has stepped away. The line to keep is this: you are not asking for too much when you want rest to actually feel like rest.",
+   "chat_trigger_note": "Monday-morning messages hit you so hard because they do not just bring information; they flip your whole system back into alert mode. That is exactly how strong Wood and low Metal can feel in daily life: movement starts fast, but the line that says stop stays weak. So a simple message can feel bigger than it should, because it touches the part of you that fears being pulled behind.",
+   "chat_repeat_note": "Your pattern is cram, then crash, which means you borrow energy from tomorrow until tomorrow collects it all at once. In the middle, you keep choosing to push a little further instead of stopping at the first sign of strain. A smaller handoff point, even once, is where the loop starts to loosen.",
+   "chat_fear_note": "The fear that stopping means falling behind is really a fear of losing your place. Underneath it, there is a wish to stay reliable, visible, and still on track. That wish makes sense, and it does not need to be argued with before it can be soothed.",
+   "psychology_fact_heading": "Perfectionism and recovery balance",
+   "psychology_fact_body": "Your 82 percent perfectionism shows up in the way you go back and re-check everything after finishing a task, and your 34 percent recovery shows up in how uneasy you feel even on a day off. That combination means completion does not register as closure for you; it registers as a moment to inspect one more time. In your answers, the body keeps moving toward rest, but the mind keeps asking for proof, which is why the same finished day can still feel unfinished. The pattern is not abstract here — it is already visible in your own two responses.",
+   "psychology_takeaway": "Finished is not the same as safe. Your mind wants certainty before it lets go, but your body needs permission to stop first.",
    "strengths": [
     {
-     "title": "Follow-through",
-     "body": "You do not leave things half-built, and that shows up in the way you keep going until the task is truly complete. Even when you are tired, you still return to the work and make sure it holds. That is a real strength, especially when Monday-morning messages try to shake your focus."
+     "title": "Strong finish",
+     "body": "You have a real ability to carry something through to the end, and that shows in the way you keep returning to the task until it is complete. The Monday-morning messages may re-ignite you, but they also show how seriously you take what you have already built. That kind of follow-through is a strength, even when it is running hotter than you want."
+    },
+    {
+     "title": "Sharp awareness",
+     "body": "You notice the shift from effort to strain before many people would even name it, and that awareness is one of your clearest assets. The tired and slightly anxious feeling you described is not vague in your system; you can feel the moment the pressure starts to stack. That sensitivity gives you a real chance to change course earlier."
+    },
+    {
+     "title": "Persistence under load",
+     "body": "You can keep moving when the day is heavy, and that is not a small thing. The cram-then-crash pattern shows endurance first, not failure first. Even when the rhythm is costly, it still proves that you know how to keep going when something matters."
     },
     {
      "title": "High standards",
-     "body": "Your 82 percent perfectionism means you notice details most people would let slide. In daily life, that can look like re-checking one last time because you care about the result, not because you enjoy the stress. The same standard that drains you also explains why your work so often feels carefully made."
-    },
-    {
-     "title": "Persistence",
-     "body": "When pressure rises, you do not disappear; you push through, sometimes too hard, but still with real determination. That persistence is part of why the cramming phase happens at all. It means you have a strong engine, even if the brakes need help."
-    },
-    {
-     "title": "Sensitivity to signals",
-     "body": "You pick up on Monday-morning messages immediately, and your system reacts fast. That sensitivity can be exhausting, but it also means you are highly responsive to what is happening around you. With the right boundaries, that responsiveness could become an advantage instead of a drain."
+     "body": "Your 82 percent perfectionism gives you a strong sense of what should be cleaned up, checked, and made solid. In practice, that means you do not let things drift carelessly, and people can trust that you will look again when quality matters. Used well, that standard becomes craftsmanship rather than self-pressure."
     }
    ],
    "weaknesses": [
     {
-     "title": "No off switch",
-     "body": "Your mind keeps checking even after the work is done, so the ending does not feel like an ending. That can turn one finished task into several extra rounds of mental labor. The weakness is not effort; it is the inability to let completion stand on its own."
+     "title": "Open loop",
+     "body": "You have trouble letting a finished task stay finished, and that keeps the loop open in your head. The checking does not come from carelessness; it comes from a system that has a hard time trusting closure. That is why rest can feel occupied even when nothing new is happening."
     },
     {
-     "title": "Thin recovery",
-     "body": "With recovery at 34 percent, rest does not restore you as fully as it should right now. You may sit down, but the inside of you still feels unfinished and alert. That is why a day off can still leave you uneasy."
+     "title": "Rest tension",
+     "body": "A day off does not always register as relief for you, and that is why recovery feels uneasy instead of easy. Your mind keeps one foot in the work, so your body never gets the full signal that it is allowed to stand down. That tension is tiring because it makes every pause feel provisional."
     },
     {
      "title": "Crash cycle",
-     "body": "You tend to cram first and pay for it later, which makes your energy feel uneven across the week. The hard part is that the crash arrives after you have already spent too much. The pattern is understandable, but it is also wearing you down."
+     "body": "You tend to cram until the pressure is too high, then drop hard afterward. The cycle is costly because it makes your energy disappear in one wave instead of spreading across the week. You are not lacking effort; you are spending it in a way that leaves nothing in reserve."
     },
     {
-     "title": "Fear of falling behind",
-     "body": "The idea of stopping can feel dangerous because it sounds like losing ground. That fear keeps you moving, but it also keeps you from noticing when enough has already been done. The worry is real, yet it is not the same thing as a fact."
+     "title": "Behind fear",
+     "body": "The fear of falling behind can make even ordinary interruptions feel threatening. A Monday message or a quiet evening can suddenly seem loaded with consequences, which keeps your attention tense. That fear is understandable, but it also keeps you from feeling the present moment as fully as you could."
     }
    ],
-   "fit_good": "You do better in a relationship rhythm that does not punish pauses, where messages do not have to be answered instantly to feel safe. A partner who respects your need to finish one thing before starting the next will help your system settle. Quiet evenings, clear plans, and less surprise pressure will let you stay present without feeling chased.",
-   "fit_bad": "If a relationship runs on urgency, constant check-ins, or the expectation that you should always be available, your body may stay on alert longer than you want. Fast back-and-forth contact, last-minute demands, and emotional tests can make your rest feel even less like rest. In that kind of setting, your burnout pattern would have less room to cool down.",
+   "fit_good": "You do best in a setting where completion has a clear endpoint and where the next step does not arrive the second you finish the last one. A workday with defined handoffs and visible closing rituals would help your mind stop reopening the file after hours. You also do better when Monday does not immediately flood you with messages before you have had a chance to settle in.",
+   "fit_bad": "You struggle in environments that reward instant replies, constant availability, and endless rechecking. If every finished item is followed by a fresh ping, your nervous system never gets a clean downshift. A day that is scattered by messages from the moment it starts will keep your recovery thin and uneasy.",
    "behavior_guides": [
     {
-     "title": "One final check",
-     "body": "Pick one task each evening and allow yourself exactly one review before you close it. Do this at the same time every day, even if the urge to re-open it comes back later. The point is to teach your system that completion can survive without repeated proof."
+     "title": "Close the loop",
+     "body": "At the end of each task, spend two minutes writing down what is done and what is not. Do it before you move to the next thing, so your mind has a place to put the finished part. Use that same note as your stopping point when the checking urge returns."
     },
     {
-     "title": "Protected pause",
-     "body": "Set a 20-minute break after work where you do not answer Monday-morning-style messages or re-read old ones. Keep the phone face down and stay with one simple activity, like tea or a short walk. That small boundary gives your mind a place to land."
+     "title": "Protect the pause",
+     "body": "Choose one short pause each day that is only for stopping, not for planning the next move. Keep it to ten minutes, and do not pair it with messages or task lists. The goal is to let your body experience a stop without asking it to earn the rest."
     },
     {
-     "title": "Stop before collapse",
-     "body": "Choose one point in the day where you stop while you still have a little energy left. Do it before you feel empty, not after. This helps break the cramming-then-crashing cycle by making stopping less dramatic."
+     "title": "Delay the check",
+     "body": "When you want to reopen something, wait five minutes before touching it again. During that window, name the feeling instead of the flaw, and let your body stay seated. If the urge is still there after five minutes, check once, not repeatedly."
     },
     {
-     "title": "Closed-loop list",
-     "body": "At the end of the day, write down the three things that are actually done. Read them once, then put the list away. This gives your brain evidence that the day has an ending, not just more room for checking."
+     "title": "Monday buffer",
+     "body": "On Monday morning, give yourself the first fifteen minutes before you open incoming messages. Use that time to settle your desk, breathe, and decide what actually needs attention first. That small buffer can keep one message from hijacking the entire day."
     }
    ],
-   "mindset_guide": "Think of your energy like a tab that keeps reopening itself. The goal is not to force more speed; it is to close the tab cleanly. Earth will help more than force here, because structure makes endings feel real. When rest feels unfinished, that is not a failure; it is just a sign that the closing ritual needs to be stronger.",
-   "closing_title": "Let the day end",
-   "closing_body": "You do not need to prove your care by checking forever. You need a way to let completion stay completed, even when your mind wants one more pass. The line worth keeping is this: done can be done, and you can still be safe."
+   "mindset_guide": "Think of your energy like a desk that never gets cleared. If every finished paper stays on top of the next one, nothing looks complete, even when the work is done. Your job is not to build a bigger desk. Your job is to clear one surface before you place the next thing on it. That is how rest starts to feel like rest again.",
+   "closing_title": "What stays after the checking",
+   "closing_body": "You do not need to become a different person to get relief. You need a rhythm that lets completion mean something to your body, not just to your standards. The line worth keeping is this: you can be devoted without staying on duty forever."
   },
   "quizDiagnosis": {
    "moduleId": "module3",
-   "moduleTitle": "Burnout",
+   "moduleTitle": "Module 3 · Burnout",
    "track": "romance",
    "answers": [
     {
@@ -1827,125 +1645,118 @@ export const QA_DEEP_REPORT: Record<string, { content: any; quizDiagnosis: any; 
  },
  "sam": {
   "content": {
-   "title_line1": "Your work gets finished,",
-   "title_line2": "but your mind keeps the tab open.",
-   "subtitle": "Burnout deep report — Five Elements x psych test x counseling integration, module Burnout",
-   "opening_scene": "It is late, and your phone lights up again with Monday-morning messages before Monday has even arrived. You have already finished the work, but your hand still reaches for the screen as if one more check could quiet the ache. The thought in the room is simple and sharp: if you stop now, you might fall behind. Sam, isn't this what your nights have been looking like lately?",
-   "case_tag": "CASE — Mina, early 30s, stuck in overchecking after the work is done",
+   "title_line1": "You keep checking even after the work is done.",
+   "title_line2": "And that is exactly where the exhaustion begins.",
+   "subtitle": "Module 3 Burnout Deep Report — Saju x Psychological Test x Counseling Integration",
+   "opening_scene": "It is late, and your phone is still in your hand after the task is already finished. Monday morning messages light up the screen, and your mind starts checking again before your body has caught up. You tell yourself you are resting, but the rest never lands as rest. By the time you finally stop, you are already tired and a little anxious. Sam, isn't this what your recent nights have been like?",
+   "case_tag": "Example case — Mina, early 30s, a project that never feels complete",
    "case_paragraphs": [
-    "Mina closes her laptop, then opens it again ten minutes later to re-read the same file. She is tired in a way that never fully turns into rest, and her Monday mornings start before sunrise because messages pull her back into the job in her head. Her Five Elements chart also leans heavily toward Wood, with Fire completely absent, so her effort keeps moving before warmth and ease can catch up. You would recognize yourself in her before the day is halfway through."
+    "Mina ends her day with a clean checklist, then opens the same files again because her mind will not accept the first pass. She works in long bursts, then crashes hard when the pressure finally drops. Her Five Elements also lean heavily toward Wood, so pressure and responsibility sit close to the center of her day. You can see how this turns even a quiet evening into one more round of checking, and that is why your pattern may feel so familiar."
    ],
-   "oheng_intro": "Your Five Elements chart is balanced at 25 percent each in Wood, Earth, Metal, and Water, but Fire is at 0 percent. That gap matters in a Burnout reading, because the module is not asking only how hard you work, but whether your effort ever turns into warmth, ease, and visible recovery. In your case, the structure is there, yet the spark that says 'enough for today' is missing.",
-   "quiz_reading": "Your Burnout result is Finisher's Drain, and that name fits the pattern shown by your scores. Perfectionism is at 82 percent, while Recovery sits at 34 percent, so the part of you that checks and refines is much louder than the part that lets the day end. That is why finishing something does not feel like finishing it for you; it feels like the start of another round of inspection.",
+   "oheng_intro": "Your Five Elements are evenly spread in four directions, but Wood stands out at 25 percent while Fire is absent at 0 percent. In a burnout pattern, that means pressure, duty, and forward motion press hard, while the part that should warm, soften, and replenish you has to be deliberately protected. So your exhaustion does not come from having nothing to give; it comes from pushing so long that the warming part never gets to stay lit.",
+   "quiz_reading": "Your score pattern is sharp: Perfectionism is high at 82 percent, while Recovery sits at 34 percent and stays moderate-low. That is exactly what Finisher's Drain looks like — the work ends, but your mind keeps standing guard over it. So a day off still feels slightly unsafe, and Monday morning messages can switch the whole system back on in a second.",
    "element_readings": {
     "wood": {
-     "heading": "Wood — strong, like a branch that keeps stretching",
-     "body": "Your Wood is at 25 percent, and in your case it shows up as forward motion that does not like to stop. In Burnout, that can look like cramming hard, then pushing again even after you are already tired, because the next task feels more urgent than your own recovery. It also fits the way you keep going back to check after finishing, as if growth only counts when it is still moving. The problem is not that you lack drive; it is that your drive keeps outrunning your rest."
+     "heading": "Wood 25 percent — the vine that keeps climbing",
+     "body": "Wood is tied at 25 percent with Earth, Metal, and Water, so it is one of several equal currents in your chart rather than a single strongest force. It shows up as the part of you that keeps pushing the work forward even after the task is technically done. In this burnout pattern, that looks like re-checking, tightening, and asking one more time whether it is really enough. For you, Wood is the force that turns Monday morning messages into pressure before the day has even begun."
     },
     "fire": {
-     "heading": "Fire — absent, like a room with the lights on but no warmth",
-     "body": "Your Fire is at 0 percent, so the part of the system that normally softens effort and makes it feel alive has very little room here. In this Burnout pattern, that shows up as work being done without the feeling of completion, and rest happening without the feeling of rest. Wood is the only element here that naturally feeds Fire, and that matters because your chart leans on movement to create the warmth it is missing. When Monday-morning messages arrive, they do not just interrupt you; they switch the whole inner room back on before it has cooled."
+     "heading": "Fire 0 percent — the warmth that needs fuel",
+     "body": "Fire sits at 0 percent in your chart, so it is simply absent rather than quietly helping from the side. Fire is what helps you feel supported, warmed, and restored. With Fire at 0 percent, recovery does not arrive on its own just because you stopped working for a while. Your balanced chart means recovery needs more than one route back in, and that makes intentional rest, support, and softness especially important."
     },
     "earth": {
-     "heading": "Earth — steady, but asked to hold too much",
-     "body": "Your Earth is at 25 percent, so there is enough steadiness in you to keep tasks organized and carried through. But in a week shaped by cramming and crashing, Earth gets turned into a holding tank for unfinished tension instead of a place to settle. That is why even on a day off, you can feel uneasy; the body is technically still, but the mind has not agreed to stay put. You are not short on structure — you are asking structure to do the work of recovery."
+     "heading": "Earth 25 percent — the ground that keeps absorbing",
+     "body": "Earth is steady at 25 percent, so part of you is always trying to hold things in place. That can look like staying responsible even when you are tired, or feeling that you should not let a task slip once it has landed on your desk. In burnout, that makes it hard to call a pause a real pause, because the ground inside you is still carrying the weight. You keep standing where the work was left, even when your body has already started asking for a break."
     },
     "metal": {
-     "heading": "Metal — precise, and hard to put down",
-     "body": "Your Metal is also at 25 percent, and it shows in the sharpness of your checking. After a task is finished, you do not simply move on; you go back and review, as if precision itself could protect you from falling behind. In Burnout, that can look efficient from the outside while quietly draining you on the inside. You are the kind of person who can notice one loose thread and spend an extra hour making sure it is tied off."
+     "heading": "Metal 25 percent — the edge that keeps the line clean",
+     "body": "Metal sits at 25 percent, and it gives your days a sharp sense of finish. That is why unfinished details bother you enough to send you back for another check. In a burnout cycle, Metal can be useful, but it can also make the final pass feel mandatory instead of optional. When your mind is already tired, that clean edge becomes the voice that says it must be precise one more time."
     },
     "water": {
-     "heading": "Water — calm on the surface, but still listening",
-     "body": "Your Water sits at 25 percent, and it gives you the capacity to sense risk before it becomes visible. That sensitivity is part of why the fear of stopping lands so strongly for you; you can already feel the drop that might follow if you let go too soon. In this Burnout pattern, Water does not look like laziness or drifting — it looks like vigilance that never fully powers down. Even when you are trying to rest, some part of you is still listening for the next message."
+     "heading": "Water 25 percent — the current that keeps thinking",
+     "body": "Water is also at 25 percent, so your mind keeps moving even when your body wants to stop. That is the part that lets you notice risks, imagine what could go wrong, and keep scanning after the work is done. In this burnout story, Water is why rest can still feel alert, as if something important might be missed if you let your guard down. It keeps the inner current running, even on the days off."
     }
    },
-   "upcoming_period_heading": "From 40 to 49, Earth rises",
-   "upcoming_period_body": "Your next 10-year cycle brings stronger Earth energy, and that usually favors steadier pacing, clearer boundaries, and a more grounded way of carrying responsibility. For you, that can become the first stretch where finishing something does not have to be followed by immediate rechecking. It will help to practice stopping on purpose now, so that when that steadier period arrives, your body is already familiar with not bracing for the next thing. The more you learn to let one task end cleanly, the easier it will be to use that future stability well.",
+   "upcoming_period_heading": "From age 40 to 49, Earth grows stronger",
+   "upcoming_period_body": "From age 40 to 49, the stronger Earth current can make your life feel more structured and more anchored. That can be a useful stretch for building routines that actually hold, especially if you are tired of living in bursts and crashes. It is a good time to practice finishing the work without carrying it home in your head. If you prepare now, this period can become less about pressure and more about dependable support.",
    "cross_analysis_quotes": [
-    "Your Wood is the part of you that keeps moving, and your Perfectionism score shows exactly that same push. At 82 percent, your checking is not random; it is your forward drive turned inward on itself. That is why you can finish the work and still not feel finished.",
-    "Your Wood keeps the process alive, but your low Recovery score shows what gets left behind. At 34 percent, rest does not yet have enough weight to hold the day closed. So the same energy that helps you get through the task also keeps you from fully stepping out of it."
+    "Your strongest element and your highest test score are pointing at the same habit: you keep pushing until the work feels airtight. That is Wood pressure meeting high perfectionism. It is why one more check can feel urgent even when the task is already done.",
+    "Your weakest element and your lower recovery score are also speaking together. Fire is the part that should help you feel restored, but your recovery stays low, so rest does not fully register. That is why stopping can still feel uneasy instead of soothing."
    ],
    "answer_notes": [
-    "Going back to re-check everything shows that you trust precision more than relief. It means your mind treats completion as a point for audit, not as a place to breathe. You are allowed to finish without reopening the file.",
-    "Feeling uneasy even when you rest shows that your body has not yet learned to recognize stillness as safe. That is why a day off can feel strangely active inside, even when nothing is being asked of you. Start by letting rest be imperfect instead of trying to make it impressive.",
-    "Even when the work is done, your mind keeps checking, and Monday-morning messages switch that tension back on. You push through, then crash all at once, and underneath sits the fear that stopping means falling behind. That answer shows a system that treats relief as risky, so even quiet time gets monitored. You are not weak for that; you are carrying a habit of vigilance that has become too heavy.",
-    "Your fear is not about comfort; it is about momentum. The deeper wish is to stay in step with your own standards without having to pay for it with collapse. That is a real, understandable wish, and it can be worked with gently. You want to keep your place without living on the edge of a crash, and that is exactly the tension your pattern reveals.",
-    "You do not need a bigger push. You need a cleaner ending to the day.",
-    "When the workday is over, close the loop once and let the last check be the last check. Put a five-minute boundary around it, then stop touching the task and move to something physically different, like washing your hands or stepping outside. On a day off, let yourself rest before you feel fully ready, because recovery often starts earlier than comfort does.",
-    "Set one fixed time for Monday-morning messages and do not open them outside that window. Your nervous system is reacting before the week even starts, so the boundary has to come before the feeling does. Keep it small and repeatable, not heroic.",
-    "After finishing a task, write one sentence that says what is done, then leave the rest for tomorrow. That gives your checking mind a place to land without reopening everything. The goal is not to stop caring; it is to stop paying twice.",
-    "Notice the moment right before you crash. That is usually the point where you have been running on effort alone for too long. Put a recovery break there on purpose, even if it is only ten minutes, so the crash does not have to do the scheduling for you."
+    "Going back to re-check everything shows that your mind trusts precision more than completion. In daily life, that can look like reopening a finished file or rereading a message after you have already sent it. The useful part of this answer is that you care deeply about getting things right, even when it costs you extra energy.",
+    "Feeling uneasy even when you rest shows that your system does not switch off easily. In daily life, that can look like lying down but still listening for the next message or the next task. You are not failing at rest; you are showing how alert your mind stays when it has been carrying too much for too long."
    ],
-   "chat_snapshot_note": "You said you rest, but it never feels like resting, and that lines up with the tired, slightly anxious state you brought into the room. The problem is not only fatigue; it is fatigue with your attention still stuck on the work. That is why even your quiet time feels watched.",
-   "chat_trigger_note": "Monday-morning messages hit you hard because they do not feel like ordinary communication; they feel like the week grabbing you by the collar before you have even stood up. That trigger matches your low Recovery score, because your system does not get much time to settle before it is asked to move again. In a Burnout pattern, even one message can restart the whole inner alarm.",
-   "chat_repeat_note": "Your cramming-then-crashing rhythm shows a very specific way of surviving pressure. You gather everything into one hard push, then your system demands the bill all at once. The smallest break you can make is to stop treating recovery as something you earn only after collapse.",
-   "chat_fear_note": "The fear that stopping means falling behind is really a fear of losing your place. It makes sense that you keep moving if you believe the cost of pausing is being left out of the race. What you seem to want underneath that fear is not more speed, but enough safety to stop without panic.",
-   "psychology_fact_heading": "Perfectionism and recovery balance",
-   "psychology_fact_body": "In psychology, perfectionism often means setting standards so high that even success fails to feel complete. Recovery, by contrast, is the capacity to downshift after effort and let the system settle. When perfectionism stays high and recovery stays low, people often look productive while privately feeling unable to stand down, which fits your task-checking and your uneasy rest. Your scores show that the issue is not just working hard; it is having too little internal permission to stop.",
-   "psychology_takeaway": "You are not failing to rest; you are failing to feel safe while resting. That can be learned, one clean ending at a time.",
+   "chat_snapshot_note": "You said you rest, but it never feels like resting, and that matches the tired, slightly anxious feeling you brought into the conversation. The important part is not only the fatigue itself, but the way your mind stays online even after the work is finished. Your tiredness has a watchful edge, and that is why it can feel heavier than simple sleepiness. The line to keep is this: your body is asking for rest, and your mind keeps asking for proof.",
+   "chat_trigger_note": "Monday morning messages matter so much because they hit the exact spot where your system is already braced. The moment a new message appears, the pressure returns before you have had time to settle. That fits the same high-perfectionism pattern as your test results: once something might still need attention, your mind jumps back into gear. For you, the trigger is not the message itself, but the sudden reactivation of responsibility.",
+   "chat_repeat_note": "You cram, then you crash, and that rhythm explains why your energy feels uneven. You choose intensity first, because stopping too early feels risky and falling behind feels worse. A smaller move can help: leave one task intentionally unfinished for ten minutes, then return only once, so your mind learns that pause does not equal failure.",
+   "chat_fear_note": "Your fear is not laziness or weakness. It is the fear that if you stop, the ground will move and you will lose your place. Under that fear is a very practical wish: you want to stay steady, keep up, and not have to rebuild everything from scratch. That is why your system keeps checking — it is trying to protect your place in the line.",
+   "psychology_fact_heading": "The Zeigarnik effect",
+   "psychology_fact_body": "The Zeigarnik effect describes how unfinished tasks stay more mentally active than finished ones. That is why a completed job can still keep looping in your head, especially when you are already sensitive to mistakes. In your case, it helps explain why resting does not fully land until your mind believes the work is truly closed. It also fits the way Monday morning messages can pull your attention back into an unfinished mental thread.",
+   "psychology_takeaway": "Your mind is treating unfinished work like an open tab that refuses to close. The more you practice a real end point, the less power that tab has over your rest.",
    "strengths": [
     {
-     "title": "Follow-through",
-     "body": "You do not leave things half done, and that matters in a career where details can slip. Your pattern of checking after completion shows how seriously you take the final result. The task may be finished, but you still care enough to make sure it is solid."
+     "title": "Sharp finishing",
+     "body": "You notice details after the task is done, which means you are rarely careless with your work. That shows up in the way you go back and re-check everything instead of letting a loose end sit there. In a busy week, that sharp finishing can keep quality high even when the pressure is heavy."
     },
     {
-     "title": "Standards",
-     "body": "An 82 percent perfectionism score means your standards are not casual. You can see flaws quickly, and that sharpness helps you catch what others miss. The same quality can wear you down, but it also means you know what good work looks like."
+     "title": "High endurance",
+     "body": "You can push through a lot before you collapse, and that is not a small thing. The cram-then-crash pattern shows stamina first, even if the crash comes later. When used well, that endurance helps you carry demanding work across a long stretch."
     },
     {
-     "title": "Persistence",
-     "body": "Your Wood at 25 percent gives you staying power, even when you are tired. That is the part of you that keeps going through Monday-morning messages and still gets the job done. You can carry a lot before anyone else notices the strain."
+     "title": "Strong responsibility",
+     "body": "You do not treat your work lightly, and that is clear in how strongly you react to Monday morning messages. Your mind keeps watch because part of you wants to make sure nothing slips. That sense of duty can make you someone others rely on when things need to be handled carefully."
     },
     {
-     "title": "Sensitivity",
-     "body": "Your Water at 25 percent makes you alert to pressure before it fully shows. That is why the fear of falling behind lands so fast in you. You sense the cost early, which gives you a chance to change the pattern before it hardens."
+     "title": "Alert self-monitoring",
+     "body": "You are quick to notice when your own energy is off, which is a real strength in burnout recovery. You already know the difference between being tired and being tired with anxiety layered on top. That awareness gives you a starting point for changing the pattern instead of only enduring it."
     }
    ],
    "weaknesses": [
     {
-     "title": "Overchecking",
-     "body": "You keep returning to finished work because your mind does not fully accept the first close. That makes simple completion into another round of labor. The strain is not laziness; it is the cost of never trusting the first pass."
+     "title": "Hard stop",
+     "body": "It is difficult for you to feel that something is truly finished, even after the work is complete. That is why your mind keeps checking and the break never feels clean. The cost is not just extra time; it is the way closure keeps slipping away from you."
     },
     {
-     "title": "Uneasy rest",
-     "body": "Your Recovery score at 34 percent shows why downtime does not always register as downtime. Even on a day off, part of you stays on watch. That makes rest feel like a pause in motion, not a real release."
+     "title": "Rest guilt",
+     "body": "Rest does not fully relax you, and that shows up as unease even on a day off. You are not simply tired; you are alert while trying to recover. That makes rest feel like another task instead of a place where your system can soften."
     },
     {
-     "title": "Crash cycle",
-     "body": "Cramming and then crashing is a costly way to stay on top of things. You can push hard enough to keep pace for a while, but the system collects the debt later. The result is not a lack of discipline; it is a rhythm that asks too much at once."
+     "title": "Overdrive cycle",
+     "body": "You cram your effort into a burst, then hit the wall afterward. That cycle can make the day look productive from the outside while leaving you empty on the inside. The pattern is especially strong when a deadline or message makes you feel that stopping would mean falling behind."
     },
     {
-     "title": "Fear of delay",
-     "body": "The thought that stopping means falling behind keeps your nervous system pressed forward. It makes every pause feel dangerous, even when the work is already done. That fear can keep you productive, but it can also keep you from recovering."
+     "title": "Fall-behind fear",
+     "body": "A quiet fear sits underneath your pace: if you stop, you may lose ground. That fear can make even a small pause feel expensive. The result is that your body asks for recovery while your mind argues for one more round of effort."
     }
    ],
-   "fit_good": "You do best in a role where deadlines are clear, output is visible, and the end of a task is truly the end. A day with one focused block, one review window, and then a clean shutdown will suit you better than a stream of interruptions. You also need a team that respects off-hours, so Monday-morning messages do not become a nightly reflex.",
-   "fit_bad": "You will struggle in a setting where messages keep arriving without boundaries and everything feels urgent all the time. A job that rewards constant availability will feed your checking habit and make rest feel suspicious. You should avoid days that end with open loops, because your mind will keep carrying them home.",
+   "fit_good": "You do best in a setting where tasks have clear endings and expectations are written down early. A day with one final review point and no surprise messages after hours will help your mind settle faster. Work that values quality without asking you to keep proving it over and over will suit you well.",
+   "fit_bad": "You will struggle in a place where Monday morning messages keep arriving before you have closed the last round of checking. A culture that expects you to re-check everything on command will feed the same loop you already described. The worst fit is a day built around constant reactivation, because your mind will never get to leave the review mode it keeps slipping back into.",
    "behavior_guides": [
     {
-     "title": "One close",
-     "body": "At the end of each workday, set a five-minute closing ritual. Use that time to check the final item once, write down what is done, and then stop. Do it every weekday, not only when you feel tired."
+     "title": "One final check",
+     "body": "Set a single time for your last review, and make it the same every workday. When that time ends, close the file and do not reopen it unless a real deadline changes. This gives your mind a clear boundary to follow instead of an endless permission to keep scanning."
     },
     {
-     "title": "Message window",
-     "body": "Choose one fixed time in the morning to read Monday messages. Keep it to ten minutes, and do not reopen the thread later unless it is truly urgent. This gives your body a predictable start instead of a surprise alarm."
+     "title": "Message delay",
+     "body": "After work, wait ten minutes before opening Monday-style messages or any new alerts. Use that gap to breathe, stand up, or wash your hands so your body gets a cue that the workday is over. Keep the same delay for a week so the pause becomes familiar instead of threatening."
     },
     {
      "title": "Recovery block",
-     "body": "On your next day off, schedule one hour that is not for productivity. Put your phone in another room, sit or walk, and do not turn the time into a task. The point is to let rest happen before you feel perfectly ready for it."
+     "body": "Protect one short block of rest each day that has no checking, no planning, and no cleanup. Keep it to twenty minutes if that is all you can hold at first. The point is not to be perfectly restful; it is to teach your system that stopping can be safe."
     },
     {
-     "title": "Stop rule",
-     "body": "When you catch yourself re-checking after finishing, count to twenty and leave the screen. Repeat that every time you want one more look. You are training the part of you that confuses extra effort with safety."
+     "title": "Cramming limit",
+     "body": "When you feel yourself speeding up, stop after the next small milestone instead of pushing all the way to exhaustion. Write down the next step, then leave it for later on purpose. That keeps your energy from collapsing all at once and makes the crash less severe."
     }
    ],
-   "mindset_guide": "Think of your energy like a desk that keeps filling with papers. If you never clear one stack before adding the next, everything starts to look urgent. Your Burnout pattern is asking you to file the work, not keep holding it in your hands. Let one task end so the next one has a place to land.",
-   "closing_title": "Leave room for the finish",
-   "closing_body": "You do not need to become less capable to feel better; you need your effort to have an ending. Your chart shows strong movement, and your test results show how easily that movement turns into strain when recovery is too low. The sentence to keep is this: finishing is not the same as staying on call."
+   "mindset_guide": "Think of your energy like a workbench lamp, not a spotlight. A spotlight burns bright and then leaves you in the dark, which is what your cram-then-crash rhythm has been doing. A lamp can stay on longer when you lower the glare and stop trying to illuminate everything at once. Your rest needs that same gentler setting, because recovery is not proof that you are falling behind.",
+   "closing_title": "When the task ends, let your mind end too",
+   "closing_body": "You do not need to become less capable to feel better. You need a finish line that your body and mind can actually recognize. The most important sentence to keep is this: stopping is not the same as falling behind."
   },
   "quizDiagnosis": {
    "moduleId": "module3",
-   "moduleTitle": "Burnout",
+   "moduleTitle": "Module 3 · Burnout",
    "track": "career",
    "answers": [
     {
@@ -2018,307 +1829,120 @@ export const QA_DEEP_REPORT: Record<string, { content: any; quizDiagnosis: any; 
    "integrated_summary": "Even when the work is done, your mind keeps checking, and Monday-morning messages switch that tension back on. You push through, then crash all at once, and underneath sits the fear that stopping means falling behind."
   }
  },
- "casey": {
-  "content": {
-   "title_line1": "Tu mente no apaga el lunes.",
-   "title_line2": "Y tu energía se va revisando lo que ya estaba terminado.",
-   "subtitle": "Informe profundo de agotamiento — saju x psicología x acompañamiento integrado",
-   "opening_scene": "A veces el día termina, pero tu cabeza sigue en la mesa de trabajo como si aún faltara una última revisión. Son las noches en que el cuerpo pide pausa, pero tú vuelves a abrir lo ya cerrado, como si una pequeña falla pudiera esconderse en el borde. Luego llega el lunes por la mañana y los mensajes vuelven a encender esa tensión desde el primer minuto. No es que no quieras descansar; es que el descanso no se siente como descanso. Casey, tus días recientes se parecen mucho a eso, ¿no es así?",
-   "case_tag": "CASO — Martín, 30 y tantos, trabajo con presión constante",
-   "case_paragraphs": [
-    "Martín termina tareas a tiempo, pero después vuelve a revisarlas desde el principio y pierde la calma justo cuando parecía haber cerrado el día. En su mapa, madera y metal están muy altos, y el agua casi no aparece, así que su mente empuja mucho pero le cuesta soltar. En un lunes cualquiera, mira el teléfono, ve nuevos mensajes y siente que otra vez empieza la carrera. Tú también podrías reconocerte en ese bucle."
-   ],
-   "oheng_intro": "Tu madera en 38% y tu metal en 38% dominan el mapa, mientras el agua queda en 0%. En Agotamiento, esa mezcla se nota como una mente que empuja, corrige y vuelve a medir, pero que tarda en humedecerse por dentro. Por eso el trabajo termina y, aun así, la tensión sigue activa.",
-   "quiz_reading": "Tu 82% en Perfeccionismo y tu 34% en Recuperación dibujan un patrón muy claro. Quien termina todo y se agota no solo hace mucho; también sigue por dentro cuando ya debería haber parado. En tu día a día eso se ve en una revisión que no se apaga y en un descanso que deja inquietud en lugar de alivio.",
-   "element_readings": {
-    "wood": {
-     "heading": "madera alta — empujar hasta el borde",
-     "body": "Tu madera está en 38%, y eso se siente como impulso que no se queda quieto ni cuando ya terminaste. En Agotamiento, esa fuerza te lleva a volver a revisar todo desde el principio, como si soltar fuera más difícil que seguir. El problema no es falta de capacidad; es que tu empuje no siempre sabe cuándo bajar el ritmo. Y cuando llega el lunes por la mañana, esa misma madera vuelve a activar la marcha antes de que tú hayas recuperado el cuerpo."
-    },
-    "fire": {
-     "heading": "fuego medio — chispa breve",
-     "body": "Tu fuego está en 13%, así que la intensidad aparece, pero no se sostiene mucho tiempo. En un día como el tuyo, eso puede sentirse como un arranque claro para resolver algo y luego una caída rápida cuando la revisión se alarga demasiado. No hay un incendio permanente; hay chispazos que se gastan pronto si el perfeccionismo toma el mando. Por eso a veces el cansancio llega antes de que notes que ya llevabas demasiada energía encendida."
-    },
-    "earth": {
-     "heading": "tierra media — sostener el peso",
-     "body": "Tu tierra está en 13%, y eso habla de una base que existe, pero que no alcanza para contener todo lo que te cargas. En tu caso, el descanso no cae como un suelo firme; se parece más a una pausa vigilada, siempre a punto de ser interrumpida por otra comprobación. Esa mezcla encaja con el patrón de acumular y luego derrumbarte, porque la tierra no está tomando todo el peso de la revisión. Cuando faltan apoyos internos, cada tarea cerrada sigue ocupando espacio mental."
-    },
-    "metal": {
-     "heading": "metal alto — corregir sin parar",
-     "body": "Tu metal también está en 38%, y eso se nota en la precisión con la que miras lo que ya hiciste. En Agotamiento, el metal alto puede volverse una voz que ordena, corrige y no deja pasar un detalle, justo como cuando vuelves a revisar todo desde el principio. Esa cualidad te ayuda a dejar las cosas bien hechas, pero también te deja más tiempo del necesario frente a la misma pantalla. El lunes por la mañana, los mensajes no solo llegan: también activan ese juez interno que no da por cerrado nada."
-    },
-    "water": {
-     "heading": "agua ausente — no aflojar",
-     "body": "Tu agua está en 0%, y eso vuelve muy difícil que el sistema baje de verdad. Aquí el agua no es una idea abstracta: es la parte que enfría, afloja y permite que el descanso se sienta como descanso. Como no está disponible, aparece inquietud incluso en un día libre, tal como marcaste en tu respuesta. La única vía que se describe aquí para nutrir ese vacío es el metal que alimenta al agua, así que la precisión de tu metal necesita volverse menos dura y más reparadora."
-    }
-   },
-   "upcoming_period_heading": "De los 41 a los 50 años, el metal toma más fuerza",
-   "upcoming_period_body": "Entre los 41 y los 50 años, tu metal tendrá más peso y eso puede volver más visible todo lo que hoy ya haces en silencio: ordenar, depurar, decidir con más nitidez. Si ahora tu mente revisa sin parar, en ese tramo puedes aprender a usar esa misma precisión para cerrar mejor, no para castigarte más. Conviene llegar a esa etapa con descansos que sí recuperen, porque así la claridad no vendrá acompañada de más desgaste. Lo que hoy se siente como presión puede convertirse después en criterio, si le das espacio al aire que ahora le falta a tu agua.",
-   "cross_analysis_quotes": [
-    "Tu 38% de madera no solo empuja; también aprieta la meta hasta que te deja sin margen. Eso se nota justo cuando quieres dejar algo bien hecho y terminas exigiéndote una vuelta más. En Agotamiento, ese impulso no te falta: te sobra hasta el punto de vaciarte.",
-    "Eso encaja con tu 82% en Perfeccionismo. Terminas, pero tu mente no suelta el control y vuelve a empezar por dentro. Por eso el cierre te cuesta más que la tarea misma.",
-    "Por eso el lunes por la mañana no te encuentra descansando. Te encuentra reactivando la misma exigencia que ya te había vaciado. Y mientras sigas entrando así al día, tu energía seguirá saliendo antes de tiempo."
-   ],
-   "answer_notes": [
-    "Volver a revisar desde el principio muestra que confías mucho en la calidad de tu trabajo, pero menos en el cierre. En la práctica, eso te deja frente a una tarea terminada como si aún faltara una prueba final. A ti te sirve más aprender a reconocer cuándo ya está bien que seguir buscando el último ajuste.",
-    "Sentir inquietud aunque descanses revela que tu cuerpo puede parar antes que tu mente. Por eso un día libre no siempre baja la carga, aunque por fuera parezca tranquilo. A ti te ayuda más un descanso con límites claros que una pausa vacía."
-   ],
-   "chat_snapshot_note": "Lo que llamas descanso, pero nunca se siente como descanso, muestra que tu problema no es solo el cansancio. También aparece una ansiedad pequeña, constante, que se cuela justo cuando el cuerpo debería aflojar. La frase que mejor te describe hoy es esta: tu cuerpo se detiene antes que tu cabeza.",
-   "chat_trigger_note": "Los mensajes del lunes por la mañana te pegan tan fuerte porque llegan justo donde tu sistema ya está sensible. No solo interrumpen tu ritmo; también reactivan tu perfeccionismo y la sensación de que no puedes quedarte atrás si paras. Ahí se enciende la urgencia de responder, corregir y seguir.",
-   "chat_repeat_note": "Primero acumulas mucha tensión y luego el cuerpo te cobra todo de golpe. En ese ciclo, tú sigues sosteniendo hasta que ya no queda margen para sostener nada. Un cambio pequeño sería cortar antes el circuito, aunque la sensación sea que todavía faltan cosas por revisar.",
-   "chat_fear_note": "Tu miedo a quedarte atrás si paras no habla de debilidad; habla de cuánto valor le das a seguir siendo fiable. Debajo de ese miedo hay una necesidad muy clara de no perder el lugar que has construido con esfuerzo. Lo que pide atención no es más empuje, sino una forma de avanzar sin vaciarte.",
-   "psychology_fact_heading": "Perfeccionismo y recuperación según el modelo de desajuste entre exigencia y descanso",
-   "psychology_fact_body": "Tu respuesta de volver a revisarlo todo desde el principio muestra un perfeccionismo que no se conforma con terminar; necesita comprobar otra vez para poder cerrar. Cuando eso se combina con una recuperación baja, como tu 34%, el descanso no corta la activación y la mente sigue trabajando después de apagar la tarea. En tu patrón, esa distancia entre terminar y soltar es justo lo que convierte una revisión útil en un desgaste repetido. No hace falta ponerle una etiqueta clínica para ver que el problema no está en hacer menos, sino en no poder dejar de mirar lo hecho.",
-   "psychology_takeaway": "Terminar no siempre significa soltar. En tu caso, aprender a cerrar también es una forma de cuidar tu energía.",
-   "strengths": [
-    {
-     "title": "Precisión",
-     "body": "Tu 38% de metal y tu 82% en Perfeccionismo muestran una capacidad real para detectar fallos antes de que se conviertan en problemas. Eso se ve cuando vuelves a revisar todo desde el principio y aun así mantienes el orden. Bien usada, esa precisión te hace fiable y muy difícil de descolocar."
-    },
-    {
-     "title": "Empuje",
-     "body": "Tu 38% de madera sostiene un ritmo que no se rinde a la primera. En el trabajo, eso se nota cuando acumulas y sigues tirando hasta terminar. Esa fuerza te permite avanzar incluso en semanas pesadas."
-    },
-    {
-     "title": "Exigencia útil",
-     "body": "Tu perfil no se conforma con salir del paso, y eso también tiene valor. Cuando el lunes por la mañana llega con mensajes nuevos, tú entiendes enseguida dónde está la fricción. Esa lectura rápida puede convertirse en criterio si no se vuelve castigo."
-    },
-    {
-     "title": "Resistencia",
-     "body": "Tu 34% en Recuperación muestra que la pausa todavía no alcanza para bajar del todo la activación. Eso explica por qué el descanso no termina de sentirse como descanso, aunque el cuerpo ya esté lejos de la tarea. Si esa recuperación gana espacio, tu energía podrá dejar de irse en cada revisión."
-    }
-   ],
-   "weaknesses": [
-    {
-     "title": "Revisión",
-     "body": "Volver a revisar todo desde el principio te roba más energía de la que parece. Un trabajo terminado sigue vivo en tu cabeza como si pidiera otra vuelta. Eso hace que el cierre llegue tarde y con gasto extra."
-    },
-    {
-     "title": "Sobrecarga",
-     "body": "Tu patrón de acumular y luego derrumbarte no aparece por azar. Primero sostienes demasiado y después el cuerpo pasa la factura de golpe. Ese vaivén te deja con menos margen justo cuando más lo necesitas."
-    },
-    {
-     "title": "Inquietud",
-     "body": "Sentir inquietud aunque descanses muestra que tu descanso todavía no consigue bajar el ruido interno. No es falta de voluntad; es que tu sistema sigue encendido. Por eso incluso un día libre puede parecer una tarea pendiente."
-    },
-    {
-     "title": "Miedo a parar",
-     "body": "Tu temor a quedarte atrás si paras hace que cualquier pausa se sienta arriesgada. Entonces sigues un poco más de lo necesario y pospones la recuperación. Ese miedo merece cuidado, no pelea."
-    }
-   ],
-   "fit_good": "Te convienen entornos donde el trabajo tenga prioridades claras y cierres definidos. Un día con menos interrupciones y menos mensajes inesperados te ayuda a no reabrir todo una y otra vez. También te va mejor cuando puedes revisar una vez con calma y luego pasar de página sin sentir culpa.",
-   "fit_bad": "Te desgastan los contextos donde todo cambia por mensajes constantes y urgencias de último minuto. Un día así te empuja a acumular tensión desde temprano y a perder el descanso antes de que empiece. También te hace caer en la revisión infinita, porque nunca sientes que el cierre sea suficiente.",
-   "behavior_guides": [
-    {
-     "title": "Cierre único",
-     "body": "Cuando termines una tarea, date solo una revisión final de diez minutos. Hazla en un momento fijo, no cada vez que vuelva la duda. Después cierra el archivo y, si hace falta volver sobre eso, déjalo para otro momento del día."
-    },
-    {
-     "title": "Pausa real",
-     "body": "En tu día libre, reserva dos bloques de veinte minutos sin mensajes ni trabajo. Durante ese tiempo, deja el teléfono lejos y no uses la pausa para repasar pendientes. Si aparece inquietud, puedes notarla sin pelear con ella y seguir con la pausa."
-    },
-    {
-     "title": "Límite de lunes",
-     "body": "Los lunes por la mañana, espera quince minutos antes de responder mensajes que te disparan. Usa ese margen para ordenar tres prioridades y no más. Así reduces el arranque automático que te vacía demasiado pronto."
-    },
-    {
-     "title": "Bajada gradual",
-     "body": "Al final del día, baja la intensidad en dos pasos: primero cierra tareas, luego cambia de actividad durante al menos media hora. No saltes directo del trabajo al intento de dormir. Esa transición corta ayuda a que tu cuerpo no tenga que caer de golpe."
-    }
-   ],
-   "mindset_guide": "Piensa en tu energía como en una cuenta que no se repone sola por mirar el saldo. Si sigues retirando sin hacer depósitos, el perfeccionismo te deja en números rojos. Tu trabajo no mejora por exprimir cada minuto, mejora cuando sabes detenerte a tiempo. Descansar no es perder terreno; es evitar que el lunes te encuentre sin reserva.",
-   "closing_title": "Lo que no se ve",
-   "closing_body": "No te falta capacidad; te sobra tensión retenida. Y cuando aprendas a cerrar sin volver a abrir, tu energía va a dejar de irse en cada revisión. Lo más importante que puedes llevarte hoy es esta frase: terminar también significa permitirte descansar."
-  },
-  "quizDiagnosis": {
-   "moduleId": "module3",
-   "moduleTitle": "Agotamiento",
-   "track": "career",
-   "answers": [
-    {
-     "qId": "qa-0",
-     "prompt": "Después de terminar una tarea…",
-     "label": "Vuelvo a revisarlo todo desde el principio",
-     "dimension": "perfectionism",
-     "score": 3
-    },
-    {
-     "qId": "qa-1",
-     "prompt": "En un día libre…",
-     "label": "Siento inquietud aunque descanse",
-     "dimension": "recovery",
-     "score": 0
-    }
-   ],
-   "dimensionResults": [
-    {
-     "dimension": "perfectionism",
-     "rawScore": 24.6,
-     "maxScore": 30,
-     "percentOfMax": 82,
-     "distanceFromMid": 64,
-     "direction": "high",
-     "intensity": "강함"
-    },
-    {
-     "dimension": "recovery",
-     "rawScore": 10.2,
-     "maxScore": 30,
-     "percentOfMax": 34,
-     "distanceFromMid": 32,
-     "direction": "low",
-     "intensity": "보통"
-    }
-   ],
-   "classification": {
-    "activeDimensions": [
-     "perfectionism"
-    ],
-    "kind": "single",
-    "typeKey": "perfectionism"
-   },
-   "typeInfo": {
-    "title": "Quien termina todo y se agota",
-    "hook": "Termina todo, y todo termina con su energía"
-   },
-   "nuancedSummary": "El perfeccionismo es alto y la recuperación es baja.",
-   "dimensionShortNames": {
-    "perfectionism": "Perfeccionismo",
-    "recovery": "Recuperación"
-   },
-   "elements": {
-    "wood": 37.5,
-    "fire": 12.5,
-    "earth": 12.5,
-    "metal": 37.5,
-    "water": 0
-   },
-   "dominantElement": "wood"
-  },
-  "chatExtract": {
-   "primary_concern": "Descanso, pero nunca se siente como descanso",
-   "emotional_state": "Cansancio y un poco de ansiedad",
-   "trigger_point": "Los mensajes del lunes por la mañana",
-   "repeat_pattern": "Acumular y luego derrumbarme",
-   "core_fear_or_meaning": "Me da miedo quedarme atrás si paro",
-   "summary_quote": "Descanso, pero nunca se siente como descanso",
-   "integrated_summary": "Aunque el trabajo termine, tu mente sigue revisando, y los mensajes del lunes por la mañana vuelven a encender esa tensión. Aguantas y luego te derrumbas de golpe, y debajo está el miedo a quedarte atrás si paras."
-  }
- },
  "jisoo": {
   "content": {
-   "title_line1": "멈추지 못한 채 지치는 마음",
-   "title_line2": "끝내는 힘보다 계속 점검하는 힘이 더 빨리 닳습니다",
-   "subtitle": "번아웃 심층 리포트 — 사주 × 심리검사 × 상담 통합",
-   "opening_scene": "월요일 아침 메신저 알림이 울리면, 아직 커피도 다 식기 전에 머릿속이 먼저 바빠집니다. 이미 끝낸 일도 다시 처음부터 훑어보고, 손은 멈췄는데 생각은 끝나지 않습니다. 쉬는 날에도 마음이 편하지 않아서, 쉬고 있는 동안에도 뒤처질까 봐 불안해집니다. 지수님은 요즘 이런 모습이지 않으신가요.",
-   "case_tag": "사례 — 민서, 30대 초반, 마감이 끝나도 마음이 남는 사람",
+   "title_line1": "멈추지 못한 손끝에",
+   "title_line2": "쉬어도 계속 켜져 있는 마음",
+   "subtitle": "모듈 3 번아웃 심층 리포트 — 사주 × 심리검사 × 상담 통합",
+   "opening_scene": "월요일 아침 메신저 알림이 울리면, 아직 몸이 덜 깬 상태인데도 머리는 바로 일을 세기 시작해요. 쉬는 날이어도 마음이 편하지 않아서, 잠깐 멈췄다가도 다시 처음부터 훑어보게 돼요. 끝냈다고 생각한 일도 머릿속에서는 계속 점검이 이어지고, 그 사이 지수님은 이미 지쳐 있어요. 쉬어도 쉬는 것 같지 않다는 말이, 지금 지수님 하루의 표정처럼 붙어 있어요.",
+   "case_tag": "가상 사례 — 서윤, 30대 초반, 업무 메신저가 끊이지 않는 직장인",
    "case_paragraphs": [
-    "민서는 퇴근 후에도 노트북을 닫지 못하고, 방금 끝낸 일을 다시 처음부터 훑어보는 사람이었습니다. 회의가 끝나도 머릿속에서는 부족한 부분만 계속 크게 보였고, 쉬는 시간조차 온전히 쉬는 느낌이 들지 않았습니다. 사주에서 토 기운이 강하고 수 기운이 약한 흐름은 이런 식으로 버티는 힘은 크지만 풀어내는 힘이 늦게 오는 모습과 닮아 있습니다. 당신도 끝낸 뒤에야 더 지치는 편이라면, 그 사람의 하루가 낯설지 않을 것입니다."
+    "서윤은 퇴근 후에도 노트북을 닫지 못하고, 방금 끝낸 일을 다시 열어 처음부터 확인하는 사람이에요. 월요일 아침 알림이 오면 손보다 먼저 마음이 먼저 굳어 버려요. 사주에서도 토가 강하고 수가 약한 흐름이라, 일을 붙드는 힘은 큰데 쉬는 힘은 잘 붙지 않았어요. 당신도 이렇게 끝낸 뒤에 더 지치는 날이 있지 않으신가요."
    ],
-   "oheng_intro": "토 기운이 50퍼센트로 가장 크고, 수 기운은 0퍼센트로 비어 있습니다. 이 분포는 번아웃에서 지수님이 느끼는 몰아서 버티기와 쉬어도 쉬는 것 같지 않음으로 이어집니다. 밀어붙이는 힘은 강한데, 긴장을 풀고 회복하는 흐름은 쉽게 붙지 않습니다.",
-   "quiz_reading": "완벽주의가 82퍼센트로 높고 회복이 34퍼센트로 낮게 나온 조합은, 일을 끝내는 능력보다 끝난 뒤에도 놓지 못하는 힘이 더 크다는 뜻으로 읽힙니다. 완주형 소진이라는 이름이 붙은 것도 그래서입니다. 하루가 끝나도 머릿속에서는 검토가 계속되고, 쉬는 날에도 마음이 불편한 장면으로 그대로 이어집니다.",
+   "oheng_intro": "토가 50퍼센트로 가장 강하고, 수는 0퍼센트로 비어 있어요. 지수님은 현실과 일을 붙잡는 힘이 아주 강한데, 그 뒤를 식혀 주고 받쳐 주는 흐름은 거의 보이지 않아요. 그래서 번아웃에서는 몰아서 버티고 한 번에 무너지는 장면으로 이 분포가 그대로 드러나요.",
+   "quiz_reading": "완벽주의가 82퍼센트로 높고 회복이 34퍼센트로 낮게 나온 조합이에요. 끝까지 해내는 힘이 분명한데, 해낸 뒤에 마음이 내려오지 않아서 하루가 끝나도 긴장이 남아 있어요. 완주형 소진이라는 이름이 붙은 이유가 바로 여기에 있어요.",
    "element_readings": {
     "wood": {
-     "heading": "목(木) 보통 — 멈추지 못하게 미는 줄기",
-     "body": "목 기운은 33퍼센트라서, 밀어붙이는 힘이 아예 약한 편은 아닙니다. 그래서 지수님은 일이 쌓이면 먼저 방향을 잡고, 끝까지 해보려는 쪽으로 몸이 움직입니다. 다만 토가 더 크기 때문에, 이 추진력은 자주 부담을 안고 달립니다. 번아웃에서는 그 힘이 ‘조금만 더’라는 생각으로 이어져, 쉬는 순간까지 다음 일을 떠올리게 합니다."
+     "heading": "목(木) 보통 — 앞으로 밀어 붙이는 줄기",
+     "body": "목은 33퍼센트로 보통이라서, 지수님 안에는 일을 앞으로 밀어 붙이는 기세가 분명히 있어요. 그런데 이 기세가 번아웃에서는 멈춤보다 진행을 먼저 택하게 만들어요. 월요일 아침 알림 하나에도 바로 다시 일을 세기 시작하는 반응이 여기서 보여요."
     },
     "fire": {
-     "heading": "화(火) 결핍 — 켜지지 못한 열",
-     "body": "화 기운은 0퍼센트라서, 겉으로 드러나는 가벼운 회복감이나 즉시 풀리는 열기가 잘 붙지 않습니다. 그래서 월요일 아침 알림처럼 긴장을 다시 켜는 자극이 오면, 마음이 바로 달아오르기보다 먼저 굳어 버리기 쉽습니다. 번아웃 모듈에서는 이 비어 있는 화가, 쉬는 법보다 긴장을 유지하는 법을 먼저 익힌 사람의 표정으로 보입니다."
+     "heading": "화(火) 적음 — 바로 타오르지 못한 불씨",
+     "body": "화는 0퍼센트라서, 지수님이 지친 뒤에 기세를 다시 올려 주는 온도가 잘 붙지 않아요. 쉬는 날에도 마음이 불편한데, 그 불편함을 데워서 풀어 주는 장치가 약한 모습이에요. 그래서 잠깐 쉬어도 곧바로 머릿속 점검으로 돌아가기 쉬워요."
     },
     "earth": {
-     "heading": "토(土) 과다 — 버티는 쪽으로만 쌓이는 무게",
-     "body": "토 기운이 50퍼센트라서, 지수님은 쉽게 무너지지 않으려고 끝까지 버티는 쪽에 강합니다. 그래서 몰아서 하고 무너지는 패턴도, 사실은 중간에 내려놓기보다 끝까지 쌓아 두는 습관에서 나옵니다. 월요일 아침 메신저 알림이 들어오면 그 무게가 다시 올라오고, 머릿속 점검은 더 촘촘해집니다. 번아웃에서는 이 토가 ‘조금 쉬면 되지’가 아니라 ‘조금만 더 쌓자’로 작동해, 지친 뒤에도 계속 일을 붙들게 만듭니다."
+     "heading": "토(土) 강함 — 일을 붙잡는 무게",
+     "body": "토는 50퍼센트로 가장 강해서, 지수님은 일을 손에서 놓지 않고 끝까지 붙드는 힘이 커요. 완벽주의 82퍼센트는 이 무게와 정확히 맞물려서, 끝낸 뒤에도 다시 처음부터 훑게 만들어요. 번아웃에서 몰아서 하고 무너지는 패턴도 이 토의 힘이 너무 오래 버티는 쪽으로 쓰이기 때문이에요."
     },
     "metal": {
-     "heading": "금(金) 보통 — 끝난 뒤에도 남는 점검선",
-     "body": "금 기운은 17퍼센트라서, 정리하고 확인하는 감각은 분명히 있습니다. 그래서 일을 끝낸 뒤에도 다시 처음부터 훑어보는 습관이 자연스럽게 붙습니다. 이건 허술함을 두려워하는 쪽으로도, 완성도를 챙기는 쪽으로도 읽힙니다. 번아웃에서는 이 금이 마지막 확인을 오래 붙잡아 두면서, 쉬는 시간까지 검토 모드로 끌고 갑니다."
+     "heading": "금(金) 보통 — 점검의 칼날",
+     "body": "금은 17퍼센트라서, 지수님은 일을 대충 넘기지 않고 기준을 세워 자꾸 다시 살펴보는 편이에요. 이 점검은 번아웃 모듈에서는 강점이면서도, 쉬어도 마음이 불편한 이유가 되기도 해요. 끝난 일을 다시 훑는 습관이 여기서 아주 선명하게 보여요."
     },
     "water": {
-     "heading": "수(水) 결핍 — 식지 못한 마음",
-     "body": "수 기운은 0퍼센트라서, 마음을 식히고 흘려보내는 힘이 거의 비어 있습니다. 그래서 쉬는 날에도 마음이 불편하고, 쉬어도 쉬는 것 같지 않은 감각이 남습니다. 금생수의 흐름이 회복에 도움이 될 수 있습니다. 지수님에게는 확인하고 정리하는 습관이 결국 마음을 식히는 쪽으로 이어질 때, 비로소 회복이 시작됩니다."
+     "heading": "수(水) 적음 — 쉬게 해 주는 물길",
+     "body": "수는 0퍼센트라서, 지수님은 지친 마음을 받아 주고 내려놓게 해 주는 흐름이 거의 비어 있어요. 이 부족한 자리는 금이 수를 살려 주는 방식으로만 아주 조심스럽게 메워질 수 있어요. 그래서 점검은 잘되는데 회복은 잘 안 붙고, 쉬어도 마음이 편하지 않은 장면이 반복돼요."
     }
    },
-   "upcoming_period_heading": "36세부터 45세, 물의 계절이 옵니다",
-   "upcoming_period_body": "36세부터 45세까지는 수 기운이 강해지면서, 지금보다 마음을 식히고 흐름을 조절하는 감각이 자연스럽게 살아날 수 있습니다. 지금까지는 몰아서 버티는 힘이 앞섰다면, 그 시기에는 속도를 조절하는 선택이 더 큰 힘이 됩니다. 그래서 미리 해두면 좋은 것은 일의 기준을 더 촘촘히 잡는 것보다, 멈췄을 때도 불안이 덜한 구조를 익히는 일입니다. 지금부터는 끝내는 습관만큼, 다시 쉬는 습관을 함께 연습해 두는 편이 좋습니다.",
+   "upcoming_period_heading": "36세부터 45세까지, 물의 흐름이 강해지는 시기",
+   "upcoming_period_body": "36세부터 45세까지는 그동안 비어 있던 회복의 감각이 조금씩 더 자주 떠오를 수 있는 흐름이에요. 지금처럼 일의 무게를 끝까지 떠안기보다, 도움을 받는 일과 잠깐 내려놓는 일이 서서히 익숙해질 여지가 있어요. 이 시기를 맞이할 때를 생각하면, 지금부터 끝낸 일을 다시 훑는 습관을 조금 느슨하게 두는 연습이 도움이 돼요. 그래야 물의 흐름이 와도 지수님 몸이 그 변화를 받아들일 자리를 만들 수 있어요.",
    "cross_analysis_quotes": [
-    "토가 50퍼센트인 사람은, 버티는 힘이 강한 만큼 멈추는 순간도 어렵습니다. 완벽주의 82퍼센트는 그 무게를 더 단단하게 만들고, 끝난 뒤에도 머릿속 점검을 멈추지 못하게 합니다. 그래서 지수님은 쉬는 시간보다 확인하는 시간이 더 익숙한 하루를 살고 있습니다.",
-    "수 기운이 0퍼센트라는 건, 회복을 자연스럽게 끌어오는 힘이 약하다는 뜻으로 읽힙니다. 회복이 34퍼센트로 낮게 나온 결과와 겹치면, 쉬는 날에도 마음이 편하지 않은 이유가 분명해집니다. 몸은 멈췄는데 마음은 계속 일을 하고 있는 셈입니다."
+    "토가 강한 사람은 끝내는 힘이 크고, 완벽주의 82퍼센트는 그 힘을 멈추지 못하게 만들어요. 지수님은 일을 붙드는 데서는 강하지만, 끝난 뒤 마음을 내려놓는 데서는 훨씬 더 많은 에너지가 들어가요. 그래서 완주형 소진이란 이름이 딱 맞아요.",
+    "수가 0퍼센트인 흐름은 회복 34퍼센트의 낮음을 아주 또렷하게 보여 줘요. 쉬는 날에도 마음이 불편하다는 답은, 몸이 쉰다기보다 마음이 계속 경계하고 있다는 뜻이에요. 쉬어도 쉬는 것 같지 않은 이유가 바로 여기에 있어요."
    ],
    "answer_notes": [
-    "일을 끝낸 뒤에도 다시 훑어보는 선택은, 결과보다 과정의 빈틈에 더 민감하다는 뜻입니다. 그래서 지수님은 마감이 끝나도 안심보다 재확인을 먼저 떠올립니다. 완벽주의가 높은 사람에게는 이 습관이 실수 방지이면서 동시에 소진의 시작점이 되기도 합니다.",
-    "쉬는 날에도 마음이 불편하다는 답은, 휴식 자체를 싫어한다기보다 쉬는 동안 놓치는 것이 생길까 봐 긴장한다는 뜻입니다. 그래서 몸은 쉬어도 머리는 계속 일정을 훑고, 편안함보다 경계심이 먼저 앞섭니다. 회복이 낮은 사람에게는 이런 불편함을 줄이는 작은 정지 연습이 필요합니다."
+    "지수님은 끝낸 일보다 끝난 뒤의 빈틈을 더 오래 바라보는 사람이에요. 그래서 성과가 있어도 마음은 바로 안심하지 못하고, 다시 확인하는 쪽으로 기울어요. 그럴수록 스스로에게는 완료보다 점검이 더 익숙한 언어가 돼요.",
+    "지수님은 쉼을 멈춤이 아니라 공백으로 받아들이는 편이에요. 그래서 쉬는 날에도 마음이 편하지 않고, 잠깐 쉬어도 곧바로 다음 일을 떠올리게 돼요. 이런 답은 회복을 의지의 문제가 아니라 안정감의 문제로 보여 줘요."
    ],
-   "chat_snapshot_note": "지수님이 실제로 꺼낸 핵심 고민은 쉬어도 쉬는 것 같지 않다는 감각입니다. 그 말은 단순한 피곤함보다, 쉬는 동안에도 마음이 완전히 내려오지 않는 불안과 붙어 있습니다. 지쳤고 조금 불안한 상태에서 나온 말이라서, 이 고민은 몸의 피로와 마음의 긴장을 함께 보여 줍니다.",
-   "chat_trigger_note": "월요일 아침 메신저 알림은 지수님에게 그냥 알림이 아니라, 다시 긴장을 켜는 스위치처럼 작동합니다. 완벽주의가 높은 사람에게 이런 자극은 아직 끝나지 않은 일처럼 느껴지기 쉽습니다. 토 기운이 강한 흐름에서는 한 번 올라간 긴장을 쉽게 내려놓지 못해서, 작은 알림도 크게 남습니다.",
-   "chat_repeat_note": "몰아서 하고 무너지는 패턴은, 버티는 힘이 먼저 앞서고 회복이 뒤따라오는 순서에서 생깁니다. 그래서 지수님은 힘이 남을 때는 끝까지 밀어붙이고, 한 번 무너지면 그제야 멈춥니다. 중간에 숨을 고르는 시간을 미리 넣는 것이 이 패턴을 조금 비켜 가는 첫걸음입니다.",
-   "chat_fear_note": "뒤처질까 봐 멈출 수 없다는 말은, 경쟁심보다 불안이 더 앞에 있다는 뜻입니다. 멈추는 순간 손해를 보는 사람처럼 느끼기 때문에, 쉬는 시간도 쉽게 죄책감으로 바뀝니다. 사실 그 아래에는 뒤처지지 않으려는 욕심보다, 지금의 자리를 지키고 싶은 마음이 더 크게 있습니다.",
-   "psychology_fact_heading": "완벽주의와 소진",
-   "psychology_fact_body": "완벽주의는 기준을 높게 세우고, 그 기준에서 벗어날 가능성을 오래 붙들게 만듭니다. 그래서 일은 끝나도 마음은 끝나지 않고, 검토와 재확인이 반복되기 쉽습니다. 여기에 회복이 낮으면, 쉬는 시간이 회복보다 불안으로 느껴질 수 있습니다. 지수님의 결과는 바로 그 조합을 보여 줍니다.",
-   "psychology_takeaway": "끝낸 뒤에도 못 놓는 마음이, 지수를 더 빨리 지치게 합니다. 쉬는 연습은 게으름이 아니라 회복의 기술입니다.",
+   "chat_snapshot_note": "지수님이 꺼낸 핵심 고민은 쉬어도 쉬는 것 같지 않다는 거예요. 그 말 뒤에는 지쳤고 조금 불안한 마음이 바로 붙어 있었어요. 저장하고 싶은 문장은 이거예요, 쉬는 동안에도 마음이 일을 놓지 못하면 사람은 결국 더 오래 지쳐요.",
+   "chat_trigger_note": "월요일 아침 메신저 알림은 지수님에게 단순한 알림이 아니에요. 멈추면 뒤처질까 봐 멈출 수 없다는 두려움을 바로 건드리는 신호예요. 완벽주의가 높은 사람에게 이런 알림은 일을 시작하라는 소리보다 긴장을 다시 켜라는 소리로 먼저 들려요.",
+   "chat_repeat_note": "지수님은 몰아서 하고 무너지는 흐름 안에서 오래 버텨 왔어요. 할 때는 끝까지 밀어붙이고, 무너지기 직전까지 멈추지 않는 선택을 반복해 온 거예요. 그 패턴을 살짝 비틀려면 끝내기 전에 잠깐 멈추는 시간을 일정에 먼저 넣어 두는 게 좋아요.",
+   "chat_fear_note": "지수님이 정말 무서워한 것은 쉬는 시간이 아니라 뒤처지는 느낌이었어요. 그래서 멈추는 순간에도 마음은 계속 앞으로 달리고 있었어요. 그 아래에는 잘하고 싶다는 마음과 놓치고 싶지 않다는 마음이 함께 있어요.",
+   "psychology_fact_heading": "완벽주의와 회복 탄력성",
+   "psychology_fact_body": "완벽주의가 높을수록 일의 기준이 높아지고, 끝난 뒤에도 머릿속 점검이 쉽게 멈추지 않아요. 회복 탄력성은 스트레스를 받은 뒤 다시 내려오는 힘을 뜻하는데, 지수님은 이 축이 낮게 나와 쉬는 시간에도 마음이 편해지기 어려워 보여요. 그래서 일의 양보다 일 뒤의 잔열이 더 오래 남는 패턴으로 읽혀요. 이 조합은 번아웃에서 특히 자주 보이는 흐름이에요.",
+   "psychology_takeaway": "끝내는 힘이 큰 사람일수록, 내려오는 연습이 더 필요해요. 지수님은 일을 잘하는 것만큼이나 일을 끝낸 뒤 마음을 접는 기술을 함께 키워야 해요.",
    "strengths": [
     {
-     "title": "완주력",
-     "body": "지수님은 일을 시작하면 끝까지 가져가는 힘이 분명합니다. 월요일 아침 알림이 와도 바로 손을 놓기보다, 해야 할 일을 다시 정리하고 이어 가는 쪽에 가깝습니다. 이 힘 덕분에 중간에 흐트러지기 쉬운 일도 결국 마무리까지 끌고 갑니다."
+     "title": "버티는 힘",
+     "body": "지수님은 토가 50퍼센트로 강해서, 일이 몰려도 쉽게 무너지지 않고 끝까지 버티는 힘이 있어요. 실제로 몰아서 하고 무너지기까지 가는 사람들은 중간에 포기하기보다 너무 오래 버티는 경우가 많아요. 이 힘은 번아웃의 원인이 되기도 하지만, 동시에 중요한 일을 끝내는 추진력이기도 해요."
     },
     {
-     "title": "정리감",
-     "body": "일을 끝낸 뒤 다시 처음부터 훑어보는 습관은, 결과를 허투루 넘기지 않는 태도입니다. 회의나 마감 뒤에도 확인할 부분을 찾는 덕분에 빈틈이 적어집니다. 다만 그 꼼꼼함이 지나치면 쉬는 시간까지 점검이 이어질 수 있습니다."
+     "title": "점검 감각",
+     "body": "완벽주의 82퍼센트는 지수님이 일을 대충 넘기지 않는다는 뜻이에요. 끝낸 뒤 다시 처음부터 훑어보는 습관은 스스로 기준을 지키려는 힘에서 나와요. 월요일 아침 알림이 와도 바로 상황을 파악하는 감각은 이 점검력이 있기 때문에 가능해요."
     },
     {
-     "title": "버팀목",
-     "body": "토 기운이 50퍼센트인 사람은 쉽게 무너지지 않으려는 힘이 큽니다. 지수님도 몰아서 하고 버티는 쪽으로 하루를 끌고 가는 편입니다. 그래서 겉으로는 버틸 수 있지만, 안에서는 피로가 더 늦게 드러날 수 있습니다."
+     "title": "책임 지속",
+     "body": "지수님은 한 번 맡은 일을 쉽게 놓지 않는 사람이에요. 그래서 일이 끝난 뒤에도 마음속에서 계속 확인이 이어지고, 그만큼 책임감이 오래 남아요. 이런 지속성은 번아웃에서는 과해지기 쉽지만, 믿고 맡길 수 있는 힘으로도 읽혀요."
     },
     {
-     "title": "신호감지",
-     "body": "메신저 알림 하나에도 바로 긴장을 알아차리는 감각이 있습니다. 이건 예민함이 아니라, 해야 할 일을 빠르게 포착하는 능력으로도 읽힙니다. 다만 그 신호를 너무 빨리 받으면 몸이 쉴 틈을 놓치기 쉽습니다."
+     "title": "긴장 감지",
+     "body": "지수님은 월요일 아침 메신저 알림이 울리는 순간 긴장이 바로 올라와요. 회복 34퍼센트가 낮게 나온 흐름은 이렇게 쉬는 자리보다 다시 시작하는 신호에 더 예민하게 반응하는 장면으로 보여요. 이 감각은 위험을 놓치지 않는 장점이기도 해요."
     }
    ],
    "weaknesses": [
     {
-     "title": "재점검",
-     "body": "끝난 일을 다시 훑는 습관은 안심을 얻기보다 긴장을 연장시키기 쉽습니다. 지수님은 이미 끝난 뒤에도 머릿속에서 검토를 멈추지 못합니다. 그래서 하루가 지나도 마음은 아직 마감 전처럼 남아 있습니다."
+     "title": "쉼의 불편",
+     "body": "지수님은 쉬는 날에도 마음이 편하지 않아서, 쉰다는 감각 자체가 잘 붙지 않아요. 그래서 몸은 멈춰도 머리는 계속 일을 점검하게 돼요. 이 불편함은 게으름이 아니라 회복의 통로가 아직 좁다는 뜻으로 읽혀요."
     },
     {
-     "title": "휴식불편",
-     "body": "쉬는 날에도 마음이 불편하다는 건, 몸의 멈춤과 마음의 멈춤이 따로 놀고 있다는 뜻입니다. 지수님은 쉬고 있어도 제대로 쉬고 있다는 감각을 얻기 어렵습니다. 이 불편함이 쌓이면 휴식이 회복이 아니라 또 다른 과제가 됩니다."
+     "title": "과점검",
+     "body": "일을 끝낸 뒤 다시 처음부터 훑는 습관은 안심을 찾는 방식이지만, 번아웃에서는 에너지를 더 빼앗기도 해요. 지수님은 완료보다 검토에 더 오래 머물면서 지치는 쪽이에요. 그 시간이 길어질수록 하루는 끝났는데 마음은 끝나지 않아요."
     },
     {
-     "title": "과부하",
-     "body": "몰아서 하고 무너지는 패턴은 한 번에 많은 것을 견디려는 방식에서 생깁니다. 지수님은 중간 조절보다 끝까지 버티는 쪽을 택하기 쉽습니다. 그래서 어느 순간에는 버틴 양만큼 크게 지칠 수 있습니다."
+     "title": "몰아치기",
+     "body": "몰아서 하고 무너지는 패턴은 지수님이 한 번에 많이 해내는 만큼 한 번에 많이 소진된다는 뜻이에요. 중간에 조금씩 풀어 놓는 대신 끝까지 쥐고 가기 때문에, 무너질 때는 더 크게 느껴져요. 이 흐름은 의지보다 리듬의 문제로 보는 편이 맞아요."
     },
     {
-     "title": "불안기동",
-     "body": "뒤처질까 봐 멈출 수 없다는 마음은, 쉬는 시간까지 계속 앞으로만 밀어붙이게 만듭니다. 지수님은 불안이 올라오면 속도를 줄이기보다 더 붙잡는 쪽으로 움직입니다. 그 결과 마음은 잠깐도 제자리에 머물지 못합니다."
+     "title": "멈춤 불안",
+     "body": "뒤처질까 봐 멈출 수 없다는 두려움은 지수님을 계속 앞으로만 몰고 가요. 그래서 쉬어도 쉬는 것 같지 않고, 잠깐 멈추는 순간에도 죄책감이 따라붙어요. 멈춤을 위험이 아니라 조절로 느끼는 연습이 필요해 보여요."
     }
    ],
-   "fit_good": "하루의 시작과 끝이 비교적 분명한 환경이 잘 맞습니다. 일이 끝나면 다음 날로 넘길 수 있는 구조가 있어야, 지수님은 밤까지 검토를 끌고 가지 않습니다. 월요일 아침 알림처럼 갑작스러운 자극이 적고, 마감 기준이 분명한 자리에서 힘이 더 안정적으로 쓰입니다.",
-   "fit_bad": "하루 종일 메시지가 끊기지 않고, 끝난 일도 계속 다시 확인해야 하는 환경은 지수님을 빨리 소진시킵니다. 쉬는 시간이 있어도 마음이 편하지 않으니, 늘 대기 상태로 있는 일은 부담이 큽니다. 몰아서 처리한 뒤 바로 다음 일을 붙이는 흐름은, 현재의 소진 패턴을 더 또렷하게 드러내기 쉽습니다.",
+   "fit_good": "하루의 시작과 끝이 분명한 환경이 지수님에게 잘 맞아요. 해야 할 일이 한 번에 몰리기보다, 우선순위가 정리되어 있고 중간 확인이 가능한 흐름이 좋아요. 끝낸 뒤 바로 다음 일로 급히 넘어가지 않아도 되는 자리에서 지수님은 덜 지쳐요.",
+   "fit_bad": "메신저 알림이 끊이지 않고, 끝난 일을 바로 다시 확인해야 하는 환경은 지수님을 빠르게 소진시켜요. 오늘 끝낸 일을 오늘 안에 여러 번 검토하게 만드는 분위기는 회복을 더 어렵게 해요. 하루의 경계가 흐린 일터는 지수님에게 특히 불리해요.",
    "behavior_guides": [
     {
-     "title": "종료의식",
-     "body": "일이 끝났을 때 바로 책상을 비우는 동작을 하나 정해 두세요. 퇴근 전 5분 동안 오늘 한 일과 내일 할 일을 딱 한 번만 적고, 그 뒤에는 화면을 닫는 순서를 고정하면 좋습니다. 이 작은 종료 동작이 머릿속 재점검을 줄이는 첫 장치가 됩니다."
+     "title": "알림 분리",
+     "body": "월요일 아침처럼 긴장이 올라오는 시간에는 알림을 바로 열지 말고 10분만 미뤄 보세요. 그 10분 동안은 물 한 잔만 마시고 오늘 할 일 세 가지만 적어 두면 돼요. 시작을 늦추는 것이 아니라, 마음이 먼저 달리지 않게 속도를 맞추는 연습이에요."
     },
     {
-     "title": "쉬는단위",
-     "body": "쉬는 날에는 큰 휴식보다 짧은 휴식을 여러 번 넣어 보세요. 오전, 오후, 저녁에 각각 10분씩만 완전히 손을 놓는 시간을 두면 마음이 덜 불편합니다. 한 번에 오래 쉬려 하기보다, 자주 쉬는 방식이 지수님에게 더 잘 맞습니다."
+     "title": "재점검 제한",
+     "body": "일을 끝낸 뒤 다시 훑고 싶어질 때는 한 번만 확인하는 규칙을 정해 보세요. 확인은 5분 안에 끝내고, 그 뒤에는 메모를 닫는 흐름이 좋아요. 완벽을 없애는 게 아니라 점검의 끝을 정해 주는 거예요."
     },
     {
-     "title": "알림차단",
-     "body": "월요일 아침처럼 긴장을 여는 시간에는 알림을 바로 보지 않는 규칙을 두는 것이 좋습니다. 출근 후 15분은 메신저를 열지 않고, 먼저 오늘의 우선순위만 적어 두세요. 알림이 일을 시작시키는 구조를 조금 늦추면 불안도 같이 늦춰집니다."
+     "title": "짧은 회복",
+     "body": "쉬는 날에는 길게 쉬려 하기보다 20분 단위로 숨을 돌려 보세요. 20분 산책이나 20분 낮잠처럼 몸이 바로 느끼는 회복이 좋아요. 지수님은 쉼이 길어질수록 불편해질 수 있어서, 작고 분명한 회복이 더 잘 맞아요."
     },
     {
-     "title": "재확인멈춤",
-     "body": "일을 끝낸 뒤 다시 훑고 싶어질 때는, 두 번째 점검은 하지 않겠다고 미리 정해 두세요. 대신 첫 점검에서 놓친 것이 있으면 다음 날 아침 한 번만 확인하는 식으로 시간을 미룹니다. 재확인의 횟수를 줄이는 것이 지수님에게는 회복의 연습이 됩니다."
+     "title": "마감 분리",
+     "body": "퇴근 후에는 업무 화면을 닫는 시간을 매일 비슷하게 고정해 보세요. 예를 들어 밤 9시 이후에는 메신저 확인을 멈추는 식으로 경계를 하나 세우면 좋아요. 일과 마음의 경계를 분리해야 지수님이 덜 무너져요."
     }
    ],
-   "mindset_guide": "지금 지수님에게 필요한 건 더 세게 달리는 힘이 아니라, 멈춰도 무너지지 않는 구조입니다. 번아웃은 엔진이 약해서가 아니라, 계속 밟은 뒤에 식힐 틈이 없을 때 더 크게 옵니다. 월요일 알림이 울려도 바로 뛰지 말고, 시동을 천천히 거는 쪽이 오래 갑니다. 쉬는 것은 멈춤이 아니라 다음 일을 견디게 하는 냉각입니다.",
-   "closing_title": "멈춤도 기술입니다",
-   "closing_body": "지수님은 이미 끝까지 해내는 힘을 갖고 있습니다. 이제는 그 힘을 다 쓰고 무너지기보다, 중간에 식히는 법을 익히면 됩니다. 오늘 가장 저장할 문장은 이겁니다. 쉬는 연습이 있어야, 끝내는 힘도 오래 갑니다."
+   "mindset_guide": "번아웃은 불이 너무 세게 붙은 뒤 식지 않는 상태에 가까워요. 지수님은 불을 키우는 쪽은 아주 잘하지만, 불을 천천히 낮추는 쪽은 아직 익숙하지 않아요. 장작을 계속 얹는 대신, 잠깐 옆으로 치워 두는 손길이 필요해요. 일을 멈추는 게 아니라, 타는 속도를 조절하는 거예요.",
+   "closing_title": "끝내는 힘, 쉬는 기술",
+   "closing_body": "지수님은 이미 많이 해내는 사람이고, 그래서 더 많이 지치는 사람이에요. 완벽하게 끝내려는 힘은 분명한 장점이지만, 그 힘이 쉬는 자리까지 차지하지 않도록 경계를 세워야 해요. 오늘의 문장은 이거예요, 일은 끝내도 마음까지 끝낼 필요는 없어요."
   },
   "quizDiagnosis": {
    "moduleId": "module3",
-   "moduleTitle": "번아웃",
+   "moduleTitle": "모듈 3 · 번아웃",
    "track": "career",
    "answers": [
     {
@@ -2391,120 +2015,493 @@ export const QA_DEEP_REPORT: Record<string, { content: any; quizDiagnosis: any; 
    "integrated_summary": "일이 끝나도 머릿속에서는 계속 점검이 이어지고, 월요일 아침 알림이 그 긴장을 다시 켭니다. 몰아서 버티다 한 번에 무너지는 패턴이 반복되고, 그 밑에는 멈추면 뒤처진다는 두려움이 있습니다."
   }
  },
- "lucia": {
+ "casey": {
   "content": {
-   "title_line1": "Termina todo,",
-   "title_line2": "y su energía termina antes que el día.",
-   "subtitle": "Informe profundo de Agotamiento, módulo 1 — saju × psicología × acompañamiento integrado",
-   "opening_scene": "Es casi lunes por la mañana y el teléfono vuelve a encenderse antes que tú. Lees los mensajes con la mano todavía quieta, pero la cabeza ya está repasando lo que falta, lo que podría fallar y lo que no conviene dejar para después. Aunque descanses, el descanso no termina de sentirse como descanso; se queda a medio camino, como si tu mente siguiera de guardia. Lucía, tus días últimamente se ven así, ¿no es cierto?",
-   "case_tag": "CASO — Martina, treintañera, termina todo pero no logra soltarlo",
+   "title_line1": "Tu mente no se apaga cuando termina el trabajo",
+   "title_line2": "y el lunes vuelve a encender lo que ya había soltado",
+   "subtitle": "Informe profundo del módulo 3 · agotamiento — saju × psicología × acompañamiento integrado",
+   "opening_scene": "De noche, el cuerpo ya pide pausa, pero tu mente vuelve a abrir lo que cerraste durante el día. Terminas una tarea y todavía sigues mirando si quedó perfecta, como si dejarla quieta fuera dejar algo importante atrás. Luego llega el lunes por la mañana, entran los mensajes, y esa tensión vuelve a subir con una rapidez que tú ya reconoces. Descansas, pero el descanso no se siente como descanso, y por eso Casey, así se ven tus días, ¿no es cierto?",
+   "case_tag": "CASO DE EJEMPLO — Martín, 30 y tantos, semana laboral exigente",
    "case_paragraphs": [
-    "Martina revisa un informe por tercera vez cuando ya debería estar cerrando la computadora. Afuera, el día avanza, pero ella sigue midiendo si quedó algo mal antes de responder el siguiente mensaje. Su tierra domina demasiado y su metal casi no aparece, así que le cuesta poner un borde claro entre terminar y seguir cargando. Tú también podrías reconocerte en esa forma de no soltar del todo."
+    "Martín revisaba el mismo informe dos veces antes de enviarlo. Cuando por fin cerraba la computadora, seguía con la sensación de que algo quedaba suelto. Su mapa también mostraba madera fuerte y agua débil, así que la mente se le iba más a sostener y corregir que a soltar. Tú también podrías verte en ese mismo ir y venir.",
+    "El martes llegaba con la energía ya gastada por el repaso del lunes. Martín no se daba permiso de parar del todo, porque sentía que aflojar un poco lo dejaba atrás. Esa mezcla de empuje y desgaste no era flojera; era una forma de sostener demasiado tiempo la tensión. Tú también podrías estar haciendo exactamente eso."
    ],
-   "oheng_intro": "Tu tierra está en 38% y domina el mapa, mientras el metal queda en 0%; no es un detalle menor, es la forma en que sostienes y luego te cuesta poner límite. En Agotamiento, eso se nota como alguien que aguanta mucho, ordena mucho y luego se vacía de golpe. El fuego y el agua, ambos en 25%, le ponen intensidad y sensibilidad a ese esfuerzo, así que la tensión no se queda quieta, se enciende. Lo que parece solo cansancio también trae la sensación de estar siempre a un paso de volver a revisar.",
-   "quiz_reading": "Tu perfeccionismo está en 82% y tu recuperación en 34%, y esa combinación no deja mucho espacio para apagar el impulso. No solo terminas las cosas; también las vuelves a abrir por dentro, como si el cierre nunca fuera suficiente. Por eso un día libre puede seguir sintiéndose tenso, incluso cuando el cuerpo ya se detuvo.",
+   "oheng_intro": "Tu madera está en 38% y tu agua en 0%, y esa distancia se nota en el módulo de agotamiento. La madera aquí es la fuerza que te hace sostener lo concreto, tomarlo en serio y seguir empujando el trabajo y el dinero. La ausencia de agua deja menos salida para lo que sientes y para la energía que necesitas devolver al cuerpo después de tanto empuje.",
+   "quiz_reading": "El perfeccionismo alto del 82% y la recuperación baja del 34% explican por qué terminas una tarea y todavía te quedas revisando mentalmente lo que ya salió bien. En quien termina todo y se agota, no faltan ganas: sobra vigilancia. Por eso un descanso libre puede sentirse raro, como si el cuerpo se parara pero la cabeza siguiera trabajando.",
    "element_readings": {
     "wood": {
-     "heading": "madera baja — el impulso que no encuentra espacio",
-     "body": "Tu madera está en 13%, y eso se nota menos como falta de deseo que como un arranque que no termina de abrir camino. En Agotamiento, quieres avanzar, pero la revisión constante te devuelve al inicio antes de que la idea respire. Esa poca madera hace que el movimiento dependa demasiado de la presión del momento, no de un ritmo que se sostenga solo. Y cuando el lunes trae mensajes nuevos, tú notas enseguida cuánto cuesta empezar sin mirar atrás."
+     "heading": "madera fuerte — sostiene más de lo que suelta",
+     "body": "Tu madera está en 38%, así que no entra en tu día como una idea suelta, sino como una mano que quiere agarrarlo todo. En este módulo se ve en esa costumbre de terminar algo y volver a revisarlo desde el principio, como si el cierre todavía no mereciera confianza. También aparece en el miedo a quedarte atrás si paras, porque la madera fuerte no tolera bien sentir que algo se escapa. Aquí tu impulso no es correr por correr; es mantener el control de lo que ya tomaste."
     },
     "fire": {
-     "heading": "fuego alto — la chispa que se gasta rápido",
-     "body": "Tu fuego está en 25%, y en este módulo se ve como una energía que se enciende con facilidad cuando llegan los mensajes del lunes por la mañana. No te falta intensidad; te falta margen para que esa intensidad no se consuma en una sola pasada. Por eso puedes acumular durante días y luego derrumbarte de golpe, como si la llama hubiera trabajado sin pausa. El problema no es sentir mucho, sino que tu impulso no siempre alcanza a descansar entre una exigencia y la siguiente."
+     "heading": "fuego bajo — chispa breve, gasto rápido",
+     "body": "Tu fuego está en 13%, así que no domina la escena, pero sí aparece en ráfagas breves cuando algo te activa. Los mensajes del lunes por la mañana pueden encenderte de golpe, aunque después esa misma intensidad se apague rápido. En el agotamiento, eso se parece a arrancar con fuerza y quedarte sin margen antes de terminar el día. Tu fuego no falta; se consume pronto cuando la vigilancia ya venía alta."
     },
     "earth": {
-     "heading": "tierra dominante — sostener hasta el borde",
-     "body": "Tu tierra está en 38%, y esa es la base que hace que no dejes nada a medias. En el tema de agotamiento, eso se ve en tu necesidad de cerrar, revisar y dejar todo en orden antes de soltarte. La tierra te da sostén, pero también te deja pegado a lo que todavía consideras pendiente. Por eso terminar una tarea no siempre te alivia; a veces solo abre otra vuelta de control."
+     "heading": "tierra baja — poco lugar para asentarse",
+     "body": "Tu tierra está en 13%, y eso deja poco espacio para sentir que algo quedó bien apoyado. En el módulo de agotamiento, se nota cuando descansas pero no logras que el cuerpo crea en ese descanso. Entonces el día sigue acumulándose por dentro, y la sensación de base firme tarda en llegar. Con esta tierra, lo que más cuesta no es hacer; es quedarte quieto sin sentir que algo se desordena."
     },
     "metal": {
-     "heading": "metal ausente — el límite que no entra solo",
-     "body": "Tu metal está en 0%, y esa ausencia se siente justo donde más lo necesitas: en el borde que separa hacer de seguir cargando. La única relación que lo puede nutrir aquí viene de la tierra que alimenta al metal, así que tu sostén no nace del corte, sino de aprender a ordenar mejor lo que ya estás sosteniendo. En Agotamiento, eso explica por qué descansar no siempre se traduce en recuperación. Sin ese límite claro, tu mente vuelve a revisar aunque el día ya terminó."
+     "heading": "metal fuerte — orden que corta y afina",
+     "body": "Tu metal está en 38%, así que tu mente sabe separar, revisar y dejar todo más limpio de como estaba. En agotamiento, esa fuerza se vuelve una lupa que vuelve una y otra vez sobre lo ya terminado. También explica por qué el lunes por la mañana, con unos mensajes, se te reactiva la tensión tan rápido. Tu metal no solo ordena; también mantiene alerta lo que todavía no quiere soltar el control."
     },
     "water": {
-     "heading": "agua media — la inquietud que sigue corriendo",
-     "body": "Tu agua está en 25%, y no baja la guardia aunque el cuerpo quiera parar. En este módulo, eso aparece como la inquietud que sientes incluso en un día libre. El agua mantiene la alerta viva, y por eso el descanso puede sentirse incompleto, como si algo siguiera moviéndose debajo de la superficie. No es que no sepas parar; es que tu interior no se convence de que parar sea seguro."
+     "heading": "agua muy baja — salida corta para tanta presión",
+     "body": "Tu agua está en 0%, y eso deja muy poco espacio para vaciar lo que llevas acumulado. En tu caso, la madera fuerte empuja a sostener y el agua no alcanza para descargar, así que acabas reuniendo tensión hasta que te derrumbas de golpe. Esa es la parte que encaja con la recuperación baja del 34%: el cuerpo pide pausa, pero no encuentra vía para recuperarse de verdad. Cuando agua casi no hay, el cansancio no se va solo; se queda dando vueltas dentro de ti."
     }
    },
-   "upcoming_period_heading": "De los 38 a los 47 años, llega un ciclo de diez años con más fuego",
-   "upcoming_period_body": "Ese tramo puede traerte más visibilidad, más iniciativa y también una demanda mayor de responder con rapidez. Si hoy ya tiendes a revisar todo dos veces, conviene cuidar que ese impulso no te quite margen para cerrar con calma. Lo más útil será practicar cierres claros, porque lo que no se cierra a tiempo te roba energía antes de que el ciclo se acelere. Si aprendes a apagar una cosa antes de encender la siguiente, ese periodo puede darte avance sin dejarte tan expuesto al desgaste.",
+   "upcoming_period_heading": "De los 41 a los 50 años, llega un ciclo de diez años con metal más fuerte",
+   "upcoming_period_body": "Cuando entre ese ciclo, tu capacidad para ordenar, decidir y dejar las cosas más claras puede ganar mucho peso. También será una etapa más útil para poner límites al exceso de revisión y para quedarte con lo esencial sin seguir exprimiendo la energía hasta el final. Si desde ahora practicas cierres más limpios y pausas reales, llegarás a ese momento con menos ruido interno. Lo que prepares hoy será la base para que esa fuerza no te endurezca, sino que te ayude a trabajar con más precisión y menos desgaste.",
    "cross_analysis_quotes": [
-    "Tu tierra manda, y tu perfeccionismo le sigue el paso. Lo que sostienes con tanta firmeza luego te cuesta soltarlo, y por eso terminas una tarea para volver a mirarla desde el principio. Esa combinación no te deja descansar del todo, porque el cierre llega, pero la mente sigue buscando una última revisión.",
-    "No es casual que el metal esté en 0% mientras tu recuperación está en 34%. Cuando falta límite, el descanso no entra limpio y la inquietud sigue encendida aunque el cuerpo ya se haya detenido. Eso explica por qué un día libre puede sentirse como una pausa con la puerta entreabierta, no como una salida real."
+    "Tu madera fuerte no solo empuja el trabajo; también alimenta el perfeccionismo del 82% y hace que terminar no signifique soltar. Por eso tu mente vuelve al principio cuando ya habías terminado, como si el cierre todavía necesitara una última vuelta. Esa mezcla te da capacidad de sostener mucho, pero también te deja viviendo en revisión constante.",
+    "La agua en 0% conversa de frente con la recuperación baja del 34%. Cuando descansas, tu sistema no encuentra del todo la salida para vaciar la tensión, y por eso el descanso se siente raro. No es falta de voluntad; es que la descarga tarda demasiado en llegar y la mente sigue encendida."
    ],
    "answer_notes": [
-    "Volver a revisar desde el principio muestra que confías más en corregir que en cerrar. En tu día a día, eso se nota cuando una tarea ya entregada sigue ocupando espacio mental como si siguiera abierta. A ti te conviene recordar que terminar no siempre exige una segunda pasada.",
-    "Sentir inquietud aunque descanses revela que tu descanso todavía está demasiado vigilado. En la práctica, eso puede aparecer en un día libre en el que no haces mucho, pero tampoco logras aflojar del todo. A ti te ayuda más una pausa con borde claro que una pausa larga pero difusa."
+    "Revisar desde el principio muestra que para ti cerrar una tarea no basta si no queda impecable. En el día a día, eso se ve en una última vuelta a lo ya entregado, aunque por fuera parezca terminado. A ti te sirve recordar que terminar también puede incluir dejarlo ir.",
+    "Sentir inquietud incluso al descansar muestra que tu cuerpo no interpreta la pausa como alivio automático. En la práctica, eso aparece cuando te sientas un momento y la mente ya está buscando lo siguiente. A ti te ayuda pensar el descanso como una habilidad que se entrena, no como algo que debería ocurrir solo."
    ],
-   "chat_snapshot_note": "Tu duda sobre descansar, pero no sentirlo como descanso, está pegada a un cansancio real y también a un poco de ansiedad. No estás describiendo solo fatiga; estás describiendo una mente que no acepta fácilmente bajar la guardia. Esa mezcla explica por qué el alivio te cuesta entrar aunque el trabajo ya haya terminado.",
-   "chat_trigger_note": "Los mensajes del lunes por la mañana te tocan tan fuerte porque reactivan de inmediato la alerta de tu fuego y tu agua. No hace falta que sean mensajes difíciles para que el cuerpo entienda que otra vez toca responder, revisar y sostener. Para ti, ese momento no es solo una notificación; es la señal de que el día ya empezó a pedir más.",
-   "chat_repeat_note": "Acumular y luego derrumbarte muestra que aguantas mucho tiempo en silencio antes de soltar de golpe. En ese patrón, tú sigues sumando exigencias hasta que la energía ya no da más. Un corte pequeño antes del colapso, como parar diez minutos antes de seguir, puede cambiar el final del día.",
-   "chat_fear_note": "Tu miedo a quedarte atrás si paras no habla de debilidad, sino de cuánto valor le das a no perder el ritmo. Debajo de ese miedo hay una necesidad muy clara de seguir siendo fiable, de no fallar justo cuando más importa. Lo que buscas no es correr más; es sentir que detenerte un momento no te borra del camino.",
+   "chat_snapshot_note": "Tu frase sobre descansar, pero no sentirlo como descanso, toca justo el punto donde el cansancio y la ansiedad se juntan. No es solo fatiga: es una mente que no baja la guardia ni cuando el día ya terminó. La frase que te conviene guardar es esta: parar no te borra el camino; solo te devuelve el cuerpo.",
+   "chat_trigger_note": "Los mensajes del lunes por la mañana te alteran porque no llegan a una mente vacía, sino a un sistema que ya venía revisando demasiado. Ese momento toca de lleno tu perfeccionismo alto y vuelve a encender la exigencia antes de que el día arranque. Por eso algo tan breve puede sentirse tan grande: activa el modo de control que ya conoces demasiado bien.",
+   "chat_repeat_note": "Tu patrón de acumular y luego derrumbarte muestra que aguantas más de la cuenta antes de permitirte aflojar. Primero sostienes, luego sigues, y cuando el cuerpo ya no da más, la caída llega de golpe. Un pequeño cambio para romper ese ciclo es hacer una pausa corta antes del límite, no después.",
+   "chat_fear_note": "Tu miedo a quedarte atrás si paras no habla de debilidad, sino de cuánto valor le das a seguir avanzando. Debajo de ese miedo hay una necesidad muy clara de no perder el lugar que has construido con tanto esfuerzo. Lo importante aquí no es correr más, sino aprender que detenerte un momento no te quita terreno.",
    "psychology_fact_heading": "Perfeccionismo y recuperación",
-   "psychology_fact_body": "En psicología, el perfeccionismo alto suele ir de la mano con una vigilancia constante sobre el propio resultado. Cuando además la recuperación es baja, el cuerpo y la mente tardan más en registrar que la tarea ya terminó. En tu caso, eso ayuda a entender por qué el cierre no se siente como cierre y por qué el descanso no llega limpio. No es solo exigencia; es dificultad para salir del modo de revisión.",
-   "psychology_takeaway": "Terminar no es lo mismo que soltar. En ti, la recuperación necesita un borde claro para que el día no siga abierto por dentro.",
+   "psychology_fact_body": "El perfeccionismo alto suele llevar a revisar más de la cuenta, mientras la recuperación baja hace difícil sentir que una pausa realmente devolvió energía. En tu caso, esa combinación aparece cuando cierras algo y aun así vuelves a mirarlo desde el inicio, como si el final todavía no fuera seguro. También ayuda a entender por qué el descanso puede sentirse raro en lugar de reparador. Tu exigencia no solo empuja; también retrasa la sensación de cierre.",
+   "psychology_takeaway": "No te falta pausa; te sobra vigilancia. Cuando la mente aprende a soltar antes, el cuerpo por fin empieza a recuperar.",
    "strengths": [
     {
-     "title": "Constancia",
-     "body": "Tu tierra en 38% te da una capacidad real para sostener lo que otros dejarían a medias. Eso se ve cuando sigues con una tarea aunque ya estés sin energía y aun así buscas dejarla bien hecha. Esa misma fuerza es valiosa, siempre que no te obligue a cargar más de la cuenta."
+     "title": "Sostén constante",
+     "body": "Tienes una capacidad real para mantener el rumbo incluso cuando ya vienes al límite. Eso se ve en que terminas una tarea y todavía encuentras energía para revisarla con cuidado, en lugar de dejarla caer a medias. Esa constancia es una fuerza muy tuya, aunque a veces te pida más de lo que conviene."
     },
     {
-     "title": "Detalle",
-     "body": "Tu perfeccionismo de 82% hace que notes fallos que otros pasan por alto. En la práctica, eso puede ser útil cuando revisas un trabajo y detectas lo que todavía no encaja. El punto es que tu ojo fino no se convierta en una puerta giratoria que nunca deja salir el cierre."
+     "title": "Ojo fino",
+     "body": "Tu atención detecta detalles que otras personas dejan pasar. En el trabajo, eso te permite ver fallos, ajustar matices y entregar algo más limpio. Ese ojo fino también explica por qué te cuesta dar una tarea por cerrada sin una última revisión."
     },
     {
-     "title": "Resistencia",
-     "body": "Aguantas mucho antes de derrumbarte, y eso habla de una resistencia que no es pequeña. Se nota en la forma en que sostienes el ritmo hasta que el cuerpo ya no da más. Bien usada, esa resistencia puede ayudarte a atravesar periodos exigentes sin perder dirección."
+     "title": "Resistencia alta",
+     "body": "Aguantas tramos largos antes de notar que ya te pasaste de punto. El patrón de acumular y luego derrumbarte muestra que tu resistencia no es pequeña; simplemente la estiras demasiado. Bien usada, esa fuerza te permite sostener procesos exigentes sin perder el hilo."
     },
     {
-     "title": "Sensibilidad",
-     "body": "Tu agua en 25% hace que percibas rápido cuándo algo vuelve a activar la tensión. Eso puede parecer incómodo, pero también te da una lectura fina de tu propio estado. Si la escuchas antes de que se convierta en saturación, te puede ahorrar varios derrumbes."
+     "title": "Lectura rápida",
+     "body": "Captas enseguida cuando algo cambia, y los mensajes del lunes por la mañana te alteran precisamente porque lees rápido el peso que traen. Esa sensibilidad te ayuda a anticiparte y a responder a tiempo. Cuando la regulas bien, se vuelve una ventaja para decidir con claridad."
     }
    ],
    "weaknesses": [
     {
-     "title": "Sobrerrevisión",
-     "body": "Revisar todo desde el principio te deja en un circuito que no termina de cerrar. En un día normal, eso puede verse como abrir otra vez lo que ya habías dado por terminado. Lo difícil no es ver el detalle; lo difícil es decidir cuándo basta."
+     "title": "Revisión excesiva",
+     "body": "Tu mente no se conforma con terminar; quiere volver a mirar por si quedó algo mejorable. Eso te lleva a reabrir mentalmente lo que ya habías cerrado, aunque por fuera el trabajo esté listo. El resultado es más desgaste que mejora."
     },
     {
-     "title": "Descanso tenso",
-     "body": "Tu recuperación de 34% muestra que parar no siempre te devuelve alivio de inmediato. Puedes tener tiempo libre y aun así seguir sintiendo inquietud, como si el cuerpo estuviera quieto pero la mente siguiera en turno. Eso no se resuelve empujándote más, sino aprendiendo a bajar la exigencia en el tramo final del día."
+     "title": "Pausa incómoda",
+     "body": "Cuando intentas descansar, aparece inquietud en vez de alivio. No es que no quieras parar; es que la pausa te deja demasiado espacio para escuchar la presión acumulada. Por eso un día libre puede sentirse raro, incluso cuando no hay nada urgente delante."
     },
     {
-     "title": "Acumulación",
-     "body": "Tu patrón de acumular y luego derrumbarte hace que el desgaste llegue tarde, pero llegue fuerte. Durante un tiempo pareces sostenerlo todo, y después el bajón aparece de golpe. Si empiezas a soltar pequeñas cargas antes, el desplome pierde fuerza."
+     "title": "Subida y caída",
+     "body": "Tu energía no se reparte de manera pareja: primero acumulas mucho y luego te derrumbas de golpe. Esa forma de funcionar hace que el cansancio tarde en avisar y después llegue con más fuerza. Si empiezas a soltar antes, evitas que el bajón te tome por sorpresa."
     },
     {
      "title": "Miedo al freno",
-     "body": "Te da miedo quedarte atrás si paras, y esa idea te empuja a seguir aunque ya estés al límite. En la vida diaria, eso puede hacer que respondas, revises o sigas solo para no sentir que te atrasas. El problema no es tu ambición; es que el freno te parece más peligroso que el cansancio."
+     "body": "Te pesa la idea de quedarte atrás si paras. Ese pensamiento te hace seguir incluso cuando ya pedirías una pausa real. Entenderlo te ayuda a ver que tu impulso no nace de falta de valor, sino de una exigencia muy alta contigo."
     }
    ],
-   "fit_good": "Te va mejor un entorno donde puedas cerrar tareas por bloques y no vivir en interrupción constante. Un día con tiempos definidos, pocos cambios bruscos y mensajes que no te obliguen a responder al instante te ayuda a no entrar en sobrecarga. También te favorece un espacio donde terminar algo signifique realmente terminarlo, sin que todo vuelva a abrirse por inercia.",
-   "fit_bad": "Te desgasta un ambiente donde los mensajes llegan a cada rato y cada pausa se siente provisional. Si trabajas rodeado de urgencias, tu mente se queda en modo revisión y no baja nunca del todo. También te perjudica un ritmo sin cierre, donde todo parece pendiente aunque ya hayas hecho bastante.",
+   "fit_good": "Te va mejor un entorno donde el trabajo tenga cierres claros y donde puedas revisar una vez sin quedarte dentro del repaso. También te ayuda un día con bloques definidos, porque así no necesitas sostener todo al mismo tiempo. Cuando sabes qué termina y qué sigue, tu energía se ordena mejor.",
+   "fit_bad": "Te desgasta un entorno con mensajes constantes, cambios de último minuto y sensación de urgencia desde la mañana. Ahí tu mente no baja, y el lunes puede volverse una alarma que dura todo el día. También te convienen poco los espacios donde nadie define cuándo algo está realmente terminado.",
    "behavior_guides": [
     {
      "title": "Cierre único",
-     "body": "Cuando termines una tarea, date un solo repaso final y cierra la pestaña. Hazlo al final del día, no en cada interrupción. Si aparece el impulso de volver a empezar, espera quince minutos antes de tocarlo otra vez."
+     "body": "Elige una sola revisión final para cada tarea importante y hazla en un bloque de 10 minutos. Después de eso, envía o guarda el trabajo sin volver a abrirlo ese mismo día. Así entrenas a tu mente a reconocer un final real."
     },
     {
-     "title": "Pausa real",
-     "body": "Elige un descanso breve de diez minutos sin mensajes ni pantalla. Hazlo después de un bloque de trabajo, no cuando ya estés al borde del cansancio. Repite ese corte dos veces al día para que tu mente aprenda que parar no es perder."
+     "title": "Pausa breve",
+     "body": "Antes de seguir con otra tarea, para 3 minutos y deja la pantalla quieta. Hazlo dos veces al día, una a media mañana y otra al final de la tarde. Esa pequeña pausa ayuda a que el cuerpo no llegue siempre al límite."
     },
     {
-     "title": "Filtro del lunes",
-     "body": "Los lunes por la mañana, revisa mensajes en un horario fijo y no al primer sonido. Reserva los primeros veinte minutos para ordenar prioridades antes de responder. Eso baja la sensación de invasión y te devuelve un poco de control."
+     "title": "Límite matinal",
+     "body": "Si los mensajes de la mañana te encienden demasiado, revisa el teléfono solo después de una primera acción concreta, como ordenar tu escritorio o tomar agua. Repite ese orden durante una semana. Así el día no empieza desde la alarma, sino desde una base más firme."
     },
     {
-     "title": "Salida clara",
-     "body": "Antes de terminar el día, escribe tres cosas hechas y una sola cosa pendiente. Hazlo siempre a la misma hora, aunque te parezca simple. Ese gesto le enseña a tu cabeza dónde acaba el trabajo y dónde empieza el descanso."
+     "title": "Salida diaria",
+     "body": "Al cerrar el día, escribe en una nota tres cosas terminadas y una sola cosa pendiente. Hazlo en 5 minutos, no más. Ese gesto le enseña a tu mente que no todo tiene que quedarse girando hasta la noche."
     }
    ],
-   "mindset_guide": "Piensa en tu energía como en una fogata pequeña. Si le echas leña sin parar, arde fuerte y se consume rápido. Si dejas espacio entre una carga y la siguiente, dura más y calienta mejor. Tu meta no es apagarla; es evitar que se convierta en ceniza antes de tiempo.",
-   "closing_title": "Lo que termina también puede descansar",
-   "closing_body": "Tu mapa no pide menos capacidad; pide mejor borde. Con 38% de tierra, 0% de metal y un perfeccionismo de 82%, no necesitas forzarte a hacer más, sino aprender a cerrar sin volver a abrir. Y si hoy solo te llevas una frase, que sea esta: terminar no debería costarte toda la energía."
+   "mindset_guide": "Piensa en tu energía como en una cuenta que no se repone sola si solo sigues sacando de ella. Si no haces pausas para devolver algo, el cansancio se acumula y termina pasando factura. El descanso no es una recompensa tardía; es el depósito que evita que el sistema se rompa. Para ti, aprender a parar a tiempo vale más que seguir apretando hasta que ya no quede nada.",
+   "closing_title": "Lo que sí puedes soltar",
+   "closing_body": "Tu mapa no dice que debas hacer menos por obligación; dice que necesitas dejar de revisar la vida como si todo dependiera de una última comprobación. Cuando el trabajo termina, tú no tienes que seguir terminándote a ti. La frase para guardar es esta: no llegas más lejos por no parar, llegas más lejos cuando paras antes de romperte."
   },
   "quizDiagnosis": {
    "moduleId": "module3",
-   "moduleTitle": "Agotamiento",
+   "moduleTitle": "Módulo 3 · Agotamiento",
+   "track": "career",
+   "answers": [
+    {
+     "qId": "qa-0",
+     "prompt": "Después de terminar una tarea…",
+     "label": "Vuelvo a revisarlo todo desde el principio",
+     "dimension": "perfectionism",
+     "score": 3
+    },
+    {
+     "qId": "qa-1",
+     "prompt": "En un día libre…",
+     "label": "Siento inquietud aunque descanse",
+     "dimension": "recovery",
+     "score": 0
+    }
+   ],
+   "dimensionResults": [
+    {
+     "dimension": "perfectionism",
+     "rawScore": 24.6,
+     "maxScore": 30,
+     "percentOfMax": 82,
+     "distanceFromMid": 64,
+     "direction": "high",
+     "intensity": "강함"
+    },
+    {
+     "dimension": "recovery",
+     "rawScore": 10.2,
+     "maxScore": 30,
+     "percentOfMax": 34,
+     "distanceFromMid": 32,
+     "direction": "low",
+     "intensity": "보통"
+    }
+   ],
+   "classification": {
+    "activeDimensions": [
+     "perfectionism"
+    ],
+    "kind": "single",
+    "typeKey": "perfectionism"
+   },
+   "typeInfo": {
+    "title": "Quien termina todo y se agota",
+    "hook": "Termina todo, y todo termina con su energía"
+   },
+   "nuancedSummary": "El perfeccionismo es alto y la recuperación es baja.",
+   "dimensionShortNames": {
+    "perfectionism": "Perfeccionismo",
+    "recovery": "Recuperación"
+   },
+   "elements": {
+    "wood": 37.5,
+    "fire": 12.5,
+    "earth": 12.5,
+    "metal": 37.5,
+    "water": 0
+   },
+   "dominantElement": "wood"
+  },
+  "chatExtract": {
+   "primary_concern": "Descanso, pero nunca se siente como descanso",
+   "emotional_state": "Cansancio y un poco de ansiedad",
+   "trigger_point": "Los mensajes del lunes por la mañana",
+   "repeat_pattern": "Acumular y luego derrumbarme",
+   "core_fear_or_meaning": "Me da miedo quedarme atrás si paro",
+   "summary_quote": "Descanso, pero nunca se siente como descanso",
+   "integrated_summary": "Aunque el trabajo termine, tu mente sigue revisando, y los mensajes del lunes por la mañana vuelven a encender esa tensión. Aguantas y luego te derrumbas de golpe, y debajo está el miedo a quedarte atrás si paras."
+  }
+ },
+ "mia": {
+  "content": {
+   "title_line1": "You keep finishing the work,",
+   "title_line2": "and then your mind starts it all over again.",
+   "subtitle": "Module 3 · Burnout deep report — saju x psych test x counseling integration",
+   "opening_scene": "It is late enough that the room has gone quiet, but your phone has not. Monday-morning messages are still lighting up the screen, and each one seems to pull your mind back into checking mode. You tell yourself you are resting, but your hand still reaches for the phone as if the day is not really over. That is what \"I rest but it never feels like resting\" looks like for you, Mia, isn’t it?",
+   "case_tag": "Example case — Hana, early 30s, the kind of person who cannot stop checking",
+   "case_paragraphs": [
+    "Hana finishes her shift, sits down in her car, and still opens the same file she already checked twice. By the time she gets home, her body is tired, but her mind is still asking whether she missed one small detail. Her chart also shows a strong Wood pattern and a weak Water pattern, so the urge to keep holding on and the difficulty letting energy flow out show up in the same day. You can probably see yourself in that loop too."
+   ],
+   "oheng_intro": "Your Five Elements are led by Wood at 38%, while Water sits low at 13%. In a romance context, that often shows up as holding on tightly to what matters and then struggling to let your feelings move freely once the moment has passed. For you, Mia, that can look like being present with someone and then replaying the whole exchange long after the message is sent.",
+   "quiz_reading": "Your 82% Perfectionism and 34% Recovery draw a very clear picture: you do not stop because the task is unfinished, but because the checking part never switches off. That is why finishing something can still feel like standing at the edge of another round of review. In a Finisher's Drain pattern, the work ends, but your nervous system keeps acting like there is one more thing to catch.",
+   "element_readings": {
+    "wood": {
+     "heading": "Wood — the grip that keeps reaching",
+     "body": "Your Wood is strong at 38%, so you naturally stay attached to what you are trying to build. In burnout, that can look like one more check, one more edit, one more message before you let yourself breathe. Monday-morning messages hit that part of you fast, because they make the unfinished feeling flare up again. You do not just work hard; you keep holding the thread even after the task should already be down."
+    },
+    "fire": {
+     "heading": "Fire — the short bright burst",
+     "body": "Your Fire is low at 13%, so the rush of energy does not stay lit for long. That fits the pattern of cramming and then crashing, where you pour yourself in quickly and then feel the drop all at once. In a romance setting, that can make your warmth show strongly in the moment and then vanish into exhaustion afterward. The pace is not steady, so the flame burns hot before it cools."
+    },
+    "earth": {
+     "heading": "Earth — the place where rest should land",
+     "body": "Your Earth is also low at 13%, which makes it harder for rest to feel settled in your body. You can sit down, but your mind keeps standing back up to check one more thing. That is why even a day off can feel a little uneasy, as if your system never fully trusts the pause. For you, rest needs structure before it starts to feel real."
+    },
+    "metal": {
+     "heading": "Metal — the part that keeps measuring",
+     "body": "Your Metal sits at 25%, so it has enough presence to keep assessing, sorting, and comparing. As the Day Master, Metal is the core tone that shapes how you handle the world, and in your case it meets a strong Wood pattern that keeps asking for more. In burnout, that can become a private audit of everything you have done. Even after the work is finished, the inner review keeps running."
+    },
+    "water": {
+     "heading": "Water — the stream that needs support",
+     "body": "Your Water is weak at 13%, and this is the part that lets your energy, expression, and talent flow out easily. Metal supports Water, so what steadies you is not more force, but the kind of structure that helps your feelings and energy move again. When that support is missing, your effort stays bottled up and comes out only after you are already depleted. That is why recovery feels uneasy instead of soft."
+    }
+   },
+   "upcoming_period_heading": "From age 33 to 42, the water years begin",
+   "upcoming_period_body": "From age 33 to 42, Water grows stronger, and that can make recovery feel more available than it does now. The pressure to keep proving yourself does not disappear, but it becomes easier to let energy move instead of trapping it in constant checking. For you, this is a time to build habits that help you stop cleanly, rest without reopening the task, and trust that pausing will not make you fall behind. If you practice that now, the coming cycle can feel less like a crash and more like a smoother current.",
+   "cross_analysis_quotes": [
+    "Your 38% Wood is the part that keeps gripping, and your 82% Perfectionism is the part that keeps checking. That is why finishing does not feel like release for you. You close the task, but your mind stays with its hand on the handle.",
+    "Your weak 13% Water matches the low 34% Recovery in a very precise way. Both point to a system that does not settle quickly after effort. Even a day off can feel uneasy when your inner flow never fully switches into rest."
+   ],
+   "answer_notes": [
+    "Going back and re-checking everything shows that you trust precision more than completion. It tells us that closure matters to you only when the details feel sealed. Mia, that level of care is useful, but it can also keep you standing at the doorway long after the room is done.",
+    "Feeling uneasy even when you rest shows that your body has not yet accepted pause as safe. It means rest has to be learned as a state, not just taken as a break. Mia, the first quiet moment may feel strange before it starts to feel normal."
+   ],
+   "chat_snapshot_note": "You said that you rest, but it never feels like resting, and that sits right next to the tired, a little anxious feeling you named. The work may be done, but your mind keeps checking, so the body never gets the message that the day is over. Mia, the clearest line here is this: when your mind stays on duty, your rest never gets to clock in.",
+   "chat_trigger_note": "Monday-morning messages hit you so hard because they reopen unfinished energy before your system has fully come down. For a mind with high Perfectionism, even a simple notification can feel like proof that one more look is required. That is not you overreacting; it is your checking reflex getting switched back on at the exact wrong time.",
+   "chat_repeat_note": "Cramming, then crashing means you push hard enough to get through, and then the bill arrives all at once. In the middle, you choose momentum over pause because stopping feels risky. A smaller step, taken earlier, would give your system room to breathe before the drop hits.",
+   "chat_fear_note": "Your fear that stopping means falling behind is really a fear of losing your place. Underneath it is a wish to stay dependable, visible, and still in the race. Mia, the need is not to stop caring; it is to learn that pause does not erase your progress.",
+   "psychology_fact_heading": "Perfectionism and recovery",
+   "psychology_fact_body": "In psychology, perfectionism often means setting standards so high that finishing does not feel finished yet. Low recovery means the body and mind do not return to baseline quickly after strain. Together, they create a loop where effort keeps going and rest feels incomplete. That is a very close match to your pattern of re-checking after completion and feeling uneasy even on a day off.",
+   "psychology_takeaway": "You are not failing to rest; your system is still treating rest like unfinished business. The work here is not to care less, but to let completion count once.",
+   "strengths": [
+    {
+     "title": "Precision",
+     "body": "You catch small details that other people would skip, and your 82% Perfectionism gives that skill real force. In practice, that is the reason you go back and re-check everything instead of letting a loose end sit. Mia, that exacting eye can make your work solid and your promises reliable."
+    },
+    {
+     "title": "Follow-through",
+     "body": "You do not leave the task halfway just because you are tired. The pattern of cramming, then crashing still shows a person who gets things finished under pressure. That persistence is part of why people can count on you when something has to be done."
+    },
+    {
+     "title": "Sensitivity to timing",
+     "body": "You feel Monday-morning messages as a real shift in your internal state, not as a small inconvenience. That means you notice transitions quickly, even before you can explain them. Mia, that sensitivity can help you build better boundaries once you start trusting what your body tells you."
+    },
+    {
+     "title": "Inner discipline",
+     "body": "You keep returning to the task because you care about getting it right, not because you are careless. The same impulse that makes rest uneasy also makes your standards consistent. When guided well, that discipline becomes a steady backbone instead of a constant strain."
+    }
+   ],
+   "weaknesses": [
+    {
+     "title": "Afterhours checking",
+     "body": "Your mind keeps opening the file again even after the work is done, and that keeps your day from ending cleanly. The result is not just fatigue, but a sense that you are never fully off the clock. Mia님, that habit steals recovery one small glance at a time."
+    },
+    {
+     "title": "Uneasy rest",
+     "body": "A day off does not automatically feel like rest for you, because the quiet itself can trigger checking. That makes recovery feel like something you have to earn before you can receive it. Mia님, this is less about laziness and more about a system that has forgotten how to downshift."
+    },
+    {
+     "title": "Crash cycle",
+     "body": "You push hard, then drop hard, and the swing between those two states can leave you drained. The cycle is visible in the way cramming turns into crashing. Mia님, the strain comes from speed without enough recovery in between."
+    },
+    {
+     "title": "Fear of falling behind",
+     "body": "The thought that stopping will make you fall behind keeps urgency alive even when the task is already complete. That fear can make every pause feel expensive. Mia님, it is understandable, but it also keeps your rest from ever feeling safe."
+    }
+   ],
+   "fit_good": "You do best in a setting where deadlines are clear, expectations are written down, and the end point is visible. A workday that ends with a real handoff, not a vague maybe, helps your mind stop circling the same task. Mia님, you need people and systems that let completion mean completion.",
+   "fit_bad": "You struggle in places where messages keep arriving after hours and urgency never really ends. A loose environment with shifting priorities can keep your checking reflex awake all night. Mia님, endless availability is the fastest way to turn effort into exhaustion.",
+   "behavior_guides": [
+    {
+     "title": "Close the loop",
+     "body": "At the end of each work block, write down the one thing you have already verified and stop there. Give yourself a 10-minute buffer before checking messages again so your nervous system can notice the shift. Mia님, practice ending once, not three times."
+    },
+    {
+     "title": "Protect the pause",
+     "body": "When you have a day off, keep the first hour screen-light and task-free. Use that hour for something physical and simple, like a walk or a shower, so your body gets the signal before your mind starts reviewing. Mia님, rest works better when it starts before the inbox does."
+    },
+    {
+     "title": "Limit rechecking",
+     "body": "Choose one specific time to review work, and do not reopen it outside that window unless there is a real change. Keep the review short and bounded, not open-ended. Mia님, a clear limit is kinder to you than an endless search for certainty."
+    },
+    {
+     "title": "Use a landing ritual",
+     "body": "After a heavy day, do the same 3-step routine every time: save, shut down, and leave the desk. Make it short enough that you can actually repeat it on tired days. Mia님, repeated endings help your mind learn that the day is done."
+    }
+   ],
+   "mindset_guide": "Think of your effort like a river, not a dam. A river still moves when it is guided, but it does not need to hold everything in one place. Your recovery gets better when you let the current slow instead of forcing one more surge. Mia님, flow will serve you better than constant pressure.",
+   "closing_title": "When the checking can rest",
+   "closing_body": "You do not need to become less careful to get better rest. You need a way to let care end without turning into more work. Mia님, the line worth saving is this: completion is allowed to be enough."
+  },
+  "quizDiagnosis": {
+   "moduleId": "module3",
+   "moduleTitle": "Module 3 · Burnout",
+   "track": "romance",
+   "answers": [
+    {
+     "qId": "qa-0",
+     "prompt": "After finishing a task I…",
+     "label": "Go back and re-check everything",
+     "dimension": "perfectionism",
+     "score": 3
+    },
+    {
+     "qId": "qa-1",
+     "prompt": "On a day off I…",
+     "label": "Feel uneasy even when I rest",
+     "dimension": "recovery",
+     "score": 0
+    }
+   ],
+   "dimensionResults": [
+    {
+     "dimension": "perfectionism",
+     "rawScore": 24.6,
+     "maxScore": 30,
+     "percentOfMax": 82,
+     "distanceFromMid": 64,
+     "direction": "high",
+     "intensity": "강함"
+    },
+    {
+     "dimension": "recovery",
+     "rawScore": 10.2,
+     "maxScore": 30,
+     "percentOfMax": 34,
+     "distanceFromMid": 32,
+     "direction": "low",
+     "intensity": "보통"
+    }
+   ],
+   "classification": {
+    "activeDimensions": [
+     "perfectionism"
+    ],
+    "kind": "single",
+    "typeKey": "perfectionism"
+   },
+   "typeInfo": {
+    "title": "Finisher's Drain",
+    "hook": "Finishes everything, and is finished by it"
+   },
+   "nuancedSummary": "Perfectionism runs high and recovery runs low.",
+   "dimensionShortNames": {
+    "perfectionism": "Perfectionism",
+    "recovery": "Recovery"
+   },
+   "elements": {
+    "wood": 37.5,
+    "fire": 12.5,
+    "earth": 12.5,
+    "metal": 25,
+    "water": 12.5
+   },
+   "dominantElement": "wood"
+  },
+  "chatExtract": {
+   "primary_concern": "I rest but it never feels like resting",
+   "emotional_state": "Tired and a little anxious",
+   "trigger_point": "Monday-morning messages",
+   "repeat_pattern": "Cramming, then crashing",
+   "core_fear_or_meaning": "I'm afraid that if I stop I'll fall behind",
+   "summary_quote": "I rest but it never feels like resting",
+   "integrated_summary": "Even when the work is done, your mind keeps checking, and Monday-morning messages switch that tension back on. You push through, then crash all at once, and underneath sits the fear that stopping means falling behind."
+  }
+ },
+ "lucia": {
+  "content": {
+   "title_line1": "Tú sigues revisando cuando todo ya terminó.",
+   "title_line2": "Y esa noche nunca se apaga del todo.",
+   "subtitle": "Informe profundo de Módulo 3 · Agotamiento — saju × psicología × acompañamiento",
+   "opening_scene": "Es de noche y la pantalla sigue encendida, aunque tu cuerpo ya pidió cierre varias veces. Terminas una tarea y, en lugar de soltarla, vuelves al principio para mirar otra vez lo mismo. Luego llega el lunes por la mañana y los mensajes te reactivan esa tensión que parecía dormida. Por fuera parece que descansaste, pero por dentro tu mente sigue trabajando sin permiso. Lucía, ¿no se ve últimamente tu vida así?",
+   "case_tag": "CASO DE EJEMPLO — Clara, treintañera, rutina de alta exigencia",
+   "case_paragraphs": [
+    "Clara deja el último envío sobre la mesa, pero antes de levantarse vuelve a abrirlo para revisar cada detalle desde el inicio. El día le pasa entre correcciones pequeñas y una sensación de alarma que no baja ni cuando se sienta a descansar. Su mapa también muestra una tierra muy fuerte y un metal débil, así que vive con mucha norma encima y con poco margen para apoyarse en alivio. Tú también podrías reconocerte en esa forma de terminar algo sin sentir que de verdad terminó."
+   ],
+   "oheng_intro": "Tu tierra en 38% domina el mapa, y tu metal en 0% deja una zona sin apoyo visible. En este módulo de agotamiento, eso se nota como una vida que aguanta por estructura, pero que no encuentra con facilidad el respiro que la afloja. La presión pesa, y el alivio tarda en llegar porque la parte que debería sostenerte con suavidad está casi ausente.",
+   "quiz_reading": "Tu 82% en perfeccionismo y tu 34% en recuperación dibujan una misma escena: cierras una tarea, pero tu cabeza no acepta el cierre. El tipo Quien termina todo y se agota encaja con esa costumbre de seguir revisando cuando ya no queda nada urgente por hacer. Por eso un descanso libre puede sentirse raro en lugar de reparador, como si la pausa dejara demasiado espacio para pensar.",
+   "element_readings": {
+    "wood": {
+     "heading": "Madera, 13% — impulso que todavía busca espacio",
+     "body": "Tu madera está en 13%, así que aparece como movimiento contenido, no como expansión fácil. En agotamiento, eso se siente cuando quieres avanzar, pero antes de dar un paso ya estás calculando qué podría salir mal. No es falta de impulso; es un impulso que se queda vigilando para no desordenar lo que ya sostienes. Por eso incluso el descanso puede parecerte una pausa provisional, no un final limpio."
+    },
+    "fire": {
+     "heading": "Fuego, 25% — chispa que se enciende con rapidez",
+     "body": "Tu fuego está en 25%, una fuerza suficiente para activar el cuerpo y la mente en cuanto llega un mensaje o una exigencia. Aquí se ve en esos mensajes del lunes por la mañana que te vuelven a poner en marcha antes de que hayas terminado de bajar el ritmo. No es un fuego que se desborda, pero sí bastante vivo para convertir una señal pequeña en tensión inmediata. En este módulo, esa chispa explica por qué te cuesta quedarte quieta cuando el día todavía pide más."
+    },
+    "earth": {
+     "heading": "Tierra, 38% — peso que sostiene y aprieta",
+     "body": "Tu tierra está en 38%, y por eso la estructura manda más que el alivio. Como tu Maestro del Día es agua, esta tierra se vive como presión, reglas y responsabilidad que te empujan a contenerte. En agotamiento, eso se convierte en acumular y luego derrumbarte de golpe, porque aguantas demasiado tiempo antes de soltar. La escena se ve clara: terminas, revisas, sostienes, y solo después notas cuánto te pesó todo."
+    },
+    "metal": {
+     "heading": "Metal, 0% — apoyo que falta y se echa de menos",
+     "body": "Tu metal está en 0%, así que el mapa deja muy poco lugar para la pausa que ordena sin apretar. Como este elemento es el que te ayuda a apoyar y a protegerte, su ausencia se nota en que descansar no termina de sentirse como descanso. En vez de dejarte en calma, el día libre te deja inquietud, como si faltara una pieza que afloje la exigencia. Y justamente por eso, cuando aparece un poco de apoyo, lo notas enseguida, porque tu sistema lo necesita de verdad."
+    },
+    "water": {
+     "heading": "Agua, 25% — sensibilidad que sigue alerta",
+     "body": "Tu agua está en 25%, y eso da una sensibilidad que no se desconecta fácilmente. Esa parte tuya percibe la tensión antes de que todo explote, pero también se queda pensando cuando ya no hay nada que hacer. En agotamiento, el agua se vuelve la voz interna que sigue revisando aunque el trabajo terminó. Por eso el cansancio y la ansiedad se mezclan tanto en tu experiencia diaria."
+    }
+   },
+   "upcoming_period_heading": "De los 38 a los 47 años, llega un ciclo de diez años con fuego más fuerte",
+   "upcoming_period_body": "Cuando llegue ese tramo, tu ritmo puede volverse más visible y más decidido. El fuego fuerte suele empujar a actuar antes, a mostrar más iniciativa y a mover lo que ahora solo sostienes en silencio. Si desde ya aprendes a cerrar de verdad una tarea, ese ciclo te encontrará con menos ruido interno y con más espacio para usar tu energía sin quemarla toda. Lo que prepares hoy será la diferencia entre correr detrás del día y dirigirlo con más claridad.",
+   "cross_analysis_quotes": [
+    "Tu tierra fuerte no te da descanso; te lo pone en lista de pendientes. Esa es la razón por la que el perfeccionismo sube tanto: cuando todo pesa, revisar parece más seguro que soltar. En tu día a día, eso se ve en cerrar algo y volver a abrirlo desde el principio.",
+    "Tu metal en 0% deja sin apoyo la parte que debería aflojar la exigencia. Por eso la recuperación sale baja y el descanso se llena de inquietud. No es que no quieras parar; es que parar te deja sin el sostén interno que calma."
+   ],
+   "answer_notes": [
+    "Volver a revisar desde el principio muestra que no te basta con terminar; necesitas sentir que todo quedó bajo control. En la práctica, eso te lleva a abrir otra vez lo que ya cerraste, incluso cuando el cuerpo pedía soltar. La frase para ti es esta: revisar también puede ser una forma de cansarte más.",
+    "Sentir inquietud aun en un día libre muestra que tu descanso todavía no encuentra una forma segura de instalarse. En la vida diaria, eso puede verse como estar quieta por fuera y seguir en alerta por dentro. La frase para ti es esta: descansar no debería sentirse como defenderse."
+   ],
+   "chat_snapshot_note": "Dices que descansas, pero nunca se siente como descanso, y eso ya muestra que tu cansancio no es solo físico. También aparece un poco de ansiedad, así que tu mente no baja el volumen aunque el cuerpo se siente. Lo que más pesa no es solo el esfuerzo, sino la imposibilidad de sentir cierre. La frase para guardar es esta: no te falta descanso, te falta permiso interno para sentirlo.",
+   "chat_trigger_note": "Los mensajes del lunes por la mañana te alteran porque no llegan como simples mensajes, sino como una señal de reanudación inmediata. Tu fuego se enciende y tu tierra vuelve a apretar, así que el cuerpo entra otra vez en modo de respuesta antes de haberse recuperado. Por eso ese momento pequeño tiene tanto efecto en ti. No es el mensaje; es todo lo que tu sistema cree que anuncia.",
+   "chat_repeat_note": "Acumular y luego derrumbarte es un ciclo que te deja sosteniendo demasiado durante demasiado tiempo. Mientras acumulas, sigues funcionando; cuando cedes, lo haces de golpe. Una salida pequeña empieza por vaciar una parte antes de que todo llegue al borde.",
+   "chat_fear_note": "Tu miedo a quedarte atrás si paras habla de una necesidad muy clara de seguir siendo valioso para ti mismo mientras avanzas. Debajo de ese miedo no hay solo presión; hay ganas de no perder el sitio que te costó tanto sostener. Por eso el problema no es descansar, sino sentir que descansar te deja fuera de juego. Lo que de verdad pide esa frase es seguridad, no más velocidad.",
+   "psychology_fact_heading": "Perfeccionismo y recuperación",
+   "psychology_fact_body": "El perfeccionismo describe la tendencia a revisar, corregir y elevar el estándar incluso cuando la tarea ya terminó. La baja recuperación, en cambio, muestra que el descanso no logra cumplir su función reparadora porque la mente sigue activa. En tu caso, ambas cosas se juntan con mucha precisión: terminas algo y luego vuelves a mirarlo desde el inicio, y en un día libre aparece inquietud aunque el cuerpo esté quieto. Esa combinación encaja con una mente que no suelta el control con facilidad.",
+   "psychology_takeaway": "Terminar no siempre significa soltar. En ti, el cierre necesita permiso, no más esfuerzo.",
+   "strengths": [
+    {
+     "title": "Constancia fina",
+     "body": "Tu 82% en perfeccionismo también muestra una atención muy fina para detectar detalles que otras personas dejarían pasar. Eso te ayuda a entregar trabajos cuidados y a notar rápido lo que todavía no encaja, como cuando vuelves a revisar todo desde el principio. Bien usado, ese nivel de vigilancia se convierte en calidad, no solo en presión."
+    },
+    {
+     "title": "Lectura interna",
+     "body": "Tu 34% en recuperación baja no borra tu capacidad de notar lo que te pasa; al contrario, te hace percibir enseguida cuándo algo no descansa de verdad. En un día libre, esa inquietud te avisa de que hay tensión acumulada antes de que se vuelva más grande. Esa sensibilidad puede ayudarte a poner nombre al cansancio con mucha precisión."
+    },
+    {
+     "title": "Resistencia sostenida",
+     "body": "Tu tierra en 38% te da una fuerza para aguantar responsabilidades largas sin abandonar a la primera. Eso se ve en tu patrón de acumular antes de derrumbarte, porque durante mucho tiempo logras sostener más de lo que parece. Cuando esa resistencia se acompaña de pausas reales, se vuelve una base muy sólida."
+    },
+    {
+     "title": "Respuesta rápida",
+     "body": "Tu fuego en 25% hace que reacciones con rapidez cuando algo te llama, como los mensajes del lunes por la mañana. Esa capacidad de encenderte rápido también te permite ponerte en marcha sin mucha fricción. Bien dirigida, te ayuda a resolver sin quedarte congelado."
+    }
+   ],
+   "weaknesses": [
+    {
+     "title": "Cierre difícil",
+     "body": "Tu costumbre de volver a revisar todo desde el principio muestra que cerrar una tarea no siempre cierra la tensión. Aunque ya terminaste, tu mente vuelve a entrar para buscar una seguridad extra. Eso te deja gastando energía en un final que nunca termina de sentirse final."
+    },
+    {
+     "title": "Descanso tenso",
+     "body": "Tu 34% en recuperación baja hace que incluso un día libre pueda sentirse raro, como si faltara algo por hacer. En vez de pausa, aparece inquietud. Esa incomodidad no habla de falta de voluntad, sino de una mente que todavía no confía en parar."
+    },
+    {
+     "title": "Presión acumulada",
+     "body": "Tu tierra en 38% sostiene mucho, pero también aprieta mucho. Por eso puedes seguir funcionando mientras acumulas, hasta que de pronto el cuerpo y la mente ceden juntos. Ese salto de aguante a derrumbe es una señal de que el peso llega demasiado alto antes de aflojar."
+    },
+    {
+     "title": "Alerta inmediata",
+     "body": "Tu fuego en 25% hace que una señal pequeña se convierta rápido en activación. Los mensajes del lunes por la mañana no solo te informan; te mueven por dentro. Esa velocidad te ayuda a responder, pero también te deja sin transición entre el descanso y la exigencia."
+    }
+   ],
+   "fit_good": "Te va mejor un entorno con tareas claras y cierres visibles, donde no todo dependa de estar disponible todo el tiempo. Un día con bloques definidos te ayuda más que una agenda abierta que te obliga a seguir mirando lo pendiente. También te conviene un espacio donde puedas revisar una sola vez y luego soltar sin sentir culpa.",
+   "fit_bad": "Te desgastan los entornos que convierten cada mensaje en una urgencia y cada pausa en una sospecha. Un día sin límites entre trabajo y descanso te empuja a seguir revisando aunque ya no haga falta. También te pesa mucho la cultura de estar siempre listo, porque alimenta justo el miedo a quedarte atrás si paras.",
+   "behavior_guides": [
+    {
+     "title": "Corte breve",
+     "body": "Cuando termines una tarea, espera diez minutos antes de volver a abrirla. Usa ese tiempo para guardar el archivo, cerrar la pantalla y moverte de lugar. Si después sigues queriendo revisar, haz solo una pasada y luego deja la tarea cerrada."
+    },
+    {
+     "title": "Pausa visible",
+     "body": "En tu día libre, marca una pausa concreta con una acción física simple, como apagar notificaciones durante una hora. Hazlo al menos una vez por la mañana y otra por la tarde. Así tu cuerpo recibe una señal clara de que descansar también cuenta."
+    },
+    {
+     "title": "Límite de lunes",
+     "body": "El lunes por la mañana, mira los mensajes solo en un horario fijo y no al abrir los ojos. Dale a tu mente diez minutos para despertar antes de entrar en modo respuesta. Esa pequeña demora baja la sensación de golpe y evita que la tensión te tome primero."
+    },
+    {
+     "title": "Cierre único",
+     "body": "Antes de terminar el día, escribe una sola línea con lo que ya quedó hecho. No añadas correcciones ni pendientes nuevos en esa nota. Así tu cabeza tiene un lugar concreto donde dejar el cierre sin volver a abrirlo por la noche."
+    }
+   ],
+   "mindset_guide": "Piensa en tu energía como una batería que se vacía cuando la dejas al final de una revisión infinita. No necesitas exprimirla más; necesitas desconectarla a tiempo. El perfeccionismo te promete seguridad, pero muchas veces solo te deja sin carga. Si aprendes a cerrar una vez, tu recuperación deja de pelear contra el mismo trabajo que ya terminaste.",
+   "closing_title": "Cuando el cierre también cuenta",
+   "closing_body": "Tu mapa no dice que te falte fuerza; dice que la fuerza se te va en revisar demasiado y descansar demasiado poco. Eso se puede ordenar, paso a paso, sin pelearte con tu manera de ser. La frase para llevarte hoy es esta: cerrar a tiempo también es una forma de cuidarte."
+  },
+  "quizDiagnosis": {
+   "moduleId": "module3",
+   "moduleTitle": "Módulo 3 · Agotamiento",
    "track": "romance",
    "answers": [
     {
@@ -2582,681 +2579,681 @@ export const QA_DEEP_REPORT: Record<string, { content: any; quizDiagnosis: any; 
 export const QA_YEAR_REPORT: Record<string, any> = {
  "jordan": {
   "year": 2027,
-  "title": "2027: A Clearer Pace",
-  "subtitle": "A year of steady initiative, careful timing, and quieter inner strength",
-  "overview": "Jordan, 2027 feels like a year where your own energy can take the lead. Since the year’s Fire tone works under your Water-centered Day Master, it can feel easier to push for results, shape outcomes, and turn effort into visible progress. With your Five Elements leaning strongly toward Earth and Metal, this may be a practical, structured year rather than a wildly experimental one, which can help you make real use of momentum without needing to force every step.\n\nAt the same time, this is not a year that rewards rushing just because things are moving. The overall pattern points to a season of waiting, building, and choosing the right moment more than trying to do everything at once. You may notice that some months feel familiar and comfortable, while others ask for more care, more patience, or a better sense of timing. The best version of this year is probably not “more effort everywhere,” but “cleaner effort in the right places.”\n\nBecause your chart type leans toward dew and order, the year may feel best when you keep things simple, visible, and well arranged. Small systems, clear priorities, and honest pacing can go a long way. If you let the year’s heat sharpen your focus instead of scattering it, 2027 can become a year where you see what you’re capable of without burning through your reserves.",
+  "title": "2027: Your steady fire",
+  "subtitle": "A year to shape momentum with care, timing, and trust in your own pace",
+  "overview": "In 2027, the year’s Fire energy meets your Water core in a way that leans toward control, direction, and results. That can make the year feel active and productive, especially around money, responsibility, and visible progress. For Jordan, this is less about waiting for life to happen and more about noticing where your effort can guide the flow without forcing it.\n\nYour overall pattern is Dew · Order, which suggests a person who tends to work best when things are clear, well-arranged, and emotionally clean. With Earth and Metal both strong in your Five Elements balance, structure and discernment may come naturally, while Water and Fire are present in smaller amounts, so pacing and warmth may need a little more intentional attention. In plain terms, 2027 looks like a year where you can do a lot, but you may feel best when you choose your targets carefully and leave a little room to breathe.\n\nThe quieter notes in the year suggest that not every month needs to become a big push. Some stretches look good for building, some for refining, and some for resting your attention so you can see what matters most. If you treat 2027 as a year of measured momentum rather than nonstop acceleration, you’re likely to find it much more workable.",
   "chapters": {
    "wealth": {
-    "heading": "Money and momentum",
-    "body": "This year looks favorable for taking initiative around money, value, and tangible results. When the year’s Fire energy sits in a position that you can guide, it can support earning through action, negotiation, and practical follow-through. For someone with a Water-centered Day Master and a chart that already has strong Earth and Metal, this can be a year where discipline and timing matter more than boldness alone.\n\nIn daily life, this might show up as being asked to make decisions faster, quote your value more clearly, or turn a skill into something visible. You may also notice that opportunities respond well when you are direct and organized, but less well when you overextend or try to control every detail. The middle of the year especially can feel productive, though it may tempt you to take on too much at once.\n\nA good approach is to keep your numbers, offers, and priorities easy to see. Jordan, if you want a simple rule for 2027, let it be this: choose the projects that can actually be completed, not only the ones that sound exciting. A small, steady gain may serve you better than a big, scattered push."
+    "heading": "Money moves with intention",
+    "body": "Money looks more workable in 2027 when you treat it as something you can organize, direct, and improve rather than chase. Because the year’s Fire energy is something you can guide, this can be a favorable stretch for making decisions, setting prices, clarifying priorities, and noticing where effort turns into concrete results. Your Earth and Metal strengths also support practical thinking, so Jordan, you may feel more comfortable when plans are simple, visible, and easy to check.\n\nIn daily life, this may show up as a month where you want to clean up subscriptions, compare options more carefully, or take on a project that rewards clear ownership. There may also be moments when opportunities feel tempting simply because they are bright or fast, and that can be useful to notice. The year’s tone favors earned gains more than impulsive moves, so a little restraint can keep things feeling clean.\n\nA good starting point is to choose one money area to tidy up early in the year, then revisit it later with fresh eyes. If you keep your system easy to track, you’re more likely to feel in charge rather than pulled around by noise."
    },
    "love": {
-    "heading": "Closeness and timing",
-    "body": "Your relationship life in 2027 may feel warm, active, and more responsive when you show up clearly. The year’s Fire tone can bring more visibility to how you express interest, care, and expectations. Because your chart is already fairly structured, connection may go best when warmth is paired with consistency rather than intensity alone.\n\nYou might notice that people respond well to honesty, initiative, and a sense that you know what you mean. At the same time, some months may bring a little friction or a need to reread a situation before reacting. That does not have to mean distance; it can simply mean the year asks for cleaner signals and fewer assumptions.\n\nA helpful practice is to say one extra sentence instead of leaving things implied. Ask the question, clarify the plan, or name what you appreciate. When you keep your tone steady and your expectations readable, this year can support more natural closeness and less confusion."
+    "heading": "Closeness grows through timing",
+    "body": "Relationships in 2027 may feel warmer when you let them unfold at a pace that matches your energy. The year can bring moments of attraction, initiative, and visible expression, but it also asks for care around overdoing, overexplaining, or moving too quickly just because the moment feels lively. With your order-loving pattern, you may feel especially settled when affection is clear, consistent, and not full of mixed signals.\n\nYou may notice that some connections feel easiest when there is a shared routine, a steady exchange, or a practical kind of support. Other moments may ask for patience, especially when plans shift or when someone’s pace does not match yours. The middle of the year looks especially active, while the later part of the year may make space for deeper understanding, quieter bonding, or a needed reset in how you relate.\n\nA small but useful practice is to say what you mean a little earlier than usual, while still leaving room for the other person to respond. Simple honesty, paired with good timing, can help the year’s warmer energy feel inviting instead of overwhelming."
    },
    "career": {
-    "heading": "Work with a sharper edge",
-    "body": "Career-wise, 2027 looks like a year where your effort can carry more weight than usual. The year’s energy supports leadership, output, and results, so this may be a good time to take ownership of tasks that benefit from momentum and decisiveness. Because your Five Elements lean heavily toward Earth and Metal, you may already be good at structure, standards, and follow-through, and this year can help those strengths become more visible.\n\nIn practical terms, you may be handed more responsibility, or you may simply feel more ready to claim space in a room. Some months will ask you to produce, present, or serve more than usual; others will ask you to slow down and check whether the pace still makes sense. The most useful move is to stay alert to overcommitment, especially when something looks promising and urgent at the same time.\n\nIf you want this year to work in your favor, treat clarity as a career tool. Keep your priorities visible, your promises realistic, and your standards consistent. Progress is likely to come less from dramatic leaps and more from well-timed, well-executed steps."
+    "heading": "Work benefits from direction",
+    "body": "Career-wise, 2027 looks like a year where your ability to lead, shape outcomes, and turn effort into visible results can stand out. The Fire tone supports initiative, and because it is something your chart can manage, you may find it easier than usual to set a direction and make progress. That said, the same pattern can also invite excess pressure if you try to carry too much at once, so the best results may come from choosing a few things and doing them well.\n\nIn ordinary workdays, this could look like being the person who clarifies the plan, smooths out confusion, or pushes a project from vague idea into real motion. Around late summer and early autumn, responsibility may feel heavier, but that can also be the part of the year that makes your competence most visible. Later on, support from others may become more noticeable, especially if you’ve already done the groundwork.\n\nA helpful approach is to define success in smaller pieces: one deliverable, one conversation, one clean decision at a time. That way, your momentum stays useful instead of turning into pressure for its own sake."
    },
    "study": {
-    "heading": "Learning that sticks",
-    "body": "This is a good year for learning that has a clear use. The overall pattern favors practical understanding, not just collecting information, and that can suit you well if you like order, structure, and knowing where things belong. Because the year also brings moments of waiting, the most helpful learning may be the kind that deepens what you already know rather than constantly chasing novelty.\n\nYou may find yourself drawn to material that helps you organize, explain, refine, or apply a skill. In daily life, that could look like revisiting notes, improving a process, or learning something because it helps you do your work better. Some months may bring fresh openings, while others may feel quieter and more inward, which can actually help the information settle.\n\nA strong strategy is to study in layers: learn it, use it, then review it. Short, repeated contact with a subject may work better than one intense burst. If you keep things concrete and connected to real life, your learning this year can become durable instead of decorative."
+    "heading": "Learning through practice",
+    "body": "Learning in 2027 may work best when it is active, applied, and tied to something you can use right away. Your Dew · Order pattern suggests a mind that likes clean systems, and your strong Metal side may help you sort, compare, and refine ideas with care. The year’s Fire energy can add drive and visibility, so this may be a good time to study in ways that produce something tangible, even if the topic is new.\n\nYou might find yourself drawn to courses, tools, or methods that help you organize information more clearly, present ideas better, or translate knowledge into action. Some months may feel more exploratory, while others feel more structured or demanding, but the overall rhythm supports steady progress rather than dramatic leaps. If you try to learn everything at once, the year may feel noisy; if you study in layers, it may feel surprisingly workable.\n\nA simple next step is to pick one skill that would genuinely support your daily life or work, then give it a fixed slot each week. Repetition with a clear purpose may suit you better than chasing novelty."
    },
    "health": {
-    "heading": "Pacing the inner flame",
-    "body": "For body and mind, 2027 suggests paying attention to rhythm. Fire years can make life feel more active, but with your Water-centered Day Master, the best support usually comes from pacing rather than pushing. Your chart’s strong Earth and Metal can help you stay disciplined, yet they can also make it easy to stay “on” for too long if you’re not checking in with yourself.\n\nYou may notice that some periods feel calm but not especially stimulating, while others feel full and busy. The main theme is not fragility; it’s the importance of not spending more energy than the moment requires. When the year asks you to wait, tidy up, or slow the tempo, that may be the most productive move available.\n\nA simple practice could be to build in small resets: a clear start to the day, a pause before switching tasks, and a gentler evening wind-down. Choosing rhythm over rush may help you feel more centered, especially in the months when the year feels busiest."
+    "heading": "Keep the pace breathable",
+    "body": "For body and mind care, 2027 points toward rhythm, moderation, and not letting momentum turn into strain. The year’s Fire energy can be energizing, but because it is something you can control, it may also tempt you to keep going after your focus has already started to thin. With Water as your Day Master, your system may feel best when there is enough rest, quiet, and recovery time to keep your inner current smooth.\n\nIn everyday life, this could show up as periods when you feel alert and productive, followed by stretches when you need more stillness than you expected. Rather than reading that as a problem, it may help to treat it as useful information. The year seems to favor a practical rhythm: work hard when the moment is right, then step back before you become scattered.\n\nOne gentle habit to try is building small pauses into your day before you feel depleted. A short walk, a screen break, or a calmer evening routine can help the year’s active tone stay sustainable."
    }
   },
   "months": [
    {
-    "headline": "Easy ignition",
-    "body": "February feels familiar enough to settle into quickly, but it may not offer a lot of brand-new stimulation. Because the month carries an unexpected-turn quality, it can help to stay flexible with plans and keep a little room for surprises. The overall feeling is light, responsive, and easier when you don’t over-script it."
+    "headline": "February: easy ignition",
+    "body": "This month can feel familiar and comfortable, with little effort needed to get moving. Unexpected turns may appear, though, so it helps to stay open rather than overly fixed on one plan."
    },
    {
-    "headline": "Warm friction",
-    "body": "March keeps the same comfortable tone, but with a bit more edge in the air. Small misunderstandings or minor resistance may appear, so it helps to read between the lines and avoid assuming everyone is already on the same page. This month works best when you keep your tone steady and your expectations simple."
+    "headline": "March: first sparks",
+    "body": "The energy here still feels close to your own rhythm, but a bit more friction may enter daily life. Small disagreements or timing snags can be useful if they help you clarify what really matters."
    },
    {
-    "headline": "Quiet output",
-    "body": "April begins a stretch where your energy may go outward more naturally, through expression, production, or giving. That can feel satisfying, but it can also take more out of you than you first expect. The month favors doing one thing well rather than scattering your attention across too many outlets."
+    "headline": "April: words in motion",
+    "body": "This is a month for expression, output, and giving more of yourself to what you care about. Because that can take energy, it may feel best to choose where your effort goes instead of scattering it."
    },
    {
-    "headline": "Fresh ground",
-    "body": "May can feel like new terrain, especially in the way you share, create, or contribute. There’s a sense of something forming, even if it’s not fully visible yet. If you plant one clear intention here, it may be easier to see it take shape later."
+    "headline": "May: something takes shape",
+    "body": "This month favors beginnings that are still forming under the surface. You may feel the urge to try something fresh, and a new setting or first attempt can be especially encouraging if you keep it light."
    },
    {
-    "headline": "Steering the wheel",
-    "body": "June is one of the stronger months for initiative, results, and practical gain. The mood supports making decisions, asking for what you want, and moving a project forward with confidence. Just watch the temptation to push beyond what the situation can realistically hold."
+    "headline": "June: take the lead",
+    "body": "The flow becomes more supportive of ownership, results, and practical wins. A bit of magnetism is in the air, so it can be a good time to present your ideas clearly, while still keeping your ambition measured."
    },
    {
-    "headline": "Stored power",
-    "body": "July keeps the same active theme, but in a quieter, more contained form. This is a good month for consolidating, checking what has already been built, and holding your ground without forcing extra movement. What looks still on the surface may still be gathering strength underneath."
+    "headline": "July: keep it contained",
+    "body": "This month looks quieter and more inward, even while the year’s productive tone remains present. Waiting, pausing, and holding your cards a little closer may work better than pushing for visible movement."
    },
    {
-    "headline": "A careful pivot",
-    "body": "August brings more pressure and responsibility, but also a chance to become sturdier through the way you handle it. Because the month connects closely with your own base, relationships and routines may feel especially vivid or consequential. Slow, accurate responses will probably serve you better than fast ones."
+    "headline": "August: careful adjustments",
+    "body": "Responsibility may rise here, and the pace can feel more demanding than before. One part of life may also echo an important personal tie, so listening carefully before reacting can save you from reading the room too fast."
    },
    {
-    "headline": "Measured authority",
-    "body": "September continues the serious tone, with a sense that structure, expectation, and responsibility are all more visible. This can be a useful month for showing reliability and for taking your role seriously without becoming rigid. The key is to keep your pace human, not mechanical."
+    "headline": "September: steady pressure",
+    "body": "This month asks for composure under pressure and clear boundaries around your time. Authority or expectations may feel stronger, but you’re likely to do best when you choose a steady pace instead of rushing to answer everything at once."
    },
    {
-    "headline": "Help arrives",
-    "body": "October feels more supportive, as if guidance, rest, or useful information comes more easily. It may be a good time to ask questions, accept assistance, or let recovery happen without trying to justify it. The month rewards openness to learning from what’s already around you."
+    "headline": "October: help arrives",
+    "body": "Support, learning, and recovery feel easier to access now. Progress can come through advice, useful contacts, or simply a calmer mind, and that can make the month feel more breathable than the ones before it."
    },
    {
-    "headline": "Motion and change",
-    "body": "November brings support too, but with more movement and a stronger sense of transition. Something may shift in direction, timing, or attention, so staying adaptable can help you use the month well. If you’ve been waiting for a sign to move, this may feel like a nudge rather than a command."
+    "headline": "November: a turn in the road",
+    "body": "This month may bring movement, change, or a sudden need to adjust your direction. Because there is also a stronger push from the outside, it helps to stay flexible and treat surprise as a cue to reorient, not panic."
    },
    {
-    "headline": "Steady finish",
-    "body": "December returns to a familiar tone, with comfort and repetition more noticeable than novelty. The month may come with a few small hiccups, so keeping your plans simple can make things smoother. It’s a good time to finish what matters and leave the rest for later."
+    "headline": "December: familiar ground",
+    "body": "The tone settles back into what feels known and manageable. Small interruptions may appear, but they are more likely to call for patience than drama, and your inner life may feel especially active underneath the surface."
    },
    {
-    "headline": "Inner momentum",
-    "body": "January carries a quiet, inward quality that can help you gather yourself before the next cycle begins. The energy feels familiar and settled, with a focus on your private world rather than public display. It’s a gentle month for reflection, sorting, and deciding what you want to carry forward."
+    "headline": "January: quiet momentum",
+    "body": "The year closes with a sense of continuity rather than sharp change. You may feel more inward, reflective, and ready to keep building from what you already understand, which can make this a good time for private planning."
    }
   ],
   "action_plan": [
    {
-    "title": "February to April: warm up without overreaching",
-    "body": "Watch for early comfort mixed with small surprises, then a rise in outward effort and energy use. Try one concrete action that keeps you organized, such as setting a single priority list for the quarter and trimming anything that doesn’t clearly support it."
+    "title": "February to April: set the frame",
+    "body": "Watch for early signs of momentum that feel easy but slightly uneven, especially in plans, communication, and first attempts. Try one concrete organizing move, such as simplifying a schedule, clarifying a budget category, or defining the next step on a project."
    },
    {
-    "title": "May to July: use momentum carefully",
-    "body": "This stretch can favor creation, visibility, and practical gain, but it can also tempt you to take on too much. Choose one project to push forward, and give it a clear finish line so your energy has somewhere to land."
+    "title": "May to July: choose your fire",
+    "body": "Notice where your energy wants to expand and where it starts to thin out. Put your effort into one visible goal, and give yourself permission to pause on anything that looks bright but would ask for too much at once."
    },
    {
     "title": "August to October: steady the pace",
-    "body": "Expect more responsibility first, then a gradual easing into support and recovery. A useful move here is to review commitments, keep only what still fits, and make one request for help, feedback, or guidance where it would genuinely lighten the load."
+    "body": "Track the places where responsibility grows and where support starts to appear again. A useful action here is to ask one clear question, request feedback, or revise a process so the pressure feels more manageable."
    },
    {
-    "title": "November to January: adapt and consolidate",
-    "body": "The final stretch brings movement, then a quieter return to your inner world. Use it to close loops, note what changed, and create a simple personal review so you enter the next year with fewer loose ends."
+    "title": "November to January: reset and store",
+    "body": "Look for shifts, movement, and quieter inner processing as the year winds down. Use this stretch to review what worked, keep what feels solid, and carry one or two refined habits into the next cycle."
    }
   ],
-  "closing": "2027 doesn’t ask you to become someone else, Jordan. It asks you to work with timing, to let your own energy lead without letting it spill everywhere, and to trust that steady progress can still be meaningful. If you keep things clear, paced, and honest, this year can leave you with more confidence in your own rhythm."
- },
- "mia": {
-  "year": 2027,
-  "title": "2027, your steadying year",
-  "subtitle": "Pressure into shape, then room to breathe",
-  "overview": "2027 feels like a year that asks you to grow stronger without rushing your own pace. For Mia, the energy is not soft, but it is useful: it can sharpen judgment, tighten focus, and help you notice which efforts are worth carrying. Because your Five Elements lean heavily toward Wood, with Metal as your core tone, this year may feel less like drifting and more like being asked to choose, refine, and commit.\n\nThe first half of the year brings more outward motion: expression, output, and visible effort tend to rise, so it can be a good time to show your work, test ideas, and let your presence be seen. Midyear asks for steadier shoulders and a cleaner rhythm, while late summer and early autumn feel more supportive, as if help, learning, and recovery arrive more naturally. By the end of the year, the tone settles into something familiar and manageable, which can be a good moment to tidy loose ends and prepare the next step without forcing it.",
-  "chapters": {
-   "wealth": {
-    "heading": "Wealth: earn, shape, and keep",
-    "body": "This year’s money tone looks more active than passive. It favors shaping results through your own effort, so income, spending, and value all feel tied to what you produce, present, or build. Because your chart already carries plenty of Wood energy, you may notice a strong urge to act on ideas quickly; the useful move is to separate “good opportunity” from “too many open loops.”\n\nIn daily life, this can look like a month where side projects, commissions, or practical tasks bring more visibility, but also more small costs in time and energy. Mia, it may help to notice when you are saying yes because something is promising versus because it is simply moving fast. A few rounds of checking numbers, deadlines, and effort can save you from spreading yourself too thin.\n\nStart small: make one simple list of what brings value, what drains value, and what is merely noise. Then choose one place where you can tighten the process, not the dream."
-   },
-   "love": {
-    "heading": "Love: clearer signals, less guessing",
-    "body": "Relationships in 2027 seem to work best when you keep things direct and real. This is not a year for vague hints or half-finished conversations; it favors showing up clearly, saying what you mean, and noticing who responds with steadiness. With your Steel and Harvest type, there can be a natural preference for sincerity and substance, so shallow connections may feel less satisfying than usual.\n\nYou might find that some people appreciate your stronger edge, while others need a softer entry point. Everyday moments could include deciding whether to answer quickly or give yourself a beat before replying, especially when feelings are involved. The year supports honest warmth more than dramatic gestures, and it may be easier to build trust through consistent small acts than through big declarations.\n\nTry one simple habit: ask a cleaner question, name one feeling plainly, or offer one thoughtful follow-through. That kind of clarity tends to travel well this year."
-   },
-   "career": {
-    "heading": "Career: pressure that can polish",
-    "body": "Work carries a disciplined, shaping quality this year. Responsibility may feel a little heavier at times, but that same weight can help you become sharper and more reliable if you choose your pace carefully. This is a strong year for refining your standards, showing competence, and letting your results speak without overextending.\n\nIn practice, you may meet moments where deadlines, expectations, or leadership demands ask for calm organization rather than speed. The best scenes this year are often not flashy: finishing what was left half-done, cleaning up a process, or handling a task others avoid. If you are tempted to push too hard, it may help to remember that steady pressure is more useful than force.\n\nA good first step is to choose one project and define what “done well” actually means. Then work backward from that standard instead of trying to carry everything at once."
-   },
-   "study": {
-    "heading": "Study: learn by refining",
-    "body": "Learning this year works best when it has a practical edge. You may absorb more when you are editing, comparing, revising, or turning raw information into something usable. Since your chart has a strong drive to produce and act, the risk is not lack of energy but scattering it across too many topics at once.\n\nA typical scene might be starting several resources, then realizing you learn best when you commit to one thread and return to it repeatedly. The year supports learning that deepens skill rather than collecting trivia. If something feels unclear at first, it may become much easier once you organize it into a simple structure.\n\nBegin with one topic you truly want to understand, and make a short repeatable study rhythm around it. A small notebook, a weekly summary, or a teach-back to yourself can make your learning much stickier."
-   },
-   "health": {
-    "heading": "Body and mind: keep the pace humane",
-    "body": "The rhythm of the year asks for balance between effort and recovery. Because the energy can be demanding, you may feel best when you avoid long stretches of overcommitment and instead build in pauses that let your system catch up. This is less about fragility and more about pacing: the year rewards a body and mind that are given time to reset.\n\nIn everyday terms, this could show up as feeling great when your schedule is clear, then suddenly noticing fatigue when too many obligations stack up. Late summer and early autumn look especially supportive for restoring your sense of ease, while the busier spring and early summer may call for more deliberate rest between tasks. Small routines matter more than grand resolutions here.\n\nTry protecting one simple anchor: a regular meal window, a short walk, or a quiet end-of-day ritual. When your rhythm is steady, your judgment tends to stay steadier too."
-   }
-  },
-  "months": [
-   {
-    "headline": "Fresh start, sharp edges",
-    "body": "The month opens with a reset feeling, and movement may come quickly. Because the energy is in a more productive, outward mode, you may find yourself speaking up, making things, or giving more than usual. If a situation shifts suddenly, it can help to treat it as a turning point rather than a problem."
-   },
-   {
-    "headline": "Small snags, real momentum",
-    "body": "This month still favors expression and output, but a few minor hiccups can ask for patience. You may do well by checking details twice before sending, posting, or promising. The good news is that the energy keeps moving, so small friction does not have to stop the larger flow."
-   },
-   {
-    "headline": "Quiet inner rise",
-    "body": "A more inward, incubating tone arrives here, which can support focus behind the scenes. It is a good month for building something before showing it, especially if you prefer a cleaner first draft. Let your plans breathe a little before you lock them in."
-   },
-   {
-    "headline": "A door opens wide",
-    "body": "This month brings a birth-like surge: initiative, results, and visibility can all feel easier to access. The energy favors making moves, but a surprising twist may change the shape of what you expected. If something fits naturally, it is worth exploring without forcing the rest."
-   },
-   {
-    "headline": "Pressure with purpose",
-    "body": "Responsibility becomes more noticeable now, and the pace may feel firmer than earlier months. That can be useful if you need structure, but it also asks you not to overpromise. A measured rhythm will likely serve you better than trying to solve everything in one sweep."
-   },
-   {
-    "headline": "Momentum under strain",
-    "body": "This is a month where things can move fast while feeling a little tense at the same time. A wildcard quality makes the terrain less predictable, so flexibility matters more than control. If plans shift, you may do best by adjusting the route instead of defending the original shape."
-   },
-   {
-    "headline": "Help comes in",
-    "body": "Supportive energy returns, and this can feel like a welcome refill. Learning, guidance, and recovery are easier to access, especially if you let someone else share the load. Fresh ground makes this a good time to begin again with less pressure than before."
-   },
-   {
-    "headline": "Warmth and pull",
-    "body": "This month has a fuller, more magnetic quality, which can make people, ideas, and opportunities feel closer. It is a favorable time to receive help or deepen a connection through genuine interest. If you stay open, you may notice that useful things find you more easily than expected."
-   },
-   {
-    "headline": "Settling into ease",
-    "body": "The tempo softens now, and familiar routines may feel especially comforting. Because the energy is less hungry for novelty, this can be a good month for polishing what already works. Waiting a little before changing direction may reveal what is actually needed."
-   },
-   {
-    "headline": "Misreads and patience",
-    "body": "The mood stays calm, but communication can be slightly more prone to being taken the wrong way. That makes this a good time to clarify rather than assume. A slower reply or a cleaner explanation can prevent a small misunderstanding from growing legs."
-   },
-   {
-    "headline": "Tidy, then direct",
-    "body": "The year begins to close with a productive but less forceful tone, which suits cleanup and consolidation. You may feel more capable of giving clear direction without pushing too hard. This is a useful month for deciding what deserves your full attention next."
-   },
-   {
-    "headline": "Quiet storage, clear step",
-    "body": "The final month holds things in a quiet, stored-up way, but it also carries a sense of advancement. It may be a good time to prepare rather than announce, and to recognize that small, deliberate progress still counts. What you save, shape, and refine now can travel well into the next cycle."
-   }
-  ],
-  "action_plan": [
-   {
-    "title": "February to April: channel the output",
-    "body": "Watch for a rise in expression, ideas, and visible effort, especially when you feel pulled to do more than one thing at once. Pick one project to present, publish, or finish, and use a simple checklist so your energy goes into completion instead of scattered motion."
-   },
-   {
-    "title": "May to July: pace the pressure",
-    "body": "Notice where responsibility, deadlines, or sudden turns ask for steadier hands. Choose one habit that slows your pace slightly—like a daily planning window or a hard stop time—so you can stay effective without burning through your reserves."
-   },
-   {
-    "title": "August to October: receive and refine",
-    "body": "Look for help, learning, and easier recovery in this stretch, then use it well. Ask one good question, accept one useful favor, and spend time improving something you already started rather than chasing a new distraction."
-   },
-   {
-    "title": "November to January: consolidate quietly",
-    "body": "The closing stretch favors familiar rhythms, clearer communication, and low-drama progress. Make a short list of what you want to carry forward, what can be left behind, and one next-step move you can prepare without announcing too early."
-   }
-  ],
-  "closing": "Mia, 2027 does not ask you to become louder than you are. It asks you to become more deliberate, more selective, and a little more trusting of your own timing. If you let the year shape you without rushing it, the pressure can turn into strength rather than strain."
+  "closing": "2027 does not need to be loud to be meaningful. If you let the year’s Fire energy work as a tool rather than a demand, you can shape real progress while still protecting your pace. Jordan, the clearest wins here may come from calm focus, timely action, and knowing when enough is enough."
  },
  "riley": {
   "year": 2027,
-  "title": "Riley's 2027 Flow",
-  "subtitle": "A year of giving, refining, and growing into steadier strength",
-  "overview": "2027 feels like a year where your own energy gets asked to do a lot of work. For a Wood Day Master, especially one with an Oak-like, rooted pattern, Fire can act like a bright output: it helps you express, create, and give, but it can also leave you feeling spent if you keep pouring without pause. Because your chart already leans strongly toward Wood, this year may feel less like starting from zero and more like learning how to direct a full, living tree with care.\n\nThe overall rhythm suggests movement between receiving and giving. Early in the year, support and recovery are easier to find; midyear, your output and visibility rise; late summer brings more drive around money, agency, and results; and autumn asks for steadier pace, responsibility, and better boundaries. Riley, the useful question this year is not whether you can do more, but where your effort actually creates value and where it simply drains the soil.",
+  "title": "2027: A Year of Steady Fire",
+  "subtitle": "Riley, a year of giving shape to your own energy and learning when to pace it",
+  "overview": "2027 feels like a year where your own energy is asked to do more than simply stay rooted. As a Wood Day Master, you naturally grow, support, and extend; with Wood strong in your chart and Fire absent, Fire years can feel like a call to express, produce, and share more openly. For an Oak-type, Rooted chart, that often brings a sense of purpose, but it can also make the year feel busier than it looks on the surface.\n\nThe good news is that 2027 doesn’t read like a year of random pressure. It looks more like a cycle with clear phases: early months that bring support and replenishment, middle months that ask you to create and deliver, and later months that push you toward responsibility, structure, and quieter confidence. Riley, if you treat this as a year for rhythm rather than speed, you may find it easier to keep your energy useful instead of scattered.\n\nBecause your chart has a strong Wood base and some Earth and Water support, you may do best when you give your efforts a real shape: one project at a time, one promise at a time, one clear finish line at a time. The year’s broader tone suggests progress through steady output, not through forcing every door open. That can make 2027 a surprisingly practical year for turning inner strength into visible results.",
   "chapters": {
    "wealth": {
-    "heading": "Wealth: build with a wider base",
-    "body": "This year’s money theme leans toward active management rather than passive waiting. Because the year’s Fire energy is something you naturally feed, financial momentum may come through your ideas, your work output, or the way you package what you know. The best results are likely to come when you treat resources as something to direct carefully, not something to chase in a hurry.\n\nYou may notice moments when a practical opportunity appears just after you’ve finished something else, or when a side project starts to look more useful than it first seemed. Late summer especially can bring a strong urge to push for results, negotiate terms, or take charge of a budget. That can be productive, but it’s also a time when enthusiasm can outrun detail.\n\nStart small by keeping one simple money check-in each week: what came in, what went out, and what felt worth it. If something looks promising, give it one extra review before committing, and let patience do part of the work."
+    "heading": "Money through momentum",
+    "body": "In 2027, money and material matters look closely tied to how actively you direct your energy. Because the year encourages expression and production, your best results may come from turning effort into something tangible: a service, a finished project, a clear deliverable, or a practical skill that others can recognize. Since your chart is rooted and Wood-heavy, it may be easier to grow value gradually than to chase quick gains.\n\nIn daily life, this can show up as a stronger pull to organize your spending, price your time more clearly, or notice which efforts quietly drain you without returning much in kind. The middle of the year especially may feel like a place where momentum matters, but overextension can blur judgment. You may find that careful tracking, simple budgets, and saying yes only to what has a clear purpose feel more supportive than trying to do everything at once.\n\nA good starting move is to choose one money habit to make visible in 2027: a weekly review, a small savings rule, or a cleaner way to separate necessary costs from impulse spending. If you keep the system simple, your energy is more likely to stay productive instead of leaking away through scattered effort."
    },
    "love": {
-    "heading": "Love: warmth with room to breathe",
-    "body": "Relationship energy this year tends to feel lively, visible, and a little more expressive than usual. Since Fire is something you help generate, you may be the one who brings the spark, initiates plans, or keeps conversations going. That can make you magnetic, but it can also mean you are doing more emotional labor than you realize.\n\nIn everyday life, this may show up as being the person who remembers, coordinates, or smooths over awkward moments. Some months feel easy and familiar, which is comforting, while others may bring a sense that people are reading you a little differently than intended. Around November, connection may deepen through shared effort or a conversation that feels more serious than expected.\n\nA good practice is to notice who meets your warmth halfway. Try saying one clear thing instead of several hints, and let the other person respond in their own time. For Riley, the healthiest closeness this year is likely the kind that doesn’t require you to keep the whole fire alive alone."
+    "heading": "Connection that needs breathing room",
+    "body": "Relationships in 2027 may feel warm, active, and a little more demanding of your time. The year’s Fire tone can make you more expressive and more visible, which can be lovely for closeness, but it can also mean that people notice your energy more directly. For you, that may bring a chance to be more open about what you want and what you can realistically offer.\n\nIn everyday moments, this could look like more invitations, more messaging, or more situations where your presence seems to matter. Early in the year, support may feel easy to receive; later, you may notice that the people around you respond well when you are clear rather than overextended. If a connection feels especially active around the months that bring movement and change, it may help to keep plans simple and expectations spoken aloud.\n\nA useful place to begin is with honest pacing: reply when you can, show up where you truly want to be, and don’t feel you need to fill every silence. Warmth lands best in 2027 when it has room to breathe, and that can make your connections feel more genuine rather than more crowded."
    },
    "career": {
-    "heading": "Career: show your work, then refine it",
-    "body": "Career-wise, 2027 supports output, visibility, and steady advancement. The year’s energy encourages you to make things, present things, and be recognized for what you contribute. Because your chart is already strongly Wood, this can feel like a season where your natural growth wants an outlet, but it works best when you shape it into something concrete.\n\nYou may find that June and July bring more responsibility, more eyes on your work, or a stronger sense that others are relying on you. That can be a good sign, yet it also means boundaries matter more than usual. In August and September, the focus shifts toward agency and results, and a sudden change of direction may feel more natural than you expected.\n\nA useful approach is to keep one visible project, one private draft, and one ongoing task moving at the same time. That way you can be seen without feeling exposed, and you can make progress without scattering your energy. Small, consistent proof tends to speak louder than dramatic moves."
+    "heading": "Work that asks for structure",
+    "body": "Career-wise, 2027 looks like a year where your output can become more visible. The Fire energy supports expression, leadership, and making things happen, while your strong Wood nature helps you keep growing into responsibility. That combination can be excellent for taking initiative, but it also means you may need to define your limits carefully so that your effort stays sustainable.\n\nIn real life, this may show up as more chances to present, organize, guide, or take charge of something that has been waiting for shape. Some months may feel especially active, with movement, change, or a shift in direction that asks you to adapt quickly. Later in the year, the tone turns more serious and focused, which can support work that needs patience, reliability, and a calm hand.\n\nA smart first step is to identify one responsibility you want to do well in 2027 and then build a simple system around it: a checklist, a weekly review, or a clearer boundary around your time. The year favors steady excellence more than dramatic leaps, so progress may come from consistency you can actually keep."
    },
    "study": {
-    "heading": "Study: learn through use, not just theory",
-    "body": "This year favors learning that becomes something you can apply. Early months are especially supportive for receiving guidance, recovering momentum, and letting useful ideas settle in. Later, when your own output rises, you may learn fastest by teaching, summarizing, or turning knowledge into something practical.\n\nIn daily life, this might look like a class, book, or skill making more sense once you start using it in real situations. Some parts of the year feel like waiting, which can be frustrating if you want quick results, but that slower pace may actually help the material sink in. The autumn months may ask for more discipline, yet they can also make your thinking sharper and more focused.\n\nTry learning in short cycles: read, test, review, repeat. Keep notes in a simple format you can return to later, and don’t worry if every insight doesn’t arrive at once. Your rooted style tends to absorb best when the lesson has a place to land."
+    "heading": "Learning that becomes usable",
+    "body": "Study and learning in 2027 may work best when they connect directly to something you can apply. The early months look especially supportive for receiving help, guidance, and fresh input, so this is a good time to absorb, ask questions, and let someone else’s experience make your own path clearer. With Water and Earth both present in your chart, you may learn well when knowledge feels grounded and practical.\n\nYou might notice that you retain more when the material has a direct use: a tool, a method, a language habit, a workflow, or a skill you can practice right away. Midyear may bring more outward energy and less patience for endless theory, so short learning cycles may suit you better than long, abstract ones. The later part of the year may ask for more discipline, which can actually help you consolidate what you’ve picked up.\n\nA good experiment is to keep your learning small and concrete: one course, one book, one skill, one note-taking method. If you let knowledge turn into action quickly, 2027 can feel less like scattered input and more like real growth."
    },
    "health": {
-    "heading": "Body and mind: protect your rhythm",
-    "body": "The main theme here is not fragility, but distribution of energy. With so much of your chart already leaning toward growth and structure, and with Fire asking you to produce, speak, and give, you may do best when you treat rest as part of the plan rather than something earned only after everything else is done. Quiet periods this year are not empty; they are where you restore your inner reserve.\n\nIn ordinary life, you may notice that busy stretches make you more mentally bright but also more likely to feel overstretched if you skip pauses. The months around autumn can feel more serious or demanding, so a slower pace, fewer commitments, and cleaner transitions between work and personal time may help you stay steady. Toward the end of the year, recovery and renewal become easier again.\n\nA simple practice is to build a small daily reset: water, a walk, a stretch, or ten minutes without screens. Keep it modest and repeatable, because consistency will likely help more than intensity. Your system may prefer regular tending over heroic effort."
+    "heading": "Keeping your rhythm gentle",
+    "body": "For your body and mind, 2027 suggests paying attention to rhythm, not just output. Because the year asks Wood to generate more Fire, you may feel more active, more mentally on, and more likely to spend energy quickly if you don’t create pauses on purpose. That doesn’t point to anything dramatic; it simply suggests that your system may prefer regular restoration over long stretches of pushing.\n\nIn daily life, this can look like feeling best when your days have a clear beginning, middle, and end. On busier weeks, you may notice that your focus improves when you build in quiet transitions: a walk after work, a slower morning, a screen break, or a small ritual that tells your mind it can unclench. The later months may ask more from your sense of duty, so recovery habits become especially helpful then.\n\nA simple starting point is to protect one repeatable reset in your week, even if it is short. For a rooted Oak type like you, small routines often work better than dramatic changes, and they can keep your energy steady enough to enjoy the year instead of merely managing it."
    }
   },
   "months": [
    {
-    "headline": "Fresh ground",
-    "body": "February feels like support arriving before you even ask for it. The energy favors learning, recovery, and getting back into motion with less strain than expected. It’s a good month to accept help without over-explaining why you need it."
+    "headline": "February: the first lift",
+    "body": "This month looks like a helpful opening, with support, learning, and recovery flowing toward you. The feeling may be more about being filled up than about proving anything. If you take in guidance now, the rest of the year may feel easier to navigate."
    },
    {
-    "headline": "Magnetic momentum",
-    "body": "March can feel lively and socially open, with a sense that people are drawn toward your ideas or presence. This is a strong month for connection, introductions, and anything that benefits from a bit of charm. Let your natural warmth do the work, but don’t rush the pace."
+    "headline": "March: magnetic help",
+    "body": "March can bring a stronger sense of ease, as if the right people or information are easier to attract. You may find that your presence feels more noticeable without you having to push for it. This is a good time to ask, listen, and let useful support come closer."
    },
    {
-    "headline": "Easy familiarity",
-    "body": "April settles into a comfortable, recognizable rhythm. Things may feel smooth, though not especially novel, so it’s a good time to maintain rather than force change. If you’ve been waiting for the right moment to organize something, this month can support quiet progress."
+    "headline": "April: familiar ground",
+    "body": "April may feel comfortable, steady, and a little less surprising. The pace is likely to be gentler, which can be useful for settling into routines. If you want novelty, you may need to create it yourself rather than wait for it to appear."
    },
    {
-    "headline": "Read carefully",
-    "body": "May can bring mixed signals or moments that seem simpler than they really are. Familiar settings may hide small misunderstandings, so a second look is worthwhile. Slowing your response a little can save you from having to untangle avoidable confusion later."
+    "headline": "May: read carefully",
+    "body": "May keeps a familiar tone, but it may also bring moments that are easy to misread. Small assumptions could cause more trouble than the situation itself, so it helps to slow down before reacting. Clear questions may save you time later."
    },
    {
-    "headline": "Command mode",
-    "body": "June turns up your output and your sense of responsibility. You may feel more visible, more needed, or more capable of taking the lead in practical matters. Use that strength, but leave enough room to finish what you start."
+    "headline": "June: time to direct",
+    "body": "June shifts into a more active, expressive rhythm, and your effort may start to carry visible weight. This is a good month for leading, producing, and making decisions with confidence. Just remember that strong output works best when you leave room to recover afterward."
    },
    {
-    "headline": "Quiet progress",
-    "body": "July is less about noise and more about stored strength becoming useful. Advancement is possible, especially if you’ve already been preparing something behind the scenes. Keep your pace steady; this is the kind of month where consistency compounds."
+    "headline": "July: visible progress",
+    "body": "July can feel like a month of quiet consolidation, where what you’ve been building begins to settle into place. Progress may not be loud, but it can be meaningful. If you keep showing up, others may notice your consistency more than your speed."
    },
    {
-    "headline": "Shift in motion",
-    "body": "August brings a noticeable turn, and movement may come faster than you planned. Because this month carries a strong push to relocate, reorient, or change direction, it’s wise to stay flexible. If plans move, treat it as information rather than interruption."
+    "headline": "August: shift in motion",
+    "body": "August brings movement and a stronger push toward action, with a sense that something wants to change direction. It may be easier to take charge of money or outcomes, but a clash-like tension in the month can make things feel more restless. Flexibility will likely serve you better than forcing a single plan."
    },
    {
-    "headline": "Results with edges",
-    "body": "September supports initiative, resourcefulness, and a stronger grip on outcomes. At the same time, small snags can appear, so precision matters more than speed. If you want something to work, give it one more check before you call it done."
+    "headline": "September: push with care",
+    "body": "September still supports initiative, ambition, and practical results, but the atmosphere is a little more delicate. Small delays or small snags may appear, so it helps to keep your expectations clean and your timing realistic. You may do especially well if you focus on what can be finished neatly."
    },
    {
-    "headline": "Inner pressure",
-    "body": "October feels more demanding, but in a way that can build sturdiness. Responsibilities may feel heavier, yet the month rewards a calmer tempo and a clearer sense of priorities. You don’t need to do everything at once to make real progress."
+    "headline": "October: steady pressure",
+    "body": "October brings a more serious tone, with responsibility and pressure asking for patience. The work may feel quieter on the outside but more demanding on the inside. If you choose your pace carefully, the month can make you stronger rather than simply busier."
    },
    {
-    "headline": "Deepening bonds",
-    "body": "November can bring a sense of things coming together, especially through people, commitments, or shared purpose. Unexpected turns are possible, but they may open a more meaningful path than the one you first expected. Stay receptive to the shape a conversation wants to take."
+    "headline": "November: a new opening",
+    "body": "November can feel like something is beginning to form, even if it is still small or uncertain. There may be an unexpected turn, and because the month is more likely to bring people or matters together, support can arrive through connection. Stay open to what comes in from the side rather than only from the front."
    },
    {
-    "headline": "Renewed ease",
-    "body": "December brings a softer, more replenishing tone. Support, learning, and recovery feel easier to access again, although a little friction may still ask for patience. If you keep your plans simple, the month can restore more than it demands."
+    "headline": "December: support returns",
+    "body": "December looks like a return of help, learning, and recovery after the heavier stretch before it. Even if friction shows up, it may be easier to sort things out once you slow the pace. This is a good month for restoring your inner balance and simplifying what you carry."
    },
    {
-    "headline": "Wildcard start",
-    "body": "January carries a less predictable feel, but not necessarily a difficult one. It can be a month of useful surprises, fresh input, or a sudden change in perspective. Leave a little space in your schedule so new information has somewhere to land."
+    "headline": "January: quiet momentum",
+    "body": "January can bring fresh movement, but it may arrive in an unpredictable way. That makes flexibility more useful than rigid expectations. If you stay curious and keep your plans light, you may be able to turn surprise into useful momentum."
    }
   ],
   "action_plan": [
    {
-    "title": "February to April: receive before you push",
-    "body": "Watch for help, useful feedback, and calmer momentum. Try one concrete habit that lets you absorb rather than produce all the time, such as a weekly review or a study block with no multitasking."
+    "title": "February to April: receive and sort",
+    "body": "Watch for help, learning, and easier access to useful people or ideas. Try one simple practice of sorting what you hear into three groups: useful now, useful later, and not for you."
    },
    {
-    "title": "May to July: protect your output",
-    "body": "Notice where your energy starts spilling into overwork or mixed messages. Pick one project to finish cleanly, and build in a pause after each major push so your effort stays effective."
+    "title": "May to July: create with limits",
+    "body": "Notice where your energy starts turning into output, and where it begins to leak. Pick one project to finish cleanly, and protect one recovery block after each active stretch."
    },
    {
-    "title": "August to October: steer with precision",
-    "body": "Expect movement, stronger ambition, and a more serious pace. Before making a big commitment, write down the goal, the cost, and one thing you will not do, so your drive stays focused."
+    "title": "August to October: steer with care",
+    "body": "Expect stronger movement, more pressure, and a greater need to make clear choices. Use a short pause before major decisions, and write down the one outcome you actually want before you act."
    },
    {
-    "title": "November to January: let renewal do its job",
-    "body": "Watch for deeper connection, then a return of support and recovery. Choose one ritual that helps you reset at the end of each week, and keep it steady through the new year."
+    "title": "November to January: consolidate gently",
+    "body": "Look for moments when support returns or a new opening starts to form. Build one quiet review habit, so you can keep what worked and release what no longer fits."
    }
   ],
-  "closing": "Riley, 2027 looks less like a year of waiting and more like a year of learning how to aim your own strength. When you give, give with intention; when you rest, rest without guilt. The more honestly you match your effort to the season, the easier it becomes to grow without burning out."
+  "closing": "Riley, 2027 looks like a year that rewards your ability to grow without losing your shape. The more you treat your energy as something to guide rather than spend carelessly, the more the year may feel workable and even quietly rewarding. If you move with patience, your rooted strength can become a real advantage."
  },
  "sam": {
   "year": 2027,
-  "title": "2027: A Year of Steady Momentum",
-  "subtitle": "Warmth arrives, then asks you to shape it with care",
-  "overview": "2027 feels like a year that comes in gently and then asks for a little more structure from you, Sam. The year’s warmth can bring support, learning, and recovery, which fits your Mountain · Order style: steady, organized, and good at holding things together. Because your Five Elements are evenly spread, the year may feel less like a dramatic reinvention and more like a timely refill of energy that helps you use what you already know with more confidence.\n\nThe first half of the year leans toward action, initiative, and visible progress, especially when you keep your goals clear and your pace realistic. Later in the year, the rhythm becomes more familiar and reflective, with room to produce, share, and quietly reset. The biggest theme is balance: when the year gives you momentum, use it; when it asks for patience, let that be part of the plan rather than a delay.",
+  "title": "2027: A steadier rhythm",
+  "subtitle": "A year of support, practice, and well-timed effort for Sam",
+  "overview": "2027 feels like a year that tends to fill you back up. For Sam, the Fire of 2027 meets an Earth Day Master in a way that brings in support, learning, and recovery rather than pressure alone. Because your Five Elements are spread quite evenly, this year may feel less like a dramatic overhaul and more like a series of useful adjustments that help you work with what is already there.\n\nYour Mountain · Order type points to a style that likes structure, reliability, and a clear sense of direction. In 2027, that preference can be a strength: when the pace picks up, simple routines and clean priorities may help you keep your footing. The year also has a wildcard feeling, so a little flexibility will likely go a long way. Sam, this is a good year for noticing what restores you, what wastes your energy, and where steady effort brings the most return.\n\nThe rhythm of 2027 seems to move in waves: early months invite initiative, midyear asks for adjustment, late summer settles into familiarity, and the final months bring another push. Rather than trying to force everything at once, you may find it easier to work in seasons, letting each stretch of the year do a different kind of job for you.",
   "chapters": {
    "wealth": {
-    "heading": "Money grows best with a plan",
-    "body": "This year’s money story looks more active than passive. Early on, it can be easier to take the lead, ask for what you want, and turn effort into visible results, but that same energy can also tempt you to overdo it. For someone with a Mountain · Order style, the good news is that you’re naturally suited to making budgets, priorities, and systems that keep momentum from turning messy.\n\nIn everyday life, this may show up as a strong urge to launch, negotiate, or reorganize how you earn and spend. You might notice that opportunities come faster when you act with clarity, but the details still matter a lot. A simple rule can help: before saying yes to a new expense or project, pause long enough to check whether it supports your larger plan.\n\nStart small by reviewing one financial habit at a time. Sam, if you choose one recurring cost, one income stream, and one savings or buffer goal to tidy up early in the year, you’ll probably feel more in control without needing to force anything."
+    "heading": "Money likes clear moves",
+    "body": "In 2027, money matters may respond well to your ability to take the lead. The year’s Fire energy can support action, making it a good time to organize, decide, and move with purpose rather than hesitate too long. Because your chart already carries a balanced mix, the strongest gains may come not from chasing more, but from using what you know with a little more confidence.\n\nYou may notice moments where a practical choice feels especially satisfying: setting a budget, tightening a plan, or turning an idea into something concrete. Early in the year, it may be easier to push for results; midyear may ask you to be more careful about pace and expectations. That shift can help you avoid overdoing a good thing.\n\nA useful starting point is to make one simple money system easier to follow. You could track one category more closely, review a recurring expense, or decide in advance what counts as “enough” for a project. Small structure may help your efforts feel cleaner and more rewarding."
    },
    "love": {
-    "heading": "Connection gets warmer, then quieter",
-    "body": "Your relationship life in 2027 seems to move through different temperatures rather than one single mood. Midyear especially can feel more supportive, easier to open up in, and more likely to bring helpful conversations or renewed closeness. Because your chart has a balanced spread overall, you may notice that connection feels best when it is steady and sincere rather than overly dramatic.\n\nIn daily life, this could look like easier exchanges with people who understand your pace, plus a few moments when you simply feel more seen. Later in the year, the energy becomes more familiar and less demanding, which can be comforting if you enjoy consistency. There may also be a few moments when you want to speak carefully and listen twice, especially if plans or expectations feel slightly out of sync.\n\nTry making room for one honest conversation and one low-pressure shared activity. A walk, a meal, or a simple check-in can do a lot for you this year, especially when you let the pace stay natural instead of trying to make every interaction meaningful at once."
+    "heading": "Connection with more warmth",
+    "body": "Relationships in 2027 may feel more vivid, more active, and sometimes a little less predictable. The year’s Fire can add warmth, honesty, and momentum, which may help conversations feel more alive. At the same time, your Mountain · Order style may prefer consistency, so you may do best when closeness is paired with clear boundaries and dependable habits.\n\nIn everyday life, this could show up as more invitations, more direct messages, or a stronger desire to say what you mean. Some months may feel easy and familiar, while others may bring sudden turns that ask for patience. Around midyear especially, a shift in tone or schedule may invite you to respond with calm instead of trying to control the pace.\n\nA gentle way to work with this is to keep one or two relationship rituals steady. A regular check-in, a shared meal, or a simple message of appreciation can do a lot. Let connection have room to breathe, and you may find that warmth grows more naturally than if you try to manage every detail."
    },
    "career": {
-    "heading": "Work rewards clear direction",
-    "body": "Career-wise, 2027 looks like a year where your effort can become more visible when you direct it well. Early months favor initiative, ownership, and practical wins, while the middle of the year asks for more patience and a stronger sense of sequence. Your Mountain · Order style is a real asset here, because you’re likely to do best when you can see the path, define the steps, and keep your standards calm.\n\nYou may find yourself handling more responsibility, or simply being the person others turn to when something needs organizing. That can feel satisfying, but it can also ask you to manage pace carefully so the work stays sustainable. The year’s supportive tone suggests that learning from others, refining your method, and letting help in can be just as important as pushing forward.\n\nA good first move is to map one current goal into smaller stages. If you can identify what needs to be decided now, what can wait, and what can be delegated or simplified, you’ll probably feel the year working with you instead of against you."
+    "heading": "Steady effort, visible shape",
+    "body": "Career-wise, 2027 looks like a year where effort can become visible. Early months may favor initiative, ownership, and practical results, while spring may bring more responsibility and the need to pace yourself wisely. Because the year’s Fire supports your Earth Day Master, work may feel more productive when you focus on building something solid rather than proving everything at once.\n\nYou might run into situations where others look to you for direction, or where your reliability becomes the reason a project holds together. That can feel rewarding, but it may also ask for discernment about what is truly yours to carry. Later in the year, especially when the energy softens, it may be easier to refine, polish, and finish rather than start from scratch.\n\nA good first step is to define the next practical milestone in plain language. If you can name what “done” looks like for one task, one proposal, or one work habit, you may feel less scattered. Your natural orderliness can turn into a real advantage when you give it a clear target."
    },
    "study": {
-    "heading": "Learning lands through repetition",
-    "body": "This looks like a strong year for learning that is practical, structured, and useful right away. The early part of the year supports quick uptake and active movement, while the supportive middle months can help knowledge settle in more deeply. Since your Five Elements are evenly balanced, you may not need flashy new methods; instead, consistent repetition and clear organization may be what help things click.\n\nIn real life, this could mean picking up new tools, refining a skill, or finally making sense of a topic that had felt scattered before. You may notice that you learn best when the material is tied to a project, a routine, or a real-world use. The year also seems to favor review, not just acquisition, so revisiting notes and simplifying what you know can be surprisingly effective.\n\nBegin with one topic you actually care about and one format you can stick to. A short weekly review, a tidy notebook, or a small practice session repeated often may take you further than a big burst of enthusiasm."
+    "heading": "Learning that lands",
+    "body": "Learning in 2027 may feel especially useful when it connects to real life. The year seems to support receiving, absorbing, and recovering, so study may work best when it is not forced, but integrated into your daily rhythm. With your balanced Five Elements, you may be able to learn across several styles, yet the strongest results may come from practical, grounded repetition.\n\nYou might find that a book, course, or conversation stays with you longer when it helps you solve an actual problem or see a familiar situation differently. Early-year momentum can help you begin, while midyear pressure may make you more selective about what deserves your attention. Later, quieter months may be ideal for review and consolidation.\n\nTry choosing one topic to deepen rather than scattering your energy across many. A short note system, a weekly review, or a small practice you repeat on purpose can make learning feel less abstract. In 2027, retention may improve when you give knowledge a place to live."
    },
    "health": {
-    "heading": "Protect your rhythm, not just your energy",
-    "body": "For body and mind care, 2027 seems less about warning signs and more about pacing. The year gives support, but it also includes stretches that ask for stronger boundaries, especially when you’re busy or pulled in several directions at once. As a Mountain · Order type, you may feel best when your day has a shape, your breaks are real, and your responsibilities don’t spill everywhere.\n\nIn ordinary life, this might look like feeling fine when your schedule is clear, then noticing fatigue of attention when everything gets stacked too tightly. The middle of the year especially may ask you to slow the tempo a little and let recovery be part of productivity. That doesn’t mean doing less in a dramatic way; it means being careful with overcommitment and giving yourself room to reset.\n\nTry protecting one small rhythm: a regular sleep window, a walking habit, a quiet start to the morning, or a screen-free pause in the evening. The point is not perfection. It’s giving your system enough predictability that the year’s warmth can actually reach you."
+    "heading": "Protect your rhythm",
+    "body": "For body and mind care, 2027 suggests that rhythm matters more than force. The year can give you support and recovery, but it may also bring stretches of heightened activity, so your energy may feel best when you move between effort and rest deliberately. As an Earth Day Master with a Mountain · Order type, you may do well with routines that are simple, stable, and easy to return to after busy days.\n\nIn daily life, this might look like feeling most settled when your sleep, meals, and work breaks have a recognizable pattern. Midyear could feel more intense or more changeable, so it may help to keep your schedule a little cleaner and your commitments a little more realistic. When the pace softens later, you may notice that restoration comes more easily if you haven’t been stretching yourself too thin.\n\nA practical place to begin is with one anchor habit that supports the rest of your day. A short walk, a fixed wind-down time, or a calmer first hour in the morning can make a surprising difference. The goal is not perfection; it is a rhythm your system can trust."
    }
   },
   "months": [
    {
-    "headline": "Fresh start, quick hands",
-    "body": "The year opens with a sense that you can make things happen, especially if you move first and refine later. Momentum is on your side, but it works best when you keep your eyes on the practical goal instead of the thrill of speed."
+    "headline": "A bold start",
+    "body": "February may bring a strong sense of initiative, as if you’re ready to take the lead and make things happen. With a fresh, beginning-like quality, it can be a good time to launch, pitch, or move a plan forward. Just keep an eye on overcommitting before the shape of the month settles."
    },
    {
-    "headline": "Small snags, steady gains",
-    "body": "This month still favors initiative, yet a few tiny interruptions may ask for patience. If you double-check details and keep your tone light, you can turn a bumpy moment into a useful adjustment."
+    "headline": "Refining the push",
+    "body": "March can carry the same forward drive, but with a slightly more delicate rhythm that asks for adjustment. Small bumps may show up as timing issues or mixed signals, so a little extra checking can save you effort later. If you stay flexible, the month may teach you how to push without forcing."
    },
    {
-    "headline": "Pressure with purpose",
-    "body": "Responsibility may feel a bit stronger here, but it can also sharpen your focus. A quieter, more inward pace helps you stay grounded while you handle what matters."
+    "headline": "Pressure with depth",
+    "body": "April may feel more demanding, with responsibilities or expectations asking for your attention. The pace can be useful if you choose it carefully, and the quieter inner tone of the month may help you work more thoughtfully. This is a good time to trust depth over speed."
    },
    {
-    "headline": "Stay flexible now",
-    "body": "Unexpected turns are more likely, so it helps to leave a little room in your plans. When you respond rather than react, you’re more likely to keep the month constructive."
+    "headline": "Expect the curve",
+    "body": "May brings momentum, but it may also come with turns you don’t see coming at first. You may need to adapt plans on the fly or respond to a change in direction without taking it personally. A steady response is likely to serve you better than a perfect one."
    },
    {
-    "headline": "Help comes in",
-    "body": "Support, learning, and recovery feel easier to access now, and that can be a relief after the earlier push. Because there’s a clash-like tension in the background, a change of plan or setting may end up revealing something useful."
+    "headline": "A turning point",
+    "body": "June has a fuller, more intense quality, and the friction in the month may come from a clear pivot or a clash of schedules. This can still be productive if you let it redirect you instead of resisting every shift. A change in the setup may open a better route than the one you first expected."
    },
    {
-    "headline": "Warmth at full strength",
-    "body": "This month feels generous in energy, and you may notice that people, ideas, or opportunities arrive more readily. The key is to receive what’s helpful without letting the pace run ahead of your capacity."
+    "headline": "Support returns",
+    "body": "July feels like a softer landing, with help, learning, and recovery more available again. The wildcard tone may bring surprises, but not necessarily unwelcome ones; they may simply keep the month lively. If you stay open, useful guidance can show up in unexpected forms."
    },
    {
-    "headline": "Easy stretch",
-    "body": "The tempo softens, and the month feels more breathable than demanding. Wildcard energy can bring an odd surprise or a pleasing detour, so a little openness may serve you well."
+    "headline": "Easy familiarity",
+    "body": "August may feel more settled and familiar, like slipping into a rhythm you already know. Fresh stimulation may be lighter, which can make the month feel calm but less dramatic. It’s a good time to enjoy what works without demanding too much novelty from it."
    },
    {
-    "headline": "Familiar ground",
-    "body": "Things may feel more like your own natural rhythm here, which can be comforting. Since the fresh stimulus is lighter, this is a good time to enjoy what already works and avoid forcing novelty."
+    "headline": "Tidy and magnetized",
+    "body": "September has a quiet, organizing quality that can help you clean up loose ends. At the same time, there may be a subtle pull toward people, ideas, or situations that feel especially engaging. If you choose carefully, you can use this month to simplify and attract at once."
    },
    {
-    "headline": "Quiet magnetism",
-    "body": "The month has a subtle pull, as if people and possibilities notice you more easily. A tidy message, a well-placed introduction, or a polished presentation can go further than expected."
+    "headline": "Make room to give",
+    "body": "October may bring a stronger need to express, produce, or share what you’ve been building. That can feel satisfying, though it may also ask for more energy than you expect. A patient approach helps the month become generous rather than draining."
    },
    {
-    "headline": "Creative output",
-    "body": "Your energy starts moving outward, so expression, production, and generosity can increase. Because this can be draining if you overextend, it helps to choose where your effort will truly land."
+    "headline": "Wait and clarify",
+    "body": "November can feel like a reset, with mixed signals or moments of misunderstanding asking you to slow down and re-read the situation. It’s a good month for checking details and making sure everyone is talking about the same thing. Clarity may come more easily after the first pass."
    },
    {
-    "headline": "Reset the lens",
-    "body": "This is a good month to notice where you may be misunderstanding a person or situation. Slowing down your first interpretation can save you effort and help your next step feel cleaner."
+    "headline": "Leadership returns",
+    "body": "December brings back a more directive feeling, with a chance to shape outcomes and move toward results. The month may support clear decisions and practical progress, as long as you avoid trying to do everything at once. A focused choice can carry more weight than a crowded plan."
    },
    {
-    "headline": "Build for next year",
-    "body": "The year closes with a strong, directive tone that supports action, results, and forward movement. If you pair ambition with restraint, you can enter the next cycle with clean momentum instead of leftover strain."
+    "headline": "Quiet growth",
+    "body": "January may feel like a period of incubation, where plans are forming beneath the surface and progress is building in a quieter way. Because the energy also points toward advancement, small but meaningful steps can start to connect into something larger. It’s a good month to prepare the ground and let momentum gather naturally."
    }
   ],
   "action_plan": [
    {
-    "title": "February to April: channel the push",
-    "body": "Watch for fast starts, stronger initiative, and a tendency to say yes too quickly. Try choosing one priority, one budget line, or one work target to advance deliberately so your energy has a clear place to land."
+    "title": "February to April: choose the target",
+    "body": "Watch for the early-year push to take charge, then the spring shift into more pressure and depth. Pick one project, one money habit, or one work goal that benefits from clear direction, and give it a simple structure you can actually keep."
    },
    {
-    "title": "May to July: let support in",
-    "body": "Notice where responsibility rises, then where help or recovery becomes more available. A useful action here is to simplify one complicated commitment and accept one form of support you would normally try to handle alone."
+    "title": "May to July: adapt without losing shape",
+    "body": "Notice where sudden turns or friction ask you to change course, especially around June and July. Keep one backup option ready, and practice responding with a short pause before deciding; that small gap may help you stay composed and effective."
    },
    {
-    "title": "August to October: refine and express",
-    "body": "This stretch favors familiar routines, then outward expression and production. Keep an eye on whether you’re creating from fullness or from pressure, and choose one project to finish rather than scattering effort across too many."
+    "title": "August to October: simplify and express",
+    "body": "Track where the pace becomes familiar, then where your energy wants to produce, share, or give more. Use the calmer stretch to tidy your systems, and then choose one place where you can put your effort into something visible and useful."
    },
    {
-    "title": "November to January: close cleanly",
-    "body": "Look for moments when messages can be misread and when your energy wants a reset before the next cycle begins. A good move is to review your plans, finish one lingering task, and set up a simple structure for the year ahead."
+    "title": "November to January: clarify and prepare",
+    "body": "Look for mixed signals in November, then a more directive, forward-moving tone in December and January. Double-check assumptions, then spend this period preparing the next step rather than rushing it; a clean setup will likely matter more than a fast start."
    }
   ],
-  "closing": "2027 doesn’t ask you to become someone else, Sam. It asks you to use your natural steadiness with a little more warmth, flexibility, and trust in timing. If you let the active months move you and the quieter months restore you, the year can feel less like a test and more like a well-paced conversation with yourself."
+  "closing": "Sam, 2027 looks like a year that rewards clear rhythm, practical courage, and a willingness to let support in. You don’t need to force every outcome; in fact, the year seems to work better when you let some things ripen while you keep your own structure steady. If you treat the year as a series of well-timed adjustments, it may feel both calmer and more fruitful."
+ },
+ "jisoo": {
+  "year": 2027,
+  "title": "2027년, 지수님의 흐름을 읽는 해",
+  "subtitle": "채우고, 펼치고, 다시 다듬는 리듬",
+  "overview": "2027년은 지수님에게 에너지가 바깥으로 많이 흘러나가기 쉬운 해예요. 중심 기운은 나무인데, 2027년의 불 기운은 그 나무를 태워 밝히는 쪽으로 작동해서, 표현·생산·베풂이 늘어나기 좋은 대신 체감상 소모도 커질 수 있어요. 지수님의 구조는 토의 비중이 높은 편이라, 바쁘게 움직이더라도 결국은 “무엇을 남길 것인가”를 정리해 주는 힘이 함께 필요해 보입니다.\n\n그래서 2027년은 한 번에 크게 밀어붙이기보다, 채워지는 구간과 쓰이는 구간을 번갈아 읽는 것이 편해요. 초반에는 도움과 회복이 들어오고, 중반에는 익숙함 속에서 속도를 조정하게 되며, 여름부터 가을로 갈수록 성과와 책임을 함께 다루는 흐름이 두드러져요. 지수님에게는 거목·성취라는 유형답게, 급한 결과보다 오래 남는 구조를 만드는 선택이 더 잘 맞는 한 해로 보입니다.",
+  "chapters": {
+   "wealth": {
+    "heading": "성과를 고르는 돈의 흐름",
+    "body": "재물 쪽은 2027년에 “내가 직접 움직여서 결과를 만드는 힘”이 살아나기 쉬워 보여요. 특히 8~9월경에는 성과나 주도권을 손에 쥐고 싶어지는 흐름이 강해져서, 돈을 쓰는 방식도 벌이는 방식도 더 적극적으로 보일 수 있습니다. 다만 지수님은 원래 토의 비중이 높아 안정감에 끌리기 쉬운데, 여기에 2027년의 불 기운이 더해지면 마음이 앞서기보다 계획이 앞서야 편해요.\n\n일상에서는 “이건 꼭 해보고 싶다”는 마음이 강해져서 지출이나 선택이 빨라지는 장면이 있을 수 있어요. 예를 들면 마음에 드는 물건, 프로젝트, 서비스에 바로 손이 가거나, 성과가 보이는 쪽으로 에너지가 쏠리기 쉬워요. 이때는 큰 결정을 서두르기보다, 한 번 더 비교하고 남는 가치를 따져보면 흐름을 잘 살릴 수 있습니다.\n\n작게 시작하려면, 2027년에는 지출과 수입을 같은 기준으로 적어 두는 습관이 도움이 돼요. 특히 8~10월경에는 “지금 필요한가, 오래 쓰일까” 두 가지 질문만 붙여도 과한 흐름을 부드럽게 조절하기 좋아요. 지수님처럼 성취 지향이 있는 분에게는, 돈을 모으는 것보다 돈의 방향을 정리하는 일이 더 큰 힘이 될 수 있어요."
+   },
+   "love": {
+    "heading": "가까움이 깊어지는 관계",
+    "body": "관계와 연애 쪽은 2027년에 말과 마음이 바깥으로 잘 드러나는 편이에요. 특히 2~3월경에는 도움을 주고받거나 자연스럽게 가까워지는 장면이 들어오기 쉬워서, 처음엔 가벼운 대화라도 금세 정이 붙는 흐름이 보입니다. 다만 지수님은 중심이 단단한 편이라, 편해지면 편해질수록 표현이 적어질 수 있으니 마음이 있다면 작은 반응을 자주 보내는 쪽이 좋아요.\n\n일상에서는 누군가와 일정이 겹치거나, 우연히 함께 움직이면서 관계가 부드럽게 이어지는 장면이 보일 수 있어요. 3월경에는 어울려 붙는 힘이 살아나서 대화의 리듬이 잘 맞을 수 있지만, 4월경에는 서로의 방향이 살짝 부딪혀 조율이 필요해 보입니다. 그럴 때는 “누가 맞다”보다 “어떻게 맞춰 갈까”로 질문을 바꾸면 훨씬 편해요.\n\n작게 시작하려면, 2027년에는 중요한 사람에게 한 달에 한 번이라도 먼저 안부를 건네 보세요. 거창한 말보다 짧은 확인이 관계를 오래 가게 만들 가능성이 커요. 지수님에게는 깊이보다 꾸준함이 더 큰 매력으로 작동할 수 있습니다."
+   },
+   "career": {
+    "heading": "밀어붙이되 조율하는 일",
+    "body": "일과 커리어에서는 2027년에 “내가 만들어 내는 결과”가 또렷해지기 쉬워요. 6~7월경에는 표현과 생산이 늘어나는 흐름이 강해서, 아이디어를 내거나 맡은 일을 밖으로 드러내는 데 힘이 실릴 수 있습니다. 다만 에너지가 많이 빠져나가는 구조이기도 해서, 많이 하는 만큼 정리와 회복이 따라와야 오래 갑니다.\n\n일상에서는 갑자기 업무가 몰리거나, 누군가의 기대를 받아서 손이 빨라지는 장면이 있을 수 있어요. 10~11월경에는 책임감과 압박이 함께 커질 수 있으니, 속도를 조금만 낮추고 우선순위를 선명하게 잡는 편이 좋아요. 지수님의 거목·성취 기운은 무작정 버티는 것보다, 어디에 힘을 쓸지 정하는 순간 더 빛나기 쉬워요.\n\n작게 시작하려면, 2027년에는 업무를 “지금 당장”, “이번 주”, “나중에” 세 칸으로 나눠 보는 습관이 유용해요. 특히 바쁜 시기에는 모든 일을 같은 무게로 들지 않는 것이 중요합니다. 6~11월 사이에는 보여 주는 일과 지키는 일을 분리해 두면 흐름이 훨씬 안정적일 거예요."
+   },
+   "study": {
+    "heading": "배움이 들어오고 쌓이는 해",
+    "body": "배움 쪽은 2027년에 초반과 후반이 특히 좋아 보여요. 2월경과 12월경에는 도움, 회복, 배움이 들어오는 기운이 살아나서, 새로 배우는 내용이 몸에 잘 붙거나 다시 정리한 지식이 선명해질 수 있습니다. 지수님은 중심이 나무라서 원래도 자라나는 힘이 있는데, 이 해에는 그 성장을 말로 풀고 형태로 남기는 연습이 중요해요.\n\n일상에서는 강의를 듣거나 자료를 모아 두는 것보다, 이해한 내용을 내 방식으로 다시 적는 순간이 더 크게 남을 수 있어요. 3월경에는 집중력이 살아나고, 10월경에는 책임감이 늘면서 공부를 단단히 붙잡아 주는 느낌이 들어요. 반대로 4~5월경에는 익숙한 방식에 머무르기 쉬우니, 같은 내용을 다른 방식으로 설명해 보는 연습이 자극이 됩니다.\n\n작게 시작하려면, 2027년에는 배우는 것과 기록하는 것을 한 세트로 두세요. 읽은 뒤 한 줄 요약, 들은 뒤 세 문장 정리처럼 아주 작게 남기는 방식이 잘 맞아요. 지수님에게는 많이 아는 것보다, 아는 것을 구조로 묶는 일이 더 큰 성취로 이어질 가능성이 큽니다."
+   },
+   "health": {
+    "heading": "리듬을 지키는 돌봄",
+    "body": "몸과 마음의 리듬은 2027년에 “쏟고, 쉬고, 다시 채우는” 순서가 중요해 보여요. 화 기운이 나무를 밀어 올리는 해라서, 의욕이 올라갈수록 생활 속 속도도 빨라지기 쉬운데, 지수님은 원래 토가 많은 편이라 규칙이 생기면 훨씬 편안해질 수 있습니다. 무리한 경고보다, 일정한 휴식과 식사, 정리된 루틴이 힘을 오래 유지하게 도와줄 거예요.\n\n일상에서는 바쁘게 움직인 뒤에 한 번에 지치기보다, 중간중간 집중이 흩어지거나 마음이 건조해지는 식으로 피로가 나타날 수 있어요. 6~9월경에는 활동량이 많아질 수 있으니, 약속과 일정을 빽빽하게 채우기보다 여백을 남기는 편이 좋아요. 12월경과 2028년 1월경에는 회복과 재정비의 감각이 돌아오기 쉬우니, 이때는 속도를 줄이는 것이 오히려 생산적일 수 있습니다.\n\n작게 시작하려면, 2027년에는 하루에 한 번 “멈춤 시간”을 정해 보세요. 10분 산책, 물 마시기, 책상 정리처럼 단순한 행동이면 충분합니다. 지수님에게는 거창한 관리보다 반복 가능한 작은 규칙이 몸과 마음을 가장 안정적으로 받쳐 줄 가능성이 커요."
+   }
+  },
+  "months": [
+   {
+    "headline": "들어오는 힘",
+    "body": "2월경에는 도움과 회복이 자연스럽게 들어오기 쉬워요. 새로 시작하는 일도 혼자 끌고 가기보다 주변의 손길을 받으면 한결 편할 수 있습니다."
+   },
+   {
+    "headline": "붙는 대화",
+    "body": "3월경에는 사람과 사람의 흐름이 잘 이어지기 좋아요. 말이 잘 통하고, 가까운 관계에서는 함께 움직일 이유가 생기기 쉽습니다."
+   },
+   {
+    "headline": "부딪혀 조정",
+    "body": "4월경에는 익숙한 흐름 속에 작은 충돌이 섞일 수 있어요. 방향을 한 번 더 맞춰 보면 오히려 관계나 일정이 또렷해질 수 있습니다."
+   },
+   {
+    "headline": "익숙한 안정",
+    "body": "5월경에는 편안함이 먼저 느껴지기 쉬워요. 다만 자극이 적을 수 있으니, 새로운 시도는 아주 작게 넣는 쪽이 좋습니다."
+   },
+   {
+    "headline": "표현이 커짐",
+    "body": "6월경에는 말, 결과, 생산이 바깥으로 드러나기 좋아요. 손이 많이 가는 만큼, 한 번에 많은 일을 벌이기보다 순서를 세우면 더 편합니다."
+   },
+   {
+    "headline": "반짝이는 명함",
+    "body": "7월경에는 사람들 앞에서 보여 주는 힘이 살아날 수 있어요. 인정받고 싶은 마음이 커지더라도, 속도를 일정하게 유지하면 흐름이 길게 갑니다."
+   },
+   {
+    "headline": "주도권 잡기",
+    "body": "8월경에는 성과를 밀어붙이기 좋은 기운이 들어와요. 선택이 빨라질 수 있으니, 중요한 건 한 번 더 비교한 뒤 움직이는 편이 좋습니다."
+   },
+   {
+    "headline": "이동과 선택",
+    "body": "9월경에는 방향을 바꾸거나 새 판을 보고 싶어질 수 있어요. 마음이 급해질수록 이동 전 체크를 꼼꼼히 하면 훨씬 부드럽게 흘러갑니다."
+   },
+   {
+    "headline": "책임의 무게",
+    "body": "10월경에는 해야 할 일이 선명해지고, 스스로 기준을 높이고 싶어질 수 있어요. 속도를 조금 낮추면 오히려 결과가 더 단단해집니다."
+   },
+   {
+    "headline": "깊어지는 압박",
+    "body": "11월경에는 맡은 몫이 커지기 쉬워요. 혼자 다 안고 가기보다 할 일의 경계를 나눠 두면 마음이 한결 가벼워집니다."
+   },
+   {
+    "headline": "회복이 들어옴",
+    "body": "12월경에는 배움과 회복의 흐름이 다시 살아나요. 정리하지 못했던 것을 다시 펼쳐 보면 생각보다 쉽게 이어질 수 있습니다."
+   },
+   {
+    "headline": "새해 준비",
+    "body": "2028년 1월경에는 한 해를 준비하는 힘이 또렷해질 수 있어요. 무리한 확장보다, 다듬고 채우는 데 집중하면 좋습니다."
+   }
+  ],
+  "action_plan": [
+   {
+    "title": "2~4월경: 도움을 받는 법 익히기",
+    "body": "이 구간에는 사람의 손길과 흐름이 잘 들어오는지 지켜보세요. 먼저 도움을 청하거나, 받은 도움을 짧게 기록해 두는 행동이 관계와 일의 맥을 살려 줍니다."
+   },
+   {
+    "title": "5~7월경: 표현의 양 조절하기",
+    "body": "일과 관계에서 나가는 에너지가 커질 수 있으니, 무엇이 꼭 필요한지 가려 보세요. 하루에 해야 할 것과 보여 줄 것을 나눠 적는 습관이 과열을 줄여 줍니다."
+   },
+   {
+    "title": "8~10월경: 성과를 선별하기",
+    "body": "주도권이 강해지는 흐름을 살리되, 모든 기회를 잡으려 하지 않는 편이 좋아요. 하나를 고를 때 기준 3개만 정해 두고 움직이면 선택이 선명해집니다."
+   },
+   {
+    "title": "11월~다음해 1월경: 정리와 회복",
+    "body": "책임이 늘고 다시 채우는 흐름이 함께 오기 쉬우니, 일정과 마음을 정돈해 두세요. 마무리할 것과 이어갈 것을 구분해 적는 작은 정리가 2028년의 출발을 편하게 해 줍니다."
+   }
+  ],
+  "closing": "지수님, 2027년은 많이 쓰는 만큼 더 또렷하게 남는 해로 보입니다. 바깥으로 나가는 힘이 큰 만큼, 중간중간 채우고 정리하는 시간을 함께 두면 흐름이 훨씬 안정될 거예요. 서두르지 않아도 괜찮고, 잘 쌓인 것부터 천천히 빛나도 충분합니다."
  },
  "casey": {
   "year": 2027,
-  "title": "2027, afinar tu ritmo",
-  "subtitle": "Un año de presión útil, claridad y mejor criterio para elegir el paso.",
-  "overview": "2027 te coloca en un tipo de fuego que no te quema por completo, sino que te pide forma. Para ti, Casey, cuyo Maestro del Día es metal y cuyo mapa mezcla metal 38% y madera 38%, el año trae una sensación de trabajo fino: ajustar bordes, ordenar prioridades y aprender a responder sin perder centro. Como no aparece agua en tus Cinco Elementos, suele venir bien hacer espacio para pausas, revisión y escucha antes de actuar.\n\nEl tono general no es de prisa ciega, sino de presión que pule. Hay meses en los que conviene producir, otros en los que conviene sostener y otros en los que toca recibir apoyo o bajar la velocidad. Si respetas ese cambio de ritmo, este año puede dejarte con más criterio, más confianza y una manera más sobria de usar tu energía.",
+  "title": "2027, tu ritmo se afina",
+  "subtitle": "Un año para medir fuerza, foco y pausas útiles",
+  "overview": "En 2027, la energía de fondo te pide firmeza, pero no a empujones. Tu Maestro del Día es metal, y en tu mapa hay mucha madera y también bastante metal, con agua en 0%. Eso suele dibujar una personalidad que sabe sostener, ordenar y dar forma, aunque a veces necesite más descanso interno para no vivir solo desde la tensión. En un año de fuego, la vida te invita a templarte: no a correr más, sino a elegir mejor dónde pones tu peso.\n\nCasey, este puede ser un año muy útil para aprender a dosificar. La presión puede aparecer como más responsabilidad, más miradas encima o más cosas que dependen de ti, pero también como una oportunidad para volverte más preciso, más claro y más confiable para ti mismo. Si respetas tus ritmos, 2027 puede sentirse menos como un examen y más como una forja: calor suficiente para transformar, sin perder la forma.",
   "chapters": {
    "wealth": {
-    "heading": "Dinero con pulso fino",
-    "body": "En dinero, 2027 favorece una actitud de avance medido: hay momentos para empujar resultados y otros para evitar que el entusiasmo te haga prometer de más. Tu mezcla fuerte de metal y madera puede dar mucha capacidad para ordenar y generar, pero también puede llevarte a querer resolver todo a la vez. Aquí conviene pensar en acumulación paciente, no en golpes de suerte.\n\nEn la práctica, quizá notes gastos ligados a decisiones rápidas, mejoras de trabajo o herramientas que parecen pequeñas pero suman. También puede aparecer la tentación de sostener más de lo razonable por querer demostrar capacidad. Casey, te iría mejor si separas lo que es urgente de lo que solo brilla, y si revisas antes de ampliar compromisos.\n\nUn buen comienzo sería llevar un registro simple de entradas y salidas durante unos meses, sin perfeccionismo. Luego, antes de decir que sí a algo nuevo, deja un margen de un día para mirar si encaja con tu energía real."
+    "heading": "Dinero con pulso propio",
+    "body": "En 2027, el dinero y los recursos se mueven mejor cuando tú tomas la iniciativa con orden. Como tu mapa mezcla mucha madera con metal, puede haber una tendencia a producir mucho, sostener mucho y querer resolver rápido; eso sirve, pero pide criterio para no dispersar esfuerzo. La parte favorable del año es que la energía te empuja a convertir ideas y trabajo en resultados visibles, siempre que no confundas velocidad con eficacia.\n\nEn la práctica, podrían aparecer decisiones pequeñas pero repetidas: ajustar precios, revisar gastos, negociar una tarea o buscar una manera más limpia de organizar ingresos. No suena a un año de apuestas grandes, sino de afinar el modo en que haces rendir lo que ya sabes hacer. Si te das el tiempo de revisar antes de comprometerte, el dinero puede sentirse más estable y menos caprichoso.\n\nTe ayudará empezar con algo simple: anotar durante unas semanas qué te deja más retorno y qué te drena sin dejar huella. Con esa lectura, Casey, será más fácil elegir dónde poner energía y dónde poner un límite amable."
    },
    "love": {
-    "heading": "Vínculos más honestos",
-    "body": "En relaciones y amor, el año trae una mezcla interesante: más iniciativa en algunos tramos y más necesidad de orden en otros. Como el fuego del año toca tu metal, puede salir una forma más directa de decir lo que quieres, con menos rodeos. Eso ayuda a aclarar vínculos, siempre que no te empuje a responder demasiado rápido.\n\nPuede que tengas conversaciones más francas, encuentros con mucha chispa o momentos en que notes quién acompaña de verdad cuando cambian las condiciones. También puede haber roces pequeños por tiempos distintos, por expectativas o por querer que todo avance al mismo paso. Lo más útil suele ser escuchar antes de defender tu posición.\n\nSi quieres cuidarlo bien, prueba a preguntar más de una vez qué necesita la otra persona y a decir lo tuyo en frases breves y claras. En vez de forzar definiciones, deja que la relación muestre su forma con hechos repetidos."
+    "heading": "Vínculos con más verdad",
+    "body": "En relaciones, 2027 puede traer un tono más serio y más claro. La energía del año no favorece tanto lo tibio como lo auténtico: lo que se dice, se nota; lo que se evita, también. Eso puede volver los vínculos más honestos, aunque a veces un poco más exigentes, porque no siempre alcanza con estar cerca: hace falta presencia real.\n\nPodrías notar conversaciones que aclaran expectativas, cambios en la forma de dar apoyo o momentos en los que prefieres menos ruido y más calidad. En vínculos nuevos, la atracción puede crecer cuando ves coherencia; en vínculos ya existentes, conviene cuidar el tono para que la franqueza no se vuelva dureza. La clave no parece ser “hacer más”, sino escuchar mejor y responder con medida.\n\nUna buena práctica sería preguntar antes de suponer, y decir con sencillez qué sí puedes ofrecer y qué no. Si dejas espacio para la respuesta del otro, el vínculo gana aire y tú también."
    },
    "career": {
-    "heading": "Trabajo con presión útil",
-    "body": "En lo laboral, 2027 tiene un aire de exigencia que puede volverse muy productivo si eliges bien dónde poner tu fuerza. El fuego del año tiende a pedir responsabilidad, visibilidad y respuesta rápida, y tu metal responde mejor cuando hay estructura. Eso hace que seas especialmente fuerte en tareas donde importa decidir, ordenar o mejorar un proceso.\n\nEn el día a día, podrías verte con más tareas que requieren criterio, con plazos más visibles o con una sensación de que te miran más de cerca. A la vez, hay tramos en los que el año te da margen para producir con fluidez y otros en los que conviene bajar un poco la velocidad para no dispersarte. El mejor resultado suele venir cuando haces menos cosas, pero mejor.\n\nTe puede ayudar empezar cada semana con tres prioridades reales y una lista corta de lo que no vas a tocar todavía. Si surgen cambios, responde con calma y ajusta el plan sin dramatizar: tu fortaleza no está en correr más, sino en sostener mejor."
+    "heading": "Trabajo con disciplina",
+    "body": "En trabajo y carrera, 2027 tiene un aire de entrenamiento: más responsabilidades, más exigencia y también más oportunidad de mostrar solidez. Tu metal responde bien a los desafíos, y el fuego del año puede actuar como el calor que le da forma a una pieza valiosa. La condición es clara: avanzar con método, no con prisa por impresionar.\n\nPuede ser un periodo en el que te pidan resolver, coordinar o sostener algo que otros no sostienen con la misma facilidad. Eso puede darte visibilidad, pero también exigir límites para no tomar demasiado de golpe. Si tu mapa ya tiende a la fuerza y al empuje, la mejor versión de 2027 aparece cuando eliges prioridades y no intentas resolver todo al mismo tiempo.\n\nConviene trabajar en bloques pequeños, con revisiones frecuentes. Un plan simple, una lista corta y una entrega bien terminada pueden valer más que una gran promesa. En 2027, la confianza profesional crece cuando tu constancia se nota más que tu prisa."
    },
    "study": {
-    "heading": "Aprender con pausa",
-    "body": "En estudio y aprendizaje, 2027 se siente como un año de consolidación: no tanto de acumular por acumular, sino de entender con más profundidad. Tu mapa tiene mucha presencia de metal y madera, así que puede irte muy bien cuando conviertes curiosidad en método. El fuego del año añade intensidad, pero te conviene usarla para enfocar, no para dispersarte.\n\nEn la práctica, puede que aprendas más cuando explicas, resumes o enseñas a otra persona lo que estás viendo. También habrá momentos en que el avance parezca lento y, aun así, esté echando raíz. Si te exiges resultados inmediatos, puedes perder la parte más valiosa del proceso.\n\nUna buena estrategia sería estudiar en bloques cortos y cerrar cada bloque con una nota de una sola idea central. Así aprovechas mejor tu energía y te quedas con una sensación de orden, no de saturación."
+    "heading": "Aprender para afinar",
+    "body": "El aprendizaje en 2027 puede sentirse menos como acumular datos y más como ordenar criterio. Con agua en 0% en tu mapa, suele ayudar estudiar de un modo que deje pausa, reflexión y espacio para integrar, no solo para producir. El año favorece especialmente lo que te enseña a seleccionar, editar, sintetizar y convertir información en algo útil.\n\nEn lo cotidiano, esto puede verse como sesiones de estudio más cortas pero más concentradas, o como un interés por temas que te permiten aplicar enseguida lo aprendido. También puede aparecer la necesidad de revisar fundamentos, porque cuando la energía externa aprieta, vuelve valioso tener bases simples y claras. Si te dispersas, no será por falta de capacidad, sino por exceso de demanda.\n\nEmpieza por una sola pregunta concreta: ¿qué necesito entender mejor para trabajar o vivir con más calma? Desde ahí, un cuaderno, una lista de lectura o una rutina breve de repaso te pueden dar mucho más rendimiento que intentar abarcarlo todo."
    },
    "health": {
-    "heading": "Cuidar tu ritmo",
-    "body": "En cuerpo y mente, el año pide atención al ritmo más que a la cantidad. Como no aparece agua en tus Cinco Elementos, suele convenirte reservar espacios de calma, silencio y recuperación, sobre todo cuando el entorno se vuelve más exigente. No se trata de hacer menos por sistema, sino de escuchar antes de pasar por encima de tus señales.\n\nEn la vida diaria, eso puede verse como días en que estás muy activx, con muchas ganas de responder y resolver, seguidos de otros en los que necesitas bajar estímulos. También puede notarse en la importancia de dormir a horas parecidas, caminar sin prisa o tener ratos sin pantallas. El año premia mucho la constancia suave.\n\nEmpieza por una costumbre pequeña que puedas sostener casi sin pensar: una pausa antes de abrir el día, una caminata corta o diez minutos sin notificaciones. Si lo vuelves habitual, tu energía se ordena con más facilidad."
+    "heading": "Ritmo para sostenerte",
+    "body": "En cuerpo y ánimo, 2027 pide ritmo antes que intensidad. No se trata de alarmarte, sino de reconocer que un año con más presión externa suele pedir descansos más intencionales, sobre todo cuando tu forma natural es responder con firmeza. Con tu mezcla de mucho metal y mucha madera, puedes notar ganas de empujar; por eso conviene reservar momentos para bajar el ruido y volver a ti.\n\nEn la vida diaria, esto puede verse en días en los que rindes mucho y luego te conviene una pausa real para no seguir en automático. También puede aparecer una sensibilidad mayor a los cambios de agenda, así que ayuda dejar márgenes y no llenar cada espacio libre. Si cuidas tu energía como cuidas una herramienta valiosa, el año se vuelve más amable.\n\nPrueba con una rutina sencilla: dormir a horas parecidas, caminar un poco, comer sin apuro y dejar un tramo del día sin exigencias. No hace falta hacerlo perfecto; basta con que tu cuerpo y tu mente noten que también tienen un lugar en la agenda."
    }
   },
   "months": [
    {
     "headline": "Cierre que mueve",
-    "body": "Febrero llega con sensación de cierre y cambio de sitio a la vez. Puede que quieras expresarte más o sacar algo hacia afuera, pero eso también consume bastante energía. Si notas que el entorno te empuja a moverte, elige tú el ritmo para que el cambio no te disperse."
+    "body": "Febrero de 2027 puede abrirse con un impulso de cambio: algo se cierra y, al mismo tiempo, te dan ganas de moverte más. Como la energía del mes choca con tu punto de apoyo, conviene observar qué te saca de rutina sin pelearte con eso. Si haces espacio para lo nuevo, el giro puede sentirse más fértil que brusco."
    },
    {
-    "headline": "Brotes con fricción",
-    "body": "Marzo trae ganas de empezar, mostrar y producir, aunque con pequeños tropiezos que piden paciencia. No es un mes para perfeccionarlo todo, sino para probar y ajustar. Lo que siembres ahora puede avanzar mejor si aceptas una curva de aprendizaje visible."
+    "headline": "Semilla en marcha",
+    "body": "Marzo de 2027 favorece empezar a mostrar, producir o compartir más, aunque eso también te pida energía. Con pequeños tropiezos en el camino, te conviene avanzar por partes y no querer resolver todo de una vez. Lo sembrado aquí puede crecer mejor si lo riegas con constancia."
    },
    {
-    "headline": "Empuje bien medido",
-    "body": "Abril favorece tomar la iniciativa y buscar resultados con más decisión. Aun así, el riesgo está en querer abarcar demasiado de una vez. Si eliges una sola meta concreta, el mes responde con más claridad."
+    "headline": "Poder con medida",
+    "body": "Abril de 2027 trae una sensación de empuje para tomar la iniciativa y buscar resultados. El mes invita a actuar con decisión, pero sin dejar que el apetito por avanzar te haga pasar por encima de lo esencial. Si eliges bien una meta, el esfuerzo puede rendir más de lo esperado."
    },
    {
-    "headline": "Aprovechar el enlace",
-    "body": "Mayo mezcla impulso y conexión, como si algunas piezas encajaran con más facilidad. Puede ser un buen momento para acuerdos, recursos compartidos o avances que dependen de coordinación. Cuida no confundir fluidez con exceso de confianza."
+    "headline": "Ajuste que suma",
+    "body": "Mayo de 2027 puede sentirse más fluido para negociar, unir fuerzas o hacer que una relación te sostenga en lo práctico. También conviene mirar de cerca los recursos, porque lo que se comparte o se mueve aquí pide cuidado. Un acuerdo claro puede ahorrarte vueltas más adelante."
    },
    {
-    "headline": "Tensión útil",
-    "body": "Junio aprieta un poco más y te pide templanza. Puede aparecer la sensación de tener que responder a más de una demanda a la vez. Si bajas una marcha y eliges prioridades, el mes se vuelve mucho más manejable."
+    "headline": "Presión con tacto",
+    "body": "Junio de 2027 puede subir la exigencia y volver más sensibles las reacciones. No hace falta responder a todo en el mismo minuto; te irá mejor si eliges el ritmo con calma. Cuando afinas el tono, la presión deja de sentirse como choque constante."
    },
    {
-    "headline": "Firmeza sin prisa",
-    "body": "Julio refuerza la idea de sostenerte con seguridad, aunque con cierta sorpresa en el camino. Las cosas avanzan mejor cuando no intentas controlarlo todo. Conviene dejar espacio para lo imprevisto y responder con criterio."
+    "headline": "Confianza en alza",
+    "body": "Julio de 2027 refuerza la sensación de que puedes sostener lo que tienes delante. Aun así, pueden aparecer imprevistos, así que conviene dejar margen para lo inesperado sin dramatizarlo. Si mantienes la cabeza clara, los cambios de plan se vuelven manejables."
    },
    {
-    "headline": "Ayuda que ordena",
-    "body": "Agosto trae apoyo, aprendizaje y una sensación de recuperación. Puede ser un mes muy bueno para recibir orientación, descansar mejor o volver a algo que te hace bien. Si aceptas ayuda sin justificarte, el alivio se nota rápido."
+    "headline": "Ayuda que nutre",
+    "body": "Agosto de 2027 trae apoyo, aprendizaje y una sensación de recuperación más tranquila. Lo que haces con esfuerzo empieza a dar fruto, aunque quizá no de forma espectacular. Un cambio de ambiente, incluso pequeño, puede devolverte perspectiva."
    },
    {
-    "headline": "Plenitud clara",
-    "body": "Septiembre se siente más lleno y más magnético, con una facilidad especial para conectar y hacer que las cosas fluyan. Es un mes favorable para mostrar lo que sabes sin esfuerzo teatral. Lo importante es no sobrecargar la agenda por aprovecharlo todo."
+    "headline": "Plenitud serena",
+    "body": "Septiembre de 2027 puede sentirse más lleno, más completo y más fácil de disfrutar. También hay un magnetismo suave que favorece el contacto y la visibilidad. Si te permites recibir, no solo dar, el mes se vuelve especialmente amable."
    },
    {
     "headline": "Ritmo más lento",
-    "body": "Octubre baja la velocidad y te devuelve a lo conocido. No trae tanta novedad, pero sí una base cómoda para ordenar lo pendiente. Si respetas ese compás más pausado, puedes recuperar mucha claridad."
+    "body": "Octubre de 2027 baja la velocidad y te deja en un terreno conocido. Eso puede darte calma, aunque también menos estímulo nuevo, así que conviene no confundir estabilidad con estancamiento. Un tiempo de espera bien usado puede ordenar mejor tus prioridades."
    },
    {
-    "headline": "Cuidar los matices",
-    "body": "Noviembre invita a mirarte con más cuidado y a evitar malentendidos por suposiciones rápidas. Es un mes útil para revisar mensajes, acuerdos y expectativas. Lo que se dice con calma suele llegar mejor que lo dicho por impulso."
+    "headline": "Cuidado y claridad",
+    "body": "Noviembre de 2027 pide más atención a ti y a la forma en que te comunicas. Pueden surgir malentendidos pequeños, de esos que se aclaran rápido si preguntas a tiempo. Ir con suavidad en las palabras puede ahorrarte mucha fricción."
    },
    {
-    "headline": "Liderar sin ruido",
-    "body": "Diciembre vuelve a pedir expresión y presencia, pero de forma más ordenada. Puede sentirse como un momento para coordinar, cerrar temas y asumir un papel visible con naturalidad. Si lo haces con sencillez, tu influencia se nota sin necesidad de imponerte."
+    "headline": "Pausa con liderazgo",
+    "body": "Diciembre de 2027 vuelve a activar la producción, la entrega y el gesto de dar a otros. A la vez, el mes favorece ordenar antes de seguir acumulando tareas. Si tomas la iniciativa con calma, puedes cerrar el periodo con una sensación de dirección clara."
    },
    {
-    "headline": "Recogerse y ver",
-    "body": "Enero de 2028 trae un tono más íntimo y reflexivo, con reconocimiento de fondo. Es buen momento para recoger lo vivido y mirar qué te dejó realmente este ciclo. Si haces espacio para esa lectura tranquila, entras al siguiente tramo con más solidez."
+    "headline": "Recogida valiosa",
+    "body": "Enero de 2028 invita a recogerte un poco y a mirar lo hecho con más distancia. También puede traer reconocimiento, sobre todo por aquello que sostuviste con constancia. Si haces una pausa para integrar, el siguiente tramo empieza con más fuerza interna."
    }
   ],
   "action_plan": [
    {
-    "title": "De febrero a abril",
-    "body": "Vigila el impulso de hacer demasiado a la vez, porque este tramo combina movimiento, producción y ganas de iniciar. Prueba a elegir una sola prioridad principal por semana y a dejar por escrito qué sí y qué no vas a tocar."
+    "title": "Entre febrero y abril",
+    "body": "Observa dónde tu energía se va en empuje y dónde vuelve en forma de resultados. Te conviene probar una lista corta de prioridades y revisar cada semana qué sí merece continuidad."
    },
    {
-    "title": "De mayo a julio",
-    "body": "Observa cómo manejas la presión cuando aumentan las exigencias y aparecen ajustes inesperados. Te conviene hablar claro, revisar plazos y reservar un margen extra antes de comprometerte con algo nuevo."
+    "title": "Entre mayo y julio",
+    "body": "Mira con atención los acuerdos, los límites y el tono con el que respondes a la presión. Una acción útil sería dejar por escrito lo importante antes de comprometerte, para que todo quede más claro."
    },
    {
-    "title": "De agosto a octubre",
-    "body": "Mira qué apoyos llegan, qué aprendizaje se consolida y en qué momento te sientes con más calma. Aprovecha este tramo para ordenar métodos, cerrar pendientes y repetir lo que de verdad te funciona."
+    "title": "Entre agosto y octubre",
+    "body": "Pon atención a lo que te ayuda a recuperarte y a lo que te deja sin margen. Te puede servir reservar un bloque fijo para aprender, descansar o simplemente pensar sin interrupciones."
    },
    {
-    "title": "De noviembre a enero",
-    "body": "Pon atención a los malentendidos, a la necesidad de cuidado y a la forma en que expresas tu liderazgo. Haz una revisión sencilla de lo vivido y termina el ciclo con una lista breve de lo que quieres conservar."
+    "title": "Entre noviembre y enero",
+    "body": "Revisa qué quieres sostener y qué ya necesita otra forma. Una buena acción sería ordenar pendientes, cerrar ciclos pequeños y preparar el terreno para empezar más liviano."
    }
   ],
-  "closing": "Casey, 2027 parece pedirte menos prisa y más precisión. No es un año para forzarte, sino para aprender a usar mejor tu fuerza: cuando eliges el ritmo correcto, el metal se vuelve más limpio y más útil. Si avanzas con atención, este ciclo puede dejarte más firme, más claro y con una confianza que no necesita ruido."
+  "closing": "2027 no te pide correr más, Casey; te pide afinar el paso. Cuando eliges con cuidado dónde poner tu fuerza, tu metal se vuelve más limpio y más útil. Si escuchas el ritmo del año sin pelearte con él, puedes terminar sintiendo que avanzaste con menos ruido y más verdad."
  },
- "jisoo": {
+ "mia": {
   "year": 2027,
-  "title": "2027, 지수님의 리듬을 읽는 해",
-  "subtitle": "채우고, 비우고, 다시 단단해지는 흐름",
-  "overview": "2027년은 지수님에게 ‘내 안의 것을 밖으로 내보내는 힘’이 커지기 쉬운 해예요. 중심 기운이 갑목이라면 원래도 곧게 자라는 나무 같은 면이 있는데, 올해는 그 나무가 열매를 맺고 그늘을 내어주는 쪽으로 기울기 쉽습니다. 오행 분포를 보면 토의 비중이 높은 편이라 현실 감각과 버티는 힘은 이미 충분한데, 화와 수가 비어 있어 열기와 유연한 순환은 의식적으로 보태 주면 더 편했을 수 있어요.\n\n그래서 올해는 ‘더 많이 하느냐’보다 ‘어떤 속도로, 어떤 방식으로 주고받느냐’가 중요해 보입니다. 초반에는 도움과 회복이 들어오고, 중반에는 익숙함과 전환이 섞이며, 여름 이후에는 성과를 밀어붙이고 책임을 정리하는 흐름이 이어져요. 지수님처럼 성취 지향이 강한 사람에게는, 한 번에 크게 바꾸기보다 구간별로 역할을 나누어 움직이는 편이 덜 소모적이었을 가능성이 큽니다.\n\n올해의 핵심은 과하게 증명하려 하기보다, 이미 가진 힘을 어디에 쓰면 좋은지 고르는 일이에요. 반안살의 기운은 이동과 자리잡기의 감각을 함께 주기 쉬워서, 새로운 위치에 적응하거나 내 자리를 재정비하는 장면도 어울립니다. 다만 2027년은 전반적으로 ‘에너지가 새는 구간’과 ‘다시 채워지는 구간’의 차이가 분명해 보이니, 작은 회복 루틴과 일정 정리만 잘해도 한 해의 체감이 꽤 달라졌을 거예요.",
+  "title": "2027, your steady edge",
+  "subtitle": "A year of pressure that can turn into poise",
+  "overview": "In 2027, the main tone around you feels like heat under a well-forged surface: not soft, not careless, but capable of making you sharper if you choose your pace well. Your Day Master is Metal, and your Five Elements lean strongly toward Wood, with a balanced but lighter presence of Fire, Earth, and Water. That mix suggests a year where practical effort, clear priorities, and careful timing can matter more than force alone.\n\nYour overall pattern reads like Steel · Harvest: something sturdy, useful, and made to hold shape after a season of work. Because 2027 brings a refining kind of Fire, the year can ask more from you, especially in responsibility and follow-through, while also helping you show what you can actually carry. Mia, this is less about pushing harder and more about choosing where your effort belongs.\n\nThe monthly flow adds a nice arc: early months can feel productive and expressive, midyear can bring more pressure and then support, and the end of the year looks more familiar, with a quieter kind of momentum. If you keep your schedule flexible and leave room to revise plans, 2027 can feel less like a test and more like a shaping year.",
   "chapters": {
    "wealth": {
-    "heading": "성과를 고르는 돈의 감각",
-    "body": "재물이나 성과와 관련해서는, 2027년이 ‘내가 밀어붙이면 결과가 보이기 쉬운 해’처럼 느껴지기 좋은 흐름이에요. 특히 여름 무렵부터는 주도권을 잡고 숫자나 실적을 정리하는 감각이 살아나기 쉬운데, 갑목의 성향상 한 번 방향을 잡으면 꾸준히 밀어붙이는 힘이 있어요. 다만 토가 많은 편이라 이미 책임과 기준이 많을 수 있으니, 올해는 더 벌기보다 어디에 힘을 집중할지 골라내는 쪽이 더 편했을 수 있습니다.\n\n일상에서는 ‘이건 지금 해도 되는 일’과 ‘조금 뒤로 미뤄도 되는 일’이 섞여 들어오는 장면이 떠오릅니다. 예를 들면 지출이나 성과를 따지는 자리에서, 누군가의 제안이 좋아 보여도 바로 다 받아들이기보다 조건을 한 번 더 보고 싶어질 수 있어요. 8월경에는 이동이 많아지거나 계획이 바뀌면서 돈의 흐름도 들쭉날쭉하게 느껴질 수 있으니, 급한 결정보다는 메모해 두고 비교하는 방식이 잘 맞습니다.\n\n작게 시작한다면, 올해는 ‘목표 1개, 보류 1개’처럼 우선순위를 눈에 보이게 적어두는 방법이 좋아요. 들어오는 기회를 다 잡기보다, 내 체력과 시간에 맞는 것부터 선택해 보는 거죠. 지수님에게는 이 방식이 성과를 지키면서도 과열을 줄이는 데 꽤 도움이 되었을 가능성이 큽니다."
+    "heading": "Money likes clear boundaries",
+    "body": "In 2027, money matters may respond well to directness, because the year’s tone tends to reward initiative, ownership, and practical follow-through. With your Metal-centered nature and strong Wood presence, you may feel pulled between wanting to build something and wanting to keep it organized; that can be useful if you let structure lead the way.\n\nA likely scene is that you notice more chances to earn, charge for your effort, or make something tangible from your ideas, especially in the spring and early summer. At the same time, the year can make it tempting to say yes too quickly or to take on more than you really want to manage. Small checks, simple budgets, and clear terms can make the whole process feel cleaner.\n\nA good starting move is to separate “useful opportunity” from “extra noise.” If something asks for more energy than it returns, pause and review it once more. When you keep your standards visible, your resources tend to feel easier to protect and easier to grow."
    },
    "love": {
-    "heading": "가까워졌다 멀어졌다의 리듬",
-    "body": "관계와 연애에서는 초봄의 도움과 연결감, 그리고 4월의 작은 충돌감이 함께 보이는 해예요. 3월경에는 누군가와 마음이 잘 맞거나, 기존 관계가 한층 부드럽게 붙는 느낌이 들어오기 쉽고, 반대로 4월에는 익숙한 사이일수록 말의 결이 살짝 어긋나며 전환점이 생기기 좋습니다. 지수님처럼 성취를 중시하는 사람은 관계에서도 답을 빨리 내고 싶어질 수 있는데, 올해는 속도를 조절할수록 오해가 덜했을 거예요.\n\n구체적으로는 연락이 자주 오가는 시기와, 혼자 정리하고 싶은 시기가 번갈아 나타나기 쉬워요. 누군가와의 약속이 갑자기 바뀌거나, 오래 알고 지낸 사람과도 예상 밖 주제로 대화가 깊어질 수 있습니다. 5월에는 익숙해서 편한 대신 새 자극이 적어, 관계를 ‘유지’하는 감각이 강해질 수 있고, 7월에는 반안살의 분위기처럼 자리와 역할을 다시 맞춰 보는 장면이 어울려요.\n\n실행은 단순하게 가는 편이 좋습니다. 보고 싶은 사람에게는 길게 설명하기보다 핵심을 짧게 전하고, 서운함이 생기면 바로 결론을 내리기보다 하루쯤 두고 말해 보세요. 올해의 관계운은 뜨겁게 밀어붙이기보다, 온도를 맞추며 오래 가는 쪽에 더 힘이 실렸습니다."
+    "heading": "Connection through honesty",
+    "body": "In relationships, 2027 can feel lively, noticeable, and a little more demanding than usual, which often helps people show their real preferences. Because the year asks you to be more defined, your connections may improve when you speak plainly and listen for what is actually being said, not just what is assumed.\n\nYou might find yourself drawn into conversations that change the tone of a bond, or into moments where someone’s behavior feels more revealing than usual. Early months may bring movement and a sense of being pulled in new directions, while late spring can make certain ties feel more magnetic or more vivid. That can be lovely, but it also helps to keep your footing and not rush the meaning of every spark.\n\nTry starting with one honest sentence instead of a long explanation. If you want closeness, clarity will probably help more than performance. In 2027, the strongest connections may be the ones that can handle a little heat without losing their shape."
    },
    "career": {
-    "heading": "일의 판을 다시 짜는 해",
-    "body": "일과 커리어에서는 2027년이 꽤 입체적으로 느껴질 수 있어요. 봄에는 도움을 받으며 자리를 잡고, 여름에는 내가 가진 것을 밖으로 내보내며 존재감을 키우고, 가을에는 책임과 압박 속에서 속도를 조절하는 흐름이 이어집니다. 거목·성취형이라는 유형답게, 지수님은 스스로 기준을 세우고 끝까지 밀어붙이는 데 강점이 있는데, 올해는 그 강점을 ‘지속 가능한 방식’으로 바꾸는 것이 관건이에요.\n\n현실에서는 새로운 역할을 맡거나, 기존 역할의 폭이 넓어지는 장면이 떠오릅니다. 6~7월에는 결과물을 보여주거나 발표하는 일, 누군가에게 설명하고 설득하는 일이 잦아질 수 있고, 10~11월에는 책임이 늘면서 일정 관리가 더 중요해질 수 있어요. 이때는 한 번에 다 처리하려 하기보다, 먼저 해야 할 일과 나중에 해도 되는 일을 나누는 편이 훨씬 편했을 겁니다.\n\n작은 실행으로는 주간 단위의 정리 습관이 잘 맞아요. 월요일에 할 일 3개만 정하고, 금요일에는 ‘이번 주에 잘된 점 1개’만 적어보는 식이죠. 올해 커리어의 핵심은 더 빠르게 달리는 것이 아니라, 지치지 않고 오래 가는 구조를 만드는 데 있었습니다."
+    "heading": "Work that can hold weight",
+    "body": "Career-wise, 2027 looks like a year that can strengthen your sense of competence if you’re willing to work at a sustainable speed. The year’s Fire tone can press on Metal, which often shows up as deadlines, expectations, and the feeling that your output is being noticed more closely. That is not always comfortable, but it can be productive when you treat it like a forging process rather than a race.\n\nYou may encounter periods when your responsibilities expand, your standards rise, or your role becomes more visible. Spring can support action and results, while early summer may ask for more discipline and a calmer way of handling friction. Later in the year, support and recovery look more available, so it may be easier to consolidate what you’ve built and let other people meet you halfway.\n\nA useful habit is to define the smallest version of a good day’s work. If you keep your tasks clear and your pace measured, you can make progress without burning through your energy. 2027 favors reliability that can be seen, not just effort that stays hidden."
    },
    "study": {
-    "heading": "배움이 채워 주는 구간",
-    "body": "배움과 공부에서는 초반과 연말의 ‘채워짐’이 분명해 보이는 해예요. 2~3월경에는 도움을 받거나 새로운 지식을 받아들이기 쉬워지고, 12월~다음 해 1월에는 다시 정리하고 흡수하는 흐름이 살아납니다. 화와 수가 비어 있는 편이라 처음엔 열정만으로 밀기보다, 설명을 듣고 구조를 잡아 주는 방식이 더 잘 맞았을 수 있어요.\n\n일상 장면으로는 누군가의 조언이 생각보다 오래 남는다거나, 혼자 끙끙대던 부분이 책 한 권이나 강의 한 번으로 풀리는 식이 떠오릅니다. 3월의 합처럼 어떤 사람과 함께 배우면 속도가 붙기 쉽고, 11월에는 겁살의 분위기처럼 비교나 압박이 느껴져도 그 긴장 덕분에 집중력이 생길 수 있어요. 중요한 건 ‘빨리 이해했다’보다 ‘제대로 쌓였다’는 감각입니다.\n\n실행은 얇고 길게 가는 편이 좋아요. 한 번에 큰 계획을 세우기보다, 매주 같은 시간에 짧게 읽고 적는 루틴을 두면 좋습니다. 지수님에게는 공부를 성과로만 보지 않고, 생각을 정리하는 도구로 쓰는 방식이 더 편안했을 가능성이 큽니다."
+    "heading": "Learning that becomes usable",
+    "body": "For study and skill-building, 2027 can be especially good for turning scattered knowledge into something you can actually use. Your chart’s strong Wood suggests growth, curiosity, and many possible directions, while the year’s refining pressure can help you trim away what is interesting but not essential.\n\nYou may notice that learning feels most alive when it leads to a result: a draft, a presentation, a tool, a method, or a real conversation. Some months encourage output and experimentation, while others are better for absorbing support, reviewing notes, or letting ideas settle before you act on them. That rhythm can be very kind to a Steel · Harvest type, because it lets you gather rather than just chase.\n\nIf you start something new, keep the first version small and usable. A short practice routine, a clean note system, or one focused topic at a time can go further than trying to master everything at once. In 2027, progress may come from repetition with purpose, not from intensity alone."
    },
    "health": {
-    "heading": "몸과 마음의 속도 조절",
-    "body": "몸과 마음의 리듬은 올해 특히 속도 조절이 중요해 보여요. 원래 목의 기운은 앞으로 뻗는 힘이 있는데, 2027년은 그 힘을 바깥으로 많이 쓰는 해라서 에너지가 새기 쉬운 편입니다. 토가 많은 구조는 버티는 힘을 주지만, 동시에 책임감과 긴장감을 오래 붙들 수 있어서, ‘괜찮아 보이는데 은근히 피곤한 상태’를 스스로 알아차리는 것이 중요해요.\n\n일상에서는 일정이 빽빽해질수록 식사, 수면, 휴식의 리듬이 흐트러지기 쉬운 장면이 떠오릅니다. 10~11월에는 책임이 늘면서 마음이 묵직해질 수 있고, 12월~1월에는 다시 채워지는 흐름이 오니 그때는 회복 쪽에 조금 더 마음을 두는 편이 좋습니다. 거창한 관리보다, 하루의 시작과 끝을 비슷한 순서로 보내는 것만으로도 체감이 달라질 수 있어요.\n\n작게 해볼 수 있는 건 아주 단순합니다. 물 마시는 타이밍, 걷는 시간, 잠들기 전 화면 끄는 시간을 하나만 정해 보세요. 지수님에게 올해의 돌봄은 특별한 이벤트가 아니라, 에너지가 빠져나가는 구멍을 조금씩 줄이는 일에 가까웠습니다."
+    "heading": "Energy management, gently done",
+    "body": "For body and mind, 2027 asks for balance more than heroics. The year’s pressure can make you feel more “on” than usual, so regular pauses, predictable meals, and enough room between obligations may matter more than trying to maximize every hour. Because your chart is already weighted toward growth and production, rest may work best when it is scheduled, not left to chance.\n\nA likely scene is that you feel fine while moving and then realize later that you’ve been carrying too much momentum for too long. Midyear especially can ask you to notice tension earlier, while late summer and early autumn may feel more replenishing. Simple routines, quieter evenings, and fewer last-minute commitments can help your system settle.\n\nTry building a small reset into your week: a walk without your phone, an earlier night once in a while, or a short block of time with no output required. The goal is not to slow everything down, only to keep your pace honest. When you do that, your energy tends to stay more steady and more available."
    }
   },
   "months": [
    {
-    "headline": "들어오는 도움",
-    "body": "2월경에는 도움과 회복이 자연스럽게 들어와서 마음이 한결 가벼워지기 좋은 흐름이에요. 건록의 기운답게 새로 시작하는 힘도 붙으니, 급하게 달리기보다 기본기를 다시 잡아두면 좋습니다."
+    "headline": "Fresh start, sharp edges",
+    "body": "February can feel like a reset with momentum: you may want to create, speak up, or get moving quickly. Because this month also carries a clash-like note, a change in routine or direction may arrive through a real-world push, so flexibility can help more than resistance."
    },
    {
-    "headline": "붙는 인연",
-    "body": "3월경에는 사람 사이가 부드럽게 붙는 장면이 생기기 쉬워요. 제왕의 힘이 있어 존재감이 살아나고, 일지와 어울리는 흐름 덕분에 누군가와의 협력이 생각보다 잘 맞을 수 있습니다."
+    "headline": "Small snags, real growth",
+    "body": "March may favor beginnings that are still forming, which makes it good for rough drafts, first conversations, and early plans. A few small hiccups could ask for patience, but they may also reveal what needs adjusting before you invest too much."
    },
    {
-    "headline": "익숙함의 흔들림",
-    "body": "4월경에는 편안한 익숙함 속에 살짝 부딪힘이 들어오기 쉬워요. 쇠의 분위기라 속도를 줄여 점검하는 편이 좋고, 관계나 일정에서 작은 전환이 생겨도 너무 서두르지 않는 쪽이 편했습니다."
+    "headline": "Quiet control",
+    "body": "April looks better for taking charge of practical matters and shaping results on your own terms. The inward tone of the month can help you work privately, refine a plan, or focus on what will actually hold up over time."
    },
    {
-    "headline": "편안한 반복",
-    "body": "5월경에는 큰 자극보다 익숙한 패턴이 더 눈에 띄어요. 병의 흐름이라 무난하게 지나가기 좋지만, 망신살의 영향으로 말과 태도는 조금 더 또렷하게 챙기면 오해를 줄일 수 있습니다."
+    "headline": "Momentum with surprises",
+    "body": "May can bring a strong sense of movement, plus a more unusual twist in how things connect. Because the month also has an easy-joining quality, people, projects, or opportunities may come together faster than expected, so stay open but keep your judgment awake."
    },
    {
-    "headline": "밖으로 나가는 힘",
-    "body": "6월경에는 내가 가진 것을 밖으로 내보내는 힘이 커집니다. 사의 흐름이라 표현과 생산이 늘기 쉽고, 장성살의 기운이 있어 책임감 있게 밀어붙이면 결과가 보이기 좋은 시기예요."
+    "headline": "Pressure becomes shape",
+    "body": "June may feel more demanding, with a clearer sense of responsibility and the need to choose your pace carefully. Friction is part of the month’s texture, so a calmer response and a cleaner schedule can help you turn strain into structure."
    },
    {
-    "headline": "자리 잡는 시간",
-    "body": "7월경에는 반안살의 분위기처럼 내 자리와 역할을 다시 정돈하기 좋습니다. 묘의 흐름은 조용히 뿌리를 내리는 느낌이라, 사람들과의 거리와 내 페이스를 함께 맞춰보면 편했을 거예요."
+    "headline": "Keep your footing",
+    "body": "July continues the refining tone, but with a more unpredictable edge. This is a good month for steady habits, because even when the day feels a little wild, simple routines can keep you oriented and prevent scattered energy."
    },
    {
-    "headline": "움직이며 잡기",
-    "body": "8월경에는 역마살의 영향으로 이동, 변경, 재조정이 잦아지기 쉬워요. 절의 흐름이라 판을 새로 짜는 감각이 강하고, 주도권을 잡는 일은 좋지만 욕심을 한꺼번에 키우지는 않는 편이 안정적입니다."
+    "headline": "Support returns",
+    "body": "August brings a more nourishing current, where help, learning, or recovery can feel easier to receive. It may be a good time to ask questions, accept guidance, or let someone else lighten the load for once."
    },
    {
-    "headline": "성과를 다듬기",
-    "body": "9월경에는 육해살의 영향이 있어, 겉으로는 진행되는데 안쪽에서 손볼 부분이 보일 수 있어요. 태의 흐름이라 시작과 마무리 사이가 유연하니, 결과를 더 키우기보다 틀을 정리하는 데 집중하면 좋습니다."
+    "headline": "Full strength",
+    "body": "September looks warm, active, and socially magnetic, with a sense that things can come together more naturally. If you’ve been waiting for a clearer opening, this month may reward confident follow-through and visible presence."
    },
    {
-    "headline": "무게가 실리는 달",
-    "body": "10월경에는 책임이 또렷해지고 속도를 고르는 감각이 중요해집니다. 양의 흐름과 화개살의 분위기가 겹쳐, 혼자 정리하고 생각을 가다듬는 시간이 오히려 힘이 되어 줄 수 있어요."
+    "headline": "Familiar ground",
+    "body": "October feels more settled and familiar, which can be comforting after a busier stretch. The tradeoff is that new excitement may be lower, so this is a good month for maintenance, review, and keeping things in good order."
    },
    {
-    "headline": "압박 속의 단단함",
-    "body": "11월경에는 해야 할 일이 늘며 마음이 쉽게 바빠질 수 있습니다. 장생의 흐름은 오래 가는 힘을 주고, 겁살의 긴장은 집중력을 키우니, 비교보다 기준을 지키는 쪽이 더 도움이 됩니다."
+    "headline": "Read twice",
+    "body": "November has a slower, more winding tone, and misunderstandings may be easier to create if messages stay too brief. A little extra care with wording, timing, and assumptions can make this month feel much smoother."
    },
    {
-    "headline": "다시 채워짐",
-    "body": "12월경에는 도움과 회복이 다시 들어와 숨을 고르기 좋아요. 목욕의 흐름이라 정리와 비움이 함께 일어나고, 재살의 기운은 남은 과제를 조심스럽게 마무리하도록 이끕니다."
+    "headline": "Tidy, then command",
+    "body": "December brings a pause that favors cleanup, sorting, and closing loops before the year changes. You may feel more capable of taking the lead if you first clear away what has been lingering in the background."
    },
    {
-    "headline": "새해 앞의 정돈",
-    "body": "2028년 1월경에는 다시 한 번 채워지고 준비하는 감각이 살아납니다. 관대의 흐름은 태도를 넓혀 주고, 천살의 분위기는 계획을 너무 크게 벌리기보다 기본을 다지는 쪽이 편하다고 말해 줍니다."
+    "headline": "Quiet storage",
+    "body": "January can feel inward and contained, as if energy is being gathered rather than spent. It’s a good month for preparing the next step, because quiet progress now may support a clearer move forward soon after."
    }
   ],
   "action_plan": [
    {
-    "title": "2~4월경",
-    "body": "지켜볼 흐름: 도움을 받는 일과 작은 충돌이 함께 들어와, 관계와 일정의 균형이 중요해 보여요. 해볼 행동: 중요한 약속은 바로 확답하기보다 하루 안에 다시 확인하고, 메모로 정리해 두세요."
+    "title": "February to April: shape the first push",
+    "body": "Watch for quick starts, fresh ideas, and a few early course corrections. Choose one project or habit to simplify, then give it a clean structure so the spring energy has somewhere useful to go."
    },
    {
-    "title": "5~7월경",
-    "body": "지켜볼 흐름: 익숙함 속에서 표현과 생산이 늘어나며 에너지가 빨리 소모되기 쉬워요. 해볼 행동: 한 주에 꼭 해야 할 일 3개만 남기고, 나머지는 다음 주로 넘겨도 되는지 구분해 보세요."
+    "title": "May to July: pace the heat",
+    "body": "Notice where momentum turns into pressure or where enthusiasm starts asking too much of you. Set one boundary in advance, such as a hard stop time or a clearer yes/no rule, so your effort stays sustainable."
    },
    {
-    "title": "8~10월경",
-    "body": "지켜볼 흐름: 주도권을 잡고 성과를 밀어붙이기 좋지만, 이동과 재조정이 잦아질 수 있어요. 해볼 행동: 계획을 두 칸으로 나눠 ‘지금 처리’와 ‘보류’로 적어두면 과욕을 줄이는 데 도움이 됩니다."
+    "title": "August to October: receive and refine",
+    "body": "Look for help, useful feedback, and moments when recovery comes more easily. Let yourself accept support, then use the calmer stretch to review what is working and trim what isn’t."
    },
    {
-    "title": "11월~다음해 1월경",
-    "body": "지켜볼 흐름: 책임이 늘었다가 다시 채워지는 흐름이 이어져, 마무리와 회복을 함께 챙기는 편이 좋아요. 해볼 행동: 하루 끝에 10분만 써서 일정, 지출, 감정 중 하나를 가볍게 정리해 보세요."
+    "title": "November to January: close and prepare",
+    "body": "Pay attention to misunderstandings, loose ends, and anything that still needs naming. Make one tidy-up ritual your own, such as clearing notes, organizing files, or finishing one lingering task before the new cycle opens."
    }
   ],
-  "closing": "지수님, 2027년은 크게 한 번에 바꾸는 해라기보다, 흐름을 읽으며 힘을 나누어 쓰는 해에 가까워 보여요. 잘 밀어붙여야 할 때와 잠깐 물러서야 할 때를 구분할수록, 올해의 성과와 관계는 더 편안하게 자리를 잡았을 가능성이 큽니다. 무엇보다 이미 가진 단단함이 충분하니, 거기에 회복의 리듬만 조금 보태 보세요."
+  "closing": "2027 does not read like a year that wants you to rush; it reads like a year that wants you to become more exact. Mia, if you let the pressure teach you rhythm instead of panic, the whole year can leave you stronger, clearer, and more self-trusting. Small choices, repeated well, may end up mattering more than dramatic moves."
  },
  "lucia": {
   "year": 2027,
-  "title": "2027, un año para afinar tu ritmo",
-  "subtitle": "Lucía, un ciclo de fuego que pide iniciativa, cuidado y buen criterio",
-  "overview": "2027 trae una energía de fuego que no te empuja a esconderte, sino a tomar la iniciativa con más decisión. Como tu Maestro del Día es agua y en tu mapa hay mucho tierra y también bastante agua, este año puede sentirse como una mezcla muy interesante: por un lado, ganas de mover recursos, ordenar resultados y hacer que las cosas rindan; por otro, necesidad de no ir demasiado rápido ni cargar con más de lo necesario. Para ti, Lucía, el tono general favorece el avance con propósito, pero premia mucho más la claridad que la prisa.\n\nTu tipo de mapa, El rocío · Orden, sugiere que te sientan bien los procesos limpios, los pasos medidos y las ideas que se convierten en forma concreta. En 2027 eso puede verse como un año útil para dar estructura a lo que ya sabes hacer, mostrar tu valor sin exagerarlo y elegir bien dónde pones tu energía. Cuando el fuego se active, conviene observar si estás construyendo algo sólido o solo acelerando por impulso; cuando aparezca más recogimiento, te ayudará volver a tu centro y revisar lo que de verdad quieres sostener.",
+  "title": "2027, tu ritmo claro",
+  "subtitle": "Un año para avanzar con pulso sereno y buen criterio",
+  "overview": "Lucía, en 2027 se abre un movimiento interesante para ti: tu agua central entra en un año de fuego, y eso suele sentirse como una etapa donde la iniciativa, el dinero y los resultados piden más presencia. Como tu mapa ya tiene mucha tierra y agua en equilibrio, con poca madera y sin metal, la clave no parece ser empujar más fuerte, sino elegir mejor dónde poner la energía. Es un año que favorece tomar la delantera, ordenar prioridades y convertir ideas en hechos visibles.\n\nA la vez, no conviene ir con prisa automática. Hay meses en los que te conviene producir y mostrar, y otros en los que el propio clima te invita a revisar, bajar una marcha y escuchar lo que se mueve por dentro. Tu tipo de energía, ligado a la claridad y al orden, encaja bien con un 2027 que premia la constancia, la estructura y los pasos bien puestos. Si cuidas el ritmo, el año puede dejarte una sensación de avance sólido, no solo de movimiento.\n\nEn conjunto, 2027 no te pide esconderte ni forzarte: te pide administrar bien tu impulso. Cuando el fuego suba, te resultará útil decidir con precisión; cuando baje, te convendrá recuperar centro y dejar que madure lo que ya pusiste en marcha. Si mantienes ese equilibrio, encontrarás más margen para avanzar sin perderte en el exceso.",
   "chapters": {
    "wealth": {
-    "heading": "Dinero con pulso claro",
-    "body": "En lo material, 2027 se ve como un año favorable para mover recursos con iniciativa y buscar resultados visibles. Como el fuego de este ciclo te favorece para tomar el control de lo que produces, puede haber más facilidad para negociar, impulsar proyectos propios o darles forma a ingresos que dependan de tu criterio. La parte a cuidar es el exceso de empuje: con tanta tierra en tu mapa, a veces conviene distinguir entre construir y acumular por inercia.\n\nEn la vida diaria, esto puede verse en decisiones como ordenar gastos con más intención, revisar qué esfuerzos sí te devuelven valor y cuáles solo te consumen tiempo. También puedes notar que algunas oportunidades aparecen cuando muestras con más nitidez lo que sabes hacer, sin esperar a que todo esté perfecto. Si te sirve, Lucía, piensa en este año como uno para hacer rendir mejor lo que ya tienes antes de buscar más cantidad.\n\nUn buen comienzo sería anotar durante unas semanas en qué se te va el dinero y en qué se te va la energía, porque a veces son la misma cosa. Luego, elige una sola mejora concreta: una forma de cobrar mejor, un gasto que simplificar o una tarea que puedas convertir en algo más útil."
+    "heading": "Dinero con dirección",
+    "body": "En 2027, el dinero y los recursos se mueven con una energía que te favorece para tomar decisiones, buscar resultados y convertir esfuerzo en algo tangible. Como el año tiene un tono de fuego y tu agua central puede marcar el rumbo, se abre una ventana buena para ordenar ingresos, negociar con claridad y poner límites a los gastos que no aportan. La tierra fuerte en tu mapa sugiere que sabes sostener procesos; lo importante será no confundir firmeza con presión innecesaria.\n\nEn la vida diaria, esto puede verse en momentos en los que te toque revisar precios, calcular mejor un presupuesto o decidir qué proyecto merece realmente tu atención. También puede aparecer la sensación de que, si te organizas bien, el dinero responde mejor a tu iniciativa que a la espera pasiva. En los meses más intensos, conviene mirar dos veces antes de comprometerte con algo que suene bien pero te exija demasiado.\n\nEmpieza por una acción simple: separar tus prioridades en tres niveles, lo necesario, lo útil y lo prescindible. Así podrás usar el impulso de 2027 para avanzar con más precisión y menos desgaste. Si haces eso, el año puede sentirse menos disperso y más provechoso."
    },
    "love": {
-    "heading": "Vínculos que se encienden",
-    "body": "En relaciones, 2027 puede traer más presencia, más iniciativa y también más necesidad de hablar claro. El fuego tiende a sacar a la superficie lo que estaba contenido, así que los vínculos pueden volverse más directos, más visibles y, en algunos momentos, más exigentes con tu tiempo y tu atención. Para tu naturaleza de agua, eso puede sentirse estimulante si hay sinceridad, pero pesado si todo se vuelve demasiado intenso.\n\nEn lo cotidiano, podrías notar conversaciones que aclaran expectativas, planes que se mueven con rapidez o personas que responden mejor cuando tú marcas con naturalidad lo que quieres. También puede haber etapas en las que te convenga escuchar más de lo que explicas, para no convertir una buena conexión en un intercambio agotador. El año favorece los lazos que respetan tu ritmo y no te obligan a estar en guardia todo el tiempo.\n\nTe ayudará mucho empezar por gestos simples: responder con honestidad, no prometer más de lo que puedes sostener y reservar espacios donde puedas estar sin actuar. Si una relación pide más cuidado, puedes mostrarlo con constancia pequeña, no con grandes declaraciones."
+    "heading": "Vínculos con más verdad",
+    "body": "En tus relaciones, 2027 tiende a sacar a la superficie lo que ya estaba buscando forma. Hay meses en que la cercanía se siente natural y otros en que el entorno te pide más claridad, más escucha y menos suposición. Como tu mapa tiene un espíritu de orden, puede resultarte especialmente favorable hablar con sencillez, poner nombre a lo que sientes y dejar que las conexiones se organicen con menos ruido.\n\nEn lo cotidiano, esto puede verse en conversaciones que aclaran malentendidos, en encuentros donde notas quién sí responde a tu ritmo y en espacios donde prefieres calidad antes que cantidad. También puede haber momentos en los que el clima relacional te invite a marcar distancia de lo confuso y a quedarte con lo que sí tiene base. No parece un año para improvisar vínculos a ciegas, sino para dar forma a los que realmente encajan contigo.\n\nTe ayudará mucho empezar con gestos pequeños: responder con honestidad, preguntar antes de asumir y reservar tiempo para vínculos que te dejan en paz. Si cuidas ese tono, 2027 puede darte relaciones más limpias y más fáciles de sostener. Lucía, la clave no será impresionar, sino construir confianza paso a paso."
    },
    "career": {
-    "heading": "Trabajo con más visibilidad",
-    "body": "En trabajo y carrera, este año favorece tomar la delantera, mostrar resultados y dar forma concreta a lo que haces. La relación entre tu energía y la del año sugiere que puedes mover asuntos con bastante eficacia, sobre todo si te apoyas en tu capacidad de ordenar y en tu sentido práctico. A la vez, tu mapa tiene poco metal, así que conviene sostener el criterio y la revisión: no todo lo que avanza rápido merece tu sí inmediato.\n\nEn la vida diaria, eso puede traducirse en más tareas que dependen de tu iniciativa, más ojos puestos en tu manera de resolver y más ocasiones para demostrar solvencia. Puede ser un buen momento para presentar ideas, asumir responsabilidades que sí te interesan o simplificar procesos que antes estaban dispersos. Lo importante será no confundir visibilidad con sobrecarga; brillar no tiene por qué significar cargar con todo.\n\nPara empezar, elige una sola área profesional donde quieras dejar huella este año y define cómo se verá un avance real allí. Después, revisa cada propuesta con una pregunta sencilla: ¿esto suma a lo que quiero construir o solo me mantiene ocupada con ruido?"
+    "heading": "Trabajo con empuje",
+    "body": "En trabajo y carrera, 2027 favorece dar un paso al frente. El año tiene un tono que te invita a mostrar capacidad, asumir iniciativa y buscar resultados visibles, y eso encaja bien con tu agua central cuando se mueve con propósito. La presencia fuerte de tierra en tu mapa también ayuda a sostener responsabilidad; por eso, si eliges bien tus batallas, puedes convertir presión en avance concreto.\n\nEn el día a día, esto puede aparecer como más tareas de coordinación, más oportunidades para resolver problemas o momentos en los que tu criterio se vuelve especialmente útil. También puede sentirse como una etapa en la que te observan más, no necesariamente para juzgarte, sino para ver cómo respondes. En los meses de mayor intensidad, te convendrá evitar el exceso de promesas y quedarte con lo que sí puedes llevar a cabo con calma.\n\nUna buena forma de empezar es revisar qué parte de tu trabajo te da resultados reales y cuál solo te mantiene ocupado. Desde ahí, el año puede ayudarte a ganar presencia sin perder centro. Si eliges la precisión antes que la prisa, tu avance se verá más claro y más sólido."
    },
    "study": {
-    "heading": "Aprender con foco",
-    "body": "En aprendizaje, 2027 favorece estudiar con intención práctica, no solo acumular información. Tu tipo de mapa, ligado al orden, suele agradecer métodos claros, y este ciclo puede ayudarte a convertir ideas dispersas en conocimientos útiles. Como el fuego empuja a actuar, aprenderás mejor cuando veas enseguida para qué sirve lo que estás incorporando.\n\nEn el día a día, esto puede aparecer como interés por cursos breves, lecturas aplicadas o conversaciones que te dejan una idea concreta para usar. También podrías notar que aprendes más cuando enseñas, resumes o conviertes lo leído en una nota propia. Si intentas abarcar demasiado a la vez, el interés puede diluirse; en cambio, con un objetivo pequeño y bien elegido, la mente responde mejor.\n\nUna forma amable de aprovecharlo es escoger un tema central por temporada y darle continuidad en lugar de abrir demasiados frentes. Puedes subrayar, resumir y repetir con tus palabras; eso te ayudará a fijar mejor lo que importa y a sentir que estudias con dirección."
+    "heading": "Aprender para afinar",
+    "body": "En aprendizaje, 2027 se siente como un año muy útil para consolidar conocimientos y darles forma práctica. No parece una etapa de dispersión, sino de estudio con intención: leer, observar, ordenar y aplicar. Como tu mapa ya trae una base de orden, te puede ir especialmente bien cuando aprendes con estructura, objetivos claros y tiempos definidos.\n\nEn la vida diaria, esto puede verse en cursos que te piden constancia, lecturas que te aclaran decisiones o conversaciones donde descubres una forma más simple de entender algo que antes parecía confuso. También puede aparecer una curiosidad más fina: no tanto por acumular información, sino por quedarte con lo que de verdad sirve. En los meses más activos, estudiar un poco cada día puede rendir más que hacer todo de golpe.\n\nTe conviene elegir un tema central y darle continuidad. Si haces espacio para repasar, resumir y aplicar, 2027 puede dejarte con una sensación de aprendizaje útil y bien integrado. No se trata de saberlo todo, sino de aprender lo que te ayuda a avanzar con más criterio."
    },
    "health": {
-    "heading": "Cuidarte sin exceso",
-    "body": "En bienestar cotidiano, 2027 pide equilibrio entre impulso y pausa. Con tu combinación de agua y tierra, a veces sostienes mucho sin darte cuenta, y este año puede mostrarte con más claridad cuándo te conviene bajar un cambio para no vivir solo desde la exigencia. El tono general no habla de fragilidad, sino de la importancia de administrar bien tu energía y de no convertir la productividad en costumbre automática.\n\nEn lo diario, esto puede verse en momentos en que tu cuerpo y tu ánimo te piden orden: dormir con más regularidad, comer con horarios más estables, hacer pausas reales o dejar de llenar cada espacio libre. También puede aparecer una necesidad fuerte de silencio, de estar a solas un rato o de tener un mundo interior más protegido, y eso no es aislamiento: es recarga. Si respetas esos momentos, el resto del año se vuelve más llevadero.\n\nTe conviene empezar con algo sencillo y sostenible, como una rutina breve al despertar o al cerrar el día. No busques hacerlo perfecto; busca que te devuelva centro. En este año, cuidarte también es elegir menos ruido."
+    "heading": "Cuidar el ritmo",
+    "body": "En cuerpo y mente, 2027 pide atención al ritmo más que a la velocidad. Con tanta tierra en tu mapa y un año de fuego que activa el hacer, puede convenirte alternar impulso y pausa para no acumular tensión innecesaria. Tu tipo de energía, ligado al rocío y al orden, suele responder bien cuando hay aire para pensar, descansar y procesar lo que pasa antes de seguir.\n\nEn lo cotidiano, esto puede notarse en días en los que rindes mejor si comienzas con calma, ordenas el espacio y dejas margen entre una tarea y otra. También puede aparecer una sensibilidad mayor a los ambientes muy cargados o a la sobreexigencia mental. Si notas que el cuerpo te pide bajar una marcha, no lo tomes como freno: puede ser la forma más inteligente de conservar claridad.\n\nUna práctica sencilla sería fijar un cierre pequeño al final del día: apagar pantallas un poco antes, ordenar lo básico y respirar sin apuro durante unos minutos. Ese gesto puede ayudarte a entrar y salir mejor del esfuerzo. Si cuidas el ritmo, 2027 puede sentirse más amable y más habitable."
    }
   },
   "months": [
    {
     "headline": "Febrero sensible",
-    "body": "Este mes se siente cercano a tu propio tono, pero con más sensibilidad a los malentendidos. Puede ser un buen inicio para observar qué te toca de cerca y qué te conviene aclarar con calma. Las cosas pequeñas pesan más de lo normal, así que conviene leer dos veces antes de responder."
+    "body": "La energía se parece mucho a la tuya y eso puede hacerte sentir cómodo, aunque con menos sorpresa de la habitual. Conviene prestar atención a malentendidos pequeños, porque una palabra rápida puede tomar más espacio del que merece."
    },
    {
-    "headline": "Marzo despierto",
-    "body": "Aquí el movimiento sigue siendo familiar, pero con un impulso de brote y liderazgo. Es un mes útil para tomar una pequeña iniciativa que venías postergando, aunque todavía no haga mucho ruido. Si das un paso concreto, el entorno tiende a notarlo."
+    "headline": "Marzo que despierta",
+    "body": "Este mes trae un aire de brote: algo empieza a tomar forma y te anima a moverte con más decisión. La sensación de liderazgo puede crecer si eliges una dirección clara y das el primer paso sin esperar demasiadas señales."
    },
    {
-    "headline": "Abril visible",
-    "body": "La energía del mes te pide producir, expresar y dar algo de ti, con un costo de energía que conviene medir. El reconocimiento puede aparecer cuando haces algo útil sin adornarlo demasiado. Mejor poco y bien que mucho y disperso."
+    "headline": "Abril que produce",
+    "body": "Aquí se nota que tú alimentas el fuego del año, así que la expresión y la entrega pueden crecer bastante. También puede subir el cansancio si dices que sí a todo, por lo que el reconocimiento llega mejor cuando seleccionas bien dónde poner tu energía."
    },
    {
-    "headline": "Mayo en marcha",
-    "body": "Este mes favorece sembrar ideas, movimientos y deseos de cambio. Puede darte ganas de moverte más, probar otra ruta o iniciar algo que estaba dormido. Si eliges un solo frente, la energía trabaja a tu favor con más claridad."
+    "headline": "Mayo en movimiento",
+    "body": "La semilla ya está dentro del suelo y pide acción concreta para abrir camino. Puede aparecer un impulso fuerte por cambiar de ritmo, salir, probar y hacer más; si canalizas ese impulso, el mes puede dejarte avances visibles."
    },
    {
-    "headline": "Junio de mando",
-    "body": "Aquí el año se vuelve más favorable para tomar decisiones, buscar resultados y empujar asuntos materiales. Al mismo tiempo, los pequeños tropiezos aparecen si te apresuras demasiado. Te conviene revisar detalles antes de cerrar cualquier paso importante."
+    "headline": "Junio decisivo",
+    "body": "El fuego del año entra en una fase en la que te conviene tomar la iniciativa con más precisión. Hay margen para resultados y dinero, pero también para pequeños tropiezos si te apresuras demasiado; revisar dos veces te dará más tranquilidad."
    },
    {
     "headline": "Julio interior",
-    "body": "El mes invita a mirar hacia dentro mientras sigues con capacidad de dirigir lo que te importa. Puede ser un buen momento para ordenar prioridades y decidir desde un lugar más sereno. Lo que no necesita urgencia gana calidad si lo dejas madurar un poco."
+    "body": "El clima te invita a mirar hacia adentro y a decidir desde un lugar más sereno. Si usas este mes para ordenar prioridades, el impulso de conseguir cosas puede volverse más limpio y más estable."
    },
    {
-    "headline": "Agosto exigente",
-    "body": "La energía del mes te pone frente a más responsabilidad y más atención sobre lo que administras. Si marcas tu ritmo con cuidado, puedes salir más firme de esta etapa. Conviene vigilar recursos, tiempos y compromisos para no dispersarte."
+    "headline": "Agosto con peso",
+    "body": "La energía empieza a exigirte más responsabilidad y puede pedirte que cuides recursos, tiempos y compromisos. Si bajas un poco la velocidad y sostienes el paso, ese peso se convierte en estructura útil."
    },
    {
-    "headline": "Septiembre de giro",
-    "body": "Este mes aprieta un poco más y puede traer roces o tensiones que te obligan a cambiar de enfoque. No hace falta forzar una solución inmediata; a veces el giro útil nace de ajustar la forma de responder. El cuerpo y la agenda agradecen una marcha más prudente."
+    "headline": "Septiembre de roce",
+    "body": "Aquí la presión sube y el entorno puede sentirse más tenso, así que te conviene afinar la comunicación. Como la rama terrestre de este mes choca con la tuya, pueden surgir giros que te empujen a cambiar de plan o de enfoque."
    },
    {
-    "headline": "Octubre aliado",
-    "body": "Aquí entra ayuda, aprendizaje y una sensación de recuperación que suaviza lo anterior. Además, hay una facilidad especial para que algo encaje con naturalidad, como si una pieza encontrara su lugar. Aprovecha para escuchar consejos y aceptar apoyos sin complicarte."
+    "headline": "Octubre que nutre",
+    "body": "Este mes trae ayuda, aprendizaje y una sensación de apoyo más clara. Además, la rama terrestre se lleva bien con la tuya, así que puede abrirse una colaboración útil o una conversación que te deja mejor posicionado."
    },
    {
     "headline": "Noviembre amplio",
-    "body": "El mes trae más plenitud y un cambio de aire que renueva la perspectiva. Puede ayudarte a ver opciones donde antes veías solo continuidad. Si buscas un nuevo ángulo, este periodo suele responder bien a la curiosidad tranquila."
+    "body": "La energía vuelve a llenarse y eso puede darte más margen para recuperar fuerzas y ordenar ideas. Los cambios de ambiente o de rutina pueden venir bien si buscas una perspectiva nueva sin forzar nada."
    },
    {
-    "headline": "Diciembre magnético",
-    "body": "La energía vuelve a parecerse a la tuya, con un efecto de fruto después del esfuerzo. También puede notarse más magnetismo en la forma en que te expresas o te presentas. Es buen momento para sostener lo logrado sin querer abarcar más de lo necesario."
+    "headline": "Diciembre fértil",
+    "body": "La energía se parece otra vez a la tuya y eso favorece una sensación de familiaridad con frutos concretos. Puede ser un mes de magnetismo suave, donde tu presencia pesa más si actúas con coherencia."
    },
    {
     "headline": "Enero paciente",
-    "body": "El cierre del ciclo se siente conocido, con más confianza y una espera que no incomoda tanto si la tomas como preparación. Es un mes para afinar lo que ya funciona y dejar que el siguiente movimiento madure. Lo que hagas con calma aquí puede darte una base más limpia para empezar de nuevo."
+    "body": "El año nuevo se acerca con un tono tranquilo y bastante conocido para ti. La espera no se siente vacía, sino como un tiempo en el que conviene confiar en lo que ya venías construyendo y dejar que madure."
    }
   ],
   "action_plan": [
    {
-    "title": "Febrero a abril: afinar el inicio",
-    "body": "Vigila si la sensibilidad te lleva a reaccionar rápido o a leer demasiado entre líneas. Prueba con una acción pequeña y concreta: escribir lo que quieres aclarar antes de hablarlo, o definir un objetivo simple para el primer trimestre."
+    "title": "De febrero a abril",
+    "body": "Observa cómo reaccionas cuando el entorno se siente familiar pero poco estimulante. Haz una lista corta de tres prioridades y empieza por la que más orden te dé; así aprovechas la claridad sin dispersarte."
    },
    {
-    "title": "Mayo a julio: empujar con medida",
-    "body": "Observa dónde se abre una oportunidad para producir más o dirigir mejor, y dónde el impulso puede volverse exceso. Haz una sola apuesta práctica: ordenar un proyecto, negociar una mejora o poner límites a una carga que ya no conviene."
+    "title": "De mayo a julio",
+    "body": "Mira dónde estás dando más de lo necesario y dónde el impulso puede llevarte a decidir rápido. Elige una meta concreta y trabaja en ella con pasos breves para que el empuje del período no se te vaya en exceso."
    },
    {
-    "title": "Agosto a octubre: sostener el cambio",
-    "body": "Fíjate en qué responsabilidades te fortalecen y cuáles solo te tensan. Elige una rutina de apoyo concreta, como revisar agenda cada semana o reservar un espacio fijo para descansar la mente, y úsala como base mientras pasan los ajustes."
+    "title": "De agosto a octubre",
+    "body": "Fíjate en qué compromisos te exigen más de lo que devuelven y en qué vínculos o apoyos sí te sostienen. Reorganiza tu agenda para dejar espacio a una ayuda real y a una conversación que te aclare el rumbo."
    },
    {
-    "title": "Noviembre a enero: cerrar y preparar",
-    "body": "Mira qué aprendiste de este año y qué merece seguir contigo sin ruido. Haz un cierre simple: anota tres cosas que sí funcionaron y una sola intención para el nuevo ciclo, para entrar en él con más claridad."
+    "title": "De noviembre a enero",
+    "body": "Atiende a lo que ya dio fruto y no intentes acelerar lo que pide madurar. Cierra el período revisando avances, guardando energía y dejando preparada una base simple para empezar el siguiente tramo con más calma."
    }
   ],
-  "closing": "Lucía, 2027 no se siente como un año para correr sin mapa, sino para avanzar con intención y buen pulso. Cuando uses tu claridad para ordenar, tu energía para construir y tu sensibilidad para no sobrecargarte, este ciclo puede dejarte resultados muy sólidos. Lo más valioso estará en elegir bien dónde poner tu fuego."
+  "closing": "2027 no te pide correr sin pausa, sino aprender a dirigir bien tu fuerza. Cuando uses el fuego del año para actuar con criterio, tu agua central encontrará una forma más limpia de avanzar. Lucía, si eliges bien tus tiempos, este puede ser un año de resultados serenos y de una confianza que crece desde dentro."
  }
 };

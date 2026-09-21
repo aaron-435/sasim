@@ -138,7 +138,7 @@ export const MODULE8_QUESTIONS_EN: Record<string, QuestionTextOverride> = {
 
 export const MODULE8_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
   C1: { prompt: "Cuando ya estás en la cama, ¿cuánto se te encadenan los pensamientos, uno tras otro?", minLabel: "Nada (mi mente está en calma)", maxLabel: "Muchísimo (los pensamientos no paran)" },
-  C2: { prompt: "¿Cómo está tu mente justo antes de dormirte?", optionLabels: ["Bastante tranquila", "De vez en cuando pasa algún pensamiento", "Me vienen todo tipo de pensamientos sin parar", "No consigo frenar los pensamientos"] },
+  C2: { prompt: "¿Cómo está tu mente justo antes de dormirte?", optionLabels: ["Bastante tranquila", "De vez en cuando pasa algún pensamiento", "Me vienen todo tipo de pensamientos sin parar", "No logro frenar los pensamientos"] },
   C3: { prompt: "Ya en la cama, ¿repasas lo que ha pasado durante el día?", optionLabels: ["Casi nunca", "Un poco, a veces", "Le doy vueltas sin parar", "Se me repiten escenas de errores que cometí"] },
   C4: { prompt: "Antes de dormir, ¿te vienen a la cabeza las tareas o las preocupaciones del día siguiente?", optionLabels: ["No pienso en ello antes de dormir", "Me pasan por la cabeza de vez en cuando", "Sigo haciendo planes mentalmente", "La preocupación me quita el sueño"] },
   C5: { prompt: "Cuando hay un problema sin resolver, ¿qué pasa por la noche?", optionLabels: ["Lo dejo ir antes de dormir", "Me molesta un poco", "Sigo dándole vueltas aun tumbándome", "Ha habido noches en que ese pensamiento me ha mantenido despierto hasta muy tarde"] },
@@ -146,7 +146,7 @@ export const MODULE8_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
   C7: { prompt: "Cuando de repente se te ocurre una idea o una preocupación, ¿qué haces?", optionLabels: ["Decido pensarlo mañana y lo dejo estar", "Lo apunto y vuelvo a acostarme", "Sigo desarrollándolo en mi cabeza", "Acabo levantándome a resolverlo para poder dormir"] },
   C8: { prompt: "Antes de dormir, ¿te vienen a la cabeza arrepentimientos del pasado?", optionLabels: ["Casi nunca", "De vez en cuando", "A menudo", "Hasta recuerdos antiguos vuelven a aparecer y me duelen"] },
   C9: { prompt: "¿Repites conversaciones o conflictos en tu cabeza?", optionLabels: ["Casi nunca", "A veces", "A menudo", "Sigo imaginando lo que debería haber dicho"] },
-  C10: { prompt: "Cuando quieres apagar tus pensamientos, ¿qué pasa?", optionLabels: ["Se apagan con facilidad", "Lo consigo hasta cierto punto", "No se apagan con facilidad", "Es como si mis pensamientos no tuvieran interruptor"] },
+  C10: { prompt: "Cuando quieres apagar tus pensamientos, ¿qué pasa?", optionLabels: ["Se apagan con facilidad", "Lo logro hasta cierto punto", "No se apagan con facilidad", "Es como si mis pensamientos no tuvieran interruptor"] },
   S1: { prompt: "Cuando ya estás en la cama, ¿cuánta tensión notas en el cuerpo?", minLabel: "Ninguna (relajación total)", maxLabel: "Mucha" },
   S2: { prompt: "Aun tumbándote, ¿cómo notas el cuerpo?", optionLabels: ["Se relaja rápido", "Se relaja hasta cierto punto", "Se queda rígido y en tensión", "No se afloja con facilidad"] },
   S3: { prompt: "¿Cómo está tu ritmo cardíaco antes de dormirte?", optionLabels: ["Tranquilo", "Más o menos como siempre", "A veces lo noto algo acelerado", "Late tan fuerte que me molesta"] },
@@ -155,7 +155,7 @@ export const MODULE8_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
   S6: { prompt: "En la cama, ¿cómo notas los músculos (hombros, mandíbula, etc.)?", optionLabels: ["Relajados", "Algo tensos", "Bastante tensos", "Con una tensión inconsciente, como apretar la mandíbula"] },
   S7: { prompt: "¿Con qué frecuencia el cuerpo te da sacudidas o te despierta mientras duermes?", optionLabels: ["Casi nunca", "De vez en cuando", "A menudo", "Casi todos los días"] },
   S8: { prompt: "¿Cómo es tu respiración cuando estás en la cama?", optionLabels: ["Cómoda y profunda", "Más o menos como siempre", "A veces superficial y rápida", "A veces siento como si me faltara el aire"] },
-  S9: { prompt: "Las noches posteriores a tomar cafeína o pasar por estrés, ¿cómo duermes?", optionLabels: ["Sin mayor efecto en el sueño", "Con un poco de efecto", "Mi cuerpo reacciona claramente", "Me afecta tanto que no consigo dormir"] },
+  S9: { prompt: "Las noches posteriores a tomar cafeína o pasar por estrés, ¿cómo duermes?", optionLabels: ["Sin mayor efecto en el sueño", "Con un poco de efecto", "Mi cuerpo reacciona claramente", "Me afecta tanto que no logro dormir"] },
   S10: { prompt: "Cuando intentas relajar el cuerpo antes de dormir, ¿cómo te va?", optionLabels: ["Sucede por sí solo", "Lleva algo de tiempo", "Tengo que esforzarme conscientemente", "Aun esforzándome, no se afloja del todo"] },
   D1: { prompt: "Justo al despertar, ¿cuánto cansancio te queda en el cuerpo?", minLabel: "Ninguno (siento el cuerpo ligero)", maxLabel: "Muchísimo (como si no hubiera dormido nada)" },
   D2: { prompt: "¿Con qué frecuencia sueñas?", optionLabels: ["Casi nunca (no recuerdo nada)", "De vez en cuando", "A menudo", "Con mucha viveza, casi todos los días"] },

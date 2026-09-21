@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, Check } from "lucide-react-native";
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, Linking, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { API_BASE_URL } from "../config";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LOCALES, LOCALE_LABELS, useLocale, useStrings, type Locale } from "../lib/i18n";

@@ -166,7 +166,7 @@ export const MODULE11_QUESTIONS_ES: Record<string, QuestionTextOverride> = {
   S6: { prompt: "Si tuvieras que describir tu propio atractivo, ¿cómo te resultaría?", optionLabels: ["Puedo hacerlo con facilidad", "Puedo hacerlo hasta cierto punto", "Me da vergüenza y me cuesta", "Casi no soy capaz"] },
   S7: { prompt: "¿Cuánta seguridad tienes en tu atractivo dentro del amor o de las relaciones?", optionLabels: ["Muy firme", "Bastante", "A menudo se tambalea", "Casi ninguna"] },
   S8: { prompt: "Cuando ves un selfi o una foto tuya, ¿qué sientes?", optionLabels: ["Me gusta cómo salgo", "La miro con tranquilidad", "Busco primero los defectos", "Me cuesta mirarla"] },
-  S9: { prompt: "Cuando alguien te dice que tienes atractivo, ¿qué piensas por dentro?", optionLabels: ["Siento que es verdad", "Lo agradezco, pero me pregunto si será cierto", "No consigo creérmelo", "Pienso que lo dice por cortesía"] },
+  S9: { prompt: "Cuando alguien te dice que tienes atractivo, ¿qué piensas por dentro?", optionLabels: ["Siento que es verdad", "Lo agradezco, pero me pregunto si será cierto", "No logro creérmelo", "Pienso que lo dice por cortesía"] },
   S10: { prompt: "¿Qué sientes hacia ti tal como eres?", optionLabels: ["Siento que tengo un atractivo real", "Me siento bien conmigo", "Muchas veces siento que me falta algo", "Me cuesta sentir algún atractivo en mí"] },
 };
 

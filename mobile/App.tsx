@@ -87,6 +87,13 @@ const BACK_TARGET: Partial<Record<StepId, StepId>> = {
 function dayMasterCharOf(homeData: HomeData): string | null {
   return (homeData.sajuResult.summary as { dayMaster?: { char?: string } } | undefined)?.dayMaster?.char ?? null;
 }
+const EL_KO_TO_KEY: Record<string, string> = { 목: "wood", 화: "fire", 토: "earth", 금: "metal", 수: "water" };
+/** The Day Master as the engine computed it, for the report (older stored readings may lack it). */
+function dayMasterOf(homeData: HomeData): { char: string; element: string } | null {
+  const dm = (homeData.sajuResult.summary as { dayMaster?: { char?: string; element?: string } } | undefined)?.dayMaster;
+  const element = dm?.element ? EL_KO_TO_KEY[dm.element] : undefined;
+  return dm?.char && element ? { char: dm.char, element } : null;
+}
 function dayBranchOf(homeData: HomeData): string | null {
   return (homeData.sajuResult.fourPillars as { day?: { earth?: string } } | undefined)?.day?.earth ?? null;
 }
@@ -528,6 +535,7 @@ function AppContent() {
           elements={homeData.sajuResult.elements}
           decadeFortune={homeData.sajuResult.decadeFortune}
           currentAge={homeData.sajuResult.currentAge}
+          dayMaster={dayMasterOf(homeData)}
           quizDiagnosis={quizDiagnosis}
           chatExtract={chatExtract}
           sessionId={sessionId}

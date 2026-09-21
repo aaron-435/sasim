@@ -37,7 +37,7 @@ const YEAR_SPOTLIGHT: Record<CompatibilityResult["relation"], YearDomain> = {
   selfNurturesOther: "love",
   otherNurturesSelf: "career",
   selfChallengesOther: "wealth",
-  otherChallengesSelf: "career",
+  otherChallengesSelf: "study",
 };
 
 type YearData = { year: number; relation: CompatibilityResult["relation"] };
