@@ -589,7 +589,7 @@ export default function ReportScreen({
     const total = body.length + 2;
 
     return [
-      { key: "cover", node: <CoverPage title1={content.title_line1} title2={content.title_line2} subtitle={content.subtitle} nickname={`${nickname}${strings.report.nicknameSuffix}`} previewLabel={lockedOpen ? "" : strings.report.previewLabel} totalPagesLabel={strings.report.totalPagesLabel(total)} /> },
+      { key: "cover", node: <CoverPage title1={content.title_line1} title2={content.title_line2} subtitle={content.subtitle} nickname={`${nickname}${strings.report.nicknameSuffix}`} previewLabel={lockedOpen ? "" : strings.report.previewLabel} totalPagesLabel={lockedOpen ? strings.report.totalPagesLabel(total) : strings.report.previewPagesLabel(body.filter((p) => !p.locked).length + 2, total)} /> },
       { key: "toc", node: <TocPage eyebrow={strings.report.tocEyebrow} title={strings.report.tocTitle} entries={tocEntries} /> },
       ...gated,
     ];
@@ -677,7 +677,11 @@ export default function ReportScreen({
         <View
           style={styles.progressTrack}
           accessibilityRole="progressbar"
-          accessibilityValue={{ min: 0, max: pages.length, now: pageIndex + 1 }}
+          accessibilityValue={{ min: 0, max: pages.length, now: pageIndex + 1, text: `${pageIndex + 1} / ${pages.length}` }}
+          aria-valuemin={0}
+          aria-valuemax={pages.length}
+          aria-valuenow={pageIndex + 1}
+          aria-valuetext={`${pageIndex + 1} / ${pages.length}`}
         >
           <View style={[styles.progressFill, { width: `${progressPct}%` }]} />
         </View>
@@ -801,7 +805,7 @@ function TocPage({ eyebrow, title, entries }: { eyebrow: string; title: string; 
   return (
     <PageShell paper>
       <Text style={pageStyles.tocEyebrow}>{eyebrow}</Text>
-      <Text style={pageStyles.tocTitle}>{title}</Text>
+      <Text style={pageStyles.tocTitle} accessibilityRole="header">{title}</Text>
       <View style={pageStyles.tocList}>
         {entries.map((e, i) => (
           <View key={e.label} style={pageStyles.tocRow}>
@@ -859,7 +863,7 @@ function QuizAnalysisPage({
 }) {
   return (
     <PageShell>
-      <Text style={pageStyles.dataTitle}>{title}</Text>
+      <Text style={pageStyles.dataTitle} accessibilityRole="header">{title}</Text>
       <Text style={pageStyles.dataSubtitle}>{subtitle}</Text>
       {hook && <Text style={pageStyles.caseBody}>{sentenceLines(hook)}</Text>}
       <View style={pageStyles.bars}>
@@ -887,7 +891,7 @@ function OhengBarsPage({ title, elements, dominantKey, intro }: { title: string;
   const strings = useStrings();
   return (
     <PageShell>
-      <Text style={pageStyles.dataTitle}>{title}</Text>
+      <Text style={pageStyles.dataTitle} accessibilityRole="header">{title}</Text>
       <View style={pageStyles.bars}>
         {ELEMENT_KEYS.map((key) => (
           <View key={key} style={pageStyles.barRow}>
@@ -913,7 +917,7 @@ function ElementReadingPage({ pct, reading }: { pct: number; reading: ElementRea
     <PageShell>
       <View style={pageStyles.elemMid}>
         <Text style={pageStyles.elemNum}>{Math.round(pct)}%</Text>
-        <Text style={pageStyles.elemHeading}>{reading.heading}</Text>
+        <Text style={pageStyles.elemHeading} accessibilityRole="header">{reading.heading}</Text>
         <Text style={pageStyles.caseBody}>{sentenceLines(reading.body)}</Text>
       </View>
     </PageShell>
@@ -924,7 +928,7 @@ function ForecastPage({ heading, body, note }: { heading: string; body: string; 
   return (
     <PageShell>
       <View style={pageStyles.elemMid}>
-        <Text style={pageStyles.elemHeading}>{heading}</Text>
+        <Text style={pageStyles.elemHeading} accessibilityRole="header">{heading}</Text>
         <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
       </View>
       <Text style={pageStyles.narrativeCaption}>{note}</Text>
@@ -1046,7 +1050,7 @@ function BreatherPage({
       <View style={pageStyles.breatherLabelBox}>
         <Text style={pageStyles.breatherLabelText}>{label}</Text>
       </View>
-      <Text style={pageStyles.breatherTitle}>{heading}</Text>
+      <Text style={pageStyles.breatherTitle} accessibilityRole="header">{heading}</Text>
       <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
       <View style={pageStyles.takeawayBox}>
         <Text style={pageStyles.takeawayText}>
@@ -1064,7 +1068,7 @@ function CardPage({ kind, indexLabel, title, body }: { kind: "jade" | "warm" | "
     <PageShell>
       <Text style={[pageStyles.cardIndex, { color }]}>{indexLabel}</Text>
       <View style={pageStyles.cardMid}>
-        <Text style={pageStyles.cardTitle}>{title}</Text>
+        <Text style={pageStyles.cardTitle} accessibilityRole="header">{title}</Text>
         <Text style={pageStyles.cardBody}>{sentenceLines(body)}</Text>
       </View>
     </PageShell>
@@ -1099,7 +1103,7 @@ function ClosingPage({ title, body, disclaimer1, disclaimer2 }: { title: string;
   return (
     <PageShell>
       <View style={pageStyles.elemMid}>
-        <Text style={pageStyles.closingTitle}>{title}</Text>
+        <Text style={pageStyles.closingTitle} accessibilityRole="header">{title}</Text>
         <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
       </View>
       <View style={pageStyles.closingBrand}>
@@ -1172,7 +1176,7 @@ function PaywallPage({
       <View style={pageStyles.paywallMid}>
         <View style={pageStyles.paywallCard}>
           <Lock size={22} strokeWidth={1.75} color={COLORS.gold} />
-          <Text style={pageStyles.paywallTitle}>{strings.report.paywallTitle}</Text>
+          <Text style={pageStyles.paywallTitle} accessibilityRole="header">{strings.report.paywallTitle}</Text>
           <Text style={pageStyles.paywallBody}>{strings.report.paywallBody}</Text>
           <Text style={pageStyles.paywallLockedNote}>{strings.report.paywallLockedNote(lockedCount, totalCount)}</Text>
 
@@ -1256,7 +1260,7 @@ const pageStyles = StyleSheet.create({
   tocIdx: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: "#5C5237", width: 18 },
   tocName: { fontFamily: "Manrope_600SemiBold", fontSize: 13, color: "#22301F", flexShrink: 1 },
   tocDots: { flex: 1, borderBottomWidth: 1, borderBottomColor: "#B7A97D", borderStyle: "dotted", marginBottom: 3 },
-  tocPage: { fontFamily: "Manrope_600SemiBold", fontSize: 11.5, color: "#5C5237" },
+  tocPage: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: "#5C5237" },
 
   narrativeMid: { flex: 1, justifyContent: "flex-start", paddingTop: "16%" },
   narrativeBody: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 19, lineHeight: 31, color: COLORS.headline },
@@ -1281,7 +1285,7 @@ const pageStyles = StyleSheet.create({
   caseBody: { fontFamily: "Manrope_400Regular", fontSize: 14.5, lineHeight: 25, color: "#C7C3D1", marginTop: 12 },
 
   dataTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 22, color: COLORS.headline, marginTop: 20, marginBottom: 6 },
-  dataSubtitle: { fontFamily: "Manrope_400Regular", fontSize: 11.5, color: COLORS.footer, marginBottom: 18 },
+  dataSubtitle: { fontFamily: "Manrope_400Regular", fontSize: 12, color: COLORS.footer, marginBottom: 18 },
   dataNote: { fontFamily: "Manrope_400Regular", fontSize: 13.5, lineHeight: 22, color: "#C7C3D1", marginTop: 18 },
   readingNote: { marginTop: 14 },
   bars: { gap: 14, marginVertical: 10 },
@@ -1366,7 +1370,7 @@ const pageStyles = StyleSheet.create({
   paywallBundleSub: { fontFamily: "Manrope_400Regular", fontSize: 12, color: COLORS.subheadline, textAlign: "center" },
   paywallLockedNote: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.gold, textAlign: "center" },
   paywallRestoreButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 8 },
-  paywallDisclaimer: { fontFamily: "Manrope_400Regular", fontSize: 11.5, lineHeight: 17, color: COLORS.subheadline, textAlign: "center", marginTop: 14, paddingHorizontal: 6 },
+  paywallDisclaimer: { fontFamily: "Manrope_400Regular", fontSize: 12, lineHeight: 17, color: COLORS.subheadline, textAlign: "center", marginTop: 14, paddingHorizontal: 6 },
   paywallRestoreLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: COLORS.subheadline, marginTop: 4, textDecorationLine: "underline" },
-  paywallNotice: { fontFamily: "Manrope_400Regular", fontSize: 11.5, lineHeight: 17, color: "#E0A296", textAlign: "center", marginTop: 4 },
+  paywallNotice: { fontFamily: "Manrope_400Regular", fontSize: 12, lineHeight: 17, color: "#E0A296", textAlign: "center", marginTop: 4 },
 });

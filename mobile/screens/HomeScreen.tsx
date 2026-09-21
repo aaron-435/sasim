@@ -308,6 +308,7 @@ export default function HomeScreen({
                 </Pressable>
               )}
             </View>
+            {!!elementName && !!sajuType && <Text style={styles.identityHint}>{strings.home.identityHint}</Text>}
           </View>
 
           {selfDayMasterChar && (
@@ -496,6 +497,7 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     color: COLORS.headline,
   },
+  identityHint: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: 10 },
   identityRow: {
     flexDirection: "row",
     flexWrap: "wrap",

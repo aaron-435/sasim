@@ -64,10 +64,13 @@ export async function POST(req: NextRequest) {
   // The module decides which purchase unlocks this report. App versions from before this fix
   // don't send one: they still get the free half (they show their own paywall over the rest),
   // but nothing the paid half is sealed under, so it simply never leaves the server.
+  // Modules whose report carries a short "someone like you" case — only some, so every report
+  // doesn't follow the same shape (attachment, burnout, anger, family).
+  const CASE_MODULES = new Set(["module1", "module3", "module6", "module9"]);
   const validModule = typeof moduleId === "string" && /^module\d{1,2}$/.test(moduleId) ? moduleId : null;
 
   try {
-    const content = await getReportContent(context, sessionId);
+    const content = await getReportContent({ ...context, includeCase: validModule !== null && CASE_MODULES.has(validModule) }, sessionId);
     await saveReportResult(sessionId, content);
 
     // Only a purchase RevenueCat confirms gets the paid half. Any other outcome — no id, not

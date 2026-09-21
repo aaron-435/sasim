@@ -17,4 +17,6 @@ export const COLORS = {
   inputBg: "rgba(255,255,255,0.03)",
   disabledBg: "rgba(255,255,255,0.06)",
   disabledText: "#6E7A72",
+  // Placeholder text inside inputs: disabledText was ~3.6:1 on the input surface.
+  placeholder: "#8A978F",
 };

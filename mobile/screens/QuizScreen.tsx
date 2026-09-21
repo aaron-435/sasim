@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   },
   progressLabel: {
     fontFamily: "Manrope_400Regular",
-    fontSize: 11,
+    fontSize: 12,
     color: COLORS.footer,
   },
   content: {
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   },
   moduleLabel: {
     fontFamily: "Manrope_600SemiBold",
-    fontSize: 11,
+    fontSize: 12,
     letterSpacing: 1.5,
     color: COLORS.gold,
     textTransform: "uppercase",
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   },
   doneBadgeLabel: {
     fontFamily: "Manrope_600SemiBold",
-    fontSize: 11,
+    fontSize: 12,
     letterSpacing: 1.5,
     color: COLORS.gold,
     textTransform: "uppercase",
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   },
   resultModuleTitle: {
     fontFamily: "Manrope_400Regular",
-    fontSize: 11,
+    fontSize: 12,
     color: COLORS.footer,
   },
   resultBrand: {

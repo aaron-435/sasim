@@ -78,9 +78,9 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </Pressable>
 
-        <Text style={styles.heading}>{strings.settings.heading}</Text>
+        <Text style={styles.heading} accessibilityRole="header">{strings.settings.heading}</Text>
 
-        <Text style={styles.sectionLabel}>{strings.settings.languageSectionLabel}</Text>
+        <Text style={styles.sectionLabel} accessibilityRole="header">{strings.settings.languageSectionLabel}</Text>
         <View style={styles.optionList}>
           {LOCALES.map((l: Locale) => (
             <Pressable
@@ -89,6 +89,7 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
               onPress={() => setLocale(l)}
               accessibilityRole="radio"
               accessibilityState={{ checked: l === locale }}
+              aria-checked={l === locale}
               accessibilityLabel={LOCALE_LABELS[l]}
             >
               <Text style={[styles.optionLabel, l === locale && styles.optionLabelActive]}>{LOCALE_LABELS[l]}</Text>
@@ -97,7 +98,7 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
           ))}
         </View>
 
-        <Text style={[styles.sectionLabel, styles.sectionSpacing]}>{strings.settings.notificationSectionLabel}</Text>
+        <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.notificationSectionLabel}</Text>
         <View style={styles.optionList}>
           {NOTIFICATION_OPTIONS.map((pref) => (
             <Pressable
@@ -107,6 +108,7 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
               disabled={applying}
               accessibilityRole="radio"
               accessibilityState={{ checked: pref === notificationPref, disabled: applying }}
+              aria-checked={pref === notificationPref}
               accessibilityLabel={`${notificationLabels[pref].label}. ${notificationLabels[pref].description}`}
             >
               <View style={styles.optionTextWrap}>
@@ -123,7 +125,7 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
         </View>
         {permissionDenied && <Text style={styles.warning}>{strings.settings.notificationPermissionDenied}</Text>}
 
-        <Text style={[styles.sectionLabel, styles.sectionSpacing]}>{strings.settings.resetSectionLabel}</Text>
+        <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.resetSectionLabel}</Text>
         <Pressable style={styles.resetRow} onPress={handleResetPress} accessibilityRole="button">
           <Text style={styles.resetLabel}>{strings.settings.resetButton}</Text>
         </Pressable>

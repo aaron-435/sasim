@@ -126,7 +126,7 @@ export default function CityScreen({
         <TextInput
           style={styles.input}
           placeholder={strings.city.placeholder}
-          placeholderTextColor={COLORS.disabledText}
+          placeholderTextColor={COLORS.placeholder}
           value={query}
           onChangeText={setQuery}
           autoFocus

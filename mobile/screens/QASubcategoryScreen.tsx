@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   categoryLabel: {
     fontFamily: "Manrope_600SemiBold",
-    fontSize: 11,
+    fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
     textTransform: "uppercase",

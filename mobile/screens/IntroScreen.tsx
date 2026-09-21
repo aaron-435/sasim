@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   brandLabel: {
     fontFamily: "Manrope_600SemiBold",
-    fontSize: 11,
+    fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
     textTransform: "uppercase",
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     fontFamily: "Manrope_400Regular",
-    fontSize: 11,
+    fontSize: 12,
     lineHeight: 18,
     color: COLORS.footer,
     textAlign: "center",

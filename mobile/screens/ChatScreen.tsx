@@ -271,7 +271,7 @@ export default function ChatScreen({
               value={input}
               onChangeText={setInput}
               placeholder={strings.chat.inputPlaceholder}
-              placeholderTextColor={COLORS.disabledText}
+              placeholderTextColor={COLORS.placeholder}
               onSubmitEditing={handleSend}
               returnKeyType="send"
             />
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   },
   doneBadgeLabel: {
     fontFamily: "Manrope_400Regular",
-    fontSize: 11,
+    fontSize: 12,
     color: COLORS.footer,
   },
   finishRow: {

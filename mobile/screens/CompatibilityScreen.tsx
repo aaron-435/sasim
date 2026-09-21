@@ -260,17 +260,32 @@ export default function CompatibilityScreen({
         <Text style={styles.fieldLabel}>{strings.compatibility.nameLabel}</Text>
         <TextInput
           style={styles.input}
+          accessibilityLabel={strings.compatibility.nameLabel}
           placeholder={strings.compatibility.namePlaceholder}
-          placeholderTextColor={COLORS.disabledText}
+          placeholderTextColor={COLORS.placeholder}
           value={otherName}
           onChangeText={setOtherName}
         />
 
-        <View style={styles.row}>
-          <Pressable style={[styles.option, isFemale === false && styles.optionActive]} onPress={() => setIsFemale(false)}>
+        <View style={styles.row} accessibilityRole="radiogroup">
+          <Pressable
+            style={[styles.option, isFemale === false && styles.optionActive]}
+            onPress={() => setIsFemale(false)}
+            accessibilityRole="radio"
+            accessibilityState={{ checked: isFemale === false }}
+            aria-checked={isFemale === false}
+            accessibilityLabel={strings.gender.male}
+          >
             <Text style={[styles.optionLabel, isFemale === false && styles.optionLabelActive]}>{strings.gender.male}</Text>
           </Pressable>
-          <Pressable style={[styles.option, isFemale === true && styles.optionActive]} onPress={() => setIsFemale(true)}>
+          <Pressable
+            style={[styles.option, isFemale === true && styles.optionActive]}
+            onPress={() => setIsFemale(true)}
+            accessibilityRole="radio"
+            accessibilityState={{ checked: isFemale === true }}
+            aria-checked={isFemale === true}
+            accessibilityLabel={strings.gender.female}
+          >
             <Text style={[styles.optionLabel, isFemale === true && styles.optionLabelActive]}>{strings.gender.female}</Text>
           </Pressable>
         </View>
@@ -283,8 +298,9 @@ export default function CompatibilityScreen({
               <TextInput
                 ref={dobRefs[field]}
                 style={[styles.input, field === "year" ? styles.yearInput : styles.shortInput]}
+                accessibilityLabel={`${strings.compatibility.dobHeading}: ${dobPlaceholders[field]}`}
                 placeholder={dobPlaceholders[field]}
-                placeholderTextColor={COLORS.disabledText}
+                placeholderTextColor={COLORS.placeholder}
                 value={dobValues[field]}
                 onChangeText={(v) => {
                   const clean = digitsOnly(v).slice(0, dobMaxLens[field]);
@@ -301,15 +317,23 @@ export default function CompatibilityScreen({
 
         <Text style={styles.fieldLabel}>{strings.compatibility.timeHeading}</Text>
         <View style={styles.row}>
-          <Pressable style={[styles.unknownToggle, timeUnknown && styles.optionActive]} onPress={() => setTimeUnknown((v) => !v)}>
+          <Pressable
+            style={[styles.unknownToggle, timeUnknown && styles.optionActive]}
+            onPress={() => setTimeUnknown((v) => !v)}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: timeUnknown }}
+            aria-checked={timeUnknown}
+            accessibilityLabel={strings.tob.unknownTime}
+          >
             <Text style={[styles.optionLabel, timeUnknown && styles.optionLabelActive]}>{strings.tob.unknownTime}</Text>
           </Pressable>
           {!timeUnknown && (
             <>
               <TextInput
                 style={[styles.input, styles.shortInput]}
+                accessibilityLabel={`${strings.compatibility.timeHeading}: ${strings.tob.hourPlaceholder}`}
                 placeholder={strings.tob.hourPlaceholder}
-                placeholderTextColor={COLORS.disabledText}
+                placeholderTextColor={COLORS.placeholder}
                 value={hour}
                 onChangeText={(v) => setHour(digitsOnly(v).slice(0, 2))}
                 keyboardType="number-pad"
@@ -318,14 +342,20 @@ export default function CompatibilityScreen({
               <Text style={styles.dot}>:</Text>
               <TextInput
                 style={[styles.input, styles.shortInput]}
+                accessibilityLabel={`${strings.compatibility.timeHeading}: ${strings.tob.minutePlaceholder}`}
                 placeholder={strings.tob.minutePlaceholder}
-                placeholderTextColor={COLORS.disabledText}
+                placeholderTextColor={COLORS.placeholder}
                 value={minute}
                 onChangeText={(v) => setMinute(digitsOnly(v).slice(0, 2))}
                 keyboardType="number-pad"
                 maxLength={2}
               />
-              <Pressable style={styles.periodToggle} onPress={() => setPeriod((p) => (p === "AM" ? "PM" : "AM"))}>
+              <Pressable
+                style={styles.periodToggle}
+                onPress={() => setPeriod((p) => (p === "AM" ? "PM" : "AM"))}
+                accessibilityRole="button"
+                accessibilityLabel={period === "AM" ? strings.tob.periodAM : strings.tob.periodPM}
+              >
                 <Text style={styles.optionLabel}>{period === "AM" ? strings.tob.periodAM : strings.tob.periodPM}</Text>
               </Pressable>
             </>
@@ -335,8 +365,9 @@ export default function CompatibilityScreen({
         <Text style={styles.fieldLabel}>{strings.compatibility.cityHeading}</Text>
         <TextInput
           style={styles.input}
+          accessibilityLabel={strings.compatibility.cityHeading}
           placeholder={strings.compatibility.cityPlaceholder}
-          placeholderTextColor={COLORS.disabledText}
+          placeholderTextColor={COLORS.placeholder}
           value={cityQuery}
           onChangeText={onChangeCityQuery}
         />

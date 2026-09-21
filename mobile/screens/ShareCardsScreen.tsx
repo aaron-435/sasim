@@ -179,6 +179,7 @@ export default function ShareCardsScreen({
               style={[styles.tab, kind === t.key && styles.tabActive]}
               accessibilityRole="tab"
               accessibilityState={{ selected: kind === t.key }}
+              aria-selected={kind === t.key}
             >
               <View style={styles.tabInner}>
                 {t.key === "year" && entitled === false && <Lock size={12} strokeWidth={2} color={kind === t.key ? COLORS.gold : COLORS.subheadline} />}
@@ -291,10 +292,10 @@ const styles = StyleSheet.create({
   body: { fontFamily: "Manrope_400Regular", fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, textAlign: "center", marginTop: 12 },
   cardBottom: { alignItems: "center", gap: 10 },
   tipPanel: { width: "100%", borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, backgroundColor: "rgba(255,255,255,0.04)", paddingVertical: 12, paddingHorizontal: 14, alignItems: "center", gap: 4 },
-  tipLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 11.5, color: COLORS.gold },
+  tipLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: COLORS.gold },
   tipText: { fontFamily: "Manrope_500Medium", fontSize: 14, lineHeight: 20, color: COLORS.headline, textAlign: "center" },
   byLine: { fontFamily: "Manrope_500Medium", fontSize: 12, color: COLORS.headline },
-  footer: { fontFamily: "Manrope_400Regular", fontSize: 11.5, color: COLORS.subheadline, textAlign: "center" },
+  footer: { fontFamily: "Manrope_400Regular", fontSize: 12, color: COLORS.subheadline, textAlign: "center" },
   gateCard: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 16, padding: 22, gap: 10, alignItems: "flex-start" },
   gateTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 22, color: COLORS.headline },
   gateBody: { fontFamily: "Manrope_400Regular", fontSize: 14, lineHeight: 21, color: COLORS.subheadline },

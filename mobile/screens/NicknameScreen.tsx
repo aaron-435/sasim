@@ -32,7 +32,7 @@ export default function NicknameScreen({
         <TextInput
           style={[styles.input, focused && styles.inputFocused]}
           placeholder={strings.nickname.placeholder}
-          placeholderTextColor={COLORS.disabledText}
+          placeholderTextColor={COLORS.placeholder}
           value={value}
           onChangeText={onChange}
           maxLength={MAX_LENGTH}

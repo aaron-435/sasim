@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   subcategoryLabel: {
     fontFamily: "Manrope_600SemiBold",
-    fontSize: 11,
+    fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
     textTransform: "uppercase",

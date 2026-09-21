@@ -49,7 +49,13 @@ export default function ModuleSelectScreen({
         </View>
 
         {orderedModules.map((m) => (
-          <Pressable key={m.id} style={styles.card} onPress={() => onSelect(m.id)}>
+          <Pressable
+            key={m.id}
+            style={styles.card}
+            onPress={() => onSelect(m.id)}
+            accessibilityRole="button"
+            accessibilityLabel={`${m.title[locale] ?? m.title.ko}. ${m.subtitle[locale] ?? m.subtitle.ko}${recommendedIds.has(m.id) ? `. ${strings.moduleSelect.recommendedBadge}` : ""}`}
+          >
             <View style={styles.cardText}>
               <View style={styles.cardTitleRow}>
                 <Text style={styles.cardTitle}>{m.title[locale] ?? m.title.ko}</Text>
@@ -106,7 +112,7 @@ const styles = StyleSheet.create({
   },
   badgeLabel: {
     fontFamily: "Manrope_600SemiBold",
-    fontSize: 11,
+    fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
     textTransform: "uppercase",
@@ -154,7 +160,7 @@ const styles = StyleSheet.create({
   recommendedBadgeText: {
     fontFamily: "Manrope_700Bold",
     fontSize: 12,
-    color: COLORS.gold,
+    color: "#7CB597",
   },
   cardSubtitle: {
     fontFamily: "Manrope_400Regular",

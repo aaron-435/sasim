@@ -282,7 +282,7 @@ export default function YearReportScreen({
             )}
           </Pressable>
 
-          <Text style={styles.chapterHeading}>{strings.yearReport.chapterOverview}</Text>
+          <Text style={styles.chapterHeading} accessibilityRole="header">{strings.yearReport.chapterOverview}</Text>
           {paragraphs(report.overview).map((p, i) => (
             <Text key={i} style={styles.body}>
               {p}
@@ -291,7 +291,7 @@ export default function YearReportScreen({
 
           {(["wealth", "love", "career", "study", "health"] as const).map((key) => (
             <View key={key} style={styles.card}>
-              <Text style={styles.cardHeading}>{report.chapters[key].heading}</Text>
+              <Text style={styles.cardHeading} accessibilityRole="header">{report.chapters[key].heading}</Text>
               {paragraphs(report.chapters[key].body).map((p, i) => (
                 <Text key={i} style={styles.body}>
                   {p}
@@ -300,7 +300,7 @@ export default function YearReportScreen({
             </View>
           ))}
 
-          <Text style={[styles.chapterHeading, styles.sectionGap]}>{strings.yearReport.timelineHeading}</Text>
+          <Text style={[styles.chapterHeading, styles.sectionGap]} accessibilityRole="header">{strings.yearReport.timelineHeading}</Text>
           <Text style={styles.timelineNote}>{strings.yearReport.timelineNote}</Text>
           <View style={styles.list}>
             {report.months.map((m, i) => {
@@ -317,10 +317,10 @@ export default function YearReportScreen({
             })}
           </View>
 
-          <Text style={[styles.chapterHeading, styles.sectionGap]}>{strings.yearReport.planHeading}</Text>
+          <Text style={[styles.chapterHeading, styles.sectionGap]} accessibilityRole="header">{strings.yearReport.planHeading}</Text>
           {report.action_plan.map((a, i) => (
             <View key={i} style={styles.card}>
-              <Text style={styles.cardHeading}>{a.title}</Text>
+              <Text style={styles.cardHeading} accessibilityRole="header">{a.title}</Text>
               <Text style={styles.body}>{a.body}</Text>
             </View>
           ))}
@@ -348,11 +348,12 @@ export default function YearReportScreen({
         {relationCopy && (
           <View style={styles.card}>
             <Text style={styles.previewLabel}>{strings.yearReport.previewLabel}</Text>
-            <Text style={styles.cardHeading}>{relationCopy.headline}</Text>
+            <Text style={styles.cardHeading} accessibilityRole="header">{relationCopy.headline}</Text>
             <Text style={styles.body}>{relationCopy.overview}</Text>
           </View>
         )}
 
+        <Text style={styles.vsProNote}>{strings.yearReport.vsProNote}</Text>
         <Text style={styles.lockedNote}>{strings.yearReport.lockedNote}</Text>
         <View style={styles.list}>
           {lockedChapters.map((label, i) => (
@@ -405,6 +406,7 @@ const styles = StyleSheet.create({
   previewLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: COLORS.subheadline, marginBottom: 6 },
   list: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, overflow: "hidden" },
   rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: COLORS.border },
+  vsProNote: { fontFamily: "Manrope_400Regular", fontSize: 13, lineHeight: 20, color: COLORS.subheadline, marginTop: 4, marginBottom: 14 },
   timelineNote: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: -4, marginBottom: 10 },
   monthRow: { flexDirection: "row", gap: 14, paddingVertical: 12, paddingHorizontal: 16 },
   monthName: { width: 40, fontFamily: "Manrope_600SemiBold", fontSize: 13, color: COLORS.gold },
@@ -412,7 +414,7 @@ const styles = StyleSheet.create({
   monthHeadline: { fontFamily: "Manrope_600SemiBold", fontSize: 14, color: COLORS.headline },
   monthBody: { fontFamily: "Manrope_400Regular", fontSize: 13, lineHeight: 20, color: COLORS.subheadline },
   closing: { fontFamily: "CormorantGaramond_500Medium", fontSize: 19, lineHeight: 28, color: COLORS.headline },
-  disclaimer: { fontFamily: "Manrope_400Regular", fontSize: 11.5, lineHeight: 17, color: COLORS.subheadline, marginTop: 16 },
+  disclaimer: { fontFamily: "Manrope_400Regular", fontSize: 12, lineHeight: 17, color: COLORS.subheadline, marginTop: 16 },
   lockedNote: { fontFamily: "Manrope_600SemiBold", fontSize: 13, color: COLORS.gold, marginTop: 22, marginBottom: 10 },
   lockedRow: { flexDirection: "row", alignItems: "center", gap: 12, minHeight: 48, paddingHorizontal: 16 },
   lockedLabel: { fontFamily: "Manrope_500Medium", fontSize: 14.5, color: COLORS.headline },

@@ -62,7 +62,7 @@ export default function VerifyCodeScreen({
         <TextInput
           style={styles.input}
           placeholder={strings.verifyCode.placeholder}
-          placeholderTextColor={COLORS.disabledText}
+          placeholderTextColor={COLORS.placeholder}
           value={code}
           onChangeText={(v) => setCode(v.replace(/[^0-9]/g, "").slice(0, CODE_LENGTH))}
           keyboardType="number-pad"

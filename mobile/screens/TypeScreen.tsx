@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   },
   brandLabel: {
     fontFamily: "Manrope_700Bold",
-    fontSize: 11,
+    fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
   },
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   shareDivider: { width: "60%", height: 1, backgroundColor: COLORS.border, marginVertical: 26 },
   shareCelebRow: { width: "100%", alignItems: "center", marginTop: 16 },
   shareCelebName: { fontFamily: "Manrope_600SemiBold", fontSize: 14, color: COLORS.headline, marginTop: 4 },
-  shareCelebMeta: { fontFamily: "Manrope_500Medium", fontSize: 11.5, color: COLORS.gold, marginTop: 2 },
+  shareCelebMeta: { fontFamily: "Manrope_500Medium", fontSize: 12, color: COLORS.gold, marginTop: 2 },
   shareCelebBlurb: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: 6 },
   shareIconBubble: { width: 52, height: 52, borderRadius: 26, alignItems: "center", justifyContent: "center", marginBottom: 14 },
   shareEyebrow: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 6 },

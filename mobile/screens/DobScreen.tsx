@@ -63,7 +63,7 @@ export default function DobScreen({
                 ref={refs[field]}
                 style={[styles.input, field === "year" ? styles.yearInput : styles.shortInput]}
                 placeholder={placeholders[field]}
-                placeholderTextColor={COLORS.disabledText}
+                placeholderTextColor={COLORS.placeholder}
                 value={values[field]}
                 onChangeText={(v) => {
                   const clean = digitsOnly(v).slice(0, maxLens[field]);

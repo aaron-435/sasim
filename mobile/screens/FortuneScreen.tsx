@@ -151,6 +151,15 @@ function ErrorNotice({ text, retryLabel, onRetry }: { text: string; retryLabel: 
   );
 }
 
+/** Splits a long overview into short paragraphs (three sentences each) so it isn't one wall of text. */
+function toParagraphs(text: string | undefined, perParagraph = 3): string {
+  if (!text) return "";
+  const sentences = text.split(/(?<=[.!?…。])\s+/).filter(Boolean);
+  const groups: string[] = [];
+  for (let i = 0; i < sentences.length; i += perParagraph) groups.push(sentences.slice(i, i + perParagraph).join(" "));
+  return groups.join("\n\n");
+}
+
 export default function FortuneScreen({
   selfDayMasterChar,
   selfDayBranch,
@@ -218,10 +227,11 @@ export default function FortuneScreen({
   }
 
   useEffect(() => {
-    if (!entitled || !selfDayMasterChar || daily || dailyLoading) return;
+    // Free users load today's reading too: they get the overview (see the free preview below).
+    if (entitled === null || !selfDayMasterChar || daily || dailyLoading) return;
     (async () => {
       const result = await fetchDaily(fortuneUrl("dailyFortune", "daily"), "daily");
-      if (!result) return;
+      if (!result || !entitled) return;
       const [opened, currentStreak] = await Promise.all([isFortuneOpened(result.date), getFortuneStreak(result.date)]);
       if (!mountedRef.current) return;
       setRevealed(opened);
@@ -330,6 +340,9 @@ export default function FortuneScreen({
   }
 
   if (!entitled) {
+    // The free half of "today": the overview is open to everyone; wealth, love, health, lucky
+    // points, the week, the month and the year stay with Pro.
+    const freeOverview = daily?.compatibility ? getOverview(content, daily.compatibility.relation, daily.dayMaster.pillarIndex) : null;
     return (
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.content}>
@@ -338,8 +351,18 @@ export default function FortuneScreen({
             <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
           </Pressable>
 
+          {dailyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
+          {freeOverview && daily?.compatibility && (
+            <View style={[styles.sectionCard, styles.freeReadingCard]}>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.freeReadingLabel}</Text>
+              <Text style={styles.rhythmValue}>{strings.fortune.rhythmNames[daily.compatibility.relation]}</Text>
+              <Text style={styles.sectionHeadline}>{freeOverview.headline}</Text>
+              <Text style={styles.sectionBody}>{toParagraphs(freeOverview.body)}</Text>
+            </View>
+          )}
+
           <View style={styles.lockedCard}>
-            <Text style={styles.lockedHeading}>{strings.fortune.lockedHeading}</Text>
+            <Text style={styles.lockedHeading} accessibilityRole="header">{strings.fortune.lockedHeading}</Text>
             <Text style={styles.lockedBody}>{strings.fortune.lockedBody}</Text>
             <View style={styles.benefitList}>
               {strings.fortune.lockedBenefits.map((benefit) => (
@@ -404,19 +427,19 @@ export default function FortuneScreen({
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </Pressable>
 
-        <Text style={styles.heading}>{strings.fortune.headerLabel}</Text>
+        <Text style={styles.heading} accessibilityRole="header">{strings.fortune.headerLabel}</Text>
 
         <View style={styles.tabRow}>
-          <Pressable style={[styles.tabButton, tab === "daily" && styles.tabButtonActive]} onPress={() => handleSelectTab("daily")} accessibilityRole="tab" accessibilityState={{ selected: tab === "daily" }}>
+          <Pressable style={[styles.tabButton, tab === "daily" && styles.tabButtonActive]} onPress={() => handleSelectTab("daily")} accessibilityRole="tab" accessibilityState={{ selected: tab === "daily" }} aria-selected={tab === "daily"}>
             <Text style={[styles.tabLabel, tab === "daily" && styles.tabLabelActive]}>{strings.fortune.dailyTab}</Text>
           </Pressable>
-          <Pressable style={[styles.tabButton, tab === "weekly" && styles.tabButtonActive]} onPress={() => handleSelectTab("weekly")} accessibilityRole="tab" accessibilityState={{ selected: tab === "weekly" }}>
+          <Pressable style={[styles.tabButton, tab === "weekly" && styles.tabButtonActive]} onPress={() => handleSelectTab("weekly")} accessibilityRole="tab" accessibilityState={{ selected: tab === "weekly" }} aria-selected={tab === "weekly"}>
             <Text style={[styles.tabLabel, tab === "weekly" && styles.tabLabelActive]}>{strings.fortune.weeklyTab}</Text>
           </Pressable>
-          <Pressable style={[styles.tabButton, tab === "month" && styles.tabButtonActive]} onPress={() => handleSelectTab("month")} accessibilityRole="tab" accessibilityState={{ selected: tab === "month" }}>
+          <Pressable style={[styles.tabButton, tab === "month" && styles.tabButtonActive]} onPress={() => handleSelectTab("month")} accessibilityRole="tab" accessibilityState={{ selected: tab === "month" }} aria-selected={tab === "month"}>
             <Text style={[styles.tabLabel, tab === "month" && styles.tabLabelActive]}>{strings.fortune.monthTab}</Text>
           </Pressable>
-          <Pressable style={[styles.tabButton, tab === "yearly" && styles.tabButtonActive]} onPress={() => handleSelectTab("yearly")} accessibilityRole="tab" accessibilityState={{ selected: tab === "yearly" }}>
+          <Pressable style={[styles.tabButton, tab === "yearly" && styles.tabButtonActive]} onPress={() => handleSelectTab("yearly")} accessibilityRole="tab" accessibilityState={{ selected: tab === "yearly" }} aria-selected={tab === "yearly"}>
             <Text style={[styles.tabLabel, tab === "yearly" && styles.tabLabelActive]}>{strings.fortune.yearlyTab}</Text>
           </Pressable>
         </View>
@@ -455,35 +478,35 @@ export default function FortuneScreen({
             </Animated.View>
 
             <Animated.View style={[styles.sectionCard, sectionStyle(1)]}>
-              <Text style={styles.sectionLabel}>{strings.fortune.overviewLabel}</Text>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.overviewLabel}</Text>
               <Text style={styles.sectionHeadline}>{dailyOverview?.headline}</Text>
-              <Text style={styles.sectionBody}>{dailyOverview?.body}</Text>
+              <Text style={styles.sectionBody}>{toParagraphs(dailyOverview?.body)}</Text>
             </Animated.View>
 
             <Animated.View style={[styles.sectionCard, sectionStyle(2)]}>
-              <Text style={styles.sectionLabel}>{strings.fortune.wealthLabel}</Text>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.wealthLabel}</Text>
               <Text style={styles.sectionBody}>{content.relations[daily.compatibility.relation].wealth}</Text>
             </Animated.View>
 
             <Animated.View style={[styles.sectionCard, sectionStyle(3)]}>
-              <Text style={styles.sectionLabel}>{strings.fortune.loveLabel}</Text>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.loveLabel}</Text>
               <Text style={styles.sectionBody}>{content.relations[daily.compatibility.relation].love}</Text>
             </Animated.View>
 
             <Animated.View style={[styles.sectionCard, sectionStyle(4)]}>
-              <Text style={styles.sectionLabel}>{strings.fortune.healthLabel}</Text>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.healthLabel}</Text>
               <Text style={styles.sectionBody}>{content.relations[daily.compatibility.relation].health}</Text>
             </Animated.View>
 
             <Animated.View style={[styles.sectionCard, sectionStyle(5)]}>
-              <Text style={styles.sectionLabel}>{strings.fortune.lifeStageLabel}</Text>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.lifeStageLabel}</Text>
               <Text style={styles.sectionHeadline}>{stagesContent.lifeStages[daily.lifeStageIndex]?.name}</Text>
               <Text style={styles.sectionBody}>{stagesContent.lifeStages[daily.lifeStageIndex]?.body}</Text>
             </Animated.View>
 
             {daily.sinsalIndex !== null && (
               <Animated.View style={[styles.sectionCard, sectionStyle(6)]}>
-                <Text style={styles.sectionLabel}>{strings.fortune.sinsalLabel}</Text>
+                <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.sinsalLabel}</Text>
                 <Text style={styles.sectionHeadline}>{stagesContent.sinsal[daily.sinsalIndex]?.name}</Text>
                 <Text style={styles.sectionBody}>{stagesContent.sinsal[daily.sinsalIndex]?.body}</Text>
               </Animated.View>
@@ -491,7 +514,7 @@ export default function FortuneScreen({
 
             {luckyPoint && luckyNumber && (
               <Animated.View style={[styles.sectionCard, sectionStyle(7)]}>
-                <Text style={styles.sectionLabel}>{strings.fortune.luckyPointLabel}</Text>
+                <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.luckyPointLabel}</Text>
                 <View style={styles.luckyRow}>
                   <View style={styles.luckyItem}>
                     <Text style={styles.luckyItemLabel}>{strings.fortune.luckyColorLabel}</Text>
@@ -605,7 +628,7 @@ export default function FortuneScreen({
             </View>
 
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionLabel}>{strings.fortune.overviewLabel}</Text>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.overviewLabel}</Text>
               <Text style={styles.sectionHeadline}>{yearContent.relations[yearly.compatibility.relation].headline}</Text>
               <Text style={styles.sectionBody}>{yearContent.relations[yearly.compatibility.relation].overview}</Text>
             </View>
@@ -617,39 +640,39 @@ export default function FortuneScreen({
             )}
 
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionLabel}>{strings.fortune.wealthLabel}</Text>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.wealthLabel}</Text>
               <Text style={styles.sectionBody}>{yearContent.relations[yearly.compatibility.relation].wealth}</Text>
             </View>
 
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionLabel}>{strings.fortune.loveLabel}</Text>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.loveLabel}</Text>
               <Text style={styles.sectionBody}>{yearContent.relations[yearly.compatibility.relation].love}</Text>
             </View>
 
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionLabel}>{strings.fortune.careerLabel}</Text>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.careerLabel}</Text>
               <Text style={styles.sectionBody}>{yearContent.relations[yearly.compatibility.relation].career}</Text>
             </View>
 
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionLabel}>{strings.fortune.studyLabel}</Text>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.studyLabel}</Text>
               <Text style={styles.sectionBody}>{yearContent.relations[yearly.compatibility.relation].study}</Text>
             </View>
 
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionLabel}>{strings.fortune.healthLabel}</Text>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.healthLabel}</Text>
               <Text style={styles.sectionBody}>{yearContent.relations[yearly.compatibility.relation].health}</Text>
             </View>
 
             <View style={styles.sectionCard}>
-              <Text style={styles.sectionLabel}>{strings.fortune.yearLifeStageLabel}</Text>
+              <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.yearLifeStageLabel}</Text>
               <Text style={styles.sectionHeadline}>{stagesContent.lifeStages[yearly.lifeStageIndex]?.name}</Text>
               <Text style={styles.sectionBody}>{stagesContent.yearLifeStageBodies[yearly.lifeStageIndex]}</Text>
             </View>
 
             {yearly.sinsalIndex !== null && (
               <View style={styles.sectionCard}>
-                <Text style={styles.sectionLabel}>{strings.fortune.yearSinsalLabel}</Text>
+                <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.yearSinsalLabel}</Text>
                 <Text style={styles.sectionHeadline}>{stagesContent.sinsal[yearly.sinsalIndex]?.name}</Text>
                 <Text style={styles.sectionBody}>{stagesContent.yearSinsalBodies[yearly.sinsalIndex]}</Text>
               </View>
@@ -659,7 +682,7 @@ export default function FortuneScreen({
 
         {tab === "yearly" && (
           <View style={styles.monthlySection}>
-            <Text style={styles.sectionLabel}>{strings.fortune.monthlyFlowLabel}</Text>
+            <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.monthlyFlowLabel}</Text>
 
             <View style={styles.domainPickerRow}>
               {(["overview", "wealth", "love", "career", "study", "health"] as YearDomain[]).map((d) => (
@@ -732,6 +755,7 @@ const styles = StyleSheet.create({
   backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },
   backLabel: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginBottom: 16 },
+  freeReadingCard: { marginBottom: 18, gap: 8 },
   lockedCard: {
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
@@ -819,7 +843,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 12,
   },
-  streakBadgeText: { fontFamily: "Manrope_600SemiBold", fontSize: 11.5, color: COLORS.gold },
+  streakBadgeText: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: COLORS.gold },
   scoreCard: {
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
@@ -851,7 +875,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     gap: 4,
   },
-  luckyItemLabel: { fontFamily: "Manrope_400Regular", fontSize: 11.5, color: COLORS.subheadline },
+  luckyItemLabel: { fontFamily: "Manrope_400Regular", fontSize: 12, color: COLORS.subheadline },
   luckyItemValue: { fontFamily: "Manrope_600SemiBold", fontSize: 14, color: COLORS.headline },
   highlightCard: {
     backgroundColor: COLORS.inputBg,
@@ -897,7 +921,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   domainChipActive: { backgroundColor: "rgba(111,169,139,0.14)", borderColor: "rgba(111,169,139,0.4)" },
-  domainChipLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 11.5, color: COLORS.subheadline },
+  domainChipLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: COLORS.subheadline },
   domainChipLabelActive: { color: COLORS.gold },
   monthRow: {
     backgroundColor: COLORS.inputBg,

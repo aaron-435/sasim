@@ -54,7 +54,7 @@ export default function TobScreen({
           <TextInput
             style={[styles.input, styles.shortInput, timeUnknown && styles.inputDisabled]}
             placeholder={strings.tob.hourPlaceholder}
-            placeholderTextColor={COLORS.disabledText}
+            placeholderTextColor={COLORS.placeholder}
             value={hour}
             editable={!timeUnknown}
             onChangeText={(v) => {
@@ -71,7 +71,7 @@ export default function TobScreen({
             ref={minuteRef}
             style={[styles.input, styles.shortInput, timeUnknown && styles.inputDisabled]}
             placeholder={strings.tob.minutePlaceholder}
-            placeholderTextColor={COLORS.disabledText}
+            placeholderTextColor={COLORS.placeholder}
             value={minute}
             editable={!timeUnknown}
             onChangeText={(v) => onChangeMinute(digitsOnly(v).slice(0, 2))}

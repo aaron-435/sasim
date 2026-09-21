@@ -31,7 +31,7 @@ await Promise.all(Object.entries(personas).map(async ([key, p]: [string, any]) =
     dimensionResults: [{ dimension: "perfectionism", direction: "high", percentOfMax: 82, intensity: "strong" }, { dimension: "recovery", direction: "low", percentOfMax: 34, intensity: "moderate" }],
     dimensionShortNames: c.dims, nuancedSummary: c.summary,
     topAnswers: [{ dimension: "perfectionism", dimensionLabel: c.dims.perfectionism, prompt: c.answers[0][0], label: c.answers[0][1] }, { dimension: "recovery", dimensionLabel: c.dims.recovery, prompt: c.answers[1][0], label: c.answers[1][1] }],
-    chatExtract: c.chat, decadeFortune: r.decadeFortune, currentAge: r.currentAge, locale: loc };
+    chatExtract: c.chat, includeCase: true, decadeFortune: r.decadeFortune, currentAge: r.currentAge, locale: loc };
   const day = r.fourPillars.day;
   const [content, year] = await Promise.all([
     getReportContent(ctx),

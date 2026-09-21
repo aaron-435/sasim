@@ -152,6 +152,9 @@ export interface ReportContext {
   /** User's app locale. Defaults to "ko" when absent — same convention as
    * ChatSessionContext.locale in chatPrompts.ts. */
   locale?: Locale;
+  /** Set by the server (never trusted from the client): whether this module's report carries the
+   * short "someone like you" case. Only a few modules do, so the reports don't all read alike. */
+  includeCase?: boolean;
 }
 
 // A trimmed excerpt of the original hand-written Module 3 report (see git
@@ -190,7 +193,14 @@ const STYLE_EXCERPT = `
 /** answer_notes' array-length rule has to name the exact count, so the schema is built per
  * request instead of being one static string — see ReportTopAnswer's header comment for why
  * this field exists at all (a literal Q&A pair alone read as flat with no interpretation). */
-function buildOutputSchema(topAnswerCount: number, hasChat: boolean): string {
+function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase: boolean): string {
+  // Only some modules carry a "someone like you" story; a report for the others goes straight from
+  // the psych-test page to the saju chart. Empty values keep the shape the app expects.
+  const caseFields = includeCase
+    ? `  "case_tag": "'[사례] — [가명], [연령대], [상황]' 형식의 짧은 태그. 맨 앞 단어는 반드시 이 언어의 말로(한국어 '사례', 영어 'CASE', 스페인어 'CASO'), 가명은 이 사람의 언어권에서 자연스러운 이름. 연령대는 '30대 초반'처럼 대략으로 쓰고 구체적 나이 숫자는 쓰지 말 것",
+  "case_paragraphs": ["이 사람과 닮은 가상 인물의 짧은 요약 — 배열 원소는 정확히 1개, 4문장. 가상 인물이 이 사람과 같은 패턴 때문에 겪는 구체적인 하루를 보여 주고, 사주도 비슷한 원소 불균형이 있다는 점을 한 문장으로 연결하며, 마지막 문장은 반드시 '당신도'처럼 이 사람에게 돌아오는 문장. 이 사례는 이 사람의 이야기로 가는 짧은 다리일 뿐이니 길게 끌지 말 것"],`
+    : `  "case_tag": "",
+  "case_paragraphs": [],`;
   const answerNotesField =
     topAnswerCount > 0
       ? `,
@@ -209,8 +219,7 @@ function buildOutputSchema(topAnswerCount: number, hasChat: boolean): string {
   "title_line2": "리포트 제목 2행 — 1행과 이어지는 한 문장",
   "subtitle": "부제 — '~ 심층 리포트 — 사주 × 심리검사 × 상담 통합' 형식, 모듈명을 자연스럽게 녹여서. 모듈 번호는 아래 데이터의 '심리테스트 모듈' 값에 나온 숫자·표기 그대로 쓰고, '삼'/'사' 같은 한글 숫자로 풀어 쓰지 말 것 (예: '모듈 3', '모듈 9'처럼 아라비아 숫자 그대로)",
   "opening_scene": "'어느 밤의 장면' 섹션 본문. 4~5문장. 이 사람의 실제 패턴(dimensionResults, chatExtract)에서 나온 구체적 장면(시간대, 손에 든 것, 머릿속 문장까지)으로 시작해서, 마지막 문장에서 '{nickname}님의 요즘은 이런 모습이지 않으신가요' 식으로 직접 부른다.",
-  "case_tag": "'[사례] — [가명], [연령대], [상황]' 형식의 짧은 태그. 맨 앞 단어는 반드시 이 언어의 말로(한국어 '사례', 영어 'CASE', 스페인어 'CASO'), 가명은 이 사람의 언어권에서 자연스러운 이름. 연령대는 '30대 초반'처럼 대략으로 쓰고 구체적 나이 숫자는 쓰지 말 것",
-  "case_paragraphs": ["이 사람과 닮은 가상 인물 사례 정확히 2문단, 배열 원소 2개. 각 문단은 3~4문장이고 따로따로 읽혀도 완결되어야 한다. 1문단: 가상 인물이 이 사람과 같은 패턴을 겪는 구체적인 하루(실존 인물처럼 보이지 않게 가명). 2문단: 그 패턴이 그 인물에게 남긴 것 + 그 인물의 사주도 이 사람과 비슷한 원소 불균형을 가졌다는 연결, 그리고 마지막 문장은 반드시 '당신도'처럼 이 사람에게 돌아오는 문장. 이 사례는 이 사람의 이야기로 가는 다리일 뿐이니 길게 끌지 말 것"],
+${caseFields}
   "quiz_reading": "심리검사 결과 페이지(막대 그래프) 아래에 붙는 해설. 3문장. 이 사람의 실제 수치(높은 축 %, 낮은 축 %)와 유형 이름을 그대로 언급하고, 그 조합이 이 사람의 하루에서 어떤 장면으로 나타나는지 짚는다. 화면에 이미 유형 이름·한 줄 설명·막대가 보이므로 그것을 그대로 되풀이하지 말고 그 의미를 풀어 줄 것",
   "oheng_intro": "오행 분포 그래프 페이지 위에 붙는 해설. 3문장. 이 사람의 실제 수치(우세 원소 %, 약한 원소 %)를 그대로 언급하고, 이 분포가 이번 모듈 주제(아래 데이터의 심리테스트 모듈)에서 어떤 장면으로 나타나는지 짚는다",
   "element_readings": {
@@ -356,7 +365,7 @@ ${topAnswersLine ? `- 실제로 답한 문항들 (answer_notes는 이 순서 그
 ${chatSection}
 
 ## 출력 스키마
-${buildOutputSchema(context.topAnswers?.length ?? 0, !!context.chatExtract)}
+${buildOutputSchema(context.topAnswers?.length ?? 0, !!context.chatExtract, !!context.includeCase)}
 ${outputLanguageDirective(locale, { en: "the JSON schema above", es: "esquema JSON anterior" })}
 `.trim();
 }
