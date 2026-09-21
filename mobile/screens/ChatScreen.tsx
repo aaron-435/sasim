@@ -6,6 +6,7 @@ import ShieldCheck from "lucide-react-native/icons/shield-check";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -82,18 +83,28 @@ export default function ChatScreen({
     return () => clearInterval(id);
   }, [done]);
 
+  // Opening the keyboard hides the bottom of the conversation — usually the bot's last question.
+  // Bring the latest message back into view when the input is focused / the keyboard appears.
+  const scrollToLatest = useCallback(() => {
+    setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 250);
+  }, []);
+  useEffect(() => {
+    const sub = Keyboard.addListener("keyboardDidShow", scrollToLatest);
+    return () => sub.remove();
+  }, [scrollToLatest]);
+
   const onBubbleLayout = useReplyScroll(scrollRef, messages.map((m) => m.role));
 
   const revealLines = useCallback(async (lines: string[]) => {
     for (const line of lines) {
       if (!mountedRef.current) return;
       setIsTyping(true);
-      const delay = Math.min(1800, 450 + line.length * 18);
+      const delay = Math.min(2600, 700 + line.length * 24);
       await new Promise((r) => setTimeout(r, delay));
       if (!mountedRef.current) return;
       setIsTyping(false);
       setMessages((m) => [...m, { role: "bot", text: line }]);
-      await new Promise((r) => setTimeout(r, 180));
+      await new Promise((r) => setTimeout(r, 300));
     }
   }, []);
 
@@ -204,11 +215,13 @@ export default function ChatScreen({
     : `${String(Math.floor(remainingSeconds / 60)).padStart(2, "0")}:${String(remainingSeconds % 60).padStart(2, "0")}`;
   const showCheckpoint = turn === CHECKPOINT_TURN && !checkpointDismissed && !done && !isTyping && !errorText;
   const canFinishEarly = !done && !isTyping && !errorText && !showCheckpoint && elapsedSeconds >= EARLY_FINISH_SECONDS;
-  const showTextInput = !isTyping && !done && !errorText && !showCheckpoint;
+  // Stays on screen while the bot is still writing (sending is blocked until it finishes): removing it
+  // for every bubble made the input row flicker away and back several times per reply.
+  const showTextInput = !done && !errorText && !showCheckpoint;
 
   return (
     <SafeAreaView style={styles.root}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+      <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <View style={styles.header}>
           <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
             <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
@@ -278,9 +291,10 @@ export default function ChatScreen({
               placeholder={strings.chat.inputPlaceholder}
               placeholderTextColor={COLORS.placeholder}
               onSubmitEditing={handleSend}
+              onFocus={scrollToLatest}
               returnKeyType="send"
             />
-            <Pressable style={styles.sendButton} onPress={handleSend}>
+            <Pressable style={[styles.sendButton, isTyping && styles.sendButtonBusy]} onPress={handleSend} disabled={isTyping} accessibilityRole="button" accessibilityState={{ disabled: isTyping }}>
               <Send size={16} strokeWidth={2} color={COLORS.ctaText} />
             </Pressable>
           </View>
@@ -458,6 +472,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
+  sendButtonBusy: { opacity: 0.45 },
   sendButton: {
     width: 44,
     height: 44,
