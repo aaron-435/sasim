@@ -317,6 +317,8 @@ export const en: typeof ko = {
     lockedHeading: "What Pro opens",
     lockedBody: "Today's overview above is yours, free. Subscribe and the rest opens up.",
     freeReadingLabel: "Today's overview · free",
+    shareOverviewButton: "Share",
+    shareOverviewTitle: "Fatesaid · Today's overview",
     lockedBenefits: [
       { title: "Today's full reading", body: "On top of the free overview: wealth, love, health and lucky points, every morning" },
       { title: "This week", body: "Seven days of flow, and the best day among them" },

@@ -9,7 +9,7 @@
 import OpenAI from "openai";
 import { logLlmUsage } from "./llmUsage";
 import { buildYearReportPrompt, type YearReportContext } from "./yearReportPrompts";
-import { checkYearReportDeterministic, makeRewriter, repairStringFindings } from "./reportQuality";
+import { checkYearReportDeterministic, makeRewriter, repairStringFindings, stripHanja } from "./reportQuality";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
@@ -83,10 +83,11 @@ class IncompleteYearReport extends Error {}
  * that failed, so a buyer never reads them. */
 async function polishYearReport(content: YearReportContent, ctx: YearReportContext, sessionId?: string): Promise<YearReportContent> {
   const problems = checkYearReportDeterministic(content, ctx.locale);
-  if (problems.length === 0) return content;
+  if (problems.length === 0) return ctx.locale === "ko" ? stripHanja(content) : content;
   console.info(`[yearReport] ${problems.length} finding(s) — ${problems.slice(0, 3).join(" | ").slice(0, 300)}`);
   const repaired = await repairStringFindings(content, problems, makeRewriter(client, YEAR_REPORT_MODEL, ctx.locale, sessionId));
-  return checkYearReportDeterministic(repaired, ctx.locale).length <= problems.length ? repaired : content;
+  const result = checkYearReportDeterministic(repaired, ctx.locale).length <= problems.length ? repaired : content;
+  return ctx.locale === "ko" ? stripHanja(result) : result;
 }
 
 async function generateYearReportOnce(ctx: YearReportContext, sessionId?: string): Promise<YearReportContent> {

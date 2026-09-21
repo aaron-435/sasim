@@ -7,7 +7,7 @@ import { API_BASE_URL } from "../config";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { useLocale, useStrings } from "../lib/i18n";
 import { exportReportPdf, pdfErrorMessage } from "../lib/reportPdf";
-import { getRevenueCatUserId, getYearReportPackage, hasYearReportEntitlement, purchaseYearReport, restoreReports } from "../lib/purchases";
+import { getRevenueCatUserId, getYearReportPackage, hasYearReportEntitlement, isUnavailableMessage, purchaseIssueDetail, purchaseYearReport, restoreReports } from "../lib/purchases";
 import { qaYearReport } from "../dev/qaMode";
 import { getSavedYearReport, saveYearReport, type YearReportContent } from "../lib/yearReportStorage";
 import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
@@ -182,7 +182,7 @@ export default function YearReportScreen({
     if (outcome.status === "success") {
       generate(year);
     } else if (outcome.status === "error") {
-      setNotice(outcome.message === "no offering available" ? strings.yearReport.purchaseUnavailable : strings.yearReport.purchaseError);
+      setNotice(isUnavailableMessage(outcome.message) ? `${strings.yearReport.purchaseUnavailable}${purchaseIssueDetail(outcome.message) ? `\n(${purchaseIssueDetail(outcome.message)})` : ""}` : `${strings.yearReport.purchaseError}${outcome.message ? `\n(${outcome.message.slice(0, 160)})` : ""}`);
     }
   }
 

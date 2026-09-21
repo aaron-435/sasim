@@ -139,20 +139,42 @@ export async function getReportPackages(): Promise<ReportPackageMap | null> {
   try {
     const offerings = await Purchases.getOfferings();
     const offering = offerings.all["reports"];
-    if (!offering) return null;
+    if (!offering) {
+      lastOfferingsIssue = `offering "reports" not found (found: ${Object.keys(offerings.all).join(", ") || "none"})`;
+      return null;
+    }
     const map: ReportPackageMap = {};
     for (const pkg of offering.availablePackages) map[pkg.identifier] = pkg;
+    lastOfferingsIssue = Object.keys(map).length ? null : 'offering "reports" has no purchasable packages';
     return map;
   } catch (err) {
+    const e = err as PurchasesError & { underlyingErrorMessage?: string };
+    lastOfferingsIssue = `${e?.code ?? "?"} ${e?.message ?? ""} ${e?.underlyingErrorMessage ?? ""}`.trim().slice(0, 220);
     console.error("[purchases] failed to fetch report offerings", err);
     return null;
   }
 }
 
+/** Why the last offerings/package lookup failed — shown (small) under the "can't buy right now"
+ * message so a failing store setup can be diagnosed from a screenshot of a TestFlight build. */
+let lastOfferingsIssue: string | null = null;
+function unavailable(detail?: string): PurchaseOutcome {
+  const why = detail ?? lastOfferingsIssue;
+  return { status: "error", message: `no offering available${why ? ` | ${why}` : ""}` };
+}
+/** The diagnostic part of an "unavailable" message ("" when there is none). */
+export function purchaseIssueDetail(message: string): string {
+  const i = message.indexOf(" | ");
+  return i >= 0 ? message.slice(i + 3) : "";
+}
+export function isUnavailableMessage(message: string): boolean {
+  return message.startsWith("no offering available");
+}
+
 export async function purchaseReportModule(moduleId: string): Promise<PurchaseOutcome> {
   const packages = await getReportPackages();
   const pkg = packages?.[moduleId];
-  if (!pkg) return { status: "error", message: "no offering available" };
+  if (!pkg) return unavailable(packages ? `package "${moduleId}" not in offering (has: ${Object.keys(packages).join(", ")})` : undefined);
   return purchasePackage(pkg);
 }
 
@@ -176,8 +198,9 @@ export async function getYearReportPackage(year: number): Promise<PurchasesPacka
 }
 
 export async function purchaseYearReport(year: number): Promise<PurchaseOutcome> {
-  const pkg = await getYearReportPackage(year);
-  if (!pkg) return { status: "error", message: "no offering available" };
+  const packages = await getReportPackages();
+  const pkg = packages?.[yearReportId(year)];
+  if (!pkg) return unavailable(packages ? `package "${yearReportId(year)}" not in offering (has: ${Object.keys(packages).join(", ")})` : undefined);
   return purchasePackage(pkg);
 }
 
@@ -194,7 +217,7 @@ export async function getRevenueCatUserId(): Promise<string | null> {
 export async function purchaseReportBundle(): Promise<PurchaseOutcome> {
   const packages = await getReportPackages();
   const pkg = packages?.[REPORT_BUNDLE_PACKAGE_ID];
-  if (!pkg) return { status: "error", message: "no offering available" };
+  if (!pkg) return unavailable(packages ? `package "${REPORT_BUNDLE_PACKAGE_ID}" not in offering (has: ${Object.keys(packages).join(", ")})` : undefined);
   return purchasePackage(pkg);
 }
 

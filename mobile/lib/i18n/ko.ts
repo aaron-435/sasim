@@ -343,6 +343,8 @@ export const ko = {
     lockedHeading: "Pro로 열리는 운세",
     lockedBody: "위의 오늘 총론은 무료로 볼 수 있어요. 구독하면 나머지가 모두 열려요.",
     freeReadingLabel: "오늘의 총론 · 무료",
+    shareOverviewButton: "공유하기",
+    shareOverviewTitle: "Fatesaid · 오늘의 총론",
     lockedBenefits: [
       { title: "오늘의 운세 전체", body: "무료 총론에 더해 재물·애정·건강, 행운 포인트까지 매일 아침" },
       { title: "이번 주", body: "7일의 흐름과 그중 가장 좋은 날" },

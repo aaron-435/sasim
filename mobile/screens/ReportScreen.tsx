@@ -5,7 +5,7 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
-import { getRevenueCatUserId, purchaseReportBundle, purchaseReportModule, restoreReports } from "../lib/purchases";
+import { getRevenueCatUserId, isUnavailableMessage, purchaseIssueDetail, purchaseReportBundle, purchaseReportModule, restoreReports } from "../lib/purchases";
 import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
 import { elementWithEmoji } from "../lib/elements";
@@ -33,8 +33,17 @@ const PAPER_BG = "#EFE7D8";
  * which chopped longer 3-sentence pages into a ragged, poem-like column. A sentence that is
  * still too long for one line wraps normally. No space follows the "." in a decimal
  * (e.g. "14.99"), so numbers are safe. */
-function sentenceLines(text: string): string {
+/** Hanja are never shown in the app (elements carry an emoji instead). New reports are cleaned on the
+ * server; this also cleans reports saved on the device before that ("화(火)", "대운(大運)"). */
+function noHanja(text: string): string {
   return text
+    .replace(/([목화토금수])\s?\(([木火土金水])\)/g, "$1")
+    .replace(/\s?\([\u4E00-\u9FFF]+\)/g, "")
+    .replace(/[\u4E00-\u9FFF]/g, "");
+}
+
+function sentenceLines(text: string): string {
+  return noHanja(text)
     .split(/(?<=[.!?…。])\s+/)
     .map((s) => s.trim())
     .filter(Boolean)
@@ -307,7 +316,7 @@ export default function ReportScreen({
     if (outcome.status === "success") {
       await refreshEntitlement();
     } else if (outcome.status === "error") {
-      setPurchaseNotice(outcome.message === "no offering available" ? strings.report.purchaseUnavailable : strings.report.purchaseErrorDefault);
+      setPurchaseNotice(isUnavailableMessage(outcome.message) ? `${strings.report.purchaseUnavailable}${purchaseIssueDetail(outcome.message) ? `\n(${purchaseIssueDetail(outcome.message)})` : ""}` : `${strings.report.purchaseErrorDefault}${outcome.message ? `\n(${outcome.message.slice(0, 160)})` : ""}`);
     }
   }
 
@@ -321,7 +330,7 @@ export default function ReportScreen({
     if (outcome.status === "success") {
       await refreshEntitlement();
     } else if (outcome.status === "error") {
-      setPurchaseNotice(outcome.message === "no offering available" ? strings.report.purchaseUnavailable : strings.report.purchaseErrorDefault);
+      setPurchaseNotice(isUnavailableMessage(outcome.message) ? `${strings.report.purchaseUnavailable}${purchaseIssueDetail(outcome.message) ? `\n(${purchaseIssueDetail(outcome.message)})` : ""}` : `${strings.report.purchaseErrorDefault}${outcome.message ? `\n(${outcome.message.slice(0, 160)})` : ""}`);
     }
   }
 
@@ -409,7 +418,7 @@ export default function ReportScreen({
       if (!reading) return;
       body.push({
         key: `element-${key}`,
-        node: <ElementReadingPage pct={resolvedElements[key] ?? 0} reading={reading} />,
+        node: <ElementReadingPage pct={resolvedElements[key] ?? 0} reading={reading} elementKey={key} />,
       });
     });
 
@@ -916,12 +925,18 @@ function OhengBarsPage({ title, elements, dominantKey, intro }: { title: string;
   );
 }
 
-function ElementReadingPage({ pct, reading }: { pct: number; reading: ElementReading }) {
+/** Element headings carry the element's emoji (older reports don't) and never a hanja. */
+function headingWithEmoji(elementKey: string, heading: string): string {
+  const clean = noHanja(heading).trim();
+  return /^\p{Extended_Pictographic}/u.test(clean) ? clean : elementWithEmoji(elementKey, clean);
+}
+
+function ElementReadingPage({ pct, reading, elementKey }: { pct: number; reading: ElementReading; elementKey: string }) {
   return (
     <PageShell>
       <View style={pageStyles.elemMid}>
         <Text style={pageStyles.elemNum}>{Math.round(pct)}%</Text>
-        <Text style={pageStyles.elemHeading} accessibilityRole="header">{reading.heading}</Text>
+        <Text style={pageStyles.elemHeading} accessibilityRole="header">{headingWithEmoji(elementKey, reading.heading)}</Text>
         <Text style={pageStyles.caseBody}>{sentenceLines(reading.body)}</Text>
       </View>
     </PageShell>

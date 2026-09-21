@@ -21,6 +21,7 @@
 import OpenAI from "openai";
 import { buildChatSystemPrompt, buildExtractionPrompt, TOTAL_TURNS, type ChatSessionContext } from "./chatPrompts";
 import { logLlmUsage } from "./llmUsage";
+import { stripHanja } from "./reportQuality";
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!, // set in .env.local, never exposed to client
@@ -82,7 +83,9 @@ function enforceOneQuestionPerReply(lines: string[]): string[] {
     return acc;
   }, []);
   if (questionIndices.length <= 1) return lines;
-  const dropIndices = new Set(questionIndices.slice(0, -1));
+  // Keep the FIRST question: a second question line is usually a dependent follow-up ("있었다면 그건
+  // 언제쯤이었나요?"), which reads as a broken fragment once the question it leans on is removed.
+  const dropIndices = new Set(questionIndices.slice(1));
   return lines.filter((_, i) => !dropIndices.has(i));
 }
 
@@ -120,7 +123,7 @@ export async function getChatReply(params: {
   const rawLines = Array.isArray(parsed.lines) ? parsed.lines.map((l: unknown) => String(l)).filter(Boolean) : [];
   if (rawLines.length === 0) throw new Error("OpenAI 응답에 lines가 없습니다.");
   const lines = enforceOneQuestionPerReply(rawLines);
-  return { lines };
+  return { lines: params.context.locale === "ko" || !params.context.locale ? stripHanja(lines) : lines };
 }
 
 export async function extractChatSummary(transcript: ChatMessage[], context: ChatSessionContext, sessionId?: string): Promise<ChatExtract> {

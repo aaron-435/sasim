@@ -46,7 +46,9 @@ export const FIELD_LANGUAGE_NAME: Record<Locale, string> = {
  * hanja notation since mobile's own ko.ts dictionary does too.
  */
 export const ELEMENT_LABEL: Record<Locale, Record<ElementKey, string>> = {
-  ko: { wood: "목(木)", fire: "화(火)", earth: "토(土)", metal: "금(金)", water: "수(水)" },
+  // Hangul only: hanja are not shown anywhere in the app (elements are labelled with an emoji), and a
+  // data line like "화(火)" is exactly what makes the model write "화(火)" back.
+  ko: { wood: "목", fire: "화", earth: "토", metal: "금", water: "수" },
   en: { wood: "Wood", fire: "Fire", earth: "Earth", metal: "Metal", water: "Water" },
   es: { wood: "Madera", fire: "Fuego", earth: "Tierra", metal: "Metal", water: "Agua" },
 };

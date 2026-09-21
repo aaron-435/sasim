@@ -317,6 +317,8 @@ export const es: typeof ko = {
     lockedHeading: "Lo que abre Pro",
     lockedBody: "El resumen de hoy que ves arriba es gratis. Suscríbete y se abre todo lo demás.",
     freeReadingLabel: "Resumen de hoy · gratis",
+    shareOverviewButton: "Compartir",
+    shareOverviewTitle: "Fatesaid · Resumen de hoy",
     lockedBenefits: [
       { title: "Lectura completa de hoy", body: "Además del resumen gratuito: dinero, amor, salud y puntos de suerte, cada mañana" },
       { title: "Esta semana", body: "Siete días de flujo y el mejor día entre ellos" },

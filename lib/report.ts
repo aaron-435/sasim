@@ -11,7 +11,7 @@
 
 import OpenAI from "openai";
 import { buildReportPrompt, type ReportContext } from "./reportPrompts";
-import { buildReviewPrompt, checkReportDeterministic, makeRewriter, repairStringFindings } from "./reportQuality";
+import { buildReviewPrompt, checkReportDeterministic, makeRewriter, repairStringFindings, stripHanja } from "./reportQuality";
 import { logLlmUsage } from "./llmUsage";
 
 const client = new OpenAI({
@@ -249,9 +249,10 @@ export async function getReportContent(context: ReportContext, sessionId?: strin
     const remaining = checkReportDeterministic(best.content, context);
     if (remaining.length > 0) {
       const repaired = await repairStrings(context, best.content, remaining, sessionId);
-      if (checkReportDeterministic(repaired, context).length < remaining.length) return repaired;
+      if (checkReportDeterministic(repaired, context).length < remaining.length) return context.locale === "ko" ? stripHanja(repaired) : repaired;
     }
   }
+  if (context.locale === "ko") return stripHanja(best.content);
   if (bestScore > 0) console.warn(`[report] shipped with ${bestScore} unresolved finding(s) after ${generations} generation(s)`);
   return best.content;
 }

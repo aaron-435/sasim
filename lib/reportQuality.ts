@@ -286,3 +286,26 @@ export async function repairStringFindings<T>(
   }
   return fixed;
 }
+
+const HANJA_ELEMENT_EMOJI: Record<string, string> = { 木: "🌳", 火: "🔥", 土: "⛰️", 金: "💎", 水: "💧" };
+const HANGUL_ELEMENT: Record<string, string> = { 木: "목", 火: "화", 土: "토", 金: "금", 水: "수" };
+
+/** Korean text must never show hanja (the app labels elements with an emoji instead). The prompts
+ * already forbid them; this is the guarantee for when the model still writes "화(火)" or "(大運)":
+ * an element with its hanja in parentheses keeps the hangul, and any other parenthesised hanja is
+ * dropped. Deep-maps every string in the value. */
+export function stripHanja<T>(value: T): T {
+  const clean = (t: string) =>
+    t
+      .replace(/([목화토금수])\s?\(([木火土金水])\)/g, (_m, ko: string) => ko)
+      .replace(/\s?\([\u4E00-\u9FFF]+\)/g, "")
+      .replace(/[木火土金水]/g, (h) => `${HANJA_ELEMENT_EMOJI[h]}${HANGUL_ELEMENT[h]}`)
+      .replace(/[\u4E00-\u9FFF]/g, "");
+  const walk = (v: unknown): unknown => {
+    if (typeof v === "string") return clean(v);
+    if (Array.isArray(v)) return v.map(walk);
+    if (v && typeof v === "object") return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, walk(x)]));
+    return v;
+  };
+  return walk(value) as T;
+}
