@@ -111,6 +111,17 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
   for (const m of Array.from(upcoming.matchAll(/\d+/g))) allowedAges.add(Number(m[0]));
   if (ctx.currentAge != null) allowedAges.add(ctx.currentAge);
 
+  // When the reader's Day Master is known, the chart pages must actually use it (the prompt hands
+  // over how their strongest/weakest elements relate to it; models tend to skip that line).
+  if (ctx.dayMaster) {
+    const label = ELEMENT_LABEL[locale][ctx.dayMaster.element];
+    const bare = label.replace(/\(.*\)/, "").trim();
+    const mentions = (t?: string) => !!t && (t.toLowerCase().includes(bare.toLowerCase()) || t.includes(ctx.dayMaster!.char));
+    if (c.oheng_intro && !mentions(c.oheng_intro)) {
+      problems.push(`oheng_intro: 나의 일간(${ctx.dayMaster.char}, ${label})을 기준으로 우세·약한 원소가 어떤 기운인지 쉬운 말로 한 문장씩 넣어야 함`);
+    }
+  }
+
   // The cover subtitle must carry the module number exactly as given ("Module 3", not "Module 1").
   const moduleNumber = ctx.moduleTitle.match(/\d+/)?.[0];
   if (moduleNumber && c.subtitle && !new RegExp(`(?<!\\d)${moduleNumber}(?!\\d)`).test(c.subtitle)) {
