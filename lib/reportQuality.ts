@@ -20,7 +20,7 @@ import type { ReportContent } from "./report";
 import type { YearReportContent } from "./yearReport";
 import { logLlmUsage } from "./llmUsage";
 import type { Locale } from "./i18n/types";
-import { describeUpcomingPeriod, type ReportContext } from "./reportPrompts";
+import { describeUpcomingPeriod, relationToDayMaster, type ReportContext } from "./reportPrompts";
 import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME } from "./promptLocale";
 import type { ElementKey } from "./sajuScore";
 
@@ -55,6 +55,7 @@ const ES_STYLE_SLIP = /\busted(es)?\b|\b[a-záéíóúñ]{3,}x\b|\bcargarse\b|\b
 const ES_CAPITALIZED_ELEMENTS = /\bCinco Elementos\b/; // running text uses lowercase "cinco elementos"
 const META_LEAK = /\b(prompt|json|schema)\b|(se describe|se indica|se menciona|se da) aquí|named here|(only|sole|one) (supporting |direct )?relationship (that|which|here|named)|the only relationship|(único|única) relación|(only|sole) (supporting )?(relationship|relation) (named|given|provided|listed)|(único|única) (relación|apoyo) (nombrad|indicad|dad)[ao]|no (future )?age range|age range (is )?(not|un)specified|not specified|no se especifica|edad no (está )?especificad/i;
 const HANGUL_OR_HANJA = /[ㄱ-ㆎ가-힣一-鿿]/;
+const HANGUL_OR_HANJA_ALL = /[ㄱ-ㆎ가-힣一-鿿]/g;
 
 /** Minimum sentences per field — the "no thin page" product rule. */
 function checkDensity(c: ReportContent, hasChat: boolean): string[] {
@@ -116,7 +117,8 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
   if (ctx.dayMaster) {
     const label = ELEMENT_LABEL[locale][ctx.dayMaster.element];
     const bare = label.replace(/\(.*\)/, "").trim();
-    const mentions = (t?: string) => !!t && (t.toLowerCase().includes(bare.toLowerCase()) || t.includes(ctx.dayMaster!.char));
+    const mentions = (t?: string) =>
+      !!t && (t.toLowerCase().includes(bare.toLowerCase()) || t.includes(ctx.dayMaster!.char) || /day master|일간|maestro del d[ií]a/i.test(t));
     if (c.oheng_intro && !mentions(c.oheng_intro)) {
       problems.push(`oheng_intro: 나의 일간(${ctx.dayMaster.char}, ${label})을 기준으로 우세·약한 원소가 어떤 기운인지 쉬운 말로 한 문장씩 넣어야 함`);
     }
@@ -130,7 +132,8 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
 
   for (const [path, text] of strings) {
     const fictional = FICTIONAL_FIELDS.some((f) => path === f || path.startsWith(`${f}[`));
-    if (locale !== "ko" && HANGUL_OR_HANJA.test(text)) problems.push(`${path}: 한국어/한자가 섞여 있음`);
+    const stray = locale !== "ko" ? text.match(HANGUL_OR_HANJA_ALL) : null;
+    if (stray) problems.push(`${path}: 한국어/한자가 섞여 있음 ("${Array.from(new Set(stray)).join("")}") — 그 글자를 빼고 이 언어로만 쓸 것`);
     if (META_LEAK.test(text)) problems.push(`${path}: 지시문/데이터 누락을 언급하는 메타 발언`);
     if (locale === "es") {
       const m = text.match(ES_GENDERED_READER) ?? text.match(ES_STYLE_SLIP) ?? text.match(ES_CAPITALIZED_ELEMENTS);
@@ -150,8 +153,15 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
   return Array.from(new Set(problems));
 }
 
-/** System prompt for the reviewing pass. The report is passed as the user message. */
-export function buildReviewPrompt(ctx: ReportContext): string {
+function dominantOf(ctx: ReportContext): ElementKey {
+  return [...ELEMENT_KEYS].sort((a, b) => (ctx.elements[b] ?? 0) - (ctx.elements[a] ?? 0))[0];
+}
+function weakestOf(ctx: ReportContext): ElementKey {
+  return [...ELEMENT_KEYS].sort((a, b) => (ctx.elements[a] ?? 0) - (ctx.elements[b] ?? 0))[0];
+}
+
+/** The source facts a report is written from, as plain lines (shared by the review and fix prompts). */
+export function describeReportData(ctx: ReportContext): string {
   const locale = ctx.locale ?? "ko";
   const elementsLine = ELEMENT_KEYS.map((k) => `${ELEMENT_LABEL[locale][k]} ${Math.round(ctx.elements[k] ?? 0)}%`).join(", ");
   const dims = ctx.dimensionResults
@@ -164,6 +174,19 @@ export function buildReviewPrompt(ctx: ReportContext): string {
         .map(([k, v]) => `${k}: ${v}`)
         .join(" | ")
     : "(상담 없음)";
+  return `- 닉네임: ${ctx.nickname}
+- 오행 분포: ${elementsLine}
+${ctx.dayMaster ? `- 나의 일간: ${ctx.dayMaster.char} (${ELEMENT_LABEL[locale][ctx.dayMaster.element]}) — 일간 기준으로 우세 원소 ${ELEMENT_LABEL[locale][dominantOf(ctx)]}는 "${relationToDayMaster(ctx.dayMaster.element, dominantOf(ctx))}", 약한 원소 ${ELEMENT_LABEL[locale][weakestOf(ctx)]}는 "${relationToDayMaster(ctx.dayMaster.element, weakestOf(ctx))}"\n` : ""}- 심리검사 모듈: ${ctx.moduleTitle} / 유형: ${ctx.psychTestTypeTitle} — ${ctx.psychTestTypeHook}
+- 심리검사 축: ${dims}
+- 심리검사 서술: ${ctx.nuancedSummary}
+- 실제 답한 문항: ${answers}
+- 상담 내용: ${chat}
+- ${describeUpcomingPeriod(ctx.decadeFortune, ctx.currentAge, locale)}`;
+}
+
+/** System prompt for the reviewing pass. The report is passed as the user message. */
+export function buildReviewPrompt(ctx: ReportContext): string {
+  const locale = ctx.locale ?? "ko";
   return `너는 유료 심층 리포트를 독자에게 내보내기 전에 검수하는 엄격하지만 합리적인 편집자다. 아래 "근거 데이터"와 사용자가 준 리포트(JSON)를 비교해서, **확실히 틀렸거나 규칙을 어긴 곳만** 목록으로 돌려줘라. 살펴봤더니 문제가 아닌 것은 절대 목록에 적지 마라("문제없음"이라고 쓸 거면 아예 빼라). 문제가 없으면 빈 배열이다.
 
 ## 의도된 설계 — 문제로 세지 마라
@@ -184,14 +207,7 @@ export function buildReviewPrompt(ctx: ReportContext): string {
 6. 메타 발언: 데이터가 없다/지시를 받았다/필드·프롬프트를 언급.
 
 ## 근거 데이터
-- 닉네임: ${ctx.nickname}
-- 오행 분포: ${elementsLine}
-- 심리검사 모듈: ${ctx.moduleTitle} / 유형: ${ctx.psychTestTypeTitle} — ${ctx.psychTestTypeHook}
-- 심리검사 축: ${dims}
-- 심리검사 서술: ${ctx.nuancedSummary}
-- 실제 답한 문항: ${answers}
-- 상담 내용: ${chat}
-- ${describeUpcomingPeriod(ctx.decadeFortune, ctx.currentAge, locale)}
+${describeReportData(ctx)}
 
 ## 출력
 JSON 객체 하나만: {"problems":[{"field":"필드 경로(예: strengths[1].body)","issue":"무엇이 왜 문제인지 한 문장, 고쳐야 할 방향 포함"}]}
@@ -224,10 +240,10 @@ function pathParts(path: string): (string | number)[] {
     .filter(Boolean)
     .map((k) => (/^\d+$/.test(k) ? Number(k) : k));
 }
-function getAt(root: unknown, path: string): unknown {
+export function getAt(root: unknown, path: string): unknown {
   return pathParts(path).reduce<unknown>((o, k) => (o == null ? undefined : (o as Record<string | number, unknown>)[k]), root);
 }
-function setAt(root: unknown, path: string, value: string): boolean {
+export function setAt(root: unknown, path: string, value: string): boolean {
   const parts = pathParts(path);
   const last = parts.pop();
   const parent = parts.reduce<unknown>((o, k) => (o == null ? undefined : (o as Record<string | number, unknown>)[k]), root);

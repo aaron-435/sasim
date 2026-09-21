@@ -11,7 +11,8 @@
 
 import OpenAI from "openai";
 import { buildReportPrompt, type ReportContext } from "./reportPrompts";
-import { buildReviewPrompt, checkReportDeterministic, makeRewriter, repairStringFindings, stripHanja } from "./reportQuality";
+import { FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
+import { buildReviewPrompt, checkReportDeterministic, describeReportData, getAt, setAt, stripHanja } from "./reportQuality";
 import { logLlmUsage } from "./llmUsage";
 
 const client = new OpenAI({
@@ -153,11 +154,6 @@ async function generateOnce(
   return { raw, content: parseReport(JSON.parse(raw)) };
 }
 
-/** Generation rounds (first draft + fixes) and independent editor reviews. Time is cheap next to a
- * report the buyer is unhappy with: worst case is ~2 minutes and a few cents, and the client waits. */
-const MAX_GENERATIONS = 4;
-const MAX_REVIEWS = 2;
-
 /** A second model reads the finished report against the source data as a strict editor. Returns
  * the problems it found ("path: issue"). Never throws — a failed review just means no findings. */
 async function reviewReport(context: ReportContext, content: ReportContent, sessionId?: string): Promise<string[]> {
@@ -198,61 +194,88 @@ async function reviewReport(context: ReportContext, content: ReportContent, sess
 }
 
 
-async function repairStrings(context: ReportContext, content: ReportContent, problems: string[], sessionId?: string): Promise<ReportContent> {
-  return repairStringFindings(content, problems, makeRewriter(client, REPORT_MODEL, context.locale ?? "ko", sessionId));
+/** Rewrites ONLY the flagged strings, all in one call. The earlier design handed the model its whole
+ * report back (~3.4k output tokens) for every round; a targeted fix is a fraction of that. Problems
+ * arrive as "path: issue"; a path that isn't a string in the report is ignored. Never throws — on any
+ * failure the content is returned unchanged. */
+async function patchFields(context: ReportContext, content: ReportContent, problems: string[], sessionId?: string): Promise<ReportContent> {
+  const locale = context.locale ?? "ko";
+  const targets: Record<string, { current: string; problems: string[] }> = {};
+  for (const p of problems) {
+    const i = p.indexOf(": ");
+    if (i < 1) continue;
+    const path = p.slice(0, i);
+    const current = getAt(content, path);
+    if (typeof current !== "string") continue;
+    (targets[path] ??= { current, problems: [] }).problems.push(p.slice(i + 2));
+  }
+  const paths = Object.keys(targets).slice(0, 14);
+  if (paths.length === 0) return content;
+  const request = Object.fromEntries(paths.map((k) => [k, targets[k]]));
+  try {
+    const completion = await client.chat.completions.create({
+      model: REPORT_MODEL,
+      temperature: 0.4,
+      messages: [
+        {
+          role: "system",
+          content: `너는 유료 심층 리포트의 편집자다. 사용자가 준 JSON의 각 필드는 검수에서 문제가 발견된 문장이다. "problems"를 모두 해결하도록 각 필드를 ${FIELD_LANGUAGE_NAME[locale]}로 다시 써라.
+- 이 사람의 실제 데이터(아래 근거 데이터)에서 온 구체적 디테일을 넣고, 데이터에 없는 사실·수치를 지어내지 마라.
+- 문제 설명이 요구하는 내용은 반드시 새 문장 안에 실제로 담는다(예: 일간 기준 원소 관계를 쉬운 말로 한 문장씩). 문장 수가 적혀 있으면 그 이상의 완결된 문장으로 쓰고, 필드의 원래 역할과 어조는 유지한다. 필드 이름·프롬프트·데이터 누락을 언급하지 않는다.
+- 한자를 쓰지 않는다. 독자는 2인칭으로 부르고, 독자 성별을 드러내는 형용사는 명사·동사로 바꾼다.
+
+## 근거 데이터
+${describeReportData(context)}
+
+## 출력
+JSON 객체 하나만: {"fixes": {"<필드 경로>": "<다시 쓴 문장>"}} — 받은 경로마다 하나씩.${outputLanguageDirective(locale, { en: 'value in "fixes"', es: 'objeto "fixes"' })}`,
+        },
+        { role: "user", content: JSON.stringify(request) },
+      ],
+      response_format: { type: "json_object" },
+    });
+    if (completion.usage) {
+      await logLlmUsage({ sessionId, endpoint: "report", model: REPORT_MODEL, promptTokens: completion.usage.prompt_tokens, completionTokens: completion.usage.completion_tokens });
+    }
+    const fixes = (JSON.parse(completion.choices[0]?.message?.content ?? "{}") as { fixes?: Record<string, unknown> }).fixes ?? {};
+    const patched: ReportContent = JSON.parse(JSON.stringify(content));
+    for (const path of paths) {
+      const text = fixes[path];
+      if (typeof text === "string" && text.trim()) setAt(patched, path, text.trim());
+    }
+    return patched;
+  } catch (err) {
+    console.error("[report] patch failed (non-fatal)", err);
+    return content;
+  }
 }
 
+/** Generate once, then fix only what is wrong:
+ *   1. code checks (free) → one targeted fix call for what they found
+ *   2. ONE editor review of the result → one targeted fix call for what it found
+ *   3. code checks again as the last gate; a fix that made things worse is discarded.
+ * Typically 2–4 calls (~$0.035) instead of rewriting the whole report for every finding (~$0.10). */
 export async function getReportContent(context: ReportContext, sessionId?: string): Promise<ReportContent> {
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [{ role: "system", content: buildReportPrompt(context) }];
+  let current = (await generateOnce(messages, sessionId)).content;
 
-  let current = await generateOnce(messages, sessionId);
-  let best = current;
-  let bestScore = Number.POSITIVE_INFINITY;
-  let generations = 1;
-  let reviews = 0;
+  const fixOnce = async (problems: string[], label: string) => {
+    if (problems.length === 0) return;
+    const before = checkReportDeterministic(current, context).length;
+    const patched = await patchFields(context, current, problems, sessionId);
+    const after = checkReportDeterministic(patched, context).length;
+    console.info(`[report] ${label}: ${problems.length} finding(s), code findings ${before} → ${after}`);
+    if (after <= before) current = patched;
+  };
 
-  for (;;) {
-    // Exact checks first; only a draft that passes them is worth an editor's read.
-    let problems = checkReportDeterministic(current.content, context);
-    if (problems.length === 0 && reviews < MAX_REVIEWS) {
-      reviews += 1;
-      problems = await reviewReport(context, current.content, sessionId);
-    }
-    console.info(`[report] draft ${generations}: ${problems.length} finding(s)${problems.length ? ` — ${problems.slice(0, 3).join(" | ").slice(0, 300)}` : ""}`);
-    if (problems.length < bestScore) {
-      best = current;
-      bestScore = problems.length;
-    }
-    if (problems.length === 0 || generations >= MAX_GENERATIONS) break;
+  await fixOnce(checkReportDeterministic(current, context), "code checks");
+  await fixOnce(await reviewReport(context, current, sessionId), "editor review");
 
-    // Hand the model its own JSON back with exactly what was found and ask for the full object again.
-    generations += 1;
-    try {
-      current = await generateOnce(
-        [
-          ...messages,
-          { role: "assistant", content: current.raw },
-          {
-            role: "user",
-            content: `검수에서 다음 문제가 발견됐다. 해당 필드만 고치고(각각 규칙 8·11·12·13과 언어 스타일 규칙에 맞게), 나머지 필드는 그대로 유지한 전체 JSON 객체 하나만 다시 출력해라.\n${problems.map((p, i) => `${i + 1}. ${p}`).join("\n")}`,
-          },
-        ],
-        sessionId
-      );
-    } catch (err) {
-      console.error("[report] fix round failed (non-fatal)", err);
-      break;
-    }
+  const remaining = checkReportDeterministic(current, context);
+  if (remaining.length > 0) {
+    await fixOnce(remaining, "final gate");
+    const left = checkReportDeterministic(current, context).length;
+    if (left > 0) console.warn(`[report] shipped with ${left} unresolved code finding(s)`);
   }
-  if (bestScore > 0) {
-    // One more chance for stubborn string-level findings (checked by code, so this is exact).
-    const remaining = checkReportDeterministic(best.content, context);
-    if (remaining.length > 0) {
-      const repaired = await repairStrings(context, best.content, remaining, sessionId);
-      if (checkReportDeterministic(repaired, context).length < remaining.length) return context.locale === "ko" ? stripHanja(repaired) : repaired;
-    }
-  }
-  if (context.locale === "ko") return stripHanja(best.content);
-  if (bestScore > 0) console.warn(`[report] shipped with ${bestScore} unresolved finding(s) after ${generations} generation(s)`);
-  return best.content;
+  return context.locale === "ko" ? stripHanja(current) : current;
 }
