@@ -33,3 +33,35 @@ Set conversationally here instead of editing the skill file (it says overrides h
 - Quick loop: the `mobile-web` preview (port 8082) at the `mobile` viewport preset. It can't show subscriber-only screens (RevenueCat is native-only) or native-only behavior.
 - Native truth: the iOS Simulator with a dev-client build (Expo Go no longer works). Say which one produced the evidence.
 - Impeccable asks for bounded passes: inspect once, fix in one batch, confirm with at most one more round.
+
+## Agent workflow (multi-step work)
+
+For a task that spans several files or steps (a new feature, a refactor, a pipeline change), work through files instead of chat memory. One-line fixes and questions skip this. Design lives in `WIKI.md`; each task's scope and progress live in `SPEC.md` / `TODO.md`.
+
+| File | Holds | Written by |
+|---|---|---|
+| `SPEC.md` | Goal, in/out of scope, constraints, done criteria for the current task only. Overwritten per task. | `/spec` |
+| `TODO.md` | Checkbox items, each small enough for one session and carrying its own QA command. | `/spec`, after the user approves SPEC |
+| `WIKI.md` | Durable architecture map: big picture and flows, no code. Read at the start of a work session. | `/work`, `/wiki` |
+
+Flow: `/spec <requirements>` → user approves SPEC, then TODO → **fresh session** → `/work` (one TODO item per run) → repeat. Planning chatter should not be billed again as development context, so don't continue into `/work` in the session that planned.
+
+Rules:
+- Done means evidence. Run the item's QA command and read its output before ticking `[x]`; say which command produced it. Anything only the user can check (real device, RevenueCat, store consoles) stays `[ ]` marked `(user check)` with exact steps. Don't fake entitlements or stub around it.
+- Session start order: `SPEC.md`, `TODO.md`, `WIKI.md`. Stable documents first, then the work.
+- Stay inside the picked TODO item. Things found on the way go under "발견 사항" in `TODO.md`, not into the diff.
+- If failures repeat or the session fills with error logs, stop at the last green state, record it in `TODO.md`, and recommend a fresh session.
+- Commits, pushes, `eas update` and store submissions stay user-triggered (deploy order is in the latest `HANDOFF_*.md`). At the end of an item, propose a commit message and wait.
+- `HANDOFF_<date>.md` keeps project-wide state (deploys, business, open decisions). `SPEC.md` / `TODO.md` are per task only.
+- Write `SPEC.md`, `TODO.md` and `WIKI.md` in Korean.
+
+### Verification commands (pick these for TODO QA lines)
+
+| Change | Command | Where |
+|---|---|---|
+| Web / API types | `npx tsc --noEmit` | root |
+| Web / API build, routes | `npm run lint && npm run build` | root |
+| Native app types | `ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit` (default stack overflows) | `mobile/` |
+| Saju engine (`lib/manseryeok.ts`, `solarTerms.ts`, `kasi.ts`) | `npm run validate:manseryeok` | root |
+| Chat prompts / logic | `npx tsx --env-file=.env.local scripts/sim-chat.mts [turns] [styles]` (calls OpenAI, costs money; keep turns low) | root |
+| Native UI | `mobile-web` preview, or iOS Simulator dev-client (see "Verifying UI") | |
