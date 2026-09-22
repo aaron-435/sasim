@@ -70,6 +70,7 @@ function checkDensity(c: ReportContent, hasChat: boolean): string[] {
   need("oheng_intro", c.oheng_intro);
   need("quiz_reading", c.quiz_reading);
   for (const k of ELEMENT_KEYS) need(`element_readings.${k}.body`, c.element_readings[k].body);
+  need("upcoming_period_preview_body", c.upcoming_period_preview_body);
   need("upcoming_period_body", c.upcoming_period_body);
   c.cross_analysis_quotes.forEach((t, i) => need(`cross_analysis_quotes[${i}]`, t));
   c.answer_notes.forEach((t, i) => need(`answer_notes[${i}]`, t));

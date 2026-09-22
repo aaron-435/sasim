@@ -46,6 +46,10 @@ export interface ReportContent {
   /** Free-half reading under the psych-test bars. Absent in reports saved before 2026-09-21. */
   quiz_reading?: string;
   element_readings: Record<(typeof ELEMENT_KEYS)[number], ElementReading>;
+  /** Free-half preview of the age+element transition, shown right before the paywall — states the
+   * fact only (no why/prepare, that's upcoming_period_body). Absent in reports saved before 2026-09-22. */
+  upcoming_period_preview_heading?: string;
+  upcoming_period_preview_body?: string;
   upcoming_period_heading: string;
   upcoming_period_body: string;
   cross_analysis_quotes: string[];
@@ -107,6 +111,8 @@ function parseReport(parsed: Record<string, unknown>): ReportContent {
     oheng_intro: String(parsed.oheng_intro ?? ""),
     quiz_reading: String(parsed.quiz_reading ?? ""),
     element_readings: asElementReadings(parsed.element_readings),
+    upcoming_period_preview_heading: String(parsed.upcoming_period_preview_heading ?? ""),
+    upcoming_period_preview_body: String(parsed.upcoming_period_preview_body ?? ""),
     upcoming_period_heading: String(parsed.upcoming_period_heading ?? ""),
     upcoming_period_body: String(parsed.upcoming_period_body ?? ""),
     cross_analysis_quotes: asStringList(parsed.cross_analysis_quotes),
