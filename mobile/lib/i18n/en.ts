@@ -415,7 +415,7 @@ export const en: typeof ko = {
     errorDefault: "We couldn't get a response from the chatbot.",
     errorNetwork: "A network error kept us from getting a chatbot response.",
     timeUpLabel: "Wrapping up",
-    finishEarlyButton: "I've shared enough",
+    finishEarlyButton: "Wrap up",
     checkpointContinueButton: "I'd like to keep going",
     checkpointFinishButton: "Let's wrap up here",
   },

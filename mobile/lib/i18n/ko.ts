@@ -441,7 +441,7 @@ export const ko = {
     errorDefault: "챗봇 응답을 받아오지 못했습니다.",
     errorNetwork: "네트워크 오류로 챗봇 응답을 받지 못했습니다.",
     timeUpLabel: "정리 중",
-    finishEarlyButton: "충분히 상담했어요",
+    finishEarlyButton: "마무리할게요",
     checkpointContinueButton: "조금 더 이야기할게요",
     checkpointFinishButton: "여기서 마무리할게요",
   },

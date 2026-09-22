@@ -1,37 +1,50 @@
-# TODO: 리포트 "다음 장" 희망 프레임
+# TODO: 무료 AI 상담 챗봇 — 종료 버튼 + 모듈별 핵심 질문 + 퀴즈 답변 재활용
 
 SPEC.md 승인 완료(2026-09-22). 항목마다 새 세션에서 `/work`로 하나씩 처리.
 
-- [x] 1. 심층 리포트 프롬프트 톤 개정 — 나이 확정 + 기운전환 확정 + 모듈영역 한정 결과 확정
-  - 변경: `lib/reportPrompts.ts`
-    - `describeUpcomingPeriod()`의 반환 데이터 줄: 나이 표기는 유지하되, 모델이 이 기운 전환을 확정 사실로 다루도록 지시를 보강
-    - `buildOutputSchema()`의 `upcoming_period_heading`/`upcoming_period_body` 지시문: "다음 장" 프레임 + 나이 숫자를 문장 앞쪽에서 명확히 쓰도록 강제하는 문구 추가
-    - `buildOutputSchema()`의 `closing_body` 지시문(paidFields): (a) 기운 전환은 확정 문장 (b) 이번 모듈이 다루는 구체적 영역에 한정된 결과도 확정 문장 (c) 모듈 영역을 벗어난 보편적 약속("인생이 다 잘 풀립니다") 금지 (d) 정신건강 계열 모듈(번아웃/수면/분노)은 "회복됩니다" 류 임상적 표현 대신 체감 표현. `mindset_guide`에 이미 있는 "범용 은유 금지" 패턴을 참고해서 같은 방식으로 강제
-    - 규칙 4·8도 함께 보강: 기운 전환을 확정 사실로 쓰라는 지시(4), "단정 금지" 안전 규칙이 이번 모듈 영역 안의 확정 결과문까지 막는 게 아니라는 경계 명시(8)
-  - QA: `npx tsx --env-file=.env.local scripts/gen-qa-fixtures.mts` → 7개 페르소나 전부 `ok`로 생성 완료, `mobile/dev/qaData.ts` 갱신됨. 갱신된 `QA_DEEP_REPORT`에서 ko(jisoo)·en(mia)·es(lucia) 3개 언어의 `upcoming_period_heading/body`·`closing_body`를 직접 읽어 확인: 나이가 문장 맨 앞에서 숫자로 명확(예: "36세부터, 물의 계절이 열립니다" / "33 to 42, the Water season opens" / "A los 38 años, el fuego toma fuerza"), 기운전환이 확정 문장("~됩니다/~합니다"), 결과문이 번아웃(module3) 영역(쉼·점검 습관)에 한정되고 "인생이 다 잘 풀립니다" 류 보편 문장 없음, 임상적 "회복됩니다" 대신 "가벼워져요"/"줄고" 같은 체감 표현. 추가로 스크래치패드 임시 스크립트로 지수 페르소나를 돈(module2)·분노(module6) 모듈로 각각 1회씩 더 호출해 비교: 두 결과 모두 같은 나이(36세)·기운(수)을 확정 문장으로 쓰되, closing_body 결과문은 각 모듈 주제(돈=결핍감·확인 미루기 완화, 분노=폭발·되새김 완화)에 맞게 실제로 달랐고 분노(정신건강 계열)도 "회복" 대신 "가벼워져요/줄고" 체감 표현 사용 — 복붙해도 말이 되는 문장 아님. 스크립트 파일은 확인 후 삭제(커밋 안 함). 추가로 `npx tsc --noEmit`(루트) 통과 확인
+- [x] 1. 헤더 종료 버튼 — 체크포인트 이후 즉시 노출 (요청 1)
+  - 변경:
+    - `mobile/screens/ChatScreen.tsx` — 하단 `finishRow`(조건부 버튼)를 제거하고 헤더(뒤로가기·"무료 AI 상담" 라벨·타이머와 같은 줄)에 종료 버튼 추가. `canFinishEarly` 조건을 `!done && !isTyping && !errorText && !showCheckpoint && (turn > CHECKPOINT_TURN || elapsedSeconds >= EARLY_FINISH_SECONDS)`로 변경(기존 `!showCheckpoint` 등은 그대로 계승, 시간 조건만 OR로 확장). 클릭 핸들러는 기존 `handleFinishEarly`(`requestNextTurn(TOTAL_TURNS, turnHistoryRef.current)`) 그대로 재사용.
+    - `mobile/lib/i18n/{ko,en,es}.ts` — 헤더 배치에 맞는 버튼 라벨로 다듬음(`chat.finishEarlyButton`: ko "마무리할게요" / en "Wrap up" / es "Terminar" — 기존 문구는 하단 전용 긴 문장이라 헤더 폭에 맞게 줄임. 웹 `lib/i18n/*.ts`는 별도 파일이라 영향 없음).
+    - `lib/chatPrompts.ts`(`ABSOLUTE_RULES_BODY`) — 규칙 13번으로 "사용자가 대화를 그만하고 싶어할 때는 이미 끝난 것처럼 말하지 말고 화면 상단 종료 버튼을 안내한다" 추가.
+  - QA:
+    - `npx tsc --noEmit` (루트) → 에러 없음
+    - `cd mobile && ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit` → 에러 없음
+    - `mobile-web` 프리뷰(포트 8082, `?qa=free&persona=jisoo`로 온보딩 스킵)에서 모듈2(돈) 퀴즈 30문항을 실제로 풀고 챗봇에 진입, 실제 OpenAI 호출로 9턴을 짧게 주고받아 턴10 체크포인트 도달 → "조금 더 이야기할게요" 클릭 → 턴11 응답 직후(경과 시간 4분대, 7분 미만) 헤더에 "마무리할게요" 버튼이 즉시 노출되는 것을 스크린샷으로 확인. 버튼 클릭 → 마감 턴 응답 후 "사주와 심리검사를 함께 읽고 있어요..." 리포트 생성 화면으로 자동 전환되는 것까지 확인. 턴2~9(체크포인트 이전) 동안은 매 턴 스크린샷에서 헤더에 버튼이 뜨지 않음을 확인(회귀 없음). 부수적으로 테스트 중 한 답변("그냥 다 내려놓고 싶은 느낌이에요")이 위기 신호로 잘못 해석되어 규칙 0 안전 프로토콜이 발동됨 — 버그 아니라 규칙 0이 의도대로 최우선 동작한 것.
 
-- [x] 2. 리포트 화면 페이월 카드에 개인화 미리보기 한 줄
-  - 변경: `mobile/lib/decadeTransition.ts` — 기존 `findNextDecadeTransition()`(생일까지 필요, 알림 예약용)은 그대로 두고, 미리보기 전용으로 더 가벼운 `findNextDecadeElementPreview(decadeFortune, currentAge)`를 새로 추가. `DecadeFortuneEntryLike`에 `skyElement`/`earthElement`(한자 문자열)를 추가하고, `lib/reportPrompts.ts`의 `HANJA_TO_ELEMENT_KEY`·`App.tsx`의 `EL_KO_TO_KEY`와 같은 매핑을 로컬에 복제(모바일은 루트 `lib/`를 import하지 않는 별도 패키지라 기존에도 이렇게 중복해 옴)해서 `{ startAge, elementKey }`를 반환. 생일이 필요 없어 `ReportScreen`에 새 prop을 늘리지 않아도 됨
-  - 변경: `mobile/screens/ReportScreen.tsx` — `topAnswers`와 같은 패턴으로 `decadePreviewLine` useMemo 추가(`decadeFortune`/`currentAge`/`strings` 의존), `PaywallPage`에 새 prop `decadePreviewLine: string | null`로 전달해 `paywallLockedNote` 바로 아래 조건부 렌더(`!!decadePreviewLine &&`). `pages` useMemo의 의존성 배열에도 추가
-  - 변경: `mobile/lib/i18n/{ko,en,es}.ts` — `report.paywallDecadePreview(age, element)` 템플릿 추가. 기운 이름은 `strings.common.elementLabels`(이미 `lib/reportPrompts.ts`의 `ELEMENT_LABEL`과 동일 어휘: 목/화/토/금/수, Wood/Fire/Earth/Metal/Water, Madera/Fuego/Tierra/Metal/Agua)를 그대로 사용
-  - QA: `cd mobile && ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit` → 에러 없음. `mobile-web` 프리뷰(포트 8082)에서 `http://localhost:8082/?qa=free&persona=mia`(en)·`?persona=jisoo`(ko)·`?persona=lucia`(es) 세 언어 모두 홈 → "Open sample deep report" → 12페이지 중 마지막(페이월) 페이지까지 넘겨 스크린샷으로 직접 확인: en "From age 33, your Water season begins", ko "36세부터, 수 기운이 시작돼요", es "A partir de los 38 años, tu temporada de Fuego comienza" — 모두 `paywallLockedNote`(잠긴 페이지 수) 바로 아래 표시되고 나이가 숫자로 또렷함. 데이터 없을 때(구버전 세션) 줄 자체가 안 보이는 분기(`!!decadePreviewLine &&`)는 코드 리뷰로 확인(픽스처가 항상 decadeFortune을 포함해 화면으로는 재현 안 됨)
+- [x] 2. 7번째 턴을 11개 모듈별 핵심 질문으로 분기 (요청 2)
+  - 변경:
+    - `lib/chatPrompts.ts` — `ChatSessionContext`에 `moduleId?: string` 추가. `PHASE_INSTRUCTIONS[7]`(고정 문자열)을 제거하고, `MODULE_PATTERN_INSTRUCTIONS`(11개 모듈별 문구 맵) + `buildPatternPhaseInstruction(moduleId?: string)` 함수로 대체 — `mobile/lib/quiz/modules.ts`의 실제 차원을 근거로 11개 모듈 각각 다른 각도의 "반복 패턴" 질문을 쓴다(SPEC "가정"의 11개 방향 그대로). `buildChatSystemPrompt`가 `effectiveTurn === 7`일 때만 이 함수를 호출하도록 분기. `moduleId`가 없거나 매핑에 없으면 기존 일반 문구(`GENERIC_PATTERN_INSTRUCTION`)로 폴백.
+    - `mobile/screens/ChatScreen.tsx` — `requestNextTurn`의 API 요청 `context`에 `moduleId: quizDiagnosis.moduleId` 추가.
+    - `scripts/sim-chat.mts` — 하드코딩된 `ctx`에 `moduleId: process.argv[4] ?? "module3"` 추가해 4번째 인자로 모듈을 바꿔가며 실행할 수 있게 확장.
+  - QA:
+    - `npx tsc --noEmit` (루트) → 에러 없음 (출력 없음)
+    - `cd mobile && ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit` → 에러 없음 (출력 없음)
+    - `npx tsx --env-file=.env.local scripts/sim-chat.mts 8 talkative module1` / `...module6` / `...module9` 3회 실행 → 7번째 턴 질문이 모듈마다 다른 각도로 나옴을 출력으로 직접 확인: module1은 "관계가 가까워지거나 멀어지려는 순간... 반응이 이번이 처음인지"(애착), module6은 "그 긴장이 처음부터 있었던 건지, 예전 번아웃 뒤로 더 자주 반복되는 쪽인지"(분노 문구가 사용자의 실제 발화 흐름에 맞춰 자연스럽게 적용됨), module9는 "예전에도 가족이랑 너무 얽히거나, 반대로 마음을 닫아버리거나, 일찍부터 어른 역할을 떠맡았던 때에 비슷하게 이렇게 긴장이 올라온 적이 있었나요?"(원가족 문구 거의 그대로 반영) — 세 실행 모두 서로 다르고 "이런 일이나 이런 감정이 이번이 처음인지"라는 동일 문구로 시작하지 않음.
+    - 나머지 8개 모듈(module2/4/5/7/8/10/11)은 코드 리뷰로 `MODULE_PATTERN_INSTRUCTIONS`의 문구와 `mobile/lib/quiz/modules.ts`의 `dimensionShortNames` 차원을 1:1 대조 확인 — 전부 일치.
+    - `npx tsx --env-file=.env.local scripts/sim-chat.mts 8 talkative none` (매핑에 없는 moduleId) 1회 실행 → 7번째 턴이 "이런 일이 예전에도 또 있었는지, 아니면 그때 그 한 번이 특히 크게 남은 건지 궁금해요?" 같은 일반 문구 취지로 폴백함을 확인(구버전 앱/웹 대비 회귀 없음).
 
-- [x] 3. 신년 리포트에 decadeFortune 반영
-  - 변경: `app/api/yearReport/route.ts` — 요청 바디에 `currentAge?: number`, `decadeFortune?: ReportDecadeFortune | null` 추가, `getYearReportContent()` 호출 시 전달
-  - 변경: `lib/yearReportPrompts.ts` — `YearReportContext`에 `currentAge`/`decadeFortune` 추가. 새로 만들지 않고 `lib/reportPrompts.ts`의 `describeUpcomingPeriod()`를 그대로 import해서 재사용(공용 함수 추출 대신 기존 함수 재사용 — 로직 중복 없음). "다가오는 대운 시기" 데이터 줄을 근거 데이터에 추가하고, 규칙 3-1(나이·기운전환은 확정 사실, 결과문은 이 리포트가 다룬 해당 연도 흐름에 한정, 보편적 약속 금지)과 `closing` 필드 지시문에 반영
-  - 변경: `lib/yearReport.ts` — 컨텍스트 전달 경로 확인만 함(그대로 통과하는 구조라 코드 변경 불필요)
-  - 변경: `mobile/screens/YearReportScreen.tsx` — `decadeFortune`/`currentAge` props 추가, fetch 바디와 `generate` 콜백 의존성 배열에 반영
-  - 변경: `mobile/App.tsx`(423행 `<YearReportScreen>`) — `homeData.sajuResult.decadeFortune`/`currentAge`를 새 props로 전달
-  - 변경: `scripts/gen-qa-fixtures.mts` — `getYearReportContent()` 호출에 `r.decadeFortune`/`r.currentAge` 추가
-  - QA: `npx tsx --env-file=.env.local scripts/gen-qa-fixtures.mts` 실행(7개 페르소나 전부 `ok`) 후 `mobile/dev/qaData.ts`의 `QA_YEAR_REPORT`에서 ko(jisoo)·en(mia)·es(lucia) `closing`을 직접 읽어 확인: 나이가 문장 맨 앞에서 숫자로 명확(예: "36세부터 45세까지 수 기운이 강해지는 시기가 이어집니다" / "From age 33 to 42, a stronger Water phase is already set to begin" / "De los 38 a los 47 años, tu ciclo de diez años entra en una etapa donde el fuego se vuelve más fuerte"), 기운전환이 확정 문장이고 그 뒤 결과문은 해당 연도(2027년)의 실제 관계 흐름에 한정되며 "인생이 다 잘 풀립니다" 류 보편 문장 없음. `cd mobile && ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit` 통과(에러 없음). `npx tsc --noEmit`(루트) 통과(에러 없음)
+- [x] 3. 퀴즈 답변 pool을 4개 턴(4·7·11·14번)에 재활용 (요청 3)
+  - 선행: 2 (7번째 턴이 함수형으로 바뀌어 있어야 그 위에 인용 조각을 자연스럽게 얹을 수 있음) — 완료 상태에서 진행함.
+  - 변경:
+    - `lib/chatPrompts.ts` — `ChatSessionContext`에 `quizAnswerPool?: QuizAnswerQuote[]`(최대 4개) 추가. `QUIZ_QUOTE_TURN_INDEX`(4→0, 7→1, 11→2, 14→3)와 공용 헬퍼 `buildQuizQuotePreamble(item?)`를 추가해 `buildChatSystemPrompt`가 해당 턴의 `phaseInstruction` 앞에 인용 조각을 붙이도록 조립(7번은 모듈별 질문 앞에 붙음). 해당 인덱스에 항목이 없으면 그 턴은 인용 없이 기존 문구 그대로.
+      - 최초 문구는 "이 문항/답을 소재로 삼아라"는 권유 톤이었는데, 실사용 시뮬레이션에서 모델이 대화 흐름을 이유로 자주 생략함(4턴 중 1턴만 인용) — "지금 대화가 이미 다른 소재로 흘러가고 있더라도 반드시 포함시켜라(생략하지 말 것)"는 강제 톤으로 재작성 후 4턴 모두 안정적으로 인용됨.
+    - `mobile/screens/ChatScreen.tsx` — `findTopAnswersOverall(quizDiagnosis.answers, 6)`(이번에 처음 호출)로 오프닝에 쓴 `headlineAnswerRaw`와 `qId`가 다른 항목을 점수 순으로 최대 4개 뽑아 `quizAnswerPool`로 API 요청에 포함.
+    - `scripts/sim-chat.mts` — `ctx`에 샘플 `quizAnswerPool`(4개) 추가, 4번째 argv(`quizPoolSize`, 기본 4)로 풀 크기를 잘라 폴백 테스트를 명령줄에서 바로 돌릴 수 있게 확장.
+  - QA:
+    - `npx tsc --noEmit` (루트) → 에러 없음 (출력 없음)
+    - `cd mobile && ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit` → 에러 없음 (출력 없음)
+    - `npx tsx --env-file=.env.local scripts/sim-chat.mts 15 talkative module3 4` 2회 실행(quizAnswerPool 4개) → 두 실행 모두 4번째 턴이 pool[0]("감정을 잘 못 느끼고 그냥 멍해진다")을, 7번째 턴이 pool[1]("예전에도 몇 번 이렇게 지쳐본 적 있다")을 각각 다른 표현으로 자연스럽게 인용함을 출력에서 직접 확인. 두 실행 모두 "talkative" 페르소나가 체크포인트(10번)에서 조기 종료를 선택해 11·14번 실제 대화 흐름 검증은 못 함 — 아래 별도 스크립트로 보완.
+    - 스크래치 스크립트(`getChatReply`를 turn=11/14로 직접 호출, 턴1~10은 합성 history)로 보완 확인: pool 4개 모두 채운 상태에서 11번 턴이 pool[2]("이러다 아예 무너져버릴까 봐")를 따옴표째 인용, 14번 턴이 pool[3]("아무렇지 않은 척 계속 일한다")을 자연스럽게 바꿔 표현 — 4개 턴 모두 서로 다른 항목을 인용하고 중복 없음 확인.
+    - 같은 스크래치 스크립트로 `quizAnswerPool`을 2개(pool[0], pool[1]만)로 줄여 11·14번 턴 재실행 → 두 턴 모두 인용 없이 일반 질문으로 자연스럽게 폴백함을 확인(뒤 턴부터 생략되는 우선순위 규칙 검증).
+    - `quizAnswerPool`을 아예 생략(undefined)하고 4번·7번 턴 재실행 → 인용 없이 정상 동작, 7번째 턴의 module3 반복패턴 문구는 그대로 유지됨을 확인(구버전 앱/웹 대비 회귀 체크).
 
-- [ ] 4. (사용자 실행) 실기기/스토어 확인
-  - 항목 1~3이 모두 `[x]`가 된 뒤: 웹(`app/api/yearReport`, `app/api/report`)이 Vercel에 배포됐는지 확인 → OTA(`eas update --branch production`) 발행 → TestFlight 또는 iOS 시뮬레이터 dev-client에서 실제 구매 전 페이월 카드와 구매 후 심층/신년 리포트 결과를 직접 읽고 톤이 의도대로인지 최종 확인
-  - (사용자 확인) — 자동화 불가, 실제 결제 플로우와 실기기 필요
+- [ ] 4. (사용자 실행) 배포 및 실기기 확인
+  - 항목 1~3이 모두 `[x]`가 된 뒤: 웹(`app/api/chat`)이 Vercel에 배포됐는지 확인 → OTA(`eas update --branch production`) 발행 → TestFlight 또는 iOS 시뮬레이터 dev-client에서 실제 대화로 헤더 종료 버튼, 모듈별 질문, 퀴즈 답변 인용이 실사용 흐름에서 자연스러운지 최종 확인
+  - (사용자 확인) — 자동화 불가, 실제 배포와 실기기 필요
 
 ## 발견 사항
 
 (작업 중 발견한 범위 밖 이슈를 여기 적는다.)
 
-- ~~항목 2(리포트 화면 페이월 카드 미리보기)가 이미 코드로 구현되어 워킹트리에 uncommitted 상태로 존재함~~ → 이후 세션에서 `/work 2`로 QA(tsc + mobile-web 3개 언어 스크린샷)까지 돌려 항목 2를 `[x]`로 체크 완료(위 항목 2 QA 기록 참고). 해결됨.
-- `gen-qa-fixtures.mts` 실행 중 신년 리포트 스페인어 페르소나(lucia)에서 "Cinco Elementos"(대문자화된 오행 표기) 스페인어 스타일 위반이 1회 감지·자동 교정됨(`checkYearReportDeterministic`의 기존 `ES_CAPITALIZED_ELEMENTS` 규칙) — 이번 작업(decadeFortune 반영)과 무관한 기존 동작이라 손대지 않음.
+- 항목 2 작업 시작 시점에 항목 1(헤더 종료 버튼)의 코드 변경(`mobile/screens/ChatScreen.tsx`의 헤더 버튼, `lib/chatPrompts.ts` 규칙 13)이 이미 작업 트리에 uncommitted 상태로 들어와 있었음(체크박스는 `[ ]`). QA가 실행/기록된 흔적이 없어 이번 세션에서는 손대지 않고 항목 2만 진행함 — 항목 1은 다음 세션에서 `/work 1`로 QA부터 마저 진행 권장.

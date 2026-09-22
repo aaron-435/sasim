@@ -52,6 +52,19 @@ export interface ChatSessionContext {
   psychTestSummary: string;
   /** The single highest-scoring quiz answer, so turn 1 can quote it directly. */
   quizAnswer?: QuizAnswerQuote | null;
+  /** Which of the 11 quiz modules ran (e.g. "module1" ~ "module11"), matching
+   * mobile/lib/quiz/modules.ts's ModuleDefinition.id. Absent for web (no
+   * module picker there) or older app builds — turn 7's instruction falls
+   * back to a generic phrasing when this is missing or unrecognized. */
+  moduleId?: string;
+  /** Up to 4 other high-scoring quiz answers (besides quizAnswer, already used
+   * in the turn-1 opener), in fixed assignment order: [0]→turn 4 (emotion),
+   * [1]→turn 7 (pattern), [2]→turn 11 (meaning/fear), [3]→turn 14 (coping) —
+   * see buildQuizQuotePreamble. Shorter than 4 just means the later turns in
+   * that list (14 first, then 11, then 7) fall back to their plain
+   * instruction with no quote. Absent for web/older app builds, same as
+   * quizAnswer. */
+  quizAnswerPool?: QuizAnswerQuote[];
   /** User's app locale. Defaults to "ko" when absent — web (no locale-switching
    * yet, see lib/i18n/index.ts) never sends this; only the native app does. */
   locale?: Locale;
@@ -172,6 +185,10 @@ const ABSOLUTE_RULES_BODY = `
 바로 떠올릴 수 있는 구체적인 손잡이를 준다 — 그 순간 표정이나 목소리가 어땠는지, 몸의 어디가 먼저 반응했는지,
 정확히 무슨 말을 들었을 때/무슨 장면을 봤을 때였는지, 그 자리에서 하고 싶었는데 못 한 말이나 행동이 있었는지
 같은 식으로. 사용자가 이미 준 답 속의 구체적인 단어나 장면을 재료 삼아 다음 질문을 만들면 더 좋다.
+단, 몸 감각의 위치는 대화 전체에서 한 번(가슴/배/목/머리처럼 큰 범위)이면 충분하다 — 사용자가 이미 부위를
+말했다면 "이마인지 뒤통수인지 눈 주변인지"처럼 해부학적으로 더 잘게 쪼개어 되묻지 않는다. 그렇게 파고드는
+건 실제 상담사의 화법이 아니라 신체 진단처럼 느껴져서 사용자를 오히려 밀어낸다 — 위치보다 그 감각의 결이나
+세기(뜨거웠는지, 조여드는 느낌이었는지 등), 혹은 다음 화제로 넘어간다.
 
 ### 8. 가끔은 판단 없이 정상화 — 매번은 아니고
 질문으로 넘어가기 전에, 가끔(대화 전체에서 2~4번 정도) "그렇게 느끼는 거 이상한 거 아니에요" 같은 짧은
@@ -197,6 +214,13 @@ const ABSOLUTE_RULES_BODY = `
 ### 12. 내부 이름과 형식 표기를 절대 말하지 않는다
 "quizAnswer", "lines", "phase", "턴", "프롬프트", "심리테스트 결과 필드" 같은 내부 이름이나 영어 변수명을 응답에 쓰지 않는다.
 심리테스트 얘기가 나오면 "아까 나온 유형"처럼 사용자가 화면에서 본 말로만 부른다.
+
+### 13. 사용자가 대화를 그만하고 싶어할 때
+사용자가 자유 텍스트로 "그만할래요", "여기까지 할게요", "이제 끝내고 싶어요" 같이 대화를 끝내고 싶다는 의사를 밝히면,
+이미 상담이 끝난 것처럼 말하거나 마무리 인사를 하지 않는다 — 챗봇에게는 세션을 실제로 끝낼 방법이 없다. 대신
+짧게 그 마음을 받아준 뒤, 화면 상단의 종료 버튼을 누르면 바로 정리해서 리포트로 넘어갈 수 있다고 안내한다.
+예: "여기까지도 이미 많은 얘기를 나눠주셨어요. 위에 있는 종료 버튼을 눌러주시면 바로 정리해드릴게요." 이 턴에서는
+다음 단계로 넘어가는 질문을 하지 않는다.
 `.trim();
 
 // 2026-09-13 fix — live ES testing caught the model copying a quoted Korean
@@ -235,6 +259,53 @@ const BREATHER_INSTRUCTION_TEMPLATE = (topic: string) => `이 턴은 숨고르�
 질문은 넣지 않지만 대화가 끝난 것처럼 들리면 안 됩니다. 마지막 말풍선은 "더 하고 싶은 말이 있으면 편하게 적어 주세요"처럼
 부담 없는 초대 한 줄(사용자 말투에 맞게 표현은 매번 다르게, 답을 요구하는 문장이 아님)로 마무리하세요.`;
 
+// 7번째 응답(반복 패턴/Pattern, 열림)은 원래 11개 모듈 전부에 "이런 일이나
+// 이런 감정이 이번이 처음인지, 예전에도 반복됐는지"라는 동일 문구를 썼다 —
+// mobile/lib/quiz/modules.ts에 이미 정의된 모듈별 실제 차원(애착=불안/회피,
+// 분노=억압/폭발/반추 등)을 전혀 쓰지 않아 11개 모듈 상담이 판박이처럼
+// 느껴진다는 실사용 피드백으로 모듈별 문구로 분기한다. "반복 패턴을 여는
+// 질문"이라는 턴의 목적 자체는 그대로 두고, 무엇을 반복 패턴의 소재로
+// 삼을지만 모듈 차원에 맞춘다 — 8번째 턴(구체화)이 그대로 이어받는 구조라
+// 8번째 턴은 손대지 않는다.
+const GENERIC_PATTERN_INSTRUCTION = `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 이런 일이나 이런 감정이 이번이 처음인지, 예전에도 비슷하게 반복된 적이 있는지 여는 질문으로 물으세요.`;
+
+const MODULE_PATTERN_INSTRUCTIONS: Record<string, string> = {
+  module1: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 관계가 가까워지거나 멀어지려는 순간에 사용자가 실제로 보인 반응(불안하게 매달리듯 확인하고 싶어지는 쪽이든, 반대로 거리를 두고 발을 빼고 싶어지는 쪽이든)이 이번이 처음인지, 예전 다른 관계에서도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+  module2: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 돈과 관련해서 결핍감에 쫓기듯 굴거나, 남들 앞에서 괜찮아 보이려 무리하거나, 아예 생각하기 싫어서 피해버렸던 장면이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+  module3: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 이렇게 지치고 냉소적으로 변하고 "해도 소용없다"는 느낌이 먼저 드는 순간이 이번이 처음인지, 예전 다른 시기에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+  module4: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 이미지 관리를 위해 진짜 마음을 숨기거나 꾸며낸 장면, 혹은 사람을 만나고 난 뒤 유독 지치는 순간이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+  module5: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 완벽하게 하려다 오히려 미루거나, 아예 손을 놓거나, 뭘 선택해야 할지 몰라 얼어붙었던 장면이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+  module6: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 화를 참다가 눌러 삼키거나, 갑자기 터뜨리거나, 지난 뒤에도 그 장면을 계속 곱씹었던 패턴이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+  module7: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 소리·빛·사람 많은 상황 같은 자극에 압도돼 버거워졌던 순간이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+  module8: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 잠들기 전 머리가 계속 돌아가거나 몸이 긴장한 채로 남아 뒤척였던 밤이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+  module9: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 가족과 지나치게 얽히거나, 반대로 마음의 문을 닫아버리거나, 일찍부터 어른 역할을 떠맡았던 장면이 이번 일과 비슷하게 예전에도 반복됐는지 여는 질문으로 물으세요.`,
+  module10: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 산만해져서 손을 못 대거나, 한번 빠지면 시간 가는 줄 모르거나, 순간적으로 확 저질러버렸던 패턴이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+  module11: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 하고 싶은 말이나 행동을 삼키거나, 확신이 없어서 물러섰던 장면이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+};
+
+function buildPatternPhaseInstruction(moduleId?: string): string {
+  if (moduleId && MODULE_PATTERN_INSTRUCTIONS[moduleId]) return MODULE_PATTERN_INSTRUCTIONS[moduleId];
+  return GENERIC_PATTERN_INSTRUCTION;
+}
+
+// quizAnswerPool 재활용 — 4개 턴(4·7·11·14)에 서로 다른 퀴즈 답변을 소재로
+// 얹어 판박이 상담을 피한다(SPEC 요청 3). 배열 인덱스는 고정 배정 순서다.
+const QUIZ_QUOTE_TURN_INDEX: Record<number, number> = { 4: 0, 7: 1, 11: 2, 14: 3 };
+
+function buildQuizQuotePreamble(item?: QuizAnswerQuote | null): string {
+  if (!item) return "";
+  return `사용자는 아까 심리테스트 문항 "${item.prompt}"에서 "${item.label}"라고 답했다. 지금 대화가 이미 다른 구체적인 소재로 흘러가고 있더라도, 이번 응답에는 반드시 이 문항/답을 소재로 삼은 자연스러운 한두 문장을 포함시켜 아래 질문으로 이어지는 계기로 삼아라(생략하지 말 것) — 그대로 베끼지 말고 지금 대화 흐름과 언어에 맞게 새로 쓸 것(영어 필드 이름은 절대 말하지 않는다).`;
+}
+
+// 2026-09-22 fix — 실사용 캡처에서 몸 감각 위치를 "가슴이냐 배냐" → "이마냐
+// 뒤통수냐 눈 주변이냐"까지 턴을 거듭하며 점점 더 잘게 해부학적으로 쪼개
+// 되묻는 패턴이 반복 관찰됨. 원인은 5번째 응답(감정 구체화)과 9번째 응답
+// (구 "몸의 반응·충동")이 둘 다 "몸 어디서 느껴졌는지"를 물어서, 모델이
+// 9번째를 5번째와 안 겹치게 만들려고 점점 더 정밀한 위치로 파고든 것으로
+// 보임 — 규칙 11("이미 물어본 건 다시 안 묻는다")을 지키려다 생긴 부작용.
+// 9번째 응답에서 위치 질문을 완전히 빼고 충동/행동에만 집중하도록 재정의해
+// 중복 자체를 없앴다. 위치 질문 자체의 과도한 해부학적 드릴다운은 규칙 7에
+// 별도 캡을 추가해 막음.
 const PHASE_INSTRUCTIONS: Record<number, string> = {
   1: OPENER_INSTRUCTION,
   2: `지금은 2번째 응답입니다 (장면/Scene, 열림). 사용자가 방금 꺼낸 이야기에 공감하고, 그게 최근 구체적으로 어떤 순간·상황에서 있었던 일인지 열어서 물으세요. 아직 사건 자체가 불명확하면 무슨 일이 있었는지부터 편하게 물으세요.`,
@@ -242,9 +313,11 @@ const PHASE_INSTRUCTIONS: Record<number, string> = {
   4: `지금은 4번째 응답입니다 (감정/Emotion, 열림). 사용자가 방금 말한 사건 속에서, 그 순간 실제로 어떤 감정을 느꼈는지 물으세요. 이미 감정 단어를 말했다면 그 감정에 이름을 붙여 반영해 주세요.`,
   5: `지금은 5번째 응답입니다 (감정/Emotion, 구체화). 방금 말한 감정이 몸이나 마음 어디서 제일 크게 느껴졌는지, 그 감정의 세기나 결이 구체적으로 어땠는지(예: 뜨거웠는지 답답했는지 등) 감각적으로 파고드세요.`,
   6: BREATHER_INSTRUCTION_TEMPLATE("지금까지 나온 사건과 감정"),
-  7: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 이런 일이나 이런 감정이 이번이 처음인지, 예전에도 비슷하게 반복된 적이 있는지 여는 질문으로 물으세요.`,
+  // 7은 buildPatternPhaseInstruction()이 moduleId별로 대체한다 — 아래 참고.
   8: `지금은 8번째 응답입니다 (반복 패턴/Pattern, 구체화). 반복된 적이 있다고 했다면, 처음 그랬던 때나 가장 기억에 남는 예전 순간 하나를 구체적으로 물으세요. 이번이 처음이라고 했다면, 그럼에도 비슷한 결의 다른 감정·상황이 있었는지 물으세요.`,
-  9: `지금은 9번째 응답입니다 (몸의 반응·충동/Somatic, 열림). 사용자가 방금 말한 감정이 몸의 어느 부분에서 제일 크게 느껴지는지, 혹은 그 순간 실제로 하고 싶었던 행동(도망치고 싶었다, 아무 말도 하기 싫었다, 다 그만두고 싶었다 등)이 있었는지 여는 질문으로 물으세요.`,
+  9: `지금은 9번째 응답입니다 (충동/Impulse, 열림). 몸의 어디서 느껴졌는지는 5번째 응답에서 이미 물었으니 다시 묻지 마세요.
+그 순간 실제로 하고 싶었던 행동이나 충동(도망치고 싶었다, 아무 말도 하기 싫었다, 다 그만두고 싶었다, 소리치고 싶었다 등)이
+있었는지 여는 질문으로 물으세요.`,
   10: `지금은 10번째 응답입니다 (중간 점검/Checkpoint) — 이 턴은 대화를 끝내는 턴이 아니라, 사용자에게 계속할지 선택권을 주는 턴입니다.
 지금까지 나온 이야기를 짧게, 따뜻하게 인정해 주세요 — 이미 꽤 의미 있는 이야기가 많이 나왔다는 걸 짚어 주세요.
 그다음 응답의 마지막 줄에서, 조금 더 이야기를 나누고 싶은지 아니면 여기서 마무리해도 괜찮은지 편하게 물어보세요
@@ -324,7 +397,11 @@ export function buildChatSystemPrompt(
 ): string {
   const locale: Locale = context.locale ?? "ko";
   const effectiveTurn = isFinalTurn(turnNumber, elapsedMinutes) ? TOTAL_TURNS : Math.max(1, turnNumber);
-  const phaseInstruction = PHASE_INSTRUCTIONS[effectiveTurn];
+  const basePhaseInstruction = effectiveTurn === 7 ? buildPatternPhaseInstruction(context.moduleId) : PHASE_INSTRUCTIONS[effectiveTurn];
+  const poolIndex = QUIZ_QUOTE_TURN_INDEX[effectiveTurn];
+  const quotePreamble =
+    poolIndex !== undefined ? buildQuizQuotePreamble(context.quizAnswerPool?.[poolIndex]) : "";
+  const phaseInstruction = quotePreamble ? `${quotePreamble}\n${basePhaseInstruction}` : basePhaseInstruction;
   const timeNotice = buildTimeNotice(elapsedMinutes);
   const quizAnswerLine = context.quizAnswer
     ? `- 가장 강하게 고른 답: 질문 "${context.quizAnswer.prompt}" → 답 "${context.quizAnswer.label}"`

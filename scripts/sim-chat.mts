@@ -1,9 +1,16 @@
 // Simulates the AI counseling chat end to end with LLM "users" of different styles, so a prompt
 // change can be judged on whole conversations instead of single replies.
-//   npx tsx --env-file=.env.local scripts/sim-chat.mts [turns] [style,style,...]
+//   npx tsx --env-file=.env.local scripts/sim-chat.mts [turns] [style,style,...] [moduleId] [quizPoolSize]
+// moduleId (default "module3") only swaps which of the 11 quiz modules' turn-7 pattern
+// instruction (see lib/chatPrompts.ts's buildPatternPhaseInstruction) is exercised — the rest
+// of ctx below stays the same fixture regardless of module, so it's for checking the turn-7
+// branch, not a fully coherent per-module persona.
+// quizPoolSize (default 4) trims QUIZ_ANSWER_POOL_SAMPLE to that many items, so a run can
+// exercise the quizAnswerPool fallback (turns 14→11→7→4 drop their quote first) without
+// editing this file — see lib/chatPrompts.ts's QUIZ_QUOTE_TURN_INDEX.
 import OpenAI from "openai";
 import { getChatReply, type ChatMessage } from "../lib/chat.ts";
-import type { ChatSessionContext } from "../lib/chatPrompts.ts";
+import type { ChatSessionContext, QuizAnswerQuote } from "../lib/chatPrompts.ts";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 const TURNS = Number(process.argv[2] ?? 12);
@@ -13,6 +20,13 @@ const STYLES: Record<string, string> = {
   lost: "너는 자기가 왜 힘든지 잘 모른다. 아주 짧게 반말로 답한다('모르겠네', '머리가 굳는 느낌이야', '멍해지면서 아무 생각이 안 들어'). 상담사가 맞혀 주길 바라며 '돈 관련이야?' 처럼 되묻기도 한다. 실제로는 회사 일이 쌓이는 것과 월요일 아침이 힘들다.",
   questioning: "너는 30대 직장인이다. 상담사를 조금 의심한다. '이게 사주랑 무슨 상관이야?', '그래서 어떻게 하라는 거야?', '그냥 답 좀 알려줘' 같은 질문을 자주 한다. 그래도 한두 번은 속마음을 살짝 말한다. 상황: 번아웃, 쉬어도 쉬는 것 같지 않다.",
 };
+const QUIZ_ANSWER_POOL_SAMPLE: QuizAnswerQuote[] = [
+  { prompt: "일이 잘 안 풀릴 때 나는?", label: "감정을 잘 못 느끼고 그냥 멍해진다" },
+  { prompt: "이런 상태가?", label: "예전에도 몇 번 이렇게 지쳐본 적 있다" },
+  { prompt: "제일 무서운 건?", label: "이러다 아예 무너져버릴까 봐" },
+  { prompt: "힘들 때 나는 보통?", label: "아무렇지 않은 척 계속 일한다" },
+];
+const quizPoolSize = Number(process.argv[5] ?? 4);
 const ctx: ChatSessionContext = {
   track: "career",
   sajuElements: { wood: 33, fire: 0, earth: 50, metal: 17, water: 0 },
@@ -20,6 +34,8 @@ const ctx: ChatSessionContext = {
   psychTestType: "완주형 소진",
   psychTestSummary: "완벽주의가 높고 회복이 낮은 편이에요.",
   quizAnswer: { prompt: "쉬는 날 나는?", label: "쉬어도 마음이 불편하다" },
+  quizAnswerPool: QUIZ_ANSWER_POOL_SAMPLE.slice(0, quizPoolSize),
+  moduleId: process.argv[4] ?? "module3",
   locale: "ko",
 };
 

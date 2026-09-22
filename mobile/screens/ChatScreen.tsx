@@ -20,7 +20,7 @@ import Text from "../components/AppText";
 import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
-import { findTopAnswers } from "../lib/quiz/quizProfile";
+import { findTopAnswers, findTopAnswersOverall } from "../lib/quiz/quizProfile";
 import type { QuizDiagnosis } from "./QuizScreen";
 import { COLORS } from "../theme/colors";
 
@@ -115,6 +115,13 @@ export default function ChatScreen({
 
       const activeDimension = quizDiagnosis.classification.activeDimensions[0] ?? null;
       const headlineAnswerRaw = activeDimension ? findTopAnswers(quizDiagnosis.answers, activeDimension, 1)[0] : null;
+      // 4개 턴(감정·반복패턴·의미·대처)에 나눠 인용할 재료 — 오프닝(headlineAnswerRaw)과
+      // 문항이 겹치지 않는 것 중 점수 상위 최대 4개. lib/chatPrompts.ts의
+      // QUIZ_QUOTE_TURN_INDEX가 이 배열의 순서를 턴 번호에 고정 배정한다.
+      const quizAnswerPool = findTopAnswersOverall(quizDiagnosis.answers, 6)
+        .filter((a) => a.qId !== headlineAnswerRaw?.qId)
+        .slice(0, 4)
+        .map((a) => ({ prompt: a.prompt, label: a.label }));
 
       try {
         const res = await fetch(`${API_BASE_URL}/api/chat`, {
@@ -130,6 +137,8 @@ export default function ChatScreen({
               psychTestType: quizDiagnosis.typeInfo?.title ?? "",
               psychTestSummary: quizDiagnosis.nuancedSummary ?? "",
               quizAnswer: headlineAnswerRaw ? { prompt: headlineAnswerRaw.prompt, label: headlineAnswerRaw.label } : null,
+              quizAnswerPool,
+              moduleId: quizDiagnosis.moduleId,
               locale,
             },
             history: apiHistory,
@@ -214,7 +223,8 @@ export default function ChatScreen({
     ? strings.chat.timeUpLabel
     : `${String(Math.floor(remainingSeconds / 60)).padStart(2, "0")}:${String(remainingSeconds % 60).padStart(2, "0")}`;
   const showCheckpoint = turn === CHECKPOINT_TURN && !checkpointDismissed && !done && !isTyping && !errorText;
-  const canFinishEarly = !done && !isTyping && !errorText && !showCheckpoint && elapsedSeconds >= EARLY_FINISH_SECONDS;
+  const canFinishEarly =
+    !done && !isTyping && !errorText && !showCheckpoint && (turn > CHECKPOINT_TURN || elapsedSeconds >= EARLY_FINISH_SECONDS);
   // Stays on screen while the bot is still writing (sending is blocked until it finishes): removing it
   // for every bubble made the input row flicker away and back several times per reply.
   const showTextInput = !done && !errorText && !showCheckpoint;
@@ -227,12 +237,26 @@ export default function ChatScreen({
             <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
           </Pressable>
           <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
-          <Text style={styles.headerLabel}>{strings.chat.headerLabel}</Text>
+          <Text style={styles.headerLabel} numberOfLines={1} ellipsizeMode="tail">
+            {strings.chat.headerLabel}
+          </Text>
           {!done && (
             <View style={styles.countdown}>
               <Clock size={12} strokeWidth={2} color={remainingSeconds <= 60 ? "#CB6249" : COLORS.footer} />
               <Text style={[styles.countdownLabel, remainingSeconds <= 60 && styles.countdownLabelWarn]}>{countdownLabel}</Text>
             </View>
+          )}
+          {canFinishEarly && (
+            <Pressable
+              onPress={handleFinishEarly}
+              hitSlop={8}
+              style={styles.headerFinishButton}
+              accessibilityRole="button"
+              accessibilityLabel={strings.chat.finishEarlyButton}
+            >
+              <ShieldCheck size={12} strokeWidth={2} color={COLORS.gold} />
+              <Text style={styles.headerFinishLabel}>{strings.chat.finishEarlyButton}</Text>
+            </Pressable>
           )}
         </View>
 
@@ -269,15 +293,6 @@ export default function ChatScreen({
             </Pressable>
             <Pressable style={styles.checkpointButtonPrimary} onPress={handleContinueAtCheckpoint}>
               <Text style={styles.checkpointButtonPrimaryLabel}>{strings.chat.checkpointContinueButton}</Text>
-            </Pressable>
-          </View>
-        )}
-
-        {canFinishEarly && (
-          <View style={styles.finishRow}>
-            <Pressable style={styles.finishButton} onPress={handleFinishEarly}>
-              <ShieldCheck size={13} strokeWidth={2} color={COLORS.gold} />
-              <Text style={styles.finishLabel}>{strings.chat.finishEarlyButton}</Text>
             </Pressable>
           </View>
         )}
@@ -393,10 +408,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.footer,
   },
-  finishRow: {
+  headerFinishButton: {
+    flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 10,
+    gap: 4,
+    backgroundColor: "rgba(255,255,255,0.03)",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 999,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  headerFinishLabel: {
+    fontFamily: "Manrope_600SemiBold",
+    fontSize: 11,
+    color: "#C7C3D1",
   },
   checkpointRow: {
     flexDirection: "row",
@@ -433,22 +459,6 @@ const styles = StyleSheet.create({
   checkpointButtonSecondaryLabel: {
     fontFamily: "Manrope_500Medium",
     fontSize: 13.5,
-    color: "#C7C3D1",
-  },
-  finishButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "rgba(255,255,255,0.03)",
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 999,
-    paddingVertical: 9,
-    paddingHorizontal: 18,
-  },
-  finishLabel: {
-    fontFamily: "Manrope_500Medium",
-    fontSize: 13,
     color: "#C7C3D1",
   },
   inputRow: {
