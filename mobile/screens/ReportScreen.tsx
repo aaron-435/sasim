@@ -10,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
 import { getRevenueCatUserId, isUnavailableMessage, purchaseIssueDetail, purchaseReportBundle, purchaseReportModule, restoreReports } from "../lib/purchases";
+import { findNextDecadeElementPreview } from "../lib/decadeTransition";
 import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
 import { elementWithEmoji } from "../lib/elements";
@@ -175,6 +176,16 @@ export default function ReportScreen({
       .filter((x): x is { dimension: string; dimensionLabel: string; prompt: string; label: string } => !!x);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizDiagnosis]);
+
+  // Personalized line for the (unpurchased) paywall card — "N세부터, [원소] 기운이 시작돼요" —
+  // computed locally from data already on screen, no AI call. null on older saved sessions
+  // that lack decadeFortune/currentAge, or once the reader has already reached that age.
+  const decadePreviewLine = useMemo(() => {
+    const preview = findNextDecadeElementPreview(decadeFortune, currentAge);
+    if (!preview) return null;
+    return strings.report.paywallDecadePreview(preview.startAge, strings.common.elementLabels[preview.elementKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [decadeFortune, currentAge, strings]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -641,6 +652,7 @@ export default function ReportScreen({
               purchasing={purchasing}
               restoring={restoring}
               purchaseNotice={purchaseNotice}
+              decadePreviewLine={decadePreviewLine}
               onBuyModule={handleBuyModule}
               onBuyBundle={handleBuyBundle}
               onRestore={handleRestore}
@@ -658,7 +670,7 @@ export default function ReportScreen({
       ...gated,
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, resolvedElements, chatExtract, unlocked, lockedOpen, unlockState, ownedCount, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, topAnswers]);
+  }, [content, resolvedElements, chatExtract, unlocked, lockedOpen, unlockState, ownedCount, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, topAnswers, decadePreviewLine]);
 
   // PDF of the whole report — only offered once it's unlocked. The server re-verifies the
   // purchase (app/api/report-pdf), so this button is a convenience, not the gate.
@@ -1225,6 +1237,7 @@ function PaywallPage({
   purchasing,
   restoring,
   purchaseNotice,
+  decadePreviewLine,
   onBuyModule,
   onBuyBundle,
   onRestore,
@@ -1236,6 +1249,8 @@ function PaywallPage({
   purchasing: boolean;
   restoring: boolean;
   purchaseNotice: string | null;
+  /** "32세부터, 수 기운이 시작돼요" — null when decadeFortune/currentAge aren't available. */
+  decadePreviewLine: string | null;
   onBuyModule: () => void;
   onBuyBundle: () => void;
   onRestore: () => void;
@@ -1249,6 +1264,7 @@ function PaywallPage({
           <Text style={pageStyles.paywallTitle} accessibilityRole="header">{strings.report.paywallTitle}</Text>
           <Text style={pageStyles.paywallBody}>{strings.report.paywallBody}</Text>
           <Text style={pageStyles.paywallLockedNote}>{strings.report.paywallLockedNote(lockedCount, totalCount)}</Text>
+          {!!decadePreviewLine && <Text style={pageStyles.paywallDecadePreview}>{decadePreviewLine}</Text>}
 
           <Pressable style={[pageStyles.paywallBuyButton, busy && pageStyles.paywallButtonDisabled]} onPress={onBuyModule} disabled={busy}>
             {purchasing ? <ActivityIndicator color={COLORS.background} /> : <Text style={pageStyles.paywallBuyButtonLabel}>{strings.report.paywallBuyLabel(formatUsd(REPORT_PRICE))}</Text>}
@@ -1439,6 +1455,7 @@ const pageStyles = StyleSheet.create({
   paywallBundleButtonLabel: { fontFamily: "Manrope_700Bold", fontSize: 13, color: COLORS.headline },
   paywallBundleSub: { fontFamily: "Manrope_400Regular", fontSize: 12, color: COLORS.subheadline, textAlign: "center" },
   paywallLockedNote: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.gold, textAlign: "center" },
+  paywallDecadePreview: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 19, color: "#C7C3D1", textAlign: "center" },
   paywallRestoreButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 8 },
   paywallDisclaimer: { fontFamily: "Manrope_400Regular", fontSize: 12, lineHeight: 17, color: COLORS.subheadline, textAlign: "center", marginTop: 14, paddingHorizontal: 6 },
   paywallRestoreLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: COLORS.subheadline, marginTop: 4, textDecorationLine: "underline" },

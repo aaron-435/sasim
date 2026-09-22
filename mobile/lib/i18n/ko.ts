@@ -541,6 +541,7 @@ export const ko = {
     restoreFailed: "구매 내역을 확인하지 못했어요. 연결을 확인한 뒤 다시 시도해주세요.",
     paywallBundleSubOwned: (owned: number, fullPrice: string) => `이미 산 리포트 ${owned}개 포함 · 따로 사면 ${fullPrice}`,
     paywallLockedNote: (locked: number, total: number) => `전체 ${total}페이지 중 ${locked}페이지가 잠겨 있어요`,
+    paywallDecadePreview: (age: number, element: string) => `${age}세부터, ${element} 기운이 시작돼요`,
     paywallOneTimeNote: "한 번 결제로 이 리포트 전체를 계속 다시 볼 수 있어요. 구독이 아니에요.",
     strengthIndex: (n: number, total: number) => `강점 · ${String(n).padStart(2, "0")} / ${String(total).padStart(2, "0")}`,
     weaknessIndex: (n: number, total: number) => `약점 · ${String(n).padStart(2, "0")} / ${String(total).padStart(2, "0")}`,

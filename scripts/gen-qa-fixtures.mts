@@ -36,7 +36,8 @@ await Promise.all(Object.entries(personas).map(async ([key, p]: [string, any]) =
   const [content, year] = await Promise.all([
     getReportContent(ctx),
     getYearReportContent({ locale: loc, nickname: p.nickname, year: 2027, dayMasterChar: day.sky, dayMasterElement: EL[day.skyElement] as any, elements: r.elements,
-      sajuTypeName: r.sajuType ? formatSajuTypeName(loc, r.sajuType) : null, yearFortune: getYearFortune(day.sky, day.earth, 2027), months: getMonthlyFortune(day.sky, day.earth, 2027) } as any),
+      sajuTypeName: r.sajuType ? formatSajuTypeName(loc, r.sajuType) : null, yearFortune: getYearFortune(day.sky, day.earth, 2027), months: getMonthlyFortune(day.sky, day.earth, 2027),
+      decadeFortune: r.decadeFortune, currentAge: r.currentAge } as any),
   ]);
   const quizDiagnosis = { moduleId: "module3", moduleTitle: c.module, track: ctx.track,
     answers: [{ qId: "qa-0", prompt: c.answers[0][0], label: c.answers[0][1], dimension: "perfectionism", score: 3 }, { qId: "qa-1", prompt: c.answers[1][0], label: c.answers[1][1], dimension: "recovery", score: 0 }],

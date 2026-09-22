@@ -6,7 +6,7 @@
  * returning anything, so the content can't be pulled without buying.
  *
  * Request:  POST { appUserId, locale, nickname, selfDayMasterChar, selfDayBranch?,
- *                  elements?, sajuTypeName?, sessionId?, year? }
+ *                  elements?, sajuTypeName?, sessionId?, year?, currentAge?, decadeFortune? }
  * Response: YearReportContent | { error, code }   code: "not_purchased" | "unavailable" | ...
  * ------------------------------------------------------------------
  */
@@ -19,6 +19,7 @@ import { checkEntitlement, yearReportEntitlementId } from "@/lib/revenuecat";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { STEM_ELEMENT } from "@/lib/sajuType";
 import { getYearReportContent } from "@/lib/yearReport";
+import type { ReportDecadeFortune } from "@/lib/reportPrompts";
 import { currentSajuYear, getMonthlyFortune, getYearFortune } from "@/lib/yearFortune";
 import type { ElementKey } from "@/lib/sajuScore";
 
@@ -32,6 +33,10 @@ interface Body {
   sajuTypeName?: string | null;
   sessionId?: string;
   year?: number;
+  /** From /api/saju (see mobile/App.tsx's homeData.sajuResult) — engine internals, passed through
+   * as-is to describeUpcomingPeriod() same as lib/reportPrompts.ts's ReportContext does. */
+  currentAge?: number;
+  decadeFortune?: ReportDecadeFortune | null;
 }
 
 const LOCALES: Locale[] = ["ko", "en", "es"];
@@ -94,6 +99,8 @@ export async function POST(req: NextRequest) {
         sajuTypeName: (body.sajuTypeName ?? "").toString().slice(0, 80) || null,
         yearFortune,
         months,
+        currentAge: typeof body.currentAge === "number" ? body.currentAge : undefined,
+        decadeFortune: body.decadeFortune ?? null,
       },
       body.sessionId,
     );

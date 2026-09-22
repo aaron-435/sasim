@@ -19,6 +19,7 @@ import type { CompatRelation } from "./compatibility";
 import type { MonthFortune, YearFortune } from "./yearFortune";
 import { TWELVE_STAGES_CONTENT } from "./twelveStagesContent";
 import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
+import { describeUpcomingPeriod, type ReportDecadeFortune } from "./reportPrompts";
 import type { ElementKey } from "./sajuScore";
 
 export interface YearReportContext {
@@ -32,6 +33,10 @@ export interface YearReportContext {
   sajuTypeName: string | null;
   yearFortune: YearFortune;
   months: MonthFortune[];
+  /** From /api/saju (same shape as lib/reportPrompts.ts's ReportContext) — absent for pre-2026-09-14
+   * sessions with no stored birthdate. describeUpcomingPeriod() degrades to a no-ages fallback then. */
+  decadeFortune?: ReportDecadeFortune | null;
+  currentAge?: number;
 }
 
 /** What each relation means, in words the model can turn into plain prose. */
@@ -64,6 +69,7 @@ export function buildYearReportPrompt(ctx: YearReportContext): string {
     : "정보 없음";
 
   const y = ctx.yearFortune;
+  const upcomingPeriodLine = describeUpcomingPeriod(ctx.decadeFortune, ctx.currentAge, locale);
   const monthLines = ctx.months
     .map(
       (m, i) =>
@@ -87,6 +93,7 @@ export function buildYearReportPrompt(ctx: YearReportContext): string {
 - 이 해와 나의 관계: ${relationOf(y)}
 - 이 해의 지지 관계: ${branchLine(y.branchRelation)}
 - 이 해의 12운성: ${stageName(y.lifeStageIndex)} / 신살: ${sinsalName(y.sinsalIndex)}
+- ${upcomingPeriodLine}
 
 ## 12개월 흐름 (입춘 무렵인 2월경부터 시작, 순서 그대로 months 배열에 1:1로 대응)
 ${monthLines}
@@ -95,6 +102,7 @@ ${monthLines}
 1. 단정 금지. "~할 것이다", "~하게 된다" 대신 "~하기 좋은 흐름이에요", "~하면 한결 편할 거예요"처럼 경향과 제안으로 쓰세요. 이 리포트는 아직 오지 않은 해를 다루니, 과거형("~했어요", "~였습니다", "~있었습니다", "~했을 가능성이 큽니다")으로 쓰지 말고 항상 앞으로 올 시간 기준의 추측·제안 표현으로 쓰세요.
 2. 절대 쓰지 말 것: 건강 악화·사고·죽음·재난·이별·파산에 대한 예측, 의학·법률·투자 조언, 특정 시점의 이직/결혼/이혼/투자 성공 확언.
 3. 긴장감은 허용됩니다. "속도를 늦추는 편이 좋은 시기", "한 번 더 확인하면 좋은 시기"처럼 부드럽게 쓰되, 겁을 주는 표현은 쓰지 마세요.
+3-1. 예외: 아래 데이터에 "다가오는 대운 시기" 줄이 있고 정보 없음/범위를 벗어남이 아니면, 그 나이와 기운 전환은 실제 계산값이므로 closing에서 "~일 수도 있어요"처럼 흐리지 않고 확정된 사실로 씁니다(규칙 1의 단정 금지는 이 경우 적용하지 않습니다). 나이 숫자는 그 데이터 줄에 있는 그대로 문장 앞쪽에서 명확히 밝히고 새로 만들어내지 않습니다. 다만 그다음에 오는 결과 문장은 이 리포트가 실제로 다룬 ${ctx.year}년의 흐름(위 데이터의 "이 해와 나의 관계" 등)에 한정해서 쓰고, 어느 해의 리포트에 붙여도 말이 되는 보편적 약속("인생이 다 잘 풀립니다")은 쓰지 않습니다. 그 데이터 줄이 정보 없음/범위를 벗어남이면 나이 없이 ${ctx.year}년의 흐름에 한정된 문장만 씁니다.
 4. 각 분야 챕터는 (1) 이 해의 흐름이 이 분야에 뜻하는 것 → (2) 일상에서 마주칠 만한 구체적 장면 → (3) 작게 시작할 수 있는 실행 제안 순서로, 3문단, 문단 사이는 빈 줄(\\n\\n)로 구분하세요. 분량은 한국어 기준 700~1000자(영어·스페인어는 130~190단어)를 목표로 하되, 근거 데이터가 말하는 것보다 부풀리지 마세요.
 5. 월별 항목은 각 달의 관계·12운성·지지 관계에 충실하게 쓰고, 12개월이 서로 같은 문장으로 반복되지 않게 하세요. 각 달 headline은 8~16자(영어는 3~6단어)의 짧은 제목, body는 2~3문장입니다. 각 달마다 그 달의 관계·12운성·지지 관계 중 다른 것을 중심에 놓고, 같은 동사·같은 마무리 문장을 두 달 이상에 쓰지 마세요(예: 어느 달이든 '무리하지 말고 쉬세요'로 끝내지 않기).
 6. 실행 계획(action_plan)은 정확히 4개: 2~4월경, 5~7월경, 8~10월경, 11월~다음해 1월경. 각각 지켜볼 흐름과 해볼 행동 하나씩을 구체적으로 제안하세요.
@@ -117,7 +125,7 @@ ${monthLines}
   },
   "months": [ { "headline": "짧은 제목", "body": "2~3문장" } ],
   "action_plan": [ { "title": "구간 제목", "body": "지켜볼 흐름과 해볼 행동" } ],
-  "closing": "마무리 한 문단(따뜻하게, 2~3문장)"
+  "closing": "마무리 한 문단, 2~3문장. 아래 데이터의 '다가오는 대운 시기' 줄에 나이·기운 전환 정보가 있으면 첫 문장에서 그 나이를 숫자 그대로 밝히며 확정된 사실로 쓰고(지금까지의 시기가 저물고 다음 장이 열린다는 담담한 전환 프레임), 이어서 ${ctx.year}년의 흐름에 한정된 문장으로 따뜻하게 마무리합니다(규칙 3-1 참고). 그 데이터가 없으면 나이 없이 ${ctx.year}년의 흐름을 따뜻하게 정리하는 문장으로 마무리합니다."
 }
 months 배열은 정확히 12개, action_plan 배열은 정확히 4개여야 합니다.`;
 

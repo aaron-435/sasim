@@ -33,6 +33,8 @@ export default function YearReportScreen({
   selfDayBranch,
   elements,
   sajuTypeName,
+  decadeFortune,
+  currentAge,
   onBack,
 }: {
   nickname: string;
@@ -40,6 +42,8 @@ export default function YearReportScreen({
   selfDayBranch: string | null;
   elements: Record<string, number> | null;
   sajuTypeName: string | null;
+  decadeFortune?: unknown;
+  currentAge?: number;
   onBack: () => void;
 }) {
   const strings = useStrings();
@@ -99,7 +103,7 @@ export default function YearReportScreen({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: controller.signal,
-          body: JSON.stringify({ appUserId, locale, nickname, selfDayMasterChar, selfDayBranch, elements, sajuTypeName, year: forYear }),
+          body: JSON.stringify({ appUserId, locale, nickname, selfDayMasterChar, selfDayBranch, elements, sajuTypeName, decadeFortune, currentAge, year: forYear }),
         });
         const json = await res.json();
         if (!mountedRef.current) return;
@@ -130,7 +134,7 @@ export default function YearReportScreen({
         clearTimeout(timeout);
       }
     },
-    [strings, locale, nickname, selfDayMasterChar, selfDayBranch, elements, sajuTypeName],
+    [strings, locale, nickname, selfDayMasterChar, selfDayBranch, elements, sajuTypeName, decadeFortune, currentAge],
   );
 
   const init = useCallback(async () => {

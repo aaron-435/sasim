@@ -515,6 +515,7 @@ export const en: typeof ko = {
     restoreFailed: "We couldn't check your purchases. Check your connection and try again.",
     paywallBundleSubOwned: (owned: number, fullPrice: string) => `Includes the ${owned} you already own · ${fullPrice} if bought separately`,
     paywallLockedNote: (locked: number, total: number) => `${locked} of ${total} pages are locked`,
+    paywallDecadePreview: (age: number, element: string) => `From age ${age}, your ${element} season begins`,
     paywallOneTimeNote: "One purchase opens this whole report for good. It isn't a subscription.",
     strengthIndex: (n: number, total: number) => `STRENGTH · ${String(n).padStart(2, "0")} OF ${String(total).padStart(2, "0")}`,
     weaknessIndex: (n: number, total: number) => `WEAKNESS · ${String(n).padStart(2, "0")} OF ${String(total).padStart(2, "0")}`,

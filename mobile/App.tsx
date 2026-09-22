@@ -426,6 +426,8 @@ function AppContent() {
           selfDayBranch={dayBranchOf(homeData)}
           elements={homeData.sajuResult.elements}
           sajuTypeName={homeData.sajuResult.sajuType ? formatSajuTypeName(locale, homeData.sajuResult.sajuType) : null}
+          decadeFortune={homeData.sajuResult.decadeFortune}
+          currentAge={homeData.sajuResult.currentAge}
           onBack={() => setStep("home")}
         />
       )}
