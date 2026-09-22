@@ -10,7 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
 import { getRevenueCatUserId, isUnavailableMessage, purchaseIssueDetail, purchaseReportBundle, purchaseReportModule, restoreReports } from "../lib/purchases";
-import { findNextDecadeElementPreview } from "../lib/decadeTransition";
+import { findNextDecadeAge } from "../lib/decadeTransition";
 import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
 import { elementWithEmoji } from "../lib/elements";
@@ -177,13 +177,12 @@ export default function ReportScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizDiagnosis]);
 
-  // Personalized line for the (unpurchased) paywall card — "N세부터, [원소] 기운이 시작돼요" —
+  // Personalized line for the (unpurchased) paywall card — "N세부터 완전히 다른 기운이 시작돼요" —
   // computed locally from data already on screen, no AI call. null on older saved sessions
   // that lack decadeFortune/currentAge, or once the reader has already reached that age.
   const decadePreviewLine = useMemo(() => {
-    const preview = findNextDecadeElementPreview(decadeFortune, currentAge);
-    if (!preview) return null;
-    return strings.report.paywallDecadePreview(preview.startAge, strings.common.elementLabels[preview.elementKey]);
+    const nextAge = findNextDecadeAge(decadeFortune, currentAge);
+    return nextAge === null ? null : strings.report.paywallDecadePreview(nextAge);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decadeFortune, currentAge, strings]);
 

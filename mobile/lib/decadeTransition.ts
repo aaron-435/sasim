@@ -9,8 +9,6 @@
 // year in either direction. The transition always lands on the birthday in
 // (birthYear + startAge), so with the exact birth date we can pin it exactly.
 
-import type { ElementKey } from "./sajuType";
-
 export type DecadeTransition = {
   targetDate: Date;
   startAge: number;
@@ -21,19 +19,22 @@ export type DecadeTransition = {
 interface DecadeFortuneEntryLike {
   startAge?: number;
   full?: string;
-  skyElement?: string;
-  earthElement?: string;
 }
 interface DecadeFortuneLike {
   list?: DecadeFortuneEntryLike[];
 }
 
-// Same hanja→key mapping as web's lib/reportPrompts.ts (HANJA_TO_ELEMENT_KEY) and
-// App.tsx's EL_KO_TO_KEY — duplicated locally because mobile is a separate package
-// that never imports the root lib/.
-const HANJA_TO_ELEMENT_KEY: Record<string, ElementKey> = {
-  목: "wood", 화: "fire", 토: "earth", 금: "metal", 수: "water",
-};
+/** Shared by findNextDecadeTransition/findNextDecadeAge: the first list entry whose startAge is
+ * strictly after currentAge (i.e. not yet reached), in age order. */
+function nextEntryAfter(decadeFortune: unknown, currentAge: number): (DecadeFortuneEntryLike & { startAge: number }) | null {
+  const list = (decadeFortune as DecadeFortuneLike | undefined)?.list;
+  if (!list?.length) return null;
+  const candidates = list.filter(
+    (e): e is DecadeFortuneEntryLike & { startAge: number } => typeof e.startAge === "number" && e.startAge > currentAge
+  );
+  candidates.sort((a, b) => a.startAge - b.startAge);
+  return candidates[0] ?? null;
+}
 
 export function findNextDecadeTransition(
   decadeFortune: unknown,
@@ -43,13 +44,8 @@ export function findNextDecadeTransition(
   birthDay: number | undefined
 ): DecadeTransition | null {
   if (currentAge === undefined || !birthYear || !birthMonth || !birthDay) return null;
-  const list = (decadeFortune as DecadeFortuneLike | undefined)?.list;
-  if (!list?.length) return null;
-
-  const next = list
-    .filter((e): e is Required<DecadeFortuneEntryLike> => typeof e.startAge === "number" && typeof e.full === "string" && e.startAge > currentAge)
-    .sort((a, b) => a.startAge - b.startAge)[0];
-  if (!next) return null;
+  const next = nextEntryAfter(decadeFortune, currentAge);
+  if (!next || typeof next.full !== "string") return null;
 
   return {
     targetDate: new Date(birthYear + next.startAge, birthMonth - 1, birthDay),
@@ -58,28 +54,12 @@ export function findNextDecadeTransition(
   };
 }
 
-export type DecadeElementPreview = {
-  startAge: number;
-  elementKey: ElementKey;
-};
-
-/** Lighter-weight sibling of findNextDecadeTransition() for the report paywall preview line:
- * that line only needs "starts at age N, element X" (no exact target date), so it skips the
- * birth-date args and reads the element hanja instead of the ganji string. Returns null when
- * decadeFortune/currentAge are missing (older saved sessions) or the next entry's element
- * can't be mapped — the caller shows nothing rather than a broken line. */
-export function findNextDecadeElementPreview(decadeFortune: unknown, currentAge: number | undefined): DecadeElementPreview | null {
+/** Lighter-weight sibling of findNextDecadeTransition() for the report paywall preview line: that
+ * line only needs "starts at age N" (no exact target date, and no element — the copy is a general
+ * "a whole new energy begins" line rather than naming a specific element), so it skips the
+ * birth-date args. Returns null when decadeFortune/currentAge are missing (older saved sessions)
+ * or there's no future entry in the data. */
+export function findNextDecadeAge(decadeFortune: unknown, currentAge: number | undefined): number | null {
   if (currentAge === undefined) return null;
-  const list = (decadeFortune as DecadeFortuneLike | undefined)?.list;
-  if (!list?.length) return null;
-
-  const next = list
-    .filter((e): e is Required<Pick<DecadeFortuneEntryLike, "startAge" | "earthElement" | "skyElement">> => typeof e.startAge === "number" && e.startAge > currentAge)
-    .sort((a, b) => a.startAge - b.startAge)[0];
-  if (!next) return null;
-
-  const elementKey = HANJA_TO_ELEMENT_KEY[next.earthElement] ?? HANJA_TO_ELEMENT_KEY[next.skyElement];
-  if (!elementKey) return null;
-
-  return { startAge: next.startAge, elementKey };
+  return nextEntryAfter(decadeFortune, currentAge)?.startAge ?? null;
 }
