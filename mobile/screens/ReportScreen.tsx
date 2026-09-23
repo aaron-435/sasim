@@ -78,6 +78,11 @@ export type ReportContent = {
   /** 2026-09-20: short reading under the psych-test bars (absent in older saved reports). */
   quiz_reading?: string;
   element_readings: Record<string, ElementReading>;
+  /** 2026-09-22: free-part preview of the calculated age+element transition — fact only, no
+   * why/prepare (that stays in the locked upcoming_period_body below). Absent in reports saved
+   * before this date. */
+  upcoming_period_preview_heading?: string;
+  upcoming_period_preview_body?: string;
   upcoming_period_heading: string;
   upcoming_period_body: string;
   cross_analysis_quotes: string[];
@@ -483,11 +488,24 @@ export default function ReportScreen({
       });
     });
 
+    if (content.upcoming_period_preview_heading && content.upcoming_period_preview_body) {
+      body.push({
+        key: "upcoming-preview",
+        tocLabel: strings.report.sectionUpcomingPeriod,
+        node: (
+          <ForecastPage
+            heading={content.upcoming_period_preview_heading}
+            body={content.upcoming_period_preview_body}
+            note={strings.report.upcomingGlimpseNote}
+          />
+        ),
+      });
+    }
+
     // ---- everything below this line is the paid half of the report ----
 
     body.push({
       key: "upcoming",
-      tocLabel: strings.report.sectionUpcomingPeriod,
       locked: true,
       node: <ForecastPage heading={content.upcoming_period_heading} body={content.upcoming_period_body} note={strings.report.upcomingPeriodNote} />,
     });

@@ -496,6 +496,7 @@ export const ko = {
     sectionSajuPatternSubtitle: "사주 원국 분석",
     sectionUpcomingPeriod: "다가오는 시기",
     upcomingPeriodNote: "대운(大運) 데이터 기반 — 사주 원국의 10년 단위 장기 흐름을 함께 봅니다.",
+    upcomingGlimpseNote: "왜 그런지, 무엇을 준비하면 좋을지는 이 리포트 뒤에서 이어집니다.",
     sectionCrossAnalysisToc: "심리검사 교차분석",
     sectionStrengthsWeaknessesToc: "강점과 취약점",
     sectionBehaviorMindsetToc: "행동 지침과 마음가짐",
