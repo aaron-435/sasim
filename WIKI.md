@@ -82,7 +82,8 @@ ko/en/es. 웹 `lib/i18n/`, 앱 `mobile/lib/i18n/`(스페인어 규칙은 `STYLE_
 
 명령표는 루트 `CLAUDE.md`의 "Verification commands". 그 외:
 - 개발용 QA 모드(`?qa=`, 픽스처): `mobile/dev/README.md`
-- 챗봇 시뮬레이션: `scripts/sim-chat.mts`. 모듈별 페르소나 11개(+영어·스페인어 1개씩)가 자기 모듈의 퀴즈 결과로 대화하고, 결과(대화, extract, 턴별 응답 시간)를 `scripts/out/`(git 제외)에 JSON으로 남긴다. 채점은 `scripts/judge-chat.mts`(Q0-b에서 추가 예정)
+- 챗봇 시뮬레이션: `scripts/sim-chat.mts`. 모듈별 페르소나 11개(+영어·스페인어 1개씩)가 자기 모듈의 퀴즈 결과로 대화하고, 결과(대화, extract, 턴별 응답 시간과 토큰, 비용)를 `scripts/out/`(git 제외)에 JSON으로 남긴다.
+- 챗봇 채점: `scripts/judge-chat.mts`. sim-chat 결과 파일을 상위 모델(기본 gpt-5.5)이 루브릭(기법 ①~⑦, 모듈 전문성, 옆 모듈로 새지 않음, 반복 없음, 자연스러움, 위반 5종, 항목별 0~2점)으로 채점한다. 모듈 플레이북과 겹침 점검표를 기준으로 삼는다. 점수표를 `scripts/out/<label>_*.json`과 `.md`로 남긴다. 개편 전 기준선은 `baseline_*` 파일이고, 이후 챗봇 변경은 이 기준선과 비교한다.
 - OpenAI 사용량 집계: `scripts/usage-report.mts`
 - 앱 화면 확인: `mobile-web` 프리뷰(포트 8082) 또는 iOS 시뮬레이터 dev-client. 설정은 `.claude/launch.json`
 

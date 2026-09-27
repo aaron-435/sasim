@@ -12,8 +12,11 @@
 // fallback (turns 14→11→7→4 drop their quote first) — see lib/chatPrompts.ts's QUIZ_QUOTE_TURN_INDEX.
 //
 // Every run writes scripts/out/sim_<timestamp>_<persona>_<moduleId>.json (transcript, extract,
-// context, per-turn latency) in addition to printing it. scripts/out/ is git-ignored.
+// context, per-turn latency and tokens, total cost) in addition to printing it. scripts/out/ is
+// git-ignored.
+import { AsyncLocalStorage } from "node:async_hooks";
 import { mkdirSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import OpenAI from "openai";
@@ -23,6 +26,55 @@ import type { ChatSessionContext, QuizAnswerQuote } from "../lib/chatPrompts.ts"
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 const USER_SIM_MODEL = "gpt-5.4-mini";
 const OUT_DIR = join(dirname(fileURLToPath(import.meta.url)), "out");
+
+// ---- token usage ----
+// getChatReply/extractChatSummary don't return usage (lib/chat.ts only logs it to llm_usage_log), so
+// every chat.completions.create call in this process is wrapped here and attributed to the persona
+// run (AsyncLocalStorage, since personas run in parallel) and to the phase that made it.
+// USD per 1M tokens (input/output); keep in step with lib/llmUsage.ts.
+const PRICING: Record<string, { input: number; output: number }> = {
+  "gpt-5.4-mini": { input: 0.75, output: 4.5 },
+};
+type Phase = "bot" | "userSim" | "extract";
+interface Usage { calls: number; promptTokens: number; completionTokens: number; costUsd: number }
+interface RunUsage { phase: Phase; last: { promptTokens: number; completionTokens: number } | null; byPhase: Record<Phase, Usage> }
+const emptyUsage = (): Usage => ({ calls: 0, promptTokens: 0, completionTokens: 0, costUsd: 0 });
+const usageStore = new AsyncLocalStorage<RunUsage>();
+type CreateFn = (...a: unknown[]) => Promise<OpenAI.Chat.ChatCompletion>;
+function wrapCreate(origCreate: CreateFn): CreateFn {
+  return async function (this: unknown, ...args: unknown[]) {
+    // Parallel 20-turn personas can hit the org's tokens-per-minute limit after the SDK's own 2
+    // retries; keep waiting here so one 429 doesn't throw away a whole run that has already been paid for.
+    let completion: OpenAI.Chat.ChatCompletion;
+    for (let attempt = 0; ; attempt++) {
+      try {
+        completion = await origCreate.apply(this, args);
+        break;
+      } catch (err) {
+        if ((err as { status?: number }).status !== 429 || attempt >= 6) throw err;
+        await new Promise((r) => setTimeout(r, 5000 * (attempt + 1)));
+      }
+    }
+    const run = usageStore.getStore();
+    if (run && completion.usage) {
+      const { prompt_tokens: promptTokens, completion_tokens: completionTokens } = completion.usage;
+      const price = PRICING[completion.model] ?? PRICING[(args[0] as { model: string }).model];
+      const u = run.byPhase[run.phase];
+      u.calls++;
+      u.promptTokens += promptTokens;
+      u.completionTokens += completionTokens;
+      u.costUsd += price ? (promptTokens * price.input + completionTokens * price.output) / 1_000_000 : NaN;
+      run.last = { promptTokens, completionTokens };
+    }
+    return completion;
+  };
+}
+// tsx loads lib/chat.ts as CommonJS (package.json has no "type": "module"), so it gets the CJS build of
+// the openai package — a different Completions class from this file's ESM import. Patch both.
+const cjsOpenAI = createRequire(import.meta.url)("openai") as typeof import("openai");
+for (const Completions of new Set([OpenAI.Chat.Completions, (cjsOpenAI.default ?? cjsOpenAI).Chat.Completions])) {
+  Completions.prototype.create = wrapCreate(Completions.prototype.create as unknown as CreateFn) as unknown as typeof Completions.prototype.create;
+}
 
 interface Persona {
   /** What the simulated user knows about themselves and how they talk. Written in the persona's locale. */
@@ -326,50 +378,61 @@ const quizPoolSize = Number(process.argv[5] ?? 4);
 const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\..*/, "");
 mkdirSync(OUT_DIR, { recursive: true });
 
-await Promise.all(names.map(async (name) => {
-  const persona = resolvePersona(name);
-  const ctx: Ctx = {
-    ...persona.context,
-    moduleId: moduleOverride ?? persona.context.moduleId,
-    quizAnswerPool: persona.context.quizAnswerPool?.slice(0, quizPoolSize),
-  };
-  if (moduleOverride && PERSONAS[name] && moduleOverride !== persona.context.moduleId) {
-    console.warn(`! ${name} is written for ${persona.context.moduleId}, running it on ${moduleOverride}`);
-  }
-  const locale = ctx.locale ?? "ko";
-  const history: ChatMessage[] = [];
-  const turns: { turn: number; bot: string[]; user: string | null; botMs: number }[] = [];
-  const started = Date.now();
-  for (let turn = 1; turn <= TURNS; turn++) {
-    const t0 = Date.now();
-    const reply = await getChatReply({ turnNumber: turn, history, context: ctx, sessionStartedAt: started });
-    const botMs = Date.now() - t0;
-    history.push({ role: "assistant", content: reply.lines.join("\n") });
-    const user = turn === TURNS ? null : await userReply(persona.situation, locale, history);
-    if (user !== null) history.push({ role: "user", content: user });
-    turns.push({ turn, bot: reply.lines, user, botMs });
-  }
-  // Same extraction call the route runs on the final turn, so a change to buildExtractionPrompt can be
-  // checked on the conversation it just produced.
-  const extract = await extractChatSummary(history, ctx);
+await Promise.all(names.map((name) => usageStore.run(
+  { phase: "bot", last: null, byPhase: { bot: emptyUsage(), userSim: emptyUsage(), extract: emptyUsage() } },
+  async () => {
+    const run = usageStore.getStore()!;
+    const persona = resolvePersona(name);
+    const ctx: Ctx = {
+      ...persona.context,
+      moduleId: moduleOverride ?? persona.context.moduleId,
+      quizAnswerPool: persona.context.quizAnswerPool?.slice(0, quizPoolSize),
+    };
+    if (moduleOverride && PERSONAS[name] && moduleOverride !== persona.context.moduleId) {
+      console.warn(`! ${name} is written for ${persona.context.moduleId}, running it on ${moduleOverride}`);
+    }
+    const locale = ctx.locale ?? "ko";
+    const history: ChatMessage[] = [];
+    const turns: { turn: number; bot: string[]; user: string | null; botMs: number; botTokens: RunUsage["last"] }[] = [];
+    const started = Date.now();
+    for (let turn = 1; turn <= TURNS; turn++) {
+      const t0 = Date.now();
+      run.phase = "bot";
+      run.last = null;
+      const reply = await getChatReply({ turnNumber: turn, history, context: ctx, sessionStartedAt: started });
+      const botMs = Date.now() - t0;
+      const botTokens = run.last;
+      history.push({ role: "assistant", content: reply.lines.join("\n") });
+      run.phase = "userSim";
+      const user = turn === TURNS ? null : await userReply(persona.situation, locale, history);
+      if (user !== null) history.push({ role: "user", content: user });
+      turns.push({ turn, bot: reply.lines, user, botMs, botTokens });
+    }
+    // Same extraction call the route runs on the final turn, so a change to buildExtractionPrompt can be
+    // checked on the conversation it just produced.
+    run.phase = "extract";
+    const extract = await extractChatSummary(history, ctx);
+    const totalCostUsd = Object.values(run.byPhase).reduce((sum, u) => sum + u.costUsd, 0);
 
-  const file = join(OUT_DIR, `sim_${stamp}_${name}_${ctx.moduleId ?? "none"}.json`);
-  writeFileSync(file, JSON.stringify({
-    kind: "sim-chat",
-    createdAt: new Date().toISOString(),
-    persona: name,
-    selfBlame: persona.selfBlame,
-    situation: persona.situation,
-    moduleId: ctx.moduleId ?? null,
-    locale,
-    totalTurns: TURNS,
-    userSimModel: USER_SIM_MODEL,
-    durationMs: Date.now() - started,
-    context: ctx,
-    turns,
-    extract,
-  }, null, 2));
+    const file = join(OUT_DIR, `sim_${stamp}_${name}_${ctx.moduleId ?? "none"}.json`);
+    writeFileSync(file, JSON.stringify({
+      kind: "sim-chat",
+      createdAt: new Date().toISOString(),
+      persona: name,
+      selfBlame: persona.selfBlame,
+      situation: persona.situation,
+      moduleId: ctx.moduleId ?? null,
+      locale,
+      totalTurns: TURNS,
+      userSimModel: USER_SIM_MODEL,
+      durationMs: Date.now() - started,
+      context: ctx,
+      turns,
+      extract,
+      usage: { ...run.byPhase, totalCostUsd },
+    }, null, 2));
 
-  const lines = turns.flatMap((t) => [`[${t.turn}] BOT: ${t.bot.join("\n   ")}`, ...(t.user === null ? [] : [`[${t.turn}] ME : ${t.user}`])]);
-  console.log(`\n===== ${name} · ${ctx.moduleId ?? "no module"} · ${locale} =====\n${lines.join("\n")}\n----- extract -----\n${JSON.stringify(extract, null, 2)}\n→ ${file}`);
-}));
+    const lines = turns.flatMap((t) => [`[${t.turn}] BOT: ${t.bot.join("\n   ")}`, ...(t.user === null ? [] : [`[${t.turn}] ME : ${t.user}`])]);
+    console.log(`\n===== ${name} · ${ctx.moduleId ?? "no module"} · ${locale} =====\n${lines.join("\n")}\n----- extract -----\n${JSON.stringify(extract, null, 2)}\n----- usage -----\nbot ${run.byPhase.bot.promptTokens}+${run.byPhase.bot.completionTokens} tok, total $${totalCostUsd.toFixed(4)}\n→ ${file}`);
+  },
+)));

@@ -1,0 +1,300 @@
+// Scores sim-chat conversations against the SPEC Q0 rubric with a stronger LLM judge, so a prompt
+// change (Q1) can be compared to the pre-overhaul baseline item by item instead of by eye.
+//   npx tsx --env-file=.env.local scripts/judge-chat.mts [--label baseline] [--model gpt-5.5] <sim_*.json> ...
+//
+// Input: files written by scripts/sim-chat.mts. The judge sees the transcript plus the module's
+// playbook (lib/modulePlaybooks.ts) and the overlap checklist from MODULE_PLAYBOOK.md, because
+// "expertise" and "no leak" only mean something against what the module is supposed to ask.
+// The baseline bot doesn't follow the playbook yet (only turn 7 does) — that's the point: the
+// baseline shows how far the current prompt is from the target.
+//
+// Rubric, each item 0–2 (null = the situation never came up, e.g. no self-blame → ⑦):
+//   t1..t7   techniques ①–⑦ (SPEC Q1-b)
+//   expertise, no_leak, no_repeat, natural
+//   v_*      violations, split so Q1 can check none got worse: double question, advice, invented
+//            emotion, body location, "one more" extension. `violations` = the worst of the five.
+//
+// Writes scripts/out/<label>_<timestamp>.json (per-file scores with evidence, sim + judge cost) and a
+// .md summary table next to it. scripts/out/ is git-ignored.
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { basename, dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import OpenAI from "openai";
+import { getModulePlaybook, PLAYBOOK_STAGE_TURNS, type ModulePlaybook } from "../lib/modulePlaybooks.ts";
+import type { Locale } from "../lib/i18n/types.ts";
+
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+const OUT_DIR = join(dirname(fileURLToPath(import.meta.url)), "out");
+
+// USD per 1M tokens (input/output). gpt-5.5 from the OpenAI pricing page (2026-09).
+const PRICING: Record<string, { input: number; output: number }> = {
+  "gpt-5.5": { input: 5, output: 30 },
+  "gpt-5.4-mini": { input: 0.75, output: 4.5 },
+};
+
+const ITEMS = [
+  ["t1", "① 이지선다"],
+  ["t2", "② 깔때기"],
+  ["t3", "③ 모순 짚기"],
+  ["t4", "④ 확인형 가설"],
+  ["t5", "⑤ 감정 어휘 좁히기"],
+  ["t6", "⑥ 정리→재확인"],
+  ["t7", "⑦ 폭로 후 리프레이밍"],
+  ["expertise", "모듈 전문성"],
+  ["no_leak", "옆 모듈로 새지 않음"],
+  ["no_repeat", "반복 없음"],
+  ["natural", "자연스러움"],
+  ["v_double_question", "위반: 질문 2개"],
+  ["v_advice", "위반: 조언"],
+  ["v_invented_emotion", "위반: 감정 지어 붙이기"],
+  ["v_body_location", "위반: 몸 위치 질문"],
+  ["v_extension", "위반: '하나만 더' 연장"],
+] as const;
+type ItemKey = (typeof ITEMS)[number][0];
+const VIOLATION_KEYS = ITEMS.map(([k]) => k).filter((k) => k.startsWith("v_"));
+
+const RUBRIC = `
+각 항목을 0, 1, 2 중 하나로 채점한다. 해당 상황이 대화에 아예 없었을 때만 null(예: 사용자가 자책 발언을 한 적이 없으면 t7은 null, 대화가 6턴 미만이면 t6은 null).
+2 = 기준을 분명히 충족, 1 = 부분적이거나 한두 번만, 0 = 없거나 반대로 함.
+
+[대화 기법]
+- t1 ① 이지선다: 좁히는 질문을 "A인가요, B인가요?" 두 갈래로 주고 출구("둘 다 아니면 편하게")를 둔다. 보기가 모듈 축이나 사용자 재료에서 나왔는가. 열린 질문만 계속하면 0.
+- t2 ② 깔때기: 질문 전에 직전 답을 한 줄로 재진술하고 그걸 전제로 범위를 좁히는가. 매 턴 주제가 새로 시작되면 0. 대화 전체가 한 가설을 향해 모이면 2.
+- t3 ③ 모순 짚기: 사용자가 한 말 두 개 사이의 어긋남(또는 모듈의 모순 축)을 판단하지 않는 질문 형태로 짚는가. 없으면 0, 비난조면 0.
+- t4 ④ 확인형 가설: 사용자가 말한 재료 두 개 이상을 엮은 가설을 "~인 걸까요?"처럼 확인형으로 묻는가. 재료 없이 단정하면 0.
+- t5 ⑤ 감정 어휘 좁히기: 뭉뚱그린 감정("힘들다", "그냥 그래")을 구체 어휘 두세 개 중에서 고르게 해 좁히는가.
+- t6 ⑥ 정리→재확인: 6·13·17·20턴에서 질문 없이 지금까지를 정리하고 맞는지 재확인하는가. 매번 다른 표현이면 2, 같은 틀의 반복이면 1.
+- t7 ⑦ 폭로 후 리프레이밍: 사용자의 자책 발언 바로 다음 응답에서, 자책을 그대로 받거나 서둘러 "그렇지 않아요"로 덮지 않고, 다른 해석을 여는 반박형 질문을 하는가(모듈의 리프레이밍 방향 참고). 조언으로 넘어가면 0.
+
+[모듈]
+- expertise 모듈 전문성: 그 분야 상담사만 물을 법한 질문(모듈 관점과 단계 질문 참고)이 나오는가. 시그니처 질문(또는 같은 뜻의 질문)이 자연스러운 자리에서 나오는가. 어느 모듈에나 쓸 수 있는 일반 질문뿐이면 0.
+- no_leak 옆 모듈로 새지 않음: 겹침 점검표 기준으로 대화가 옆 모듈의 주제로 넘어가 머무르지 않는가. 짧게 닿고 돌아오면 괜찮다. 오래 머물면 0.
+
+[품질]
+- no_repeat 반복 없음: 같은 질문, 같은 시작 표현("~하셨군요", "그럴 수 있어요" 등), 같은 문장 틀을 되풀이하지 않는가. 세 번 이상 같은 틀이면 0.
+- natural 자연스러움: 번역투, 템플릿 느낌, 어색한 호칭이 없는가. 해당 언어 원어민 상담사가 쓴 것처럼 읽히는가.
+
+[위반] 2 = 한 번도 없음, 1 = 경계선 사례 1건, 0 = 명백한 사례가 1건 이상.
+- v_double_question: 한 응답에 서로 다른 질문 두 개(물음표 두 개, 또는 "그리고 ~는요?" 식으로 두 번째 질문을 붙임).
+- v_advice: 해결책·행동 권유·조언("~해 보세요", "~하는 게 좋아요"). 사용자가 해결책을 물어도 조언하면 위반. 안전 안내는 제외.
+- v_invented_emotion: 사용자가 말하지 않은 감정·동기·경험을 사실처럼 덧붙임("무시당한 느낌이셨겠네요" — 사용자가 그런 말을 안 했으면 위반). 확인형 질문으로 묻는 건 위반이 아니다.
+- v_body_location: 감정이 몸의 어디에서 느껴지는지 묻기.
+- v_extension: 대화를 끝낼 자리(10턴 점검, 20턴, 사용자의 종료 의사)에서 "하나만 더", "조금만 더 얘기해 볼까요" 식으로 사용자에게 대화를 더 이어 가자고 끌기. 20턴 끝의 "잠시만 기다려 주세요, (결과/리포트를) 살펴볼게요" 같은 문장은 앱이 리포트 화면으로 넘어가는 정해진 마무리 문구이므로 위반이 아니다.
+`.trim();
+
+const OVERLAP: [string, string, string][] = [
+  ["module1", "module9", "애착(1) vs 원가족(9): 지금의 친밀한 관계에서 거리 조절 vs 가족 체계 속 내 자리"],
+  ["module4", "module11", "가면(4) vs 본능(11): 남 앞에서 보여 주는 모습 관리 vs 내가 원하는 것 자체를 삼킴"],
+  ["module6", "module11", "분노(6) vs 본능(11): 선이 침범된 뒤의 에너지 vs 침범 없이도 스스로 욕구를 누름"],
+  ["module3", "module8", "번아웃(3) vs 수면(8): 낮의 자원 고갈 구조 vs 밤에 꺼지지 않는 각성"],
+  ["module5", "module10", "실행력(5) vs 몰입(10): 시작 직전의 브레이크 vs 시작 후 주의의 흩어짐과 과몰입"],
+  ["module4", "module7", "가면(4) vs 예민함(7): 연기하는 비용 vs 자극을 깊이 받아들이는 신경계"],
+  ["module2", "module4", "돈(2) vs 가면(4): 돈에 붙은 믿음과 감정 vs 사회적 이미지 전반"],
+];
+
+interface SimFile {
+  persona: string;
+  selfBlame?: boolean;
+  situation: string;
+  moduleId: string | null;
+  locale: Locale;
+  totalTurns: number;
+  turns: { turn: number; bot: string[]; user: string | null; botMs: number }[];
+  usage?: { totalCostUsd: number };
+}
+
+type Score = 0 | 1 | 2 | null;
+interface ItemResult { score: Score; evidence: string }
+interface JudgeResult {
+  file: string;
+  persona: string;
+  moduleId: string | null;
+  locale: string;
+  turns: number;
+  scores: Record<ItemKey | "violations", Score>;
+  details: Record<ItemKey, ItemResult>;
+  violationList: { turn: number; type: string; quote: string }[];
+  summary: string;
+  stats: { avgBotMs: number; openingRepeats: number };
+  simCostUsd: number | null;
+  judgeUsage: { promptTokens: number; completionTokens: number; costUsd: number | null };
+}
+
+function playbookBlock(pb: ModulePlaybook, locale: Locale): string {
+  const stages = (Object.keys(pb.stages) as (keyof typeof pb.stages)[])
+    .map((s) => `  ${s}(${PLAYBOOK_STAGE_TURNS[s].join("·")}턴): ${pb.stages[s]}`).join("\n");
+  const overlaps = OVERLAP.filter(([a, b]) => a === pb.id || b === pb.id).map(([, , t]) => `  - ${t}`).join("\n");
+  return [
+    `모듈: ${pb.id}`,
+    `전문 관점: ${pb.lens}`,
+    `경계: ${pb.boundary}`,
+    `시그니처 질문(${pb.signatureStage} 단계): ${pb.signatureQuestion[locale]}`,
+    `단계별 목표 질문(20턴 기준, 1·6·10·13·17·20턴은 고정 역할):\n${stages}`,
+    `19턴 관점 전환: ${pb.perspectiveShift.speaker} → ${pb.perspectiveShift.listener}`,
+    `이지선다 축: ${pb.forcedChoiceAxes.map((a) => `${a.name}(${a.options[0][locale]} / ${a.options[1][locale]})`).join("; ")}`,
+    `감정 팔레트: ${pb.emotionPalette.map((e) => e[locale]).join(", ")}`,
+    `모순 축: ${pb.contradictions.join(" / ")}`,
+    `리프레이밍: 자책 "${pb.reframe.selfBlame}" → ${pb.reframe.direction}`,
+    `겹침 점검표:\n${overlaps || "  (해당 쌍 없음)"}`,
+  ].join("\n");
+}
+
+function transcriptBlock(sim: SimFile): string {
+  return sim.turns.map((t) => [
+    `[${t.turn}턴] 상담사: ${t.bot.join(" / ")}`,
+    ...(t.user === null ? [] : [`[${t.turn}턴] 사용자: ${t.user}`]),
+  ].join("\n")).join("\n");
+}
+
+/** How many bot replies start with the same first few characters as an earlier reply — a cheap check next to the judge's no_repeat. */
+function openingRepeats(sim: SimFile): number {
+  const seen = new Set<string>();
+  let repeats = 0;
+  for (const t of sim.turns) {
+    const head = (t.bot[0] ?? "").replace(/\s+/g, "").slice(0, 6);
+    if (!head) continue;
+    if (seen.has(head)) repeats++;
+    seen.add(head);
+  }
+  return repeats;
+}
+
+const isScore = (v: unknown): v is Score => v === null || v === 0 || v === 1 || v === 2;
+
+async function judge(file: string, model: string): Promise<JudgeResult> {
+  const sim = JSON.parse(readFileSync(file, "utf8")) as SimFile;
+  const pb = getModulePlaybook(sim.moduleId);
+  if (!pb) throw new Error(`${file}: no playbook for moduleId ${sim.moduleId}`);
+
+  const system = `너는 심리 상담 대화 품질을 평가하는 엄격한 채점자다. 따뜻한 존댓말 상담 챗봇(20턴 구성)의 대화를 루브릭으로 채점한다. 점수는 관대하게 주지 않는다. 근거는 반드시 턴 번호와 짧은 인용으로 댄다. 대화가 영어나 스페인어여도 설명은 한국어로 쓴다.
+
+${RUBRIC}
+
+출력은 JSON 객체 하나:
+{
+  "items": { "<항목 키>": { "score": 0|1|2|null, "evidence": "턴 번호와 인용을 포함한 한두 문장" }, ... },
+  "violations": [ { "turn": 숫자, "type": "v_로 시작하는 항목 키", "quote": "문제 문장" } ],
+  "summary": "이 대화의 가장 큰 강점 하나와 가장 큰 약점 하나, 두 문장"
+}
+항목 키: ${ITEMS.map(([k]) => k).join(", ")}. 모든 키를 빠짐없이 쓴다.`;
+
+  const user = `## 모듈 플레이북 (이 대화가 목표로 해야 하는 전문성)
+${playbookBlock(pb, sim.locale)}
+
+## 사용자 정보
+언어: ${sim.locale}. 사용자는 시뮬레이션이며, 설정상 ${sim.selfBlame ? "자책 발언을 하는 성향이다" : "자책 발언 성향이 따로 없다(실제로 했는지는 대화를 보고 판단)"}.
+
+## 대화 (${sim.turns.length}턴)
+${transcriptBlock(sim)}`;
+
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const completion = await client.chat.completions.create({
+      model,
+      response_format: { type: "json_object" },
+      messages: [{ role: "system", content: system }, { role: "user", content: user }],
+    });
+    try {
+      const parsed = JSON.parse(completion.choices[0]?.message?.content ?? "");
+      const details = {} as Record<ItemKey, ItemResult>;
+      const scores = {} as JudgeResult["scores"];
+      for (const [key] of ITEMS) {
+        const it = parsed.items?.[key];
+        if (!it || !isScore(it.score)) throw new Error(`bad or missing item ${key}: ${JSON.stringify(it)}`);
+        details[key] = { score: it.score, evidence: String(it.evidence ?? "") };
+        scores[key] = it.score;
+      }
+      const vs = VIOLATION_KEYS.map((k) => scores[k]).filter((s): s is 0 | 1 | 2 => s !== null);
+      scores.violations = vs.length ? (Math.min(...vs) as 0 | 1 | 2) : null;
+      const promptTokens = completion.usage?.prompt_tokens ?? 0;
+      const completionTokens = completion.usage?.completion_tokens ?? 0;
+      const price = PRICING[model];
+      return {
+        file: basename(file),
+        persona: sim.persona,
+        moduleId: sim.moduleId,
+        locale: sim.locale,
+        turns: sim.turns.length,
+        scores,
+        details,
+        violationList: Array.isArray(parsed.violations) ? parsed.violations : [],
+        summary: String(parsed.summary ?? ""),
+        stats: {
+          avgBotMs: Math.round(sim.turns.reduce((s, t) => s + t.botMs, 0) / sim.turns.length),
+          openingRepeats: openingRepeats(sim),
+        },
+        simCostUsd: sim.usage?.totalCostUsd ?? null,
+        judgeUsage: {
+          promptTokens,
+          completionTokens,
+          costUsd: price ? (promptTokens * price.input + completionTokens * price.output) / 1_000_000 : null,
+        },
+      };
+    } catch (err) {
+      lastErr = err;
+      console.warn(`! ${basename(file)}: judge output rejected (attempt ${attempt + 1}): ${err}`);
+    }
+  }
+  throw lastErr;
+}
+
+const fmt = (s: Score | number | null) => (s === null ? "–" : typeof s === "number" && !Number.isInteger(s) ? s.toFixed(2) : String(s));
+const mean = (xs: (Score | number)[]) => {
+  const ns = xs.filter((x): x is number => x !== null);
+  return ns.length ? ns.reduce((a, b) => a + b, 0) / ns.length : null;
+};
+
+function summaryTable(results: JudgeResult[]): string {
+  const cols = results.map((r) => `${r.persona}·${r.moduleId}`);
+  const rows: string[] = [
+    `| 항목 | ${cols.join(" | ")} | 평균 |`,
+    `|---|${cols.map(() => "---:").join("|")}|---:|`,
+  ];
+  for (const [key, label] of [...ITEMS, ["violations", "위반 종합(최저)"] as const]) {
+    const vals = results.map((r) => r.scores[key as ItemKey | "violations"]);
+    rows.push(`| ${label} | ${vals.map(fmt).join(" | ")} | ${fmt(mean(vals))} |`);
+  }
+  const quality = results.map((r) => mean(ITEMS.map(([k]) => r.scores[k])));
+  rows.push(`| **전 항목 평균** | ${quality.map(fmt).join(" | ")} | ${fmt(mean(quality))} |`);
+  rows.push(`| 턴 수 | ${results.map((r) => r.turns).join(" | ")} | |`);
+  rows.push(`| 챗봇 평균 응답(ms) | ${results.map((r) => r.stats.avgBotMs).join(" | ")} | |`);
+  rows.push(`| 같은 시작 표현 반복 | ${results.map((r) => r.stats.openingRepeats).join(" | ")} | |`);
+  rows.push(`| 시뮬레이션 비용($) | ${results.map((r) => fmt(r.simCostUsd)).join(" | ")} | |`);
+  rows.push(`| 채점 비용($) | ${results.map((r) => fmt(r.judgeUsage.costUsd)).join(" | ")} | |`);
+  return rows.join("\n");
+}
+
+// ---- CLI ----
+const args = process.argv.slice(2);
+let label = "judge";
+let model = "gpt-5.5";
+const files: string[] = [];
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === "--label") label = args[++i];
+  else if (args[i] === "--model") model = args[++i];
+  else files.push(args[i]);
+}
+if (files.length === 0) {
+  console.error("usage: judge-chat.mts [--label baseline] [--model gpt-5.5] <scripts/out/sim_*.json> ...");
+  process.exit(1);
+}
+
+const results = await Promise.all(files.map((f) => judge(f, model)));
+const table = summaryTable(results);
+const totalSim = results.reduce((s, r) => s + (r.simCostUsd ?? 0), 0);
+const totalJudge = results.reduce((s, r) => s + (r.judgeUsage.costUsd ?? 0), 0);
+const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\..*/, "");
+mkdirSync(OUT_DIR, { recursive: true });
+const base = join(OUT_DIR, `${label}_${stamp}`);
+writeFileSync(`${base}.json`, JSON.stringify({
+  kind: "judge-chat",
+  label,
+  createdAt: new Date().toISOString(),
+  judgeModel: model,
+  inputs: files.map((f) => basename(f)),
+  cost: { simUsd: totalSim, judgeUsd: totalJudge },
+  results,
+}, null, 2));
+const md = `# ${label} (${stamp}, 채점 ${model})\n\n${table}\n\n비용: 시뮬레이션 $${totalSim.toFixed(4)} + 채점 $${totalJudge.toFixed(4)} = $${(totalSim + totalJudge).toFixed(4)}\n\n${results.map((r) => `- **${r.persona}·${r.moduleId}**: ${r.summary}`).join("\n")}\n`;
+writeFileSync(`${base}.md`, md);
+console.log(`${md}\n→ ${base}.json\n→ ${base}.md`);
