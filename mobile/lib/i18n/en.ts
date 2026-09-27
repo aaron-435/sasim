@@ -470,6 +470,7 @@ export const en: typeof ko = {
     sectionSajuPatternSubtitle: "Saju Chart Analysis",
     sectionUpcomingPeriod: "What's Coming",
     upcomingPeriodNote: "Based on your 10-year cycles — the long-term rhythm of your saju chart.",
+    moduleLensEyebrow: "Through the lens of your topic",
     upcomingGlimpseNote: "Why it matters, and what to do about it, continue later in this report.",
     sectionCrossAnalysisToc: "Cross-Analysis",
     sectionStrengthsWeaknessesToc: "Strengths & Weaknesses",

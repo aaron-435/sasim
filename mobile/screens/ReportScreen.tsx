@@ -85,6 +85,12 @@ export type ReportContent = {
   upcoming_period_preview_body?: string;
   upcoming_period_heading: string;
   upcoming_period_body: string;
+  /** 2026-09-27: module-specific pages from the module playbook (lib/modulePlaybooks.ts on the
+   * server). module_map is free (before the upcoming-period preview); module_deep is paid (before
+   * the behavior guides) and arrives as { title, body: "" } until the paid half is written. Absent
+   * in reports saved before this date and in requests without a moduleId. */
+  module_map?: { title: string; body: string };
+  module_deep?: { title: string; body: string };
   cross_analysis_quotes: string[];
   answer_notes: string[];
   /** 2026-09-20: a written reading under each chat-derived page (absent in older saved reports). */
@@ -303,6 +309,7 @@ export default function ReportScreen({
           oheng_intro: content.oheng_intro,
           quiz_reading: content.quiz_reading,
           element_readings: Object.fromEntries(Object.entries(content.element_readings ?? {}).map(([k, v]) => [k, { heading: v?.heading ?? "" }])),
+          module_map: content.module_map,
         };
         const res = await fetch(`${API_BASE_URL}/api/report/paid`, {
           signal: controller.signal,
@@ -488,6 +495,15 @@ export default function ReportScreen({
       });
     });
 
+    const moduleMap = content.module_map;
+    if (moduleMap?.title && moduleMap.body) {
+      body.push({
+        key: "module-map",
+        tocLabel: moduleMap.title,
+        node: <ModulePage eyebrow={strings.report.moduleLensEyebrow} title={moduleMap.title} body={moduleMap.body} />,
+      });
+    }
+
     if (content.upcoming_period_preview_heading && content.upcoming_period_preview_body) {
       body.push({
         key: "upcoming-preview",
@@ -623,6 +639,17 @@ export default function ReportScreen({
 
     body.push({ key: "fit-good", locked: true, node: <FitPage kind="good" label={strings.report.fitGoodLabel} body={content.fit_good} /> });
     body.push({ key: "fit-bad", locked: true, node: <FitPage kind="bad" label={strings.report.fitBadLabel} body={content.fit_bad} /> });
+
+    // Only the title is needed to lay the page out while the paid half is sealed.
+    const moduleDeep = content.module_deep;
+    if (moduleDeep?.title) {
+      body.push({
+        key: "module-deep",
+        tocLabel: moduleDeep.title,
+        locked: true,
+        node: <ModulePage eyebrow={strings.report.moduleLensEyebrow} title={moduleDeep.title} body={moduleDeep.body ?? ""} />,
+      });
+    }
 
     guidesList.forEach((g, i) => {
       body.push({
@@ -1181,6 +1208,18 @@ function FitPage({ kind, label, body }: { kind: "good" | "bad"; label: string; b
     <PageShell>
       <View style={pageStyles.elemMid}>
         <Text style={[pageStyles.fitLabel, { color }]}>{label}</Text>
+        <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
+      </View>
+    </PageShell>
+  );
+}
+
+function ModulePage({ eyebrow, title, body }: { eyebrow: string; title: string; body: string }) {
+  return (
+    <PageShell>
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <View style={pageStyles.elemMid}>
+        <Text style={pageStyles.elemHeading} accessibilityRole="header">{noHanja(title)}</Text>
         <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
       </View>
     </PageShell>

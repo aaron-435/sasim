@@ -38,10 +38,12 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
   - 작업 중 고친 것: 모델이 모듈 페이지를 객체로 감싸 보내 본문이 빈 경우(1·2회차 casey)가 있어 파서가 객체 안의 문자열을 받게 하고, 본문이 비면 결함으로 잡아 재작성한다. `countSentences`가 따옴표로 끝나는 문장(`?”`)을 세지 못하던 것을 고쳤다(모듈 1 유료 페이지가 부탁 문장을 인용함). ES 성별 검사가 "apego ansioso"를 독자 성별로 오탐해 예외 처리. 무료 응답은 이제 유료 필드를 코드로 비워서 보낸다(모델이 스키마 밖 필드를 써도 새지 않게).
   - 메모(F1-c용): 두 필드는 `{ title, body }`. 무료 응답(`locked_pending`)에는 `module_deep`이 `{ title, body: "" }`로 온다. 제목은 잠금 페이지와 TOC에 쓰고, 본문은 구매 후 `/api/report/paid`의 `locked.module_deep`으로 온다. `locked_shape`는 바꾸지 않았다. 픽스처는 이제 연애 페르소나(mia, riley=en, lucia=es)가 모듈 1, 나머지(jisoo=ko, jordan, sam=en, casey=es)가 모듈 3이다.
 
-- [ ] 5. F1-c: 리포트 화면 — 모듈 전용 페이지 2장 + i18n
+- [x] 5. F1-c: 리포트 화면 — 모듈 전용 페이지 2장 + i18n
   - 선행: 4
   - 변경: `mobile/screens/ReportScreen.tsx` 타입과 `pages`: `module_map`은 무료 구간의 "다가오는 시기" 미리보기 앞, `module_deep`은 유료 구간의 행동 가이드 앞. 필드가 없으면 건너뜀. TOC 라벨. `mobile/lib/i18n/{ko,en,es}.ts`.
   - QA: mobile tsc 통과. `mobile-web` 프리뷰(375×812)에서 무료 사용자로 3개 언어 리포트를 열고 `get_page_text`로 순서와 잠금 상태 확인. 이전 형식 픽스처도 에러 없이 열리는지 확인.
+  - QA: mobile tsc → exit 0. `mobile-web`(375×812, `?qa=free`) 본문 텍스트 확인: jisoo(ko) 목차 05 "에너지 수지표" p12 → 06 다가오는 시기 p13, 잠긴 11 "다시 채우는 순서"(강점과 취약점 뒤, 행동 지침 앞), 41쪽 중 13쪽 미리보기. mia(en) "Your relationship alarm" p12 / 잠긴 "A relationship that feels like a safe base". lucia(es) "Tu alarma en las relaciones" p14 / 잠긴 "Una relación que sea tu base segura". 세 언어 모두 무료 페이지 본문은 보이고 유료 페이지는 페이월로 대체됨. 이전 형식 픽스처(커밋 `8303000`의 `qaData.ts`로 잠시 교체 후 원복, 해시 동일 확인) → 모듈 페이지 없이 39쪽으로 열림, 콘솔 에러 없음 (2026-09-27)
+  - 구현: 두 페이지는 새 `ModulePage`(눈썹 문구 `report.moduleLensEyebrow` + 플레이북 제목 + 본문). 목차 라벨은 페이지 제목 그대로. `module_deep`은 제목만 있어도 잠긴 페이지 자리를 잡는다(무료 응답은 본문 빈 문자열). 구매 후 `/api/report/paid`에 보내는 `freePart`에 `module_map`을 추가해 유료 파트가 무료 모듈 페이지를 반복하지 않게 했다(서버 `describeFreePart`가 이미 읽음).
 
 - [ ] 6. F2-a: 강점 서버 — 무료 3개 + 잠긴 핵심 1개
   - 선행: 4 (같은 파일을 만짐)
@@ -117,3 +119,4 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
 - (F1-b) `app/api/report-pdf/route.ts`의 심층 리포트 파서가 아는 필드만 옮겨서 `module_map`/`module_deep`이 PDF에 안 들어간다. PDF에도 넣을지 결정 필요.
 - (F1-b) `lib/reportQuality.ts`의 `ES_GENDERED_READER`에 "expuest-", "pegad-" 같은 형용사가 없어 "no quedar tan expuesta", "quedarte pegada al teléfono"가 걸리지 않았다(1·2차 픽스처 lucia). 목록 보강 검토.
 - 신년 리포트 12개월 타임라인에서 3월만 신살 이름이 빠짐(jisoo, ko). 계산 결과인지 누락 버그인지 `sinsalName()`/`branchLine()` 확인 필요.
+- (F1-c) 모델이 `module_map` 본문 첫 문장에서 페이지 제목을 되풀이한다(lucia es: "Tu alarma en las relaciones se enciende…", jisoo도 비슷). 프롬프트는 되풀이 금지인데 검사가 없음. `reportQuality.ts`에 제목 반복 검사 추가 검토.

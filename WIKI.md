@@ -50,7 +50,7 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 ### 리포트 (무료/유료 분리)
 무료 절반을 먼저 생성하고, 유료 절반은 구매 후 `/api/report/paid`가 만든다. 잠금은 `lib/reportLock.ts`. 생성 품질은 `lib/reportQuality.ts`: 결정론적 검사 → 표적 패치 → 리뷰어 1회 → 패치 1회 → 최종 게이트(한자 제거·ES 성별/usted 등 포함). 프롬프트는 `lib/reportPrompts.ts`, 호출은 `lib/report.ts`.
 무료 파트 마지막(페이월 직전)에 실제 계산된 나이+기운 전환을 사실만 담백하게 미리 보여주는 페이지가 있다(`upcoming_period_preview_heading`/`_body`, `FREE_PART_TEXT_FIELDS`에 포함되어 유료 파트 프롬프트에 "이미 쓰인 앞부분"으로 전달됨). 잠긴 본편(`upcoming_period_heading`/`_body`)은 같은 사실을 반복하지 않고 왜/무엇을 준비하면 좋을지로 이어 쓴다 — 두 필드 모두 `describeUpcomingPeriod()`가 만든 같은 나이 데이터 줄을 쓰므로 나이 환각 가드(`path.startsWith("upcoming_period")`)가 둘 다에 자동 적용된다.
-모듈 전용 페이지 2장: `module_map`(무료, "다가오는 시기" 미리보기 앞)과 `module_deep`(유료, `LOCKED_KEYS`, 행동 가이드 앞). 둘 다 `{ title, body }`이고, 제목은 플레이북의 고정 문구를 코드(`parseReport`)가 붙이며 모델은 본문만 쓴다. 서버가 요청의 검증된 `moduleId`를 `ReportContext.moduleId`에 넣어야 생기므로, `moduleId`를 안 보내는 구버전 요청과 이전 리포트에는 두 필드가 없다. 무료 응답은 유료 필드를 모두 비워서 보내되 `module_deep`의 제목만 남긴다(잠긴 챕터 이름을 보여 주기 위함, 비밀 아님).
+모듈 전용 페이지 2장: `module_map`(무료, "다가오는 시기" 미리보기 앞)과 `module_deep`(유료, `LOCKED_KEYS`, 행동 가이드 앞). 둘 다 `{ title, body }`이고, 제목은 플레이북의 고정 문구를 코드(`parseReport`)가 붙이며 모델은 본문만 쓴다. 서버가 요청의 검증된 `moduleId`를 `ReportContext.moduleId`에 넣어야 생기므로, `moduleId`를 안 보내는 구버전 요청과 이전 리포트에는 두 필드가 없다. 무료 응답은 유료 필드를 모두 비워서 보내되 `module_deep`의 제목만 남긴다(잠긴 챕터 이름을 보여 주기 위함, 비밀 아님). 앱(`ReportScreen`의 `ModulePage`)은 두 제목을 목차 라벨로도 쓰고, 필드가 없으면 페이지를 건너뛴다. 구매 후 유료 절반 요청의 `freePart`에 `module_map`을 실어 보내 반복을 막는다.
 
 ### 결제
 - 앱: RevenueCat SDK(`mobile/lib/purchases.ts`). 키는 플랫폼별로 `mobile/config.ts`에 있다(공개 SDK 키). 구독 + 모듈별 리포트 + 번들 + 신년 리포트(상품 목록은 `IAP_PRODUCTS.md`).
