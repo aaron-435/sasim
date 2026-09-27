@@ -487,6 +487,12 @@ export function buildExtractionPrompt(
   const elementsLine = (Object.keys(context.sajuElements) as ElementKey[])
     .map((k) => `${ELEMENT_LABEL[locale][k]} ${Math.round(context.sajuElements[k])}%`)
     .join(", ");
+  // 2026-09-27 (TODO F1-a): 모듈 전용 리포트 페이지(module_map/module_deep)의 재료. 플레이북이 없는
+  // moduleId(웹, 구버전 앱)는 module_fields를 스키마에서 아예 뺀다.
+  const playbook = getModulePlaybook(context.moduleId);
+  const moduleFieldsSchema = playbook
+    ? `,\n  "module_fields": {\n${playbook.extractFields.map((f) => `    "${f.key}": "${f.description} (사용자가 말하지 않았으면 null)"`).join(",\n")}\n  }`
+    : "";
 
   const system = `
 아래는 사용자와의 대화 전문이다(중간 점검에서 일찍 마무리했을 수도 있어 턴 수는 매번 다를 수 있다). 이 대화와 아래 배경 데이터(사주, 심리테스트 결과)를 바탕으로 다음 JSON을 추출하라.
@@ -505,9 +511,13 @@ export function buildExtractionPrompt(
   "trigger_point": "사용자가 언급한 구체적 사건 (장면 단계, 한 문장)",
   "repeat_pattern": "이 문제가 처음이 아니라면 과거 패턴 (없으면 null)",
   "core_fear_or_meaning": "이 상황이 유독 힘든 이유/두려움 (의미 단계 답변)",
+  "coping": "그 상황에서 사용자가 실제로 하는 대처(버티기, 피하기, 혼자 삭이기 등) 한 문장 (말하지 않았으면 null)",
+  "relational": "이 고민에 얽힌 사람과 그 사람과의 관계 방식 한 문장 (말하지 않았으면 null)",
+  "desired_change": "사용자가 바라는 변화나 되고 싶은 모습 한 문장 (말하지 않았으면 null)",
   "summary_quote": "사주 오행 분포, 심리테스트 결과, 그리고 이번 대화에서 사용자가 실제로 언급한 구체적 사건·패턴·두려움 중 최소 1개를 반드시 포함한 1~2문장 하이라이트. 오행/심리테스트 이론만 일반론으로 나열하지 말 것 — 대화의 특정 문장을 그대로 복사하지도 말고, 대화의 구체적 내용을 새 표현으로 녹여 넣을 것. 리포트의 인용구 박스에 들어갈 짧고 임팩트 있는 한두 문장.",
-  "integrated_summary": "이번 상담 전체에 대한 총평. 사용자가 이번 대화에서 실제로 말한 구체적 사건, 반복 패턴, 두려움을 먼저 구체적으로 짚은 뒤 — 그것이 사주 오행 분포 및 심리테스트 결과와 어떻게 연결되는지 3~5문장으로 설명할 것. '화 기운이 강하면 열정적이다' 같은 사주/심리학 일반론만 나열하는 것은 금지 — 이 사람이 이번 대화에서 실제로 한 말이 드러나야, 이 상담에서만 나올 수 있는 총평이 된다. 리포트 본문 작성의 기초 자료로 쓰인다."
+  "integrated_summary": "이번 상담 전체에 대한 총평. 사용자가 이번 대화에서 실제로 말한 구체적 사건, 반복 패턴, 두려움을 먼저 구체적으로 짚은 뒤 — 그것이 사주 오행 분포 및 심리테스트 결과와 어떻게 연결되는지 3~5문장으로 설명할 것. '화 기운이 강하면 열정적이다' 같은 사주/심리학 일반론만 나열하는 것은 금지 — 이 사람이 이번 대화에서 실제로 한 말이 드러나야, 이 상담에서만 나올 수 있는 총평이 된다. 리포트 본문 작성의 기초 자료로 쓰인다."${moduleFieldsSchema}
 }
+null로 표시된 필드는 대화에 근거가 없으면 문자열 "null"이 아니라 JSON null을 쓴다.
 
 ## 배경 데이터
 - 사주 오행 분포: ${elementsLine} (우세 원소: ${ELEMENT_LABEL[locale][context.dominantSajuElement]})

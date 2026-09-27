@@ -23,10 +23,12 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
   - QA: `npx tsc --noEmit`(루트) → exit 0, 오류 없음. 스크래치 스크립트로 `buildChatSystemPrompt(7, ctx, 0)` 전체 프롬프트를 module1~11 + moduleId 없음 + 알 수 없는 id(13개)에 대해 변경 전/후 JSON으로 저장 → `cmp` 결과 IDENTICAL (2026-09-27)
   - 메모: `MODULE_PLAYBOOKS`는 이제 `Record<PlaybookModuleId, ModulePlaybook>`. 7번째 턴 문구는 `patternTurnInstruction` 필드로 옮겼고 `chatPrompts.ts`의 `MODULE_PATTERN_INSTRUCTIONS`는 삭제됨. `getModulePlaybook()`은 own-property만 인정(`"toString"` 같은 id로 프로토타입 값이 나오지 않게).
 
-- [ ] 3. F1-a: 대화 추출 확장
+- [x] 3. F1-a: 대화 추출 확장
   - 선행: 2
   - 변경: `lib/chatPrompts.ts`의 `buildExtractionPrompt()`에 공통 필드 `coping`, `relational`, `desired_change`와 모듈 추출 필드 2개(`module_fields`)를 추가한다. 말하지 않은 건 `null`. `lib/chat.ts`의 `ChatExtract`, 저장/전달 경로(`app/api/chat/route.ts`, 앱에서 리포트 요청으로 넘기는 곳)를 따라가며 타입을 맞춘다. 필드는 모두 optional(구버전 호환).
   - QA: 루트 tsc + mobile tsc 통과. `npx tsx --env-file=.env.local scripts/sim-chat.mts 20 talkative module2 4` 1회 실행 후 extract에 새 필드가 채워지는지 확인(sim-chat이 extract를 출력하지 않으면 이 항목에서 출력만 추가).
+  - QA: `npx tsc --noEmit`(루트) → exit 0. mobile tsc → exit 0. `sim-chat.mts 20 talkative module2 4` → `coping`/`relational`/`desired_change` 모두 채워짐, `module_fields`(`money_script`, `money_loop`)는 번아웃 페르소나가 돈 얘기를 안 해서 둘 다 JSON null(의도대로). 보강으로 `sim-chat.mts 8 talkative module3 4` → `module_fields.demand_drain`/`resource_left` 채워짐, 8턴이라 `desired_change`는 null (2026-09-27)
+  - 메모: 앱(`mobile/screens/ChatScreen.tsx`의 `ChatExtract = Record<string, unknown>`)과 `/api/chat`, 리포트 요청은 extract를 그대로 넘겨서 코드 변경이 필요 없었다. `describeReportData()`(`lib/reportQuality.ts`)는 문자열 값만 싣기 때문에 `module_fields`(객체)는 아직 리포트 리뷰어에게 안 간다. 리포트 프롬프트에 넣는 건 F1-b. 플레이북에 없는 moduleId면 `module_fields`는 스키마와 결과 모두에서 빠진다. 파싱은 플레이북 key만 남기고 문자열 "null"/빈 문자열은 null로 바꾼다.
 
 - [ ] 4. F1-b: 리포트 서버 — `module_map`(무료), `module_deep`(유료)
   - 선행: 3

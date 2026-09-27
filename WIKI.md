@@ -40,7 +40,7 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 |---|---|---|
 | Q&A(무료 일일 한도) | `/api/qa-answer` (`lib/qaChat.ts`, 한도는 `lib/qaQuota.ts`, `llm_usage_log` 행 수로 집계) | `QAScreen`, `QAQuestionScreen` |
 | 퀴즈(11개 모듈) | `/api/quiz-result`는 결과를 Supabase에 저장만 한다. 문항·채점은 앱 안(`mobile/lib/quiz/`)에 있고, 루트 `lib/module*.ts`·`lib/quizProfile.ts`는 웹 컴포넌트용 | `ModuleSelectScreen`, `QuizScreen` |
-| AI 상담(20턴) | `/api/chat` (`lib/chat.ts`, `lib/chatPrompts.ts`). 모듈별 대화·리포트 설계 데이터는 `lib/modulePlaybooks.ts`(`MODULE_PLAYBOOK.md`의 코드판, 11개 모듈). 현재 챗봇은 7번째 턴 지침만 여기서 읽는다 | `ChatScreen`, `useReplyScroll` |
+| AI 상담(20턴) | `/api/chat` (`lib/chat.ts`, `lib/chatPrompts.ts`). 모듈별 대화·리포트 설계 데이터는 `lib/modulePlaybooks.ts`(`MODULE_PLAYBOOK.md`의 코드판, 11개 모듈). 현재 챗봇은 7번째 턴 지침만 여기서 읽는다. 마지막 턴의 추출(extract)은 공통 필드(고민, 감정, 촉발 사건, 반복 패턴, 두려움, 대처·관계·바라는 변화, 요약)에 더해 플레이북의 모듈 필드 2개를 `module_fields`로 뽑는다(말하지 않았으면 null, 새 필드는 모두 optional). 앱은 extract를 해석하지 않고 저장했다가 리포트 요청에 그대로 넘긴다 | `ChatScreen`, `useReplyScroll` |
 | 심층 리포트 | `/api/report`, `/api/report/paid`, `/api/report/unlock`, `/api/report-pdf` | `ReportScreen`, `MyReportsScreen` |
 | 오늘/올해 운세 | `/api/dailyFortune`, `/api/yearFortune` | `FortuneScreen`, `HomeScreen` |
 | 궁합 | `/api/compatibility` | `CompatibilityScreen` |

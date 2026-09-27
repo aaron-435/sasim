@@ -20,6 +20,7 @@
 
 import OpenAI from "openai";
 import { buildChatSystemPrompt, buildExtractionPrompt, TOTAL_TURNS, type ChatSessionContext } from "./chatPrompts";
+import { getModulePlaybook } from "./modulePlaybooks";
 import { logLlmUsage } from "./llmUsage";
 import { stripHanja } from "./reportQuality";
 
@@ -51,6 +52,20 @@ export interface ChatExtract {
   summary_quote: string;
   /** Saju + Module 1 attachment result + full conversation, synthesized into one narrative. Drives the report. */
   integrated_summary: string;
+  // 2026-09-27 (TODO F1-a): 아래는 모두 optional — 이 필드가 생기기 전의 extract(앱에 저장된 이전
+  // 리포트, 구버전 앱이 보내는 리포트 요청)도 그대로 통과해야 한다. 사용자가 말하지 않았으면 null.
+  coping?: string | null;
+  relational?: string | null;
+  desired_change?: string | null;
+  /** 모듈 플레이북의 extractFields 2개(key → 값). 플레이북이 없는 moduleId면 생략. */
+  module_fields?: Record<string, string | null>;
+}
+
+// The model sometimes writes the string "null" (or "") instead of JSON null for a field the user never touched.
+function nullableText(v: unknown): string | null {
+  if (typeof v !== "string") return null;
+  const t = v.trim();
+  return t && t.toLowerCase() !== "null" ? t : null;
 }
 
 export interface ChatReply {
@@ -127,6 +142,7 @@ export async function getChatReply(params: {
 }
 
 export async function extractChatSummary(transcript: ChatMessage[], context: ChatSessionContext, sessionId?: string): Promise<ChatExtract> {
+  const playbook = getModulePlaybook(context.moduleId);
   const { system, user } = buildExtractionPrompt(transcript, context);
 
   const completion = await client.chat.completions.create({
@@ -161,6 +177,13 @@ export async function extractChatSummary(transcript: ChatMessage[], context: Cha
     core_fear_or_meaning: parsed.core_fear_or_meaning ?? "",
     summary_quote: parsed.summary_quote ?? "",
     integrated_summary: parsed.integrated_summary ?? "",
+    coping: nullableText(parsed.coping),
+    relational: nullableText(parsed.relational),
+    desired_change: nullableText(parsed.desired_change),
+    // Only the playbook's own keys, so a stray key the model invents never reaches the report prompt.
+    ...(playbook && {
+      module_fields: Object.fromEntries(playbook.extractFields.map((f) => [f.key, nullableText(parsed.module_fields?.[f.key])])),
+    }),
   };
 }
 

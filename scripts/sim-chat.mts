@@ -9,7 +9,7 @@
 // exercise the quizAnswerPool fallback (turns 14→11→7→4 drop their quote first) without
 // editing this file — see lib/chatPrompts.ts's QUIZ_QUOTE_TURN_INDEX.
 import OpenAI from "openai";
-import { getChatReply, type ChatMessage } from "../lib/chat.ts";
+import { getChatReply, extractChatSummary, type ChatMessage } from "../lib/chat.ts";
 import type { ChatSessionContext, QuizAnswerQuote } from "../lib/chatPrompts.ts";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
@@ -64,5 +64,8 @@ await Promise.all(styles.map(async (style) => {
     history.push({ role: "user", content: u });
     out.push(`[${turn}] ME : ${u}`);
   }
-  console.log(`\n===== ${style} =====\n${out.join("\n")}`);
+  // Same extraction call the route runs on the final turn, so a change to buildExtractionPrompt can be
+  // checked on the conversation it just produced.
+  const extract = await extractChatSummary(history, ctx);
+  console.log(`\n===== ${style} =====\n${out.join("\n")}\n----- extract -----\n${JSON.stringify(extract, null, 2)}`);
 }));
