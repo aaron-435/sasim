@@ -7,10 +7,11 @@
  * Keeps OPENAI_API_KEY server-side only.
  *
  * Request body:
- *   { turnNumber, sessionStartedAt, context: ChatSessionContext, history: ChatMessage[] }
+ *   { turnNumber, sessionStartedAt, context: ChatSessionContext, history: ChatMessage[], formulation?: ChatFormulation }
+ *   formulation is the previous response's hidden memo, echoed back unchanged by the app (TODO Q1-c).
  *
  * Response body:
- *   { lines: string[] }
+ *   { lines: string[], formulation?: ChatFormulation }  — formulation is never shown or saved; the app keeps it for the next request
  *   { lines, extract: ChatExtract }  — only when isFinalTurn() is true (turnNumber >= TOTAL_TURNS, or the client jumped straight there via the CHECKPOINT_TURN early-finish path)
  *   or { error: string } with a non-200 status
  * ------------------------------------------------------------------
@@ -20,6 +21,7 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { getChatReply, extractChatSummary, type ChatMessage } from "@/lib/chat";
 import type { ChatSessionContext } from "@/lib/chatPrompts";
+import { sanitizeFormulation } from "@/lib/chatPrompts";
 import { isFinalTurn } from "@/lib/chatPrompts";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
@@ -30,6 +32,7 @@ interface ChatRequestBody {
   context?: ChatSessionContext;
   history?: ChatMessage[];
   sessionId?: string;
+  formulation?: unknown;
 }
 
 async function saveChatSession(sessionId: string | undefined, transcript: ChatMessage[], extract: unknown) {
@@ -53,7 +56,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { turnNumber, sessionStartedAt, context, history, sessionId } = body ?? {};
+  const { turnNumber, sessionStartedAt, context, history, sessionId, formulation } = body ?? {};
 
   if (!turnNumber || !context || !Array.isArray(history)) {
     return NextResponse.json({ error: "turnNumber, context, history는 필수입니다." }, { status: 400 });
@@ -61,12 +64,14 @@ export async function POST(req: NextRequest) {
 
   try {
     const resolvedStartedAt = sessionStartedAt ?? Date.now();
-    const { lines } = await getChatReply({
+    const { lines, formulation: nextFormulation } = await getChatReply({
       turnNumber,
       history,
       context,
       sessionStartedAt: resolvedStartedAt,
       sessionId,
+      // Client-supplied, so it goes through the same length caps and whitelist as the model's output.
+      formulation: sanitizeFormulation(formulation),
     });
 
     // A slow typer who blows past the time limit gets the closing message on
@@ -83,7 +88,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ lines, extract });
     }
 
-    return NextResponse.json({ lines });
+    return NextResponse.json({ lines, ...(nextFormulation && { formulation: nextFormulation }) });
   } catch (err) {
     if (err instanceof OpenAI.APIError) {
       if (err.status === 401) {

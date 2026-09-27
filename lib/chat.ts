@@ -19,7 +19,14 @@
  */
 
 import OpenAI from "openai";
-import { buildChatSystemPrompt, buildExtractionPrompt, TOTAL_TURNS, type ChatSessionContext } from "./chatPrompts";
+import {
+  buildChatSystemPrompt,
+  buildExtractionPrompt,
+  sanitizeFormulation,
+  TOTAL_TURNS,
+  type ChatFormulation,
+  type ChatSessionContext,
+} from "./chatPrompts";
 import { getModulePlaybook } from "./modulePlaybooks";
 import { logLlmUsage } from "./llmUsage";
 import { stripHanja } from "./reportQuality";
@@ -71,6 +78,8 @@ function nullableText(v: unknown): string | null {
 export interface ChatReply {
   /** 2-4 short messenger-style messages, rendered as sequential bubbles. */
   lines: string[];
+  /** Hidden counselor memo (TODO Q1-c). The route passes it to the app, which echoes it back next turn; never shown or persisted. */
+  formulation?: ChatFormulation;
 }
 
 // A line counts as "asking a question" if it ends in ? or in a no-"?"
@@ -110,9 +119,11 @@ export async function getChatReply(params: {
   context: ChatSessionContext;
   sessionStartedAt: number;
   sessionId?: string;
+  /** The previous reply's formulation, echoed back by the client. */
+  formulation?: ChatFormulation;
 }): Promise<ChatReply> {
   const elapsedMinutes = Math.floor((Date.now() - params.sessionStartedAt) / 60000);
-  const systemPrompt = buildChatSystemPrompt(params.turnNumber, params.context, elapsedMinutes);
+  const systemPrompt = buildChatSystemPrompt(params.turnNumber, params.context, elapsedMinutes, params.formulation);
 
   const completion = await client.chat.completions.create({
     model: CHAT_MODEL,
@@ -138,7 +149,11 @@ export async function getChatReply(params: {
   const rawLines = Array.isArray(parsed.lines) ? parsed.lines.map((l: unknown) => String(l)).filter(Boolean) : [];
   if (rawLines.length === 0) throw new Error("OpenAI 응답에 lines가 없습니다.");
   const lines = enforceOneQuestionPerReply(rawLines);
-  return { lines: params.context.locale === "ko" || !params.context.locale ? stripHanja(lines) : lines };
+  const formulation = sanitizeFormulation(parsed.formulation);
+  return {
+    lines: params.context.locale === "ko" || !params.context.locale ? stripHanja(lines) : lines,
+    ...(formulation && { formulation }),
+  };
 }
 
 export async function extractChatSummary(transcript: ChatMessage[], context: ChatSessionContext, sessionId?: string): Promise<ChatExtract> {

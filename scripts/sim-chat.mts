@@ -8,6 +8,8 @@
 // scripts/judge-chat.mts, which scores the saved files. Legacy styles keep the old burnout fixture
 // (moduleId default "module3"). The moduleId argument overrides the persona's own module ("-" or
 // omitted keeps it); a mismatch is allowed but warned about, since the persona's story won't fit.
+// --no-formulation stops echoing the hidden `formulation` memo back each turn (the app echoes it —
+// TODO Q1-c), to compare against a web/older-app session. Each turn's memo is saved either way.
 // quizPoolSize (default 4) trims the quiz-answer pool, so a run can exercise the quizAnswerPool
 // fallback (turn 14 then 7 drops its quote first) — see lib/chatPrompts.ts's QUIZ_QUOTE_TURN_INDEX.
 //
@@ -21,7 +23,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import OpenAI from "openai";
 import { getChatReply, extractChatSummary, type ChatMessage } from "../lib/chat.ts";
-import type { ChatSessionContext, QuizAnswerQuote } from "../lib/chatPrompts.ts";
+import type { ChatFormulation, ChatSessionContext, QuizAnswerQuote } from "../lib/chatPrompts.ts";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 const USER_SIM_MODEL = "gpt-5.4-mini";
@@ -371,10 +373,12 @@ async function userReply(situation: string, locale: string, history: ChatMessage
   return c.choices[0].message.content?.trim() ?? "";
 }
 
-const TURNS = Number(process.argv[2] ?? 12);
-const names = (process.argv[3] ?? "terse,talkative,questioning").split(",");
-const moduleOverride = process.argv[4] && process.argv[4] !== "-" ? process.argv[4] : undefined;
-const quizPoolSize = Number(process.argv[5] ?? 4);
+const args = process.argv.slice(2).filter((a) => !a.startsWith("--"));
+const echoFormulation = !process.argv.includes("--no-formulation");
+const TURNS = Number(args[0] ?? 12);
+const names = (args[1] ?? "terse,talkative,questioning").split(",");
+const moduleOverride = args[2] && args[2] !== "-" ? args[2] : undefined;
+const quizPoolSize = Number(args[3] ?? 4);
 const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\..*/, "");
 mkdirSync(OUT_DIR, { recursive: true });
 
@@ -393,20 +397,23 @@ await Promise.all(names.map((name) => usageStore.run(
     }
     const locale = ctx.locale ?? "ko";
     const history: ChatMessage[] = [];
-    const turns: { turn: number; bot: string[]; user: string | null; botMs: number; botTokens: RunUsage["last"] }[] = [];
+    const turns: { turn: number; bot: string[]; user: string | null; botMs: number; botTokens: RunUsage["last"]; formulation: ChatFormulation | null }[] = [];
+    // Echo the hidden memo back the way ChatScreen does (TODO Q1-c). --no-formulation drops it, to compare against the old behavior.
+    let formulation: ChatFormulation | undefined;
     const started = Date.now();
     for (let turn = 1; turn <= TURNS; turn++) {
       const t0 = Date.now();
       run.phase = "bot";
       run.last = null;
-      const reply = await getChatReply({ turnNumber: turn, history, context: ctx, sessionStartedAt: started });
+      const reply = await getChatReply({ turnNumber: turn, history, context: ctx, sessionStartedAt: started, formulation });
+      formulation = echoFormulation ? reply.formulation : undefined;
       const botMs = Date.now() - t0;
       const botTokens = run.last;
       history.push({ role: "assistant", content: reply.lines.join("\n") });
       run.phase = "userSim";
       const user = turn === TURNS ? null : await userReply(persona.situation, locale, history);
       if (user !== null) history.push({ role: "user", content: user });
-      turns.push({ turn, bot: reply.lines, user, botMs, botTokens });
+      turns.push({ turn, bot: reply.lines, user, botMs, botTokens, formulation: reply.formulation ?? null });
     }
     // Same extraction call the route runs on the final turn, so a change to buildExtractionPrompt can be
     // checked on the conversation it just produced.
@@ -424,6 +431,7 @@ await Promise.all(names.map((name) => usageStore.run(
       moduleId: ctx.moduleId ?? null,
       locale,
       totalTurns: TURNS,
+      echoFormulation,
       userSimModel: USER_SIM_MODEL,
       durationMs: Date.now() - started,
       context: ctx,

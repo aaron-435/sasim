@@ -67,6 +67,11 @@ export default function ChatScreen({
   const sessionStartedAt = useRef(Date.now()).current;
   const doneRef = useRef(false);
   const turnHistoryRef = useRef<HistoryEntry[]>([]);
+  // The server's hidden counselor memo from the last successful reply (lib/chatPrompts.ts's
+  // ChatFormulation, TODO Q1-c). Opaque here: never rendered, never saved, only echoed back on the
+  // next request so the bot keeps building on one hypothesis. A failed request leaves it untouched,
+  // so a retry resends the same memo.
+  const formulationRef = useRef<unknown>(undefined);
   const mountedRef = useRef(true);
   const openerFiredRef = useRef(false);
 
@@ -143,6 +148,7 @@ export default function ChatScreen({
             },
             history: apiHistory,
             sessionId,
+            formulation: formulationRef.current,
           }),
         });
         const json = await res.json();
@@ -159,6 +165,7 @@ export default function ChatScreen({
         if (!mountedRef.current) return;
 
         turnHistoryRef.current = [...apiHistory, { role: "assistant", content: lines.join(" ") }];
+        formulationRef.current = json.formulation ?? undefined;
         setTurn(nextTurn);
 
         if (json.extract) {
