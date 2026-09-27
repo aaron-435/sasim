@@ -45,10 +45,13 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
   - QA: mobile tsc → exit 0. `mobile-web`(375×812, `?qa=free`) 본문 텍스트 확인: jisoo(ko) 목차 05 "에너지 수지표" p12 → 06 다가오는 시기 p13, 잠긴 11 "다시 채우는 순서"(강점과 취약점 뒤, 행동 지침 앞), 41쪽 중 13쪽 미리보기. mia(en) "Your relationship alarm" p12 / 잠긴 "A relationship that feels like a safe base". lucia(es) "Tu alarma en las relaciones" p14 / 잠긴 "Una relación que sea tu base segura". 세 언어 모두 무료 페이지 본문은 보이고 유료 페이지는 페이월로 대체됨. 이전 형식 픽스처(커밋 `8303000`의 `qaData.ts`로 잠시 교체 후 원복, 해시 동일 확인) → 모듈 페이지 없이 39쪽으로 열림, 콘솔 에러 없음 (2026-09-27)
   - 구현: 두 페이지는 새 `ModulePage`(눈썹 문구 `report.moduleLensEyebrow` + 플레이북 제목 + 본문). 목차 라벨은 페이지 제목 그대로. `module_deep`은 제목만 있어도 잠긴 페이지 자리를 잡는다(무료 응답은 본문 빈 문자열). 구매 후 `/api/report/paid`에 보내는 `freePart`에 `module_map`을 추가해 유료 파트가 무료 모듈 페이지를 반복하지 않게 했다(서버 `describeFreePart`가 이미 읽음).
 
-- [ ] 6. F2-a: 강점 서버 — 무료 3개 + 잠긴 핵심 1개
+- [x] 6. F2-a: 강점 서버 — 무료 3개 + 잠긴 핵심 1개
   - 선행: 4 (같은 파일을 만짐)
   - 변경: `lib/reportPrompts.ts`(`strengths_preview` 3개를 `freeFields`와 `FREE_PART_TEXT_FIELDS`에, `strengths`는 겹치지 않는 핵심 1개로, 강점 방향은 플레이북에서), `lib/report.ts`, `lib/reportLock.ts`(`locked_shape.strengths` = 1), `lib/reportQuality.ts`.
   - QA: 루트 tsc 통과. `gen-qa-fixtures` 재실행 후 3개 언어에서 `strengths_preview` 3개, `strengths` 1개, 서로 겹치지 않는지 확인.
+  - QA: `npx tsc --noEmit`(루트) → exit 0, mobile tsc → exit 0. `gen-qa-fixtures.mts` 4회 실행(4회차 최종) → 7명(ko 1, en 4, es 2) 모두 `strengths_preview` 3개 + `strengths` 1개, 결정론적 검사 0건. 핵심 강점은 mia "Direction setting", jisoo "구조 감각", jordan "Directional sense", lucia "Dirección interna"처럼 무료 3개(알아채는 감각·버팀·책임 계열)와 다른 능력. 전체 생성 모드에서 sam "Relentless completion", casey "Criterio claro"는 아직 무료 강점과 가깝다. 실제 앱 경로(무료 → `freePart`에 `strengths_preview`를 넣은 유료)를 스크래치 스크립트로 jisoo·mia·casey·lucia·sam 실행 → 5명 모두 유료 프롬프트에 무료 강점 줄이 들어가고 핵심 1개가 따로 나옴(sam "Directional clarity", casey "Criterio que ordena"). `strengthsSplit` 없는 요청의 프롬프트에는 `strengths_preview`가 없음(구버전 앱 호환) (2026-09-27)
+  - 구현: 구버전 앱(이미 `moduleId`를 보냄)이 새 서버에서 유료 강점 1개만 받게 되는 걸 막으려고, 분할은 앱이 `context.strengthsSplit: true`를 보낼 때만 한다(레이아웃 플래그, 유료 내용 노출 없음). 유료 절반은 `freePart.strengths_preview`가 있을 때만 1개로 쓴다. `strengths_preview`는 배열이라 `FREE_PART_TEXT_FIELDS` 대신 `describeFreePart`가 따로 싣는다. 무료 응답의 `locked_shape.strengths`는 무료 강점이 있으면 1, 없으면 4. 핵심 강점 겹침 방지는 근거를 나눠서 했다(무료 3개: 심리검사 답·상담, 플레이북 강점 방향 3개에 하나씩 / 핵심 1개: 일간 기질, 강점 방향 3개 금지). 제목 단어 겹침 검사(제목·본문 함께 재작성), 리뷰어 규칙 5에 중복 추가, "free preview" 같은 메타 발언을 `META_LEAK`에 추가. `gen-qa-fixtures`는 `strengthsSplit: true`로 생성한다.
+  - 메모(F2-b용): 앱이 할 일 두 가지 — `buildReportContext()`에 `strengthsSplit: true`, 구매 후 `/api/report/paid`에 보내는 `freePart`에 `strengths_preview` 추가. 이 둘이 없으면 서버는 예전 4개 방식으로 동작한다. 지금 `qaData.ts`는 분할 형식이라 F2-b 전까지 `mobile-web` 리포트에는 강점이 1장만 보인다.
 
 - [ ] 7. F2-b: 강점 화면
   - 선행: 6
@@ -119,4 +122,7 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
 - (F1-b) `app/api/report-pdf/route.ts`의 심층 리포트 파서가 아는 필드만 옮겨서 `module_map`/`module_deep`이 PDF에 안 들어간다. PDF에도 넣을지 결정 필요.
 - (F1-b) `lib/reportQuality.ts`의 `ES_GENDERED_READER`에 "expuest-", "pegad-" 같은 형용사가 없어 "no quedar tan expuesta", "quedarte pegada al teléfono"가 걸리지 않았다(1·2차 픽스처 lucia). 목록 보강 검토.
 - 신년 리포트 12개월 타임라인에서 3월만 신살 이름이 빠짐(jisoo, ko). 계산 결과인지 누락 버그인지 `sinsalName()`/`branchLine()` 확인 필요.
+- (F2-a) 전체 생성 모드(구매자가 처음 리포트를 만들 때, 한 번에 전부 씀)에서는 번아웃 모듈 영어·스페인어 페르소나(sam, casey)의 핵심 강점이 무료 강점과 아직 가깝다. 무료 → 유료 두 단계 경로는 괜찮았다. 필요하면 전체 모드에서 핵심 강점 순서를 앞당기거나 리뷰어 중복 규칙을 강화하는 방향 검토.
+- (F2-a) 무료 생성 10여 회 중 1회(jisoo, ko) 모델이 `strengths_preview`를 빠뜨렸다. 그 리포트는 유료 4개로 돌아가서 깨지지는 않지만, 빈도가 높으면 무료 강점만 다시 쓰는 표적 호출을 검토.
+- (F2-a) 영어 리포트에 "Riley님", "Jordan님"처럼 한국어 호칭이 섞이는 경우가 있다(2회차 riley는 19개 필드). 결정론적 검사가 잡지만 패치 경로가 14개로 잘려서 다 못 고치고 내보냈다. 프롬프트 예시의 "님" 영향으로 보임.
 - (F1-c) 모델이 `module_map` 본문 첫 문장에서 페이지 제목을 되풀이한다(lucia es: "Tu alarma en las relaciones se enciende…", jisoo도 비슷). 프롬프트는 되풀이 금지인데 검사가 없음. `reportQuality.ts`에 제목 반복 검사 추가 검토.

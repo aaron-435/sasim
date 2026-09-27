@@ -56,7 +56,7 @@ const ES_GENDERED_READER =
   /(?<!\b(?:he|has|ha|hemos|han|había|habías|habrás|apego)\s)\b(atrapad|agotad|cansad|abrumad|sobrecargad|desbordad|preocupad|ansios|estresad|frustrad|aislad|agobiad|vaciad|quemad|inquiet|conectad|desconectad|bloquead|desorientad|saturad|exhaust|sobrepasad)[ao]s?\b/i;
 const ES_STYLE_SLIP = /\busted(es)?\b|\b[a-záéíóúñ]{3,}x\b|\bcargarse\b|\bdescolocar|\bsu carta\b|\btu carta\b|\bla carta\b|\bvuestr/i;
 const ES_CAPITALIZED_ELEMENTS = /\bCinco Elementos\b/; // running text uses lowercase "cinco elementos"
-const META_LEAK = /\b(prompt|json|schema)\b|(se describe|se indica|se menciona|se da) aquí|named here|(only|sole|one) (supporting |direct )?relationship (that|which|here|named)|the only relationship|(único|única) relación|(only|sole) (supporting )?(relationship|relation) (named|given|provided|listed)|(único|única) (relación|apoyo) (nombrad|indicad|dad)[ao]|no (future )?age range|age range (is )?(not|un)specified|not specified|no se especifica|edad no (está )?especificad/i;
+const META_LEAK = /\b(prompt|json|schema)\b|(se describe|se indica|se menciona|se da) aquí|named here|(only|sole|one) (supporting |direct )?relationship (that|which|here|named)|the only relationship|(único|única) relación|(only|sole) (supporting )?(relationship|relation) (named|given|provided|listed)|(único|única) (relación|apoyo) (nombrad|indicad|dad)[ao]|no (future )?age range|age range (is )?(not|un)specified|not specified|no se especifica|edad no (está )?especificad|\bfree (preview|strengths?)\b|\b(vista previa|fortalezas?) gratuitas?\b|무료 (강점|미리보기)/i;
 const HANGUL_OR_HANJA = /[ㄱ-ㆎ가-힣一-鿿]/;
 const HANGUL_OR_HANJA_ALL = /[ㄱ-ㆎ가-힣一-鿿]/g;
 
@@ -86,6 +86,7 @@ function checkDensity(c: ReportContent, hasChat: boolean): string[] {
     need("chat_fear_note", c.chat_fear_note);
   }
   need("psychology_fact_body", c.psychology_fact_body);
+  c.strengths_preview?.forEach((b, i) => need(`strengths_preview[${i}].body`, b.body));
   c.strengths.forEach((b, i) => need(`strengths[${i}].body`, b.body));
   c.weaknesses.forEach((b, i) => need(`weaknesses[${i}].body`, b.body));
   need("fit_good", c.fit_good);
@@ -104,6 +105,20 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
   const part = ctx.part ?? "full";
   if (c.module_map && part !== "paid" && !c.module_map.body.trim()) problems.push("module_map.body: 페이지 본문이 비어 있음 — 이 페이지 제목과 모듈 관점에 맞는 4문장 이상으로 쓸 것");
   if (c.module_deep && part !== "free" && !c.module_deep.body.trim()) problems.push("module_deep.body: 페이지 본문이 비어 있음 — 이 페이지 제목과 모듈 관점에 맞는 4문장 이상으로 쓸 것");
+  // The core strength (paid) must not be one of the three free ones under another wording (TODO F2-a).
+  if (c.strengths_preview?.length && c.strengths.length && part !== "free") {
+    // Same title, or a shared content word ("Repair instinct" / "Repair courage", "끝까지 챙김" / "끝까지 버팀").
+    const STOP = new Set(["the", "and", "your", "you", "of", "for", "with", "del", "las", "los", "una", "que", "con", "por", "para", "tu"]);
+    const words = (t: string) =>
+      t.toLowerCase().split(/[\s.,:;!?¡¿"“”«»()—–-]+/).filter((w) => w.length >= 2 && !STOP.has(w) && (locale === "ko" || w.length >= 4));
+    const core = new Set(words(c.strengths[0].title));
+    const same = c.strengths_preview.find((b) => words(b.title).some((w) => core.has(w)));
+    if (same) {
+      // Title and body together, so the fix call rewrites them as one new strength.
+      const fix = `핵심 강점이 무료로 공개된 강점 "${same.title}"와 겹침 — 무료 강점 3개와 다른 능력(사주의 일간·원소와 심리검사 축이 만나는 자리의 힘)으로 제목과 본문을 함께 바꾸고, 제목에 무료 강점 제목의 단어를 쓰지 말 것`;
+      problems.push(`strengths[0].title: ${fix}`, `strengths[0].body: ${fix}`);
+    }
+  }
   const strings = flattenStrings(c);
 
   // Numbers the reader can actually verify on screen: the element bars and the test's dimension bars.
@@ -221,7 +236,7 @@ export function buildReviewPrompt(ctx: ReportContext): string {
 2. 겁주기: 건강 악화·사고·죽음·재난·이별·파산에 대한 예측, 의학적 진단, 단정적 부정 예측, 불안을 부추기는 압박.
 3. 완전한 일반론: 이 사람의 데이터(수치, 답한 문항, 상담 내용) 어느 것도 언급하지 않아서 누구에게나 붙여 쓸 수 있는 문단.
 4. 언어 품질: 이 언어(${locale})에서 명백히 부자연스러운 직역투, 뜻이 모호한 단어, 독자 성별을 드러내는 표현, 말투 불일치(존댓말/반말 혼용), 다른 언어 단어 섞임.
-5. 모순: 페이지끼리 사실이 서로 다르다(같은 원소를 어디선 강하다, 어디선 약하다고 함).
+5. 모순·중복: 페이지끼리 사실이 서로 다르다(같은 원소를 어디선 강하다, 어디선 약하다고 함). 또는 strengths[0](유료 핵심 강점)이 strengths_preview(무료 강점 3개) 중 하나와 이름만 바꾼 같은 강점이다.
 6. 메타 발언: 데이터가 없다/지시를 받았다/필드·프롬프트를 언급.
 
 ## 근거 데이터

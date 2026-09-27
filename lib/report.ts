@@ -10,7 +10,7 @@
  */
 
 import OpenAI from "openai";
-import { buildReportPrompt, type ReportContext } from "./reportPrompts";
+import { buildReportPrompt, strengthsSplitFor, type ReportContext } from "./reportPrompts";
 import { FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 import { LOCKED_KEYS, splitLocked } from "./reportLock";
 import { getModulePlaybook } from "./modulePlaybooks";
@@ -70,6 +70,11 @@ export interface ReportContent {
   psychology_fact_heading: string;
   psychology_fact_body: string;
   psychology_takeaway: string;
+  /** Three free strengths shown before the paywall (2026-09-27, TODO F2-a). Only when the request
+   * asked for the split (ReportContext.strengthsSplit); absent in older reports and for older apps. */
+  strengths_preview?: ReportBullet[];
+  /** Paid. With strengths_preview: the one core strength (overlapping none of the three). Without it:
+   * four strengths, as before. */
   strengths: ReportBullet[];
   weaknesses: ReportBullet[];
   fit_good: string;
@@ -126,6 +131,8 @@ function asModulePage(value: unknown, title: string | undefined): ReportBullet |
 function parseReport(parsed: Record<string, unknown>, context: ReportContext): ReportContent {
   const pages = getModulePlaybook(context.moduleId)?.reportPages;
   const locale = context.locale ?? "ko";
+  const preview = asBulletList(parsed.strengths_preview).slice(0, 3);
+  const strengths = asBulletList(parsed.strengths);
   return {
     title_line1: String(parsed.title_line1 ?? ""),
     title_line2: String(parsed.title_line2 ?? ""),
@@ -140,6 +147,7 @@ function parseReport(parsed: Record<string, unknown>, context: ReportContext): R
     upcoming_period_preview_body: String(parsed.upcoming_period_preview_body ?? ""),
     module_map: asModulePage(parsed.module_map, pages?.module_map.title[locale]),
     module_deep: asModulePage(parsed.module_deep, pages?.module_deep.title[locale]),
+    strengths_preview: preview.length ? preview : undefined,
     upcoming_period_heading: String(parsed.upcoming_period_heading ?? ""),
     upcoming_period_body: String(parsed.upcoming_period_body ?? ""),
     cross_analysis_quotes: asStringList(parsed.cross_analysis_quotes),
@@ -151,7 +159,9 @@ function parseReport(parsed: Record<string, unknown>, context: ReportContext): R
     psychology_fact_heading: String(parsed.psychology_fact_heading ?? ""),
     psychology_fact_body: String(parsed.psychology_fact_body ?? ""),
     psychology_takeaway: String(parsed.psychology_takeaway ?? ""),
-    strengths: asBulletList(parsed.strengths),
+    // The split has room for exactly one core strength behind the paywall. A front half the model wrote
+    // without its three free strengths falls back to the old four paid ones (locked_shape follows).
+    strengths: strengthsSplitFor(context) && (context.part === "paid" || preview.length > 0) ? strengths.slice(0, 1) : strengths,
     weaknesses: asBulletList(parsed.weaknesses),
     fit_good: String(parsed.fit_good ?? ""),
     fit_bad: String(parsed.fit_bad ?? ""),
@@ -302,6 +312,9 @@ async function runReport(context: ReportContext, sessionId?: string): Promise<Re
   const part = context.part ?? "full";
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [{ role: "system", content: buildReportPrompt(context) }];
   const generated = (await generateOnce(messages, context, sessionId)).content;
+  if (part !== "paid" && strengthsSplitFor(context) && (generated.strengths_preview?.length ?? 0) < 3) {
+    console.warn(`[report:${part}] strengths split requested but ${generated.strengths_preview?.length ?? 0} free strength(s) written`);
+  }
   let current: ReportContent =
     part === "paid"
       ? { ...parseReport((context.freePart ?? {}) as Record<string, unknown>, context), ...pickPaid(generated) }

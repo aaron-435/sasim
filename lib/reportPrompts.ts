@@ -170,6 +170,21 @@ export interface ReportContext {
   /** For part "paid": the front half the reader has already read, so the back half continues it
    * instead of repeating it. Only a few known text fields are used (see describeFreePart). */
   freePart?: Record<string, unknown>;
+  /** Sent by app versions that show three free strengths before the paywall (2026-09-27, TODO F2).
+   * Only then does the report split its strengths into strengths_preview (3, free) + strengths (the
+   * one core strength, paid); older apps keep getting four paid strengths. Layout only — nothing
+   * paid is exposed by it. See strengthsSplitFor(). */
+  strengthsSplit?: boolean;
+}
+
+/** Whether this request writes the 3 free + 1 core strengths split. The paid half follows the front
+ * half the reader actually has: split only when it carries the three free strengths. */
+export function strengthsSplitFor(context: ReportContext): boolean {
+  if (context.part === "paid") {
+    const preview = context.freePart?.strengths_preview;
+    return Array.isArray(preview) && preview.length > 0;
+  }
+  return context.strengthsSplit === true;
 }
 
 // A trimmed excerpt of the original hand-written Module 3 report (see git
@@ -210,7 +225,7 @@ const STYLE_EXCERPT = `
  * this field exists at all (a literal Q&A pair alone read as flat with no interpretation). */
 export type ReportPart = "full" | "free" | "paid";
 
-function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase: boolean, part: ReportPart, playbook: ModulePlaybook | undefined, locale: Locale): string {
+function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase: boolean, part: ReportPart, playbook: ModulePlaybook | undefined, locale: Locale, split: boolean): string {
   // Only some modules carry a "someone like you" story; a report for the others goes straight from
   // the psych-test page to the saju chart. Empty values keep the shape the app expects.
   const caseFields = includeCase
@@ -240,6 +255,20 @@ function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase
     ? `
   "module_deep": "유료 구간의 모듈 전용 페이지 '${playbook.reportPages.module_deep.title[locale]}'의 본문(문자열 하나). 4~6문장. 작성 지시: ${playbook.reportPages.module_deep.instruction} 무료 구간의 module_map에서 이미 그린 그림을 전제로 이어 쓰고 같은 장면·표현을 반복하지 않는다. behavior_guides와 겹치는 일반 실천법이 아니라 이 모듈의 전문 관점에서만 나올 수 있는 내용으로 쓴다. 페이지 제목은 화면에 따로 표시되므로 본문에서 되풀이하지 않는다.",`
     : "";
+  // 2026-09-27 (TODO F2-a): 강점은 무료 3개(strengths_preview) + 잠긴 핵심 1개(strengths)로 나눈다.
+  // 나누지 않는 요청(구버전 앱)은 예전처럼 유료 strengths 4개.
+  const strengthTitleRule = "짧은 명사구, 한국어는 띄어쓰기를 지킨 자연스러운 말 2~8자 — '휴식불편' 같은 붙임말 금지";
+  // 무료 3개와 핵심 1개가 같은 능력을 이름만 바꿔 되풀이하지 않게, 근거의 출처를 나눈다: 무료 3개는 심리검사 답과
+  // 상담 내용(플레이북 강점 방향 3개에 하나씩), 핵심 1개는 사주(일간과 원소)와 심리검사 축이 만나는 자리.
+  const directionsHint = playbook ? `아래 '이번 모듈의 전문 관점'의 강점 방향 세 가지에 순서대로 하나씩 대응시키고, ` : "";
+  const coreAvoid = playbook ? `강점 방향 세 가지(${playbook.strengthDirections.join(", ")})는 무료 강점의 몫이므로 핵심 강점은 그 어느 것과도 같은 능력이 아니어야 한다. ` : "";
+  const strengthsPreviewField = split
+    ? `
+  "strengths_preview": [{"title": "강점 제목 (${strengthTitleRule})", "body": "3문장 설명 — 결핍·약점이 아니라 그 데이터가 주는 힘으로 쓴다. 근거는 심리검사에서 실제 답한 문항과 상담 내용에서만 가져오고 사주·오행 수치는 쓰지 않는다(사주에서 나오는 강점은 핵심 강점의 몫). 구체적 장면 하나 포함. 이 배열 항목은 정확히 3개이고 ${directionsHint}세 개가 서로 다른 능력이어야 한다. 각 항목이 화면 한 장씩 차지하고 결제 전에 무료로 보인다"}],`
+    : "";
+  const strengthsField = split
+    ? `"strengths": [{"title": "핵심 강점 제목 (${strengthTitleRule})", "body": "3~4문장 설명 — 무료 강점 3개(strengths_preview)가 심리검사와 상담에서 이미 찾은 능력과는 다른 종류의 힘 하나. 찾는 자리는 이 사람의 일간(아래 데이터의 '나의 일간'; 없으면 우세 원소) 자체가 가진 기질이 심리검사 결과 속에서 드러나는 방식이다 — 이 리포트가 사주와 심리를 함께 봤기 때문에 찾을 수 있는 강점. 무료 강점은 주로 높은 축과 반복 패턴에 기대므로, 핵심 강점은 그 능력(예: 알아채는 감각, 버티는 힘, 꼼꼼함, 책임감, 끝까지 해내는 힘)이 아니라 일간의 기질에서 나오는 다른 종류의 능력(예: 방향을 세우는 힘, 새로 시작하는 힘, 사람을 품는 힘, 결단력, 흐름에 맞춰 바꾸는 유연함 중 이 일간에 맞는 것)으로 고른다. ${coreAvoid}무료 강점의 능력을 '더 깊은'·'핵심'이라고 다시 부르거나, 무료 강점이 쓴 장면·근거를 다시 쓰면 실패다. 본문에서 무료·유료·미리보기·다른 강점과의 비교를 언급하지 않는다. 제목에 무료 강점 제목의 단어를 쓰지 않는다. 구체적 장면 하나 포함. 이 배열 항목은 정확히 1개"}]`
+    : `"strengths": [{"title": "강점 제목 (${strengthTitleRule})", "body": "3문장 설명 — 이 사람의 실제 데이터에서 나온 구체적 장면 하나 포함. 이 배열 항목은 정확히 4개, 각 항목이 화면 한 장씩 차지함"}]`;
   const freeFields = `
   "title_line1": "리포트 제목 1행 — 시적이고 은유적, 이 사람의 핵심 패턴을 압축",
   "title_line2": "리포트 제목 2행 — 1행과 이어지는 한 문장",
@@ -256,7 +285,7 @@ ${caseFields}
     "metal": {"heading": "금 💎에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
     "water": {"heading": "수 💧에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"}
   },
-${moduleMapField}
+${moduleMapField}${strengthsPreviewField}
   "upcoming_period_preview_heading": "'다가오는 시기' 섹션 소제목 — 아래 데이터의 '다가오는 대운 시기' 줄에 나온 나이와 원소를 제목 맨 앞에서 숫자 그대로 밝히고, 지금까지의 시기가 저물고 다음 장이 시작된다는 담담한 전환 프레임으로 쓴다. 예: '32세부터, 물의 계절이 열립니다' / '32세부터 시작되는 다음 장'. '머지않아'·'언젠가'처럼 나이를 흐리는 말로 시작하지 않는다. 그 줄이 '정보 없음'이거나 '범위를 벗어남'이면 나이 없이 '다가오는 흐름' 정도의 일반적인 제목",
   "upcoming_period_preview_body": "3문장. 첫 문장부터 '다가오는 대운 시기' 데이터의 나이 숫자를 그대로 명확히 밝히며 시작한다('머지않아'·'언젠가'·'곧' 같은 흐린 시점 표현으로 시작하지 말 것). 지금까지의 시기가 저물고 새로운 국면이 시작된다는 확정된 사실로, 나이+원소 전환이 있다는 사실 그 자체만 쓴다 — 그 전환이 왜 일어나는지, 그 이후 무엇이 달라지는지, 무엇을 준비하면 좋은지는 이 필드에 절대 쓰지 않는다(그 내용은 구매 후 이어지는 본편 upcoming_period_body의 몫이니 앞당겨 쓰지 말 것). 나머지 문장은 그 전환을 감각적으로 그리는 장면(계절·빛·공기가 바뀌는 느낌 등)으로 채우되 결과·이유·조언은 여전히 담지 않는다. 나이 숫자는 그 데이터 줄에 있는 그대로만 쓰고 절대 새로 만들어내지 말 것 — 정보가 없다고 나오면 숫자 없이 일반적인 흐름으로만 쓰되, 정보가 없다는 사실 자체를 문장에 쓰지 말 것. 이미 지난 시기를 다루지 말고 반드시 앞으로 올 시기만 다룰 것."`;
   const paidFields = `
@@ -266,7 +295,7 @@ ${moduleMapField}
   "psychology_fact_heading": "이 사람의 패턴과 관련된 실제 심리학 개념/이론/연구자 이름을 정확히 인용한 소제목. 화면에 이미 '잠깐, 심리학 상식 하나'라는 라벨이 따로 표시되므로 그 문구를 다시 쓰지 말 것 — 개념 이름 자체로 시작 (예: '볼비와 불안-회피 애착')",
   "psychology_fact_body": "그 개념을 3~4문장으로 정확하게 설명하고 이 사람 패턴과 연결. 실제 연구자·연도·개념은 정확한 것만 쓰고 확실하지 않으면 개념만 쓴다",
   "psychology_takeaway": "2문장짜리 핵심 요약 — 첫 문장은 기억에 남는 짧은 한 줄. 화면에 이미 '기억할 한 가지 ·' 라벨이 따로 붙으므로 '기억할 한 가지' 같은 말을 반복하지 말고 바로 요약 문장으로 시작",
-  "strengths": [{"title": "강점 제목 (짧은 명사구, 한국어는 띄어쓰기를 지킨 자연스러운 말 2~8자 — '휴식불편' 같은 붙임말 금지)", "body": "3문장 설명 — 이 사람의 실제 데이터에서 나온 구체적 장면 하나 포함. 이 배열 항목은 정확히 4개, 각 항목이 화면 한 장씩 차지함"}],
+  ${strengthsField},
   "weaknesses": [{"title": "취약점 제목 (짧은 명사구, 한국어는 띄어쓰기를 지킨 자연스러운 말 2~8자)", "body": "3문장 설명 — 비난이 아니라 이해로. 구체적 장면 하나 포함. 이 배열 항목도 정확히 4개"}],
   "fit_good": "이 사람에게 맞는 환경/일 스타일 3문장 — 구체적인 하루의 모습으로",
   "fit_bad": "이 사람이 피해야 할 환경/일 스타일 3문장 — 구체적인 하루의 모습으로",${moduleDeepField}
@@ -306,6 +335,10 @@ function describeFreePart(free?: Record<string, unknown>): string {
   const map = free.module_map as { body?: unknown } | string | undefined;
   const mapBody = cap(typeof map === "string" ? map : map?.body, 700);
   if (mapBody) lines.push(`- module_map: ${mapBody}`);
+  // The three free strengths — the core strength must not repeat any of them.
+  const preview = Array.isArray(free.strengths_preview) ? (free.strengths_preview as { title?: unknown; body?: unknown }[]).slice(0, 3) : [];
+  const previewLines = preview.map((b) => `${cap(b?.title, 40)} — ${cap(b?.body, 300)}`).filter((l) => l !== " — ");
+  if (previewLines.length) lines.push(`- strengths_preview(무료로 이미 공개된 강점, 핵심 강점과 겹치면 안 됨): ${previewLines.join(" / ")}`);
   const els = (free.element_readings ?? {}) as Record<string, { heading?: unknown }>;
   const headings = Object.entries(els).map(([k, v]) => `${k}: ${cap(v?.heading, 80)}`).filter((x) => !x.endsWith(": "));
   if (headings.length) lines.push(`- element_readings 제목: ${headings.join(" / ")}`);
@@ -365,7 +398,7 @@ export function buildReportPrompt(context: ReportContext): string {
 - 관점: ${playbook.lens}
 - 경계(옆 모듈로 새지 않게): ${playbook.boundary}
 - 이 모듈의 핵심 질문: ${playbook.signatureQuestion[locale]}
-- 강점을 찾을 방향: ${playbook.strengthDirections.join(" / ")} — strengths는 이 방향에서, 이 사람의 실제 데이터로 구체화해서 쓴다
+- 강점을 찾을 방향: ${playbook.strengthDirections.join(" / ")} — 강점은 이 방향에서 이 사람의 실제 데이터로 구체화해서 쓴다(strengths_preview가 있으면 무료 3개가 이 방향을 하나씩 맡고, 유료 핵심 강점은 이 방향 밖에서 사주와 심리검사가 만나는 자리의 힘)
 ${playbook.caution ? `- 주의: ${playbook.caution}\n` : ""}- 관점의 이론 이름은 module_map·module_deep에서 한두 번 자연스럽게 쓸 수 있지만 진단처럼 들리게 쓰지 않고, 이론을 강의하지 않는다. 전문성은 이 사람의 재료를 그 관점으로 정확히 짚는 것으로 드러낸다.`.trimEnd()
     : "";
 
@@ -405,7 +438,7 @@ ${STYLE_EXCERPT}
 ### 페이지 품질
 9. 한 필드는 화면 한 장이다. 스키마에 "3문장"이라 적힌 필드는 완결된 문장 3개 이상으로 쓴다(문장을 나눠서, 억지로 늘이지 말 것). 짧고 명확하게 끊고 맞춤법·띄어쓰기를 정확히 지킨다. 한두 문장짜리 페이지는 실패다.
 10. 모든 필드에 (a) 데이터에서 온 구체적 디테일 하나 (b) 이 사람을 직접 부르는 2인칭 (c) 캡처하고 싶은 짧고 선명한 문장 하나를 넣는다. 다른 사람의 리포트에 그대로 붙여도 되는 문장, 상투적 위로("괜찮아요"), 사전식 정의로 채우지 않는다.
-11. 반복하지 않는다: 같은 상담 표현·장면(예: "월요일 아침 메신저")은 리포트 전체에서 두 번을 넘기지 말고 페이지마다 다른 각도로 쓴다. "이 모듈에서는"은 한 번 이하로 쓰고 주제를 직접 말한다. strengths는 결핍·약점 서술이 아니라 그 데이터가 주는 힘(버티는 힘, 알아채는 감각 등)으로 쓴다.
+11. 반복하지 않는다: 같은 상담 표현·장면(예: "월요일 아침 메신저")은 리포트 전체에서 두 번을 넘기지 말고 페이지마다 다른 각도로 쓴다. "이 모듈에서는"은 한 번 이하로 쓰고 주제를 직접 말한다. 강점(strengths_preview·strengths)은 결핍·약점 서술이 아니라 그 데이터가 주는 힘(버티는 힘, 알아채는 감각 등)으로 쓴다.
 
 ### 언어
 12. 모든 필드는 ${FIELD_LANGUAGE_NAME[locale]}로만 쓴다. 한자는 어떤 언어에서도 쓰지 않는다("화(火)", "대운(大運)" 병기 금지, 원소는 이모지 🌳🔥⛰️💎💧). 용어집(대운=영어 "10-year cycle", 스페인어 "ciclo de diez años" 등)을 지키고, 처음 나오는 용어는 같은 문장 안에서 짧게 풀어 준다. 데이터의 라벨·표기를 문장에 그대로 옮기지 않는다.
@@ -416,7 +449,7 @@ ${STYLE_EXCERPT}
 ${scopeNote}
 
 ## 출력 스키마
-${buildOutputSchema(context.topAnswers?.length ?? 0, !!context.chatExtract, !!context.includeCase, part, playbook, locale)}
+${buildOutputSchema(context.topAnswers?.length ?? 0, !!context.chatExtract, !!context.includeCase, part, playbook, locale, strengthsSplitFor(context))}
 
 ## 이번 리포트의 데이터
 - 닉네임: ${context.nickname}

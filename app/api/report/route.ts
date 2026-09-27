@@ -86,7 +86,8 @@ export async function POST(req: NextRequest) {
 
     // How many pages the back half holds, so the reader can lay out the table of contents, page
     // totals and paywall note before it exists. Matches the counts the back half's schema demands.
-    const locked_shape = { cross_analysis_quotes: 2, strengths: 4, weaknesses: 4, behavior_guides: 4 };
+    // With the strengths split (TODO F2-a) three strengths are already in the free half; one core strength stays locked.
+    const locked_shape = { cross_analysis_quotes: 2, strengths: content.strengths_preview?.length ? 1 : 4, weaknesses: 4, behavior_guides: 4 };
     return NextResponse.json({ ...content, locked_pending: true, locked_shape });
   } catch (err) {
     if (err instanceof OpenAI.APIError) {
