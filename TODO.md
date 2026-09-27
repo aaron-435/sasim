@@ -53,10 +53,12 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
   - 구현: 구버전 앱(이미 `moduleId`를 보냄)이 새 서버에서 유료 강점 1개만 받게 되는 걸 막으려고, 분할은 앱이 `context.strengthsSplit: true`를 보낼 때만 한다(레이아웃 플래그, 유료 내용 노출 없음). 유료 절반은 `freePart.strengths_preview`가 있을 때만 1개로 쓴다. `strengths_preview`는 배열이라 `FREE_PART_TEXT_FIELDS` 대신 `describeFreePart`가 따로 싣는다. 무료 응답의 `locked_shape.strengths`는 무료 강점이 있으면 1, 없으면 4. 핵심 강점 겹침 방지는 근거를 나눠서 했다(무료 3개: 심리검사 답·상담, 플레이북 강점 방향 3개에 하나씩 / 핵심 1개: 일간 기질, 강점 방향 3개 금지). 제목 단어 겹침 검사(제목·본문 함께 재작성), 리뷰어 규칙 5에 중복 추가, "free preview" 같은 메타 발언을 `META_LEAK`에 추가. `gen-qa-fixtures`는 `strengthsSplit: true`로 생성한다.
   - 메모(F2-b용): 앱이 할 일 두 가지 — `buildReportContext()`에 `strengthsSplit: true`, 구매 후 `/api/report/paid`에 보내는 `freePart`에 `strengths_preview` 추가. 이 둘이 없으면 서버는 예전 4개 방식으로 동작한다. 지금 `qaData.ts`는 분할 형식이라 F2-b 전까지 `mobile-web` 리포트에는 강점이 1장만 보인다.
 
-- [ ] 7. F2-b: 강점 화면
+- [x] 7. F2-b: 강점 화면
   - 선행: 6
   - 변경: `mobile/screens/ReportScreen.tsx` — 무료 강점 3장은 잠금 없이 무료 구간에, 핵심 강점 1장은 유료 구간에 제목까지 가려서. `strengths_preview`가 없는 이전 리포트는 기존 4장 유료 렌더링 유지. i18n "핵심 강점" 라벨.
   - QA: mobile tsc 통과. `mobile-web`에서 무료 사용자 3개 언어로 확인(`get_page_text` + 핵심 강점 페이지 스크린샷 1장). 이전 형식 픽스처 확인.
+  - QA: mobile tsc → exit 0. `mobile-web`(375×812, `?qa=free`) 본문 텍스트 확인: jisoo(ko) 목차 06 "강점" p13 → 07 다가오는 시기 p16, 잠긴 11 "핵심 강점과 취약점", 41쪽 중 16쪽 미리보기, "강점 · 01~03 / 03" 세 장이 페이월 앞에 보이고 핵심 강점 제목("구조 감각")은 무료 화면 어디에도 없음. mia(en) "Strengths" p13 / "STRENGTH · 01~03 OF 03" / 잠긴 "Core Strength & Weaknesses", 42쪽 중 16쪽. lucia(es) "Fortalezas" p14 / "FORTALEZA · 01~03 DE 03" / 잠긴 "Fortaleza central y puntos débiles", 43쪽 중 17쪽. `?qa=all` jisoo에서 핵심 강점 페이지("핵심 강점" 라벨 + "구조 감각") 스크린샷 확인. 이전 형식 픽스처(커밋 `8303000`의 `qaData.ts`로 잠시 교체 후 원복, 해시 동일 확인) → 무료 강점 없이 39쪽, 목차 "강점과 취약점", `qa=all`에서 "강점 · 01~04 / 04", 콘솔 에러 없음 (2026-09-27)
+  - 구현: 무료 강점 3장은 기존 `CardPage`(jade)로 모듈 페이지(`module_map`) 뒤, 다가오는 시기 미리보기 앞에 둔다(미리보기가 페이월 직전 자리를 유지). `strengths_preview`가 있으면 유료 쪽 `strengths`는 "핵심 강점" 라벨 1장이고 목차 라벨이 "핵심 강점과 취약점"으로 바뀐다. 잠긴 페이지는 페이월 한 장으로 대체되므로 핵심 강점 제목은 구매 전 어디에도 나오지 않는다. `buildReportContext()`에 `strengthsSplit: true`, 구매 후 `freePart`에 `strengths_preview` 추가. i18n 새 키 `sectionCoreStrengthWeaknessesToc`, `coreStrengthIndex`(무료 목차 라벨은 기존 `sectionStrengths` 재사용 — 무료 강점이 3개 미만일 수 있어 개수를 넣지 않음).
 
 ## 디자인
 

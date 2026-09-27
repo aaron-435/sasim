@@ -101,6 +101,10 @@ export type ReportContent = {
   psychology_fact_heading: string;
   psychology_fact_body: string;
   psychology_takeaway: string;
+  /** 2026-09-27: three free strengths shown before the paywall (sent only when the request asked
+   * for the split, context.strengthsSplit). With them, `strengths` is the one locked core strength;
+   * without them (older reports, older servers) `strengths` stays the four paid cards. */
+  strengths_preview?: { title: string; body: string }[];
   strengths: { title: string; body: string }[];
   weaknesses: { title: string; body: string }[];
   fit_good: string;
@@ -233,6 +237,8 @@ export default function ReportScreen({
       topAnswers,
       chatExtract: chatExtract ?? null,
       locale,
+      // Asks the server for 3 free strengths + 1 locked core strength (older apps omit it and keep 4 paid).
+      strengthsSplit: true,
     };
   }
 
@@ -310,6 +316,8 @@ export default function ReportScreen({
           quiz_reading: content.quiz_reading,
           element_readings: Object.fromEntries(Object.entries(content.element_readings ?? {}).map(([k, v]) => [k, { heading: v?.heading ?? "" }])),
           module_map: content.module_map,
+          // Without it the server writes the old four paid strengths, repeating the free three.
+          strengths_preview: content.strengths_preview,
         };
         const res = await fetch(`${API_BASE_URL}/api/report/paid`, {
           signal: controller.signal,
@@ -495,6 +503,9 @@ export default function ReportScreen({
       });
     });
 
+    const strengthsPreview = content.strengths_preview ?? [];
+    const coreOnly = strengthsPreview.length > 0;
+
     const moduleMap = content.module_map;
     if (moduleMap?.title && moduleMap.body) {
       body.push({
@@ -503,6 +514,14 @@ export default function ReportScreen({
         node: <ModulePage eyebrow={strings.report.moduleLensEyebrow} title={moduleMap.title} body={moduleMap.body} />,
       });
     }
+
+    strengthsPreview.forEach((s, i) => {
+      body.push({
+        key: `strength-preview-${i}`,
+        tocLabel: i === 0 ? strings.report.sectionStrengths : undefined,
+        node: <CardPage kind="jade" indexLabel={strings.report.strengthIndex(i + 1, strengthsPreview.length)} title={s.title} body={s.body} />,
+      });
+    });
 
     if (content.upcoming_period_preview_heading && content.upcoming_period_preview_body) {
       body.push({
@@ -623,9 +642,16 @@ export default function ReportScreen({
     strengthsList.forEach((s, i) => {
       body.push({
         key: `strength-${i}`,
-        tocLabel: i === 0 ? strings.report.sectionStrengthsWeaknessesToc : undefined,
+        tocLabel: i === 0 ? (coreOnly ? strings.report.sectionCoreStrengthWeaknessesToc : strings.report.sectionStrengthsWeaknessesToc) : undefined,
         locked: true,
-        node: <CardPage kind="jade" indexLabel={strings.report.strengthIndex(i + 1, strengthsList.length)} title={s.title} body={s.body} />,
+        node: (
+          <CardPage
+            kind="jade"
+            indexLabel={coreOnly ? strings.report.coreStrengthIndex : strings.report.strengthIndex(i + 1, strengthsList.length)}
+            title={s.title}
+            body={s.body}
+          />
+        ),
       });
     });
 
