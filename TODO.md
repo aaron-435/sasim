@@ -76,9 +76,12 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
 
 ## 퀄리티
 
-- [ ] 10. Q0-a: `sim-chat` 확장 — 모듈별 페르소나
+- [x] 10. Q0-a: `sim-chat` 확장 — 모듈별 페르소나
   - 변경: `scripts/sim-chat.mts`에 모듈별 페르소나 11개(모듈 주제에 맞는 상황, 말투, 일부는 자책 발언) + EN/ES 페르소나 2개. 모듈에 맞는 퀴즈 결과와 답변 풀을 페르소나마다 둔다. 대화 기록과 extract를 JSON 파일로 저장(`scripts/out/`, `.gitignore`에 추가).
   - QA: `npx tsx --env-file=.env.local scripts/sim-chat.mts 3 <persona> module6` 1회 스모크 실행, 결과 파일 생성 확인.
+  - QA: `npx tsc --noEmit`(루트) → exit 0. `sim-chat.mts 3 anger module6` → 3턴 대화 + extract(`module_fields.anger_underneath`/`crossed_line` 채워짐), `scripts/out/sim_20260927T042455_anger_module6.json` 생성(moduleId module6, locale ko, 턴별 응답 시간 포함). 보강 `sim-chat.mts 2 attach_en,anger_es` → 영어·스페인어로 대화하고 각각 module1/module6 파일 생성. `git status`에 `scripts/out/` 안 나옴 (2026-09-27)
+  - 구현: 페르소나 이름은 `attach`(1), `money`(2), `burnout`(3), `mask`(4), `procrast`(5), `anger`(6), `sensitive`(7), `sleep`(8), `family`(9), `focus`(10), `instinct`(11), `attach_en`(1, en), `anger_es`(6, es). 자책 발언(`selfBlame`)은 money, procrast, anger, family, instinct, anger_es. 페르소나가 자기 모듈을 갖고 있어서 세 번째 인자(moduleId)는 생략하거나 `-`로 두면 되고, 다른 모듈을 주면 경고 후 덮어쓴다. 기존 스타일(terse, talkative, lost, questioning)은 번아웃 픽스처로 그대로 남겼다(이전 항목 QA 명령 호환). 사용자 시뮬레이터 지시문은 페르소나 언어로 준다. 퀴즈 유형 이름은 `mobile/lib/quiz/` 결과 제목을 썼다.
+  - 메모(Q0-b용): 결과 JSON 키는 `persona, selfBlame, situation, moduleId, locale, totalTurns, context, turns[{turn, bot[], user, botMs}], extract`. 토큰 사용량은 `getChatReply`가 반환하지 않아(`llm_usage_log`에만 기록) 파일에 없다. 비용은 judge 쪽에서 추정하거나 `lib/chat.ts`를 건드리지 않는 방법으로 잰다.
 
 - [ ] 11. Q0-b: `judge-chat` + 개편 전 기준선
   - 선행: 10
@@ -133,4 +136,5 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
 - (F2-a) 영어 리포트에 "Riley님", "Jordan님"처럼 한국어 호칭이 섞이는 경우가 있다(2회차 riley는 19개 필드). 결정론적 검사가 잡지만 패치 경로가 14개로 잘려서 다 못 고치고 내보냈다. 프롬프트 예시의 "님" 영향으로 보임.
 - (F1-c) 모델이 `module_map` 본문 첫 문장에서 페이지 제목을 되풀이한다(lucia es: "Tu alarma en las relaciones se enciende…", jisoo도 비슷). 프롬프트는 되풀이 금지인데 검사가 없음. `reportQuality.ts`에 제목 반복 검사 추가 검토.
 - (D1) 첫 번째 잠긴 페이지인 "다가오는 시기" 본편은 목차 라벨이 무료 미리보기 쪽에만 있어서 페이월 챕터 목록에 나오지 않는다. 목록에 "다가오는 시기 — 이어지는 이야기" 같은 항목을 넣을지 검토(압박 규칙상 제목만이면 괜찮음).
+- (Q0-a) 스모크 대화 anger_es 2턴째에 챗봇이 사용자가 말하지 않은 "que no te hicieran caso"(무시당함)를 붙였다. 규칙 9 위반 사례로 기준선 채점에서 볼 것.
 - (D2) 배지 문구 "한국천문연구원 천문 데이터로 계산"의 정확도: 엔진은 일주만 KASI API를 쓰고 연주·월주는 태양 황경으로 직접 계산하며, 엔진 오류 시 외부 SAZU API로 폴백한다(`lib/sazu.ts`). 기존 웹 `trust` 문구와 같은 수준의 표현이라 그대로 두었지만, 폴백으로 계산된 사용자에게도 같은 배지가 보인다. 문구를 "천문 데이터 기반" 쪽으로 넓힐지 결정 필요.

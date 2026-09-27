@@ -37,3 +37,6 @@ next-env.d.ts
 
 # local MCP config (contains API keys)
 .mcp.json
+
+# sim-chat / judge-chat output (conversations, scores)
+/scripts/out/

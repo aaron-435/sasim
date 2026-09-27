@@ -82,6 +82,7 @@ ko/en/es. 웹 `lib/i18n/`, 앱 `mobile/lib/i18n/`(스페인어 규칙은 `STYLE_
 
 명령표는 루트 `CLAUDE.md`의 "Verification commands". 그 외:
 - 개발용 QA 모드(`?qa=`, 픽스처): `mobile/dev/README.md`
+- 챗봇 시뮬레이션: `scripts/sim-chat.mts`. 모듈별 페르소나 11개(+영어·스페인어 1개씩)가 자기 모듈의 퀴즈 결과로 대화하고, 결과(대화, extract, 턴별 응답 시간)를 `scripts/out/`(git 제외)에 JSON으로 남긴다. 채점은 `scripts/judge-chat.mts`(Q0-b에서 추가 예정)
 - OpenAI 사용량 집계: `scripts/usage-report.mts`
 - 앱 화면 확인: `mobile-web` 프리뷰(포트 8082) 또는 iOS 시뮬레이터 dev-client. 설정은 `.claude/launch.json`
 
