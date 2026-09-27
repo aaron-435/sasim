@@ -4,6 +4,7 @@ export const es: typeof ko = {
   common: {
     brand: "Fatesaid",
     backLabel: "Atrás",
+    calcSourceBadge: "Calculado con datos astronómicos oficiales de Corea (KASI)",
     nextLabel: "Siguiente",
     retryLabel: "Reintentar",
     elementLabels: {

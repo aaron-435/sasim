@@ -10,6 +10,7 @@ import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, View } fro
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
+import CalcSourceBadge from "../components/CalcSourceBadge";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
@@ -78,6 +79,9 @@ export default function TypeScreen({
           </View>
           <Text style={styles.typeName}>{typeName}</Text>
           <Text style={styles.greeting}>{strings.home.greeting(nickname)}</Text>
+          <View style={styles.sourceRow}>
+            <CalcSourceBadge />
+          </View>
         </View>
 
         <View style={styles.section}>
@@ -243,6 +247,13 @@ const styles = StyleSheet.create({
     fontFamily: "Manrope_400Regular",
     fontSize: 13,
     color: COLORS.subheadline,
+  },
+  sourceRow: {
+    marginTop: 8,
+    paddingTop: 14,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: COLORS.border,
+    alignSelf: "stretch",
   },
   section: {
     marginTop: 26,

@@ -56,6 +56,8 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 
 페이월(`ReportScreen`의 `PaywallPage`)은 잠긴 페이지 전체를 한 장으로 대신하고, 카드 안에 목차(`tocEntries`)에서 잠긴 항목의 제목을 자물쇠와 함께 나열한다(신년 리포트 미리보기의 잠긴 챕터 목록과 같은 모양). 모듈 페이지 제목과 핵심 강점 라벨은 목차를 통해 자동으로 들어간다. 카드는 세로 스크롤 영역이라 작은 화면에서도 잘리지 않는다.
 
+계산 근거 배지: 공용 `mobile/components/CalcSourceBadge.tsx`(문구 `common.calcSourceBadge`)가 심층 리포트 커버와 사주 유형 화면(`TypeScreen`) 히어로 카드에 붙는다. 정적 텍스트이고 탭 대상이 아니다.
+
 ### 결제
 - 앱: RevenueCat SDK(`mobile/lib/purchases.ts`). 키는 플랫폼별로 `mobile/config.ts`에 있다(공개 SDK 키). 구독 + 모듈별 리포트 + 번들 + 신년 리포트(상품 목록은 `IAP_PRODUCTS.md`).
 - 서버: 생성 비용이 드는 유료 콘텐츠는 서버에서 `lib/revenuecat.ts`로 entitlement를 확인한다(`REVENUECAT_SECRET_KEY` 필요, 없으면 fail closed). 앱 쪽 게이트만 믿지 않는다.

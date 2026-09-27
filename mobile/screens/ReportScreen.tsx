@@ -6,6 +6,7 @@ import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import Text from "../components/AppText";
+import CalcSourceBadge from "../components/CalcSourceBadge";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
@@ -939,6 +940,9 @@ function CoverPage({
         </Text>
         <View style={pageStyles.coverRule} />
         <Text style={pageStyles.coverSub}>{nickname}</Text>
+        <View style={pageStyles.coverSource}>
+          <CalcSourceBadge align="start" />
+        </View>
       </View>
       <View style={pageStyles.pageFoot}>
         <Text style={pageStyles.pageFootText}>{previewLabel}</Text>
@@ -1438,6 +1442,7 @@ const pageStyles = StyleSheet.create({
   coverTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 27, lineHeight: 36, color: COLORS.headline, marginBottom: 4 },
   coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: 16 },
   coverSub: { fontFamily: "Manrope_500Medium", fontSize: 13, color: COLORS.headline },
+  coverSource: { marginTop: 22, marginBottom: 28 },
 
   tocEyebrow: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: "#5C5237", marginTop: 24, marginBottom: 12 },
   tocTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 24, lineHeight: 31, color: "#22301F", marginBottom: 26 },

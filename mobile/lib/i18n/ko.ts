@@ -28,6 +28,7 @@ export const ko = {
   common: {
     brand: "Fatesaid",
     backLabel: "이전",
+    calcSourceBadge: "한국천문연구원 천문 데이터로 계산",
     nextLabel: "다음",
     retryLabel: "다시 시도",
     elementLabels: {

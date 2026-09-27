@@ -68,9 +68,11 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
   - QA: mobile tsc → exit 0. `mobile-web`(375×812, `?qa=free`) 페이월 스크린샷 3장 + 구매 버튼 위치 측정: jisoo(ko) 잠긴 챕터 7개("직접 나눈 이야기"~"마무리", 모듈 제목 "다시 채우는 순서" 포함), 구매 버튼 하단 y=525 / 812, 면책 문구까지 한 화면. mia(en) 7개("A relationship that feels like a safe base" 포함), y=525, 한 화면. lucia(es) 7개("Una relación que sea tu base segura" 포함), y=544, 면책 문구만 첫 화면 아래(세로 스크롤로 보임). 콘솔 에러 없음 (2026-09-27)
   - 구현: 목록은 이미 계산된 `tocEntries` 중 잠긴 항목의 라벨을 그대로 쓴다(새 i18n 키 없음, 모듈 페이지 제목과 "핵심 강점과 취약점"이 자동 반영). 모양은 신년 리포트 `lockedRow`(자물쇠 + 제목 + 구분선)를 페이월 카드 안에 맞게 줄인 것(행 30pt, 탭 대상 아님). 목록이 본문 나열을 대신하므로 `paywallBody`를 3개 언어 모두 한 문장으로 줄였다. 작은 화면이나 큰 글자에서 잘리지 않게 카드 영역을 세로 `ScrollView`로 감쌌다(375×812에서는 스크롤 없이 들어감).
 
-- [ ] 9. D2: 계산 근거 배지
+- [x] 9. D2: 계산 근거 배지
   - 변경: 심층 리포트 커버와 사주 결과 화면에 정적 배지. i18n 3개 언어. 탭 가능해 보이지 않게. `impeccable` 1패스.
   - QA: mobile tsc 통과. `mobile-web`에서 두 화면 × 3개 언어 스크린샷.
+  - QA: mobile tsc → exit 0. `mobile-web`(375×812, `?qa=free`) 스크린샷 6장: 리포트 커버 jisoo(ko) "한국천문연구원 천문 데이터로 계산" 한 줄, mia(en) "Calculated from Korea's national astronomy data (KASI)" 두 줄, lucia(es) "Calculado con datos astronómicos oficiales de Corea (KASI)" 두 줄. 사주 유형 화면(홈의 유형 버튼 → `TypeScreen`) jisoo "거목 · 성취", mia "Steel · Harvest", lucia "El rocío · Orden" 히어로 카드 아래쪽에 같은 문구. 접근성 트리에서 배지는 button이 아닌 텍스트(generic)로 나옴. 콘솔 에러 없음 (2026-09-27)
+  - 구현: 공용 `mobile/components/CalcSourceBadge.tsx`(망원경 아이콘 + 12pt 문구, 테두리·배경·눌림 상태 없음 → 버튼처럼 보이지 않음). i18n 키 `common.calcSourceBadge`. 리포트 커버는 닉네임 아래 왼쪽 정렬, 유형 화면은 히어로 카드 안 인사말 아래에 얇은 구분선을 두고 가운데 정렬. impeccable 점검에서 커버 배지가 하단 PREVIEW 줄에 붙어 보여 아래 여백을 한 번 늘렸다. "사주 결과 화면"은 사주 유형 결과 화면(`TypeScreen`)으로 해석했다(오행 막대가 있는 홈 화면이 아님).
 
 ## 퀄리티
 
@@ -131,3 +133,4 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
 - (F2-a) 영어 리포트에 "Riley님", "Jordan님"처럼 한국어 호칭이 섞이는 경우가 있다(2회차 riley는 19개 필드). 결정론적 검사가 잡지만 패치 경로가 14개로 잘려서 다 못 고치고 내보냈다. 프롬프트 예시의 "님" 영향으로 보임.
 - (F1-c) 모델이 `module_map` 본문 첫 문장에서 페이지 제목을 되풀이한다(lucia es: "Tu alarma en las relaciones se enciende…", jisoo도 비슷). 프롬프트는 되풀이 금지인데 검사가 없음. `reportQuality.ts`에 제목 반복 검사 추가 검토.
 - (D1) 첫 번째 잠긴 페이지인 "다가오는 시기" 본편은 목차 라벨이 무료 미리보기 쪽에만 있어서 페이월 챕터 목록에 나오지 않는다. 목록에 "다가오는 시기 — 이어지는 이야기" 같은 항목을 넣을지 검토(압박 규칙상 제목만이면 괜찮음).
+- (D2) 배지 문구 "한국천문연구원 천문 데이터로 계산"의 정확도: 엔진은 일주만 KASI API를 쓰고 연주·월주는 태양 황경으로 직접 계산하며, 엔진 오류 시 외부 SAZU API로 폴백한다(`lib/sazu.ts`). 기존 웹 `trust` 문구와 같은 수준의 표현이라 그대로 두었지만, 폴백으로 계산된 사용자에게도 같은 배지가 보인다. 문구를 "천문 데이터 기반" 쪽으로 넓힐지 결정 필요.
