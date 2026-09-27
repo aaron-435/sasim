@@ -40,7 +40,7 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 |---|---|---|
 | Q&A(무료 일일 한도) | `/api/qa-answer` (`lib/qaChat.ts`, 한도는 `lib/qaQuota.ts`, `llm_usage_log` 행 수로 집계) | `QAScreen`, `QAQuestionScreen` |
 | 퀴즈(11개 모듈) | `/api/quiz-result`는 결과를 Supabase에 저장만 한다. 문항·채점은 앱 안(`mobile/lib/quiz/`)에 있고, 루트 `lib/module*.ts`·`lib/quizProfile.ts`는 웹 컴포넌트용 | `ModuleSelectScreen`, `QuizScreen` |
-| AI 상담(20턴) | `/api/chat` (`lib/chat.ts`, `lib/chatPrompts.ts`) | `ChatScreen`, `useReplyScroll` |
+| AI 상담(20턴) | `/api/chat` (`lib/chat.ts`, `lib/chatPrompts.ts`). 모듈별 대화·리포트 설계 데이터는 `lib/modulePlaybooks.ts`(`MODULE_PLAYBOOK.md`의 코드판, 11개 모듈). 현재 챗봇은 7번째 턴 지침만 여기서 읽는다 | `ChatScreen`, `useReplyScroll` |
 | 심층 리포트 | `/api/report`, `/api/report/paid`, `/api/report/unlock`, `/api/report-pdf` | `ReportScreen`, `MyReportsScreen` |
 | 오늘/올해 운세 | `/api/dailyFortune`, `/api/yearFortune` | `FortuneScreen`, `HomeScreen` |
 | 궁합 | `/api/compatibility` | `CompatibilityScreen` |

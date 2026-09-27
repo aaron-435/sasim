@@ -16,10 +16,12 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
   - QA: `npx tsc --noEmit`(루트) → exit 0, 오류 없음 (2026-09-27)
   - 메모(F0-b용): `MODULE_PLAYBOOKS`는 지금 `Partial<Record<…>>`다. 모듈 5~11을 채우면 `Record<PlaybookModuleId, ModulePlaybook>`로 바꿔 누락을 타입으로 막는다. 7번째 턴 문구를 옮길 필드(예: `patternTurnInstruction`)는 F0-b에서 타입에 추가한다.
 
-- [ ] 2. F0-b: 모듈 5~11 데이터 + 7번째 턴 지침 흡수
+- [x] 2. F0-b: 모듈 5~11 데이터 + 7번째 턴 지침 흡수
   - 선행: 1
   - 변경: 모듈 5~11 데이터 추가. `lib/chatPrompts.ts`의 `MODULE_PATTERN_INSTRUCTIONS`를 플레이북 파일에서 읽도록 옮긴다(이 항목에서는 문구를 바꾸지 않아 동작이 같아야 한다).
   - QA: 루트 tsc 통과. 변경 전후로 `buildChatSystemPrompt(7, ctx)`를 11개 모듈에 대해 출력해 비교하는 일회성 스크립트(스크래치 디렉터리)로 7번째 턴 문구가 동일함을 확인.
+  - QA: `npx tsc --noEmit`(루트) → exit 0, 오류 없음. 스크래치 스크립트로 `buildChatSystemPrompt(7, ctx, 0)` 전체 프롬프트를 module1~11 + moduleId 없음 + 알 수 없는 id(13개)에 대해 변경 전/후 JSON으로 저장 → `cmp` 결과 IDENTICAL (2026-09-27)
+  - 메모: `MODULE_PLAYBOOKS`는 이제 `Record<PlaybookModuleId, ModulePlaybook>`. 7번째 턴 문구는 `patternTurnInstruction` 필드로 옮겼고 `chatPrompts.ts`의 `MODULE_PATTERN_INSTRUCTIONS`는 삭제됨. `getModulePlaybook()`은 own-property만 인정(`"toString"` 같은 id로 프로토타입 값이 나오지 않게).
 
 - [ ] 3. F1-a: 대화 추출 확장
   - 선행: 2

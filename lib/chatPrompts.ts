@@ -32,6 +32,7 @@
 
 import type { ElementKey } from "./sajuScore";
 import type { Locale } from "./i18n/types";
+import { getModulePlaybook } from "./modulePlaybooks";
 import { CRISIS_RESOURCES, ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 
 export type Track = "romance" | "career";
@@ -282,23 +283,11 @@ const BREATHER_INSTRUCTION_TEMPLATE = (topic: string) => `이 턴은 숨고르�
 // 8번째 턴은 손대지 않는다.
 const GENERIC_PATTERN_INSTRUCTION = `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 이런 일이나 이런 감정이 이번이 처음인지, 예전에도 비슷하게 반복된 적이 있는지 여는 질문으로 물으세요.`;
 
-const MODULE_PATTERN_INSTRUCTIONS: Record<string, string> = {
-  module1: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 관계가 가까워지거나 멀어지려는 순간에 사용자가 실제로 보인 반응(불안하게 매달리듯 확인하고 싶어지는 쪽이든, 반대로 거리를 두고 발을 빼고 싶어지는 쪽이든)이 이번이 처음인지, 예전 다른 관계에서도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
-  module2: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 돈과 관련해서 결핍감에 쫓기듯 굴거나, 남들 앞에서 괜찮아 보이려 무리하거나, 아예 생각하기 싫어서 피해버렸던 장면이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
-  module3: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 이렇게 지치고 냉소적으로 변하고 "해도 소용없다"는 느낌이 먼저 드는 순간이 이번이 처음인지, 예전 다른 시기에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
-  module4: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 이미지 관리를 위해 진짜 마음을 숨기거나 꾸며낸 장면, 혹은 사람을 만나고 난 뒤 유독 지치는 순간이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
-  module5: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 완벽하게 하려다 오히려 미루거나, 아예 손을 놓거나, 뭘 선택해야 할지 몰라 얼어붙었던 장면이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
-  module6: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 화를 참다가 눌러 삼키거나, 갑자기 터뜨리거나, 지난 뒤에도 그 장면을 계속 곱씹었던 패턴이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
-  module7: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 소리·빛·사람 많은 상황 같은 자극에 압도돼 버거워졌던 순간이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
-  module8: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 잠들기 전 머리가 계속 돌아가거나 몸이 긴장한 채로 남아 뒤척였던 밤이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
-  module9: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 가족과 지나치게 얽히거나, 반대로 마음의 문을 닫아버리거나, 일찍부터 어른 역할을 떠맡았던 장면이 이번 일과 비슷하게 예전에도 반복됐는지 여는 질문으로 물으세요.`,
-  module10: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 산만해져서 손을 못 대거나, 한번 빠지면 시간 가는 줄 모르거나, 순간적으로 확 저질러버렸던 패턴이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
-  module11: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 하고 싶은 말이나 행동을 삼키거나, 확신이 없어서 물러섰던 장면이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
-};
-
+// 2026-09-27 (TODO F0-b): 모듈별 7번째 턴 문구는 lib/modulePlaybooks.ts의
+// patternTurnInstruction으로 옮겼다(문구 동일). 플레이북이 없는 moduleId는
+// 여전히 GENERIC_PATTERN_INSTRUCTION으로 폴백한다.
 function buildPatternPhaseInstruction(moduleId?: string): string {
-  if (moduleId && MODULE_PATTERN_INSTRUCTIONS[moduleId]) return MODULE_PATTERN_INSTRUCTIONS[moduleId];
-  return GENERIC_PATTERN_INSTRUCTION;
+  return getModulePlaybook(moduleId)?.patternTurnInstruction ?? GENERIC_PATTERN_INSTRUCTION;
 }
 
 // quizAnswerPool 재활용 — 4개 턴(4·7·11·14)에 서로 다른 퀴즈 답변을 소재로

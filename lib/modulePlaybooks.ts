@@ -6,7 +6,8 @@
  * 모듈 전용 페이지 2장(module_map 무료, module_deep 유료)에 무엇을 쓰는지를
  * 정한다.
  *
- * 이 파일은 데이터만 담는다. 챗봇 프롬프트(lib/chatPrompts.ts), 추출
+ * 이 파일은 데이터만 담는다(예외: 7번째 턴 지침은 lib/chatPrompts.ts가 이미
+ * 읽는다). 챗봇 프롬프트(lib/chatPrompts.ts), 추출
  * 프롬프트, 리포트 프롬프트(lib/reportPrompts.ts)가 이 데이터를 읽는 건 각
  * 작업 항목(SPEC F1, Q1)에서 연결한다.
  *
@@ -19,7 +20,9 @@
  *     추출 필드 설명, 리포트 작성 지시, 강점 방향)은 기존 프롬프트 관례대로
  *     한국어로 쓴다. 출력 언어는 lib/promptLocale.ts가 따로 지정한다.
  *
- * 2026-09-27: 모듈 1~4 추가(TODO F0-a). 모듈 5~11은 F0-b에서 채운다.
+ * 2026-09-27: 모듈 1~4 추가(TODO F0-a).
+ * 2026-09-27: 모듈 5~11 추가, 7번째 턴 지침(patternTurnInstruction)을
+ *   lib/chatPrompts.ts에서 옮겨 옴(TODO F0-b). 문구는 그대로다.
  * ------------------------------------------------------------------
  */
 
@@ -449,20 +452,576 @@ const MODULE4: ModulePlaybook = {
   patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 이미지 관리를 위해 진짜 마음을 숨기거나 꾸며낸 장면, 혹은 사람을 만나고 난 뒤 유독 지치는 순간이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
 };
 
-/**
- * 모듈 5~11은 TODO F0-b에서 채운다. 그 전까지 없는 모듈은
- * getModulePlaybook()이 undefined를 돌려주고, 호출하는 쪽은 기존 공통 지침으로
- * 폴백한다.
- */
-export const MODULE_PLAYBOOKS: Partial<Record<PlaybookModuleId, ModulePlaybook>> = {
+const MODULE5: ModulePlaybook = {
+  id: "module5",
+  lens: "정서 조절로서의 미루기(미루기는 게으름이 아니라 불편한 감정을 잠깐 피하는 행동)와 다차원 완벽주의(스스로 부과한 기준, 남이 기대한다고 느끼는 기준), 최대화 경향(최선의 선택을 찾느라 멈춤).",
+  boundary: "몰입(모듈 10)은 시작한 뒤 주의가 흩어지거나 빠지는 걸 보고, 실행력은 시작하기 직전에 무엇이 브레이크를 거는지를 본다.",
+  signatureQuestion: {
+    ko: "그 일을 열어 보려던 직전 3초, 어떤 생각이 스쳤어요?",
+    en: "In the three seconds right before you were about to open that task, what thought went through your mind?",
+    es: "En los tres segundos justo antes de ponerte con esa tarea, ¿qué pensamiento se te cruzó por la cabeza?",
+  },
+  signatureStage: "B",
+  stages: {
+    A: "최근 미뤄 둔 일 하나와, 그걸 열어 보려다 닫은 순간을 묻는다.",
+    B: "시그니처 질문(직전 3초)으로 그때 스친 생각을 묻고, 그 순간 피하고 싶었던 감정이 무엇인지 좁힌다.",
+    C: "멈추는 지점이 시작인지, 중간인지, 마무리인지 보고, 비슷한 일에서 반복되는지 묻는다.",
+    D: "그 기준이 누구의 기준인지(내 기준인지, 남이 기대한다고 느끼는 기준인지), 틀리면 무슨 일이 일어날 것 같은지 묻는다.",
+    E: "결국 움직이게 했던 조건(마감, 누군가의 존재, 작게 쪼개기)을 묻는다.",
+    F: "주변에서 내 미루기를 어떻게 보는지, 누구의 평가가 가장 신경 쓰이는지 묻는다.",
+    G: "'적당히 괜찮게' 해낸 장면을 상상하면 어떤지 묻는다.",
+  },
+  perspectiveShift: {
+    speaker: "그 일을 이미 끝낸 1년 뒤의 나",
+    listener: "지금의 나",
+    why: "미래의 나와 이어지면 시작의 브레이크가 풀린다. 1년 뒤의 내가 지금의 나에게 보내는 말을 묻는다.",
+  },
+  forcedChoiceAxes: [
+    {
+      name: "완벽주의",
+      options: [
+        { ko: "잘해야 해서 못 시작했어요", en: "I couldn't start because it had to be good", es: "No empecé porque tenía que salir bien" },
+        { ko: "하기 싫어서 미뤘어요", en: "I put it off because I didn't want to do it", es: "Lo dejé para después porque no tenía ganas" },
+      ],
+    },
+    {
+      name: "회피",
+      options: [
+        { ko: "마감 직전에 몰아쳐요", en: "I rush it right before the deadline", es: "Lo hago todo de golpe justo antes del plazo" },
+        { ko: "끝내 못 할 때도 있어요", en: "Sometimes it never gets done", es: "A veces nunca llego a hacerlo" },
+      ],
+    },
+    {
+      name: "선택마비",
+      options: [
+        { ko: "선택지가 많아서요", en: "There were too many options", es: "Había demasiadas opciones" },
+        { ko: "틀릴까 봐서요", en: "I was afraid of getting it wrong", es: "Tenía miedo de equivocarme" },
+      ],
+    },
+  ],
+  emotionPalette: [
+    { ko: "초조함", en: "restlessness", es: "inquietud" },
+    { ko: "죄책감", en: "guilt", es: "culpa" },
+    { ko: "미룬 뒤의 안도", en: "relief after putting it off", es: "alivio después de posponerlo" },
+  ],
+  contradictions: [
+    "기준은 높은데 시작을 안 한다.",
+    "미루면서도 계속 그 일을 생각한다.",
+  ],
+  reframe: {
+    selfBlame: "나는 게을러",
+    direction: "잘하고 싶은 마음이 너무 커서 브레이크가 먼저 밟히는 것",
+  },
+  extractFields: [
+    { key: "pre_start_thought", description: "시작 직전에 스치는 생각(사용자 표현을 살려서)" },
+    { key: "move_condition", description: "그래도 움직이게 했던 조건(마감, 누군가의 존재, 작게 쪼개기 등)" },
+  ],
+  reportPages: {
+    module_map: {
+      title: { ko: "브레이크가 걸리는 지점", en: "Where the brakes kick in", es: "Dónde se activa el freno" },
+      instruction: "시작 직전 3초에 스치는 생각과 그 순간 피하는 감정을 대화에 나온 실제 일로 그린다. 멈추는 지점(시작, 중간, 마무리)과 그 기준이 누구의 것인지 짚되, 게으름이라는 평가로 들리지 않게 쓴다.",
+    },
+    module_deep: {
+      title: { ko: "나에게 맞는 시작 장치", en: "Starting devices that fit you", es: "Mecanismos de arranque hechos a tu medida" },
+      instruction: "이 사람이 실제로 움직였던 조건에서 만든 구체적인 시작 장치 3개를 제시한다. 일반적인 생산성 팁이나 앱 추천은 쓰지 않는다.",
+    },
+  },
+  strengthDirections: ["높은 기준", "신중함", "몰아칠 때의 추진력"],
+  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 완벽하게 하려다 오히려 미루거나, 아예 손을 놓거나, 뭘 선택해야 할지 몰라 얼어붙었던 장면이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+};
+
+const MODULE6: ModulePlaybook = {
+  id: "module6",
+  lens: "2차 감정으로서의 분노(화 아래 깔린 1차 감정: 상처, 두려움, 무시당함)와 분노 반추, 그리고 경계. 화를 없앨 대상이 아니라 침범된 선을 알리는 신호로 본다.",
+  boundary: "본능(모듈 11)은 원하는 걸 삼키는 걸 보고, 분노는 선이 침범됐을 때 올라온 에너지가 어디로 가는지를 본다.",
+  signatureQuestion: {
+    ko: "그 화를 한 겹 벗기면 아래에 뭐가 있었을까요? 억울함이었어요, 서운함이었어요, 무시당한 느낌이었어요?",
+    en: "If you peeled back one layer of that anger, what would be underneath? Was it feeling wronged, feeling hurt, or feeling dismissed?",
+    es: "Si le quitaras una capa a ese enfado, ¿qué habría debajo? ¿Sentiste que era injusto, que te dolió o que no te tomaban en cuenta?",
+  },
+  signatureStage: "B",
+  stages: {
+    A: "최근 화가 났던 순간과, 상대가 정확히 한 말이나 행동을 묻는다.",
+    B: "시그니처 질문으로 화 아래에 깔린 감정을 좁힌다.",
+    C: "그 화가 어디로 갔는지(삼킴, 터짐, 곱씹음) 보고, 같은 경로가 반복되는지 묻는다.",
+    D: "그 순간 침범된 선이 무엇이었는지, 그 선이 나에게 왜 중요한지 묻는다.",
+    E: "화가 지나간 뒤에 하는 일과, 곱씹는 시간이 얼마나 되는지 묻는다.",
+    F: "화를 표현했을 때 돌아온 반응과, 화를 편하게 낼 수 있는 사람이 있는지 묻는다.",
+    G: "선을 말로 그을 수 있다면 어떤 문장일지 묻는다.",
+  },
+  perspectiveShift: {
+    speaker: "화가 가라앉은 다음 날 아침의 나",
+    listener: "화가 치밀던 그 순간의 나",
+    why: "식은 뒤의 내가 그 선이 왜 중요했는지 말해 준다. 다음 날 아침의 내가 그 순간의 나에게 해 주는 말을 묻는다.",
+  },
+  forcedChoiceAxes: [
+    {
+      name: "억압",
+      options: [
+        { ko: "그 자리에서 말했어요", en: "I said something right then", es: "Lo dije en ese mismo momento" },
+        { ko: "삼켰어요", en: "I swallowed it", es: "Me lo tragué" },
+      ],
+    },
+    {
+      name: "폭발",
+      options: [
+        { ko: "크게 올라왔어요", en: "It came up hard", es: "Me subió de golpe" },
+        { ko: "오래 남았어요", en: "It stayed with me for a long time", es: "Se me quedó mucho tiempo" },
+      ],
+    },
+    {
+      name: "반추",
+      options: [
+        { ko: "상대에게 향했어요", en: "It was aimed at them", es: "Fue hacia la otra persona" },
+        { ko: "나 자신에게 향했어요", en: "It turned on myself", es: "Se volvió contra mí" },
+      ],
+    },
+  ],
+  emotionPalette: [
+    { ko: "억울함", en: "feeling wronged", es: "sensación de injusticia" },
+    { ko: "서운함", en: "hurt", es: "dolor" },
+    { ko: "무시당한 느낌", en: "feeling dismissed", es: "sentir que no te toman en cuenta" },
+    { ko: "무력감", en: "helplessness", es: "impotencia" },
+  ],
+  contradictions: [
+    "참는다면서 나중에 터진다.",
+    "괜찮다면서 계속 곱씹는다.",
+  ],
+  reframe: {
+    selfBlame: "나는 성격이 나빠",
+    direction: "지키고 싶은 선이 분명하다는 신호",
+  },
+  extractFields: [
+    { key: "anger_underneath", description: "화 아래에 깔린 1차 감정(억울함, 서운함, 무시당한 느낌 등)" },
+    { key: "crossed_line", description: "그 순간 침범된 선(지키고 싶었던 것)" },
+  ],
+  reportPages: {
+    module_map: {
+      title: { ko: "화의 빙산", en: "The anger iceberg", es: "El iceberg del enfado" },
+      instruction: "겉으로 보인 화, 그 아래의 감정, 침범된 선을 대화에 나온 실제 장면으로 세 층으로 그린다. 화가 어디로 갔는지(삼킴, 터짐, 곱씹음)를 짚되 화 자체를 나쁜 것으로 쓰지 않는다.",
+    },
+    module_deep: {
+      title: { ko: "선을 말로 긋는 법", en: "Drawing your line in words", es: "Cómo poner tus límites en palabras" },
+      instruction: "이 사람의 상황과 상대에 맞춘 경계 문장 2~3개를 이 사람의 말투로 제시한다. 상대를 공격하거나 관계를 끊으라는 식으로 쓰지 않는다.",
+    },
+  },
+  strengthDirections: ["정의감", "솔직함", "자기를 지키는 감각"],
+  caution: "타인이나 자신을 해치는 언급이 나오면 규칙 0 안전 프로토콜이 우선한다.",
+  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 화를 참다가 눌러 삼키거나, 갑자기 터뜨리거나, 지난 뒤에도 그 장면을 계속 곱씹었던 패턴이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+};
+
+const MODULE7: ModulePlaybook = {
+  id: "module7",
+  lens: "감각 처리 민감성의 네 가지 결(깊이 처리하기, 쉽게 과부하되기, 정서 반응이 크기, 미묘한 것을 알아채기). 약점이 아니라 타고난 처리 방식으로 본다.",
+  boundary: "가면(모듈 4)의 관계피로는 연기 비용이고, 예민함은 자극 자체를 깊이 받아들이는 신경계의 방식이다. 번아웃(모듈 3)과 달리 일의 양이 아니라 환경의 자극을 본다.",
+  signatureQuestion: {
+    ko: "다른 사람은 못 느끼는데 나만 먼저 알아채는 것, 뭐가 있어요?",
+    en: "What's something you pick up on before anyone else does, something other people don't seem to notice?",
+    es: "¿Qué es algo que tú notas antes que nadie, algo que a los demás parece pasárseles?",
+  },
+  signatureStage: "D",
+  stages: {
+    A: "최근 버거웠던 환경(소리, 빛, 냄새, 사람 많은 자리)과 어떤 자극이 먼저 들어왔는지 묻는다.",
+    B: "압도됐을 때의 느낌을 좁힌다. 짜증인지, 멍해짐인지, 도망치고 싶음인지.",
+    C: "과부하가 오는 상황들과, 회복하는 데 걸리는 시간을 묻는다.",
+    D: "시그니처 질문으로 미묘한 것을 알아채는 감각을 묻고, '예민하다'는 말을 처음 들은 기억을 묻는다.",
+    E: "과부하 뒤 회복하는 방법과, 충전되는 자극(자연, 음악, 혼자만의 공간)을 묻는다.",
+    F: "주변이 내 예민함을 어떻게 대하는지, 그걸 이해해 주는 사람이 있는지 묻는다.",
+    G: "내 감각에 맞는 하루라면 어떤 모습일지 묻는다.",
+  },
+  perspectiveShift: {
+    speaker: "지금의 나",
+    listener: "'너무 예민하다'는 말을 듣고 있는 어린아이",
+    why: "그 말을 처음 들은 기억(단계 D)과 이어진다. 그 아이에게 해 주고 싶은 말을 묻는다.",
+  },
+  forcedChoiceAxes: [
+    {
+      name: "자극과부하",
+      options: [
+        { ko: "소리나 빛 같은 감각이었어요", en: "It was sensory, like noise or light", es: "Fue algo sensorial, como el ruido o la luz" },
+        { ko: "사람들의 감정이었어요", en: "It was other people's emotions", es: "Fueron las emociones de la gente" },
+      ],
+    },
+    {
+      name: "낮은감각역치",
+      options: [
+        { ko: "자리를 떴어요", en: "I left", es: "Me fui de allí" },
+        { ko: "참고 버텼어요", en: "I pushed through it", es: "Aguanté como pude" },
+      ],
+    },
+    {
+      name: "심미적민감성",
+      options: [
+        { ko: "아름다운 것에 깊이 흔들려요", en: "Beautiful things move me deeply", es: "Las cosas bellas me conmueven profundamente" },
+        { ko: "그런 편은 아니에요", en: "Not really", es: "No tanto" },
+      ],
+    },
+  ],
+  emotionPalette: [
+    { ko: "압도됨", en: "overwhelm", es: "agobio" },
+    { ko: "짜증", en: "irritation", es: "irritación" },
+    { ko: "깊은 감동", en: "being deeply moved", es: "emoción profunda" },
+  ],
+  contradictions: [
+    "사람을 좋아하면서 금방 지친다.",
+    "예민한 게 싫다면서 그 덕분에 남들이 못 보는 걸 알아챈다.",
+  ],
+  reframe: {
+    selfBlame: "내가 유난이야",
+    direction: "남들보다 더 깊이, 더 많이 처리하는 신경계를 가진 것",
+  },
+  extractFields: [
+    { key: "drain_stimulus", description: "소모시키는 자극(소리, 빛, 사람 많은 자리, 다른 사람의 감정 등)" },
+    { key: "charge_stimulus", description: "충전되는 자극(자연, 음악, 혼자만의 공간 등)" },
+  ],
+  reportPages: {
+    module_map: {
+      title: { ko: "나의 감각 프로필", en: "Your sensory profile", es: "Tu perfil sensorial" },
+      instruction: "네 가지 결(깊이 처리, 과부하, 큰 정서 반응, 미묘한 것 알아채기) 중 이 사람에게 두드러진 것과, 소모시키는 자극과 충전되는 자극을 대화 재료로 그린다. 예민함을 고쳐야 할 결함으로 쓰지 않는다.",
+    },
+    module_deep: {
+      title: { ko: "내 신경계에 맞는 환경 설계", en: "Designing surroundings that suit your nervous system", es: "Un entorno a la medida de tu sistema nervioso" },
+      instruction: "공간, 일정, 관계에서 이 사람이 실제로 바꿀 수 있는 것을 이 사람의 소모·충전 자극에 맞춰 구체적으로 제시한다.",
+    },
+  },
+  strengthDirections: ["섬세한 관찰력", "깊은 공감", "미적 감각"],
+  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 소리·빛·사람 많은 상황 같은 자극에 압도돼 버거워졌던 순간이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+};
+
+const MODULE8: ModulePlaybook = {
+  id: "module8",
+  lens: "잠들기 전 각성(생각이 도는 인지적 각성, 몸이 풀리지 않는 신체적 각성)과 수면 문제의 3P 관점(원래 가진 경향, 시작된 계기, 계속되게 만드는 습관). 밤을 하루의 연장선으로 본다.",
+  boundary: "번아웃(모듈 3)은 낮의 자원 고갈을 보고, 수면은 하루가 끝나도 꺼지지 않는 각성을 본다.",
+  signatureQuestion: {
+    ko: "불 끄고 누운 뒤 첫 10분을 영상처럼 틀어 본다면, 머릿속에서 뭐가 재생돼요?",
+    en: "If you played back the first ten minutes after you turn off the light like a video, what's running through your head?",
+    es: "Si pudieras ver como un video los primeros diez minutos después de apagar la luz, ¿qué se reproduce en tu cabeza?",
+  },
+  signatureStage: "A",
+  stages: {
+    A: "최근 잠들지 못한 밤을 묻고, 시그니처 질문(첫 10분 재생)으로 그때 머릿속을 묻는다.",
+    B: "그때의 감정을 좁힌다. 초조함인지, 불안인지, 억울함인지.",
+    C: "생각이 먼저 도는지, 몸이 먼저 긴장하는지 보고, 잠이 흐트러지기 시작한 시기와 계기를 묻는다.",
+    D: "밤이 하루 중 유일한 내 시간인지, 잠드는 걸 미루게 되는 이유를 묻는다.",
+    E: "잠들려고 해 본 것들과, 그게 오히려 각성을 키우는지 묻는다.",
+    F: "같이 사는 사람이나 낮의 관계가 밤에 따라 들어오는지 묻는다.",
+    G: "편하게 잠드는 밤이라면 어떤 장면일지 묻는다.",
+  },
+  perspectiveShift: {
+    speaker: "지금의 나",
+    listener: "오늘 밤 불을 끄고 누울 나",
+    why: "밤의 각성을 낮에 미리 내려놓는 연습이 된다. 오늘 밤의 나에게 미리 건네 두고 싶은 말을 묻는다.",
+  },
+  forcedChoiceAxes: [
+    {
+      name: "인지적각성",
+      options: [
+        { ko: "생각이 멈추지 않았어요", en: "My thoughts wouldn't stop", es: "No podía parar de pensar" },
+        { ko: "몸이 풀리지 않았어요", en: "My body wouldn't relax", es: "Mi cuerpo no se relajaba" },
+      ],
+    },
+    {
+      name: "반추방향",
+      options: [
+        { ko: "내일 걱정이었어요", en: "I was worrying about tomorrow", es: "Me preocupaba el día siguiente" },
+        { ko: "오늘 곱씹기였어요", en: "I was going over today", es: "Le daba vueltas a lo que pasó hoy" },
+      ],
+    },
+    {
+      name: "무의식누수",
+      options: [
+        { ko: "꿈이 선명하게 남아요", en: "My dreams stay vivid", es: "Recuerdo los sueños con claridad" },
+        { ko: "거의 기억 안 나요", en: "I barely remember them", es: "Casi no los recuerdo" },
+      ],
+    },
+  ],
+  emotionPalette: [
+    { ko: "초조함", en: "restlessness", es: "inquietud" },
+    { ko: "불안", en: "anxiety", es: "ansiedad" },
+    { ko: "억울함", en: "resentment", es: "rabia contenida" },
+    { ko: "외로움", en: "loneliness", es: "soledad" },
+  ],
+  contradictions: [
+    "피곤한데 잠들기 싫다.",
+    "하루 중 내 시간이 밤뿐이라 놓기 아깝다.",
+  ],
+  reframe: {
+    selfBlame: "잠도 제대로 못 자는 나",
+    direction: "낮에 처리할 틈이 없던 것을 밤에 처리하고 있는 것",
+  },
+  extractFields: [
+    { key: "night_replay", description: "밤에 재생되는 주제(무엇이 어떤 순서로 떠오르는지)" },
+    { key: "arousal_type", description: "인지적 각성인지 신체적 각성인지(사용자 표현 그대로)" },
+  ],
+  reportPages: {
+    module_map: {
+      title: { ko: "밤의 재생 목록", en: "Your nighttime playlist", es: "Tu lista de reproducción nocturna" },
+      instruction: "불을 끈 뒤 무엇이 어떤 순서로 떠오르는지를 대화 재료로 그리고, 생각이 먼저인지 몸이 먼저인지 짚는다. 수면 위생 일반론은 쓰지 않는다.",
+    },
+    module_deep: {
+      title: { ko: "하루를 닫는 순서", en: "The order for closing your day", es: "El orden para cerrar tu día" },
+      instruction: "낮의 긴장을 밤 전에 내려놓는 이 사람만의 순서를 이 사람의 재생 목록과 하루 흐름에 맞춰 단계로 제시한다.",
+    },
+  },
+  strengthDirections: ["깊이 생각하는 힘", "책임감", "풍부한 내면"],
+  caution: "불면증 같은 진단명, 약, 수면 보조제 언급을 하지 않는다.",
+  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 잠들기 전 머리가 계속 돌아가거나 몸이 긴장한 채로 남아 뒤척였던 밤이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+};
+
+const MODULE9: ModulePlaybook = {
+  id: "module9",
+  lens: "가족 체계 이론. 자기 분화(가족과 연결된 채로 나로 존재하는 정도), 삼각관계(두 사람의 갈등에 끌려 들어가는 제3자), 정서적 단절, 그리고 부모화(도구적 부모화: 집안일과 돌봄 / 정서적 부모화: 부모의 감정 받아 주기).",
+  boundary: "애착(모듈 1)은 지금의 친밀한 관계를 보고, 원가족은 가족이라는 체계 안에서 내가 맡은 자리와 그게 지금까지 따라오는 방식을 본다.",
+  signatureQuestion: {
+    ko: "가족 안에서 내 자리에 이름을 붙인다면요? 중재자, 보호자, 착한 아이, 조용한 아이… 어떤 게 가까워요?",
+    en: "If you gave your place in your family a name, what would it be? The peacekeeper, the protector, the good kid, the quiet one... which feels closest?",
+    es: "Si le pusieras nombre a tu lugar en la familia, ¿cuál sería? ¿La persona que media, la que protege, la que siempre se porta bien, la que no hace ruido...? ¿Cuál se acerca más?",
+  },
+  signatureStage: "C",
+  stages: {
+    A: "최근 가족과의 통화나 만남과, 끝나고 남은 느낌을 묻는다.",
+    B: "그 뒤의 감정을 좁힌다. 죄책감인지, 서운함인지, 무거운 책임감인지.",
+    C: "시그니처 질문으로 가족 안의 내 자리를 묻고, 그 자리를 언제부터 맡았는지 묻는다.",
+    D: "가족 사이 갈등에 끌려 들어간 경험(삼각관계)과, 그 자리를 내려놓으면 무슨 일이 일어날 것 같은지 묻는다.",
+    E: "가족과의 거리를 조절하는 방법(연락 빈도, 선 긋기)을 묻는다.",
+    F: "가족 안의 그 역할이 지금 친구나 연인, 직장에서도 반복되는지 묻는다.",
+    G: "가족과 연결된 채로 나로 있을 수 있다면 어떤 모습일지 묻는다.",
+  },
+  perspectiveShift: {
+    speaker: "지금의 나",
+    listener: "그 집에서 너무 일찍 어른이 되어야 했던 어린 나",
+    why: "부모화된 자리를 어른이 된 내가 알아봐 준다. 그 어린 나에게 해 주고 싶은 말을 묻는다.",
+  },
+  forcedChoiceAxes: [
+    {
+      name: "정서적얽힘",
+      options: [
+        { ko: "너무 가까워서 힘들어요", en: "It's hard because we're too close", es: "Me cuesta porque estamos demasiado cerca" },
+        { ko: "너무 멀어서 힘들어요", en: "It's hard because we're too distant", es: "Me cuesta porque estamos demasiado lejos" },
+      ],
+    },
+    {
+      name: "역할부담",
+      options: [
+        { ko: "챙기는 쪽이었어요", en: "I was the one taking care of others", es: "Yo era quien cuidaba de los demás" },
+        { ko: "챙김받는 쪽이었어요", en: "I was the one being taken care of", es: "Yo era a quien cuidaban" },
+      ],
+    },
+    {
+      name: "정서적단절",
+      options: [
+        { ko: "연락 뒤에 죄책감이 남아요", en: "I'm left with guilt after we talk", es: "Después de hablar me queda culpa" },
+        { ko: "피로가 남아요", en: "I'm left drained", es: "Me queda el cansancio" },
+      ],
+    },
+  ],
+  emotionPalette: [
+    { ko: "죄책감", en: "guilt", es: "culpa" },
+    { ko: "서운함", en: "hurt", es: "dolor" },
+    { ko: "무거운 책임감", en: "a heavy sense of responsibility", es: "un peso de responsabilidad" },
+    { ko: "해방감", en: "a sense of release", es: "sensación de liberación" },
+  ],
+  contradictions: [
+    "거리를 두면서도 계속 신경 쓴다.",
+    "벗어나고 싶은데 그 역할을 놓지 못한다.",
+  ],
+  reframe: {
+    selfBlame: "나는 못된 자식이야",
+    direction: "너무 일찍 어른의 자리를 맡았던 사람이 이제 자기 자리를 찾으려는 것",
+  },
+  extractFields: [
+    { key: "family_role", description: "가족 안에서 내 자리의 이름(사용자 표현 그대로)" },
+    { key: "role_carryover", description: "그 역할이 지금 옮겨 온 다른 관계(친구, 연인, 직장 등)" },
+  ],
+  reportPages: {
+    module_map: {
+      title: { ko: "가족 안의 내 자리", en: "Your place in the family", es: "Tu lugar en la familia" },
+      instruction: "이 사람이 가족 안에서 맡은 자리의 이름, 언제부터 맡았는지, 지금 어느 관계로 옮겨 왔는지를 대화 재료로 그린다. 가족 구성원을 탓하는 문장으로 쓰지 않는다.",
+    },
+    module_deep: {
+      title: { ko: "연결된 채로 나로 있기", en: "Staying connected while staying yourself", es: "Seguir en contacto sin dejar de ser tú" },
+      instruction: "가족과의 거리 조절과 선 긋기를 이 사람의 실제 연락 방식과 상황에 맞춰 구체적으로 제시한다. 연을 끊으라거나 화해하라는 결론을 내리지 않는다.",
+    },
+  },
+  strengthDirections: ["책임감", "돌보는 힘", "갈등을 읽는 감각"],
+  caution: "부모나 형제 구성을 가정하지 않는다. 성별 중립으로 쓴다(한부모, 조부모 양육, 입양, 위탁 등 모두 자연스럽게 읽혀야 한다).",
+  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 가족과 지나치게 얽히거나, 반대로 마음의 문을 닫아버리거나, 일찍부터 어른 역할을 떠맡았던 장면이 이번 일과 비슷하게 예전에도 반복됐는지 여는 질문으로 물으세요.`,
+};
+
+const MODULE10: ModulePlaybook = {
+  id: "module10",
+  lens: "몰입 이론(도전과 실력이 맞을 때 몰입이 켜진다)과 주의 잔여(한 일에서 다른 일로 넘어갈 때 주의가 남아 흩어지는 현상), 보상 민감성(새로움과 즉각적 보상에 끌리는 정도). 주의를 의지가 아니라 조건의 문제로 본다.",
+  boundary: "실행력(모듈 5)은 시작 직전의 브레이크를 보고, 몰입은 시작한 뒤 주의가 흩어지거나 과하게 빠지는 조건을 본다.",
+  signatureQuestion: {
+    ko: "시간 가는 줄 몰랐던 마지막 순간은 뭘 할 때였어요? 그때 일이 쉬웠어요, 딱 적당히 어려웠어요?",
+    en: "The last time you completely lost track of time, what were you doing? Was it easy, or just the right amount of hard?",
+    es: "La última vez que se te pasó el tiempo volando, ¿qué estabas haciendo? ¿Era fácil o tenía justo la dificultad adecuada?",
+  },
+  signatureStage: "C",
+  stages: {
+    A: "최근 집중이 흩어진 순간과, 무엇이 주의를 가져갔는지 묻는다.",
+    B: "흩어질 때의 감정을 좁힌다. 답답함인지, 들뜸인지, 자책인지.",
+    C: "시그니처 질문으로 몰입의 조건을 묻고, 흩어지는 조건과 불붙는 조건이 어떻게 다른지 묻는다.",
+    D: "'집중 못 하는 사람'이라는 말을 들어 온 경험과, 그 말이 나를 어떻게 바꿨는지 묻는다.",
+    E: "집중하려고 쓰는 방법과, 순간적으로 저질렀던 결정과 그 뒤의 느낌을 묻는다.",
+    F: "주변이 내 집중 방식을 어떻게 보는지, 나와 리듬이 맞는 사람이 있는지 묻는다.",
+    G: "내 주의 방식에 맞춘 하루라면 어떤 모습일지 묻는다.",
+  },
+  perspectiveShift: {
+    speaker: "시간 가는 줄 모르고 빠져 있던 그 순간의 나",
+    listener: "흩어져 있는 지금의 나",
+    why: "같은 사람 안에 이미 몰입 조건이 있다는 걸 보게 한다. 그 순간의 내가 지금의 나에게 해 줄 말을 묻는다.",
+  },
+  forcedChoiceAxes: [
+    {
+      name: "산만함",
+      options: [
+        { ko: "시작이 어려워요", en: "Getting started is the hard part", es: "Lo difícil es empezar" },
+        { ko: "유지가 어려워요", en: "Keeping it going is the hard part", es: "Lo difícil es mantenerme" },
+      ],
+    },
+    {
+      name: "과집중",
+      options: [
+        { ko: "흥미가 있을 때만 켜져요", en: "It only switches on when I'm interested", es: "Solo se enciende cuando algo me interesa" },
+        { ko: "압박이 있을 때 켜져요", en: "It switches on under pressure", es: "Se enciende cuando hay presión" },
+      ],
+    },
+    {
+      name: "충동성",
+      options: [
+        { ko: "저지르고 후회했어요", en: "I jumped in and regretted it", es: "Me lancé y me arrepentí" },
+        { ko: "저지르고 만족했어요", en: "I jumped in and was glad I did", es: "Me lancé y me alegré de hacerlo" },
+      ],
+    },
+  ],
+  emotionPalette: [
+    { ko: "답답함", en: "frustration", es: "frustración" },
+    { ko: "들뜸", en: "restless excitement", es: "entusiasmo inquieto" },
+    { ko: "후회", en: "regret", es: "arrepentimiento" },
+    { ko: "몰입의 쾌감", en: "the thrill of being absorbed", es: "el gusto de estar absorto en algo" },
+  ],
+  contradictions: [
+    "산만하다면서 어떤 일에는 몇 시간씩 빠진다.",
+  ],
+  reframe: {
+    selfBlame: "나는 의지가 약해",
+    direction: "관심과 적당한 도전이 연료인 방식으로 움직이는 것",
+  },
+  extractFields: [
+    { key: "focus_on", description: "몰입이 켜지는 조건(어떤 일, 어떤 난이도, 어떤 환경)" },
+    { key: "focus_off", description: "주의가 흩어지는 조건" },
+  ],
+  reportPages: {
+    module_map: {
+      title: { ko: "집중 스위치", en: "Your focus switch", es: "Tu interruptor de concentración" },
+      instruction: "몰입이 켜지는 조건과 꺼지는 조건을 대화에 나온 실제 장면으로 나란히 그린다. 주의를 의지나 성격 문제로 쓰지 않는다.",
+    },
+    module_deep: {
+      title: { ko: "몰입을 설계하는 법", en: "How to design for focus", es: "Cómo diseñar tu concentración" },
+      instruction: "도전 수준 맞추기, 전환 비용 줄이기 등 이 사람의 켜짐·꺼짐 조건에 맞춘 구체적 장치를 제시한다. 일반적인 집중법 목록은 쓰지 않는다.",
+    },
+  },
+  strengthDirections: ["폭발적 몰입력", "호기심", "빠른 실행력"],
+  caution: "ADHD 같은 진단명이나 '증상'이라는 말을 쓰지 않는다.",
+  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 산만해져서 손을 못 대거나, 한번 빠지면 시간 가는 줄 모르거나, 순간적으로 확 저질러버렸던 패턴이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+};
+
+const MODULE11: ModulePlaybook = {
+  id: "module11",
+  lens: "자기 침묵(관계를 지키려고 내 생각과 욕구를 스스로 누르는 것)과 자기결정성 이론의 자율성(내가 선택했다고 느끼는 정도), 행동 억제와 접근 동기(원하는 걸 향해 가는 힘과 멈추게 하는 힘의 균형).",
+  boundary: "가면(모듈 4)은 남에게 보여 주는 모습을 관리하고, 분노(모듈 6)는 침범당한 뒤의 반응이다. 본능은 내가 무엇을 원하는지 알아차리고 스스로 허락하는 힘을 본다.",
+  signatureQuestion: {
+    ko: "최근에 입 밖으로 나오기 직전에 삼킨 문장이 있다면, 그대로 옮겨 볼 수 있어요?",
+    en: "Is there a sentence you swallowed recently, right before it came out? Could you write it here just as it was?",
+    es: "¿Hay alguna frase que te hayas tragado hace poco, justo antes de decirla? ¿Podrías escribirla aquí tal cual?",
+  },
+  signatureStage: "A",
+  stages: {
+    A: "최근 하고 싶은 말이나 행동을 삼킨 순간을 묻고, 시그니처 질문으로 삼킨 한 문장을 묻는다.",
+    B: "삼킨 뒤의 감정을 좁힌다. 답답함인지, 아쉬움인지, 안도인지.",
+    C: "어떤 자리에서 주로 삼키는지, '아무거나', '괜찮아'를 얼마나 자주 말하는지 묻는다.",
+    D: "원하는 걸 말했을 때 돌아왔던 반응과, 원하는 걸 드러내면 무슨 일이 일어날 것 같은지 묻는다.",
+    E: "삼킨 욕구가 어디로 가는지(잊기, 혼자 채우기, 나중에 터지기) 묻는다.",
+    F: "원하는 걸 편하게 말할 수 있는 사람이 있는지, 그 사람 앞에서는 무엇이 다른지 묻는다.",
+    G: "나에게 작은 허락을 준다면 무엇부터일지 묻는다.",
+  },
+  perspectiveShift: {
+    speaker: "하고 싶은 걸 거리낌 없이 말하던 어린 시절의 나",
+    listener: "지금의 나",
+    why: "삼키기 전의 목소리가 원래 내 것이었음을 떠올린다. 그 시절의 내가 지금의 나에게 해 줄 말을 묻는다.",
+  },
+  forcedChoiceAxes: [
+    {
+      name: "표현억제",
+      options: [
+        { ko: "말하고 싶었어요", en: "I wanted to say something", es: "Quería decir algo" },
+        { ko: "해 보고 싶었어요", en: "I wanted to do something", es: "Quería hacer algo" },
+      ],
+    },
+    {
+      name: "즉흥성억제",
+      options: [
+        { ko: "튈까 봐서요", en: "I didn't want to stand out", es: "No quería llamar la atención" },
+        { ko: "틀릴까 봐서요", en: "I was afraid of being wrong", es: "Tenía miedo de equivocarme" },
+      ],
+    },
+    {
+      name: "확신부족",
+      options: [
+        { ko: "나중에 후회했어요", en: "I regretted it later", es: "Después me arrepentí" },
+        { ko: "오히려 안도했어요", en: "I was actually relieved", es: "En realidad sentí alivio" },
+      ],
+    },
+  ],
+  emotionPalette: [
+    { ko: "답답함", en: "frustration", es: "frustración" },
+    { ko: "아쉬움", en: "a sense of missed chance", es: "la sensación de haberlo dejado pasar" },
+    { ko: "안도", en: "relief", es: "alivio" },
+    { ko: "설렘", en: "a flutter of excitement", es: "ilusión" },
+  ],
+  contradictions: [
+    "원하는 게 분명한데 '아무거나'라고 말한다.",
+    "자유롭고 싶다면서 허락을 기다린다.",
+  ],
+  reframe: {
+    selfBlame: "나는 줏대가 없어",
+    direction: "관계를 지키려고 내 목소리를 먼저 낮추는 법을 너무 잘 배운 것",
+  },
+  extractFields: [
+    { key: "swallowed_line", description: "삼킨 문장이나 욕구(사용자 표현 그대로)" },
+    { key: "permission_needed", description: "허락이 필요했던 순간(누구의, 어떤 허락)" },
+  ],
+  reportPages: {
+    module_map: {
+      title: { ko: "내가 삼킨 것들", en: "What you've been swallowing", es: "Lo que te has ido tragando" },
+      instruction: "이 사람이 삼킨 문장이나 욕구를 대화 재료 그대로 옮기고, 삼킨 것이 어디로 가는지(잊기, 혼자 채우기, 나중에 터지기)를 그린다. 줏대 없음이라는 평가로 들리지 않게 쓴다.",
+    },
+    module_deep: {
+      title: { ko: "나에게 주는 작은 허락", en: "Small permissions to give yourself", es: "Pequeños permisos para ti" },
+      instruction: "이 사람의 상황에 맞춘 허락 연습 3단계를 가장 부담이 적은 자리부터 순서대로 제시한다.",
+    },
+  },
+  strengthDirections: ["신중함", "배려", "잠재된 생동감"],
+  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 하고 싶은 말이나 행동을 삼키거나, 확신이 없어서 물러섰던 장면이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
+};
+
+export const MODULE_PLAYBOOKS: Record<PlaybookModuleId, ModulePlaybook> = {
   module1: MODULE1,
   module2: MODULE2,
   module3: MODULE3,
   module4: MODULE4,
+  module5: MODULE5,
+  module6: MODULE6,
+  module7: MODULE7,
+  module8: MODULE8,
+  module9: MODULE9,
+  module10: MODULE10,
+  module11: MODULE11,
 };
 
 /** moduleId가 없거나 알 수 없으면 undefined(웹, 구버전 앱). */
 export function getModulePlaybook(moduleId?: string | null): ModulePlaybook | undefined {
-  if (!moduleId) return undefined;
+  if (!moduleId || !Object.prototype.hasOwnProperty.call(MODULE_PLAYBOOKS, moduleId)) return undefined;
   return MODULE_PLAYBOOKS[moduleId as PlaybookModuleId];
 }
