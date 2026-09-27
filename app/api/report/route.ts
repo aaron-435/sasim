@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
       validModule !== null && typeof appUserId === "string" && appUserId.length > 0 && (await checkEntitlement(appUserId, `report_${validModule}`)) === "active";
 
     const content = await getReportContent(
-      { ...context, includeCase: validModule !== null && CASE_MODULES.has(validModule), part: entitled ? "full" : "free" },
+      { ...context, moduleId: validModule ?? undefined, includeCase: validModule !== null && CASE_MODULES.has(validModule), part: entitled ? "full" : "free" },
       sessionId
     );
     await saveReportResult(sessionId, content);

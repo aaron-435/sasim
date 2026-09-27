@@ -25,6 +25,7 @@ import type { ElementKey } from "./sajuScore";
 import type { ChatExtract } from "./chat";
 import type { Locale } from "./i18n/types";
 import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
+import { getModulePlaybook, type ModulePlaybook } from "./modulePlaybooks";
 
 const ELEMENT_HANJA: Record<ElementKey, string> = {
   wood: "목", fire: "화", earth: "토", metal: "금", water: "수",
@@ -137,6 +138,10 @@ export interface ReportContext {
   track: "romance" | "career";
   elements: Record<ElementKey, number>;
   moduleTitle: string;
+  /** Set by the server from the request's validated moduleId (never read from the client's context).
+   * Picks the module playbook (lib/modulePlaybooks.ts) behind the module_map / module_deep pages;
+   * absent (older app, unknown module) → those two pages are simply not written. */
+  moduleId?: string;
   psychTestTypeTitle: string;
   psychTestTypeHook: string;
   dimensionResults: ReportDimensionResult[];
@@ -205,7 +210,7 @@ const STYLE_EXCERPT = `
  * this field exists at all (a literal Q&A pair alone read as flat with no interpretation). */
 export type ReportPart = "full" | "free" | "paid";
 
-function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase: boolean, part: ReportPart): string {
+function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase: boolean, part: ReportPart, playbook: ModulePlaybook | undefined, locale: Locale): string {
   // Only some modules carry a "someone like you" story; a report for the others goes straight from
   // the psych-test page to the saju chart. Empty values keep the shape the app expects.
   const caseFields = includeCase
@@ -225,6 +230,16 @@ function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase
   "chat_repeat_note": "상담에서 나온 '반복 패턴'(아래 데이터)을 다시 비춰 주는 3문장. 그 패턴이 어떻게 굴러가는지(1), 그 안에서 이 사람이 하는 선택(1), 그 패턴을 살짝 벗어나는 작은 방법(1). 반복 패턴 데이터가 '(없음)'이면 빈 문자열",
   "chat_fear_note": "상담에서 나온 '핵심 두려움/의미'(아래 데이터)를 따뜻하게 받아 주는 3문장. 두려움을 부풀리지 말고, 그 아래 있는 바람을 읽어 줄 것"`
     : "";
+  // 2026-09-27 (TODO F1-b): 모듈 전용 페이지 2장. 제목은 플레이북의 고정 문구라 코드가 붙이고(lib/report.ts
+  // parseReport), 모델은 본문만 쓴다. 플레이북이 없는 요청(구버전 앱)에는 두 필드를 아예 요구하지 않는다.
+  const moduleMapField = playbook
+    ? `
+  "module_map": "무료 구간의 모듈 전용 페이지 '${playbook.reportPages.module_map.title[locale]}'의 본문(문자열 하나). 4~5문장. 작성 지시: ${playbook.reportPages.module_map.instruction} 아래 '이번 모듈의 전문 관점'의 틀로 보고, 재료는 상담의 모듈 추출 내용·반복 패턴·심리검사 축에서 가져온다(재료가 없으면 심리검사 결과만으로 담담하게). 페이지 제목은 화면에 따로 표시되므로 본문에서 되풀이하지 않는다. 다가오는 시기·강점·행동 지침·해결책은 이 페이지에서 다루지 않는다 — 지도를 그리는 페이지다.",`
+    : "";
+  const moduleDeepField = playbook
+    ? `
+  "module_deep": "유료 구간의 모듈 전용 페이지 '${playbook.reportPages.module_deep.title[locale]}'의 본문(문자열 하나). 4~6문장. 작성 지시: ${playbook.reportPages.module_deep.instruction} 무료 구간의 module_map에서 이미 그린 그림을 전제로 이어 쓰고 같은 장면·표현을 반복하지 않는다. behavior_guides와 겹치는 일반 실천법이 아니라 이 모듈의 전문 관점에서만 나올 수 있는 내용으로 쓴다. 페이지 제목은 화면에 따로 표시되므로 본문에서 되풀이하지 않는다.",`
+    : "";
   const freeFields = `
   "title_line1": "리포트 제목 1행 — 시적이고 은유적, 이 사람의 핵심 패턴을 압축",
   "title_line2": "리포트 제목 2행 — 1행과 이어지는 한 문장",
@@ -241,6 +256,7 @@ ${caseFields}
     "metal": {"heading": "금 💎에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
     "water": {"heading": "수 💧에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"}
   },
+${moduleMapField}
   "upcoming_period_preview_heading": "'다가오는 시기' 섹션 소제목 — 아래 데이터의 '다가오는 대운 시기' 줄에 나온 나이와 원소를 제목 맨 앞에서 숫자 그대로 밝히고, 지금까지의 시기가 저물고 다음 장이 시작된다는 담담한 전환 프레임으로 쓴다. 예: '32세부터, 물의 계절이 열립니다' / '32세부터 시작되는 다음 장'. '머지않아'·'언젠가'처럼 나이를 흐리는 말로 시작하지 않는다. 그 줄이 '정보 없음'이거나 '범위를 벗어남'이면 나이 없이 '다가오는 흐름' 정도의 일반적인 제목",
   "upcoming_period_preview_body": "3문장. 첫 문장부터 '다가오는 대운 시기' 데이터의 나이 숫자를 그대로 명확히 밝히며 시작한다('머지않아'·'언젠가'·'곧' 같은 흐린 시점 표현으로 시작하지 말 것). 지금까지의 시기가 저물고 새로운 국면이 시작된다는 확정된 사실로, 나이+원소 전환이 있다는 사실 그 자체만 쓴다 — 그 전환이 왜 일어나는지, 그 이후 무엇이 달라지는지, 무엇을 준비하면 좋은지는 이 필드에 절대 쓰지 않는다(그 내용은 구매 후 이어지는 본편 upcoming_period_body의 몫이니 앞당겨 쓰지 말 것). 나머지 문장은 그 전환을 감각적으로 그리는 장면(계절·빛·공기가 바뀌는 느낌 등)으로 채우되 결과·이유·조언은 여전히 담지 않는다. 나이 숫자는 그 데이터 줄에 있는 그대로만 쓰고 절대 새로 만들어내지 말 것 — 정보가 없다고 나오면 숫자 없이 일반적인 흐름으로만 쓰되, 정보가 없다는 사실 자체를 문장에 쓰지 말 것. 이미 지난 시기를 다루지 말고 반드시 앞으로 올 시기만 다룰 것."`;
   const paidFields = `
@@ -253,7 +269,7 @@ ${caseFields}
   "strengths": [{"title": "강점 제목 (짧은 명사구, 한국어는 띄어쓰기를 지킨 자연스러운 말 2~8자 — '휴식불편' 같은 붙임말 금지)", "body": "3문장 설명 — 이 사람의 실제 데이터에서 나온 구체적 장면 하나 포함. 이 배열 항목은 정확히 4개, 각 항목이 화면 한 장씩 차지함"}],
   "weaknesses": [{"title": "취약점 제목 (짧은 명사구, 한국어는 띄어쓰기를 지킨 자연스러운 말 2~8자)", "body": "3문장 설명 — 비난이 아니라 이해로. 구체적 장면 하나 포함. 이 배열 항목도 정확히 4개"}],
   "fit_good": "이 사람에게 맞는 환경/일 스타일 3문장 — 구체적인 하루의 모습으로",
-  "fit_bad": "이 사람이 피해야 할 환경/일 스타일 3문장 — 구체적인 하루의 모습으로",
+  "fit_bad": "이 사람이 피해야 할 환경/일 스타일 3문장 — 구체적인 하루의 모습으로",${moduleDeepField}
   "behavior_guides": [{"title": "행동지침 제목 (짧은 명사구, 한국어는 띄어쓰기를 지킨 자연스러운 말 2~10자)", "body": "구체적 실천 방법 3문장 — 언제, 무엇을, 얼마나 하는지가 보이게. 이 배열 항목도 정확히 4개"}],
   "mindset_guide": "사고방식 전환 조언 4문장 — 은유를 하나 써서. 문장을 짧게 끊어서. 이 은유는 이번 심리테스트 모듈의 주제(돈/번아웃/애착/분노 등, 아래 데이터 참고)에서 자연스럽게 가져올 것 — 어느 모듈 리포트에 넣어도 어색하지 않을 만큼 범용적인 은유(파도, 그릇, 문턱 같은 것을 아무 맥락 없이 쓰는 식)는 피한다.",
   "closing_title": "마무리 섹션 소제목 — 짧고 여운 있게",
@@ -275,7 +291,7 @@ export function relationToDayMaster(day: ElementKey, other: ElementKey): string 
   return "나를 누르는 기운(규칙·책임·압박 같은 기운)";
 }
 
-const FREE_PART_TEXT_FIELDS = ["title_line1", "title_line2", "subtitle", "opening_scene", "case_tag", "oheng_intro", "quiz_reading", "upcoming_period_preview_heading", "upcoming_period_preview_body"] as const;
+export const FREE_PART_TEXT_FIELDS = ["title_line1", "title_line2", "subtitle", "opening_scene", "case_tag", "oheng_intro", "quiz_reading", "upcoming_period_preview_heading", "upcoming_period_preview_body"] as const;
 
 /** The already-written front half as compact lines for the "paid" prompt (untrusted client text:
  * only known fields, each length-capped). */
@@ -287,6 +303,9 @@ function describeFreePart(free?: Record<string, unknown>): string {
     const t = cap(free[k], k === "opening_scene" ? 700 : 400);
     if (t) lines.push(`- ${k}: ${t}`);
   }
+  const map = free.module_map as { body?: unknown } | string | undefined;
+  const mapBody = cap(typeof map === "string" ? map : map?.body, 700);
+  if (mapBody) lines.push(`- module_map: ${mapBody}`);
   const els = (free.element_readings ?? {}) as Record<string, { heading?: unknown }>;
   const headings = Object.entries(els).map(([k, v]) => `${k}: ${cap(v?.heading, 80)}`).filter((x) => !x.endsWith(": "));
   if (headings.length) lines.push(`- element_readings 제목: ${headings.join(" / ")}`);
@@ -326,6 +345,30 @@ export function buildReportPrompt(context: ReportContext): string {
     ? context.topAnswers.map((a, i) => `[${i + 1}] ${a.dimensionLabel} — "${a.prompt}" → "${a.label}"`).join(" / ")
     : null;
 
+  const playbook = getModulePlaybook(context.moduleId);
+  const extract = context.chatExtract;
+  const moduleFieldLines = playbook && extract?.module_fields
+    ? playbook.extractFields
+        .map((f) => `- ${f.description}: ${extract.module_fields?.[f.key] ?? "(말하지 않음)"}`)
+        .join("\n")
+    : "";
+  const optionalChatLines = [
+    extract?.coping ? `- 지금까지 해 본 대처: ${extract.coping}` : "",
+    extract?.relational ? `- 관계 속에서 드러난 모습: ${extract.relational}` : "",
+    extract?.desired_change ? `- 바라는 변화: ${extract.desired_change}` : "",
+    moduleFieldLines,
+  ].filter(Boolean).join("\n");
+  // 2026-09-27 (TODO F1-b): 모듈의 전문 관점 — module_map/module_deep의 틀이자 strengths를 찾을 방향.
+  const moduleSection = playbook
+    ? `
+## 이번 모듈의 전문 관점 (module_map·module_deep의 틀, strengths의 방향)
+- 관점: ${playbook.lens}
+- 경계(옆 모듈로 새지 않게): ${playbook.boundary}
+- 이 모듈의 핵심 질문: ${playbook.signatureQuestion[locale]}
+- 강점을 찾을 방향: ${playbook.strengthDirections.join(" / ")} — strengths는 이 방향에서, 이 사람의 실제 데이터로 구체화해서 쓴다
+${playbook.caution ? `- 주의: ${playbook.caution}\n` : ""}- 관점의 이론 이름은 module_map·module_deep에서 한두 번 자연스럽게 쓸 수 있지만 진단처럼 들리게 쓰지 않고, 이론을 강의하지 않는다. 전문성은 이 사람의 재료를 그 관점으로 정확히 짚는 것으로 드러낸다.`.trimEnd()
+    : "";
+
   const chatSection = context.chatExtract
     ? `
 ## 상담 대화에서 나온 실제 내용 (있으면 반드시 opening_scene, cross_analysis_quotes, strengths/weaknesses 중 자연스러운 곳에 구체적으로 녹여 쓸 것 — 일반론으로 흘리지 말 것)
@@ -335,6 +378,7 @@ export function buildReportPrompt(context: ReportContext): string {
 - 반복 패턴: ${context.chatExtract.repeat_pattern ?? "(없음)"}
 - 핵심 두려움/의미: ${context.chatExtract.core_fear_or_meaning}
 - 종합 요약: ${context.chatExtract.integrated_summary}
+${optionalChatLines}
 `.trim()
     : "## 상담 대화 없음 — 사주와 심리검사 결과만으로 작성할 것";
 
@@ -372,7 +416,7 @@ ${STYLE_EXCERPT}
 ${scopeNote}
 
 ## 출력 스키마
-${buildOutputSchema(context.topAnswers?.length ?? 0, !!context.chatExtract, !!context.includeCase, part)}
+${buildOutputSchema(context.topAnswers?.length ?? 0, !!context.chatExtract, !!context.includeCase, part, playbook, locale)}
 
 ## 이번 리포트의 데이터
 - 닉네임: ${context.nickname}
@@ -386,6 +430,7 @@ ${dayMasterLine}- 심리테스트 모듈: ${context.moduleTitle}
 - 심리테스트 세부 축: ${dimensionLines}
 - 심리테스트 서술: ${context.nuancedSummary}
 ${topAnswersLine ? `- 실제로 답한 문항들 (answer_notes는 이 순서 그대로): ${topAnswersLine}` : ""}
+${moduleSection}
 
 ${chatSection}
 ${outputLanguageDirective(locale, { en: "the JSON schema above", es: "esquema JSON anterior" })}

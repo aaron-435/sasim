@@ -30,10 +30,13 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
   - QA: `npx tsc --noEmit`(루트) → exit 0. mobile tsc → exit 0. `sim-chat.mts 20 talkative module2 4` → `coping`/`relational`/`desired_change` 모두 채워짐, `module_fields`(`money_script`, `money_loop`)는 번아웃 페르소나가 돈 얘기를 안 해서 둘 다 JSON null(의도대로). 보강으로 `sim-chat.mts 8 talkative module3 4` → `module_fields.demand_drain`/`resource_left` 채워짐, 8턴이라 `desired_change`는 null (2026-09-27)
   - 메모: 앱(`mobile/screens/ChatScreen.tsx`의 `ChatExtract = Record<string, unknown>`)과 `/api/chat`, 리포트 요청은 extract를 그대로 넘겨서 코드 변경이 필요 없었다. `describeReportData()`(`lib/reportQuality.ts`)는 문자열 값만 싣기 때문에 `module_fields`(객체)는 아직 리포트 리뷰어에게 안 간다. 리포트 프롬프트에 넣는 건 F1-b. 플레이북에 없는 moduleId면 `module_fields`는 스키마와 결과 모두에서 빠진다. 파싱은 플레이북 key만 남기고 문자열 "null"/빈 문자열은 null로 바꾼다.
 
-- [ ] 4. F1-b: 리포트 서버 — `module_map`(무료), `module_deep`(유료)
+- [x] 4. F1-b: 리포트 서버 — `module_map`(무료), `module_deep`(유료)
   - 선행: 3
   - 변경: `lib/reportPrompts.ts`(리포트 데이터에 모듈 관점, 핵심 질문, 추출 필드, 강점 방향 추가, 두 필드 스키마와 지시문은 플레이북에서), `lib/report.ts`(타입, `parseReport`), `lib/reportLock.ts`(`module_deep`을 `LOCKED_KEYS`에), `lib/reportQuality.ts`(밀도 검사).
   - QA: 루트 tsc 통과. `npx tsx --env-file=.env.local scripts/gen-qa-fixtures.mts` 실행 후 `mobile/dev/qaData.ts`에서 모듈이 다른 페르소나 2명 이상, 3개 언어의 `module_map`/`module_deep`을 읽고 모듈마다 다른 관점과 제목인지 확인. 잠금 응답에서 `module_deep`이 가려지는지 코드 리뷰로 확인.
+  - QA: `npx tsc --noEmit`(루트) → exit 0, mobile tsc → exit 0. `gen-qa-fixtures.mts` 3회 실행(3회차 최종) → 7명 모두 `module_map`/`module_deep` 4~6문장, 모듈 1(mia·riley en, lucia es)은 "Your relationship alarm"/"Tu alarma en las relaciones" + 안전기지, 모듈 3(jisoo ko, jordan·sam en, casey es)은 "에너지 수지표"/"다시 채우는 순서" 계열로 관점과 제목이 다름. 남은 코드 결함은 기존 `oheng_intro` 일간 문장(jisoo, lucia)뿐. 스크래치 실행(ko 모듈 1, part "free") → `module_map` 채워짐, `module_deep` = `{title:"나에게 안전기지가 되는 관계", body:""}`, 다른 유료 필드 비어 있음. `moduleId` 없는 요청의 프롬프트에는 `module_map` 없음 (2026-09-27)
+  - 작업 중 고친 것: 모델이 모듈 페이지를 객체로 감싸 보내 본문이 빈 경우(1·2회차 casey)가 있어 파서가 객체 안의 문자열을 받게 하고, 본문이 비면 결함으로 잡아 재작성한다. `countSentences`가 따옴표로 끝나는 문장(`?”`)을 세지 못하던 것을 고쳤다(모듈 1 유료 페이지가 부탁 문장을 인용함). ES 성별 검사가 "apego ansioso"를 독자 성별로 오탐해 예외 처리. 무료 응답은 이제 유료 필드를 코드로 비워서 보낸다(모델이 스키마 밖 필드를 써도 새지 않게).
+  - 메모(F1-c용): 두 필드는 `{ title, body }`. 무료 응답(`locked_pending`)에는 `module_deep`이 `{ title, body: "" }`로 온다. 제목은 잠금 페이지와 TOC에 쓰고, 본문은 구매 후 `/api/report/paid`의 `locked.module_deep`으로 온다. `locked_shape`는 바꾸지 않았다. 픽스처는 이제 연애 페르소나(mia, riley=en, lucia=es)가 모듈 1, 나머지(jisoo=ko, jordan, sam=en, casey=es)가 모듈 3이다.
 
 - [ ] 5. F1-c: 리포트 화면 — 모듈 전용 페이지 2장 + i18n
   - 선행: 4
@@ -111,4 +114,6 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
 - `lib/report.ts`의 `runReport()`가 가끔 "shipped with N unresolved code finding(s)"을 로그로 남긴 채 재시도 없이 내보낸다(기존 동작).
 - `mobile/screens/ReportScreen.tsx`의 `TocPage` 행이 `Pressable`이 아니라 목차 항목을 탭해도 해당 페이지로 이동하지 않는다.
 - 신년 리포트 마무리(closing)가 심층 리포트 `closing_body`보다 뭉뚱그려진 표현으로 끝나는 경향(`lib/yearReportPrompts.ts` 규칙 3-1 강화 검토).
+- (F1-b) `app/api/report-pdf/route.ts`의 심층 리포트 파서가 아는 필드만 옮겨서 `module_map`/`module_deep`이 PDF에 안 들어간다. PDF에도 넣을지 결정 필요.
+- (F1-b) `lib/reportQuality.ts`의 `ES_GENDERED_READER`에 "expuest-", "pegad-" 같은 형용사가 없어 "no quedar tan expuesta", "quedarte pegada al teléfono"가 걸리지 않았다(1·2차 픽스처 lucia). 목록 보강 검토.
 - 신년 리포트 12개월 타임라인에서 3월만 신살 이름이 빠짐(jisoo, ko). 계산 결과인지 누락 버그인지 `sinsalName()`/`branchLine()` 확인 필요.

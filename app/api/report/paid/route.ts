@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const free = freePart && typeof freePart === "object" && !Array.isArray(freePart) ? (freePart as Record<string, unknown>) : {};
-    const locked = await getPaidPart({ ...context, includeCase: false }, free);
+    const locked = await getPaidPart({ ...context, moduleId, includeCase: false }, free);
     return NextResponse.json({ moduleId, locked });
   } catch (err) {
     if (err instanceof OpenAI.APIError) {

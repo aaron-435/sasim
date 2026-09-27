@@ -40,6 +40,7 @@ export const LOCKED_KEYS = [
   "weaknesses",
   "fit_good",
   "fit_bad",
+  "module_deep",
   "behavior_guides",
   "mindset_guide",
   "closing_title",
@@ -65,6 +66,7 @@ const EMPTY_LOCKED: LockedPart = {
   weaknesses: [],
   fit_good: "",
   fit_bad: "",
+  module_deep: undefined,
   behavior_guides: [],
   mindset_guide: "",
   closing_title: "",
@@ -110,6 +112,12 @@ export function openLocked(token: string): { moduleId: string; locked: LockedPar
     const locked = { ...EMPTY_LOCKED } as Record<string, unknown>;
     for (const k of LOCKED_KEYS) {
       const value = parsed.c[k];
+      if (k === "module_deep") {
+        // A page object ({ title, body }); tokens sealed before 2026-09-27 simply don't have it.
+        const page = value as { title?: unknown; body?: unknown } | undefined;
+        if (page && typeof page.title === "string" && typeof page.body === "string") locked[k] = { title: page.title, body: page.body };
+        continue;
+      }
       const isList = Array.isArray(EMPTY_LOCKED[k]);
       if (isList ? Array.isArray(value) : typeof value === "string") locked[k] = value;
     }

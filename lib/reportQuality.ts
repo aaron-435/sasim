@@ -23,6 +23,7 @@ import type { Locale } from "./i18n/types";
 import { describeUpcomingPeriod, relationToDayMaster, type ReportContext } from "./reportPrompts";
 import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME } from "./promptLocale";
 import type { ElementKey } from "./sajuScore";
+import { getModulePlaybook } from "./modulePlaybooks";
 
 const ELEMENT_KEYS: ElementKey[] = ["wood", "fire", "earth", "metal", "water"];
 
@@ -31,7 +32,9 @@ const FICTIONAL_FIELDS = ["case_tag", "case_paragraphs"];
 
 export function countSentences(text: string): number {
   return text
-    .split(/[.!?…。]+(?:\s+|$)/)
+    // A sentence may end inside a quote ('…a quick note?' Mia, …) — closing quotes/brackets after the
+    // end mark still end the sentence (2026-09-27: module_deep pages quote a sentence to ask for).
+    .split(/[.!?…。]+["'”’»)]*(?:\s+|$)/)
     .map((t) => t.trim())
     .filter((t) => t.length > 1).length;
 }
@@ -50,7 +53,7 @@ export function flattenStrings(value: unknown, path = "report", out: [string, st
 }
 
 const ES_GENDERED_READER =
-  /(?<!\b(?:he|has|ha|hemos|han|había|habías|habrás)\s)\b(atrapad|agotad|cansad|abrumad|sobrecargad|desbordad|preocupad|ansios|estresad|frustrad|aislad|agobiad|vaciad|quemad|inquiet|conectad|desconectad|bloquead|desorientad|saturad|exhaust|sobrepasad)[ao]s?\b/i;
+  /(?<!\b(?:he|has|ha|hemos|han|había|habías|habrás|apego)\s)\b(atrapad|agotad|cansad|abrumad|sobrecargad|desbordad|preocupad|ansios|estresad|frustrad|aislad|agobiad|vaciad|quemad|inquiet|conectad|desconectad|bloquead|desorientad|saturad|exhaust|sobrepasad)[ao]s?\b/i;
 const ES_STYLE_SLIP = /\busted(es)?\b|\b[a-záéíóúñ]{3,}x\b|\bcargarse\b|\bdescolocar|\bsu carta\b|\btu carta\b|\bla carta\b|\bvuestr/i;
 const ES_CAPITALIZED_ELEMENTS = /\bCinco Elementos\b/; // running text uses lowercase "cinco elementos"
 const META_LEAK = /\b(prompt|json|schema)\b|(se describe|se indica|se menciona|se da) aquí|named here|(only|sole|one) (supporting |direct )?relationship (that|which|here|named)|the only relationship|(único|única) relación|(only|sole) (supporting )?(relationship|relation) (named|given|provided|listed)|(único|única) (relación|apoyo) (nombrad|indicad|dad)[ao]|no (future )?age range|age range (is )?(not|un)specified|not specified|no se especifica|edad no (está )?especificad/i;
@@ -70,6 +73,8 @@ function checkDensity(c: ReportContent, hasChat: boolean): string[] {
   need("oheng_intro", c.oheng_intro);
   need("quiz_reading", c.quiz_reading);
   for (const k of ELEMENT_KEYS) need(`element_readings.${k}.body`, c.element_readings[k].body);
+  need("module_map.body", c.module_map?.body, 4);
+  need("module_deep.body", c.module_deep?.body, 4);
   need("upcoming_period_preview_body", c.upcoming_period_preview_body);
   need("upcoming_period_body", c.upcoming_period_body);
   c.cross_analysis_quotes.forEach((t, i) => need(`cross_analysis_quotes[${i}]`, t));
@@ -94,6 +99,11 @@ function checkDensity(c: ReportContent, hasChat: boolean): string[] {
 export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): string[] {
   const locale = ctx.locale ?? "ko";
   const problems = checkDensity(c, !!ctx.chatExtract);
+  // A module page the model left empty (TODO F1-b). The free half legitimately carries module_deep with
+  // an empty body (it's written after purchase), so only pages whose part was written are checked.
+  const part = ctx.part ?? "full";
+  if (c.module_map && part !== "paid" && !c.module_map.body.trim()) problems.push("module_map.body: 페이지 본문이 비어 있음 — 이 페이지 제목과 모듈 관점에 맞는 4문장 이상으로 쓸 것");
+  if (c.module_deep && part !== "free" && !c.module_deep.body.trim()) problems.push("module_deep.body: 페이지 본문이 비어 있음 — 이 페이지 제목과 모듈 관점에 맞는 4문장 이상으로 쓸 것");
   const strings = flattenStrings(c);
 
   // Numbers the reader can actually verify on screen: the element bars and the test's dimension bars.
@@ -175,6 +185,13 @@ export function describeReportData(ctx: ReportContext): string {
         .map(([k, v]) => `${k}: ${v}`)
         .join(" | ")
     : "(상담 없음)";
+  const moduleFields = ctx.chatExtract?.module_fields
+    ? Object.entries(ctx.chatExtract.module_fields)
+        .filter(([, v]) => typeof v === "string" && v)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(" | ")
+    : "";
+  const playbook = getModulePlaybook(ctx.moduleId);
   return `- 닉네임: ${ctx.nickname}
 - 오행 분포: ${elementsLine}
 ${ctx.dayMaster ? `- 나의 일간: ${ctx.dayMaster.char} (${ELEMENT_LABEL[locale][ctx.dayMaster.element]}) — 일간 기준으로 우세 원소 ${ELEMENT_LABEL[locale][dominantOf(ctx)]}는 "${relationToDayMaster(ctx.dayMaster.element, dominantOf(ctx))}", 약한 원소 ${ELEMENT_LABEL[locale][weakestOf(ctx)]}는 "${relationToDayMaster(ctx.dayMaster.element, weakestOf(ctx))}"\n` : ""}- 심리검사 모듈: ${ctx.moduleTitle} / 유형: ${ctx.psychTestTypeTitle} — ${ctx.psychTestTypeHook}
@@ -182,7 +199,7 @@ ${ctx.dayMaster ? `- 나의 일간: ${ctx.dayMaster.char} (${ELEMENT_LABEL[local
 - 심리검사 서술: ${ctx.nuancedSummary}
 - 실제 답한 문항: ${answers}
 - 상담 내용: ${chat}
-- ${describeUpcomingPeriod(ctx.decadeFortune, ctx.currentAge, locale)}`;
+${moduleFields ? `- 상담의 모듈 추출 내용: ${moduleFields}\n` : ""}${playbook ? `- 모듈 전문 관점(module_map·module_deep의 틀): ${playbook.lens}\n` : ""}- ${describeUpcomingPeriod(ctx.decadeFortune, ctx.currentAge, locale)}`;
 }
 
 /** System prompt for the reviewing pass. The report is passed as the user message. */

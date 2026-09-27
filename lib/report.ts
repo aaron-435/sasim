@@ -12,7 +12,8 @@
 import OpenAI from "openai";
 import { buildReportPrompt, type ReportContext } from "./reportPrompts";
 import { FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
-import { LOCKED_KEYS } from "./reportLock";
+import { LOCKED_KEYS, splitLocked } from "./reportLock";
+import { getModulePlaybook } from "./modulePlaybooks";
 import { buildReviewPrompt, checkReportDeterministic, describeReportData, getAt, setAt, stripHanja } from "./reportQuality";
 import { logLlmUsage } from "./llmUsage";
 
@@ -50,6 +51,12 @@ export interface ReportContent {
    * fact only (no why/prepare, that's upcoming_period_body). Absent in reports saved before 2026-09-22. */
   upcoming_period_preview_heading?: string;
   upcoming_period_preview_body?: string;
+  /** Module-specific pages (2026-09-27, TODO F1-b). The title is the playbook's fixed wording in the
+   * report's locale (set by parseReport, never by the model); the body is written per reader.
+   * module_map is free (right before the upcoming-period preview), module_deep is paid (right before
+   * the behavior guides). Absent in reports saved before this and when the request had no known moduleId. */
+  module_map?: ReportBullet;
+  module_deep?: ReportBullet;
   upcoming_period_heading: string;
   upcoming_period_body: string;
   cross_analysis_quotes: string[];
@@ -100,7 +107,25 @@ function asElementReadings(value: unknown): ReportContent["element_readings"] {
   return result;
 }
 
-function parseReport(parsed: Record<string, unknown>): ReportContent {
+/** The model writes a module page as a bare string; a front half sent back by the app has it as
+ * { title, body }. Either way the title comes from the playbook, not from the text. */
+function asModulePage(value: unknown, title: string | undefined): ReportBullet | undefined {
+  if (!title) return undefined;
+  // The model occasionally wraps the text in an object with its own key names ({ "texto": … }) —
+  // take the body, or failing that the longest string inside.
+  const obj = value && typeof value === "object" ? (value as Record<string, unknown>) : null;
+  const body =
+    typeof value === "string"
+      ? value
+      : typeof obj?.body === "string"
+        ? obj.body
+        : Object.values(obj ?? {}).filter((v): v is string => typeof v === "string").sort((a, b) => b.length - a.length)[0];
+  return { title, body: typeof body === "string" ? body.trim() : "" };
+}
+
+function parseReport(parsed: Record<string, unknown>, context: ReportContext): ReportContent {
+  const pages = getModulePlaybook(context.moduleId)?.reportPages;
+  const locale = context.locale ?? "ko";
   return {
     title_line1: String(parsed.title_line1 ?? ""),
     title_line2: String(parsed.title_line2 ?? ""),
@@ -113,6 +138,8 @@ function parseReport(parsed: Record<string, unknown>): ReportContent {
     element_readings: asElementReadings(parsed.element_readings),
     upcoming_period_preview_heading: String(parsed.upcoming_period_preview_heading ?? ""),
     upcoming_period_preview_body: String(parsed.upcoming_period_preview_body ?? ""),
+    module_map: asModulePage(parsed.module_map, pages?.module_map.title[locale]),
+    module_deep: asModulePage(parsed.module_deep, pages?.module_deep.title[locale]),
     upcoming_period_heading: String(parsed.upcoming_period_heading ?? ""),
     upcoming_period_body: String(parsed.upcoming_period_body ?? ""),
     cross_analysis_quotes: asStringList(parsed.cross_analysis_quotes),
@@ -137,6 +164,7 @@ function parseReport(parsed: Record<string, unknown>): ReportContent {
 
 async function generateOnce(
   messages: OpenAI.Chat.ChatCompletionMessageParam[],
+  context: ReportContext,
   sessionId?: string
 ): Promise<{ raw: string; content: ReportContent }> {
   const completion = await client.chat.completions.create({
@@ -158,7 +186,7 @@ async function generateOnce(
 
   const raw = completion.choices[0]?.message?.content?.trim();
   if (!raw) throw new Error("OpenAI가 빈 응답을 반환했습니다.");
-  return { raw, content: parseReport(JSON.parse(raw)) };
+  return { raw, content: parseReport(JSON.parse(raw), context) };
 }
 
 /** A second model reads the finished report against the source data as a strict editor. Returns
@@ -212,6 +240,8 @@ async function patchFields(context: ReportContext, content: ReportContent, probl
     const i = p.indexOf(": ");
     if (i < 1) continue;
     const path = p.slice(0, i);
+    // A module page's title is the playbook's fixed wording — only its body may be rewritten.
+    if (/^module_(map|deep)\.title$/.test(path)) continue;
     const current = getAt(content, path);
     if (typeof current !== "string") continue;
     (targets[path] ??= { current, problems: [] }).problems.push(p.slice(i + 2));
@@ -271,8 +301,15 @@ const rootOf = (path: string) => path.split(/[.[]/)[0];
 async function runReport(context: ReportContext, sessionId?: string): Promise<ReportContent> {
   const part = context.part ?? "full";
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [{ role: "system", content: buildReportPrompt(context) }];
-  const generated = (await generateOnce(messages, sessionId)).content;
-  let current: ReportContent = part === "paid" ? { ...parseReport((context.freePart ?? {}) as Record<string, unknown>), ...pickPaid(generated) } : generated;
+  const generated = (await generateOnce(messages, context, sessionId)).content;
+  let current: ReportContent =
+    part === "paid"
+      ? { ...parseReport((context.freePart ?? {}) as Record<string, unknown>, context), ...pickPaid(generated) }
+      : part === "free"
+        ? // The free half never carries paid text, even if the model wrote some anyway. The locked module
+          // page keeps its (non-secret, fixed) title so the reader can see what the chapter is.
+          { ...splitLocked(generated).open, module_deep: generated.module_deep && { title: generated.module_deep.title, body: "" } }
+        : generated;
 
   const relevant = (p: string) => part !== "paid" || PAID_ROOTS.has(rootOf(p.split(": ")[0]));
   const check = (c: ReportContent) => checkReportDeterministic(c, context).filter(relevant);
