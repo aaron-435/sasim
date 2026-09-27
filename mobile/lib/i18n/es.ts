@@ -505,7 +505,7 @@ export const es: typeof ko = {
       "Este informe lo interpreta una IA a partir de cálculos de saju precisos, hechos con nuestro propio motor basado en el calendario perpetuo coreano (manseryeok). No sustituye la orientación psicológica profesional ni un diagnóstico médico.",
     disclaimer2: "Tómalo como una referencia para conocerte mejor y disfrutar del camino.",
     paywallTitle: "Aquí continúa el informe profundo",
-    paywallBody: "Lo que contaste en la conversación, leído junto a tu mapa: lo que lo desencadenó, el patrón que se repite, tus respuestas reales al test, fortalezas y puntos débiles, entornos que encajan contigo y pasos concretos: el resto de este informe, hasta la última página.",
+    paywallBody: "El resto del informe cruza lo que le contaste a la IA con tu mapa.",
     paywallBuyLabel: (price: string) => `Desbloquear este informe · ${price}`,
     paywallBundleBuyLabel: (price: string) => `Desbloquear los 11 informes · ${price}`,
     paywallBundleSub: (fullPrice: string, discountPercent: number) => `${fullPrice} si los compras por separado (${discountPercent}% de descuento)`,

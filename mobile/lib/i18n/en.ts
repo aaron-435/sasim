@@ -505,7 +505,7 @@ export const en: typeof ko = {
       "This report is AI-interpreted content based on precise saju calculations from our own manseryeok engine, and does not replace professional psychological counseling or medical diagnosis.",
     disclaimer2: "Please treat it as a reference for fun and self-understanding.",
     paywallTitle: "The in-depth report continues here",
-    paywallBody: "What you told the AI, read against your chart: the moment that triggered it, the pattern that repeats, your real test answers, strengths and weaknesses, environments that fit you, and concrete steps — the rest of this report, through to the last page.",
+    paywallBody: "The rest of the report reads what you told the AI against your chart.",
     paywallBuyLabel: (price: string) => `Unlock this report · ${price}`,
     paywallBundleBuyLabel: (price: string) => `Unlock all 11 reports · ${price}`,
     paywallBundleSub: (fullPrice: string, discountPercent: number) => `${fullPrice} if bought separately (${discountPercent}% off)`,

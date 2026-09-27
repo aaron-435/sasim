@@ -531,7 +531,7 @@ export const ko = {
       "이 리포트는 자체 구축한 만세력 엔진의 정밀 사주 계산을 바탕으로 AI가 해석·작성한 콘텐츠이며, 전문적인 심리 상담이나 의학적 진단을 대체하지 않습니다.",
     disclaimer2: "재미와 자기 이해를 위한 참고 자료로 봐주세요.",
     paywallTitle: "여기부터는 심층 리포트예요",
-    paywallBody: "AI 상담에서 나눈 이야기를 내 사주와 함께 읽어요 — 무엇이 계기였는지, 반복되는 패턴, 실제로 고른 답, 강점과 약점, 맞는 환경, 구체적인 실천까지. 이 리포트의 나머지가 마지막 페이지까지 이어집니다.",
+    paywallBody: "AI 상담에서 나눈 이야기를 내 사주와 함께 읽는 나머지 장들이에요.",
     paywallBuyLabel: (price: string) => `이 리포트 잠금해제 · ${price}`,
     paywallBundleBuyLabel: (price: string) => `전체 11개 리포트 한번에 · ${price}`,
     paywallBundleSub: (fullPrice: string, discountPercent: number) => `따로 사면 총 ${fullPrice} (${discountPercent}% 할인)`,

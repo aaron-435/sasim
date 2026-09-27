@@ -718,6 +718,7 @@ export default function ReportScreen({
               ownedCount={ownedCount}
               lockedCount={lockedTotal}
               totalCount={body.length + 2}
+              lockedChapters={tocEntries.filter((e) => e.locked).map((e) => e.label)}
               strings={strings}
               purchasing={purchasing}
               restoring={restoring}
@@ -1315,6 +1316,7 @@ function PaywallPage({
   ownedCount,
   lockedCount,
   totalCount,
+  lockedChapters,
   strings,
   purchasing,
   restoring,
@@ -1327,6 +1329,8 @@ function PaywallPage({
   ownedCount: number;
   lockedCount: number;
   totalCount: number;
+  /** TOC labels of the sealed chapters, in reading order — the paywall names exactly what it unlocks. */
+  lockedChapters: string[];
   strings: Dictionary;
   purchasing: boolean;
   restoring: boolean;
@@ -1340,12 +1344,26 @@ function PaywallPage({
   const busy = purchasing || restoring;
   return (
     <PageShell>
-      <View style={pageStyles.paywallMid}>
+      {/* Scrolls only when the card outgrows the page (small phones, large text); on a
+          375×812 screen everything fits and the buy button sits in the first view. */}
+      <ScrollView style={pageStyles.paywallScroll} contentContainerStyle={pageStyles.paywallMid} showsVerticalScrollIndicator={false}>
         <View style={pageStyles.paywallCard}>
-          <Lock size={22} strokeWidth={1.75} color={COLORS.gold} />
+          <Lock size={20} strokeWidth={1.75} color={COLORS.gold} />
           <Text style={pageStyles.paywallTitle} accessibilityRole="header">{strings.report.paywallTitle}</Text>
           <Text style={pageStyles.paywallBody}>{strings.report.paywallBody}</Text>
           <Text style={pageStyles.paywallLockedNote}>{strings.report.paywallLockedNote(lockedCount, totalCount)}</Text>
+          {lockedChapters.length > 0 && (
+            <View style={pageStyles.paywallChapterList}>
+              {lockedChapters.map((label, i) => (
+                <View key={label} style={[pageStyles.paywallChapterRow, i > 0 && pageStyles.paywallChapterDivider]}>
+                  <Lock size={13} strokeWidth={1.75} color={COLORS.gold} />
+                  <Text style={pageStyles.paywallChapterLabel} numberOfLines={1}>
+                    {label}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
           {!!decadePreviewLine && <Text style={pageStyles.paywallDecadePreview}>{decadePreviewLine}</Text>}
 
           <Pressable style={[pageStyles.paywallBuyButton, busy && pageStyles.paywallButtonDisabled]} onPress={onBuyModule} disabled={busy}>
@@ -1372,7 +1390,7 @@ function PaywallPage({
           {!!purchaseNotice && <Text style={pageStyles.paywallNotice}>{purchaseNotice}</Text>}
         </View>
         <Text style={pageStyles.paywallDisclaimer}>{strings.report.disclaimer1}</Text>
-      </View>
+      </ScrollView>
     </PageShell>
   );
 }
@@ -1525,8 +1543,13 @@ const pageStyles = StyleSheet.create({
   closingBrand: { paddingTop: 20, borderTopWidth: 1, borderTopColor: COLORS.border },
   disclaimer: { fontFamily: "Manrope_400Regular", fontSize: 12, lineHeight: 17, color: COLORS.footer, marginTop: 10 },
 
-  paywallMid: { flex: 1, justifyContent: "center" },
-  paywallCard: { alignItems: "center", backgroundColor: "rgba(111,169,139,0.06)", borderWidth: 1, borderColor: "rgba(111,169,139,0.3)", borderRadius: 16, padding: 26, gap: 10, width: "100%" },
+  paywallScroll: { flex: 1 },
+  paywallMid: { flexGrow: 1, justifyContent: "center", paddingVertical: 4 },
+  paywallCard: { alignItems: "center", backgroundColor: "rgba(111,169,139,0.06)", borderWidth: 1, borderColor: "rgba(111,169,139,0.3)", borderRadius: 16, paddingHorizontal: 22, paddingVertical: 20, gap: 8, width: "100%" },
+  paywallChapterList: { alignSelf: "stretch", borderTopWidth: 1, borderBottomWidth: 1, borderColor: "rgba(111,169,139,0.18)", marginBottom: 4 },
+  paywallChapterRow: { flexDirection: "row", alignItems: "center", gap: 10, minHeight: 30, paddingHorizontal: 4 },
+  paywallChapterDivider: { borderTopWidth: 1, borderTopColor: "rgba(111,169,139,0.1)" },
+  paywallChapterLabel: { flex: 1, fontFamily: "Manrope_500Medium", fontSize: 13, color: COLORS.headline },
   paywallTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 19, color: COLORS.headline, textAlign: "center", marginTop: 4 },
   paywallBody: { fontFamily: "Manrope_400Regular", fontSize: 13, lineHeight: 21, color: "#C7C3D1", textAlign: "center" },
   paywallButtonDisabled: { opacity: 0.6 },

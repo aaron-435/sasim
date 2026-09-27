@@ -54,6 +54,8 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 
 강점 3+1 분할: 요청 `context.strengthsSplit: true`를 보내는 앱에만 적용된다(보내지 않는 구버전 앱은 예전처럼 유료 강점 4개). 분할이면 무료 절반에 `strengths_preview`(3개, 심리검사 답·상담 근거, 플레이북 강점 방향 3개에 하나씩)가 들어가고, 유료 `strengths`는 핵심 강점 1개(일간의 기질에서 찾는, 강점 방향 밖의 능력)다. 유료 절반은 `freePart`에 `strengths_preview`가 실려 와야 1개로 쓴다(`strengthsSplitFor()`). 모델이 무료 강점을 빠뜨리면 그 리포트는 유료 4개로 돌아가고, 무료 응답의 `locked_shape.strengths`도 그에 맞춰 1 또는 4다. 핵심 강점 제목이 무료 강점 제목과 단어가 겹치면 결정론적 검사가 제목·본문을 함께 다시 쓰게 한다. 앱(`ReportScreen`)은 `strengthsSplit: true`를 보내고, 무료 강점을 모듈 페이지 뒤·다가오는 시기 미리보기 앞에 잠금 없이 보여 준다. 유료 쪽은 "핵심 강점" 1장(목차 "핵심 강점과 취약점")이며, 구매 후 유료 절반 요청의 `freePart`에 `strengths_preview`를 실어 보낸다. `strengths_preview`가 없는 이전 리포트는 예전처럼 유료 강점 4장.
 
+페이월(`ReportScreen`의 `PaywallPage`)은 잠긴 페이지 전체를 한 장으로 대신하고, 카드 안에 목차(`tocEntries`)에서 잠긴 항목의 제목을 자물쇠와 함께 나열한다(신년 리포트 미리보기의 잠긴 챕터 목록과 같은 모양). 모듈 페이지 제목과 핵심 강점 라벨은 목차를 통해 자동으로 들어간다. 카드는 세로 스크롤 영역이라 작은 화면에서도 잘리지 않는다.
+
 ### 결제
 - 앱: RevenueCat SDK(`mobile/lib/purchases.ts`). 키는 플랫폼별로 `mobile/config.ts`에 있다(공개 SDK 키). 구독 + 모듈별 리포트 + 번들 + 신년 리포트(상품 목록은 `IAP_PRODUCTS.md`).
 - 서버: 생성 비용이 드는 유료 콘텐츠는 서버에서 `lib/revenuecat.ts`로 entitlement를 확인한다(`REVENUECAT_SECRET_KEY` 필요, 없으면 fail closed). 앱 쪽 게이트만 믿지 않는다.
