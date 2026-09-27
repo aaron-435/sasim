@@ -9,7 +9,7 @@
 // (moduleId default "module3"). The moduleId argument overrides the persona's own module ("-" or
 // omitted keeps it); a mismatch is allowed but warned about, since the persona's story won't fit.
 // quizPoolSize (default 4) trims the quiz-answer pool, so a run can exercise the quizAnswerPool
-// fallback (turns 14→11→7→4 drop their quote first) — see lib/chatPrompts.ts's QUIZ_QUOTE_TURN_INDEX.
+// fallback (turn 14 then 7 drops its quote first) — see lib/chatPrompts.ts's QUIZ_QUOTE_TURN_INDEX.
 //
 // Every run writes scripts/out/sim_<timestamp>_<persona>_<moduleId>.json (transcript, extract,
 // context, per-turn latency and tokens, total cost) in addition to printing it. scripts/out/ is
