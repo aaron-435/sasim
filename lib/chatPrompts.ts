@@ -32,7 +32,7 @@
 
 import type { ElementKey } from "./sajuScore";
 import type { Locale } from "./i18n/types";
-import { getModulePlaybook } from "./modulePlaybooks";
+import { getModulePlaybook, PLAYBOOK_STAGE_TURNS, type ModulePlaybook, type PlaybookStage } from "./modulePlaybooks";
 import { CRISIS_RESOURCES, ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 
 export type Track = "romance" | "career";
@@ -275,19 +275,93 @@ const BREATHER_INSTRUCTION_TEMPLATE = (topic: string) => `이 턴은 숨고르�
 
 // 7번째 응답(반복 패턴/Pattern, 열림)은 원래 11개 모듈 전부에 "이런 일이나
 // 이런 감정이 이번이 처음인지, 예전에도 반복됐는지"라는 동일 문구를 썼다 —
-// mobile/lib/quiz/modules.ts에 이미 정의된 모듈별 실제 차원(애착=불안/회피,
-// 분노=억압/폭발/반추 등)을 전혀 쓰지 않아 11개 모듈 상담이 판박이처럼
-// 느껴진다는 실사용 피드백으로 모듈별 문구로 분기한다. "반복 패턴을 여는
-// 질문"이라는 턴의 목적 자체는 그대로 두고, 무엇을 반복 패턴의 소재로
-// 삼을지만 모듈 차원에 맞춘다 — 8번째 턴(구체화)이 그대로 이어받는 구조라
-// 8번째 턴은 손대지 않는다.
+// 실사용 피드백으로 한때 모듈별 문구로 분기했다(모듈 차원을 반복 패턴의 소재로).
+// 2026-09-27 (TODO Q1-a): 모듈이 있으면 2~19턴 전체가 buildModulePhaseInstruction()의
+// 플레이북 흐름을 따르므로, 이 공통 문구는 moduleId가 없거나 모르는 id일 때만 쓰인다.
 const GENERIC_PATTERN_INSTRUCTION = `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 이런 일이나 이런 감정이 이번이 처음인지, 예전에도 비슷하게 반복된 적이 있는지 여는 질문으로 물으세요.`;
 
-// 2026-09-27 (TODO F0-b): 모듈별 7번째 턴 문구는 lib/modulePlaybooks.ts의
-// patternTurnInstruction으로 옮겼다(문구 동일). 플레이북이 없는 moduleId는
-// 여전히 GENERIC_PATTERN_INSTRUCTION으로 폴백한다.
-function buildPatternPhaseInstruction(moduleId?: string): string {
-  return getModulePlaybook(moduleId)?.patternTurnInstruction ?? GENERIC_PATTERN_INSTRUCTION;
+// ── 모듈별 20턴 흐름 (2026-09-27, TODO Q1-a) ──────────────────────────────
+// 기준선 채점(scripts/out/baseline_*)에서 11개 모듈이 7번째 턴만 빼고 같은 지침을
+// 써서 "그 분야 상담사만 물을 법한 질문"이 드물었다(모듈 전문성 평균 1.25/2).
+// 그래서 고정 역할 턴(1·6·10·13·17·20)을 뺀 14턴을 MODULE_PLAYBOOK.md의 7단계
+// 흐름(lib/modulePlaybooks.ts)으로 만든다. 단계마다 첫 턴은 열기, 둘째 턴은 좁히기다.
+// 시그니처 질문은 그 단계의 둘째 턴(단계가 1턴이면 그 턴)에 둔다 — 첫 턴 중
+// 4·7·11·14는 퀴즈 답변 인용 턴이라 질문이 인용 질문으로 대체되기 때문이다.
+// 19턴은 모듈마다 다른 관점 전환 대상(perspectiveShift)을 쓴다.
+// 대화 기법(이지선다, 감정 팔레트, 모순 짚기, 리프레이밍)은 Q1-b에서 더한다.
+const STAGE_LABEL: Record<PlaybookStage, string> = {
+  A: "장면/Scene",
+  B: "감정/Emotion",
+  C: "반복 패턴/Pattern",
+  D: "뿌리/Root",
+  E: "대처 방식/Coping",
+  F: "관계/Relational",
+  G: "원하는 변화/Desired Change",
+};
+
+const STAGE_ORDER: readonly PlaybookStage[] = ["A", "B", "C", "D", "E", "F", "G"];
+
+function stageOfTurn(turn: number): PlaybookStage | undefined {
+  return STAGE_ORDER.find((s) => PLAYBOOK_STAGE_TURNS[s].includes(turn));
+}
+
+// 단계 안에서 시그니처 질문을 하는 턴: 둘째 턴, 단계가 1턴뿐이면 그 턴.
+function signatureTurn(stage: PlaybookStage): number {
+  const turns = PLAYBOOK_STAGE_TURNS[stage];
+  return turns[Math.min(1, turns.length - 1)];
+}
+
+function buildStageRole(turn: number, turns: readonly number[]): string {
+  if (turns.length === 1) {
+    return "이 단계는 이번 한 턴뿐이다. 위 내용을 사용자가 방금 한 말에서 출발하는 열린 질문 하나로 묻는다.";
+  }
+  const pos = turns.indexOf(turn);
+  if (pos === 0) {
+    return "이 단계를 여는 턴이다. 사용자가 방금 한 말에서 출발해, 위 내용의 첫 부분을 열린 질문으로 묻는다.";
+  }
+  if (pos === 1) {
+    return "좁히는 턴이다. 직전 답에서 구체적인 것 하나(장면, 말, 행동)를 짚고, 위 내용 중 아직 나오지 않은 부분으로 한 겹 좁혀 묻는다(규칙 7).";
+  }
+  return "이 단계의 마지막 턴이다. 앞의 두 턴에서 아직 다루지 않은 부분을 마저 묻는다. 이미 다 나왔다면 그중 한 장면을 한 겹 더 구체적으로 묻는다.";
+}
+
+function buildModulePhaseInstruction(turn: number, playbook: ModulePlaybook, locale: Locale): string | undefined {
+  if (turn === 19) {
+    const { speaker, listener, why } = playbook.perspectiveShift;
+    return `지금은 19번째 응답입니다 (관점 전환/Reframe). 이 상담에서는 "${speaker}"가 "${listener}"에게 말을 건네는 장면으로 관점을 바꾼다. 이 대상을 고른 이유: ${why}
+사용자가 지금까지 이 대화에서 한 이야기를 한 줄로 받은 뒤, "${speaker}"가 "${listener}"에게 뭐라고 말해 줄 것 같은지(또는 말해 주고 싶은지) 한 문장 질문으로 물으세요. 대상이 사용자 자신이 아닌 사람이면 사용자와 같은 처지에 있는 모습으로 짧게 그려 준다. 해결책이나 조언을 요구하는 질문("어떻게 해야 할까요?")이 아니라 건네는 말을 묻는 질문이다(규칙 5).`;
+  }
+  const stage = stageOfTurn(turn);
+  if (!stage) return undefined;
+  const turns = PLAYBOOK_STAGE_TURNS[stage];
+  // G 단계(18·19)는 18턴이 단계 내용 전부를 묻고 19턴은 위의 관점 전환이다.
+  const stageTurns = stage === "G" ? [18] : turns;
+  const pos = stageTurns.indexOf(turn) + 1;
+  const lines = [
+    `지금은 ${turn}번째 응답입니다 (단계 ${stage}. ${STAGE_LABEL[stage]} — 이 단계 ${stageTurns.length}턴 중 ${pos}번째).`,
+    `이 상담에서 이 단계가 다루는 것: ${playbook.stages[stage]}`,
+    `이번 턴의 역할: ${buildStageRole(turn, stageTurns)}`,
+  ];
+  if (stage === playbook.signatureStage) {
+    const sigTurn = signatureTurn(stage);
+    lines.push(
+      turn === sigTurn
+        ? `이번 턴에서 이 상담의 시그니처 질문을 한다: "${playbook.signatureQuestion[locale]}" — 무엇을 묻는지는 그대로 살리되, 지금 대화 흐름과 사용자가 쓴 표현에 맞게 다듬어 이번 응답의 유일한 질문으로 쓴다(보기가 들어 있으면 보기도 사용자의 상황에 맞게 바꿔도 된다).`
+        : `이 단계의 시그니처 질문("${playbook.signatureQuestion[locale]}")은 ${sigTurn}번째 응답에서 한다. 이번 턴에서는 그 질문을 쓰지 않는다.`
+    );
+  }
+  const next = STAGE_ORDER[STAGE_ORDER.indexOf(stage) + 1];
+  if (next && pos === stageTurns.length) {
+    lines.push(`다음 단계(${STAGE_LABEL[next]})의 내용은 아직 묻지 않는다.`);
+  }
+  return lines.join("\n");
+}
+
+function buildModuleLensSection(playbook: ModulePlaybook): string {
+  return `## 이번 상담의 관점
+이 상담이 기대는 관점: ${playbook.lens}
+옆 주제와의 경계: ${playbook.boundary}${playbook.caution ? `\n주의: ${playbook.caution}` : ""}
+이 관점은 무엇을 물을지 고르는 데만 쓴다. 이론이나 용어 이름을 사용자에게 말하거나 설명하지 않는다 — 전문성은 질문의 정확도로 드러난다.`;
 }
 
 // quizAnswerPool 재활용 — 4개 턴(4·7·11·14)에 서로 다른 퀴즈 답변을 소재로
@@ -327,7 +401,7 @@ const PHASE_INSTRUCTIONS: Record<number, string> = {
   4: `지금은 4번째 응답입니다 (감정/Emotion, 열림). 사용자가 방금 말한 사건 속에서, 그 순간 실제로 어떤 감정을 느꼈는지 물으세요. 이미 감정 단어를 말했다면 그 감정에 이름을 붙여 반영해 주세요.`,
   5: `지금은 5번째 응답입니다 (감정/Emotion, 구체화). 방금 말한 감정의 세기나 결이 구체적으로 어땠는지(예: 뜨거웠는지 조여드는 느낌이었는지, 갑자기 확 올라왔는지 서서히 쌓였는지 등) 감각적으로 파고드세요. 몸의 어느 부위인지(가슴/배/목 등)는 절대 묻지 마세요(규칙 7) — 사용자가 스스로 위치를 먼저 말하면 자연스럽게 반영은 하되, 위치를 질문으로 만들지 않습니다.`,
   6: BREATHER_INSTRUCTION_TEMPLATE("지금까지 나온 사건과 감정"),
-  // 7은 buildPatternPhaseInstruction()이 moduleId별로 대체한다 — 아래 참고.
+  7: GENERIC_PATTERN_INSTRUCTION,
   8: `지금은 8번째 응답입니다 (반복 패턴/Pattern, 구체화). 반복된 적이 있다고 했다면, 처음 그랬던 때나 가장 기억에 남는 예전 순간 하나를 구체적으로 물으세요. 이번이 처음이라고 했다면, 그럼에도 비슷한 결의 다른 감정·상황이 있었는지 물으세요.`,
   9: `지금은 9번째 응답입니다 (충동/Impulse, 열림). 몸의 위치는 절대 묻지 마세요(규칙 7).
 그 순간 실제로 하고 싶었던 행동이나 충동(도망치고 싶었다, 아무 말도 하기 싫었다, 다 그만두고 싶었다, 소리치고 싶었다 등)이
@@ -411,7 +485,10 @@ export function buildChatSystemPrompt(
 ): string {
   const locale: Locale = context.locale ?? "ko";
   const effectiveTurn = isFinalTurn(turnNumber, elapsedMinutes) ? TOTAL_TURNS : Math.max(1, turnNumber);
-  const basePhaseInstruction = effectiveTurn === 7 ? buildPatternPhaseInstruction(context.moduleId) : PHASE_INSTRUCTIONS[effectiveTurn];
+  // moduleId가 없거나(웹, 구버전 앱) 모르는 id면 플레이북이 없어 예전 공통 지침을 그대로 쓴다.
+  const playbook = getModulePlaybook(context.moduleId);
+  const basePhaseInstruction =
+    (playbook && buildModulePhaseInstruction(effectiveTurn, playbook, locale)) ?? PHASE_INSTRUCTIONS[effectiveTurn];
   const poolIndex = QUIZ_QUOTE_TURN_INDEX[effectiveTurn];
   const quotePreamble =
     poolIndex !== undefined ? buildQuizQuotePreamble(context.quizAnswerPool?.[poolIndex]) : "";
@@ -440,7 +517,7 @@ export function buildChatSystemPrompt(
 있는 구체적인 이야기를 듣는 것이다.
 
 ${buildAbsoluteRules(locale)}
-
+${playbook ? `\n${buildModuleLensSection(playbook)}\n` : ""}
 ## 지금 해야 할 일
 (아래는 이번 단계의 안내일 뿐이다. 규칙 9~11 — 사용자의 직전 발화가 우선이고, 이미 나온 재료는 다시 묻지 않는다.)
 ${phaseInstruction}${bodyLocationReminder}

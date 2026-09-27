@@ -6,10 +6,9 @@
  * 모듈 전용 페이지 2장(module_map 무료, module_deep 유료)에 무엇을 쓰는지를
  * 정한다.
  *
- * 이 파일은 데이터만 담는다(예외: 7번째 턴 지침은 lib/chatPrompts.ts가 이미
- * 읽는다). 챗봇 프롬프트(lib/chatPrompts.ts), 추출
- * 프롬프트, 리포트 프롬프트(lib/reportPrompts.ts)가 이 데이터를 읽는 건 각
- * 작업 항목(SPEC F1, Q1)에서 연결한다.
+ * 이 파일은 데이터만 담는다. 챗봇 프롬프트(lib/chatPrompts.ts의 2~19턴
+ * 지침), 추출 프롬프트, 리포트 프롬프트(lib/reportPrompts.ts)가 이 데이터를
+ * 읽는다.
  *
  * 언어 규칙:
  *   - 사용자에게 그대로 보일 수 있는 문구(시그니처 질문, 이지선다 보기,
@@ -23,6 +22,8 @@
  * 2026-09-27: 모듈 1~4 추가(TODO F0-a).
  * 2026-09-27: 모듈 5~11 추가, 7번째 턴 지침(patternTurnInstruction)을
  *   lib/chatPrompts.ts에서 옮겨 옴(TODO F0-b). 문구는 그대로다.
+ * 2026-09-27: 챗봇 2~19턴이 stages/signatureQuestion/perspectiveShift로
+ *   모듈별 지침을 만들게 되어 patternTurnInstruction을 지웠다(TODO Q1-a).
  * ------------------------------------------------------------------
  */
 
@@ -126,12 +127,6 @@ export interface ModulePlaybook {
   strengthDirections: readonly string[];
   /** 모듈별 추가 주의(모델용). 없으면 생략. */
   caution?: string;
-  /**
-   * 7번째 응답(반복 패턴/Pattern, 열림)의 턴 지침 전문(모델용).
-   * lib/chatPrompts.ts의 MODULE_PATTERN_INSTRUCTIONS에서 문구 그대로 옮겼다
-   * (2026-09-27, TODO F0-b). 20턴 흐름 개편(Q1-a) 전까지 문구를 바꾸지 않는다.
-   */
-  patternTurnInstruction: string;
 }
 
 const MODULE1: ModulePlaybook = {
@@ -212,7 +207,6 @@ const MODULE1: ModulePlaybook = {
     },
   },
   strengthDirections: ["관계의 온도를 알아채는 감각", "깊은 헌신", "다시 이어 붙이려는 의지"],
-  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 관계가 가까워지거나 멀어지려는 순간에 사용자가 실제로 보인 반응(불안하게 매달리듯 확인하고 싶어지는 쪽이든, 반대로 거리를 두고 발을 빼고 싶어지는 쪽이든)이 이번이 처음인지, 예전 다른 관계에서도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
 };
 
 const MODULE2: ModulePlaybook = {
@@ -293,7 +287,6 @@ const MODULE2: ModulePlaybook = {
     },
   },
   strengthDirections: ["위험을 먼저 알아채는 감각", "계획성", "남을 챙기는 너그러움"],
-  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 돈과 관련해서 결핍감에 쫓기듯 굴거나, 남들 앞에서 괜찮아 보이려 무리하거나, 아예 생각하기 싫어서 피해버렸던 장면이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
 };
 
 const MODULE3: ModulePlaybook = {
@@ -371,7 +364,6 @@ const MODULE3: ModulePlaybook = {
     },
   },
   strengthDirections: ["책임감", "버티는 힘", "잘하고 싶은 마음"],
-  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 이렇게 지치고 냉소적으로 변하고 "해도 소용없다"는 느낌이 먼저 드는 순간이 이번이 처음인지, 예전 다른 시기에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
 };
 
 const MODULE4: ModulePlaybook = {
@@ -449,7 +441,6 @@ const MODULE4: ModulePlaybook = {
     },
   },
   strengthDirections: ["분위기를 읽는 감각", "배려", "적응력"],
-  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 이미지 관리를 위해 진짜 마음을 숨기거나 꾸며낸 장면, 혹은 사람을 만나고 난 뒤 유독 지치는 순간이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
 };
 
 const MODULE5: ModulePlaybook = {
@@ -527,7 +518,6 @@ const MODULE5: ModulePlaybook = {
     },
   },
   strengthDirections: ["높은 기준", "신중함", "몰아칠 때의 추진력"],
-  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 완벽하게 하려다 오히려 미루거나, 아예 손을 놓거나, 뭘 선택해야 할지 몰라 얼어붙었던 장면이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
 };
 
 const MODULE6: ModulePlaybook = {
@@ -607,7 +597,6 @@ const MODULE6: ModulePlaybook = {
   },
   strengthDirections: ["정의감", "솔직함", "자기를 지키는 감각"],
   caution: "타인이나 자신을 해치는 언급이 나오면 규칙 0 안전 프로토콜이 우선한다.",
-  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 화를 참다가 눌러 삼키거나, 갑자기 터뜨리거나, 지난 뒤에도 그 장면을 계속 곱씹었던 패턴이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
 };
 
 const MODULE7: ModulePlaybook = {
@@ -685,7 +674,6 @@ const MODULE7: ModulePlaybook = {
     },
   },
   strengthDirections: ["섬세한 관찰력", "깊은 공감", "미적 감각"],
-  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 소리·빛·사람 많은 상황 같은 자극에 압도돼 버거워졌던 순간이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
 };
 
 const MODULE8: ModulePlaybook = {
@@ -765,7 +753,6 @@ const MODULE8: ModulePlaybook = {
   },
   strengthDirections: ["깊이 생각하는 힘", "책임감", "풍부한 내면"],
   caution: "불면증 같은 진단명, 약, 수면 보조제 언급을 하지 않는다.",
-  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 잠들기 전 머리가 계속 돌아가거나 몸이 긴장한 채로 남아 뒤척였던 밤이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
 };
 
 const MODULE9: ModulePlaybook = {
@@ -845,7 +832,6 @@ const MODULE9: ModulePlaybook = {
   },
   strengthDirections: ["책임감", "돌보는 힘", "갈등을 읽는 감각"],
   caution: "부모나 형제 구성을 가정하지 않는다. 성별 중립으로 쓴다(한부모, 조부모 양육, 입양, 위탁 등 모두 자연스럽게 읽혀야 한다).",
-  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 가족과 지나치게 얽히거나, 반대로 마음의 문을 닫아버리거나, 일찍부터 어른 역할을 떠맡았던 장면이 이번 일과 비슷하게 예전에도 반복됐는지 여는 질문으로 물으세요.`,
 };
 
 const MODULE10: ModulePlaybook = {
@@ -924,7 +910,6 @@ const MODULE10: ModulePlaybook = {
   },
   strengthDirections: ["폭발적 몰입력", "호기심", "빠른 실행력"],
   caution: "ADHD 같은 진단명이나 '증상'이라는 말을 쓰지 않는다.",
-  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 산만해져서 손을 못 대거나, 한번 빠지면 시간 가는 줄 모르거나, 순간적으로 확 저질러버렸던 패턴이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
 };
 
 const MODULE11: ModulePlaybook = {
@@ -1003,7 +988,6 @@ const MODULE11: ModulePlaybook = {
     },
   },
   strengthDirections: ["신중함", "배려", "잠재된 생동감"],
-  patternTurnInstruction: `지금은 7번째 응답입니다 (반복 패턴/Pattern, 열림). 하고 싶은 말이나 행동을 삼키거나, 확신이 없어서 물러섰던 장면이 이번이 처음인지, 예전에도 비슷하게 반복됐는지 여는 질문으로 물으세요.`,
 };
 
 export const MODULE_PLAYBOOKS: Record<PlaybookModuleId, ModulePlaybook> = {

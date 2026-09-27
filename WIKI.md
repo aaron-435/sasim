@@ -40,7 +40,7 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 |---|---|---|
 | Q&A(무료 일일 한도) | `/api/qa-answer` (`lib/qaChat.ts`, 한도는 `lib/qaQuota.ts`, `llm_usage_log` 행 수로 집계) | `QAScreen`, `QAQuestionScreen` |
 | 퀴즈(11개 모듈) | `/api/quiz-result`는 결과를 Supabase에 저장만 한다. 문항·채점은 앱 안(`mobile/lib/quiz/`)에 있고, 루트 `lib/module*.ts`·`lib/quizProfile.ts`는 웹 컴포넌트용 | `ModuleSelectScreen`, `QuizScreen` |
-| AI 상담(20턴) | `/api/chat` (`lib/chat.ts`, `lib/chatPrompts.ts`). 모듈별 대화·리포트 설계 데이터는 `lib/modulePlaybooks.ts`(`MODULE_PLAYBOOK.md`의 코드판, 11개 모듈). 현재 챗봇은 7번째 턴 지침만 여기서 읽고, 리포트 프롬프트는 전문 관점·경계·핵심 질문·강점 방향·모듈 페이지 지시를 읽는다. 마지막 턴의 추출(extract)은 공통 필드(고민, 감정, 촉발 사건, 반복 패턴, 두려움, 대처·관계·바라는 변화, 요약)에 더해 플레이북의 모듈 필드 2개를 `module_fields`로 뽑는다(말하지 않았으면 null, 새 필드는 모두 optional). 앱은 extract를 해석하지 않고 저장했다가 리포트 요청에 그대로 넘긴다 | `ChatScreen`, `useReplyScroll` |
+| AI 상담(20턴) | `/api/chat` (`lib/chat.ts`, `lib/chatPrompts.ts`). 모듈별 대화·리포트 설계 데이터는 `lib/modulePlaybooks.ts`(`MODULE_PLAYBOOK.md`의 코드판, 11개 모듈). 챗봇은 `moduleId`가 있으면 2~19턴 중 고정 역할 턴(6·10·13·17)을 뺀 14턴 지침을 플레이북의 7단계 흐름(A 장면 2–3, B 감정 4–5, C 패턴 7–9, D 뿌리 11–12, E 대처 14–15, F 관계 16, G 변화 18)과 모듈별 시그니처 질문(단계의 둘째 턴), 19턴 관점 전환 대상으로 만들고, 프롬프트에 모듈의 관점·경계를 붙인다. `moduleId`가 없거나 모르는 id(웹, 구버전 앱)면 예전 공통 지침 그대로다. 리포트 프롬프트는 전문 관점·경계·핵심 질문·강점 방향·모듈 페이지 지시를 읽는다. 마지막 턴의 추출(extract)은 공통 필드(고민, 감정, 촉발 사건, 반복 패턴, 두려움, 대처·관계·바라는 변화, 요약)에 더해 플레이북의 모듈 필드 2개를 `module_fields`로 뽑는다(말하지 않았으면 null, 새 필드는 모두 optional). 앱은 extract를 해석하지 않고 저장했다가 리포트 요청에 그대로 넘긴다 | `ChatScreen`, `useReplyScroll` |
 | 심층 리포트 | `/api/report`, `/api/report/paid`, `/api/report/unlock`, `/api/report-pdf` | `ReportScreen`, `MyReportsScreen` |
 | 오늘/올해 운세 | `/api/dailyFortune`, `/api/yearFortune` | `FortuneScreen`, `HomeScreen` |
 | 궁합 | `/api/compatibility` | `CompatibilityScreen` |
