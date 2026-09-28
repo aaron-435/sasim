@@ -22,6 +22,7 @@ import OpenAI from "openai";
 import {
   buildChatSystemPrompt,
   buildExtractionPrompt,
+  isFinalTurn,
   sanitizeFormulation,
   TOTAL_TURNS,
   type ChatFormulation,
@@ -42,7 +43,27 @@ const client = new OpenAI({
 // false-positive, actually outperforming gpt-4o (67% recall on the same
 // set — it missed a method-mention case and dropped the mandatory hotline
 // numbers on another). Re-run that matrix before ever changing this again.
-const CHAT_MODEL = "gpt-5.4-mini";
+//
+// 2026-09-28 (TODO 15-b): 대화 턴은 gpt-5.6-luna(추론 강도 low)로 바꿨다. 같은 4개 페르소나 × 20턴
+// 채점 평균 1.80(mini 1.59, gpt-5.4 1.79), 대화 1개 비용 $0.017(mini $0.12), 응답 중앙값 4.2초(mini 2.2초).
+// 안전 매트릭스(위기 6 + 과장 5 + 돈 스트레스 1) 3회: 위기 18/18, 과장 오탐 0/15, "또 못 버티겠다"는 매번
+// 안전 확인으로 넘어감(규칙 0에 위기 신호로 적힌 표현). 추출은 mini로 둔다 — luna 추출은 summary_quote를
+// 오행 수치로 시작하고 조언투가 섞였으며 20턴 끝 대기가 약 7초로 늘었다.
+export const CHAT_MODEL = "gpt-5.6-luna";
+const EXTRACT_MODEL = "gpt-5.4-mini";
+
+// 2026-09-28 (TODO 15-b): gpt-5.5·5.6 계열은 temperature 기본값(1)만 받고 추론형이다. 기본 추론을 켜 두면
+// gpt-5.6-luna가 턴당 약 300개의 보이지 않는 추론 토큰을 써서 응답 중앙값이 6초대였다. 이 계열로 바꿀 때는
+// temperature 대신 추론 강도를 보낸다.
+export type ChatReasoningEffort = "none" | "low" | "medium" | "high";
+const CHAT_REASONING_EFFORT: ChatReasoningEffort = "low";
+export function chatSamplingParams(
+  model: string,
+  temperature: number,
+  reasoningEffort: ChatReasoningEffort = CHAT_REASONING_EFFORT,
+): { temperature: number } | { reasoning_effort: ChatReasoningEffort } {
+  return /^gpt-5\.[56]/.test(model) ? { reasoning_effort: reasoningEffort } : { temperature };
+}
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -113,6 +134,35 @@ function enforceOneQuestionPerReply(lines: string[]): string[] {
   return lines.filter((_, i) => !dropIndices.has(i));
 }
 
+// 2026-09-28 (TODO 15-b): 마지막 턴은 "요약 → 확인 질문 → 잠시 기다려 달라는 마무리 안내" 순서여야 하는데,
+// 모델이 확인 질문을 맨 끝에 두거나(규칙 3 "질문은 마지막 줄"과 헷갈림) 안내를 빠뜨리면 대화가 질문으로 끝난 채
+// 앱이 리포트로 넘어간다(gpt-5.6-luna·terra 4개 중 2개). 안내 줄을 맨 끝으로 옮기고, 없으면 언어별 문장을 붙인다.
+// 요약 줄에도 나올 수 있는 말("기다리다", "wait for his reply")은 피하고, 안내 문장에만 나오는 표현으로 찾는다.
+const CLOSING_LINE_PATTERN: Record<string, RegExp> = {
+  ko: /잠시만|잠깐만|기다려 주|(사주|테스트).*(살펴|묶|엮|종합|볼게)/,
+  en: /\b(give me a moment|one moment|a moment|hold on|saju|test results)\b/i,
+  es: /(un momento|un segundo|saju|resultados del test)/i,
+};
+const CLOSING_LINE_FALLBACK: Record<string, string> = {
+  ko: "잠시만 기다려 주세요. 들려주신 이야기와 사주, 테스트 결과를 함께 살펴볼게요.",
+  en: "Give me a moment — I'll look at everything you shared together with your saju and test results.",
+  es: "Dame un momento: voy a revisar todo lo que compartiste junto con tu saju y los resultados del test.",
+};
+// 위기 대응(규칙 0) 중인 응답에는 리포트로 넘어간다는 안내를 붙이지 않는다 — 안전 안내가 마지막 말이어야 한다.
+// 번호는 lib/promptLocale.ts의 언어별 위기 상담 안내와 같다.
+const CRISIS_LINE_PATTERN = /1393|1577-0199|\b988\b|findahelpline/i;
+export function ensureClosingLineLast(lines: string[], locale: string = "ko"): string[] {
+  if (lines.some((line) => CRISIS_LINE_PATTERN.test(line))) return lines;
+  const pattern = CLOSING_LINE_PATTERN[locale] ?? CLOSING_LINE_PATTERN.ko;
+  let idx = -1;
+  lines.forEach((line, i) => {
+    if (!isQuestionLine(line) && pattern.test(line)) idx = i;
+  });
+  if (idx === -1) return [...lines, CLOSING_LINE_FALLBACK[locale] ?? CLOSING_LINE_FALLBACK.ko];
+  if (idx === lines.length - 1) return lines;
+  return [...lines.slice(0, idx), ...lines.slice(idx + 1), lines[idx]];
+}
+
 export async function getChatReply(params: {
   turnNumber: number;
   history: ChatMessage[];
@@ -125,30 +175,46 @@ export async function getChatReply(params: {
   const elapsedMinutes = Math.floor((Date.now() - params.sessionStartedAt) / 60000);
   const systemPrompt = buildChatSystemPrompt(params.turnNumber, params.context, elapsedMinutes, params.formulation);
 
-  const completion = await client.chat.completions.create({
-    model: CHAT_MODEL,
-    temperature: 0.8,
-    messages: [{ role: "system", content: systemPrompt }, ...params.history],
-    response_format: { type: "json_object" },
-  });
-
-  if (completion.usage) {
-    await logLlmUsage({
-      sessionId: params.sessionId,
-      endpoint: "chat",
+  // 2026-09-28 (TODO 15-b): gpt-5.6-luna 시뮬레이션 80턴 중 2번, JSON에 lines가 빠진 응답이 와서 대화가 오류로
+  // 끊겼다. 빈 응답·깨진 JSON·lines 없음은 한 번만 다시 요청한다(두 번째도 실패하면 예전처럼 오류).
+  let parsed: { lines?: unknown; formulation?: unknown } = {};
+  let rawLines: string[] = [];
+  for (let attempt = 0; ; attempt++) {
+    const completion = await client.chat.completions.create({
       model: CHAT_MODEL,
-      promptTokens: completion.usage.prompt_tokens,
-      completionTokens: completion.usage.completion_tokens,
+      ...chatSamplingParams(CHAT_MODEL, 0.8),
+      messages: [{ role: "system", content: systemPrompt }, ...params.history],
+      response_format: { type: "json_object" },
     });
+
+    if (completion.usage) {
+      await logLlmUsage({
+        sessionId: params.sessionId,
+        endpoint: "chat",
+        model: CHAT_MODEL,
+        promptTokens: completion.usage.prompt_tokens,
+        completionTokens: completion.usage.completion_tokens,
+      });
+    }
+
+    const content = completion.choices[0]?.message?.content?.trim() ?? "";
+    let problem = "";
+    try {
+      parsed = content ? JSON.parse(content) : {};
+      rawLines = Array.isArray(parsed.lines) ? parsed.lines.map((l: unknown) => String(l)).filter(Boolean) : [];
+      if (!content) problem = "OpenAI가 빈 응답을 반환했습니다.";
+      else if (rawLines.length === 0) problem = `OpenAI 응답에 lines가 없습니다. (받은 키: ${Object.keys(parsed).join(", ")})`;
+    } catch {
+      problem = `OpenAI 응답이 JSON이 아닙니다. (앞부분: ${content.slice(0, 120)})`;
+    }
+    if (!problem) break;
+    if (attempt >= 1) throw new Error(problem);
+    console.warn(`[chat] turn ${params.turnNumber}: ${problem} — 한 번 다시 요청합니다.`);
   }
-
-  const content = completion.choices[0]?.message?.content?.trim();
-  if (!content) throw new Error("OpenAI가 빈 응답을 반환했습니다.");
-
-  const parsed = JSON.parse(content);
-  const rawLines = Array.isArray(parsed.lines) ? parsed.lines.map((l: unknown) => String(l)).filter(Boolean) : [];
-  if (rawLines.length === 0) throw new Error("OpenAI 응답에 lines가 없습니다.");
-  const lines = enforceOneQuestionPerReply(rawLines);
+  const oneQuestion = enforceOneQuestionPerReply(rawLines);
+  const lines = isFinalTurn(params.turnNumber, elapsedMinutes)
+    ? ensureClosingLineLast(oneQuestion, params.context.locale ?? "ko")
+    : oneQuestion;
   const formulation = sanitizeFormulation(parsed.formulation);
   return {
     lines: params.context.locale === "ko" || !params.context.locale ? stripHanja(lines) : lines,
@@ -161,8 +227,8 @@ export async function extractChatSummary(transcript: ChatMessage[], context: Cha
   const { system, user } = buildExtractionPrompt(transcript, context);
 
   const completion = await client.chat.completions.create({
-    model: CHAT_MODEL,
-    temperature: 0,
+    model: EXTRACT_MODEL,
+    ...chatSamplingParams(EXTRACT_MODEL, 0),
     response_format: { type: "json_object" },
     messages: [
       { role: "system", content: system },
@@ -174,7 +240,7 @@ export async function extractChatSummary(transcript: ChatMessage[], context: Cha
     await logLlmUsage({
       sessionId,
       endpoint: "chat_extract",
-      model: CHAT_MODEL,
+      model: EXTRACT_MODEL,
       promptTokens: completion.usage.prompt_tokens,
       completionTokens: completion.usage.completion_tokens,
     });

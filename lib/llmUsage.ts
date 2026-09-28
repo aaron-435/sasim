@@ -18,6 +18,7 @@ import { getSupabaseAdmin } from "./supabase";
 // true when they were written (not recalculated retroactively).
 const PRICING: Record<string, { input: number; output: number }> = {
   "gpt-5.4-mini": { input: 0.75, output: 4.5 },
+  "gpt-5.6-luna": { input: 0.1, output: 0.5 }, // 2026-09-28 채팅 모델, OpenAI 가격 페이지 standard·short context
   "gpt-4o": { input: 2.5, output: 10.0 },
 };
 

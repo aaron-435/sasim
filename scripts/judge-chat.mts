@@ -13,6 +13,8 @@
 //   expertise, no_leak, no_repeat, natural
 //   v_*      violations, split so Q1 can check none got worse: double question, advice, invented
 //            emotion, body location, "one more" extension. `violations` = the worst of the five.
+// (2026-09-27 Q1-e: the judge now gets the pre-chat quiz answers, psych-test type and saju chart the
+// user already saw, so quoting them is not scored as invented, and ⑥ allows the one re-confirmation question turn 20 is told to ask.)
 //
 // Writes scripts/out/<label>_<timestamp>.json (per-file scores with evidence, sim + judge cost) and a
 // .md summary table next to it. scripts/out/ is git-ignored.
@@ -63,7 +65,7 @@ const RUBRIC = `
 - t3 ③ 모순 짚기: 사용자가 한 말 두 개 사이의 어긋남(또는 모듈의 모순 축)을 판단하지 않는 질문 형태로 짚는가. 없으면 0, 비난조면 0.
 - t4 ④ 확인형 가설: 사용자가 말한 재료 두 개 이상을 엮은 가설을 "~인 걸까요?"처럼 확인형으로 묻는가. 재료 없이 단정하면 0.
 - t5 ⑤ 감정 어휘 좁히기: 뭉뚱그린 감정("힘들다", "그냥 그래")을 구체 어휘 두세 개 중에서 고르게 해 좁히는가.
-- t6 ⑥ 정리→재확인: 6·13·17·20턴에서 질문 없이 지금까지를 정리하고 맞는지 재확인하는가. 매번 다른 표현이면 2, 같은 틀의 반복이면 1.
+- t6 ⑥ 정리→재확인: 6·13·17·20턴에서 새 질문(탐색 질문) 없이 지금까지를 정리하고 맞는지 재확인하는가. 재확인 자체를 위한 물음("~라는 얘기죠?", "제가 이렇게 이해한 게 맞을까요?") 한 개는 이 기법의 일부이므로 감점하지 않는다. 매번 다른 표현이면 2, 같은 틀의 반복이면 1.
 - t7 ⑦ 폭로 후 리프레이밍: 사용자의 자책 발언 바로 다음 응답에서, 자책을 그대로 받거나 서둘러 "그렇지 않아요"로 덮지 않고, 다른 해석을 여는 반박형 질문을 하는가(모듈의 리프레이밍 방향 참고). 조언으로 넘어가면 0.
 
 [모듈]
@@ -77,7 +79,7 @@ const RUBRIC = `
 [위반] 2 = 한 번도 없음, 1 = 경계선 사례 1건, 0 = 명백한 사례가 1건 이상.
 - v_double_question: 한 응답에 서로 다른 질문 두 개(물음표 두 개, 또는 "그리고 ~는요?" 식으로 두 번째 질문을 붙임).
 - v_advice: 해결책·행동 권유·조언("~해 보세요", "~하는 게 좋아요"). 사용자가 해결책을 물어도 조언하면 위반. 안전 안내는 제외.
-- v_invented_emotion: 사용자가 말하지 않은 감정·동기·경험을 사실처럼 덧붙임("무시당한 느낌이셨겠네요" — 사용자가 그런 말을 안 했으면 위반). 확인형 질문으로 묻는 건 위반이 아니다.
+- v_invented_emotion: 사용자가 말하지 않은 감정·동기·경험을 사실처럼 덧붙임("무시당한 느낌이셨겠네요" — 사용자가 그런 말을 안 했으면 위반). 확인형 질문으로 묻는 건 위반이 아니다. 상담 전에 사용자가 본 심리검사 유형·사주 결과를 언급하거나, 퀴즈 답변(둘 다 아래 "사용자 정보"에 있음)을 "아까 '…' 질문에 '…'라고 답해 주셨는데"처럼 인용하는 건 사용자가 실제로 한 답이므로 위반이 아니다. 단, 목록에 없는 퀴즈 답을 인용하면 위반이다.
 - v_body_location: 감정이 몸의 어디에서 느껴지는지 묻기.
 - v_extension: 대화를 끝낼 자리(10턴 점검, 20턴, 사용자의 종료 의사)에서 "하나만 더", "조금만 더 얘기해 볼까요" 식으로 사용자에게 대화를 더 이어 가자고 끌기. 20턴 끝의 "잠시만 기다려 주세요, (결과/리포트를) 살펴볼게요" 같은 문장은 앱이 리포트 화면으로 넘어가는 정해진 마무리 문구이므로 위반이 아니다.
 `.trim();
@@ -101,6 +103,8 @@ interface SimFile {
   totalTurns: number;
   turns: { turn: number; bot: string[]; user: string | null; botMs: number }[];
   usage?: { totalCostUsd: number };
+  botModel?: string;
+  context?: { psychTestType?: string; psychTestSummary?: string; dominantSajuElement?: string; quizAnswer?: { prompt: string; label: string }; quizAnswerPool?: { prompt: string; label: string }[] };
 }
 
 type Score = 0 | 1 | 2 | null;
@@ -109,6 +113,7 @@ interface JudgeResult {
   file: string;
   persona: string;
   moduleId: string | null;
+  botModel: string;
   locale: string;
   turns: number;
   scores: Record<ItemKey | "violations", Score>;
@@ -159,6 +164,21 @@ function openingRepeats(sim: SimFile): number {
   return repeats;
 }
 
+/** Results the user already saw in the app before the chat (psych test, saju chart) — the bot is told to mention them. */
+function priorResultsBlock(sim: SimFile): string {
+  const c = sim.context ?? {};
+  return [
+    c.psychTestType && `  - 심리검사 유형: ${c.psychTestType}${c.psychTestSummary ? ` (${c.psychTestSummary})` : ""}`,
+    `  - 사주 결과 화면${c.dominantSajuElement ? `(강한 오행: ${c.dominantSajuElement})` : ""}. 20턴 마무리에서 "들려주신 이야기와 사주를 함께 살펴볼게요"처럼 언급하는 건 정해진 문구다.`,
+  ].filter(Boolean).join("\n");
+}
+
+/** The pre-chat quiz answers the bot is told it may quote (sim context) — without these the judge reads a quote as invented. */
+function quizBlock(sim: SimFile): string {
+  const quotes = [sim.context?.quizAnswer, ...(sim.context?.quizAnswerPool ?? [])].filter((q): q is { prompt: string; label: string } => !!q);
+  return quotes.length ? quotes.map((q) => `  - "${q.prompt}" → "${q.label}"`).join("\n") : "  (없음)";
+}
+
 const isScore = (v: unknown): v is Score => v === null || v === 0 || v === 1 || v === 2;
 
 async function judge(file: string, model: string): Promise<JudgeResult> {
@@ -182,7 +202,11 @@ ${RUBRIC}
 ${playbookBlock(pb, sim.locale)}
 
 ## 사용자 정보
-언어: ${sim.locale}. 사용자는 시뮬레이션이며, 설정상 ${sim.selfBlame ? "자책 발언을 하는 성향이다" : "자책 발언 성향이 따로 없다(실제로 했는지는 대화를 보고 판단)"}.
+언어: ${sim.locale}. 사용자가 상담 전에 앱에서 이미 본 결과(챗봇이 "아까 ~가 나왔던데"처럼 언급할 수 있으며, 지어낸 것이 아니다):
+${priorResultsBlock(sim)}
+상담 전 퀴즈에서 사용자가 실제로 고른 답(챗봇이 인용할 수 있음):
+${quizBlock(sim)}
+사용자는 시뮬레이션이며, 설정상 ${sim.selfBlame ? "자책 발언을 하는 성향이다" : "자책 발언 성향이 따로 없다(실제로 했는지는 대화를 보고 판단)"}.
 
 ## 대화 (${sim.turns.length}턴)
 ${transcriptBlock(sim)}`;
@@ -213,6 +237,7 @@ ${transcriptBlock(sim)}`;
         file: basename(file),
         persona: sim.persona,
         moduleId: sim.moduleId,
+        botModel: sim.botModel ?? "gpt-5.4-mini",
         locale: sim.locale,
         turns: sim.turns.length,
         scores,
@@ -245,7 +270,7 @@ const mean = (xs: (Score | number)[]) => {
 };
 
 function summaryTable(results: JudgeResult[]): string {
-  const cols = results.map((r) => `${r.persona}·${r.moduleId}`);
+  const cols = results.map((r) => `${r.persona}·${r.moduleId}${r.botModel === "gpt-5.4-mini" ? "" : `·${r.botModel}`}`);
   const rows: string[] = [
     `| 항목 | ${cols.join(" | ")} | 평균 |`,
     `|---|${cols.map(() => "---:").join("|")}|---:|`,

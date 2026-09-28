@@ -10,6 +10,15 @@
 // omitted keeps it); a mismatch is allowed but warned about, since the persona's story won't fit.
 // --no-formulation stops echoing the hidden `formulation` memo back each turn (the app echoes it —
 // TODO Q1-c), to compare against a web/older-app session. Each turn's memo is saved either way.
+// --bot-model <id> runs the counselor turns on another model (TODO Q1-e model comparison); the user
+// simulator and the extraction call stay on gpt-5.4-mini so only the chat model differs (without the flag
+// the bot runs on lib/chat.ts's CHAT_MODEL — gpt-5.6-luna since 2026-09-28). Bot calls get
+// the same sampling params the server would send for that model (lib/chat.ts's chatSamplingParams:
+// gpt-5.5/5.6 take reasoning_effort instead of temperature); --reasoning <none|low|medium|high>
+// overrides the effort (TODO 15-b).
+// At the turn-10 checkpoint the simulated user always chooses to keep going, like tapping the app's
+// "continue" button, so every run really has 20 turns to compare (the app's "finish" button jumps
+// straight to turn 20, which a typed reply can't reproduce).
 // quizPoolSize (default 4) trims the quiz-answer pool, so a run can exercise the quizAnswerPool
 // fallback (turn 14 then 7 drops its quote first) — see lib/chatPrompts.ts's QUIZ_QUOTE_TURN_INDEX.
 //
@@ -22,7 +31,7 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import OpenAI from "openai";
-import { getChatReply, extractChatSummary, type ChatMessage } from "../lib/chat.ts";
+import { getChatReply, extractChatSummary, chatSamplingParams, CHAT_MODEL, type ChatMessage, type ChatReasoningEffort } from "../lib/chat.ts";
 import type { ChatFormulation, ChatSessionContext, QuizAnswerQuote } from "../lib/chatPrompts.ts";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
@@ -34,9 +43,17 @@ const OUT_DIR = join(dirname(fileURLToPath(import.meta.url)), "out");
 // every chat.completions.create call in this process is wrapped here and attributed to the persona
 // run (AsyncLocalStorage, since personas run in parallel) and to the phase that made it.
 // USD per 1M tokens (input/output); keep in step with lib/llmUsage.ts.
+// Upper models from the OpenAI pricing page, standard tier, short context (2026-09-27).
 const PRICING: Record<string, { input: number; output: number }> = {
   "gpt-5.4-mini": { input: 0.75, output: 4.5 },
+  "gpt-5.4": { input: 2.5, output: 15 },
+  "gpt-5.5": { input: 5, output: 30 },
+  "gpt-5.6-luna": { input: 0.1, output: 0.5 },
+  "gpt-5.6-sol": { input: 2, output: 10 },
+  "gpt-5.6-terra": { input: 2, output: 12 },
 };
+let botModel: string | undefined;
+let reasoningEffort: ChatReasoningEffort | undefined;
 type Phase = "bot" | "userSim" | "extract";
 interface Usage { calls: number; promptTokens: number; completionTokens: number; costUsd: number }
 interface RunUsage { phase: Phase; last: { promptTokens: number; completionTokens: number } | null; byPhase: Record<Phase, Usage> }
@@ -48,6 +65,12 @@ function wrapCreate(origCreate: CreateFn): CreateFn {
     // Parallel 20-turn personas can hit the org's tokens-per-minute limit after the SDK's own 2
     // retries; keep waiting here so one 429 doesn't throw away a whole run that has already been paid for.
     let completion: OpenAI.Chat.ChatCompletion;
+    const run0 = usageStore.getStore();
+    if (botModel && run0?.phase === "bot") {
+      const { temperature = 0.8, ...rest } = args[0] as Record<string, unknown>;
+      const req = { ...rest, model: botModel, ...chatSamplingParams(botModel, temperature as number, reasoningEffort) };
+      args = [req, ...args.slice(1)];
+    }
     for (let attempt = 0; ; attempt++) {
       try {
         completion = await origCreate.apply(this, args);
@@ -363,17 +386,29 @@ function resolvePersona(name: string): { situation: string; selfBlame: boolean; 
   throw new Error(`unknown persona "${name}". Personas: ${Object.keys(PERSONAS).join(", ")}; legacy styles: ${Object.keys(LEGACY_STYLES).join(", ")}`);
 }
 
-async function userReply(situation: string, locale: string, history: ChatMessage[]): Promise<string> {
+// Turn 10 is the mid-conversation checkpoint; see the header comment for why the simulated user always continues.
+const CHECKPOINT_CONTINUE: Record<string, string> = {
+  ko: "방금 챗봇이 더 이야기할지 마무리할지 물었다면, 너는 조금 더 이야기하는 쪽을 고른다(마무리하지 않는다). 네 말투로 짧게 답해라.",
+  en: "If the bot just asked whether to keep talking or wrap up, you choose to keep talking (don't wrap up). Answer briefly in your own voice.",
+  es: "Si el bot acaba de preguntar si seguir hablando o terminar, eliges seguir hablando (no terminas). Responde breve, con tu estilo.",
+};
+
+async function userReply(situation: string, locale: string, history: ChatMessage[], checkpoint = false): Promise<string> {
   const msgs = history.map((m) => ({ role: m.role === "user" ? "assistant" : "user", content: m.content })) as OpenAI.Chat.ChatCompletionMessageParam[];
   const c = await client.chat.completions.create({
     model: USER_SIM_MODEL,
     temperature: 0.9,
-    messages: [{ role: "system", content: `${situation}\n${SIM_FRAME[locale] ?? SIM_FRAME.ko}` }, ...msgs],
+    messages: [{ role: "system", content: `${situation}\n${SIM_FRAME[locale] ?? SIM_FRAME.ko}${checkpoint ? `\n${CHECKPOINT_CONTINUE[locale] ?? CHECKPOINT_CONTINUE.ko}` : ""}` }, ...msgs],
   });
   return c.choices[0].message.content?.trim() ?? "";
 }
 
-const args = process.argv.slice(2).filter((a) => !a.startsWith("--"));
+const argv = process.argv.slice(2);
+const botModelAt = argv.indexOf("--bot-model");
+if (botModelAt >= 0) botModel = argv.splice(botModelAt, 2)[1];
+const reasoningAt = argv.indexOf("--reasoning");
+if (reasoningAt >= 0) reasoningEffort = argv.splice(reasoningAt, 2)[1] as ChatReasoningEffort;
+const args = argv.filter((a) => !a.startsWith("--"));
 const echoFormulation = !process.argv.includes("--no-formulation");
 const TURNS = Number(args[0] ?? 12);
 const names = (args[1] ?? "terse,talkative,questioning").split(",");
@@ -411,7 +446,7 @@ await Promise.all(names.map((name) => usageStore.run(
       const botTokens = run.last;
       history.push({ role: "assistant", content: reply.lines.join("\n") });
       run.phase = "userSim";
-      const user = turn === TURNS ? null : await userReply(persona.situation, locale, history);
+      const user = turn === TURNS ? null : await userReply(persona.situation, locale, history, turn === 10);
       if (user !== null) history.push({ role: "user", content: user });
       turns.push({ turn, bot: reply.lines, user, botMs, botTokens, formulation: reply.formulation ?? null });
     }
@@ -421,7 +456,7 @@ await Promise.all(names.map((name) => usageStore.run(
     const extract = await extractChatSummary(history, ctx);
     const totalCostUsd = Object.values(run.byPhase).reduce((sum, u) => sum + u.costUsd, 0);
 
-    const file = join(OUT_DIR, `sim_${stamp}_${name}_${ctx.moduleId ?? "none"}.json`);
+    const file = join(OUT_DIR, `sim_${stamp}_${name}_${ctx.moduleId ?? "none"}${botModel ? `_${botModel}` : ""}${reasoningEffort ? `_${reasoningEffort}` : ""}.json`);
     writeFileSync(file, JSON.stringify({
       kind: "sim-chat",
       createdAt: new Date().toISOString(),
@@ -432,6 +467,8 @@ await Promise.all(names.map((name) => usageStore.run(
       locale,
       totalTurns: TURNS,
       echoFormulation,
+      botModel: botModel ?? CHAT_MODEL,
+      reasoningEffort: reasoningEffort ?? null,
       userSimModel: USER_SIM_MODEL,
       durationMs: Date.now() - started,
       context: ctx,
