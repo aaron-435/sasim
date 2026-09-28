@@ -275,9 +275,11 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
   - **모델 결정(사용자, 2026-09-28): 대화 턴을 gpt-5.6-luna(low)로 교체.** 추출은 gpt-5.4-mini 유지 — 같은 대화 4개로 비교했을 때 luna 추출은 `summary_quote`가 4개 모두 오행 수치("금과 수가 각각 서른세 퍼센트")로 시작했고, anger는 조언투("존중받을 필요가 있다")가 섞였으며, 20턴 끝 대기가 4.4s → 약 7s로 늘었다. `lib/llmUsage.ts` 가격표에 luna 추가. QA: `npx tsc --noEmit` → exit 0, `sim-chat.mts 3 anger`(기본 경로, `--bot-model` 없음) → `botModel: gpt-5.6-luna`, 턴 3.0~4.3s, 추출 mini 1회 정상.
   - 배포: 서버만 바뀜(앱 변경 없음) → 웹(Vercel) 배포로 적용, OTA 불필요. 배포 전에 Vercel의 `OPENAI_API_KEY` 조직에서 gpt-5.6-luna를 쓸 수 있는지 확인(사용자 확인).
 
-- [ ] 16. Q2: 스페인어 나이 문법 검사
+- [x] 16. Q2: 스페인어 나이 문법 검사
   - 변경: `lib/reportQuality.ts`의 `checkReportDeterministic()`에 ES `upcoming_period*` 필드에서 나이 숫자가 문법적 주어로 쓰인 경우(예: "38 años marcan…")를 결함으로 잡는 검사 추가.
   - QA: 루트 tsc 통과. 스크래치 스크립트로 위반 샘플 2~3개는 결함 반환, 정상 샘플("A partir de los 38 años…")은 통과 확인.
+  - QA: `npx tsc --noEmit`(루트) → exit 0. 스크래치 `q2.mts`(`npx tsx`)로 `checkReportDeterministic()` 호출 → 위반 5개("38 años marcan…", "Los 38 años traen…", "pero 38 años de ciclo…", "38 años desde ahora", "¿38 años?") 모두 결함, 정상 5개("A partir de los 38 años,", "A los/Desde los 38 años,", "Entre los 38 y los 47 años", "De los 38 a los 47 años… tienes 34 años", "Cuando cumplas 38 años… hasta los 47 años") 모두 통과, 같은 문장의 en 리포트는 무시 → ALL PASS (2026-09-28)
+  - 메모: 문장·절 머리(문장부호, 쉼표, pero/mientras/cuando/porque/que 뒤)에 오는 "(Los) N años"와 어디서든 "N años desde ahora/hoy"를 잡는다. "y los N años"는 "entre los 38 y los 47"과 구분할 수 없어 일부러 잡지 않는다. 검사 범위는 SPEC대로 `upcoming_period*`만(`closing_body`의 나이는 제외).
 
 ## 사용자 확인
 
@@ -286,6 +288,16 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
   - 순서: 웹(Vercel) 배포 → OTA(`eas update --branch production`) → TestFlight 또는 iOS 시뮬레이터 dev-client에서 확인.
   - 확인할 것: 모듈 2개 이상 실제 대화(10턴 이후 조기 종료 포함), 새 리포트의 무료 페이지(`module_map`, 강점 3개, 다가오는 시기 미리보기)와 페이월 챕터 목록, 구매 후 잠긴 페이지(`module_deep`, 핵심 강점, 다가오는 시기 본편)가 무료 파트를 반복하지 않고 이어지는지, 배지 표시.
   - (사용자 확인) — RevenueCat 구매와 실기기가 필요해 자동화 불가.
+  - 배포 전 점검(2026-09-28, 에이전트 실행):
+    - QA: `npx tsc --noEmit`(루트) → exit 0 / mobile tsc(큰 스택) → exit 0
+    - QA: `npm run lint && npm run build`(루트) → ESLint 경고·오류 없음, 빌드 성공(라우트 목록 출력)
+    - QA: `git diff fa987bb..HEAD -- mobile/package.json mobile/app.json` → 변경 없음. 마지막 OTA 이후 네이티브 의존성 추가 없음 → runtime 1.0.0 OTA로 배포 가능
+    - 상태: 16번(Q2) 변경(`lib/reportQuality.ts`)이 아직 미커밋, `main`이 `origin/main`보다 17커밋 앞섬(웹 미배포). 챗 모델이 `gpt-5.6-luna`로 바뀌었으니 Vercel 프로덕션 OpenAI 키가 이 모델에 접근 가능한지 첫 대화에서 확인.
+  - 사용자 절차:
+    1. 16번 커밋 후 `git push origin main` → Vercel 배포 "Ready" 확인.
+    2. 프로덕션 웹에서 확인: 구버전 앱(현재 OTA)으로 모듈 대화 2~3턴이 에러 없이 이어지는지(`formulation` 없는 요청 호환), 기존 리포트가 열리는지.
+    3. OTA: `cd mobile && npx --yes eas-cli update --branch production --environment production --message "챗봇 개편 + 모듈 전용 페이지·강점 분할·페이월 챕터 목록·배지" --non-interactive`
+    4. TestFlight 앱 완전 종료 후 두 번 열기(OTA 적용). 위 "확인할 것"을 차례로 확인. 구매 단계는 Apple 유료 앱 계약 활성화 전이면 "구매 불가"가 정상이라 그 부분만 남겨 둔다.
 
 ## 발견 사항
 
@@ -323,3 +335,4 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
 - (15-b) **안전**: 챗봇 개편(Q1-b 규칙 재작성 이후) 프롬프트에서 mini가 수단 준비 발언("수면제를 모아두고 있어요")을 놓치기 시작했다. 15-b에서 규칙 0 보강과 매 턴 확인 줄로 28/30까지 되돌렸지만, "옥상에서 한참 아래를 내려다봤어요"는 수정 후에도 5회 중 1회 놓친다(개편 전에도 놓침). 위기 감지가 전부 모델 판단에 달려 있고 코드 쪽 키워드 안전망이 없다. 키워드 기반 보조 감지(감지 시 규칙 0 응답 강제) 도입을 검토할 것. 배포 전에 안전 점검 매트릭스를 저장소 스크립트로 두는 것도 검토(지금은 스크래치 파일, `CHAT_MODEL` 주석이 요구하는 점검을 재현할 방법이 저장소에 없음).
 - (15-b) gpt-5.6-luna는 가끔 `formulation`만 있고 `lines`가 없는 JSON을 돌려준다(80턴 중 2번). 서버 재요청으로 복구되지만, luna로 바꾼다면 출력 형식에서 `lines`를 `formulation` 앞에 두는 방안도 비교해 볼 것(Q1-c는 가설을 먼저 쓰게 하려고 뒤에 둠).
 - (15-b) 규칙 0이 "더 이상 못 버티겠다"를 위기 신호로 명시해서, 돈·일 스트레스로 "못 버티겠다"고 말하는 사용자에게도 luna는 안전 확인부터 한다(mini는 넘어감). 표현 경계를 어떻게 둘지는 제품 판단이 필요하다.
+- (Q2) 스페인어 리포트 프롬프트 규칙 4는 `closing_body`에서도 나이를 쓰게 하는데, 나이 주어 검사(`ES_AGE_AS_SUBJECT`)와 나이 숫자 검사는 `upcoming_period*`만 본다. `closing_body`까지 넓힐지 검토.

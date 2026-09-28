@@ -57,6 +57,12 @@ const ES_GENDERED_READER =
 const ES_STYLE_SLIP = /\busted(es)?\b|\b[a-záéíóúñ]{3,}x\b|\bcargarse\b|\bdescolocar|\bsu carta\b|\btu carta\b|\bla carta\b|\bvuestr/i;
 const ES_CAPITALIZED_ELEMENTS = /\bCinco Elementos\b/; // running text uses lowercase "cinco elementos"
 const META_LEAK = /\b(prompt|json|schema)\b|(se describe|se indica|se menciona|se da) aquí|named here|(only|sole|one) (supporting |direct )?relationship (that|which|here|named)|the only relationship|(único|única) relación|(only|sole) (supporting )?(relationship|relation) (named|given|provided|listed)|(único|única) (relación|apoyo) (nombrad|indicad|dad)[ao]|no (future )?age range|age range (is )?(not|un)specified|not specified|no se especifica|edad no (está )?especificad|\bfree (preview|strengths?)\b|\b(vista previa|fortalezas?) gratuitas?\b|무료 (강점|미리보기)/i;
+// An age as the grammatical subject of a Spanish sentence ("38 años marcan…", "Los 38 años traen…"): a
+// number/verb agreement slip, and it reads as a span of years rather than an age. The prompt asks for a
+// leading prepositional phrase ("A los 38 años," / "Desde los 38 años,"), so a bare "N años" at the start
+// of a clause is the slip; "N años desde ahora" reads as "38 years from now" anywhere. (TODO Q2, 2026-09-28)
+const ES_AGE_AS_SUBJECT =
+  /(?:^|[.!?;:—–]\s*|[¡¿]|,\s*|\b(?:pero|mientras|cuando|porque|que)\s+)(?:(?:los|tus|esos|estos|sus)\s+)?\d{1,2}\s+años\b|\b\d{1,2}\s+años\s+(?:desde|a partir de|de) (?:ahora|hoy)\b/i;
 const HANGUL_OR_HANJA = /[ㄱ-ㆎ가-힣一-鿿]/;
 const HANGUL_OR_HANJA_ALL = /[ㄱ-ㆎ가-힣一-鿿]/g;
 
@@ -174,6 +180,8 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
         const n = Number(m[1] ?? m[2]);
         if (!allowedAges.has(n)) problems.push(`${path}: 나이 "${m[0].trim()}"이 '다가오는 대운 시기' 데이터에 없는 숫자`);
       }
+      const subj = locale === "es" ? text.match(ES_AGE_AS_SUBJECT) : null;
+      if (subj) problems.push(`${path}: 스페인어 나이 "${subj[0].replace(/^.*?(?=(?:(?:los|tus|esos|estos|sus)\s+)?\d)/i, "")}"를 문장의 주어로 씀 — "A los N años," 또는 "Desde los N años,"처럼 나이를 전치사구로 앞세워 문장을 시작할 것`);
     }
   }
   return Array.from(new Set(problems));
