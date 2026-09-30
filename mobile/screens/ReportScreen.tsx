@@ -542,6 +542,7 @@ export default function ReportScreen({
 
     body.push({
       key: "upcoming",
+      tocLabel: strings.report.sectionUpcomingPeriodContinued,
       locked: true,
       node: <ForecastPage heading={content.upcoming_period_heading} body={content.upcoming_period_body} note={strings.report.upcomingPeriodNote} />,
     });
@@ -700,6 +701,11 @@ export default function ReportScreen({
       .map((p, i) => (p.tocLabel ? { label: p.tocLabel, pageNumber: i + 3, locked: !lockedOpen && !!p.locked } : null))
       .filter((x): x is { label: string; pageNumber: number; locked: boolean } => !!x);
 
+    // Where a tap on a locked TOC row should land: the single paywall page below replaces every
+    // locked page, at the position of the first one (see the `gated` flatMap below).
+    const firstLockedBodyIdx = body.findIndex((p) => p.locked);
+    const paywallPageIndex = !lockedOpen && firstLockedBodyIdx >= 0 ? firstLockedBodyIdx + 2 : null;
+
     const lockedTotal = body.filter((p) => p.locked).length;
     // One paywall page in place of every locked page (was ~29 identical copies to swipe
     // through). The full page count still shows on the cover and in the paywall note.
@@ -738,7 +744,7 @@ export default function ReportScreen({
 
     return [
       { key: "cover", node: <CoverPage title1={content.title_line1} title2={content.title_line2} subtitle={content.subtitle} nickname={`${nickname}${strings.report.nicknameSuffix}`} previewLabel={lockedOpen ? "" : strings.report.previewLabel} totalPagesLabel={lockedOpen ? strings.report.totalPagesLabel(total) : strings.report.previewPagesLabel(body.filter((p) => !p.locked).length + 2, total)} /> },
-      { key: "toc", node: <TocPage eyebrow={strings.report.tocEyebrow} title={strings.report.tocTitle} entries={tocEntries} /> },
+      { key: "toc", node: <TocPage eyebrow={strings.report.tocEyebrow} title={strings.report.tocTitle} entries={tocEntries} paywallPageIndex={paywallPageIndex} onSelect={goTo} /> },
       ...gated,
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -952,21 +958,40 @@ function CoverPage({
   );
 }
 
-function TocPage({ eyebrow, title, entries }: { eyebrow: string; title: string; entries: { label: string; pageNumber: number; locked: boolean }[] }) {
+function TocPage({
+  eyebrow,
+  title,
+  entries,
+  paywallPageIndex,
+  onSelect,
+}: {
+  eyebrow: string;
+  title: string;
+  entries: { label: string; pageNumber: number; locked: boolean }[];
+  paywallPageIndex: number | null;
+  onSelect: (pageIndex: number) => void;
+}) {
   return (
     <PageShell paper>
       <Text style={pageStyles.tocEyebrow}>{eyebrow}</Text>
       <Text style={pageStyles.tocTitle} accessibilityRole="header">{title}</Text>
       <View style={pageStyles.tocList}>
         {entries.map((e, i) => (
-          <View key={e.label} style={pageStyles.tocRow}>
+          <Pressable
+            key={e.label}
+            style={pageStyles.tocRow}
+            hitSlop={6}
+            onPress={() => onSelect(e.locked ? (paywallPageIndex ?? e.pageNumber - 1) : e.pageNumber - 1)}
+            accessibilityRole="button"
+            accessibilityLabel={e.label}
+          >
             <Text style={pageStyles.tocIdx}>{String(i + 1).padStart(2, "0")}</Text>
             <Text style={pageStyles.tocName} numberOfLines={2}>
               {e.label}
             </Text>
             <View style={pageStyles.tocDots} />
             {e.locked ? <Lock size={12} strokeWidth={2} color="#5C5237" /> : <Text style={pageStyles.tocPage}>{String(e.pageNumber).padStart(2, "0")}</Text>}
-          </View>
+          </Pressable>
         ))}
       </View>
     </PageShell>

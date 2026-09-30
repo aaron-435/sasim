@@ -53,7 +53,7 @@ export function flattenStrings(value: unknown, path = "report", out: [string, st
 }
 
 const ES_GENDERED_READER =
-  /(?<!\b(?:he|has|ha|hemos|han|había|habías|habrás|apego)\s)\b(atrapad|agotad|cansad|abrumad|sobrecargad|desbordad|preocupad|ansios|estresad|frustrad|aislad|agobiad|vaciad|quemad|inquiet|conectad|desconectad|bloquead|desorientad|saturad|exhaust|sobrepasad)[ao]s?\b/i;
+  /(?<!\b(?:he|has|ha|hemos|han|había|habías|habrás|apego)\s)\b(atrapad|agotad|cansad|abrumad|sobrecargad|desbordad|preocupad|ansios|estresad|frustrad|aislad|agobiad|vaciad|quemad|inquiet|conectad|desconectad|bloquead|desorientad|saturad|exhaust|sobrepasad|expuest|pegad)[ao]s?\b/i;
 const ES_STYLE_SLIP = /\busted(es)?\b|\b[a-záéíóúñ]{3,}x\b|\bcargarse\b|\bdescolocar|\bsu carta\b|\btu carta\b|\bla carta\b|\bvuestr/i;
 const ES_CAPITALIZED_ELEMENTS = /\bCinco Elementos\b/; // running text uses lowercase "cinco elementos"
 const META_LEAK = /\b(prompt|json|schema)\b|(se describe|se indica|se menciona|se da) aquí|named here|(only|sole|one) (supporting |direct )?relationship (that|which|here|named)|the only relationship|(único|única) relación|(only|sole) (supporting )?(relationship|relation) (named|given|provided|listed)|(único|única) (relación|apoyo) (nombrad|indicad|dad)[ao]|no (future )?age range|age range (is )?(not|un)specified|not specified|no se especifica|edad no (está )?especificad|\bfree (preview|strengths?)\b|\b(vista previa|fortalezas?) gratuitas?\b|무료 (강점|미리보기)/i;
@@ -65,6 +65,18 @@ const ES_AGE_AS_SUBJECT =
   /(?:^|[.!?;:—–]\s*|[¡¿]|,\s*|\b(?:pero|mientras|cuando|porque|que)\s+)(?:(?:los|tus|esos|estos|sus)\s+)?\d{1,2}\s+años\b|\b\d{1,2}\s+años\s+(?:desde|a partir de|de) (?:ahora|hoy)\b/i;
 const HANGUL_OR_HANJA = /[ㄱ-ㆎ가-힣一-鿿]/;
 const HANGUL_OR_HANJA_ALL = /[ㄱ-ㆎ가-힣一-鿿]/g;
+
+/** The prompt tells module_map/module_deep the title is already shown on screen and not to repeat it
+ * in the body, but models still open with it (TODO F1-c, 2026-09-28: "Tu alarma en las relaciones se
+ * enciende…" for a page titled "Tu alarma en las relaciones"). Checks only the opening, since a title
+ * word resurfacing later in the body is normal. */
+function titleRepeatsInOpening(title: string, body: string): boolean {
+  const norm = (s: string) => s.toLowerCase().replace(/[¿¡"“”'’.,:;!?]/g, "").replace(/\s+/g, " ").trim();
+  const t = norm(title);
+  if (t.length < 4) return false;
+  const opening = norm(body).slice(0, t.length + 20);
+  return opening.includes(t);
+}
 
 /** Minimum sentences per field — the "no thin page" product rule. */
 function checkDensity(c: ReportContent, hasChat: boolean): string[] {
@@ -111,6 +123,12 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
   const part = ctx.part ?? "full";
   if (c.module_map && part !== "paid" && !c.module_map.body.trim()) problems.push("module_map.body: 페이지 본문이 비어 있음 — 이 페이지 제목과 모듈 관점에 맞는 4문장 이상으로 쓸 것");
   if (c.module_deep && part !== "free" && !c.module_deep.body.trim()) problems.push("module_deep.body: 페이지 본문이 비어 있음 — 이 페이지 제목과 모듈 관점에 맞는 4문장 이상으로 쓸 것");
+  if (c.module_map && part !== "paid" && c.module_map.body.trim() && titleRepeatsInOpening(c.module_map.title, c.module_map.body)) {
+    problems.push(`module_map.body: 첫 문장이 페이지 제목("${c.module_map.title}")을 그대로 되풀이함 — 제목은 화면에 따로 표시되니 되풀이하지 말고 바로 내용으로 시작할 것`);
+  }
+  if (c.module_deep && part !== "free" && c.module_deep.body.trim() && titleRepeatsInOpening(c.module_deep.title, c.module_deep.body)) {
+    problems.push(`module_deep.body: 첫 문장이 페이지 제목("${c.module_deep.title}")을 그대로 되풀이함 — 제목은 화면에 따로 표시되니 되풀이하지 말고 바로 내용으로 시작할 것`);
+  }
   // The core strength (paid) must not be one of the three free ones under another wording (TODO F2-a).
   if (c.strengths_preview?.length && c.strengths.length && part !== "free") {
     // Same title, or a shared content word ("Repair instinct" / "Repair courage", "끝까지 챙김" / "끝까지 버팀").
@@ -175,7 +193,9 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
     for (const m of Array.from(text.matchAll(/(\d{1,3})(?:[.,]\d+)?\s?(?:%|percent\b|por ciento\b|퍼센트|프로)/gi))) {
       if (!allowedPercent.has(Number(m[1]))) problems.push(`${path}: 퍼센트 "${m[0].trim()}"가 데이터의 어떤 수치와도 맞지 않음`);
     }
-    if (path.startsWith("upcoming_period")) {
+    // Rule 4 (reportPrompts.ts) has closing_body echo the same age+element transition as the
+    // upcoming_period_* pages, so it must follow the same number and grammar rules (TODO Q2, 2026-09-29).
+    if (path.startsWith("upcoming_period") || path === "closing_body") {
       for (const m of Array.from(text.matchAll(/(\d{1,2})\s*(?:세|years?\b|años\b|yrs?\b)|\b(?:age|edad|aged)\s+(\d{1,2})\b/gi))) {
         const n = Number(m[1] ?? m[2]);
         if (!allowedAges.has(n)) problems.push(`${path}: 나이 "${m[0].trim()}"이 '다가오는 대운 시기' 데이터에 없는 숫자`);

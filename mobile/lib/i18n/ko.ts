@@ -496,6 +496,7 @@ export const ko = {
     sectionSajuPattern: "무엇이 이 패턴을 만들었나",
     sectionSajuPatternSubtitle: "사주 원국 분석",
     sectionUpcomingPeriod: "다가오는 시기",
+    sectionUpcomingPeriodContinued: "다가오는 시기 — 이어지는 이야기",
     upcomingPeriodNote: "대운(大運) 데이터 기반 — 사주 원국의 10년 단위 장기 흐름을 함께 봅니다.",
     moduleLensEyebrow: "이 주제의 시선으로",
     upcomingGlimpseNote: "왜 그런지, 무엇을 준비하면 좋을지는 이 리포트 뒤에서 이어집니다.",

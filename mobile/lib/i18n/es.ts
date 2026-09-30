@@ -470,6 +470,7 @@ export const es: typeof ko = {
     sectionSajuPattern: "Qué dio forma a este patrón",
     sectionSajuPatternSubtitle: "Análisis de tu mapa de saju",
     sectionUpcomingPeriod: "Lo que viene",
+    sectionUpcomingPeriodContinued: "Lo que viene — Continuación",
     upcomingPeriodNote: "A partir de tus ciclos de diez años: los tramos largos de tu mapa de saju.",
     moduleLensEyebrow: "Desde la mirada de tu tema",
     upcomingGlimpseNote: "Por qué importa y qué hacer al respecto continúa más adelante en este informe.",

@@ -305,16 +305,16 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
 
 이전 작업(2026-09-22 "다가오는 시기")에서 넘어온 미해결 항목:
 - `lib/report.ts`의 `runReport()`가 가끔 "shipped with N unresolved code finding(s)"을 로그로 남긴 채 재시도 없이 내보낸다(기존 동작).
-- `mobile/screens/ReportScreen.tsx`의 `TocPage` 행이 `Pressable`이 아니라 목차 항목을 탭해도 해당 페이지로 이동하지 않는다.
+- `mobile/screens/ReportScreen.tsx`의 `TocPage` 행이 `Pressable`이 아니라 목차 항목을 탭해도 해당 페이지로 이동하지 않는다. → 해결(2026-09-30): 행을 `Pressable`로 바꾸고 `onSelect`(=`goTo`)를 연결. 잠긴 항목은 잠긴 페이지들이 하나로 합쳐지는 페이월 자리(`paywallPageIndex`, `body.findIndex(locked)+2`)로, 열린 항목은 자기 `pageNumber-1`로 이동. QA: mobile tsc 통과. `mobile-web`(375×812, `?qa=free&persona=lucia`)에서 목차 열린 항목("Fortalezas") 탭 → 14/18 해당 페이지로 이동, 잠긴 항목("Lo que surgió con tus propias palabras") 탭 → 18/18 페이월로 이동 확인.
 - 신년 리포트 마무리(closing)가 심층 리포트 `closing_body`보다 뭉뚱그려진 표현으로 끝나는 경향(`lib/yearReportPrompts.ts` 규칙 3-1 강화 검토).
 - (F1-b) `app/api/report-pdf/route.ts`의 심층 리포트 파서가 아는 필드만 옮겨서 `module_map`/`module_deep`이 PDF에 안 들어간다. PDF에도 넣을지 결정 필요.
-- (F1-b) `lib/reportQuality.ts`의 `ES_GENDERED_READER`에 "expuest-", "pegad-" 같은 형용사가 없어 "no quedar tan expuesta", "quedarte pegada al teléfono"가 걸리지 않았다(1·2차 픽스처 lucia). 목록 보강 검토.
+- (F1-b) `lib/reportQuality.ts`의 `ES_GENDERED_READER`에 "expuest-", "pegad-" 같은 형용사가 없어 "no quedar tan expuesta", "quedarte pegada al teléfono"가 걸리지 않았다(1·2차 픽스처 lucia). 목록 보강 검토. → 해결(2026-09-29): 정규식에 `expuest`, `pegad` 스템 추가. QA: 루트 tsc 통과, 스크래치 스크립트로 "no quedar tan expuesta"/"quedarte pegada al teléfono" 결함 잡힘, 무관 문장("El plan queda claro…")은 통과 확인.
 - 신년 리포트 12개월 타임라인에서 3월만 신살 이름이 빠짐(jisoo, ko). 계산 결과인지 누락 버그인지 `sinsalName()`/`branchLine()` 확인 필요.
 - (F2-a) 전체 생성 모드(구매자가 처음 리포트를 만들 때, 한 번에 전부 씀)에서는 번아웃 모듈 영어·스페인어 페르소나(sam, casey)의 핵심 강점이 무료 강점과 아직 가깝다. 무료 → 유료 두 단계 경로는 괜찮았다. 필요하면 전체 모드에서 핵심 강점 순서를 앞당기거나 리뷰어 중복 규칙을 강화하는 방향 검토.
 - (F2-a) 무료 생성 10여 회 중 1회(jisoo, ko) 모델이 `strengths_preview`를 빠뜨렸다. 그 리포트는 유료 4개로 돌아가서 깨지지는 않지만, 빈도가 높으면 무료 강점만 다시 쓰는 표적 호출을 검토.
 - (F2-a) 영어 리포트에 "Riley님", "Jordan님"처럼 한국어 호칭이 섞이는 경우가 있다(2회차 riley는 19개 필드). 결정론적 검사가 잡지만 패치 경로가 14개로 잘려서 다 못 고치고 내보냈다. 프롬프트 예시의 "님" 영향으로 보임.
-- (F1-c) 모델이 `module_map` 본문 첫 문장에서 페이지 제목을 되풀이한다(lucia es: "Tu alarma en las relaciones se enciende…", jisoo도 비슷). 프롬프트는 되풀이 금지인데 검사가 없음. `reportQuality.ts`에 제목 반복 검사 추가 검토.
-- (D1) 첫 번째 잠긴 페이지인 "다가오는 시기" 본편은 목차 라벨이 무료 미리보기 쪽에만 있어서 페이월 챕터 목록에 나오지 않는다. 목록에 "다가오는 시기 — 이어지는 이야기" 같은 항목을 넣을지 검토(압박 규칙상 제목만이면 괜찮음).
+- (F1-c) 모델이 `module_map` 본문 첫 문장에서 페이지 제목을 되풀이한다(lucia es: "Tu alarma en las relaciones se enciende…", jisoo도 비슷). 프롬프트는 되풀이 금지인데 검사가 없음. `reportQuality.ts`에 제목 반복 검사 추가 검토. → 해결(2026-09-29): `titleRepeatsInOpening()` 추가, `module_map`·`module_deep` 둘 다 검사(두 페이지 모두 같은 "제목은 화면에 따로 표시" 프롬프트 지시를 받음). 제목이 4자 미만이면 우연한 겹침을 피하려고 검사하지 않음. QA: 루트 tsc 통과, 스크래치 스크립트로 제목 반복 2건 감지, 정상 문장·짧은 제목 각 통과 확인.
+- (D1) 첫 번째 잠긴 페이지인 "다가오는 시기" 본편은 목차 라벨이 무료 미리보기 쪽에만 있어서 페이월 챕터 목록에 나오지 않는다. 목록에 "다가오는 시기 — 이어지는 이야기" 같은 항목을 넣을지 검토(압박 규칙상 제목만이면 괜찮음). → 해결(2026-09-30): `upcoming`(유료) 페이지에 `tocLabel: sectionUpcomingPeriodContinued` 추가(ko "다가오는 시기 — 이어지는 이야기" / en "What's Coming — Continued" / es "Lo que viene — Continuación", 제목만이라 압박 규칙 위반 없음). QA: mobile tsc 통과. `mobile-web`(375×812, `?qa=free&persona=lucia`, 가장 타이트했던 로케일) 목차에 새 항목이 08번으로 보임, 페이월 잠긴 챕터 목록에도 첫 줄로 들어감, 항목이 하나 늘었는데도 구매 버튼은 여전히 첫 화면 안(`getBoundingClientRect().bottom`=574.5, viewport 812) 확인.
 - (Q0-a) 스모크 대화 anger_es 2턴째에 챗봇이 사용자가 말하지 않은 "que no te hicieran caso"(무시당함)를 붙였다. 규칙 9 위반 사례로 기준선 채점에서 볼 것.
 - (D2) 배지 문구 "한국천문연구원 천문 데이터로 계산"의 정확도: 엔진은 일주만 KASI API를 쓰고 연주·월주는 태양 황경으로 직접 계산하며, 엔진 오류 시 외부 SAZU API로 폴백한다(`lib/sazu.ts`). 기존 웹 `trust` 문구와 같은 수준의 표현이라 그대로 두었지만, 폴백으로 계산된 사용자에게도 같은 배지가 보인다. 문구를 "천문 데이터 기반" 쪽으로 넓힐지 결정 필요.
 - (Q0-b) `sim-chat`/`gen-qa-fixtures`를 로컬에서 돌리면 `lib/chat.ts`의 `logLlmUsage()`가 `.env.local`의 Supabase로 `llm_usage_log`를 쓴다(sessionId 없음). 이 DB가 프로덕션이면 사용량 집계에 테스트 비용이 섞인다. 스크립트 실행 시 로깅을 끌지 검토.
@@ -335,4 +335,4 @@ SPEC.md, MODULE_PLAYBOOK.md v2 승인 완료(2026-09-27). 항목마다 **새 세
 - (15-b) **안전**: 챗봇 개편(Q1-b 규칙 재작성 이후) 프롬프트에서 mini가 수단 준비 발언("수면제를 모아두고 있어요")을 놓치기 시작했다. 15-b에서 규칙 0 보강과 매 턴 확인 줄로 28/30까지 되돌렸지만, "옥상에서 한참 아래를 내려다봤어요"는 수정 후에도 5회 중 1회 놓친다(개편 전에도 놓침). 위기 감지가 전부 모델 판단에 달려 있고 코드 쪽 키워드 안전망이 없다. 키워드 기반 보조 감지(감지 시 규칙 0 응답 강제) 도입을 검토할 것. 배포 전에 안전 점검 매트릭스를 저장소 스크립트로 두는 것도 검토(지금은 스크래치 파일, `CHAT_MODEL` 주석이 요구하는 점검을 재현할 방법이 저장소에 없음).
 - (15-b) gpt-5.6-luna는 가끔 `formulation`만 있고 `lines`가 없는 JSON을 돌려준다(80턴 중 2번). 서버 재요청으로 복구되지만, luna로 바꾼다면 출력 형식에서 `lines`를 `formulation` 앞에 두는 방안도 비교해 볼 것(Q1-c는 가설을 먼저 쓰게 하려고 뒤에 둠).
 - (15-b) 규칙 0이 "더 이상 못 버티겠다"를 위기 신호로 명시해서, 돈·일 스트레스로 "못 버티겠다"고 말하는 사용자에게도 luna는 안전 확인부터 한다(mini는 넘어감). 표현 경계를 어떻게 둘지는 제품 판단이 필요하다.
-- (Q2) 스페인어 리포트 프롬프트 규칙 4는 `closing_body`에서도 나이를 쓰게 하는데, 나이 주어 검사(`ES_AGE_AS_SUBJECT`)와 나이 숫자 검사는 `upcoming_period*`만 본다. `closing_body`까지 넓힐지 검토.
+- (Q2) 스페인어 리포트 프롬프트 규칙 4는 `closing_body`에서도 나이를 쓰게 하는데, 나이 주어 검사(`ES_AGE_AS_SUBJECT`)와 나이 숫자 검사는 `upcoming_period*`만 본다. `closing_body`까지 넓힐지 검토. → 해결(2026-09-29): 두 검사 모두 `path === "closing_body"`에도 적용(규칙 4가 세 필드 모두에 같은 나이 데이터를 쓰라고 명시). QA: 루트 tsc 통과, 스크래치 스크립트로 `closing_body`의 나이 주어 위반·데이터에 없는 나이 숫자 모두 결함으로 잡힘, 정상 문장은 통과, EN 로케일 나이 숫자 검사는 회귀 없음 확인.
