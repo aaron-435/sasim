@@ -53,6 +53,10 @@ function cleanYear(raw: unknown): YearPdfContent | null {
 function cleanDeep(raw: unknown): DeepPdfContent | null {
   const c = obj(raw);
   const bullets = (v: unknown) => arr(v).map((b) => ({ title: str(obj(b).title, 200), body: str(obj(b).body, 2000) })).filter((b) => b.title && b.body);
+  const bullet = (v: unknown): { title: string; body: string } | undefined => {
+    const b = { title: str(obj(v).title, 200), body: str(obj(v).body, 4000) };
+    return b.title && b.body ? b : undefined;
+  };
   const readings: DeepPdfContent["element_readings"] = {};
   for (const key of ["wood", "fire", "earth", "metal", "water"]) {
     const r = obj(obj(c.element_readings)[key]);
@@ -66,6 +70,8 @@ function cleanDeep(raw: unknown): DeepPdfContent | null {
     case_tag: str(c.case_tag, 200),
     case_paragraphs: arr(c.case_paragraphs, 8).map((p) => str(p)),
     element_readings: readings,
+    module_map: bullet(c.module_map),
+    module_deep: bullet(c.module_deep),
     upcoming_period_heading: str(c.upcoming_period_heading, 200),
     upcoming_period_body: str(c.upcoming_period_body),
     cross_analysis_quotes: arr(c.cross_analysis_quotes, 8).map((p) => str(p)),
@@ -73,6 +79,7 @@ function cleanDeep(raw: unknown): DeepPdfContent | null {
     psychology_fact_heading: str(c.psychology_fact_heading, 200),
     psychology_fact_body: str(c.psychology_fact_body),
     psychology_takeaway: str(c.psychology_takeaway, 600),
+    strengths_preview: bullets(c.strengths_preview),
     strengths: bullets(c.strengths),
     weaknesses: bullets(c.weaknesses),
     fit_good: str(c.fit_good),

@@ -83,6 +83,7 @@ interface Labels {
     caseStudy: string;
     quiz: string;
     oheng: string;
+    moduleLens: string;
     upcoming: string;
     chat: string;
     concern: string;
@@ -115,7 +116,7 @@ const LABELS: Record<Locale, Labels> = {
     closing: "마무리",
     months: ["2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월", "1월"],
     elements: { wood: "목", fire: "화", earth: "토", metal: "금", water: "수" },
-    deep: { opening: "어느 밤의 장면", caseStudy: "닮은 사례", quiz: "심리테스트 분석", oheng: "나의 오행", upcoming: "다가오는 시기", chat: "직접 나눈 이야기", concern: "핵심 고민", emotion: "요즘의 마음", trigger: "흔들리는 순간", pattern: "반복되는 패턴", fear: "마음 깊은 곳", answers: "내가 고른 답", cross: "사주 × 심리 교차 분석", breather: "잠깐 숨 고르기", takeaway: "한 줄 정리", strengths: "강점", weaknesses: "약점", fitGood: "잘 맞는 환경", fitBad: "피하면 좋은 환경", guides: "행동 지침", mindset: "마음가짐" },
+    deep: { opening: "어느 밤의 장면", caseStudy: "닮은 사례", quiz: "심리테스트 분석", oheng: "나의 오행", moduleLens: "이 주제의 시선으로", upcoming: "다가오는 시기", chat: "직접 나눈 이야기", concern: "핵심 고민", emotion: "요즘의 마음", trigger: "흔들리는 순간", pattern: "반복되는 패턴", fear: "마음 깊은 곳", answers: "내가 고른 답", cross: "사주 × 심리 교차 분석", breather: "잠깐 숨 고르기", takeaway: "한 줄 정리", strengths: "강점", weaknesses: "약점", fitGood: "잘 맞는 환경", fitBad: "피하면 좋은 환경", guides: "행동 지침", mindset: "마음가짐" },
   },
   en: {
     by: (n) => `Prepared for ${n}`,
@@ -128,7 +129,7 @@ const LABELS: Record<Locale, Labels> = {
     closing: "Closing",
     months: ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan"],
     elements: { wood: "Wood", fire: "Fire", earth: "Earth", metal: "Metal", water: "Water" },
-    deep: { opening: "A scene from one night", caseStudy: "A similar case", quiz: "Psych test analysis", oheng: "Your five elements", upcoming: "The period ahead", chat: "What we talked about", concern: "Core concern", emotion: "How you've been feeling", trigger: "Where it shakes you", pattern: "A repeating pattern", fear: "Deeper down", answers: "Answers you chose", cross: "Saju × psychology", breather: "A moment to breathe", takeaway: "In one line", strengths: "Strengths", weaknesses: "Weaknesses", fitGood: "Environments that fit you", fitBad: "Environments to avoid", guides: "Behavior guides", mindset: "Mindset" },
+    deep: { opening: "A scene from one night", caseStudy: "A similar case", quiz: "Psych test analysis", oheng: "Your five elements", moduleLens: "Through the lens of your topic", upcoming: "The period ahead", chat: "What we talked about", concern: "Core concern", emotion: "How you've been feeling", trigger: "Where it shakes you", pattern: "A repeating pattern", fear: "Deeper down", answers: "Answers you chose", cross: "Saju × psychology", breather: "A moment to breathe", takeaway: "In one line", strengths: "Strengths", weaknesses: "Weaknesses", fitGood: "Environments that fit you", fitBad: "Environments to avoid", guides: "Behavior guides", mindset: "Mindset" },
   },
   es: {
     by: (n) => `Preparado para ${n}`,
@@ -141,7 +142,7 @@ const LABELS: Record<Locale, Labels> = {
     closing: "Cierre",
     months: ["Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic", "Ene"],
     elements: { wood: "Madera", fire: "Fuego", earth: "Tierra", metal: "Metal", water: "Agua" },
-    deep: { opening: "Una escena de una noche", caseStudy: "Un caso parecido", quiz: "Análisis del test psicológico", oheng: "Tus cinco elementos", upcoming: "El período que viene", chat: "Lo que conversamos", concern: "Preocupación central", emotion: "Cómo te has sentido", trigger: "Donde te sacude", pattern: "Un patrón que se repite", fear: "Más adentro", answers: "Respuestas que elegiste", cross: "Saju × psicología", breather: "Un momento para respirar", takeaway: "En una línea", strengths: "Fortalezas", weaknesses: "Debilidades", fitGood: "Entornos que encajan contigo", fitBad: "Entornos que conviene evitar", guides: "Guías de comportamiento", mindset: "Actitud" },
+    deep: { opening: "Una escena de una noche", caseStudy: "Un caso parecido", quiz: "Análisis del test psicológico", oheng: "Tus cinco elementos", moduleLens: "Desde la mirada de tu tema", upcoming: "El período que viene", chat: "Lo que conversamos", concern: "Preocupación central", emotion: "Cómo te has sentido", trigger: "Donde te sacude", pattern: "Un patrón que se repite", fear: "Más adentro", answers: "Respuestas que elegiste", cross: "Saju × psicología", breather: "Un momento para respirar", takeaway: "En una línea", strengths: "Fortalezas", weaknesses: "Debilidades", fitGood: "Entornos que encajan contigo", fitBad: "Entornos que conviene evitar", guides: "Guías de comportamiento", mindset: "Actitud" },
   },
 };
 
@@ -357,6 +358,10 @@ export interface DeepPdfContent {
   oheng_intro?: string;
   quiz_reading?: string;
   element_readings: Record<string, { heading: string; body: string }>;
+  /** Module-specific pages (2026-09-30, TODO F1-b finding): absent for pre-2026-09-27 reports and
+   * for requests with no known moduleId, same as in the app's ReportContent. */
+  module_map?: { title: string; body: string };
+  module_deep?: { title: string; body: string };
   upcoming_period_heading: string;
   upcoming_period_body: string;
   cross_analysis_quotes: string[];
@@ -368,6 +373,9 @@ export interface DeepPdfContent {
   psychology_fact_heading: string;
   psychology_fact_body: string;
   psychology_takeaway: string;
+  /** The three free strengths shown before strengths[0] (paid, the core one) when the report used
+   * the split — absent for older reports, which keep strengths as four. */
+  strengths_preview?: { title: string; body: string }[];
   strengths: { title: string; body: string }[];
   weaknesses: { title: string; body: string }[];
   fit_good: string;
@@ -452,6 +460,10 @@ function DeepDocument({ locale, nickname, date, content, extras }: { locale: Loc
           );
         })}
 
+        {content.module_map && (
+          <Section s={s} label={d.moduleLens} title={content.module_map.title} text={content.module_map.body} />
+        )}
+
         {content.upcoming_period_body && (
           <Section s={s} label={d.upcoming} title={content.upcoming_period_heading || d.upcoming} text={content.upcoming_period_body} />
         )}
@@ -499,7 +511,7 @@ function DeepDocument({ locale, nickname, date, content, extras }: { locale: Loc
         )}
 
         <Section s={s} label={d.strengths}>
-          {content.strengths.map((b, i) => (
+          {[...(content.strengths_preview ?? []), ...content.strengths].map((b, i) => (
             <Card key={i} s={s} title={b.title} body={b.body} />
           ))}
         </Section>
@@ -511,6 +523,10 @@ function DeepDocument({ locale, nickname, date, content, extras }: { locale: Loc
 
         <Section s={s} label={d.fitGood} text={content.fit_good} />
         <Section s={s} label={d.fitBad} text={content.fit_bad} />
+
+        {content.module_deep && (
+          <Section s={s} label={d.moduleLens} title={content.module_deep.title} text={content.module_deep.body} />
+        )}
 
         <Section s={s} label={d.guides}>
           {content.behavior_guides.map((b, i) => (
