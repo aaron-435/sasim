@@ -18,11 +18,17 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
 
 ## 데이터
 
-- [ ] 1. 플레이북 세트 데이터: 타입 + 모듈 1~4
+- [x] 1. 플레이북 세트 데이터: 타입 + 모듈 1~4
   - 변경: `lib/modulePlaybooks.ts`에 세트 타입(세트 번호·주제, 퀴즈 후보 문항 ID, 후보가 없을 때 기본 질문, ③④⑤ 질문, 세트 5 점수 방향)과 24턴 고정 문구(ko/en/es)를 추가한다. 모듈 1~4 데이터를 `CHAT_SETS_DRAFT.md` 2장(후보)·8·9장(질문)에서 옮긴다. 세트 2는 ③④ + 대체 질문(⑤). 질문·보기는 ko/en/es `LocalizedText`(EN/ES는 `mobile/lib/i18n/STYLE_GUIDE.md`, es는 tú·성별 중립). 기존 `stages`는 그대로 둔다.
   - 변경: 새 `scripts/check-playbook-sets.mts` — 모든 후보 문항 ID가 `mobile/lib/quiz/module*.ts`에 실제로 있는지, 슬라이더 문항·제외 문항(모듈 3 E6, 4 AS2, 6 E6, 8 S8)이 없는지, 한 모듈 안에서 세트끼리 후보가 겹치지 않는지, 세트 1~4 후보가 2개 이상의 차원을 덮는지, 3개 언어 문구가 비어 있지 않은지 검사한다.
   - QA: `npx tsc --noEmit`(루트) → exit 0
   - QA: `npx tsx scripts/check-playbook-sets.mts` → 모듈 1~4 오류 0 (5~11은 "데이터 없음"으로 건너뜀)
+  - 결과(2026-10-02):
+    - QA: `npx tsc --noEmit`(루트) → exit 0
+    - QA: `npx tsx scripts/check-playbook-sets.mts` → 24턴 고정 문구·module1~4 오류 0, module5~11 "데이터 없음", exit 0
+    - QA(검사기 자체): 후보를 일부러 깨뜨림(슬라이더 A1, 없는 ID, 모듈 3 E6, 세트 간 겹침, 단일 차원) → 6건 모두 감지, exit 1. 원복 후 다시 오류 0.
+    - 구조: 세트 데이터는 기존 플레이북 객체에 넣지 않고 `MODULE_CHAT_SETS`(+ `getModuleChatSets()`)로 따로 뒀다. ★ 질문은 `MODULEn.signatureQuestion`을 그대로 참조한다(검사기가 문구 일치를 확인). 세트 2는 `questions` ③④ + `alternate`(⑤), 세트 5는 ③만. 24턴 고정 문구는 `PERSPECTIVE_SHIFT_LEAD`, 세트 주제(모델용)는 `CHAT_SET_THEMES`.
+    - 기본 질문(후보가 없을 때)은 초안에 문구가 없어 세트의 focus에서 새로 썼다(ko/en/es). 사용자 문구 검토 권장.
 
 - [ ] 2. 플레이북 세트 데이터: 모듈 5~11
   - 선행: 1

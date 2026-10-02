@@ -1009,3 +1009,701 @@ export function getModulePlaybook(moduleId?: string | null): ModulePlaybook | un
   if (!moduleId || !Object.prototype.hasOwnProperty.call(MODULE_PLAYBOOKS, moduleId)) return undefined;
   return MODULE_PLAYBOOKS[moduleId as PlaybookModuleId];
 }
+
+// ------------------------------------------------------------------
+// 5세트 흐름(flowVersion 2) 데이터. CHAT_SETS_DRAFT.md 2장(후보 문항)과
+// 8·9장(세트 ③④⑤ 질문)을 코드로 옮긴 것이다. 위의 stages/signatureStage는
+// 구버전 20턴 흐름이 계속 쓰므로 그대로 둔다.
+//
+// 2026-10-02: 타입, 24턴 고정 문구, 모듈 1~4 추가(TODO 1).
+// ------------------------------------------------------------------
+
+/** 세트 번호. 1 장면, 2 반복, 3 속마음, 4 대처, 5 힘(11개 모듈 공통). */
+export type ChatSetNumber = 1 | 2 | 3 | 4 | 5;
+
+export type ChatSetTheme = "scene" | "repeat" | "inner" | "coping" | "strength";
+
+/** 세트 주제(모델용, 한국어). 사용자에게 보이는 라벨은 앱 i18n에 따로 둔다. */
+export const CHAT_SET_THEMES: Record<ChatSetNumber, { key: ChatSetTheme; name: string; description: string }> = {
+  1: { key: "scene", name: "장면", description: "요즘 가장 걸리는 순간" },
+  2: { key: "repeat", name: "반복", description: "같은 일이 되풀이되는 순서" },
+  3: { key: "inner", name: "속마음", description: "그 아래 있는 믿음과 두려움" },
+  4: { key: "coping", name: "대처", description: "지금 쓰는 방법과 그 대가" },
+  5: { key: "strength", name: "힘", description: "잘 되는 쪽, 바라는 모습" },
+};
+
+/**
+ * 24턴(관점 전환) 앞머리 고정 문구. 모델이 바꿔 쓰지 않도록 코드가 응답 앞에
+ * 붙이고, 모델은 그 뒤의 관점 전환 질문만 쓴다.
+ */
+export const PERSPECTIVE_SHIFT_LEAD: LocalizedText = {
+  ko: "마지막으로 묻고 싶은 게 있어요.",
+  en: "There's one last thing I'd like to ask.",
+  es: "Hay una última cosa que quiero preguntarte.",
+};
+
+/**
+ * 세트 ③④⑤ 질문. 보기는 질문 문장 안에 들어 있다(앱 버튼이 아니라 말풍선
+ * 속 문장으로 보인다). 모델은 앞머리 한 줄로 직전 답을 받은 뒤 이 방향으로
+ * 자연스럽게 묻는다.
+ */
+export interface ChatSetQuestion {
+  text: LocalizedText;
+  /** 자유 서술 질문(이지선다가 아님). */
+  free?: boolean;
+  /** 모듈 시그니처 질문(★). text는 플레이북의 signatureQuestion과 같다. */
+  signature?: boolean;
+}
+
+export interface ChatSet {
+  set: ChatSetNumber;
+  /** 이 모듈에서 세트가 보는 구체적인 장면(모델용, 한국어). 예: "신호에 흔들릴 때". */
+  focus: string;
+  /**
+   * 세트 ①에서 인용할 퀴즈 문항 ID 후보. 순서가 곧 동점 우선순위다.
+   * 세트 1~4는 가장 높은 점수(2~3점), 세트 5는 strengthScoreDirection을 따른다.
+   */
+  candidates: readonly string[];
+  /** 인용할 문항이 없을 때 세트 ①에서 묻는 기본 질문. */
+  fallbackQuestion: LocalizedText;
+  /**
+   * ③④⑤ 질문. 세트 2는 ③④만(⑤ 자리가 10턴 정리·점검), 세트 5는 ③만
+   * (④ 관점 전환, ⑤ 마무리).
+   */
+  questions: readonly ChatSetQuestion[];
+  /** 세트 2 전용: ③이나 ④가 이미 답해졌을 때 대신 묻는 질문. */
+  alternate?: ChatSetQuestion;
+}
+
+export interface ModuleChatSets {
+  /** 세트 1~5 순서. */
+  sets: readonly [ChatSet, ChatSet, ChatSet, ChatSet, ChatSet];
+  /**
+   * 세트 5 ①의 인용 문항 방향. 기본 "low"(0~1점, "이건 별로 안 그렇다"로
+   * 강점을 연다). 모듈 7·10은 높은 점수가 곧 강점이라 "high".
+   */
+  strengthScoreDirection: "low" | "high";
+}
+
+const MODULE1_SETS: ModuleChatSets = {
+  strengthScoreDirection: "low",
+  sets: [
+    {
+      set: 1,
+      focus: "신호에 흔들릴 때",
+      candidates: ["A6", "A2", "V10", "V5"],
+      fallbackQuestion: {
+        ko: "요즘 가까운 사람과의 사이에서 늦은 답장이나 달라진 말투 같은 작은 신호에 마음이 흔들렸던 순간이 있었다면, 언제였어요?",
+        en: "Lately, was there a moment when a small signal from someone close, like a late reply or a change in tone, shook you a little? When was it?",
+        es: "Últimamente, ¿hubo algún momento en que una señal pequeña de alguien cercano, como una respuesta tardía o un cambio de tono, te removió por dentro? ¿Cuándo fue?",
+      },
+      questions: [
+        { text: MODULE1.signatureQuestion, signature: true },
+        {
+          text: {
+            ko: "그럴 때 확인하고 싶어져요, 조용히 기다려요?",
+            en: "In those moments, do you feel the urge to check in, or do you wait quietly?",
+            es: "En esos momentos, ¿te dan ganas de comprobar qué pasa o esperas en silencio?",
+          },
+        },
+        {
+          text: {
+            ko: "상대가 먼저 성큼 다가오면 반가워요, 살짝 부담돼요?",
+            en: "When the other person moves in close first, and quickly, does it feel welcome or a little heavy?",
+            es: "Cuando la otra persona se acerca primero y con ganas, ¿te alegra o te pesa un poco?",
+          },
+        },
+      ],
+    },
+    {
+      set: 2,
+      focus: "다툰 뒤",
+      candidates: ["A5", "A9", "V13", "V7"],
+      fallbackQuestion: {
+        ko: "다투거나 서운한 일이 생긴 뒤에 늘 비슷하게 흘러가는 순서가 있다면, 보통 어떻게 흘러가요?",
+        en: "After an argument or a hurt, is there a sequence things tend to follow? How does it usually go?",
+        es: "Después de una discusión o de algo que te dolió, ¿suele repetirse la misma secuencia? ¿Cómo suele ir?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "서운할 때 말로 해요, 괜찮은 척해요?",
+            en: "When something hurts, do you say so, or act like you're fine?",
+            es: "Cuando algo te duele, ¿lo dices o haces como si todo estuviera bien?",
+          },
+        },
+        {
+          text: {
+            ko: "다툰 뒤에는 먼저 손 내미는 편이에요, 기다리는 편이에요?",
+            en: "After a fight, are you usually the one who reaches out first, or the one who waits?",
+            es: "Después de una pelea, ¿sueles ser quien da el primer paso o quien espera?",
+          },
+        },
+      ],
+      alternate: {
+        text: {
+          ko: "이 흐름, 예전 연애에서도 있었어요, 이번이 처음이에요?",
+          en: "Has this pattern shown up in past relationships too, or is this the first time?",
+          es: "¿Este patrón ya aparecía en relaciones anteriores o es la primera vez?",
+        },
+      },
+    },
+    {
+      set: 3,
+      focus: "가까워질수록",
+      candidates: ["A15", "A8", "V3", "V4", "V12"],
+      fallbackQuestion: {
+        ko: "관계가 가까워질수록 마음속에서 커지는 생각이 있다면, 어떤 생각이에요?",
+        en: "As a relationship gets closer, is there a thought that grows louder inside you? What is it?",
+        es: "A medida que una relación se vuelve más cercana, ¿hay algún pensamiento que crece por dentro? ¿Cuál es?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "사랑받는다고 느끼는 건 말을 들을 때예요, 행동을 볼 때예요?",
+            en: "Do you feel loved more when you hear it, or when you see it in what they do?",
+            es: "¿Sientes que te quieren más cuando te lo dicen o cuando lo ves en lo que hacen?",
+          },
+        },
+        {
+          text: {
+            ko: "상대가 아주 잘해 주면 편해져요, 오히려 불안해져요?",
+            en: "When someone treats you really well, do you relax, or does it make you more uneasy?",
+            es: "Cuando alguien te trata muy bien, ¿te relajas o te inquieta todavía más?",
+          },
+        },
+        {
+          text: {
+            ko: "'사랑받으려면 ___해야 한다'에서 빈칸에 뭐가 들어갈 것 같아요?",
+            en: "\"To be loved, I have to ___.\" What would you put in the blank?",
+            es: "\"Para que me quieran, tengo que ___.\" ¿Qué pondrías en el espacio en blanco?",
+          },
+          free: true,
+        },
+      ],
+    },
+    {
+      set: 4,
+      focus: "기대기와 혼자",
+      candidates: ["A14", "A10", "V2", "V6"],
+      fallbackQuestion: {
+        ko: "가까운 사람과의 사이가 불편해질 때 주로 어떻게 해요?",
+        en: "When things feel uneasy between you and someone close, what do you usually do?",
+        es: "Cuando algo se siente incómodo con alguien cercano, ¿qué sueles hacer?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "마음이 불편할 때 혼자 삭여요, 누군가에게 털어놔요?",
+            en: "When you're upset, do you keep it to yourself, or talk it out with someone?",
+            es: "Cuando algo te inquieta, ¿lo guardas para ti o se lo cuentas a alguien?",
+          },
+        },
+        {
+          text: {
+            ko: "그 방법이 끝나고 나면 상대와 더 가까워져요, 멀어져요?",
+            en: "After you do that, do you end up closer to the other person, or further apart?",
+            es: "Después de hacerlo, ¿terminas más cerca de la otra persona o más lejos?",
+          },
+        },
+        {
+          text: {
+            ko: "상대는 가까워질 때 먼저 다가오는 편이에요, 기다리는 편이에요?",
+            en: "And the other person: when it comes to getting closer, do they tend to come toward you first, or wait?",
+            es: "¿Y la otra persona? A la hora de acercarse, ¿suele dar el primer paso o esperar?",
+          },
+        },
+      ],
+    },
+    {
+      set: 5,
+      focus: "관계에서 흔들리지 않는 쪽",
+      candidates: ["A4", "A13", "V9", "V15"],
+      fallbackQuestion: {
+        ko: "관계에서 '이건 내가 꽤 잘하는구나' 싶은 순간이 있다면, 어떤 때예요?",
+        en: "In your relationships, when do you catch yourself thinking, \"I'm actually pretty good at this\"?",
+        es: "En tus relaciones, ¿en qué momentos piensas \"esto se me da bastante bien\"?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "안정적인 관계라면 같이 있는 시간이 많은 쪽이에요, 각자의 시간을 지키는 쪽이에요?",
+            en: "In a steady relationship, would it be lots of time together, or each of you keeping your own time?",
+            es: "En una relación estable, ¿sería pasar mucho tiempo en compañía o que cada quien conserve su propio tiempo?",
+          },
+        },
+      ],
+    },
+  ],
+};
+
+const MODULE2_SETS: ModuleChatSets = {
+  strengthScoreDirection: "low",
+  sets: [
+    {
+      set: 1,
+      focus: "돈을 쓰는 순간",
+      candidates: ["S3", "S8", "G6", "G9", "M1"],
+      fallbackQuestion: {
+        ko: "최근에 돈을 쓰면서 마음이 쓰였던 순간이 있었다면, 무엇을 살 때였어요?",
+        en: "Was there a recent moment when spending money stirred something in you? What were you buying?",
+        es: "¿Hubo hace poco algún momento en que gastar dinero te removió algo por dentro? ¿Qué estabas comprando?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "결제 직전에 '이거 꼭 필요해?' 하고 멈추는 편이에요, 일단 사고 나중에 생각하는 편이에요?",
+            en: "Right before paying, do you tend to stop and ask \"Do I really need this?\", or buy first and think later?",
+            es: "Justo antes de pagar, ¿sueles frenar y preguntarte \"¿de verdad lo necesito?\" o compras primero y lo piensas después?",
+          },
+        },
+        {
+          text: {
+            ko: "결제하고 나면 남는 건 안도예요, 찜찜함이에요?",
+            en: "After you pay, what stays with you: relief, or a nagging unease?",
+            es: "Después de pagar, ¿qué te queda: alivio o una sensación incómoda?",
+          },
+        },
+        {
+          text: {
+            ko: "잔고는 자주 확인해요, 일부러 안 봐요?",
+            en: "Do you check your balance often, or avoid looking on purpose?",
+            es: "¿Revisas tu saldo a menudo o evitas mirarlo a propósito?",
+          },
+        },
+      ],
+    },
+    {
+      set: 2,
+      focus: "남과 비교할 때",
+      candidates: ["S6", "G3", "G8", "M7"],
+      fallbackQuestion: {
+        ko: "다른 사람의 돈 얘기를 듣고 마음이 움직였던 때가 있었다면, 그다음엔 어떻게 흘러갔어요?",
+        en: "Think of a time someone else's money talk got to you. What happened after that?",
+        es: "Piensa en una vez en que lo que alguien contó sobre su dinero te afectó. ¿Qué pasó después?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "남이 연봉이나 집 얘기를 하면 나랑 비교하게 돼요, 흘려들어요?",
+            en: "When people talk about their salary or their home, do you end up comparing, or let it pass?",
+            es: "Cuando alguien habla de su sueldo o de su casa, ¿terminas comparándote o lo dejas pasar?",
+          },
+        },
+        {
+          text: {
+            ko: "비교하고 나면 더 아끼게 돼요, 오히려 더 쓰게 돼요?",
+            en: "After comparing, do you end up saving more, or spending more?",
+            es: "Después de compararte, ¿terminas ahorrando más o gastando más?",
+          },
+        },
+      ],
+      alternate: {
+        text: {
+          ko: "돈 걱정이 올라올 때 하는 행동이 매번 비슷해요, 그때그때 달라요?",
+          en: "When money worries come up, do you tend to do the same thing every time, or does it change?",
+          es: "Cuando te sube la preocupación por el dinero, ¿haces casi siempre lo mismo o depende del momento?",
+        },
+      },
+    },
+    {
+      set: 3,
+      focus: "돈과 나의 가치",
+      candidates: ["G4", "G10", "M4", "M9", "S9"],
+      fallbackQuestion: {
+        ko: "돈이 나에게 어떤 의미인지 생각해 보면, 가장 먼저 떠오르는 장면이나 말이 있어요?",
+        en: "When you think about what money means to you, is there a scene or a phrase that comes to mind first?",
+        es: "Cuando piensas en lo que el dinero significa para ti, ¿hay alguna escena o frase que te venga primero?",
+      },
+      questions: [
+        { text: MODULE2.signatureQuestion, free: true, signature: true },
+        {
+          text: {
+            ko: "어릴 때 집에서 돈 얘기는 자주 나왔어요, 조용히 피하는 주제였어요?",
+            en: "Growing up, was money something your family talked about often, or a topic everyone quietly avoided?",
+            es: "En tu infancia, ¿en casa se hablaba de dinero a menudo o era un tema que se evitaba en silencio?",
+          },
+        },
+        {
+          text: {
+            ko: "돈이 충분히 많아지면 마음이 편해질 것 같아요, 다른 걱정이 생길 것 같아요?",
+            en: "If you had plenty of money, do you think you'd finally feel at ease, or would new worries show up?",
+            es: "Si tuvieras dinero de sobra, ¿crees que por fin estarías en calma o aparecerían otras preocupaciones?",
+          },
+        },
+      ],
+    },
+    {
+      set: 4,
+      focus: "관리와 관계",
+      candidates: ["S5", "S10", "G7", "M3", "M6", "M2"],
+      fallbackQuestion: {
+        ko: "돈 문제로 마음이 무거울 때 주로 어떻게 해요?",
+        en: "When money weighs on you, what do you usually do?",
+        es: "Cuando el dinero te pesa, ¿qué sueles hacer?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "돈 걱정이 오면 계획부터 세워요, 생각을 끄고 딴 걸 해요?",
+            en: "When money worries hit, do you start making a plan, or switch off and do something else?",
+            es: "Cuando llega la preocupación por el dinero, ¿te pones a planear o desconectas y haces otra cosa?",
+          },
+        },
+        {
+          text: {
+            ko: "그러고 나면 걱정이 줄어요, 잠깐 미뤄지는 거예요?",
+            en: "And after that, does the worry actually shrink, or just get put off for a while?",
+            es: "Y después, ¿la preocupación de verdad baja o solo se aplaza un rato?",
+          },
+        },
+        {
+          text: {
+            ko: "돈 얘기가 가장 불편한 상대는 가족이에요, 친구예요, 연인이에요?",
+            en: "Who's hardest to talk about money with: family, friends, or a partner?",
+            es: "¿Con quién te cuesta más hablar de dinero: con tu familia, con tus amistades o con tu pareja?",
+          },
+        },
+      ],
+    },
+    {
+      set: 5,
+      focus: "돈 앞에서 흔들리지 않는 쪽",
+      candidates: ["M10", "S2", "G2", "G1"],
+      fallbackQuestion: {
+        ko: "돈과 관련해서 '이건 내가 꽤 괜찮게 하고 있다' 싶은 부분이 있다면 뭐예요?",
+        en: "When it comes to money, is there something you feel you actually handle pretty well?",
+        es: "En lo que respecta al dinero, ¿hay algo que sientes que manejas bastante bien?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "돈과 편안한 사이라면, 월급날 하루는 어떤 모습일 것 같아요?",
+            en: "If you and money were on easy terms, what would payday look like?",
+            es: "Si tu relación con el dinero fuera tranquila, ¿cómo sería tu día de cobro?",
+          },
+          free: true,
+        },
+      ],
+    },
+  ],
+};
+
+const MODULE3_SETS: ModuleChatSets = {
+  strengthScoreDirection: "low",
+  sets: [
+    {
+      set: 1,
+      focus: "하루의 무게",
+      candidates: ["E3", "E4", "E7", "C2"],
+      fallbackQuestion: {
+        ko: "요즘 하루 중에 가장 무겁게 느껴지는 시간이 있다면, 언제예요?",
+        en: "Is there a time of day lately that feels the heaviest? When is it?",
+        es: "Últimamente, ¿hay algún momento del día que se te hace más pesado? ¿Cuál?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "그날 마지막 한 방울이 된 건 일의 양이었어요, 사람이었어요?",
+            en: "On that day, what was the last straw: the amount of work, or the people?",
+            es: "Ese día, ¿qué fue la gota que colmó el vaso: la cantidad de trabajo o la gente?",
+          },
+        },
+        {
+          text: {
+            ko: "그 지침은 몸이 무거운 쪽이에요, 마음이 식은 쪽이에요?",
+            en: "Does that tiredness feel more like a heavy body, or a heart that's gone cold?",
+            es: "Ese cansancio, ¿se siente más como un cuerpo pesado o como un ánimo que se ha enfriado?",
+          },
+        },
+        {
+          text: {
+            ko: "그런 날 퇴근길엔 머릿속이 텅 비어요, 계속 일 생각이에요?",
+            en: "On days like that, on the way home, is your mind blank, or still on work?",
+            es: "En días así, de camino a casa, ¿tienes la mente en blanco o sigues pensando en el trabajo?",
+          },
+        },
+      ],
+    },
+    {
+      set: 2,
+      focus: "쉬어도 안 풀릴 때",
+      candidates: ["E5", "E9", "C9", "C10", "F4"],
+      fallbackQuestion: {
+        ko: "쉬어도 잘 풀리지 않는다고 느낀 때가 있었다면, 그때 어떤 흐름이었어요?",
+        en: "Was there a time when rest just didn't seem to help? What was going on then?",
+        es: "¿Hubo alguna vez en que descansar no parecía servir de nada? ¿Qué estaba pasando entonces?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "이런 시기, 전에도 있었어요, 이번이 처음이에요?",
+            en: "Have you been through a stretch like this before, or is this the first time?",
+            es: "¿Ya habías pasado por una etapa así o es la primera vez?",
+          },
+        },
+        {
+          text: {
+            ko: "그때 더 컸던 건 일이 많은 거였어요, 아무도 알아주지 않는 거였어요?",
+            en: "What weighed more then: the sheer amount of work, or that nobody seemed to notice?",
+            es: "¿Qué pesaba más entonces: la cantidad de trabajo o que nadie pareciera notarlo?",
+          },
+        },
+      ],
+      alternate: {
+        text: {
+          ko: "요즘 일 얘기를 할 때 진지하게 해요, 농담처럼 넘겨요?",
+          en: "These days, when work comes up, do you talk about it seriously, or brush it off with a joke?",
+          es: "Últimamente, cuando sale el tema del trabajo, ¿hablas en serio o lo despachas con una broma?",
+        },
+      },
+    },
+    {
+      set: 3,
+      focus: "의미와 자격",
+      candidates: ["C5", "C8", "F9", "F3"],
+      fallbackQuestion: {
+        ko: "처음 이 일을 붙잡게 한 게 뭐였는지 떠올려 보면, 지금은 그게 어디쯤 있는 것 같아요?",
+        en: "Think back to what first made you hold on to this work. Where is that now?",
+        es: "Piensa en lo que al principio te hizo aferrarte a este trabajo. ¿Dónde está eso ahora?",
+      },
+      questions: [
+        { text: MODULE3.signatureQuestion, free: true, signature: true },
+        {
+          text: {
+            ko: "'쉬면 안 된다'는 느낌은 내 안에서 나와요, 주변 눈치에서 나와요?",
+            en: "That feeling of \"I can't rest\": does it come from inside you, or from reading the room around you?",
+            es: "Esa sensación de \"no puedo descansar\", ¿sale de ti o de lo que percibes a tu alrededor?",
+          },
+        },
+        {
+          text: {
+            ko: "처음 이 일을 시작할 때 좋았던 건 일 자체였어요, 잘해 내는 내 모습이었어요?",
+            en: "When you first started, what did you like more: the work itself, or seeing yourself do it well?",
+            es: "Cuando empezaste, ¿qué te gustaba más: el trabajo en sí o verte haciéndolo bien?",
+          },
+        },
+      ],
+    },
+    {
+      set: 4,
+      focus: "버티는 방식",
+      candidates: ["E8", "C7", "F5", "F6"],
+      fallbackQuestion: {
+        ko: "요즘 하루하루를 버티게 해 주는 나만의 방식이 있다면, 어떤 거예요?",
+        en: "What's your own way of getting through the days lately?",
+        es: "Últimamente, ¿cuál es tu manera de ir aguantando los días?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "쉬는 날엔 진짜 쉬어져요, 쉬면서도 일 생각이 나요?",
+            en: "On your days off, do you actually rest, or does work keep creeping into your head?",
+            es: "En tus días libres, ¿de verdad descansas o el trabajo se te sigue colando en la cabeza?",
+          },
+        },
+        {
+          text: {
+            ko: "힘들 때 도와 달라고 말해요, 혼자 끝까지 해요?",
+            en: "When it gets hard, do you ask for help, or push through on your own?",
+            es: "Cuando se pone difícil, ¿pides ayuda o lo sacas adelante por tu cuenta?",
+          },
+        },
+        {
+          text: {
+            ko: "직장에 내 상태를 눈치챈 사람이 있어요, 아무도 몰라요?",
+            en: "At work, has anyone picked up on how you're doing, or does nobody know?",
+            es: "En el trabajo, ¿alguien se ha dado cuenta de cómo estás o nadie lo sabe?",
+          },
+        },
+      ],
+    },
+    {
+      set: 5,
+      focus: "지친 와중에도 남아 있는 것",
+      candidates: ["C3", "F8", "F2", "F7"],
+      fallbackQuestion: {
+        ko: "지쳐 있는 와중에도 '이건 아직 내가 잘하고 있다' 싶은 게 있다면 뭐예요?",
+        en: "Even through the exhaustion, is there something you feel you're still doing well?",
+        es: "Incluso con todo el cansancio, ¿hay algo que sientes que todavía haces bien?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "에너지가 돌아온다면 가장 먼저 하고 싶은 건 뭐예요?",
+            en: "If your energy came back, what's the first thing you'd want to do?",
+            es: "Si recuperaras la energía, ¿qué es lo primero que te gustaría hacer?",
+          },
+          free: true,
+        },
+      ],
+    },
+  ],
+};
+
+const MODULE4_SETS: ModuleChatSets = {
+  strengthScoreDirection: "low",
+  sets: [
+    {
+      set: 1,
+      focus: "사람들 앞의 나",
+      candidates: ["IM4", "IM7", "AS7", "SE1"],
+      fallbackQuestion: {
+        ko: "최근에 사람들과 어울리고 돌아온 날이 있었다면, 그날 집에 와서 어땠어요?",
+        en: "Think of a recent day you spent around people. How did you feel once you got home?",
+        es: "Piensa en algún día reciente que pasaste con gente. ¿Cómo te sentiste al llegar a casa?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "그 자리에서 웃은 건 분위기 때문이었어요, 상대 때문이었어요?",
+            en: "When you smiled in that moment, was it for the mood in the room, or for the person in front of you?",
+            es: "Cuando sonreíste en ese momento, ¿fue por el ambiente o por la persona que tenías delante?",
+          },
+        },
+        {
+          text: {
+            ko: "자리가 끝난 직후 남은 건 피로예요, 외로움이에요, 안도예요?",
+            en: "Right after it ended, what was left: tiredness, loneliness, or relief?",
+            es: "Justo al terminar, ¿qué te quedó: cansancio, soledad o alivio?",
+          },
+        },
+        {
+          text: {
+            ko: "그 자리에서 진짜 하고 싶었던 말이 있었어요, 딱히 없었어요?",
+            en: "Was there something you really wanted to say there, or not really?",
+            es: "¿Había algo que de verdad querías decir ahí o no especialmente?",
+          },
+        },
+      ],
+    },
+    {
+      set: 2,
+      focus: "관계마다 다른 나",
+      candidates: ["IM5", "IM10", "AS8", "SE8"],
+      fallbackQuestion: {
+        ko: "만나는 사람에 따라 내 모습이 달라진다고 느낀 적이 있다면, 어떤 관계에서 가장 달라져요?",
+        en: "Have you noticed yourself changing depending on who you're with? With whom do you change the most?",
+        es: "¿Has notado que cambias según con quién estás? ¿Con quién cambias más?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "가면이 가장 두꺼워지는 건 처음 보는 사람 앞이에요, 오래 본 사람 앞이에요?",
+            en: "When is the mask thickest: with people you've just met, or with people you've known for years?",
+            es: "¿Cuándo es más gruesa la máscara: con gente que acabas de conocer o con gente que conoces desde hace años?",
+          },
+        },
+        {
+          text: {
+            ko: "이렇게 맞추게 된 시점이 기억나요, 늘 이랬던 것 같아요?",
+            en: "Do you remember when you started adjusting like this, or does it feel like it's always been this way?",
+            es: "¿Recuerdas cuándo empezaste a adaptarte así o sientes que siempre ha sido igual?",
+          },
+        },
+      ],
+      alternate: {
+        text: {
+          ko: "모임 약속이 잡히면 기대돼요, 벌써 피곤해요?",
+          en: "When group plans get set, do you look forward to it, or feel tired already?",
+          es: "Cuando se cierra un plan con un grupo, ¿te hace ilusión o ya te cansa de antemano?",
+        },
+      },
+    },
+    {
+      set: 3,
+      focus: "들킬까 봐",
+      candidates: ["IM9", "IM6", "AS9", "SE7"],
+      fallbackQuestion: {
+        ko: "진짜 내 모습을 누가 알게 되면 어떨 것 같아요?",
+        en: "What do you imagine would happen if someone saw the real you?",
+        es: "¿Qué crees que pasaría si alguien viera cómo eres de verdad?",
+      },
+      questions: [
+        { text: MODULE4.signatureQuestion, free: true, signature: true },
+        {
+          text: {
+            ko: "가면을 벗으면 사람들이 실망할 것 같아요, 멀어질 것 같아요?",
+            en: "If the mask came off, do you think people would be disappointed, or drift away?",
+            es: "Si te quitaras la máscara, ¿crees que la gente se decepcionaría o se alejaría?",
+          },
+        },
+        {
+          text: {
+            ko: "지금 가면이 지켜 주는 건 나예요, 관계예요?",
+            en: "Right now, what is the mask protecting more: you, or the relationship?",
+            es: "Ahora mismo, ¿qué protege más la máscara: a ti o a la relación?",
+          },
+        },
+      ],
+    },
+    {
+      set: 4,
+      focus: "숨기기와 방전",
+      candidates: ["AS3", "AS6", "AS10", "SE9", "AS4"],
+      fallbackQuestion: {
+        ko: "속마음을 숨긴 날, 그 피로는 보통 어떻게 풀어요?",
+        en: "On days you've kept your real feelings hidden, how do you usually let that tiredness out?",
+        es: "Los días en que escondes lo que sientes de verdad, ¿cómo sueles soltar ese cansancio?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "가면을 쓴 날 회복은 혼자 있는 시간으로 해요, 편한 사람 한 명과 해요?",
+            en: "After a day behind the mask, do you recover with time alone, or with one person you're at ease with?",
+            es: "Después de un día con la máscara puesta, ¿te recuperas con tiempo a solas o con una persona con quien te sientes a gusto?",
+          },
+        },
+        {
+          text: {
+            ko: "그 회복 시간이 지금 충분해요, 늘 모자라요?",
+            en: "Is that recovery time enough right now, or always running short?",
+            es: "¿Ese tiempo para recuperarte te alcanza ahora o siempre se queda corto?",
+          },
+        },
+        {
+          text: {
+            ko: "가면 없이 대할 수 있는 사람이 있다면, 그 사람 앞에선 뭐가 달라요?",
+            en: "If there's someone you can be with without the mask, what's different around them?",
+            es: "Si hay alguien con quien puedes estar sin máscara, ¿qué cambia cuando estás con esa persona?",
+          },
+          free: true,
+        },
+      ],
+    },
+    {
+      set: 5,
+      focus: "사람들 사이에서 자연스러운 쪽",
+      candidates: ["SE10", "SE6", "IM2", "IM8"],
+      fallbackQuestion: {
+        ko: "사람들 사이에서 '이건 내가 자연스럽게 잘한다' 싶은 게 있다면 뭐예요?",
+        en: "Around other people, is there something that comes naturally to you, something you're simply good at?",
+        es: "Cuando estás con otras personas, ¿hay algo que te sale natural, algo que simplemente se te da bien?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "가면을 조금 내려놓는다면 어느 자리부터 해 보고 싶어요?",
+            en: "If you set the mask down a little, where would you want to try it first?",
+            es: "Si bajaras un poco la máscara, ¿en qué lugar te gustaría probar primero?",
+          },
+          free: true,
+        },
+      ],
+    },
+  ],
+};
+
+/** 모듈별 5세트 데이터. 아직 옮기지 않은 모듈은 비어 있다(TODO 2에서 5~11). */
+export const MODULE_CHAT_SETS: Partial<Record<PlaybookModuleId, ModuleChatSets>> = {
+  module1: MODULE1_SETS,
+  module2: MODULE2_SETS,
+  module3: MODULE3_SETS,
+  module4: MODULE4_SETS,
+};
+
+/** 세트 데이터가 없는 모듈이나 알 수 없는 id면 undefined. */
+export function getModuleChatSets(moduleId?: string | null): ModuleChatSets | undefined {
+  if (!moduleId || !Object.prototype.hasOwnProperty.call(MODULE_CHAT_SETS, moduleId)) return undefined;
+  return MODULE_CHAT_SETS[moduleId as PlaybookModuleId];
+}
