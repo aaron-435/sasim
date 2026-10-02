@@ -157,11 +157,16 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
     - QA: `mobile-web` 프리뷰 375×812(브라우저 패널) — ko `?qa=free&persona=jisoo`: 목차 03 "검사 × 대화"·10 "검사 × 대화 — 이어지는 4장", 5쪽 카드 1/5 잘림 없음, 17/17 페이월 잠긴 챕터 목록에 카드 챕터, 구매 버튼 첫 화면 안. ko `?qa=all`: 39쪽, 카드 5장(1·19~23쪽 구간), 구버전 페이지 라벨("가장 걸리는 것"·"느껴진 감정" 등) 없음, 카드 3/5 화면 확인. es `?qa=all&persona=lucia`: 카드 1/5·2/5 인용 있음, 4/5는 인용 칸 없이 답·해설만, "Lo que dijiste…" 2회·"Lo que elegiste…" 5회. es `?qa=free`: 19/19 페이월 챕터 목록에 "Test × conversación — 4 tarjetas más", 구매 버튼 첫 화면 안. 기존 픽스처(`Open sample deep report`, jisoo): 41쪽, 카드 0장, 상담 스냅샷·사건·반복·두려움·실제 응답 인용 페이지 그대로. 콘솔 오류 없음.
     - 확인 못 한 것: 잠긴 동안의 카드 자리(`locked_shape`만 있고 `set_cards_2to5`가 빈 상태)는 픽스처가 합친 리포트라 화면에서 안 탔다. 그 자리는 페이월/여는 중 페이지로 대체되고 열린 뒤에만 실제 카드가 보이므로 빈 카드가 그려지는 경로는 없다(코드 확인). 실제 앱 흐름은 13번 실기기 확인에서 본다.
 
-- [ ] 10. PDF
+- [x] 10. PDF
   - 선행: 7
   - 변경: `app/api/report-pdf/route.ts`(카드 파싱), `lib/pdf/reportPdf.tsx`(v2 리포트면 상담·퀴즈 해설 자리에 카드 5장, ko/en/es 라벨). 이전 리포트는 그대로.
   - QA: `npx tsc --noEmit`(루트) → exit 0
   - QA: 로컬 `next dev` + RevenueCat 목 서버로 v2 픽스처를 `/api/report-pdf`에 POST → 200, PDF에 카드 5장(이전 방식과 동일한 절차, `TODO_2026-09-23.md` 발견 사항의 F1-b 참고)
+  - 결과(2026-10-02):
+    - 변경: `route.ts` — `cleanSetCard()`로 `set_card_1`·`set_cards_2to5` 파싱(세트 번호·주제가 자리와 맞아야 받음, 길이 상한, 퀴즈 없으면 null). 앱은 이미 `content` 전체를 보내므로 앱 변경 없음.
+    - 변경: `reportPdf.tsx` — `DeepPdfSetCard` 타입, `SetCardBlock`(eyebrow "검사 × 대화 n/5 · 주제", "검사에서 고른 답" 질문 → 보기, "대화에서 한 말" 인용, 읽어 주기; 한 장은 페이지에서 쪼개지지 않음). 카드 1은 심리테스트 분석 뒤, 카드 2~5는 "직접 나눈 이야기" 자리. 카드가 있으면 상담 카드(핵심 고민 등)·`chat_*_note`·"내가 고른 답" 섹션을 빼고, 없으면 지금 그대로. 라벨 ko/en/es는 앱 i18n 문구와 같음. 섹션 라벨을 카드 위에 따로 달면 페이지 끝에 혼자 남아서(1차 렌더에서 확인) 카드 eyebrow만 둠.
+    - QA: `npx tsc --noEmit`(루트) → exit 0. `npx eslint app/api/report-pdf/route.ts lib/pdf/reportPdf.tsx` → exit 0.
+    - QA: 임시 launch 설정(목 RevenueCat 3199 + `REVENUECAT_API_BASE`/`REVENUECAT_SECRET_KEY=sk_test_mock`로 `next dev -p 3005`)에서 스크래치 페이로드(`QA_DEEP_REPORT_V2` jisoo ko·lucia es, lucia 페이로드를 en으로, 기존 `QA_DEEP_REPORT` jisoo)를 `curl`로 `/api/report-pdf`에 POST → 4건 모두 200 `application/pdf`. `pdftotext`: v2 ko 10쪽 카드 eyebrow 5·퀴즈 라벨 5·인용 라벨 5, v2 es 12쪽 카드 5·인용 2(세트 3~5는 대화 없어 인용 칸 없음), v2 en eyebrow 5개 "TEST × CONVERSATION 1/5 · THE MOMENT"~"5/5 · WHAT ALREADY WORKS", 세 v2 PDF 모두 구버전 상담·답 섹션 0. 기존 리포트 9쪽, 카드 0, "직접 나눈 이야기"·"핵심 고민"·"내가 고른 답" 그대로. `pdftoppm` 이미지로 ko 2·5쪽, es 6쪽 확인: 카드 잘림·겹침 없음. 끝난 뒤 임시 launch 설정은 원래대로 되돌림.
 
 ## 마무리
 
@@ -206,3 +211,5 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
 - (9번 픽스처) 카드 `note`가 인용을 되풀이하는 경우가 있다: jisoo 카드 1 note 첫 문장이 원문("알람을 끄고 … 설친다고 했어요")을 거의 그대로 다시 씀(규칙 6 "인용을 되풀이하지 말고"). 또 lucia 카드 4(세트 4, 퀴즈 A10 SNS 확인)의 note가 세트 3 재료("te quiero"·"la palabra de cariño")를 해설함 — 카드와 세트 재료가 어긋남. 둘 다 결정론적 검사로는 안 잡힌다. 11번 최종 비교에서 리뷰어 루브릭이나 프롬프트 한 줄("카드 N의 note는 세트 N 재료만") 검토.
 - (9번 픽스처) lucia 무료 절반이 `oheng_intro` 2문장(3문장 기준) 결함 1건을 못 고친 채 출고됨 — 품질 루프의 기존 동작(v2와 무관).
 - (6번) 앱 홈 무료 안내 문구 `freeNote`가 "무료 20분 리딩"(ko) / "Free 20-minute reading"(en) / "Lectura gratis de 20 minutos"(es) — 새 흐름은 30분. `mobile/lib/i18n/{ko,en,es}.ts` 42·66행 부근. 13번 OTA 전에 고칠지 결정 필요.
+- (10번) `app/api/report-pdf/route.ts`의 `cleanDeep()`이 `oheng_intro`·`quiz_reading`(그리고 구버전 `chat_*_note`)을 옮기지 않아, `reportPdf.tsx`가 그 자리를 그리도록 되어 있어도 PDF에는 늘 빠진다(구버전·v2 공통, 이번 변경 전부터). 넣을지 결정 필요.
+- (10번) PDF의 오행 읽기 제목 앞 이모지(🌲 등)가 Noto Sans KR/Manrope에 없는 글리프라 깨진 기호로 찍힌다(ko 4쪽 "보통 — 확인하고…" 앞). 이번 변경 전부터 있던 문제.

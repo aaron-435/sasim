@@ -20,7 +20,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type { Locale } from "@/lib/i18n/types";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
 import { checkEntitlement, yearReportEntitlementId } from "@/lib/revenuecat";
-import { renderDeepReportPdf, renderYearReportPdf, type DeepPdfContent, type DeepPdfExtras, type YearPdfContent } from "@/lib/pdf/reportPdf";
+import { renderDeepReportPdf, renderYearReportPdf, type DeepPdfContent, type DeepPdfExtras, type DeepPdfSetCard, type YearPdfContent } from "@/lib/pdf/reportPdf";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -48,6 +48,20 @@ function cleanYear(raw: unknown): YearPdfContent | null {
     closing: str(c.closing, 2000),
   };
   return content.title && content.overview ? content : null;
+}
+
+const SET_THEMES = ["scene", "repeat", "inner", "coping", "strength"] as const;
+
+// 검사 × 대화 카드 (5-set reports, lib/reportSets.ts SetCard). The report was already built and
+// checked server-side; this only re-validates the shape and caps lengths.
+function cleanSetCard(raw: unknown, set: number): DeepPdfSetCard | undefined {
+  const c = obj(raw);
+  const theme = SET_THEMES[set - 1];
+  if (!theme || Number(c.set) !== set || c.theme !== theme) return undefined;
+  const q = obj(c.quiz);
+  const quiz = str(q.prompt, 400) && str(q.label, 400) ? { prompt: str(q.prompt, 400), label: str(q.label, 400) } : null;
+  const card = { set, theme, quiz, quote: str(c.quote, 400).trim(), note: str(c.note, 2000).trim() };
+  return card.quiz || card.quote || card.note ? card : undefined;
 }
 
 function cleanDeep(raw: unknown): DeepPdfContent | null {
@@ -88,6 +102,10 @@ function cleanDeep(raw: unknown): DeepPdfContent | null {
     mindset_guide: str(c.mindset_guide),
     closing_title: str(c.closing_title, 200),
     closing_body: str(c.closing_body),
+    set_card_1: cleanSetCard(c.set_card_1, 1),
+    set_cards_2to5: arr(c.set_cards_2to5, 4)
+      .map((card, i) => cleanSetCard(card, i + 2))
+      .filter((card): card is DeepPdfSetCard => !!card),
   };
   return content.opening_scene && content.closing_body ? content : null;
 }

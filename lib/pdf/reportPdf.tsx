@@ -101,6 +101,11 @@ interface Labels {
     fitBad: string;
     guides: string;
     mindset: string;
+    /** 검사 × 대화 cards (5-set reports) — same wording as the app's report strings. */
+    setCardEyebrow: (n: number, theme: string) => string;
+    setThemes: Record<DeepPdfSetCard["theme"], string>;
+    setCardQuiz: string;
+    setCardQuote: string;
   };
 }
 
@@ -116,7 +121,12 @@ const LABELS: Record<Locale, Labels> = {
     closing: "마무리",
     months: ["2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월", "1월"],
     elements: { wood: "목", fire: "화", earth: "토", metal: "금", water: "수" },
-    deep: { opening: "어느 밤의 장면", caseStudy: "닮은 사례", quiz: "심리테스트 분석", oheng: "나의 오행", moduleLens: "이 주제의 시선으로", upcoming: "다가오는 시기", chat: "직접 나눈 이야기", concern: "핵심 고민", emotion: "요즘의 마음", trigger: "흔들리는 순간", pattern: "반복되는 패턴", fear: "마음 깊은 곳", answers: "내가 고른 답", cross: "사주 × 심리 교차 분석", breather: "잠깐 숨 고르기", takeaway: "한 줄 정리", strengths: "강점", weaknesses: "약점", fitGood: "잘 맞는 환경", fitBad: "피하면 좋은 환경", guides: "행동 지침", mindset: "마음가짐" },
+    deep: { opening: "어느 밤의 장면", caseStudy: "닮은 사례", quiz: "심리테스트 분석", oheng: "나의 오행", moduleLens: "이 주제의 시선으로", upcoming: "다가오는 시기", chat: "직접 나눈 이야기", concern: "핵심 고민", emotion: "요즘의 마음", trigger: "흔들리는 순간", pattern: "반복되는 패턴", fear: "마음 깊은 곳", answers: "내가 고른 답", cross: "사주 × 심리 교차 분석", breather: "잠깐 숨 고르기", takeaway: "한 줄 정리", strengths: "강점", weaknesses: "약점", fitGood: "잘 맞는 환경", fitBad: "피하면 좋은 환경", guides: "행동 지침", mindset: "마음가짐",
+      setCardEyebrow: (n, theme) => `검사 × 대화 ${n}/5 · ${theme}`,
+      setThemes: { scene: "그 장면", repeat: "되풀이되는 흐름", inner: "그 아래의 마음", coping: "버티는 방식", strength: "이미 가진 힘" },
+      setCardQuiz: "검사에서 고른 답",
+      setCardQuote: "대화에서 한 말",
+    },
   },
   en: {
     by: (n) => `Prepared for ${n}`,
@@ -129,7 +139,12 @@ const LABELS: Record<Locale, Labels> = {
     closing: "Closing",
     months: ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan"],
     elements: { wood: "Wood", fire: "Fire", earth: "Earth", metal: "Metal", water: "Water" },
-    deep: { opening: "A scene from one night", caseStudy: "A similar case", quiz: "Psych test analysis", oheng: "Your five elements", moduleLens: "Through the lens of your topic", upcoming: "The period ahead", chat: "What we talked about", concern: "Core concern", emotion: "How you've been feeling", trigger: "Where it shakes you", pattern: "A repeating pattern", fear: "Deeper down", answers: "Answers you chose", cross: "Saju × psychology", breather: "A moment to breathe", takeaway: "In one line", strengths: "Strengths", weaknesses: "Weaknesses", fitGood: "Environments that fit you", fitBad: "Environments to avoid", guides: "Behavior guides", mindset: "Mindset" },
+    deep: { opening: "A scene from one night", caseStudy: "A similar case", quiz: "Psych test analysis", oheng: "Your five elements", moduleLens: "Through the lens of your topic", upcoming: "The period ahead", chat: "What we talked about", concern: "Core concern", emotion: "How you've been feeling", trigger: "Where it shakes you", pattern: "A repeating pattern", fear: "Deeper down", answers: "Answers you chose", cross: "Saju × psychology", breather: "A moment to breathe", takeaway: "In one line", strengths: "Strengths", weaknesses: "Weaknesses", fitGood: "Environments that fit you", fitBad: "Environments to avoid", guides: "Behavior guides", mindset: "Mindset",
+      setCardEyebrow: (n, theme) => `Test × Conversation ${n}/5 · ${theme}`,
+      setThemes: { scene: "The moment", repeat: "The loop", inner: "What sits underneath", coping: "How you cope", strength: "What already works" },
+      setCardQuiz: "What you chose in the test",
+      setCardQuote: "What you said in the conversation",
+    },
   },
   es: {
     by: (n) => `Preparado para ${n}`,
@@ -142,7 +157,12 @@ const LABELS: Record<Locale, Labels> = {
     closing: "Cierre",
     months: ["Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic", "Ene"],
     elements: { wood: "Madera", fire: "Fuego", earth: "Tierra", metal: "Metal", water: "Agua" },
-    deep: { opening: "Una escena de una noche", caseStudy: "Un caso parecido", quiz: "Análisis del test psicológico", oheng: "Tus cinco elementos", moduleLens: "Desde la mirada de tu tema", upcoming: "El período que viene", chat: "Lo que conversamos", concern: "Preocupación central", emotion: "Cómo te has sentido", trigger: "Donde te sacude", pattern: "Un patrón que se repite", fear: "Más adentro", answers: "Respuestas que elegiste", cross: "Saju × psicología", breather: "Un momento para respirar", takeaway: "En una línea", strengths: "Fortalezas", weaknesses: "Debilidades", fitGood: "Entornos que encajan contigo", fitBad: "Entornos que conviene evitar", guides: "Guías de comportamiento", mindset: "Actitud" },
+    deep: { opening: "Una escena de una noche", caseStudy: "Un caso parecido", quiz: "Análisis del test psicológico", oheng: "Tus cinco elementos", moduleLens: "Desde la mirada de tu tema", upcoming: "El período que viene", chat: "Lo que conversamos", concern: "Preocupación central", emotion: "Cómo te has sentido", trigger: "Donde te sacude", pattern: "Un patrón que se repite", fear: "Más adentro", answers: "Respuestas que elegiste", cross: "Saju × psicología", breather: "Un momento para respirar", takeaway: "En una línea", strengths: "Fortalezas", weaknesses: "Debilidades", fitGood: "Entornos que encajan contigo", fitBad: "Entornos que conviene evitar", guides: "Guías de comportamiento", mindset: "Actitud",
+      setCardEyebrow: (n, theme) => `Test × conversación ${n}/5 · ${theme}`,
+      setThemes: { scene: "La escena", repeat: "El ciclo", inner: "Lo que hay debajo", coping: "Cómo lo sostienes", strength: "Lo que ya te funciona" },
+      setCardQuiz: "Lo que elegiste en el test",
+      setCardQuote: "Lo que dijiste en la conversación",
+    },
   },
 };
 
@@ -241,6 +261,28 @@ function Card({ s, title, body }: { s: S; title: string; body: string }) {
     <View style={s.card} wrap={false}>
       <Text style={s.cardTitle}>{title}</Text>
       <Text style={s.cardBody}>{body}</Text>
+    </View>
+  );
+}
+
+function SetCardBlock({ s, d, card }: { s: S; d: Labels["deep"]; card: DeepPdfSetCard }) {
+  return (
+    <View style={s.card} wrap={false}>
+      <Text style={s.label}>{d.setCardEyebrow(card.set, d.setThemes[card.theme]).toUpperCase()}</Text>
+      {card.quiz ? (
+        <View style={{ marginBottom: 10 }}>
+          <Text style={s.cardTitle}>{d.setCardQuiz}</Text>
+          <Text style={s.pMuted}>{card.quiz.prompt}</Text>
+          <Text style={s.cardBody}>→ {card.quiz.label}</Text>
+        </View>
+      ) : null}
+      {card.quote ? (
+        <View style={{ marginBottom: 10 }}>
+          <Text style={s.cardTitle}>{d.setCardQuote}</Text>
+          <Text style={[s.quote, { marginBottom: 0 }]}>{`“${card.quote}”`}</Text>
+        </View>
+      ) : null}
+      {card.note ? <Text style={s.cardBody}>{card.note}</Text> : null}
     </View>
   );
 }
@@ -384,6 +426,19 @@ export interface DeepPdfContent {
   mindset_guide: string;
   closing_title: string;
   closing_body: string;
+  /** 검사 × 대화 cards (5-set reports, 2026-10-02): card 1 plus cards 2–5. When present they take
+   * the place of the chat snapshot cards and the "answers you chose" cards, same as in the app;
+   * older reports have neither and keep those sections. */
+  set_card_1?: DeepPdfSetCard;
+  set_cards_2to5?: DeepPdfSetCard[];
+}
+
+export interface DeepPdfSetCard {
+  set: number;
+  theme: "scene" | "repeat" | "inner" | "coping" | "strength";
+  quiz: { prompt: string; label: string } | null;
+  quote: string;
+  note: string;
 }
 
 export interface DeepPdfExtras {
@@ -412,6 +467,8 @@ function DeepDocument({ locale, nickname, date, content, extras }: { locale: Loc
   const sortedElements = extras.elements
     ? [...ELEMENT_KEYS].sort((a, b) => (extras.elements![b] ?? 0) - (extras.elements![a] ?? 0))
     : [...ELEMENT_KEYS];
+  const setCardsMode = !!content.set_card_1;
+  const laterCards = content.set_cards_2to5 ?? [];
 
   return (
     <Document title={title} author="Fatesaid" subject={content.subtitle}>
@@ -435,6 +492,14 @@ function DeepDocument({ locale, nickname, date, content, extras }: { locale: Loc
             </View>
           ))}
         </Section>
+
+        {/* Each card carries its own "검사 × 대화 n/5" eyebrow, so no section label above it (a
+            label would also strand at a page bottom, since a card never splits). */}
+        {content.set_card_1 && (
+          <View style={s.section}>
+            <SetCardBlock s={s} d={d} card={content.set_card_1} />
+          </View>
+        )}
 
         {content.case_paragraphs.length > 0 && (
           <Section s={s} label={d.caseStudy} title={content.case_tag || d.caseStudy}>
@@ -468,7 +533,15 @@ function DeepDocument({ locale, nickname, date, content, extras }: { locale: Loc
           <Section s={s} label={d.upcoming} title={content.upcoming_period_heading || d.upcoming} text={content.upcoming_period_body} />
         )}
 
-        {chatItems.some(([, v]) => v && v.trim()) && (
+        {setCardsMode && laterCards.length > 0 && (
+          <View style={s.section}>
+            {laterCards.map((card) => (
+              <SetCardBlock key={card.set} s={s} d={d} card={card} />
+            ))}
+          </View>
+        )}
+
+        {!setCardsMode && chatItems.some(([, v]) => v && v.trim()) && (
           <Section s={s} label={d.chat}>
             {chatItems.map(([label, value]) =>
               value && value.trim() ? (
@@ -481,7 +554,7 @@ function DeepDocument({ locale, nickname, date, content, extras }: { locale: Loc
           </Section>
         )}
 
-        {extras.topAnswers.length > 0 && (
+        {!setCardsMode && extras.topAnswers.length > 0 && (
           <Section s={s} label={d.answers}>
             {extras.topAnswers.map((a, i) => (
               <Card key={i} s={s} title={a.dimensionLabel} body={`${a.prompt}\n→ ${a.answer}${content.answer_notes[i] ? `\n\n${content.answer_notes[i]}` : ""}`} />
