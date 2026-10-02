@@ -960,8 +960,13 @@ const RESTATEMENT_FORMS_V2 = [
   "\"~라고 하셨어요\", \"~였던 셈이에요\"처럼 들은 내용을 평서문으로 받아 두는 한 줄",
 ] as const;
 
-function restatementFormV2(turn: number): string {
-  return `앞머리 재진술 모양(이번 턴): ${RESTATEMENT_FORMS_V2[turn % RESTATEMENT_FORMS_V2.length]}. 직전 응답의 첫 줄과 같은 어미·같은 틀로 시작하지 않는다.`;
+// 2026-10-02 (TODO 11): 영어 대화에서 따옴표 인용형을 따라 하다 "“I have to keep paying attention”이라는 말에, …"처럼
+// 한국어 조사·문장이 붙어 나왔다. 한국어가 아닌 대화에는 모양만 따르고 연결 말은 그 언어로 쓰라고 못 박는다.
+function restatementFormV2(turn: number, locale: Locale): string {
+  const base = `앞머리 재진술 모양(이번 턴): ${RESTATEMENT_FORMS_V2[turn % RESTATEMENT_FORMS_V2.length]}. 직전 응답의 첫 줄과 같은 어미·같은 틀로 시작하지 않는다.`;
+  return locale === "ko"
+    ? base
+    : `${base} 위 예시는 모양만 보여 주는 한국어다 — 따옴표 인용 앞뒤의 연결 말까지 전부 ${FIELD_LANGUAGE_NAME[locale]}로 쓰고, 한국어 조사나 어미("~이라는 말에", "~라고 하셨어요")를 붙이지 않는다. 응답 어디에도 한글이 들어가면 안 된다.`;
 }
 
 function buildModuleQuestionInstruction(role: SetTurnRole, chatSet: ChatSet, locale: Locale): string {
@@ -1030,7 +1035,7 @@ function buildSetTurnInstruction(
       `정리·재진술 없이 연다 — 지금까지의 이야기는 ${CHECKPOINT_TURN_V2}번째 응답에서 이미 정리했다. 사용자의 직전 답(계속 이야기하겠다는 말)은 "좋아요, 이어서 볼게요" 같은 뜻의 짧은 한 구절로만 받고, 앞 세트 내용을 요약하거나 다시 꺼내지 말고 바로 아래 인용으로 넘어간다. 직전 답에 새 이야기가 있었다면 그것만 한 구절로 받는다.`
     );
   } else if (position >= 2) {
-    parts.push(restatementFormV2(role.turn));
+    parts.push(restatementFormV2(role.turn, locale));
   }
 
   const isLast = position === (set === 2 ? 4 : set === 5 ? 3 : 5);

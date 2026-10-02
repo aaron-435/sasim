@@ -170,12 +170,32 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
 
 ## 마무리
 
-- [ ] 11. 최종 비교
+- [x] 11. 최종 비교
   - 선행: 5, 6, 8, 9
   - QA: `npx tsx --env-file=.env.local scripts/sim-chat.mts 25 <페르소나 3명: 모듈 서로 다르게, ko·en·es 각 1> --flow v2` → 3건 완주 (OpenAI 비용 발생)
   - QA: `npx tsx --env-file=.env.local scripts/judge-chat.mts <위 결과>` → 지난 기준(`scripts/out/q1e-*`)보다 공통 항목 평균이 낮지 않음, 세트 준수 평균 1.5/2 이상. 표로 비교해 이 항목 아래에 기록.
   - QA: `flowVersion` 없는 요청 흉내(`sim-chat` 기본 흐름, 3턴) → 20턴 흐름 프롬프트, 기존 리포트 필드 그대로
   - QA: 루트 `npx tsc --noEmit`, `npm run lint && npm run build`, mobile tsc → 모두 통과
+  - 결과(2026-10-02):
+    - QA: `sim-chat.mts 25 family,attach_en,anger_es - --flow v2` → 3건 25턴 완주(ko module9, en module1, es module6). 세트 ① 인용 15/15 기대값과 일치(세트 5는 낮은 점수 문항 CO10 0점·V9 1점·R9 1점), 24턴 고정 문구 3/3, `set_packets` 5개씩 모두 `has_chat: true`. 파일 `scripts/out/sim_20261002T091719_*_v2.json`
+    - 첫 채점(`q11-final_20261002T092052`)에서 문제 2건 발견 → 수정:
+      - attach_en 15턴에 한국어 섞임(`“I have to keep paying attention”이라는 말에, …`, 자연스러움 0). `lib/chatPrompts.ts` `restatementFormV2`가 비한국어 대화에는 "예시는 모양만, 연결 말까지 그 언어로, 한글 금지"를 덧붙이고, `lib/chat.ts` `getChatReply`는 비한국어 응답에 한글이 섞이면 한 번 다시 요청하고 또 섞이면 한글 줄을 뺀다.
+      - 24턴 고정 문구가 두 번 나감(모델이 `There’s …`를 둥근 아포스트로피로 써서 서버 중복 검사를 빠져나감). `prependPerspectiveLead`가 따옴표 모양을 무시하고 비교하고, 같은 줄 앞머리에 붙은 문구도 떼어 낸다. QA: 스크래치 사례 6건(둥근·곧은 따옴표, 같은 줄, 없음, ko, es) 모두 문구 1번 + 질문.
+    - QA: 수정 후 `sim-chat.mts 25 attach_en - --flow v2`(`sim_20261002T123040_…`) → 25턴, 인용 5/5, 24턴 문구 1번, 한글 0자, 서버 한글 재요청 로그 없음. `judge-chat --label q11-final-en2` → 공통 1.75(자연스러움 0→2, 반복 없음 1→2), 세트 준수 2.00.
+    - 비교표(공통 항목 평균, 채점 gpt-5.5):
+
+      | | family·m9 | attach·m1 | anger·m6 | 평균 | 세트 준수 |
+      |---|---:|---:|---:|---:|---:|
+      | `q1e-baseline` (개편 전, 20턴, mini) | 0.94 | 1.19 | 1.31 | 1.17(4명) | – |
+      | `q1e-mini` (20턴, mini) | 1.56 | 1.63 | 1.63 | 1.63(4명) | – |
+      | `q1e2-luna` (20턴, 현 운영 모델) | 1.75 | 1.94 | 1.63 | 1.80(4명) | – |
+      | **v2 5세트 25턴(luna)** | 1.88 (ko) | 1.75 (en) | 1.81 (es) | **1.81** | **2.00** |
+
+      v2는 페르소나 언어가 en·es로 바뀌어 같은 조건 비교는 아니다. 남은 약점: ④ 확인형 가설(family 1, anger_es 1), ⑤ 감정 어휘 좁히기(attach_en 0~1), ① 이지선다(en·es 1).
+    - QA: `dump-chat-prompt --legacy` module1·module7 × ko/en/es × 1~20턴, HEAD의 `chatPrompts.ts`로 만든 출력과 diff 0(2,444,772바이트 동일).
+    - QA: `sim-chat.mts 3 attach`(flowVersion 없음, `sim_20261002T122946_attach_module1.json`) → context에 `flowVersion` 없음, 20턴식 1~3턴(인사+퀴즈 인용 → 재진술·모순 → 이지선다), extract는 기존 필드만(`set_packets` 없음).
+    - QA: 루트 `npx tsc --noEmit` exit 0, `npm run lint` 경고·오류 없음, `npm run build` exit 0, mobile tsc exit 0.
+    - 비용: 시뮬레이션 약 $0.35 + 채점 약 $0.93.
 
 - [ ] 12. 문서
   - 선행: 11
@@ -212,4 +232,6 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
 - (9번 픽스처) lucia 무료 절반이 `oheng_intro` 2문장(3문장 기준) 결함 1건을 못 고친 채 출고됨 — 품질 루프의 기존 동작(v2와 무관).
 - (6번) 앱 홈 무료 안내 문구 `freeNote`가 "무료 20분 리딩"(ko) / "Free 20-minute reading"(en) / "Lectura gratis de 20 minutos"(es) — 새 흐름은 30분. `mobile/lib/i18n/{ko,en,es}.ts` 42·66행 부근. 13번 OTA 전에 고칠지 결정 필요.
 - (10번) `app/api/report-pdf/route.ts`의 `cleanDeep()`이 `oheng_intro`·`quiz_reading`(그리고 구버전 `chat_*_note`)을 옮기지 않아, `reportPdf.tsx`가 그 자리를 그리도록 되어 있어도 PDF에는 늘 빠진다(구버전·v2 공통, 이번 변경 전부터). 넣을지 결정 필요.
+- (11번) v2 en 대화 한국어 섞임·24턴 고정 문구 중복 — 11번에서 해결. 한글 줄 제거 백스톱은 20턴 흐름 비한국어 응답에도 걸린다(프롬프트는 그대로, 응답 후처리만).
+- (11번) 5번·9번 발견 사항의 "11번에서 볼 것"(한 줄 안 질문 2개, 카드 note가 다른 세트 재료를 해설) 중 질문 2개는 최종 3건(family·anger_es·attach_en 재실행)에서 위반 점수 2(위반 없음)였지만, 첫 attach_en 실행에서는 1이 나왔다 — 해결된 것은 아니다. 카드 note 문제는 리포트를 다시 생성하지 않아 확인하지 못함 — 남아 있음.
 - (10번) PDF의 오행 읽기 제목 앞 이모지(🌲 등)가 Noto Sans KR/Manrope에 없는 글리프라 깨진 기호로 찍힌다(ko 4쪽 "보통 — 확인하고…" 앞). 이번 변경 전부터 있던 문제.

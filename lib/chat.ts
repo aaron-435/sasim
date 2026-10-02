@@ -118,6 +118,11 @@ function isQuestionLine(line: string): boolean {
   return /[?？]\s*$/.test(trimmed) || /궁금(해요|하네요|합니다)\.?\s*$/.test(trimmed);
 }
 
+const HANGUL = /[\u1100-\u11FF\u3130-\u318F\uAC00-\uD7AF]/;
+function hasHangul(line: string): boolean {
+  return HANGUL.test(line);
+}
+
 /**
  * Deterministic backstop for chatPrompts.ts rule 4 ("one question per
  * reply"). Prose instructions plus negative examples measurably failed to
@@ -175,12 +180,18 @@ export function ensureClosingLineLast(lines: string[], locale: string = "ko"): s
 export function prependPerspectiveLead(lines: string[], locale: string = "ko"): string[] {
   if (lines.some((line) => CRISIS_LINE_PATTERN.test(line))) return lines;
   const lead = PERSPECTIVE_SHIFT_LEAD[locale as Locale] ?? PERSPECTIVE_SHIFT_LEAD.ko;
-  const norm = (t: string) => t.replace(/[\s.。!?¿¡,:—-]+/g, "").toLowerCase();
+  // 2026-10-02 (TODO 11): 모델이 고정 문구를 둥근 아포스트로피(’)로 써서 같은 줄이 두 번 나갔다 — 따옴표 모양은 무시하고 비교한다.
+  const norm = (t: string) => t.replace(/[\s.。!?¿¡,:—'’‘"“”-]+/g, "").toLowerCase();
+  const leadKey = norm(lead);
   const rest = lines
     .map((line) => {
       const trimmed = line.trim();
-      if (norm(trimmed) === norm(lead)) return "";
-      return trimmed.startsWith(lead) ? trimmed.slice(lead.length).trim() : trimmed;
+      if (norm(trimmed) === leadKey) return "";
+      // 고정 문구로 시작하고 같은 줄에 질문이 이어지면 문구만 떼어 낸다(따옴표 모양이 달라도).
+      for (let i = 1; i <= trimmed.length; i++) {
+        if (norm(trimmed.slice(0, i)) === leadKey) return trimmed.slice(i).replace(/^[\s.!?,:—-]+/, "").trim();
+      }
+      return trimmed;
     })
     .filter(Boolean);
   return [lead, ...rest];
@@ -245,6 +256,9 @@ export async function getChatReply(params: {
 
   // 2026-09-28 (TODO 15-b): gpt-5.6-luna 시뮬레이션 80턴 중 2번, JSON에 lines가 빠진 응답이 와서 대화가 오류로
   // 끊겼다. 빈 응답·깨진 JSON·lines 없음은 한 번만 다시 요청한다(두 번째도 실패하면 예전처럼 오류).
+  // 2026-10-02 (TODO 11): 영어 v2 대화 15턴에 "“…”이라는 말에, …"처럼 한국어가 섞여 나왔다. 한국어가 아닌 대화에서
+  // 한글이 섞인 응답은 한 번 다시 요청하고, 두 번째도 섞이면 한글이 든 줄을 뺀다(다 빠지면 그대로 둔다).
+  const replyLocale = params.context.locale ?? "ko";
   let parsed: { lines?: unknown; formulation?: unknown } = {};
   let rawLines: string[] = [];
   for (let attempt = 0; ; attempt++) {
@@ -274,6 +288,15 @@ export async function getChatReply(params: {
       else if (rawLines.length === 0) problem = `OpenAI 응답에 lines가 없습니다. (받은 키: ${Object.keys(parsed).join(", ")})`;
     } catch {
       problem = `OpenAI 응답이 JSON이 아닙니다. (앞부분: ${content.slice(0, 120)})`;
+    }
+    if (!problem && replyLocale !== "ko" && rawLines.some(hasHangul)) {
+      if (attempt >= 1) {
+        const kept = rawLines.filter((l) => !hasHangul(l));
+        if (kept.length) rawLines = kept;
+        console.warn(`[chat] turn ${params.turnNumber}: 다시 요청해도 한글이 섞여 해당 줄을 뺐습니다.`);
+        break;
+      }
+      problem = `${replyLocale} 응답에 한글이 섞였습니다.`;
     }
     if (!problem) break;
     if (attempt >= 1) throw new Error(problem);
