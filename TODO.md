@@ -128,11 +128,17 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
     - 필드: `set_card_1`(무료, `quiz_reading` 뒤 자리)과 `set_cards_2to5`(유료, `LOCKED_KEYS`), 각 `{ set, theme, quiz{id,prompt,label,score}|null, quote, note }`. 무료 응답 `locked_shape`에 v2일 때만 `set_cards_2to5: 4`. 유료 절반은 `freePart.set_card_1`을 받아 이어 쓰고(`describeFreePart`), 카드 코드 필드(set/theme/quiz)는 패치 대상에서 뺐다. `FREE_PART_TEXT_FIELDS`는 문자열 필드 목록이라 그대로 두고 카드 1은 `describeFreePart`에서 따로 넣는다.
     - 프롬프트(v2만): 30문항 전체(차원별, ★2~3점·○0점), 세트 재료 묶음 5개(대화 없는 세트는 후보 답만, 세트 5에 24턴 답), 섹션별 근거 표(`CHAT_SETS_DRAFT.md` 3-2), 규칙 6을 카드 인용 규칙으로 교체, `answer_notes`·`chat_*_note`·`topAnswers` 줄 없음. 리뷰어·패치 근거 데이터에도 세트 묶음을 넣고, 결정론적 검사는 카드의 quiz·quote(사용자 원문)를 문체 검사에서 뺀다(인용 검사는 8번).
 
-- [ ] 8. 리포트 품질 검사: 카드
+- [x] 8. 리포트 품질 검사: 카드
   - 선행: 7
   - 변경: `lib/reportQuality.ts` — 카드 `quote`가 해당 세트 사용자 원문의 부분 문자열인지(공백·문장부호 정규화 후), 대화 없는 세트의 `quote`가 비어 있는지, 카드 수가 세트 수와 같은지, `note`가 3문장인지. 어긋나면 기존 패치 경로(인용만 다시 고르게).
   - QA: `npx tsc --noEmit`(루트) → exit 0
   - QA: 스크래치 스크립트 — 지어낸 인용, 원문 일부 인용, 대화 없는 세트에 인용 있음, 카드 4장 사례 → 결함 3건 감지, 정상 1건 통과
+  - 결과(2026-10-02):
+    - QA: `npx tsc --noEmit`(루트) → exit 0. `npm run lint` → "No ESLint warnings or errors"
+    - QA: 스크래치 `check-card-quality.mts`(7번 실제 리포트 `report_v2_20261002T085054.json` + 그 sim 파일의 30문항·`set_packets`) → "통과 19 · 실패 0". 결함 감지: 지어낸 인용(세트 3), 대화 없는 세트 4에 인용, 카드 4장(유료 3장) + 추가로 note 2문장, 퀴즈 보기 변조, 자리 바뀐 카드, 대화 있는 세트의 빈 인용, 무료 구간 카드 1 누락. 정상 통과: 실제 리포트 카드 5장, 원문 일부 인용(문장부호 빼고 "…"로 끝냄), 대화 없는 세트 3~5의 빈 인용, 무료·유료 구간 각각, `reportSets` 없는 구버전 컨텍스트(카드 검사 없음).
+    - QA(회귀): `npx tsx scripts/check-chat-sets.mts` → 92/92
+    - 구조: `checkSetCards()`가 `checkReportDeterministic` 안에서 `reportSets`가 있을 때만 돈다. 구간별로 쓴 카드만 본다(무료 → `set_card_1`, 유료 → `set_cards_2to5` 4장). 인용 일치는 `quoteMatchesSource()` — 소문자·공백·문장부호 제거 후, "…"로 나뉜 조각이 같은 답 원문(①②③④⑤, 24턴 답 제외) 안에 순서대로 있는지. 퀴즈는 `cardQuizFor()` 재계산값과 같은지. 인용 결함 메시지에 그 세트 원문을 담아 기존 패치 호출이 그중 한 구절을 고르게 했고, `lib/report.ts` 패치 프롬프트에 quote 경로가 있을 때만 "다시 쓰지 말고 원문 구절을 글자 그대로" 한 줄을 붙인다(구버전 리포트 프롬프트는 그대로). 카드 수·세트·퀴즈 결함은 문자열이 아니라 패치 대상이 아니다 — `parseReport`/`buildSetCard`가 이미 코드로 고정하므로 안전장치다.
+    - 실제 모델 패치로 인용이 고쳐지는지는 OpenAI 호출이 필요해 돌리지 않았다. 9번 픽스처 생성(`gen-qa-fixtures`)의 품질 루프 로그(`code checks: N finding(s)`)에서 함께 확인할 것.
 
 - [ ] 9. 리포트 화면 + i18n + QA 픽스처
   - 선행: 7

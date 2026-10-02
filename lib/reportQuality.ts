@@ -23,8 +23,8 @@ import type { Locale } from "./i18n/types";
 import { describeUpcomingPeriod, relationToDayMaster, type ReportContext } from "./reportPrompts";
 import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME } from "./promptLocale";
 import type { ElementKey } from "./sajuScore";
-import { getModulePlaybook } from "./modulePlaybooks";
-import { describeSetPackets } from "./reportSets";
+import { getModuleChatSets, getModulePlaybook } from "./modulePlaybooks";
+import { cardQuizFor, describeSetPackets, type SetCard } from "./reportSets";
 
 const ELEMENT_KEYS: ElementKey[] = ["wood", "fire", "earth", "metal", "water"];
 
@@ -116,9 +116,76 @@ function checkDensity(c: ReportContent, hasChat: boolean): string[] {
   return out;
 }
 
+/** Lowercased, without spaces and punctuation — so a quote that drops a comma, changes spacing or trims
+ * an end mark still counts as the reader's own words. */
+function normalizeForQuote(text: string): string {
+  return text.normalize("NFC").toLowerCase().replace(/[\s.,!?;:…"'“”‘’«»()[\]{}<>\-–—~·、。，！？¿¡*_/]+/g, "");
+}
+
+/** True when every part of the quote (split at an ellipsis the model used to skip words) appears, in
+ * order, inside one of the reader's answers. */
+export function quoteMatchesSource(quote: string, sources: readonly string[]): boolean {
+  const parts = quote.split(/…|\.{3}/).map(normalizeForQuote).filter(Boolean);
+  if (parts.length === 0) return false;
+  return sources.some((s) => {
+    const src = normalizeForQuote(s);
+    let from = 0;
+    for (const part of parts) {
+      const at = src.indexOf(part, from);
+      if (at < 0) return false;
+      from = at + part.length;
+    }
+    return true;
+  });
+}
+
+/** The 5-set cards (TODO 8): one card per set in its slot, the quiz answer exactly as the app sent it,
+ * a quote that is the reader's own words from that set (empty when the set had no chat), and a 3-sentence
+ * reading. Only the cards of the part that was written are checked. */
+function checkSetCards(c: ReportContent, ctx: ReportContext): string[] {
+  const sets = ctx.reportSets;
+  if (!sets) return [];
+  const out: string[] = [];
+  const part = ctx.part ?? "full";
+  const chatSets = getModuleChatSets(ctx.moduleId);
+  const slots: [string, number, SetCard | undefined][] = [];
+  if (part !== "paid") {
+    if (!c.set_card_1) out.push("set_card_1: 무료 카드(세트 1)가 없음");
+    else slots.push(["set_card_1", 1, c.set_card_1]);
+  }
+  if (part !== "free") {
+    const paid = c.set_cards_2to5 ?? [];
+    if (paid.length !== 4) out.push(`set_cards_2to5: 유료 카드는 4장(세트 2~5)이어야 하는데 ${paid.length}장`);
+    paid.slice(0, 4).forEach((card, i) => slots.push([`set_cards_2to5[${i}]`, i + 2, card]));
+  }
+  for (const [path, set, card] of slots) {
+    if (!card) continue;
+    if (card.set !== set) out.push(`${path}.set: 세트 ${set} 자리에 세트 ${card.set} 카드가 있음`);
+    const expected = chatSets ? cardQuizFor(chatSets, set as 1 | 2 | 3 | 4 | 5, sets.quizAnswers) : null;
+    const same = (a: SetCard["quiz"], b: SetCard["quiz"]) => (!a && !b) || (!!a && !!b && a.id === b.id && a.prompt === b.prompt && a.label === b.label && a.score === b.score);
+    if (!same(card.quiz, expected)) out.push(`${path}.quiz: 검사 답이 앱이 보낸 30문항 데이터와 다름`);
+
+    const packet = sets.setPackets[set - 1];
+    const sources = packet ? [...packet.opening_answers, ...packet.module_answers] : [];
+    const quote = card.quote.trim();
+    if (!packet?.has_chat || sources.length === 0) {
+      if (quote) out.push(`${path}.quote: 세트 ${set}에는 대화가 없어서 인용이 비어 있어야 함`);
+    } else if (!quote) {
+      out.push(`${path}.quote: 세트 ${set} 사용자 원문에서 고른 인용이 비어 있음 — 아래 원문에서 한 구절을 글자 그대로 옮길 것: ${sources.map((s) => `"${s}"`).join(" / ")}`);
+    } else if (!quoteMatchesSource(quote, sources)) {
+      out.push(
+        `${path}.quote: 세트 ${set} 사용자 원문에 없는 문장 — 바꿔 말하거나 요약하지 말고, 아래 원문 중 한 구절(한두 문장 이내)을 글자 그대로 옮길 것: ${sources.map((s) => `"${s}"`).join(" / ")}`
+      );
+    }
+    const n = card.note.trim() ? countSentences(card.note) : 0;
+    if (n !== 3) out.push(`${path}.note: 읽어 주기는 3문장이어야 하는데 ${n}문장 — 검사 답과 대화의 말을 잇는 해석 3문장으로 쓸 것`);
+  }
+  return out;
+}
+
 export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): string[] {
   const locale = ctx.locale ?? "ko";
-  const problems = checkDensity(c, !!ctx.chatExtract);
+  const problems = [...checkDensity(c, !!ctx.chatExtract), ...checkSetCards(c, ctx)];
   // A module page the model left empty (TODO F1-b). The free half legitimately carries module_deep with
   // an empty body (it's written after purchase), so only pages whose part was written are checked.
   const part = ctx.part ?? "full";
