@@ -19,6 +19,7 @@ import { getPaidPart } from "@/lib/report";
 import type { ReportContext } from "@/lib/reportPrompts";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
 import { checkEntitlement } from "@/lib/revenuecat";
+import { resolveReportSets } from "@/lib/reportSets";
 
 // Written, checked and reviewed like the front half: up to ~1 minute.
 export const maxDuration = 120;
@@ -52,7 +53,9 @@ export async function POST(req: NextRequest) {
 
   try {
     const free = freePart && typeof freePart === "object" && !Array.isArray(freePart) ? (freePart as Record<string, unknown>) : {};
-    const locked = await getPaidPart({ ...context, moduleId, includeCase: false }, free);
+    // Same 5-set check as /api/report, so the back half matches the front half the reader has.
+    const reportSets = resolveReportSets(moduleId, context.flowVersion, context.quizAnswers, context.chatExtract?.set_packets);
+    const locked = await getPaidPart({ ...context, moduleId, includeCase: false, reportSets }, free);
     return NextResponse.json({ moduleId, locked });
   } catch (err) {
     if (err instanceof OpenAI.APIError) {

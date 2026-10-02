@@ -24,6 +24,7 @@ import { describeUpcomingPeriod, relationToDayMaster, type ReportContext } from 
 import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME } from "./promptLocale";
 import type { ElementKey } from "./sajuScore";
 import { getModulePlaybook } from "./modulePlaybooks";
+import { describeSetPackets } from "./reportSets";
 
 const ELEMENT_KEYS: ElementKey[] = ["wood", "fire", "earth", "metal", "water"];
 
@@ -181,6 +182,9 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
   }
 
   for (const [path, text] of strings) {
+    // Verbatim text on the 5-set cards: the quiz answer the app sent and the reader's own words. Style and
+    // number rules don't apply to what the reader actually said (TODO 8 checks the quote against the source).
+    if (/^set_card(_1|s_2to5\[\d\])\.(quiz\.|quote$)/.test(path)) continue;
     const fictional = FICTIONAL_FIELDS.some((f) => path === f || path.startsWith(`${f}[`));
     const stray = locale !== "ko" ? text.match(HANGUL_OR_HANJA_ALL) : null;
     if (stray) problems.push(`${path}: 한국어/한자가 섞여 있음 ("${Array.from(new Set(stray)).join("")}") — 그 글자를 빼고 이 언어로만 쓸 것`);
@@ -235,6 +239,9 @@ export function describeReportData(ctx: ReportContext): string {
         .join(" | ")
     : "";
   const playbook = getModulePlaybook(ctx.moduleId);
+  const sets = ctx.reportSets
+    ? `- 상담의 세트 재료 묶음(사용자가 실제로 한 말과 고른 퀴즈 답 — set_card_*의 quote는 여기서 글자 그대로 옮긴 사용자 원문이다):\n${describeSetPackets(ctx.reportSets, ctx.moduleId)}\n`
+    : "";
   return `- 닉네임: ${ctx.nickname}
 - 오행 분포: ${elementsLine}
 ${ctx.dayMaster ? `- 나의 일간: ${ctx.dayMaster.char} (${ELEMENT_LABEL[locale][ctx.dayMaster.element]}) — 일간 기준으로 우세 원소 ${ELEMENT_LABEL[locale][dominantOf(ctx)]}는 "${relationToDayMaster(ctx.dayMaster.element, dominantOf(ctx))}", 약한 원소 ${ELEMENT_LABEL[locale][weakestOf(ctx)]}는 "${relationToDayMaster(ctx.dayMaster.element, weakestOf(ctx))}"\n` : ""}- 심리검사 모듈: ${ctx.moduleTitle} / 유형: ${ctx.psychTestTypeTitle} — ${ctx.psychTestTypeHook}
@@ -242,7 +249,7 @@ ${ctx.dayMaster ? `- 나의 일간: ${ctx.dayMaster.char} (${ELEMENT_LABEL[local
 - 심리검사 서술: ${ctx.nuancedSummary}
 - 실제 답한 문항: ${answers}
 - 상담 내용: ${chat}
-${moduleFields ? `- 상담의 모듈 추출 내용: ${moduleFields}\n` : ""}${playbook ? `- 모듈 전문 관점(module_map·module_deep의 틀): ${playbook.lens}\n` : ""}- ${describeUpcomingPeriod(ctx.decadeFortune, ctx.currentAge, locale)}`;
+${moduleFields ? `- 상담의 모듈 추출 내용: ${moduleFields}\n` : ""}${sets}${playbook ? `- 모듈 전문 관점(module_map·module_deep의 틀): ${playbook.lens}\n` : ""}- ${describeUpcomingPeriod(ctx.decadeFortune, ctx.currentAge, locale)}`;
 }
 
 /** System prompt for the reviewing pass. The report is passed as the user message. */
@@ -257,7 +264,7 @@ export function buildReviewPrompt(ctx: ReportContext): string {
 - upcoming_period_*의 나이·시기 표현은 코드가 검사한다. 보고하지 마라. 나이 숫자가 데이터와 같다면, 그 시기에 어떤 변화가 온다는 서술 자체는 문제가 아니다("아직 안 왔음"을 다시 밝히라고 요구하지 마라).
 - 오행의 상생은 목→화→토→금→수→목, 상극은 목→토, 토→수, 수→화, 화→금, 금→목이다. 이 관계를 맞게 말한 문장은 (데이터에 따로 적혀 있지 않아도) 문제가 아니다. 틀리게 말한 것만 보고한다.
 - 오행이 동률이면 데이터의 "약한 원소"로 지정된 것을 약하다고 말하는 것은 문제가 아니다. 데이터에 있는 상생 관계를 그대로 풀어 쓴 것도 문제가 아니다.
-- 리포트에는 가상 사례(case_*)가 들어 있으나 이 요청에서는 이미 뺐다. 사례에 대해서는 아무것도 말하지 마라.
+- 리포트에는 가상 사례(case_*)가 들어 있으나 이 요청에서는 이미 뺐다. 사례에 대해서는 아무것도 말하지 마라.${ctx.reportSets ? "\n- set_card_*의 quiz와 quote는 코드가 붙인 실제 퀴즈 답과 사용자 원문이다. 그 문구·맞춤법·성별 표현은 보고하지 마라(note만 검수한다)." : ""}
 
 ## 문제로 보고할 것 (이 6가지에 해당할 때만)
 1. 근거 없는 사실: 근거 데이터에 없는 구체적 과거 사건(직업, 가족, 연애 상태 등)을 독자의 사실로 단정한다. (숫자·나이·오행 관계는 코드가 따로 검사하니 보고하지 마라.)

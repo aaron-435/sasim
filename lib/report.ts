@@ -14,6 +14,7 @@ import { buildReportPrompt, strengthsSplitFor, type ReportContext } from "./repo
 import { FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 import { LOCKED_KEYS, splitLocked } from "./reportLock";
 import { getModulePlaybook } from "./modulePlaybooks";
+import { buildSetCard, type SetCard } from "./reportSets";
 import { buildReviewPrompt, checkReportDeterministic, describeReportData, getAt, setAt, stripHanja } from "./reportQuality";
 import { logLlmUsage } from "./llmUsage";
 
@@ -57,6 +58,11 @@ export interface ReportContent {
    * the behavior guides). Absent in reports saved before this and when the request had no known moduleId. */
   module_map?: ReportBullet;
   module_deep?: ReportBullet;
+  /** 검사 × 대화 카드(2026-10-02, 5세트 흐름). 세트 1 카드는 무료(quiz_reading 뒤), 세트 2~5 카드 4장은 유료.
+   * 세트·주제·퀴즈 답은 parseReport가 세트 재료 묶음에서 붙이고 모델은 quote·note만 쓴다. 5세트 흐름이 아닌
+   * 요청과 이전 리포트에는 없다(그때는 answer_notes·chat_*_note가 그 자리를 채운다). */
+  set_card_1?: SetCard;
+  set_cards_2to5?: SetCard[];
   upcoming_period_heading: string;
   upcoming_period_body: string;
   cross_analysis_quotes: string[];
@@ -133,6 +139,9 @@ function parseReport(parsed: Record<string, unknown>, context: ReportContext): R
   const locale = context.locale ?? "ko";
   const preview = asBulletList(parsed.strengths_preview).slice(0, 3);
   const strengths = asBulletList(parsed.strengths);
+  // 5세트 흐름: 카드 수는 세트 수로 고정(무료 1 + 유료 4). 모델이 덜 쓰면 빈 note로 채워 품질 검사가 잡게 한다.
+  const sets = context.reportSets ?? null;
+  const paidCards = Array.isArray(parsed.set_cards_2to5) ? parsed.set_cards_2to5 : [];
   return {
     title_line1: String(parsed.title_line1 ?? ""),
     title_line2: String(parsed.title_line2 ?? ""),
@@ -147,6 +156,8 @@ function parseReport(parsed: Record<string, unknown>, context: ReportContext): R
     upcoming_period_preview_body: String(parsed.upcoming_period_preview_body ?? ""),
     module_map: asModulePage(parsed.module_map, pages?.module_map.title[locale]),
     module_deep: asModulePage(parsed.module_deep, pages?.module_deep.title[locale]),
+    set_card_1: sets ? buildSetCard(parsed.set_card_1, 1, context.moduleId, sets) : undefined,
+    set_cards_2to5: sets ? ([2, 3, 4, 5] as const).map((n, i) => buildSetCard(paidCards[i], n, context.moduleId, sets)) : undefined,
     strengths_preview: preview.length ? preview : undefined,
     upcoming_period_heading: String(parsed.upcoming_period_heading ?? ""),
     upcoming_period_body: String(parsed.upcoming_period_body ?? ""),
@@ -252,6 +263,8 @@ async function patchFields(context: ReportContext, content: ReportContent, probl
     const path = p.slice(0, i);
     // A module page's title is the playbook's fixed wording — only its body may be rewritten.
     if (/^module_(map|deep)\.title$/.test(path)) continue;
+    // A card's set, theme and quiz answer come from the set packets — only quote and note are the model's.
+    if (/^set_card(_1|s_2to5\[\d\])\.(?!quote$|note$)/.test(path)) continue;
     const current = getAt(content, path);
     if (typeof current !== "string") continue;
     (targets[path] ??= { current, problems: [] }).problems.push(p.slice(i + 2));

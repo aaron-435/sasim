@@ -111,13 +111,22 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
 
 ## 리포트
 
-- [ ] 7. 리포트 서버: 카드 + 30문항 + 섹션 근거
+- [x] 7. 리포트 서버: 카드 + 30문항 + 섹션 근거
   - 선행: 3
   - 변경: `lib/reportPrompts.ts` — v2 컨텍스트(30문항 답, `set_packets`)를 받으면: 퀴즈 답 데이터는 차원별로 묶고 2~3점·0점 표시. 카드 필드(카드 1은 무료 필드, `FREE_PART_TEXT_FIELDS`에 포함 / 카드 2~5는 유료 필드). 카드마다 `quote`(사용자 원문에서 고른 짧은 인용, 원문이 없으면 빈 값)와 `note` 3문장. 섹션별 근거 지시(`CHAT_SETS_DRAFT.md` 3-2: `opening_scene` ← 세트 1, `module_map` ← 세트 2, `strengths_preview` ← 세트 5, `module_deep` ← 세트 3, `weaknesses`·`behavior_guides` ← 세트 4, `closing` ← 24턴 답 등). v2에서는 `answer_notes`·`chat_*_note`를 요구하지 않는다.
   - 변경: `lib/report.ts`(파싱, 퀴즈 문구·세트 번호는 모델이 아니라 코드가 `set_packets`에서 붙임), `lib/reportLock.ts`(카드 2~5 잠금, 무료 응답 `locked_shape`), `app/api/report*/route.ts`(v2 컨텍스트 받기, 구버전 요청은 그대로).
   - QA: `npx tsc --noEmit`(루트) → exit 0
   - QA: `npm run lint && npm run build`(루트) → 경고·오류 없음
   - QA: 5번의 sim-chat 결과로 리포트 무료 → 유료를 생성하는 스크래치 스크립트 1회(모듈 1 ko) → 무료에 카드 1장, 유료에 카드 4장, `opening_scene`에 세트 1 원문 장면, `closing`에 24턴 답이 드러남. (OpenAI 비용 발생)
+  - 결과(2026-10-02):
+    - QA: `npx tsc --noEmit`(루트) → exit 0
+    - QA: `npm run lint && npm run build`(루트) → "No ESLint warnings or errors", "Compiled successfully", 경고 없음
+    - QA: 스크래치 `report-v2.mts`로 `sim_20261002T083650_attach_module1_v2.json`(모듈 1 ko) → 무료 → 유료 생성 1회(무료 17초, 유료 16초, 품질 루프 정상). 결과 `scripts/out/report_v2_20261002T085054.json`. 무료에 `set_card_1` 1장(`set_cards_2to5` 없음), 유료에 `set_cards_2to5` 4장(세트 2~5), 두 구간 모두 `answer_notes` `[]`·`chat_*_note` 빈 값. 카드 5장 인용이 모두 해당 세트 원문의 부분 문자열이고 퀴즈 문구가 앱이 보낸 30문항과 같음(node 검사). `opening_scene`이 세트 1 원문 장면("친구들과 술자리에 간 남자친구", "3시간이 넘도록", "내가 뭘 잘못했나"), `module_map`이 세트 2(휴대폰 계속 확인, 참다가), `behavior_guides`가 세트 4 장면(답장 2~3시간 공백, 싸운 뒤 연결 시간), `closing_body` 마지막 문장이 24턴 답 원문("너무 빨리 결론 내리지 말고, 먼저 사실부터 차분히 보자")으로 맺음.
+    - QA(구버전 회귀): 수정 전 HEAD를 임시 worktree로 떠서 같은 context 72건(ko/en/es × full/free/paid × 상담 유무 × moduleId 유무 × 강점 분할 유무, 모두 `flowVersion: 2`·`quizAnswers`를 보내되 서버 판정 `reportSets` 없음)의 `buildReportPrompt`·`buildReviewPrompt`·`describeReportData` 출력 비교 → diff 0.
+    - QA(보완): 스크래치 `check-report-sets.mts` → 13/13 통과(flowVersion 없음·1·모듈 없음·퀴즈 답 없음 → v2 아님, `set_packets` 없음 → 대화 없는 세트 5개, 클라이언트가 보낸 quiz 무시·서버 재선택, 원문 개수 상한, 10턴 마무리 → 세트 1·2만 대화, 대화 없는 세트 카드 quote 비움, 무료 응답에서 카드 2~5 잠금). `check-chat-sets` 92/92, `check-playbook-sets` 전체 오류 0.
+    - 구조: 새 `lib/reportSets.ts` — `resolveReportSets()`(flowVersion 2 + 세트 데이터 있는 모듈 + 정제 후 30문항 1개 이상일 때만 재료 생성, 클라이언트 `set_packets`에서는 사용자 원문만 받아 자르고 인용 문항은 같은 30문항으로 서버가 다시 고름), `buildSetCard()`(세트·주제·퀴즈는 코드가 붙임, 대화 없는 세트는 quote 비움, 인용 문항이 없던 세트는 후보 중 방향에 가장 가까운 답을 카드에 씀), 프롬프트용 `describeQuizAnswersByDimension()`·`describeSetPackets()`. 두 라우트(`/api/report`, `/api/report/paid`)가 `reportSets`를 만들어 `ReportContext`에 넣는다(클라이언트 값은 덮어씀).
+    - 필드: `set_card_1`(무료, `quiz_reading` 뒤 자리)과 `set_cards_2to5`(유료, `LOCKED_KEYS`), 각 `{ set, theme, quiz{id,prompt,label,score}|null, quote, note }`. 무료 응답 `locked_shape`에 v2일 때만 `set_cards_2to5: 4`. 유료 절반은 `freePart.set_card_1`을 받아 이어 쓰고(`describeFreePart`), 카드 코드 필드(set/theme/quiz)는 패치 대상에서 뺐다. `FREE_PART_TEXT_FIELDS`는 문자열 필드 목록이라 그대로 두고 카드 1은 `describeFreePart`에서 따로 넣는다.
+    - 프롬프트(v2만): 30문항 전체(차원별, ★2~3점·○0점), 세트 재료 묶음 5개(대화 없는 세트는 후보 답만, 세트 5에 24턴 답), 섹션별 근거 표(`CHAT_SETS_DRAFT.md` 3-2), 규칙 6을 카드 인용 규칙으로 교체, `answer_notes`·`chat_*_note`·`topAnswers` 줄 없음. 리뷰어·패치 근거 데이터에도 세트 묶음을 넣고, 결정론적 검사는 카드의 quiz·quote(사용자 원문)를 문체 검사에서 뺀다(인용 검사는 8번).
 
 - [ ] 8. 리포트 품질 검사: 카드
   - 선행: 7
@@ -165,6 +174,9 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
 ## 발견 사항
 
 (작업 중 발견한 범위 밖 이슈를 여기 적는다.)
+
+- (7번 리포트 생성) 한국어 리포트 `weaknesses[3].body`에 힌디 문자 "शांत"가 섞여 나왔는데 통과됨. 결정론적 검사의 다른 문자 검사는 en/es의 한글·한자만 본다 — ko에도 한글·라틴·숫자·문장부호 밖 문자(데바나가리·키릴 등)를 잡는 검사가 필요. `lib/reportQuality.ts` `checkReportDeterministic`. (v2와 무관, 구버전 리포트에도 해당)
+- (7번 리포트 생성) `strengths_preview[2]`가 24턴 관점 전환 답(closing 재료)을 근거로 써서 `closing_body`와 같은 말이 두 번 나옴. 8번이나 11번에서 섹션별 근거 지시에 "24턴 답은 closing에만" 한 줄 추가 검토. 또 `module_map`에 "이 모듈에서는" 메타 표현이 남음(기존 규칙 11 위반, 검사 없음).
 
 - (5번 sim/judge, 프롬프트 품질 — 11번 최종 비교 전에 볼 것) `q5-v2` 채점: ① 세트 시작 정리 뒤 재확인이 빠짐(16턴, finish 대화의 6턴) — `s_recap` 1/0. ② 11턴이 "정리 없이 세트 3"이어야 하는데 "지금까지 비슷한 장면이…"로 앞머리 정리를 함. ③ "둘 다 아니면 편하게"·"~군요" 재진술 틀이 7회 이상 반복(`no_repeat` 0, 기준선과 같음). ④ 25턴 마무리에 "이 정리가 맞을까요?" 질문이 대기 안내 앞에 남음(사용자가 답할 수 없는 자리). 모두 `lib/chatPrompts.ts` v2 지시문 쪽 문제.
   - ③④ 해결(2026-10-02, 사용자 요청): v2 전용으로 출구 문장은 세트 ③ 자리(3·8·13·18턴)에만 턴별로 다른 뜻으로 붙이고 "둘 다 아니면 편하게" 표현 금지, 재진술 앞머리 모양을 턴마다 4가지(따옴표 인용·명사 끝·질문에 녹이기·"~라고 하셨어요") 중 하나로 정하고 "~군요/~네요" 끝맺음 금지, v2 예시 대화의 재진술·출구 문장 교체, 25턴은 확인 질문 대신 "이렇게 정리가 되겠군요" 같은 평서문으로 맺기(judge v2 t6 기준도 맞춤). 20턴 흐름 프롬프트는 그대로(`dump-chat-prompt --legacy` module1·module7 × ko/en/es × 1~20턴, 수정 전 출력과 diff 0).

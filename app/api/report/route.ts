@@ -21,6 +21,7 @@ import type { ReportContext } from "@/lib/reportPrompts";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
 import { checkEntitlement } from "@/lib/revenuecat";
+import { resolveReportSets } from "@/lib/reportSets";
 
 // The report is generated, checked by code, reviewed by a second model pass and fixed where that
 // found something — up to ~2 minutes in the worst case. Quality matters more than speed here.
@@ -77,8 +78,11 @@ export async function POST(req: NextRequest) {
     const entitled =
       validModule !== null && typeof appUserId === "string" && appUserId.length > 0 && (await checkEntitlement(appUserId, `report_${validModule}`)) === "active";
 
+    // 5세트 흐름(flowVersion 2 + 30문항 답 + 세트 데이터가 있는 모듈)이면 검사 × 대화 카드를 쓴다. 클라이언트가 보낸
+    // reportSets는 믿지 않고 여기서 다시 만든다. 구버전 앱은 null이라 지금 리포트 그대로.
+    const reportSets = resolveReportSets(validModule ?? undefined, context.flowVersion, context.quizAnswers, context.chatExtract?.set_packets);
     const content = await getReportContent(
-      { ...context, moduleId: validModule ?? undefined, includeCase: validModule !== null && CASE_MODULES.has(validModule), part: entitled ? "full" : "free" },
+      { ...context, moduleId: validModule ?? undefined, includeCase: validModule !== null && CASE_MODULES.has(validModule), part: entitled ? "full" : "free", reportSets },
       sessionId
     );
     await saveReportResult(sessionId, content);
@@ -87,7 +91,14 @@ export async function POST(req: NextRequest) {
     // How many pages the back half holds, so the reader can lay out the table of contents, page
     // totals and paywall note before it exists. Matches the counts the back half's schema demands.
     // With the strengths split (TODO F2-a) three strengths are already in the free half; one core strength stays locked.
-    const locked_shape = { cross_analysis_quotes: 2, strengths: content.strengths_preview?.length ? 1 : 4, weaknesses: 4, behavior_guides: 4 };
+    // The 5-set flow adds four locked cards (sets 2–5) after the free card 1.
+    const locked_shape = {
+      cross_analysis_quotes: 2,
+      strengths: content.strengths_preview?.length ? 1 : 4,
+      weaknesses: 4,
+      behavior_guides: 4,
+      ...(content.set_card_1 ? { set_cards_2to5: 4 } : {}),
+    };
     return NextResponse.json({ ...content, locked_pending: true, locked_shape });
   } catch (err) {
     if (err instanceof OpenAI.APIError) {

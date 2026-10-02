@@ -33,6 +33,7 @@ export const LOCKED_KEYS = [
   "chat_trigger_note",
   "chat_repeat_note",
   "chat_fear_note",
+  "set_cards_2to5",
   "psychology_fact_heading",
   "psychology_fact_body",
   "psychology_takeaway",
@@ -59,6 +60,7 @@ const EMPTY_LOCKED: LockedPart = {
   chat_trigger_note: "",
   chat_repeat_note: "",
   chat_fear_note: "",
+  set_cards_2to5: undefined,
   psychology_fact_heading: "",
   psychology_fact_body: "",
   psychology_takeaway: "",
@@ -116,6 +118,11 @@ export function openLocked(token: string): { moduleId: string; locked: LockedPar
         // A page object ({ title, body }); tokens sealed before 2026-09-27 simply don't have it.
         const page = value as { title?: unknown; body?: unknown } | undefined;
         if (page && typeof page.title === "string" && typeof page.body === "string") locked[k] = { title: page.title, body: page.body };
+        continue;
+      }
+      if (k === "set_cards_2to5") {
+        // Cards (2026-10-02, 5-set flow); older tokens don't have them.
+        if (Array.isArray(value)) locked[k] = value;
         continue;
       }
       const isList = Array.isArray(EMPTY_LOCKED[k]);

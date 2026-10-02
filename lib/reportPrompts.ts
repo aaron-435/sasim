@@ -26,6 +26,7 @@ import type { ChatExtract } from "./chat";
 import type { Locale } from "./i18n/types";
 import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 import { getModulePlaybook, type ModulePlaybook } from "./modulePlaybooks";
+import { describeQuizAnswersByDimension, describeSetPackets, type ReportSetsInput } from "./reportSets";
 
 const ELEMENT_HANJA: Record<ElementKey, string> = {
   wood: "목", fire: "화", earth: "토", metal: "금", water: "수",
@@ -175,6 +176,14 @@ export interface ReportContext {
    * one core strength, paid); older apps keep getting four paid strengths. Layout only — nothing
    * paid is exposed by it. See strengthsSplitFor(). */
   strengthsSplit?: boolean;
+  /** 5세트 흐름 앱이 보내는 표시(2). 이것과 quizAnswers만으로는 아무것도 바뀌지 않고, 서버가
+   * resolveReportSets()로 검사한 결과(reportSets)가 있어야 v2 리포트가 된다. */
+  flowVersion?: number;
+  /** 5세트 흐름 앱이 보내는 퀴즈 30문항 답(정제 전 원본). */
+  quizAnswers?: unknown;
+  /** 서버가 정한다(클라이언트 값은 라우트가 덮어쓴다): 정제된 30문항 답과 세트 재료 묶음 5개.
+   * 있으면 검사 × 대화 카드와 섹션별 세트 근거를 쓰고 answer_notes·chat_*_note는 쓰지 않는다. */
+  reportSets?: ReportSetsInput | null;
 }
 
 /** Whether this request writes the 3 free + 1 core strengths split. The paid half follows the front
@@ -225,7 +234,7 @@ const STYLE_EXCERPT = `
  * this field exists at all (a literal Q&A pair alone read as flat with no interpretation). */
 export type ReportPart = "full" | "free" | "paid";
 
-function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase: boolean, part: ReportPart, playbook: ModulePlaybook | undefined, locale: Locale, split: boolean): string {
+function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase: boolean, part: ReportPart, playbook: ModulePlaybook | undefined, locale: Locale, split: boolean, v2: boolean): string {
   // Only some modules carry a "someone like you" story; a report for the others goes straight from
   // the psych-test page to the saju chart. Empty values keep the shape the app expects.
   const caseFields = includeCase
@@ -269,6 +278,18 @@ function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase
   const strengthsField = split
     ? `"strengths": [{"title": "핵심 강점 제목 (${strengthTitleRule})", "body": "3~4문장 설명 — 무료 강점 3개(strengths_preview)가 심리검사와 상담에서 이미 찾은 능력과는 다른 종류의 힘 하나. 찾는 자리는 이 사람의 일간(아래 데이터의 '나의 일간'; 없으면 우세 원소) 자체가 가진 기질이 심리검사 결과 속에서 드러나는 방식이다 — 이 리포트가 사주와 심리를 함께 봤기 때문에 찾을 수 있는 강점. 무료 강점은 주로 높은 축과 반복 패턴에 기대므로, 핵심 강점은 그 능력(예: 알아채는 감각, 버티는 힘, 꼼꼼함, 책임감, 끝까지 해내는 힘)이 아니라 일간의 기질에서 나오는 다른 종류의 능력(예: 방향을 세우는 힘, 새로 시작하는 힘, 사람을 품는 힘, 결단력, 흐름에 맞춰 바꾸는 유연함 중 이 일간에 맞는 것)으로 고른다. ${coreAvoid}무료 강점의 능력을 '더 깊은'·'핵심'이라고 다시 부르거나, 무료 강점이 쓴 장면·근거를 다시 쓰면 실패다. 본문에서 무료·유료·미리보기·다른 강점과의 비교를 언급하지 않는다. 제목에 무료 강점 제목의 단어를 쓰지 않는다. 구체적 장면 하나 포함. 이 배열 항목은 정확히 1개"}]`
     : `"strengths": [{"title": "강점 제목 (${strengthTitleRule})", "body": "3문장 설명 — 이 사람의 실제 데이터에서 나온 구체적 장면 하나 포함. 이 배열 항목은 정확히 4개, 각 항목이 화면 한 장씩 차지함"}]`;
+  // 2026-10-02 (5세트 흐름): 검사 × 대화 카드. 세트·주제·'검사에서 고른 답'은 코드가 세트 재료 묶음에서 붙이고
+  // (lib/reportSets.ts buildSetCard), 모델은 인용(quote)과 읽어 주기(note)만 쓴다. 카드 1은 무료, 2~5는 유료.
+  const cardRule = (n: string) =>
+    `"quote": "세트 ${n}의 '답 원문'(①~⑤) 중 하나에서 글자 그대로 옮긴 짧은 인용 — 한 문장이나 구(대략 8~60자), 고치거나 요약하거나 번역하지 말고 원문 그대로. 따옴표는 붙이지 않는다. 그 세트가 '대화 없음'이면 빈 문자열", "note": "'읽어 주기' 정확히 3문장 — 검사에서 고른 답과 대화에서 한 말이 함께 가리키는 것(1), 그게 이 사람의 어떤 면인지 이해로 짚기(1), 건네는 한마디(1). 화면에 질문·답·인용이 따로 보이므로 그대로 되풀이하지 않는다. 대화 없는 세트는 퀴즈 답 하나로 같은 구성의 3문장"`;
+  const setCardFreeField = v2
+    ? `
+  "set_card_1": {${cardRule("1")}},`
+    : "";
+  const setCardsPaidField = v2
+    ? `,
+  "set_cards_2to5": [{${cardRule("N(이 배열은 정확히 4개이고 순서대로 세트 2, 3, 4, 5)")}}]`
+    : "";
   const freeFields = `
   "title_line1": "리포트 제목 1행 — 시적이고 은유적, 이 사람의 핵심 패턴을 압축",
   "title_line2": "리포트 제목 2행 — 1행과 이어지는 한 문장",
@@ -285,13 +306,13 @@ ${caseFields}
     "metal": {"heading": "금 💎에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
     "water": {"heading": "수 💧에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"}
   },
-${moduleMapField}${strengthsPreviewField}
+${moduleMapField}${strengthsPreviewField}${setCardFreeField}
   "upcoming_period_preview_heading": "'다가오는 시기' 섹션 소제목 — 아래 데이터의 '다가오는 대운 시기' 줄에 나온 나이와 원소를 제목 맨 앞에서 숫자 그대로 밝히고, 지금까지의 시기가 저물고 다음 장이 시작된다는 담담한 전환 프레임으로 쓴다. 예: '32세부터, 물의 계절이 열립니다' / '32세부터 시작되는 다음 장'. '머지않아'·'언젠가'처럼 나이를 흐리는 말로 시작하지 않는다. 그 줄이 '정보 없음'이거나 '범위를 벗어남'이면 나이 없이 '다가오는 흐름' 정도의 일반적인 제목",
   "upcoming_period_preview_body": "3문장. 첫 문장부터 '다가오는 대운 시기' 데이터의 나이 숫자를 그대로 명확히 밝히며 시작한다('머지않아'·'언젠가'·'곧' 같은 흐린 시점 표현으로 시작하지 말 것). 지금까지의 시기가 저물고 새로운 국면이 시작된다는 확정된 사실로, 나이+원소 전환이 있다는 사실 그 자체만 쓴다 — 그 전환이 왜 일어나는지, 그 이후 무엇이 달라지는지, 무엇을 준비하면 좋은지는 이 필드에 절대 쓰지 않는다(그 내용은 구매 후 이어지는 본편 upcoming_period_body의 몫이니 앞당겨 쓰지 말 것). 나머지 문장은 그 전환을 감각적으로 그리는 장면(계절·빛·공기가 바뀌는 느낌 등)으로 채우되 결과·이유·조언은 여전히 담지 않는다. 나이 숫자는 그 데이터 줄에 있는 그대로만 쓰고 절대 새로 만들어내지 말 것 — 정보가 없다고 나오면 숫자 없이 일반적인 흐름으로만 쓰되, 정보가 없다는 사실 자체를 문장에 쓰지 말 것. 이미 지난 시기를 다루지 말고 반드시 앞으로 올 시기만 다룰 것."`;
   const paidFields = `
   "upcoming_period_heading": "'다가오는 시기' 섹션(본편) 소제목 — 위 upcoming_period_preview_heading과 같은 나이+원소 데이터를 쓰되 표현은 다르게. 아래 데이터의 '다가오는 대운 시기' 줄에 나온 나이와 원소를 제목 맨 앞에서 숫자 그대로 밝히고, 지금까지의 시기가 저물고 다음 장이 시작된다는 담담한 전환 프레임으로 쓴다. 예: '32세부터, 물의 계절이 열립니다' / '32세부터 시작되는 다음 장'. '머지않아'·'언젠가'처럼 나이를 흐리는 말로 시작하지 않는다. 그 줄이 '정보 없음'이거나 '범위를 벗어남'이면 나이 없이 '다가오는 흐름' 정도의 일반적인 제목",
   "upcoming_period_body": "3~4문장. 무료 파트의 upcoming_period_preview_body에서 이미 이 나이+원소 전환을 확정 문장으로 한 번 밝혔다는 걸 전제로 쓴다 — 같은 사실을 문장 구조만 바꿔 다시 여는 것으로 시작하지 말고, 곧바로 이 전환이 왜 의미 있는지·그 이후 무엇이 달라지는지·지금부터 무엇을 준비해 두면 좋은지로 들어간다. 나이나 원소를 다시 언급할 때도 미리보기와 같은 문장 구조·표현을 반복하지 말고, 그 이후 달라지는 구체적 장면 같은 새로운 문장 안에 자연스럽게 섞어 쓴다. 나이를 언급할 때는 여전히 '머지않아'·'언젠가'·'곧'처럼 흐리지 말고 데이터의 숫자 그대로 명확히 쓴다. 나이 숫자는 그 데이터 줄에 있는 그대로만 쓰고 절대 새로 만들어내지 말 것 — 정보가 없다고 나오면 숫자 없이 일반적인 흐름으로만 쓰되, 정보가 없다는 사실 자체를 문장에 쓰지 말 것. 이미 지난 시기를 다루지 말고 반드시 앞으로 올 시기만 다룰 것.",
-  "cross_analysis_quotes": ["우세 원소와 심리검사 주요 축을 명시적으로 연결하는 3문장이 한 문자열 안에 모두 들어간 항목 — 첫 문장은 캡처해서 공유하고 싶은 짧고 강한 한 줄, 나머지 두 문장은 그 근거. 배열 원소는 정확히 2개이고, 첫 문장만 따로 배열 원소로 빼지 말 것", "약한 원소와 심리검사의 다른 축을 연결하는 3문장 — 같은 구성(한 문자열에 3문장)"]${answerNotesField}${chatNotesFields},
+  "cross_analysis_quotes": ["우세 원소와 심리검사 주요 축을 명시적으로 연결하는 3문장이 한 문자열 안에 모두 들어간 항목 — 첫 문장은 캡처해서 공유하고 싶은 짧고 강한 한 줄, 나머지 두 문장은 그 근거. 배열 원소는 정확히 2개이고, 첫 문장만 따로 배열 원소로 빼지 말 것", "약한 원소와 심리검사의 다른 축을 연결하는 3문장 — 같은 구성(한 문자열에 3문장)"]${answerNotesField}${chatNotesFields}${setCardsPaidField},
   "psychology_fact_heading": "이 사람의 패턴과 관련된 실제 심리학 개념/이론/연구자 이름을 정확히 인용한 소제목. 화면에 이미 '잠깐, 심리학 상식 하나'라는 라벨이 따로 표시되므로 그 문구를 다시 쓰지 말 것 — 개념 이름 자체로 시작 (예: '볼비와 불안-회피 애착')",
   "psychology_fact_body": "그 개념을 3~4문장으로 정확하게 설명하고 이 사람 패턴과 연결. 실제 연구자·연도·개념은 정확한 것만 쓰고 확실하지 않으면 개념만 쓴다",
   "psychology_takeaway": "2문장짜리 핵심 요약 — 첫 문장은 기억에 남는 짧은 한 줄. 화면에 이미 '기억할 한 가지 ·' 라벨이 따로 붙으므로 '기억할 한 가지' 같은 말을 반복하지 말고 바로 요약 문장으로 시작",
@@ -335,6 +356,10 @@ function describeFreePart(free?: Record<string, unknown>): string {
   const map = free.module_map as { body?: unknown } | string | undefined;
   const mapBody = cap(typeof map === "string" ? map : map?.body, 700);
   if (mapBody) lines.push(`- module_map: ${mapBody}`);
+  // 5세트 흐름의 무료 카드 1 — 유료 카드 2~5가 같은 해설을 되풀이하지 않게.
+  const card = free.set_card_1 as { quote?: unknown; note?: unknown } | undefined;
+  const cardNote = cap(card?.note, 500);
+  if (cardNote) lines.push(`- set_card_1(무료 카드, 세트 1): ${cap(card?.quote, 200) ? `인용 "${cap(card?.quote, 200)}" / ` : ""}${cardNote}`);
   // The three free strengths — the core strength must not repeat any of them.
   const preview = Array.isArray(free.strengths_preview) ? (free.strengths_preview as { title?: unknown; body?: unknown }[]).slice(0, 3) : [];
   const previewLines = preview.map((b) => `${cap(b?.title, 40)} — ${cap(b?.body, 300)}`).filter((l) => l !== " — ");
@@ -374,7 +399,9 @@ export function buildReportPrompt(context: ReportContext): string {
     .map((r) => `${context.dimensionShortNames[r.dimension] ?? r.dimension}: ${r.direction === "high" ? "높음" : "낮음"} (${Math.round(r.percentOfMax)}%, ${r.intensity})`)
     .join("; ");
 
-  const topAnswersLine = context.topAnswers?.length
+  // 5세트 흐름: 서버가 검사한 30문항 답 + 세트 재료 묶음. 있으면 topAnswers·answer_notes·chat_*_note 대신 이것을 쓴다.
+  const sets = context.reportSets ?? null;
+  const topAnswersLine = !sets && context.topAnswers?.length
     ? context.topAnswers.map((a, i) => `[${i + 1}] ${a.dimensionLabel} — "${a.prompt}" → "${a.label}"`).join(" / ")
     : null;
 
@@ -400,6 +427,32 @@ export function buildReportPrompt(context: ReportContext): string {
 - 이 모듈의 핵심 질문: ${playbook.signatureQuestion[locale]}
 - 강점을 찾을 방향: ${playbook.strengthDirections.join(" / ")} — 강점은 이 방향에서 이 사람의 실제 데이터로 구체화해서 쓴다(strengths_preview가 있으면 무료 3개가 이 방향을 하나씩 맡고, 유료 핵심 강점은 이 방향 밖에서 사주와 심리검사가 만나는 자리의 힘)
 ${playbook.caution ? `- 주의: ${playbook.caution}\n` : ""}- 관점의 이론 이름은 module_map·module_deep에서 한두 번 자연스럽게 쓸 수 있지만 진단처럼 들리게 쓰지 않고, 이론을 강의하지 않는다. 전문성은 이 사람의 재료를 그 관점으로 정확히 짚는 것으로 드러낸다.`.trimEnd()
+    : "";
+
+  const setsSection = sets
+    ? `
+## 심리검사 30문항 전체 답 (차원별, ★2~3점 강하게 그렇다 / ○0점 전혀 아니다)
+퀴즈 답을 인용할 때는 아래 문구를 그대로 쓰고 바꿔 말하지 않는다. 카드에 나오지 않은 문항도 강점·취약점·행동 지침·quiz_reading의 근거로 쓸 수 있다. 0점 문항은 강점 재료다.
+${describeQuizAnswersByDimension(sets.quizAnswers, context.dimensionShortNames)}
+
+## 상담의 세트 재료 묶음 (사용자가 실제로 한 말 — 아래 '상담 대화에서 나온 실제 내용'의 요약보다 이것을 먼저 근거로 쓴다)
+${describeSetPackets(sets, context.moduleId)}
+
+## 섹션별 근거 (각 섹션은 이 세트 재료를 우선 근거로 쓴다. 원문을 쓸 때는 사용자의 표현·장면을 살리되 같은 인용을 여러 섹션에 되풀이하지 않는다)
+- opening_scene ← 세트 1의 ② 원문(없으면 ①): 사용자가 말한 시간·장소·행동으로 장면을 연다. 지어낸 장면으로 바꾸지 않는다.
+- quiz_reading ← 세트 1~2의 퀴즈 답: 높은 축이 실제 어떤 답에서 나왔는지 짚는다.
+- module_map ← 세트 2 원문 + 세트 1·2의 ③④⑤ 답: 그 모듈의 순서(신호 → 행동 → 결과 같은)를 사용자 답으로 채운다.
+- strengths_preview ← 세트 5의 퀴즈 답과 원문: 강점마다 "이건 흔들리지 않는다고 답했다" 같은 실제 근거를 붙인다.
+- set_card_1 / set_cards_2to5 ← 각 세트(카드 N = 세트 N).
+- psychology_fact ← 세트 3 원문: 고르는 개념이 이 사람의 속마음 이야기와 맞닿게.
+- module_deep ← 세트 3 원문: 믿음·두려움을 사용자 말로 짚고 다르게 읽어 준다.
+- weaknesses ← 세트 4의 퀴즈 답과 ③④⑤ 답: 취약점마다 사용자의 실제 답 하나에 묶는다.
+- behavior_guides ← 세트 4 원문: "'~'라고 했던 그 순간에" 할 것처럼 일반론이 아니라 그 장면에 붙인다.
+- mindset_guide ← 세트 3의 믿음 문장.
+- fit_good / fit_bad ← 세트 4~5.
+- closing_body ← 세트 5의 24턴 관점 전환 답: 그 답이 있으면 마지막 문장을 사용자 자신의 그 말에 기대어 맺는다(원문을 짧게 인용하거나 그 뜻을 받아서). 없으면 지금 규칙대로 쓴다.
+- '대화 없음'인 세트에 기대는 섹션은 그 세트 후보 문항 답(점수 높은 순)을 근거로 쓰고, 사용자가 하지 않은 말을 지어내지 않는다.
+- 무료 카드(set_card_1)는 해석이지 예측이 아니다. 부정적 예측·겁주기를 쓰지 않는다.`.trimEnd()
     : "";
 
   const chatSection = context.chatExtract
@@ -429,7 +482,7 @@ ${STYLE_EXCERPT}
 3. 수치 표현은 일관되게: 오행 30% 이상 "강하다/우세", 15~29% "보통", 14% 이하 "약하다/적다"이며 같은 값은 어느 페이지에서나 같은 말로 부른다. 심리검사 축은 데이터의 방향·강도 표기와 모순되는 말을 쓰지 않는다.
 4. 나이는 "다가오는 대운 시기" 줄의 숫자만 그대로 쓴다. 계산·추측·이미 지난 시기를 쓰지 않고, 그 줄이 "정보 없음"이면 숫자 없이 쓴다. 이 기운 전환은 실제 계산값이므로 upcoming_period_preview_body, upcoming_period_body, closing_body에서 "~일 수도 있어요"처럼 흐리지 말고 확정된 사실로 쓴다. 스페인어로 쓸 때는 나이 숫자를 문장의 문법적 주어로 쓰지 않는다(예: "38 años marca..."는 단수·복수 수 불일치 오류이고, "38 años desde ahora" 같은 구문은 "지금부터 38년 후"로 오독된다) — 반드시 "A los 38 años," 또는 "Desde los 38 años,"처럼 나이를 부사적 전치사구로 앞세워 문장을 시작하고, 같은 리포트 안에서 나이를 가리킬 때는 그중 하나의 형태로 통일해서 쓴다.
 5. track이 career면 일·커리어 맥락, romance면 관계·연애 맥락으로 사례와 환경 조언을 맞춘다.
-6. answer_notes는 "실제로 답한 문항들"과 같은 순서·개수로 쓰고, 질문이나 답을 되풀이하지 말고 그 답이 보여주는 새 관점 하나를 짚는다.
+${sets ? `6. 검사 × 대화 카드(set_card_1, set_cards_2to5)의 quote는 세트 재료 묶음의 '답 원문'에서 글자 그대로 잘라 온다(맞춤법·띄어쓰기도 원문 그대로, 번역 금지). 원문이 없는 세트는 빈 문자열이다. note는 질문·답·인용을 되풀이하지 말고 그 답들이 함께 보여 주는 새 관점 하나를 짚는다.` : `6. answer_notes는 "실제로 답한 문항들"과 같은 순서·개수로 쓰고, 질문이나 답을 되풀이하지 말고 그 답이 보여주는 새 관점 하나를 짚는다.`}
 7. 이번 모듈의 주제(돈/번아웃/애착 등)가 element_readings와 mindset_guide의 실제 소재다. 같은 사주로 다른 모듈 리포트가 있어도 겹치지 않게, 어느 모듈에나 붙는 일반론·범용 은유는 쓰지 않는다.
 
 ### 안전
@@ -449,7 +502,7 @@ ${STYLE_EXCERPT}
 ${scopeNote}
 
 ## 출력 스키마
-${buildOutputSchema(context.topAnswers?.length ?? 0, !!context.chatExtract, !!context.includeCase, part, playbook, locale, strengthsSplitFor(context))}
+${buildOutputSchema(sets ? 0 : context.topAnswers?.length ?? 0, !sets && !!context.chatExtract, !!context.includeCase, part, playbook, locale, strengthsSplitFor(context), !!sets)}
 
 ## 이번 리포트의 데이터
 - 닉네임: ${context.nickname}
@@ -463,7 +516,7 @@ ${dayMasterLine}- 심리테스트 모듈: ${context.moduleTitle}
 - 심리테스트 세부 축: ${dimensionLines}
 - 심리테스트 서술: ${context.nuancedSummary}
 ${topAnswersLine ? `- 실제로 답한 문항들 (answer_notes는 이 순서 그대로): ${topAnswersLine}` : ""}
-${moduleSection}
+${moduleSection}${setsSection}
 
 ${chatSection}
 ${outputLanguageDirective(locale, { en: "the JSON schema above", es: "esquema JSON anterior" })}
