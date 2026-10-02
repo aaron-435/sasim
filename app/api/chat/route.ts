@@ -9,20 +9,23 @@
  * Request body:
  *   { turnNumber, sessionStartedAt, context: ChatSessionContext, history: ChatMessage[], formulation?: ChatFormulation }
  *   formulation is the previous response's hidden memo, echoed back unchanged by the app (TODO Q1-c).
+ *   context.flowVersion === 2 + context.quizAnswers (30문항) → 5세트 25턴 흐름(TODO 4). 없으면 20턴 흐름 그대로.
  *
  * Response body:
  *   { lines: string[], formulation?: ChatFormulation }  — formulation is never shown or saved; the app keeps it for the next request
  *   { lines, extract: ChatExtract }  — only when isFinalTurn() is true (turnNumber >= TOTAL_TURNS, or the client jumped straight there via the CHECKPOINT_TURN early-finish path)
+ *     5세트 흐름이면 extract.set_packets(세트 재료 묶음 5개)가 붙는다.
  *   or { error: string } with a non-200 status
  * ------------------------------------------------------------------
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import { getChatReply, extractChatSummary, type ChatMessage } from "@/lib/chat";
+import { attachSetPackets, getChatReply, extractChatSummary, type ChatMessage } from "@/lib/chat";
 import type { ChatSessionContext } from "@/lib/chatPrompts";
-import { sanitizeFormulation } from "@/lib/chatPrompts";
+import { chatFlowVersion, sanitizeFormulation } from "@/lib/chatPrompts";
 import { isFinalTurn } from "@/lib/chatPrompts";
+import { sanitizeQuizAnswers } from "@/lib/chatSets";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
 
@@ -56,11 +59,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { turnNumber, sessionStartedAt, context, history, sessionId, formulation } = body ?? {};
+  const { turnNumber, sessionStartedAt, context: rawContext, history, sessionId, formulation } = body ?? {};
 
-  if (!turnNumber || !context || !Array.isArray(history)) {
+  if (!turnNumber || !rawContext || !Array.isArray(history)) {
     return NextResponse.json({ error: "turnNumber, context, history는 필수입니다." }, { status: 400 });
   }
+  // 30문항 답은 시스템 프롬프트와 extract에 들어가므로 형식·길이를 거른다. 구버전 앱은 보내지 않는다(빈 배열 → 20턴 흐름).
+  const context: ChatSessionContext = { ...rawContext, quizAnswers: sanitizeQuizAnswers(rawContext.quizAnswers) };
 
   try {
     const resolvedStartedAt = sessionStartedAt ?? Date.now();
@@ -79,11 +84,11 @@ export async function POST(req: NextRequest) {
     // elapsed time too, not just turnNumber, or the model would say goodbye
     // while the route keeps waiting for turnNumber to reach TOTAL_TURNS.
     const elapsedMinutes = Math.floor((Date.now() - resolvedStartedAt) / 60000);
-    if (isFinalTurn(turnNumber, elapsedMinutes)) {
+    if (isFinalTurn(turnNumber, elapsedMinutes, chatFlowVersion(context))) {
       // 추출 프롬프트는 한 턴 = 한 메시지 단위로 트랜스크립트를 읽으므로,
       // 화면에 여러 버블로 나뉘어 보이는 lines를 다시 한 줄로 합쳐서 전달한다.
       const fullTranscript: ChatMessage[] = [...history, { role: "assistant", content: lines.join(" ") }];
-      const extract = await extractChatSummary(fullTranscript, context, sessionId);
+      const extract = attachSetPackets(await extractChatSummary(fullTranscript, context, sessionId), fullTranscript, context);
       await saveChatSession(sessionId, fullTranscript, extract);
       return NextResponse.json({ lines, extract });
     }

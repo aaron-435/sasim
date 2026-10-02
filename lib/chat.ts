@@ -22,13 +22,17 @@ import OpenAI from "openai";
 import {
   buildChatSystemPrompt,
   buildExtractionPrompt,
+  chatFlowVersion,
+  effectiveSetTurnRole,
   isFinalTurn,
   sanitizeFormulation,
   TOTAL_TURNS,
   type ChatFormulation,
   type ChatSessionContext,
 } from "./chatPrompts";
-import { getModulePlaybook } from "./modulePlaybooks";
+import { getModuleChatSets, getModulePlaybook, PERSPECTIVE_SHIFT_LEAD } from "./modulePlaybooks";
+import { buildSetPackets, type SetPacket } from "./chatSets";
+import type { Locale } from "./i18n/types";
 import { logLlmUsage } from "./llmUsage";
 import { stripHanja } from "./reportQuality";
 
@@ -87,6 +91,8 @@ export interface ChatExtract {
   desired_change?: string | null;
   /** 모듈 플레이북의 extractFields 2개(key → 값). 플레이북이 없는 moduleId면 생략. */
   module_fields?: Record<string, string | null>;
+  /** 5세트 흐름(flowVersion 2)만: 세트별 재료 묶음 5개. LLM이 아니라 서버가 대화 기록과 턴 번호로 만든다(attachSetPackets). */
+  set_packets?: SetPacket[];
 }
 
 // The model sometimes writes the string "null" (or "") instead of JSON null for a field the user never touched.
@@ -163,6 +169,23 @@ export function ensureClosingLineLast(lines: string[], locale: string = "ko"): s
   return [...lines.slice(0, idx), ...lines.slice(idx + 1), lines[idx]];
 }
 
+// 2026-10-02 (TODO 4): 5세트 흐름의 24턴은 "마지막으로 묻고 싶은 게 있어요." 고정 문구로 시작한다. 모델에게 맡기면
+// 표현이 바뀌므로 코드가 붙인다. 모델이 지시를 어기고 같은 문장을 직접 썼으면 그 줄(또는 줄 앞부분)을 지운 뒤 붙인다.
+// 위기 대응 응답(규칙 0)은 건드리지 않는다 — 안전 안내가 응답의 전부여야 한다.
+export function prependPerspectiveLead(lines: string[], locale: string = "ko"): string[] {
+  if (lines.some((line) => CRISIS_LINE_PATTERN.test(line))) return lines;
+  const lead = PERSPECTIVE_SHIFT_LEAD[locale as Locale] ?? PERSPECTIVE_SHIFT_LEAD.ko;
+  const norm = (t: string) => t.replace(/[\s.。!?¿¡,:—-]+/g, "").toLowerCase();
+  const rest = lines
+    .map((line) => {
+      const trimmed = line.trim();
+      if (norm(trimmed) === norm(lead)) return "";
+      return trimmed.startsWith(lead) ? trimmed.slice(lead.length).trim() : trimmed;
+    })
+    .filter(Boolean);
+  return [lead, ...rest];
+}
+
 export async function getChatReply(params: {
   turnNumber: number;
   history: ChatMessage[];
@@ -212,9 +235,13 @@ export async function getChatReply(params: {
     console.warn(`[chat] turn ${params.turnNumber}: ${problem} — 한 번 다시 요청합니다.`);
   }
   const oneQuestion = enforceOneQuestionPerReply(rawLines);
-  const lines = isFinalTurn(params.turnNumber, elapsedMinutes)
-    ? ensureClosingLineLast(oneQuestion, params.context.locale ?? "ko")
-    : oneQuestion;
+  const flow = chatFlowVersion(params.context);
+  const locale = params.context.locale ?? "ko";
+  const lines = isFinalTurn(params.turnNumber, elapsedMinutes, flow)
+    ? ensureClosingLineLast(oneQuestion, locale)
+    : flow === 2 && effectiveSetTurnRole(params.turnNumber, elapsedMinutes).kind === "perspective"
+      ? prependPerspectiveLead(oneQuestion, locale)
+      : oneQuestion;
   const formulation = sanitizeFormulation(parsed.formulation);
   return {
     lines: params.context.locale === "ko" || !params.context.locale ? stripHanja(lines) : lines,
@@ -266,6 +293,16 @@ export async function extractChatSummary(transcript: ChatMessage[], context: Cha
       module_fields: Object.fromEntries(playbook.extractFields.map((f) => [f.key, nullableText(parsed.module_fields?.[f.key])])),
     }),
   };
+}
+
+/**
+ * 5세트 흐름의 마지막 턴 extract에 세트 재료 묶음을 붙인다. 20턴 흐름이면 extract를 그대로 돌려준다.
+ * transcript는 마지막 봇 응답까지 포함한 대화 전문(app/api/chat/route.ts의 fullTranscript).
+ */
+export function attachSetPackets(extract: ChatExtract, transcript: ChatMessage[], context: ChatSessionContext): ChatExtract {
+  const chatSets = getModuleChatSets(context.moduleId);
+  if (chatFlowVersion(context) !== 2 || !chatSets) return extract;
+  return { ...extract, set_packets: buildSetPackets(transcript, chatSets, context.quizAnswers ?? []) };
 }
 
 export { TOTAL_TURNS };

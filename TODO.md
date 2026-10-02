@@ -61,7 +61,7 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
     - 구조: `getSetTurnRole()`(턴 → kind `set`/`checkpoint`/`perspective`/`closing`, 세트, 위치, `recapSets`, `greeting`), `sanitizeQuizAnswers()`(ID·차원 형식, 0~3점, 중복 ID 제거, 최대 40개, 질문 300자·보기 200자), `selectSetQuizAnswer()`/`selectAllSetQuizAnswers()`, `buildSetPackets()`. 상수 `TOTAL_TURNS_V2`(25)·`CHECKPOINT_TURN_V2`(10)·`PERSPECTIVE_SHIFT_TURN_V2`(24)도 여기 둔다(4번에서 `chatPrompts.ts`가 가져다 쓰면 된다).
     - 세트 재료 묶음(`SetPacket`, extract용 snake_case): `set`, `theme`, `quiz`(id·dimension·prompt·label·score 또는 null), `opening_answers`(①②), `module_answers`(③④⑤), `has_chat`, 세트 5만 `perspective_answer`(24턴 답, `closing` 근거). 답 원문은 600자에서 자른다. k번째 봇 메시지 = k턴, 그 뒤 첫 사용자 메시지 = k턴의 답으로 매핑하므로 마무리 버튼으로 25턴을 앞당겨 요청해도 실제 대화한 턴만 들어간다. 10턴 답("조금 더" 뒤 사용자가 쓴 말)은 어느 세트에도 넣지 않는다.
 
-- [ ] 4. 챗봇 프롬프트·라우트 v2
+- [x] 4. 챗봇 프롬프트·라우트 v2
   - 선행: 2, 3
   - 변경: `lib/chatPrompts.ts`에 v2 시스템 프롬프트 빌더. 턴 역할(세트 ① 인용 질문, ② 상세, ③④⑤ 다른 축 + 앞머리 한 줄, 세트 시작 정리·재확인, 10턴 정리+점검, 24턴 고정 문구는 코드가 응답 앞에 붙이고 모델은 관점 전환 질문만, 25턴 마무리), 이번 세트에 필요한 문항만 프롬프트에 넣기, 모순 짚기는 세트 3·4 앞머리에서 한 번, 기존 안전 규칙·기법·`formulation` 유지. `TOTAL_TURNS_V2 = 25`, `TIME_LIMIT_MINUTES_V2 = 30`, `isFinalTurn`이 흐름 버전을 받는다.
   - 변경: `lib/chat.ts`, `app/api/chat/route.ts` — `context.flowVersion === 2`이고 30문항 답이 있을 때만 v2. 마지막 턴 extract에 세트 재료 묶음(`set_packets`)을 넣는다(`ChatExtract` 타입 optional 필드). v2가 아니면 지금 코드 경로 그대로.
@@ -70,6 +70,16 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
   - QA: `npm run lint && npm run build`(루트) → 경고·오류 없음
   - QA: `npx tsx scripts/dump-chat-prompt.mts module1 1,6,10,11,24,25 ko` → 1턴에 세트 1 인용 문항, 6턴에 정리+세트 2 인용, 10턴 점검, 11턴 정리 없음, 24턴 관점 전환 대상이 모듈 1 값, 25턴 마무리. 30문항 전체가 프롬프트에 들어가지 않음.
   - QA: `npx tsx scripts/dump-chat-prompt.mts module1 7 ko --legacy` → 지금(개편 전) 프롬프트와 동일(`git stash`로 만든 기준 출력과 diff 0)
+  - 결과(2026-10-02):
+    - QA: `npx tsc --noEmit`(루트) → exit 0
+    - QA: `npm run lint && npm run build`(루트) → "No ESLint warnings or errors", "Compiled successfully", 경고 없음
+    - QA: `npx tsx scripts/dump-chat-prompt.mts module1 1,6,10,11,24,25 ko` → 1턴 세트 1 인용 A6, 6턴 세트 1 정리 + 세트 2 인용 A5, 10턴 정리+점검(퀴즈 0문항), 11턴 정리 없이 세트 3 인용 A15, 24턴 관점 전환 "지금의 나 → 다음 사랑을 시작할 미래의 나" + 고정 문구는 서버가 붙인다는 지시, 25턴 마무리. 프롬프트 속 퀴즈 문항은 세트 턴 4~5/30, 점검·관점 전환·마무리 0/30.
+    - QA: 기준 출력은 코드 수정 전에 같은 context로 떠 둔 프롬프트(`git stash` 대신 수정 전 스크래치 스크립트). `dump-chat-prompt.mts <m> <t> <l> --legacy`를 module1·module7·moduleId 없음 × ko/en/es × 1~21턴 + 시간 초과(21분) 198건과 비교 → 전부 diff 0 (`module1 7 ko --legacy` 포함).
+    - QA(추가, 회귀): `npx tsx scripts/check-chat-sets.mts` → 92/92, `npx tsx scripts/check-playbook-sets.mts` → 전체 오류 0. 스크래치 검사(`chatFlowVersion`: flowVersion 없음·답 0개·모르는 모듈 → 1, 정상 → 2 / `isFinalTurn` v2: 20턴 false·25턴 true·30분 true / `prependPerspectiveLead`: 모델이 고정 문구를 직접 써도 한 번만, 위기 안내 응답은 그대로 / `attachSetPackets`: v2만 `set_packets` 5개) 전부 기대값.
+    - 구조: `chatFlowVersion(context)`가 `flowVersion === 2` + 퀴즈 답 1개 이상 + 세트 데이터가 있는 moduleId일 때만 2. `buildChatSystemPrompt`가 맨 앞에서 v2면 `buildChatSystemPromptV2`로 넘기고, 아니면 기존 코드 그대로. 규칙 3의 마지막 턴 번호·숨고르기 줄, 기법 절(`TECHNIQUES_BODY_V2`), 예시 대화의 ⑥ 설명, 가설 메모 절만 v2용으로 갈랐다. 세트 시작 정리 틀은 기존 숨고르기 틀을 6→6, 16→13, 21→17로 옮겨 쓴다. 모순 짚기는 세트 3·4의 ③(13·18턴) 앞머리 평서문. 입력값에는 이번 세트 후보 문항의 답만 들어간다.
+    - 24턴 고정 문구: `lib/chat.ts`의 `prependPerspectiveLead()`가 응답 맨 앞에 붙인다(모델에게는 쓰지 말라고 지시). 위기 안내가 담긴 응답에는 붙이지 않는다.
+    - 라우트: `context.quizAnswers`를 `sanitizeQuizAnswers()`로 거른 뒤 쓰고, 마지막 턴이면 `attachSetPackets()`가 extract에 `set_packets`를 붙인다(`ChatExtract.set_packets` optional). `TIME_LIMIT_MINUTES_V2 = 30`, `isFinalTurn(turn, elapsed, flowVersion)`. 기존 `TOTAL_TURNS`/`TIME_LIMIT_MINUTES`(20/20)는 웹 `components/ChatScreen.jsx`가 쓰므로 그대로.
+    - 실제 모델 응답(인용 정확도, 24턴 문구)은 5번 sim-chat에서 확인한다.
 
 - [ ] 5. sim-chat / judge-chat v2
   - 선행: 4
