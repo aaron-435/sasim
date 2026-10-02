@@ -127,10 +127,13 @@ export function qaYearReport(locale: Locale, nickname?: string): unknown | null 
   return pickFixture(loadData()?.QA_YEAR_REPORT ?? {}, locale, nickname);
 }
 
-/** A generated deep report with the diagnosis and chat it was written from. */
+/** A generated deep report with the diagnosis and chat it was written from. `v2` picks the
+ * 5-set chat flow report (test × conversation cards); those exist for ko and es only. */
 export function qaDeepReport(
   locale: Locale,
-  nickname?: string
+  nickname?: string,
+  v2 = false
 ): { content: unknown; quizDiagnosis: unknown; chatExtract: unknown } | null {
-  return pickFixture(loadData()?.QA_DEEP_REPORT ?? {}, locale, nickname);
+  const data = loadData();
+  return pickFixture((v2 ? data?.QA_DEEP_REPORT_V2 : data?.QA_DEEP_REPORT) ?? {}, locale, nickname);
 }

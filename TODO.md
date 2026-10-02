@@ -140,7 +140,7 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
     - 구조: `checkSetCards()`가 `checkReportDeterministic` 안에서 `reportSets`가 있을 때만 돈다. 구간별로 쓴 카드만 본다(무료 → `set_card_1`, 유료 → `set_cards_2to5` 4장). 인용 일치는 `quoteMatchesSource()` — 소문자·공백·문장부호 제거 후, "…"로 나뉜 조각이 같은 답 원문(①②③④⑤, 24턴 답 제외) 안에 순서대로 있는지. 퀴즈는 `cardQuizFor()` 재계산값과 같은지. 인용 결함 메시지에 그 세트 원문을 담아 기존 패치 호출이 그중 한 구절을 고르게 했고, `lib/report.ts` 패치 프롬프트에 quote 경로가 있을 때만 "다시 쓰지 말고 원문 구절을 글자 그대로" 한 줄을 붙인다(구버전 리포트 프롬프트는 그대로). 카드 수·세트·퀴즈 결함은 문자열이 아니라 패치 대상이 아니다 — `parseReport`/`buildSetCard`가 이미 코드로 고정하므로 안전장치다.
     - 실제 모델 패치로 인용이 고쳐지는지는 OpenAI 호출이 필요해 돌리지 않았다. 9번 픽스처 생성(`gen-qa-fixtures`)의 품질 루프 로그(`code checks: N finding(s)`)에서 함께 확인할 것.
 
-- [ ] 9. 리포트 화면 + i18n + QA 픽스처
+- [x] 9. 리포트 화면 + i18n + QA 픽스처
   - 선행: 7
   - 변경: `mobile/screens/ReportScreen.tsx` — 카드 페이지 컴포넌트(세트 주제 eyebrow, "검사에서 고른 답", "대화에서 한 말", 읽어 주기). 카드 1은 무료 구간 `quiz_reading` 뒤, 카드 2~5는 유료 구간에서 지금 상담·퀴즈 해설 페이지 자리. 카드 필드가 있으면 `chat-snapshot`/`chat-trigger`/`chat-repeat-pattern`/`chat-core-fear`/`quiz-answer-*` 페이지를 띄우지 않는다(없으면 지금 그대로). 목차·페이월 잠긴 챕터 목록에 카드 챕터. 리포트 요청에 30문항 답과 `flowVersion: 2`를 보낸다.
   - 변경: `mobile/lib/i18n/{ko,en,es}.ts` — 세트 주제 라벨 5개, 카드 라벨, 목차 라벨.
@@ -148,6 +148,14 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
   - QA: `cd mobile && ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit` → exit 0
   - QA: `npx tsx --env-file=.env.local scripts/gen-qa-fixtures.mts` → v2 픽스처 생성 (OpenAI 비용 발생)
   - QA: `mobile-web` 프리뷰 375×812, v2 픽스처 `?qa=free`와 `?qa=paid`(ko, es) → 카드 1 무료·2~5 유료로 보임, 잘림 없음, 페이월 잠긴 챕터 목록에 카드 챕터, 구매 버튼이 첫 화면 안. 기존 픽스처는 지금 화면 그대로. 스크린샷 첨부.
+  - 결과(2026-10-02):
+    - 변경: `ReportScreen` — `SetCardPage`(eyebrow "검사 × 대화 N/5 · 주제", "검사에서 고른 답" 질문+보기, "대화에서 한 말" 인용, 읽어 주기; 작은 화면에서 넘치면 세로 스크롤). `set_card_1`이 있으면 카드 모드: 카드 1은 심리검사 분석 뒤(무료), 카드 2~5는 "직접 나눈 이야기" 뒤(유료, 잠긴 동안 `locked_shape.set_cards_2to5` 수만큼 자리), 상담 스냅샷·사건·반복·두려움·실제 응답 인용 페이지는 빼고 `chat-story`는 유지. 목차 "검사 × 대화" / "검사 × 대화 — 이어지는 4장". 리포트 요청 `context`에 `flowVersion: 2`·`quizAnswers`(30문항), 유료 절반 `freePart`에 `set_card_1`. i18n ko/en/es에 `setCardEyebrow`·`setThemes`(5개)·`setCardQuizLabel`·`setCardQuoteLabel`·`sectionSetCardsToc`·`sectionSetCardsContinuedToc`.
+    - 변경: `scripts/gen-qa-fixtures.mts --v2-only` → `QA_DEEP_REPORT_V2`(jisoo ko 모듈 3 25턴, lucia es 모듈 1 10턴 마무리). 퀴즈는 실제 문항 30개, 세트 묶음은 손으로 쓴 사용자 답을 서버 `buildSetPackets`에 통과시켜 만들고, 앱처럼 무료 → 유료(`getPaidPart`, `freePart.set_card_1`)로 생성. QA 패널에 "Open sample 5-set report (v2)" 버튼(그 언어 픽스처가 있을 때만), `qaDeepReport(locale, nickname, v2)`. 기존 `QA_DEEP_REPORT`·`QA_YEAR_REPORT`는 그대로(`git diff mobile/dev/qaData.ts` 삭제 줄 0). `mobile/dev/README.md` 갱신.
+    - QA: `cd mobile && ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit` → exit 0. 루트 `npx tsc --noEmit` → exit 0.
+    - QA: `npx tsx --env-file=.env.local scripts/gen-qa-fixtures.mts --v2-only` → "jisoo v2 ok", "lucia v2 ok", qaData 기록. 품질 루프 로그 정상(무료 1건 미해결로 출고 — 아래 검사에서 `oheng_intro` 2문장으로 확인, 카드와 무관).
+    - QA(보완): 스크래치 `check-v2-fixtures.mts`(픽스처 + `resolveReportSets` + `checkReportDeterministic`) → 두 픽스처 모두 카드 5장(무료 1·유료 4), `answer_notes` 0개·`chat_*_note` 빈 값, 카드 결함 0. jisoo 인용 5/5가 해당 세트 원문, lucia는 세트 1·2만 인용하고 3~5는 빈 값, 세트 5 퀴즈는 0점 문항(C3, V9). `opening_scene`에 세트 1 장면(일요일 밤 메신저 알림, 메일 다시 읽기), `module_map`에 세트 2·5 원문(거절 못 함, 동생과 통화 10분), `behavior_guides[0]`에 세트 4 장면(밤에 메일 다시 읽기), `closing_body`에 24턴 답 방향.
+    - QA: `mobile-web` 프리뷰 375×812(브라우저 패널) — ko `?qa=free&persona=jisoo`: 목차 03 "검사 × 대화"·10 "검사 × 대화 — 이어지는 4장", 5쪽 카드 1/5 잘림 없음, 17/17 페이월 잠긴 챕터 목록에 카드 챕터, 구매 버튼 첫 화면 안. ko `?qa=all`: 39쪽, 카드 5장(1·19~23쪽 구간), 구버전 페이지 라벨("가장 걸리는 것"·"느껴진 감정" 등) 없음, 카드 3/5 화면 확인. es `?qa=all&persona=lucia`: 카드 1/5·2/5 인용 있음, 4/5는 인용 칸 없이 답·해설만, "Lo que dijiste…" 2회·"Lo que elegiste…" 5회. es `?qa=free`: 19/19 페이월 챕터 목록에 "Test × conversación — 4 tarjetas más", 구매 버튼 첫 화면 안. 기존 픽스처(`Open sample deep report`, jisoo): 41쪽, 카드 0장, 상담 스냅샷·사건·반복·두려움·실제 응답 인용 페이지 그대로. 콘솔 오류 없음.
+    - 확인 못 한 것: 잠긴 동안의 카드 자리(`locked_shape`만 있고 `set_cards_2to5`가 빈 상태)는 픽스처가 합친 리포트라 화면에서 안 탔다. 그 자리는 페이월/여는 중 페이지로 대체되고 열린 뒤에만 실제 카드가 보이므로 빈 카드가 그려지는 경로는 없다(코드 확인). 실제 앱 흐름은 13번 실기기 확인에서 본다.
 
 - [ ] 10. PDF
   - 선행: 7
@@ -195,4 +203,6 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
     - QA: 스크래치 사례 3건 추가(10턴 없음→질문 앞 삽입, 이미 있음, es) 기대대로. `dump-chat-prompt --legacy` 120건 diff 0, 루트 tsc exit 0, `npm run lint` 경고·오류 없음.
     - QA: `sim-chat.mts 25 attach module1 --flow v2`(`sim_20261002T083650_…`) → 10턴 정리 → 재확인 줄(서버 보충) → "조금 더 이야기를 나누고 싶으신가요, 아니면 여기서 마무리해도 괜찮으신가요?". `judge-chat --label q5-v2-checkpoint2` → t6 2, 위반 5종 모두 2(위반 목록 비어 있음), `no_repeat`·자연스러움 2, 세트 준수 평균 2.00, 공통 평균 1.69.
     - 참고(이번 수정과 무관한 채점 편차): 중간 실행 `q5-v2-checkpoint`(`sim_20261002T083258_…`)에서 13·22턴 한 줄 안의 "~나요? 반대로 ~나요?" 질문 2개, t7(18턴 "예민한 사람처럼 보일까 봐요" 뒤 리프레이밍 없음), t5 0이 잡혔다. 질문 2개는 `enforceOneQuestionPerReply`가 줄 단위라 한 줄 안의 물음표 둘을 못 거르는 문제 — 11번 최종 비교에서 다시 볼 것.
+- (9번 픽스처) 카드 `note`가 인용을 되풀이하는 경우가 있다: jisoo 카드 1 note 첫 문장이 원문("알람을 끄고 … 설친다고 했어요")을 거의 그대로 다시 씀(규칙 6 "인용을 되풀이하지 말고"). 또 lucia 카드 4(세트 4, 퀴즈 A10 SNS 확인)의 note가 세트 3 재료("te quiero"·"la palabra de cariño")를 해설함 — 카드와 세트 재료가 어긋남. 둘 다 결정론적 검사로는 안 잡힌다. 11번 최종 비교에서 리뷰어 루브릭이나 프롬프트 한 줄("카드 N의 note는 세트 N 재료만") 검토.
+- (9번 픽스처) lucia 무료 절반이 `oheng_intro` 2문장(3문장 기준) 결함 1건을 못 고친 채 출고됨 — 품질 루프의 기존 동작(v2와 무관).
 - (6번) 앱 홈 무료 안내 문구 `freeNote`가 "무료 20분 리딩"(ko) / "Free 20-minute reading"(en) / "Lectura gratis de 20 minutos"(es) — 새 흐름은 30분. `mobile/lib/i18n/{ko,en,es}.ts` 42·66행 부근. 13번 OTA 전에 고칠지 결정 필요.

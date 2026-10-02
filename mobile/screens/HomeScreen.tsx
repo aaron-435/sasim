@@ -107,7 +107,7 @@ export default function HomeScreen({
   onOpenShareCards: () => void;
   onOpenYearReport: () => void;
   /** Persona test mode (dev web only) — see dev/README.md. Null in every real build. */
-  qa?: { level: string; persona: string | null; onOpenSampleReport: () => void } | null;
+  qa?: { level: string; persona: string | null; onOpenSampleReport: () => void; onOpenSampleReportV2?: () => void } | null;
   onOpenSajuLearn: () => void;
   onOpenSettings: () => void;
 }) {
@@ -442,6 +442,11 @@ export default function HomeScreen({
               <Pressable onPress={qa.onOpenSampleReport} style={styles.qaButton} accessibilityRole="button">
                 <Text style={styles.qaButtonLabel}>Open sample deep report</Text>
               </Pressable>
+              {qa.onOpenSampleReportV2 && (
+                <Pressable onPress={qa.onOpenSampleReportV2} style={styles.qaButton} accessibilityRole="button">
+                  <Text style={styles.qaButtonLabel}>Open sample 5-set report (v2)</Text>
+                </Pressable>
+              )}
             </View>
           )}
 

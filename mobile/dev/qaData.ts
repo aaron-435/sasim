@@ -3363,3 +3363,1121 @@ export const QA_YEAR_REPORT: Record<string, any> = {
   "closing": "From age 40 to 49, the Earth energy in your 10-year cycle becomes stronger, and that is a real turning point in the larger pattern of your life. In 2027, that future shift does not need to be rushed; the year itself already offers you support, recovery, and a clearer sense of how to use your strength well. If you let the year’s warmth work with your natural structure, Sam, you can move through it with more ease than effort."
  }
 };
+
+// 5-set chat flow (flowVersion 2) reports with test × conversation cards — scripts/gen-qa-fixtures.mts.
+export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: any; chatExtract: any }> = {
+ "jisoo": {
+  "content": {
+   "title_line1": "멈추지 못한 채 닳는 마음",
+   "title_line2": "쉬고 싶어도 머리가 먼저 일하는 하루",
+   "subtitle": "모듈 3 번아웃 심층 리포트 — 사주 × 심리검사 × 상담 통합",
+   "opening_scene": "일요일 밤부터 메신저 알림이 하나씩 쌓이기 시작하면, 지수님은 이미 잠이 얕아져 있어요. 알람이 울리기 전부터 오늘 할 일 목록이 머릿속에 먼저 떠오르고, 누운 채로도 메일을 다시 읽는 장면이 이어져요. 몸은 분명 쉬고 있는데, 생각은 내일 보고서 문장을 계속 고치고 있어요. 금요일까지 몰아서 버티고 주말에 쓰러지듯 쉬어도 크게 달라지지 않는다고 느끼는 날들이 몇 달째 이어지고 있어요. 지수님, 요즘 이런 모습 아니세요?",
+   "case_tag": "가상 사례 — 민지, 30대 초반, 새 프로젝트를 맡은 직장인",
+   "case_paragraphs": [
+    "민지는 아침에 눈을 뜨자마자 오늘 해야 할 일을 떠올리는 사람이라, 출근 전부터 이미 진이 빠져 있었어요. 일을 맡는 양은 계속 늘어나는데 거절을 잘 못해서, 퇴근 뒤에도 머릿속이 멈추지 않았어요. 사주에서도 토가 강하고 수가 약해서, 현실을 붙잡는 힘은 큰데 자신을 풀어 주는 숨은 부족한 흐름이었어요. 당신도 비슷하게, 시작하기 전부터 이미 닳는 하루를 지나고 있지 않나요?"
+   ],
+   "oheng_intro": "지수님은 토 50%가 우세하고 수 0%가 약한 편이에요. 일간이 갑인 지수님에게 토는 내가 다루는 기운이라서, 현실과 일, 재물을 붙잡는 힘이 크게 서 있어요. 반대로 수는 나를 살려 주는 기운인데 비어 있어서, 버티는 힘은 남아도 회복의 숨은 자주 얕아져요.",
+   "quiz_reading": "지수님은 소진 84%가 높고, 효능감 저하 71%도 보통 이상으로 올라와 있어요. 유형 이름이 소진형인 이유가 화면에 그대로 드러나는데, 실제 장면은 ‘눈뜨자마자 이미 지쳐있다’와 ‘내가 감당할 수 있을지 의문이 든다’가 함께 나타나는 쪽이에요. 일은 계속 붙잡고 있는데 스스로의 손에 잡히는 느낌은 옅어지는 하루가 바로 이 조합의 얼굴이에요.",
+   "element_readings": {
+    "wood": {
+     "heading": "🌳 목 강하다 — 자라려는 마음이 먼저 움직여요",
+     "body": "지수님은 목이 33%라서, 시작하려는 마음과 방향을 세우는 감각이 분명해요. 새 프로젝트 리드를 맡았을 때 기쁘기보다 무서웠다고 했지만, 그 안에도 해내고 싶다는 의지는 분명히 살아 있었어요. 결과물을 대충 넘기지 못한다고 답한 점도 이 목의 성질과 맞닿아 있어요. 다만 이 자라는 힘이 토 50%와 붙으면, 일이 늘어날수록 더 빨리 몸을 쓰게 되는 쪽으로 기울어요."
+    },
+    "fire": {
+     "heading": "🔥 화 약하다 — 열은 적지만 마음의 불씨는 남아 있어요",
+     "body": "지수님은 화가 0%라서, 겉으로 확 끓어오르는 추진보다 안에서 오래 버티는 방식이 더 강해 보여요. 그래서 월요일 아침 메신저 알림을 보면 바로 타오르기보다, 먼저 지치고 먼저 조용해지는 반응이 나와요. 그래도 일의 결과물에 여전히 진심으로 신경 쓴다고 답한 건 이 불씨가 꺼지지 않았다는 뜻이에요. 화가 비어 있으면 에너지가 길게 이어지기보다 짧게 소모되기 쉬운데, 지수님은 이미 그 소모감을 몸으로 느끼고 있어요."
+    },
+    "earth": {
+     "heading": "⛰️ 토 강하다 — 붙잡는 힘이 일의 무게를 키워요",
+     "body": "지수님에게 토 50%는 현실을 붙드는 힘이 아주 강하다는 뜻이에요. 일의 양이 계속 늘어나도 끝까지 혼자 해내려 하고, 부탁하는 순간 내가 감당 못 한다고 인정하는 것 같다고 느끼는 장면이 바로 이 토의 얼굴이에요. 새 프로젝트가 와도 일단 버티고, 주말에 쓰러지듯 자고, 다시 월요일을 맞이하는 흐름도 토가 중심이라 더 단단하게 반복돼요. 일간이 갑인 지수님에게 이 토는 내가 다루는 기운이라서, 책임과 성과를 손에서 놓지 못하게 만드는 쪽으로 작동해요."
+    },
+    "metal": {
+     "heading": "💎 금 보통 — 확인하고 정리하는 손이 있어요",
+     "body": "지수님은 금이 17%라서, 아주 강하진 않지만 정리하고 점검하는 감각은 분명히 있어요. 그래서 메일을 다시 읽고, 보고서 문장을 고치고, 두 번 세 번 확인하는 습관이 생겨요. 이 금은 일을 대충 넘기지 않게 붙잡아 주지만, 동시에 확인 작업이 길어지면 지수님을 더 쉽게 지치게 해요. 수가 약한 지수님에게는 이 금이 수를 살려 주는 쪽이라, 정리의 힘이 회복의 통로가 되어야 해요."
+    },
+    "water": {
+     "heading": "💧 수 약하다 — 쉬게 하는 숨이 얕아요",
+     "body": "지수님은 수가 0%라서, 멈추고 풀어 주고 흘려 보내는 감각이 거의 비어 있어요. 쉬어도 크게 달라지지 않는다고 답한 것, 그리고 잠들 때까지 유튜브를 틀어 놓아 생각을 끄려는 방식이 이 빈자리를 그대로 보여 줘요. 일간이 갑인 지수님에게 수는 나를 살려 주는 기운이라서, 지금은 지원과 배움, 보호를 받아들일 숨이 부족한 상태예요. 그래서 몸은 쉬고 있어도 마음은 계속 다음 일을 붙잡고 있어요."
+    }
+   },
+   "upcoming_period_preview_heading": "",
+   "upcoming_period_preview_body": "",
+   "module_map": {
+    "title": "에너지 수지표",
+    "body": "지수님은 요구가 자원보다 훨씬 앞서는 쪽에 서 있어요. 맡은 일이 계속 늘어나는데 거절을 잘 못하고, 잘한다는 말을 들으면 일이 더 와서 다시 버티는 구조가 반복돼요. 반면 자원 쪽에는 퇴근 후 동생과 통화하는 10분, 후배가 자료를 보고 이해됐다고 말해 준 순간, 그리고 결과물을 대충 넘기지 않는 자기 기준이 남아 있어요. 소진은 높고, 냉소는 낮고, 효능감 저하는 올라와 있어서, 차갑게 돌아선 게 아니라 일에 대한 애정은 아직 남은 채 비어 가는 모습이 더 선명해요."
+   },
+   "module_deep": {
+    "title": "다시 채우는 순서",
+    "body": "지수님은 먼저 내려놓을 것을 정해야 해요. 지금 가장 먼저 놓아야 할 건 ‘혼자 끝까지 다 확인해야 안심된다’는 감각이에요. 그다음에는 퇴근 후 동생과 통화하던 10분처럼 실제로 숨이 돌아오는 자리를 일정표 안에 먼저 넣어야 해요. 마지막으로는 잘한다는 말이 들어와도 일이 더 붙지 않도록, 맡는 양의 경계를 숫자로 적어 두는 게 필요해요. 요구를 줄이는 게 아니라, 요구가 자원을 다 삼키기 전에 자원을 먼저 채우는 순서예요."
+   },
+   "set_card_1": {
+    "set": 1,
+    "theme": "scene",
+    "quiz": {
+     "id": "E3",
+     "prompt": "아침에 눈을 뜨면?",
+     "label": "눈뜨자마자 이미 지쳐있다",
+     "score": 3
+    },
+    "quote": "특히 월요일 아침이요. 일요일 밤부터 메신저 알림이 하나씩 쌓이는 게 보이면 잠도 설쳐요.",
+    "note": "알람을 끄고 누운 채로 오늘 해야 할 일 목록부터 떠올리면 벌써 진이 빠지고, 특히 월요일 아침에는 일요일 밤부터 쌓이는 메신저 알림을 보며 잠까지 설친다고 했어요. 지수님은 게으른 게 아니라, 하루를 열기도 전에 이미 일을 안고 서 있어요. 그만큼 아침이 가장 무거운 시간이에요."
+   },
+   "strengths_preview": [
+    {
+     "title": "끝까지 보는 눈",
+     "body": "지수님은 결과물을 대충 넘기지 못한다고 답했어요. 지쳐도 품질을 놓지 않는 힘이 있어서, 후배가 자료를 보고 이해됐다고 했을 때 기분이 좋아지는 장면이 자연스럽게 이어져요. 이건 버티는 사람에게만 남는 집중력이에요."
+    },
+    {
+     "title": "책임 감각",
+     "body": "새 프로젝트 리드를 맡았을 때 기쁘기보다 무서웠다고 했지만, 그럼에도 맡은 일을 끝까지 확인해요. 부탁하는 순간 내가 감당 못 한다고 인정하는 것 같아서 혼자 해낸다는 답에는 책임을 놓지 않는 태도가 들어 있어요. 지수님은 흔들려도 일을 놓아버리진 않아요."
+    },
+    {
+     "title": "애정의 잔열",
+     "body": "일의 결과물에 여전히 진심으로 신경 쓴다고 답한 건 꽤 분명한 재료예요. 냉소가 낮고, 일에 대한 이야기도 긍정적으로 말한다고 했으니, 마음이 식은 게 아니라 에너지만 먼저 닳은 쪽이에요. 그래서 지수님은 지쳐도 사람과 일에 남아 있는 온도를 가지고 있어요."
+    }
+   ],
+   "upcoming_period_heading": "36세부터 시작되는 수의 계절",
+   "upcoming_period_body": "36세부터 45세까지는 지수님에게 수가 강해지는 흐름이 열려요. 지금은 토가 앞에 서 있어서 일과 현실을 붙잡는 힘이 크지만, 그 다음 장에서는 버티는 방식보다 채우는 방식이 더 중요해져요. 그래서 지금부터는 혼자 끝까지 확인하는 습관만 더 세게 밀기보다, 누가 도와줄 수 있는지와 어디서 숨이 돌아오는지를 먼저 남겨 두는 편이 좋아요. 퇴근 후 동생과 통화하던 10분처럼 작지만 실제로 회복을 만드는 자리가 그 시기에 더 크게 작동해요.",
+   "cross_analysis_quotes": [
+    "토가 앞에 서 있을수록 지수님은 일을 붙잡는 힘이 세지고, 소진 84%와 효능감 저하 71%가 함께 올라온 모습도 그 구조와 맞닿아 있어요. 맡은 건 계속 잡히는데 스스로는 자꾸 부족하게 느껴지는 흐름이라서, 붙드는 힘과 지치는 감각이 동시에 커져요. 지수님은 버티는 사람이라기보다, 버티는 데 에너지를 너무 많이 쓰는 사람이에요.",
+    "수는 지수님에게 지원과 배움, 보호처럼 사람을 살려 주는 기운인데 비어 있어요. 그래서 냉소가 낮은데도 쉬는 감각은 얕고, 도움을 받기보다 혼자 확인하는 쪽으로 기울어요. 지수님은 마음이 식어서 무너진 게 아니라, 살려 주는 통로가 좁아져서 더 빨리 닳는 쪽이에요."
+   ],
+   "answer_notes": [],
+   "chat_snapshot_note": "",
+   "chat_trigger_note": "",
+   "chat_repeat_note": "",
+   "chat_fear_note": "",
+   "psychology_fact_heading": "자기 효능감",
+   "psychology_fact_body": "자기 효능감은 내가 과제를 해낼 수 있다고 느끼는 감각이에요. 반대로 이 감각이 흔들리면, 실제 능력과 별개로 새 역할이나 어려운 요청 앞에서 먼저 위축될 수 있어요. 지수님은 능력이 없어서 흔들리는 게 아니라, 실수 하나가 쌓아 온 걸 무너뜨릴까 봐 자꾸 감시하는 쪽에 가까워요. 그래서 71%의 효능감 저하와 새 프로젝트 리드를 맡았을 때 무서웠다고 한 답이 정확히 맞물려요.",
+   "psychology_takeaway": "능력보다 먼저 무서워지는 건, 지수님이 스스로를 너무 오래 감시해 왔기 때문이에요. 감시를 조금만 내려놓아도 일의 무게가 전부 지수님 어깨로만 쏠리지는 않아요.",
+   "strengths": [
+    {
+     "title": "흐트러짐을 붙드는 힘",
+     "body": "지수님은 갑 일간이라서 일이 흩어져도 무엇을 먼저 붙잡아야 하는지 가늠하는 힘이 있어요. 토 기운이 강해서 현실과 일을 손에 쥐고 버티는 쪽에 힘이 실리고, 화 기운이 약해서 마음속 부담을 바로 밖으로 쏟아내기보다 안에 눌러 두는 편이에요. 새 프로젝트 리드를 맡았을 때 기쁘기보다 무서웠다고 해도, 그 역할의 중심을 놓치지 않으려고 두 번 세 번 확인하는 모습이 그 힘을 보여줘요. 지하철에서도 내일 보고서 문장을 고치고 있었다는 장면처럼, 흐름이 흔들려도 다시 중심을 세우는 기질이에요."
+    }
+   ],
+   "weaknesses": [
+    {
+     "title": "멈춤 불안",
+     "body": "지수님은 쉬면 뒤처질 것 같아서 스스로를 쉬게 두지 못해요. 아무도 쉬지 말라고 하지 않았는데도 안쪽에서 계속 경보가 울리는 상태예요. 알람을 끄고 누운 채로 오늘 할 일을 떠올리는 순간부터, 몸보다 먼저 불안이 움직여요."
+    },
+    {
+     "title": "과한 확인",
+     "body": "지수님은 실수 하나가 그동안 쌓은 걸 다 무너뜨릴 것 같아서 두 번 세 번 확인해요. 그래서 혼자 끝까지 해버리고, 부탁하는 순간 감당 못 한다고 인정하는 것처럼 느껴져요. 이 방식은 책임감이지만, 동시에 피로를 오래 붙잡는 습관이기도 해요."
+    },
+    {
+     "title": "자기 의심",
+     "body": "지수님은 칭찬을 받아도 과분하다고 느끼고, 중요한 결정을 내려야 할 때 자격이 없다고 느끼는 쪽이에요. 그래서 실제 성과가 있어도 마음은 자꾸 뒤로 물러나요. 새 역할이 들어올수록 능력보다 부족함부터 먼저 보이는 흐름이 선명해요."
+    },
+    {
+     "title": "회복 지연",
+     "body": "지수님은 쉬어도 크게 달라지지 않는다고 답했고, 주말 내내 누워 있어도 월요일에 똑같이 피곤했어요. 그래서 회복이 늦게 오는 게 아니라, 쉬는 동안에도 머리가 계속 일을 붙잡고 있어요. 몸이 무거운 쪽이라는 말이 딱 맞는 장면이에요."
+    }
+   ],
+   "fit_good": "지수님에게 맞는 환경은 일이 많아도 기준이 분명하고, 결과물의 쓰임이 바로 보이는 자리예요. 후배가 자료를 보고 덕분에 이해됐다고 말하는 것처럼, 내가 만든 것이 누구에게 닿았는지가 확인되는 하루가 잘 맞아요. 그리고 퇴근 뒤 10분처럼 짧아도 실제로 끊어지는 시간이 있어야 해요.",
+   "fit_bad": "지수님에게 맞지 않는 환경은 일이 늘어나는 속도는 빠른데 거절 기준은 흐린 자리예요. 잘한다는 말을 들을수록 일이 더 오고, 끝내도 끝난 느낌이 없는 하루가 반복되면 금방 닳아요. 누웠는데도 메일을 다시 읽게 만드는 구조라면, 지수님은 계속 더 무거워져요.",
+   "behavior_guides": [
+    {
+     "title": "확인 멈춤",
+     "body": "오늘 보낸 메일은 밤에 다시 열지 말고, 보내자마자 메모장에 한 줄로만 남겨 두세요. 그 한 줄은 ‘보냈다’만 적으면 충분해요. 누워서 다시 읽고 싶어질 때는 그 메모만 보고 닫는 연습을 3일만 이어가세요."
+    },
+    {
+     "title": "경계 문장",
+     "body": "새 요청이 오면 바로 받지 말고, 먼저 내일 오전까지 답하겠다고 말해 보세요. 한 번에 떠안지 않고 시간을 버는 문장이 필요해요. 지수님은 거절보다 유예가 더 잘 맞아요."
+    },
+    {
+     "title": "회복 고정",
+     "body": "퇴근 후 동생과 통화하던 10분을 주 3회, 캘린더에 먼저 넣어 두세요. 그 시간에는 일 얘기를 하지 않는 규칙을 붙여야 해요. 짧아도 실제로 끊기는 시간이 있어야 몸이 덜 무거워져요."
+    },
+    {
+     "title": "양 조절",
+     "body": "월요일 아침에 쌓인 일을 볼 때, 오늘 꼭 끝낼 것 2개만 먼저 고르세요. 나머지는 메모에 옮겨 두고, 오전 내내 추가하지 마세요. 지수님은 많이 하는 것보다 먼저 줄 세우는 쪽이 더 중요해요."
+    }
+   ],
+   "mindset_guide": "지수님은 빈 컵을 더 세게 쥐고 버텨 온 쪽이에요. 컵이 가벼워지는 건 의지가 약해져서가 아니라, 바닥에 조금이라도 물이 다시 들어와야 가능해요. 번아웃은 불이 꺼진 문제가 아니라, 계속 붓기만 하고 채우는 시간이 없었던 상태예요. 그러니 오늘은 끈기를 늘리기보다, 채우는 순서를 먼저 바꾸는 쪽으로 생각해 보세요.",
+   "closing_title": "덜 무겁게 가는 쪽",
+   "closing_body": "36세부터 45세까지 수가 강해지면, 지수님은 혼자 끝까지 확인하는 방식에서 조금씩 벗어나게 돼요. 지금처럼 메일을 다시 읽고 누워서도 일을 붙잡는 하루보다, 퇴근 뒤 10분이 실제로 숨을 돌리는 쪽으로 바뀝니다. 무겁던 느낌은 조금 가벼워지고, 잘해야만 버틸 수 있다는 압박도 덜 날카로워져요. 지수님은 그 시기부터 일에 더 매달리는 사람이 아니라, 필요한 만큼만 붙잡고도 버틸 수 있는 쪽으로 갑니다.",
+   "set_cards_2to5": [
+    {
+     "set": 2,
+     "theme": "repeat",
+     "quiz": {
+      "id": "E9",
+      "prompt": "새로운 일이나 요청이 들어오면?",
+      "label": "이미 한계라 거절하고 싶어진다",
+      "score": 3
+     },
+     "quote": "일이 많은 거요. 알아주긴 하는데, 잘한다는 말을 들으면 일이 더 와요.",
+     "note": "지수님은 인정이 들어오면 잠깐 힘이 나지만, 그 다음 장면에서 바로 요구가 늘어나는 구조를 보고 있어요. 잘하고 싶은 마음이 강해서 맡은 일을 쉽게 놓지 못하고, 그만큼 더 얹히는 흐름에 오래 노출되는 편이에요. 지금은 칭찬을 버티는 힘으로만 쓰지 말고, 늘어나는 양을 멈추는 기준을 같이 세워야 해요."
+    },
+    {
+     "set": 3,
+     "theme": "inner",
+     "quiz": {
+      "id": "F9",
+      "prompt": "새로운 역할이나 책임을 맡게 되면?",
+      "label": "내가 감당 못 할 것 같아 두렵다",
+      "score": 2
+     },
+     "quote": "제 안에서요. 아무도 쉬지 말라고 안 했는데, 쉬면 뒤처질 것 같아서 제가 못 쉬어요.",
+     "note": "지수님은 바깥의 압박보다 안쪽의 경계심이 더 크게 작동하고 있어요. 이건 게으름이 아니라, 멈추면 뒤처진다는 믿음이 몸까지 당기는 상태예요. 그러니 쉬는 시간을 의지 문제로 보지 말고, 확인을 멈추는 연습이 필요한 자리로 봐야 해요."
+    },
+    {
+     "set": 4,
+     "theme": "coping",
+     "quiz": {
+      "id": "E8",
+      "prompt": "잠들기 전 상태는?",
+      "label": "몸은 지쳤는데 머리는 각성돼 있다",
+      "score": 3
+     },
+     "quote": "그거 완전 저예요. 누우면 오늘 보낸 메일을 머릿속에서 다시 읽어요.",
+     "note": "지수님은 일이 끝난 뒤에도 머리가 계속 그 문장을 붙들고 있어요. 몸은 쉬어도 생각이 다시 업무로 돌아가니, 피로가 얕게 사라지지 않고 계속 남아요. 오늘은 메일을 다시 읽는 대신, 이미 보낸 뒤엔 닫아 두는 동작이 더 필요해요."
+    },
+    {
+     "set": 5,
+     "theme": "strength",
+     "quiz": {
+      "id": "C3",
+      "prompt": "일의 결과물에 대한 관심은?",
+      "label": "여전히 진심으로 신경 쓴다",
+      "score": 0
+     },
+     "quote": "후배가 제 자료를 보고 덕분에 이해됐다고 할 때요. 그때는 피곤해도 기분이 좋아요.",
+     "note": "지수님은 결과물이 누군가의 이해를 열어 줄 때 에너지가 살아나요. 단순히 많이 하는 사람이 아니라, 전달이 실제로 통하는 순간에 힘을 얻는 사람이에요. 그래서 앞으로는 양보다 전달의 선명도를 살리는 자리에서 더 오래 버틸 수 있어요."
+    }
+   ]
+  },
+  "quizDiagnosis": {
+   "moduleId": "module3",
+   "moduleTitle": "모듈 3 · 번아웃",
+   "track": "career",
+   "answers": [
+    {
+     "qId": "E1",
+     "dimension": "exhaustion",
+     "prompt": "퇴근 후(혹은 일과 후) 피로감 정도는?",
+     "label": "8/10",
+     "score": 2.3333333333333335
+    },
+    {
+     "qId": "E2",
+     "dimension": "exhaustion",
+     "prompt": "일주일 중 에너지가 남아있는 날은?",
+     "label": "일주일 내내 방전 상태다",
+     "score": 2
+    },
+    {
+     "qId": "E3",
+     "dimension": "exhaustion",
+     "prompt": "아침에 눈을 뜨면?",
+     "label": "눈뜨자마자 이미 지쳐있다",
+     "score": 3
+    },
+    {
+     "qId": "E4",
+     "dimension": "exhaustion",
+     "prompt": "간단한 일(메일 답장, 잡무 등)도?",
+     "label": "생각만 해도 진이 빠진다",
+     "score": 3
+    },
+    {
+     "qId": "E5",
+     "dimension": "exhaustion",
+     "prompt": "주말이나 휴가가 끝나면?",
+     "label": "쉬어도 크게 달라지지 않는다",
+     "score": 2
+    },
+    {
+     "qId": "E6",
+     "dimension": "exhaustion",
+     "prompt": "몸의 컨디션(두통, 소화불량, 근육긴장 등)은?",
+     "label": "여기저기 안 아픈 데가 없다",
+     "score": 3
+    },
+    {
+     "qId": "E7",
+     "dimension": "exhaustion",
+     "prompt": "하루 일과를 마치고 나면 감정은?",
+     "label": "탈진한 느낌이 든다",
+     "score": 2
+    },
+    {
+     "qId": "E8",
+     "dimension": "exhaustion",
+     "prompt": "잠들기 전 상태는?",
+     "label": "몸은 지쳤는데 머리는 각성돼 있다",
+     "score": 3
+    },
+    {
+     "qId": "E9",
+     "dimension": "exhaustion",
+     "prompt": "새로운 일이나 요청이 들어오면?",
+     "label": "이미 한계라 거절하고 싶어진다",
+     "score": 3
+    },
+    {
+     "qId": "E10",
+     "dimension": "exhaustion",
+     "prompt": "스스로 느끼는 전반적인 에너지 수준은?",
+     "label": "바닥나 있다",
+     "score": 2
+    },
+    {
+     "qId": "C1",
+     "dimension": "cynicism",
+     "prompt": "일에 대해 무감각하거나 냉소적으로 느껴지는 정도는?",
+     "label": "3/10",
+     "score": 0.6666666666666666
+    },
+    {
+     "qId": "C2",
+     "dimension": "cynicism",
+     "prompt": "동료나 고객을 대할 때?",
+     "label": "예전처럼 마음 써서 대한다",
+     "score": 0
+    },
+    {
+     "qId": "C3",
+     "dimension": "cynicism",
+     "prompt": "일의 결과물에 대한 관심은?",
+     "label": "여전히 진심으로 신경 쓴다",
+     "score": 0
+    },
+    {
+     "qId": "C4",
+     "dimension": "cynicism",
+     "prompt": "회사(혹은 조직)에 대한 감정은?",
+     "label": "무난한 정도다",
+     "score": 1
+    },
+    {
+     "qId": "C5",
+     "dimension": "cynicism",
+     "prompt": "예전엔 열정적으로 했던 일을 지금은?",
+     "label": "여전히 그 열정이 남아있다",
+     "score": 0
+    },
+    {
+     "qId": "C6",
+     "dimension": "cynicism",
+     "prompt": "일하면서 드는 냉소적인 생각(예: 어차피 다 소용없다)은?",
+     "label": "가끔 스친다",
+     "score": 1
+    },
+    {
+     "qId": "C7",
+     "dimension": "cynicism",
+     "prompt": "함께 일하는 사람들에 대한 신뢰는?",
+     "label": "여전히 두텁다",
+     "score": 0
+    },
+    {
+     "qId": "C8",
+     "dimension": "cynicism",
+     "prompt": "일의 의미나 목적에 대해 생각하면?",
+     "label": "그럭저럭 의미는 있다",
+     "score": 1
+    },
+    {
+     "qId": "C9",
+     "dimension": "cynicism",
+     "prompt": "문제가 생겼을 때 반응은?",
+     "label": "해결하려 노력하는 편이다",
+     "score": 1
+    },
+    {
+     "qId": "C10",
+     "dimension": "cynicism",
+     "prompt": "일에 대한 이야기를 할 때 스스로 느끼기에?",
+     "label": "긍정적으로 말한다",
+     "score": 0
+    },
+    {
+     "qId": "F1",
+     "dimension": "efficacyLoss",
+     "prompt": "스스로의 능력이나 성과를 의심하는 정도는?",
+     "label": "8/10",
+     "score": 2.3333333333333335
+    },
+    {
+     "qId": "F2",
+     "dimension": "efficacyLoss",
+     "prompt": "스스로의 능력에 대한 확신은?",
+     "label": "대체로 괜찮다고 느낀다",
+     "score": 1
+    },
+    {
+     "qId": "F3",
+     "dimension": "efficacyLoss",
+     "prompt": "칭찬을 받으면?",
+     "label": "과분하다고 느낀다",
+     "score": 2
+    },
+    {
+     "qId": "F4",
+     "dimension": "efficacyLoss",
+     "prompt": "어려운 과제가 주어지면?",
+     "label": "내가 감당할 수 있을지 의문이 든다",
+     "score": 2
+    },
+    {
+     "qId": "F5",
+     "dimension": "efficacyLoss",
+     "prompt": "실수를 하면?",
+     "label": "내 무능함이 드러난 것 같아 괴롭다",
+     "score": 3
+    },
+    {
+     "qId": "F6",
+     "dimension": "efficacyLoss",
+     "prompt": "다른 사람과 비교했을 때 나의 능력은?",
+     "label": "뒤처진다고 자주 느낀다",
+     "score": 2
+    },
+    {
+     "qId": "F7",
+     "dimension": "efficacyLoss",
+     "prompt": "중요한 결정을 내려야 할 때?",
+     "label": "결정을 내릴 자격이 없다고 느낀다",
+     "score": 3
+    },
+    {
+     "qId": "F8",
+     "dimension": "efficacyLoss",
+     "prompt": "지금까지 이뤄온 것들을 돌아보면?",
+     "label": "나쁘지 않다고 느낀다",
+     "score": 1
+    },
+    {
+     "qId": "F9",
+     "dimension": "efficacyLoss",
+     "prompt": "새로운 역할이나 책임을 맡게 되면?",
+     "label": "내가 감당 못 할 것 같아 두렵다",
+     "score": 2
+    },
+    {
+     "qId": "F10",
+     "dimension": "efficacyLoss",
+     "prompt": "스스로에게 하는 평가는?",
+     "label": "무능하다고 느낄 때가 많다",
+     "score": 3
+    }
+   ],
+   "dimensionResults": [
+    {
+     "dimension": "exhaustion",
+     "rawScore": 25.333333333333336,
+     "maxScore": 30,
+     "percentOfMax": 84.4,
+     "distanceFromMid": 68.9,
+     "direction": "high",
+     "intensity": "강함"
+    },
+    {
+     "dimension": "cynicism",
+     "rawScore": 4.666666666666666,
+     "maxScore": 30,
+     "percentOfMax": 15.6,
+     "distanceFromMid": 68.9,
+     "direction": "low",
+     "intensity": "강함"
+    },
+    {
+     "dimension": "efficacyLoss",
+     "rawScore": 21.333333333333336,
+     "maxScore": 30,
+     "percentOfMax": 71.1,
+     "distanceFromMid": 42.2,
+     "direction": "high",
+     "intensity": "보통"
+    }
+   ],
+   "classification": {
+    "activeDimensions": [
+     "exhaustion"
+    ],
+    "kind": "single",
+    "typeKey": "exhaustion"
+   },
+   "typeInfo": {
+    "title": "소진형",
+    "hook": "에너지가 바닥난 상태지만, 일에 대한 애정과 자기 확신은 아직 남아있습니다."
+   },
+   "nuancedSummary": "소진이 꽤 뚜렷하고, 일에 대한 애정이 꽤 뚜렷하고, 효능감저하가 다소 나타나고요.",
+   "dimensionShortNames": {
+    "exhaustion": "소진",
+    "cynicism": "냉소",
+    "efficacyLoss": "효능감 저하"
+   },
+   "elements": {
+    "wood": 33.3,
+    "fire": 0,
+    "earth": 50,
+    "metal": 16.7,
+    "water": 0
+   },
+   "dominantElement": "earth"
+  },
+  "chatExtract": {
+   "primary_concern": "쉬어도 쉬는 것 같지 않아요",
+   "emotional_state": "지쳤고 조금 불안함",
+   "trigger_point": "월요일 아침 메신저 알림",
+   "repeat_pattern": "금요일까지 몰아서 버티고 주말에 쓰러지기",
+   "core_fear_or_meaning": "쉬면 뒤처지고, 언젠가 별거 아니라는 게 드러날까 봐 두려워요",
+   "summary_quote": "쉬어도 크게 달라지지 않아요",
+   "integrated_summary": "눈뜨자마자 오늘 할 일부터 떠올리며 지치고, 금요일까지 몰아서 버틴 뒤 주말에 쓰러지는 흐름이 몇 달째 이어집니다. 그 밑에는 쉬면 뒤처지고 언젠가 부족함이 드러날 거라는 두려움이 있고, 그래서 도움을 청하지 않고 혼자 끝까지 확인합니다.",
+   "coping": "잠들 때까지 유튜브를 틀어 놓아요",
+   "relational": "괜찮냐는 질문에 괜찮다고 해요",
+   "desired_change": "알람 없이 일어나 목적 없이 걷고 싶어요",
+   "set_packets": [
+    {
+     "set": 1,
+     "theme": "scene",
+     "quiz": {
+      "id": "E3",
+      "dimension": "exhaustion",
+      "prompt": "아침에 눈을 뜨면?",
+      "label": "눈뜨자마자 이미 지쳐있다",
+      "score": 3
+     },
+     "opening_answers": [
+      "맞아요. 알람 끄고 누운 채로 오늘 해야 할 일 목록부터 떠올리는데, 그때 벌써 진이 빠져요.",
+      "특히 월요일 아침이요. 일요일 밤부터 메신저 알림이 하나씩 쌓이는 게 보이면 잠도 설쳐요."
+     ],
+     "module_answers": [
+      "양이요. 사람들은 다 괜찮은데, 제가 맡은 게 계속 늘어나요. 거절을 잘 못 해서요.",
+      "몸이 무거운 쪽이에요. 마음은 아직 잘하고 싶은데 몸이 안 따라와요.",
+      "계속 일 생각이요. 지하철에서도 내일 보고서 문장을 고치고 있어요."
+     ],
+     "has_chat": true
+    },
+    {
+     "set": 2,
+     "theme": "repeat",
+     "quiz": {
+      "id": "E9",
+      "dimension": "exhaustion",
+      "prompt": "새로운 일이나 요청이 들어오면?",
+      "label": "이미 한계라 거절하고 싶어진다",
+      "score": 3
+     },
+     "opening_answers": [
+      "쉬어도 크게 달라지지 않아요. 주말 내내 누워 있었는데 월요일에 똑같이 피곤했어요.",
+      "보통 금요일까지 몰아서 버티고, 주말에 쓰러지듯 자고, 일요일 저녁부터 다시 불안해져요. 그게 몇 달째 반복이에요."
+     ],
+     "module_answers": [
+      "작년 연말 결산 때도 그랬어요. 그때는 프로젝트가 끝나면 괜찮아질 줄 알았는데 이번엔 끝이 안 보여요.",
+      "일이 많은 거요. 알아주긴 하는데, 잘한다는 말을 들으면 일이 더 와요."
+     ],
+     "has_chat": true
+    },
+    {
+     "set": 3,
+     "theme": "inner",
+     "quiz": {
+      "id": "F9",
+      "dimension": "efficacyLoss",
+      "prompt": "새로운 역할이나 책임을 맡게 되면?",
+      "label": "내가 감당 못 할 것 같아 두렵다",
+      "score": 2
+     },
+     "opening_answers": [
+      "네, 새 프로젝트 리드를 맡았을 때 사실 기쁘기보다 무서웠어요. 언젠가 제가 별거 아니라는 게 드러날 것 같아서요.",
+      "그래서 남들보다 두 번 세 번 확인해요. 실수 하나가 그동안 쌓은 걸 다 무너뜨릴 것 같거든요."
+     ],
+     "module_answers": [
+      "빼 가는 건 끝없는 확인 작업이고, 채워 주는 건 퇴근 후에 동생이랑 통화하는 10분이요.",
+      "제 안에서요. 아무도 쉬지 말라고 안 했는데, 쉬면 뒤처질 것 같아서 제가 못 쉬어요.",
+      "솔직히 잘해 내는 제 모습이었던 것 같아요. 인정받을 때 살아 있는 느낌이었어요."
+     ],
+     "has_chat": true
+    },
+    {
+     "set": 4,
+     "theme": "coping",
+     "quiz": {
+      "id": "E8",
+      "dimension": "exhaustion",
+      "prompt": "잠들기 전 상태는?",
+      "label": "몸은 지쳤는데 머리는 각성돼 있다",
+      "score": 3
+     },
+     "opening_answers": [
+      "그거 완전 저예요. 누우면 오늘 보낸 메일을 머릿속에서 다시 읽어요.",
+      "그럴 땐 유튜브를 틀어 놓고 잠들 때까지 봐요. 생각을 끄려고요. 근데 그러면 새벽 두 시가 돼요."
+     ],
+     "module_answers": [
+      "쉬면서도 일 생각이 나요. 카페에 가도 노트북을 챙겨 가요.",
+      "혼자 끝까지 해요. 부탁하는 순간 제가 감당 못 한다고 인정하는 것 같아서요.",
+      "팀장님이 한 번 괜찮냐고 물었는데, 괜찮다고 했어요. 아마 아무도 모를 거예요."
+     ],
+     "has_chat": true
+    },
+    {
+     "set": 5,
+     "theme": "strength",
+     "quiz": {
+      "id": "C3",
+      "dimension": "cynicism",
+      "prompt": "일의 결과물에 대한 관심은?",
+      "label": "여전히 진심으로 신경 쓴다",
+      "score": 0
+     },
+     "opening_answers": [
+      "네, 그건 맞아요. 지쳐도 결과물은 대충 넘기지 못해요. 그게 저를 힘들게도 하지만요.",
+      "후배가 제 자료를 보고 덕분에 이해됐다고 할 때요. 그때는 피곤해도 기분이 좋아요."
+     ],
+     "module_answers": [
+      "아침에 알람 없이 일어나서 한강 따라 천천히 걷고 싶어요. 아무 목적 없이요."
+     ],
+     "has_chat": true,
+     "perspective_answer": "친구였다면 그만 좀 확인하고 오늘은 일찍 자라고 했을 거예요. 그 정도면 충분히 했다고요."
+    }
+   ]
+  }
+ },
+ "lucia": {
+  "content": {
+   "title_line1": "Cuando un «ok» seco te deja sin suelo",
+   "title_line2": "Y tu mente empieza a buscar el fallo antes que la respuesta",
+   "subtitle": "Módulo 1 · Amor y apego — informe profundo de saju × prueba psicológica × acompañamiento",
+   "opening_scene": "Son las tardes en las que miras el chat una vez más y vuelves a leer ese «ok» seco, como si entre dos palabras pudiera esconderse la explicación. Te quedas con el teléfono en la mano y la cabeza ya está trabajando sola: “¿Qué hice mal?”, “¿dónde me equivoqué?”, “¿por qué respondió así?”. La noche se te va repasando mensajes, buscando la frase exacta que cambió el tono. Y aunque en el fondo sabes que tenía una reunión, la duda te sigue empujando a comprobarlo todo. Lucía, ¿te suena esta escena de estos días?",
+   "case_tag": "CASO DE EJEMPLO — Marta, 30 y tantos, después de una discusión",
+   "case_paragraphs": [
+    "Marta ve que su pareja responde seco y se queda revisando el chat durante horas, no para entender el contenido, sino para encontrar el punto exacto en que cree haberse equivocado. Esa noche vuelve a escribir, aunque no le toque a ella arreglar nada, y termina con más inquietud que al principio. Su mapa también muestra una tierra muy fuerte y metal ausente, así que la presión y la falta de apoyo claro se le juntan en el mismo gesto. Lucía, tú también puedes reconocerte en esa urgencia de buscar una señal antes de poder respirar.",
+    "Por la mañana, Marta ya no piensa en la discusión, sino en si la otra persona se cansó de ella y en si el silencio significa algo peor. Eso la hace callarse primero, acercarse después y pedir respuesta antes de que la calma vuelva sola. En su prueba, la ansiedad alta y la evitación baja dibujan una cercanía que no asusta, pero sí duele cuando no recibe confirmación. Lucía, tú también podrías estar viviendo esa misma mezcla."
+   ],
+   "oheng_intro": "Tu tierra está en 38%, y en tu Maestro del Día, que es agua, esa tierra se siente como la fuerza que te pone reglas, responsabilidad y presión encima. El metal está en 0%, y en tu Maestro del Día, que es agua, ese metal sería la ayuda que te protege, te enseña y te sostiene; por eso notas más la presión de la tierra que el apoyo del metal.",
+   "quiz_reading": "Tu ansiedad está en 85% y tu evitación en 10%, y eso encaja con un apego ansioso muy claro junto a una apertura a la intimidad casi extrema. No te cierras cuando la relación se acerca; lo que te rompe el ritmo es la espera, el silencio o una reacción más seca de lo habitual. Por eso una respuesta breve, como ese «ok» seco, te lleva enseguida a revisar qué pasó y a pensar que tal vez hiciste algo mal.",
+   "element_readings": {
+    "wood": {
+     "heading": "🌳 madera débil — crece, pero hoy pide espacio",
+     "body": "Tu madera está en 13%, así que no domina la escena, pero sí deja ver una manera de empujar hacia delante cuando la relación se enreda. En tu caso, esa energía aparece cuando vuelves a escribir o cuando intentas encontrar una explicación para no quedarte quieta frente al silencio. No es una madera que se imponga; es una que insiste en seguir buscando salida incluso después de una respuesta seca."
+    },
+    "fire": {
+     "heading": "🔥 fuego normal — enciende lo que sientes",
+     "body": "Tu fuego está en 25%, así que no es escaso ni excesivo: calienta, ilumina y vuelve muy visible lo que pasa entre tú y la otra persona. Por eso una frase breve puede cambiarte el ambiente interno en cuestión de segundos, como si la temperatura del día subiera o bajara de golpe. En amor y apego, ese fuego hace que notes enseguida el tono emocional, aunque luego te cueste soltarlo."
+    },
+    "earth": {
+     "heading": "⛰️ tierra fuerte — peso que pide respuesta",
+     "body": "Tu tierra está en 38%, y en tu mapa eso es la fuerza que pone deber, estructura y presión sobre la relación. Como tu Maestro del Día es agua, esta tierra se siente como una energía que te aprieta y te ordena por fuera, mientras por dentro te deja buscando seguridad. Cuando no llega respuesta, esa tierra no se queda quieta: te empuja a revisar, a pensar y a querer cerrar la duda cuanto antes."
+    },
+    "metal": {
+     "heading": "💎 metal débil — apoyo que hoy falta",
+     "body": "Tu metal está en 0%, así que aquí falta la energía que te ayuda a recibir apoyo, aprender de lo que pasa y sentirte protegido dentro del vínculo. En tu mapa, la tierra puede alimentar ese metal, pero hoy esa ayuda no se ve en número y por eso la contención no entra con facilidad. Lucía, eso se nota cuando una frase corta pesa demasiado y no encuentras un borde claro donde apoyarte."
+    },
+    "water": {
+     "heading": "💧 agua normal — siente antes de cerrar",
+     "body": "Tu agua está en 25%, así que hay sensibilidad suficiente para leer lo que cambia en el ambiente emocional sin quedarte fría ante ello. Como tu Maestro del Día es agua, esta parte es la que entiende la duda al instante y la lleva muy adentro, donde empieza a darle vueltas. En tu día, eso se ve cuando no te basta con una sola respuesta y vuelves al mensaje buscando una segunda lectura."
+    }
+   },
+   "upcoming_period_preview_heading": "A los 38 años, fuego enciende otro tramo",
+   "upcoming_period_preview_body": "Desde los 38 años, el fuego se vuelve más fuerte en tu ciclo de diez años. Eso marca el cierre de una etapa y la apertura de otra con un tono más cálido, más visible y más impulsivo. Se siente como cambiar de luz en una habitación: la misma escena sigue ahí, pero ya no se ve igual.",
+   "module_map": {
+    "title": "Tu alarma en las relaciones",
+    "body": "Lo que te enciende la alarma no es una discusión larga, sino un detalle pequeño: un «ok» seco, una mala cara o un silencio que cambia el tono del vínculo. Cuando eso pasa, tu reacción no es alejarte, sino quedarte mirando, releer el chat y buscar la frase exacta donde crees que fallaste. Después, das tú el primer paso para arreglarlo, aunque no haya sido tu culpa, y el resultado te deja peor porque la conversación todavía no había terminado dentro de ti. Esa combinación de conducta de protesta y necesidad de confirmar la relación muestra que tu alarma no se activa por falta de amor, sino por falta de señal clara."
+   },
+   "module_deep": {
+    "title": "Una relación que sea tu base segura",
+    "body": "Lo que más te calma no es una promesa grande, sino una respuesta clara y breve que no deje huecos. Para ti, una base segura se construye mejor con constancia visible: decirte cuándo va a escribir, avisarte si está ocupado y no dejarte sola interpretando el silencio. También te ayuda que la distancia sea breve y explicada, no fría ni vaga. Si tuvieras que pedirlo con tus propias palabras, te serviría algo como: “Dime solo si vas a tardar, para no quedarme pensando en lo peor”."
+   },
+   "set_card_1": {
+    "set": 1,
+    "theme": "scene",
+    "quiz": {
+     "id": "A6",
+     "prompt": "Si notas que esa persona tiene mala cara, ¿qué haces?",
+     "label": "No dejo de pensar en qué pude haber hecho mal",
+     "score": 3
+    },
+    "quote": "Sí, me pasa mucho. Si llega con mala cara, me paso la noche pensando qué hice yo.",
+    "note": "Tu mente toma una señal pequeña y la convierte enseguida en una búsqueda de error propio. Eso no habla de frialdad, sino de una vigilancia muy fina sobre el estado del vínculo. Lucía, lo que más te pesa aquí no es la falta de cariño, sino la duda de no saber dónde quedó el fallo."
+   },
+   "strengths_preview": [
+    {
+     "title": "Contacto natural",
+     "body": "Dijiste que mantener contacto todos los días te parece natural y agradable, y eso no es poca cosa en un vínculo que te importa tanto. También dijiste que cuando algo se pone difícil, se lo cuentas a esa persona antes que a nadie, y ahí se ve una forma directa de entrar en la cercanía. Lucía, tu fuerza no está en hacerte la distante: está en saber sostener la presencia cuando la relación pide continuidad."
+    },
+    {
+     "title": "Apertura clara",
+     "body": "Dijiste que cuanto más profunda se vuelve la relación, más a gusto te sientes, y eso marca una apertura muy limpia a la intimidad. No te asusta que la relación avance; lo que te altera es la incertidumbre del tono. Lucía, esa disposición a seguir entrando también es una forma de cuidado real."
+    },
+    {
+     "title": "Primer paso",
+     "body": "Dijiste que das el primer paso para arreglarlo, y eso muestra una voluntad fuerte de recomponer el vínculo incluso cuando la situación te deja tocando el borde de la ansiedad. No esperas a que todo se enfríe por completo; intentas volver a unir lo que se rompió. Lucía, esa iniciativa es una manera concreta de no soltar la relación a la primera grieta."
+    }
+   ],
+   "upcoming_period_heading": "A los 38 años, se abre el ciclo de fuego",
+   "upcoming_period_body": "A los 38 años, el fuego toma más peso en tu mapa y eso cambia el tipo de tensión que sientes en los vínculos. Lo que antes te dejaba clavada en la duda pasa a empujarte más hacia la reacción rápida, la palabra inmediata y la necesidad de mover la relación sin dejarla enfriar. Para ese tramo te conviene llegar con una práctica muy simple: pedir claridad sin rodeos y sin convertir cada silencio en un veredicto. Así, cuando esa energía suba, no te arrastra desde la urgencia; ya tienes una forma de nombrar lo que necesitas.",
+   "cross_analysis_quotes": [
+    "Tu tierra está en 38% y tu ansiedad en 85%: ahí se ve una misma presión por todos los lados. La tierra te pone encima peso, regla y exigencia, y la ansiedad hace que esa carga se convierta enseguida en vigilancia de la relación. Lucía, por eso una señal pequeña te deja buscando el error propio antes que la explicación simple.",
+    "Tu metal está en 0% y tu evitación en 10%: no te alejas para enfriarte, te quedas dentro buscando apoyo. La falta de metal en tu mapa deja menos espacio para sentirte sostenida por una ayuda que ordene y proteja, y por eso tu mente intenta compensarlo revisando, preguntando y volviendo sobre el chat. Lucía, tu impulso no es cerrar la puerta; es asegurarte de que sigue abierta."
+   ],
+   "answer_notes": [],
+   "chat_snapshot_note": "",
+   "chat_trigger_note": "",
+   "chat_repeat_note": "",
+   "chat_fear_note": "",
+   "psychology_fact_heading": "Teoría del apego de John Bowlby",
+   "psychology_fact_body": "Bowlby propuso que el apego no es solo una emoción, sino una forma de buscar seguridad en una figura cercana cuando algo altera tu calma. En un apego ansioso, la distancia, el silencio o una señal ambigua suelen activar más búsqueda de confirmación. Eso encaja con tu patrón: no te cierras cuando la relación se acerca, pero una respuesta seca o una espera larga te empujan a revisar, preguntar y anticipar el problema. Tu ansiedad no nace de querer menos; nace de necesitar una señal clara para sentir que el vínculo sigue en pie.",
+   "psychology_takeaway": "No te falta interés; te sobra alarma. Cuando el vínculo se vuelve borroso, tu mente corre a llenar el hueco antes de que llegue la respuesta.",
+   "strengths": [
+    {
+     "title": "Dirección interna",
+     "body": "Tu Maestro del Día es agua, y en ti eso se nota como una facilidad para adaptarte sin perder la sensibilidad. Para ti, el contacto diario puede sentirse natural y agradable, y eso ayuda a que la relación tenga un ritmo vivo y cercano. Cuando algo se mueve, no te quedas rígida: observas, ajustas y sigues en vínculo con la otra persona. Lucía, esa forma de sostener la cercanía te da una base tranquila para construir confianza."
+    }
+   ],
+   "weaknesses": [
+    {
+     "title": "Sobrerrevisión",
+     "body": "Cuando ves una mala cara o un mensaje seco, tu mente se va enseguida a lo que pudiste hacer mal. No te quedas solo con la escena; la revisas por dentro hasta convertirla en prueba contra ti. Lucía, ese hábito te roba aire justo cuando más necesitarías ver la situación completa."
+    },
+    {
+     "title": "Urgencia de cierre",
+     "body": "Después de una discusión, te cuesta dejar la historia abierta aunque aún no esté resuelta por fuera. Callarte primero y escribir después te deja con la sensación de que ya entraste a arreglar algo que ni siquiera habías roto. Lucía, esa prisa por cerrar te hace cargar sola con una tensión que todavía no tenía dueño."
+    },
+    {
+     "title": "Calma frágil",
+     "body": "Incluso cuando escuchas un «te quiero», la ansiedad de fondo no se va del todo. Eso muestra que la calma te llega, pero todavía no se queda con suficiente peso. Lucía, por eso una señal buena te alivia un rato y luego vuelve la pregunta."
+    },
+    {
+     "title": "Lectura de ansiedad",
+     "body": "Cuando aparece una publicación nueva o un detalle ambiguo, tu cabeza empieza a darle vueltas a lo que significa. No es desinterés; es una vigilancia muy fina que busca seguridad en cada pista. Lucía, esa lectura constante te mantiene cerca, pero también te deja sin energía por dentro."
+    }
+   ],
+   "fit_good": "Te va mejor un día de trabajo en el que puedas responder sin interrupciones largas y dejar claro qué esperas de la otra persona. Si un mensaje se retrasa, te ayuda mucho tener una tarea concreta delante para no quedarte sola con la interpretación. Lucía, un entorno así te deja sostener el vínculo sin sentir que todo depende de una sola respuesta.",
+   "fit_bad": "Te pesa mucho un ambiente donde el contacto cambia sin explicación y nadie aclara nada hasta el final del día. Si además tienes que esperar en silencio mientras la otra persona actúa como si nada, tu cabeza se llena de escenarios y ya no descansas en lo que estás haciendo. Lucía, un día así te deja pendiente del chat más que de tu propia vida.",
+   "behavior_guides": [
+    {
+     "title": "Pausa breve",
+     "body": "Cuando veas una respuesta seca, espera diez minutos antes de releer el chat. En esos diez minutos, escribe en una nota solo dos hechos: lo que pasó y lo que estás imaginando. Luego decide si hace falta preguntar o si todavía estás llenando huecos."
+    },
+    {
+     "title": "Pregunta clara",
+     "body": "Si después de discutir sigue el silencio, manda un solo mensaje concreto y corto. Pregunta qué pasó y cuándo podéis retomar la conversación, sin explicar veinte veces tu lado. Lucía, así le quitas combustible a la ansiedad sin perder tu voz."
+    },
+    {
+     "title": "Apoyo propio",
+     "body": "En los días en que la espera te altere, no dejes el resto del día en pausa. Sigue con una tarea pequeña y visible, aunque sea de veinte minutos, antes de volver a mirar el móvil. Eso le enseña a tu cuerpo que una demora no borra tu día."
+    },
+    {
+     "title": "Límite sano",
+     "body": "Si notas que te nace escribir por puro miedo, espera hasta poder decir una sola frase útil. No mandes tres mensajes seguidos ni busques pruebas en redes mientras sigues alterada. Lucía, un límite así protege tu calma y también la conversación."
+    }
+   ],
+   "mindset_guide": "Tu mente trata el silencio como si fuera una puerta cerrada, cuando muchas veces solo es una pausa. Si cambias esa imagen, dejas de empujar la puerta a golpes y empiezas a mirar si de verdad está cerrada o solo entornada. En tu caso, la espera no es una sentencia; es un espacio que todavía no tiene forma. Lucía, cuanto menos rellenes ese espacio con culpa, más fácil te será escuchar lo que sí está pasando.",
+   "closing_title": "Lo que queda en pie",
+   "closing_body": "A los 38 años, el fuego entra con más fuerza y ya no deja tu mundo afectivo en el mismo sitio. Lo que ahora te pesa como duda empieza a pedir más movimiento, más palabra y más claridad en el trato diario. Y aunque la ansiedad siga apareciendo, la sensación deja de quedarse solo en el nudo: se afloja un poco y te deja respirar mejor. Lucía, lo que más quiero que te lleves es esto: no necesitas convertir cada demora en culpa para seguir en pie.",
+   "set_cards_2to5": [
+    {
+     "set": 2,
+     "theme": "repeat",
+     "quiz": {
+      "id": "A5",
+      "prompt": "Si después de una pelea esa persona no te escribe primero, ¿cómo reaccionas?",
+      "label": "Entro en pánico pensando que la relación se acabó",
+      "score": 3
+     },
+     "quote": "Exacto. Si después de discutir no me escribe, no puedo concentrarme en nada hasta saber algo.",
+     "note": "Una señal mínima te empuja a mirar hacia dentro antes que hacia la escena completa. Eso muestra que tu atención va directo al posible fallo propio. Lucía, lo que necesitas en ese momento es separar gesto y culpa."
+    },
+    {
+     "set": 3,
+     "theme": "inner",
+     "quiz": {
+      "id": "A15",
+      "prompt": "Aunque te diga «te quiero», ¿qué sientes?",
+      "label": "Aunque lo escuche, la ansiedad de fondo no se va",
+      "score": 3
+     },
+     "quote": "",
+     "note": "Aquí se ve el mismo ciclo: silencio, paso adelante y alivio que dura poco. No estás buscando ganar la discusión; estás intentando recuperar el vínculo antes de que la distancia te pese más. Lucía, tu punto débil no es la falta de interés, sino la prisa por cerrar lo que todavía dolía."
+    },
+    {
+     "set": 4,
+     "theme": "coping",
+     "quiz": {
+      "id": "A10",
+      "prompt": "Cuando ves su nueva publicación en redes sociales, ¿qué haces?",
+      "label": "La reviso una y otra vez, dándole vueltas a lo que significa",
+      "score": 3
+     },
+     "quote": "",
+     "note": "La frase deja claro que la palabra de cariño no siempre alcanza para calmar tu sistema interno. Hay una parte de ti que sigue pidiendo una señal más estable que un mensaje bonito. Lucía, lo que buscas no es más intensidad, sino más suelo."
+    },
+    {
+     "set": 5,
+     "theme": "strength",
+     "quiz": {
+      "id": "V9",
+      "prompt": "¿Qué sientes al mantener contacto todos los días?",
+      "label": "Me parece natural y agradable",
+      "score": 0
+     },
+     "quote": "",
+     "note": "Tu mente no se queda en la superficie de lo que ves; intenta leer el mensaje completo detrás de cada detalle. Eso te da mucha sensibilidad para detectar cambios, pero también te deja sin energía por dentro. Lucía, cuando algo te altera, tu cabeza trabaja demasiado rápido para quedarse quieta."
+    }
+   ]
+  },
+  "quizDiagnosis": {
+   "moduleId": "module1",
+   "moduleTitle": "Módulo 1 · Amor y apego",
+   "track": "romance",
+   "answers": [
+    {
+     "qId": "A1",
+     "dimension": "anxiety",
+     "prompt": "¿Cuánto te molesta que tarde en responderte?",
+     "label": "8/10",
+     "score": 2.3333333333333335
+    },
+    {
+     "qId": "A2",
+     "dimension": "anxiety",
+     "prompt": "Si sientes que te muestra menos cariño que antes, ¿cómo reaccionas?",
+     "label": "Empiezo a repasar qué pude haber hecho mal",
+     "score": 2
+    },
+    {
+     "qId": "A3",
+     "dimension": "anxiety",
+     "prompt": "Cuando necesitas que te confirmen que todo va bien en la relación, ¿qué te pasa?",
+     "label": "Ni aunque me lo confirmen siempre se me quita la ansiedad",
+     "score": 3
+    },
+    {
+     "qId": "A4",
+     "dimension": "anxiety",
+     "prompt": "Cuando ves que conversa animadamente con otra amistad, ¿qué sientes?",
+     "label": "Se me enreda la cabeza",
+     "score": 2
+    },
+    {
+     "qId": "A5",
+     "dimension": "anxiety",
+     "prompt": "Si después de una pelea esa persona no te escribe primero, ¿cómo reaccionas?",
+     "label": "Entro en pánico pensando que la relación se acabó",
+     "score": 3
+    },
+    {
+     "qId": "A6",
+     "dimension": "anxiety",
+     "prompt": "Si notas que esa persona tiene mala cara, ¿qué haces?",
+     "label": "No dejo de pensar en qué pude haber hecho mal",
+     "score": 3
+    },
+    {
+     "qId": "A7",
+     "dimension": "anxiety",
+     "prompt": "Si guarda silencio mientras están juntos, ¿cómo lo vives?",
+     "label": "Me pregunto si se ha molestado conmigo",
+     "score": 2
+    },
+    {
+     "qId": "A8",
+     "dimension": "anxiety",
+     "prompt": "Si los planes de futuro (casarse, vivir juntos, etc.) siguen sin definirse, ¿cómo lo llevas?",
+     "label": "Me genera ansiedad, como si la relación misma se tambaleara",
+     "score": 3
+    },
+    {
+     "qId": "A9",
+     "dimension": "anxiety",
+     "prompt": "Cuando algo que hizo esa persona te duele, ¿qué haces?",
+     "label": "Antes de decir algo, sigo tanteando cómo está de ánimo",
+     "score": 2
+    },
+    {
+     "qId": "A10",
+     "dimension": "anxiety",
+     "prompt": "Cuando ves su nueva publicación en redes sociales, ¿qué haces?",
+     "label": "La reviso una y otra vez, dándole vueltas a lo que significa",
+     "score": 3
+    },
+    {
+     "qId": "A11",
+     "dimension": "anxiety",
+     "prompt": "Cuando tienes la sensación de que te quiere menos que antes, ¿qué pasa?",
+     "label": "Ese pensamiento me absorbe tanto que no puedo concentrarme en nada más",
+     "score": 3
+    },
+    {
+     "qId": "A12",
+     "dimension": "anxiety",
+     "prompt": "¿Cuánta confianza sientes en ti dentro de la relación?",
+     "label": "A veces me pregunto si soy suficiente",
+     "score": 2
+    },
+    {
+     "qId": "A13",
+     "dimension": "anxiety",
+     "prompt": "Cuando surge un conflicto, aunque sea pequeño, ¿cómo lo tomas?",
+     "label": "Imagino lo peor, como si estuviéramos a punto de terminar",
+     "score": 3
+    },
+    {
+     "qId": "A14",
+     "dimension": "anxiety",
+     "prompt": "Cuando pasas mucho tiempo a solas, ¿piensas en esa persona?",
+     "label": "No dejo de preguntarme qué estará haciendo",
+     "score": 2
+    },
+    {
+     "qId": "A15",
+     "dimension": "anxiety",
+     "prompt": "Aunque te diga «te quiero», ¿qué sientes?",
+     "label": "Aunque lo escuche, la ansiedad de fondo no se va",
+     "score": 3
+    },
+    {
+     "qId": "V1",
+     "dimension": "avoidance",
+     "prompt": "¿Cuánta presión sientes cuando la relación empieza a volverse cercana en lo emocional?",
+     "label": "3/10",
+     "score": 0.6666666666666666
+    },
+    {
+     "qId": "V2",
+     "dimension": "avoidance",
+     "prompt": "Cuando algo se pone difícil, ¿qué haces con tu pareja?",
+     "label": "Se lo cuento a esa persona antes que a nadie",
+     "score": 0
+    },
+    {
+     "qId": "V3",
+     "dimension": "avoidance",
+     "prompt": "Cuanto más profunda se vuelve la relación, ¿qué te pasa?",
+     "label": "Más a gusto me siento",
+     "score": 0
+    },
+    {
+     "qId": "V4",
+     "dimension": "avoidance",
+     "prompt": "Si esa persona te pregunta «¿qué somos exactamente?», ¿qué haces?",
+     "label": "Se me hace un poco pesado, pero respondo",
+     "score": 1
+    },
+    {
+     "qId": "V5",
+     "dimension": "avoidance",
+     "prompt": "Si te pregunta los detalles de tu día, ¿cómo reaccionas?",
+     "label": "Se lo cuento todo con gusto",
+     "score": 0
+    },
+    {
+     "qId": "V6",
+     "dimension": "avoidance",
+     "prompt": "Cuando quieres apoyarte en tu pareja, ¿qué haces?",
+     "label": "Me apoyo de vez en cuando",
+     "score": 1
+    },
+    {
+     "qId": "V7",
+     "dimension": "avoidance",
+     "prompt": "Cuando te dice que algo le dolió, ¿cómo reaccionas?",
+     "label": "Lo escucho con seriedad y lo hablamos",
+     "score": 0
+    },
+    {
+     "qId": "V8",
+     "dimension": "avoidance",
+     "prompt": "Cuando se trata de planear un futuro en pareja, ¿cómo te sientes?",
+     "label": "Me lo imagino con entusiasmo junto a esa persona",
+     "score": 0
+    },
+    {
+     "qId": "V9",
+     "dimension": "avoidance",
+     "prompt": "¿Qué sientes al mantener contacto todos los días?",
+     "label": "Me parece natural y agradable",
+     "score": 0
+    },
+    {
+     "qId": "V10",
+     "dimension": "avoidance",
+     "prompt": "Cuando esa persona te pregunta cómo estás emocionalmente, ¿cómo lo sientes?",
+     "label": "Me parece un gesto atento y reconfortante",
+     "score": 0
+    },
+    {
+     "qId": "V11",
+     "dimension": "avoidance",
+     "prompt": "¿Cómo te sientes al comienzo de una relación?",
+     "label": "Lo disfruto, pero mantengo cierta distancia",
+     "score": 1
+    },
+    {
+     "qId": "V12",
+     "dimension": "avoidance",
+     "prompt": "Cuando te dice «te quiero», ¿qué haces?",
+     "label": "Le respondo con naturalidad",
+     "score": 0
+    },
+    {
+     "qId": "V13",
+     "dimension": "avoidance",
+     "prompt": "Cuando quieres reconciliarte después de una pelea, ¿qué haces?",
+     "label": "Doy el primer paso para arreglarlo",
+     "score": 0
+    },
+    {
+     "qId": "V14",
+     "dimension": "avoidance",
+     "prompt": "Si tuvieras que hacer un viaje en el que estén juntos las 24 horas, ¿cómo lo verías?",
+     "label": "Suena bien, pero igual necesitaría tiempo a solas",
+     "score": 1
+    },
+    {
+     "qId": "V15",
+     "dimension": "avoidance",
+     "prompt": "¿Con qué frecuencia te viene el pensamiento «estaría bien incluso sin esta persona»?",
+     "label": "Casi nunca",
+     "score": 0
+    }
+   ],
+   "dimensionResults": [
+    {
+     "dimension": "anxiety",
+     "rawScore": 38.333333333333336,
+     "maxScore": 45,
+     "percentOfMax": 85.2,
+     "distanceFromMid": 70.4,
+     "direction": "high",
+     "intensity": "강함"
+    },
+    {
+     "dimension": "avoidance",
+     "rawScore": 4.666666666666666,
+     "maxScore": 45,
+     "percentOfMax": 10.4,
+     "distanceFromMid": 79.3,
+     "direction": "low",
+     "intensity": "매우 강함"
+    }
+   ],
+   "classification": {
+    "activeDimensions": [
+     "anxiety"
+    ],
+    "kind": "single",
+    "typeKey": "anxiety"
+   },
+   "typeInfo": {
+    "title": "Apego ansioso",
+    "hook": "Tiendes a buscar confirmación frecuente de que la relación está bien, y eres sensible a las reacciones de la otra persona."
+   },
+   "nuancedSummary": "Apego ansioso se manifiesta con bastante claridad, Apertura a la intimidad aparece de forma casi extrema.",
+   "dimensionShortNames": {
+    "anxiety": "Ansiedad",
+    "avoidance": "Evitación"
+   },
+   "elements": {
+    "wood": 12.5,
+    "fire": 25,
+    "earth": 37.5,
+    "metal": 0,
+    "water": 25
+   },
+   "dominantElement": "earth"
+  },
+  "chatExtract": {
+   "primary_concern": "Cuando una respuesta tarda, me derrumbo",
+   "emotional_state": "Ansiedad y algo de dolor",
+   "trigger_point": "Un «ok» seco después de una discusión",
+   "repeat_pattern": "Callarme, escribir yo para arreglarlo y sentirme peor",
+   "core_fear_or_meaning": "Me da miedo que se canse de mí",
+   "summary_quote": "Esperar se me hace eterno",
+   "integrated_summary": "Una señal pequeña, como un «ok» seco, enciende la pregunta de qué hiciste mal. Después de discutir te callas, das tú el primer paso aunque no sea tu culpa y terminas peor; debajo está el miedo a que la otra persona se canse de ti.",
+   "coping": "Releo el chat buscando el error",
+   "relational": "Doy el primer paso aunque no haya sido mi culpa",
+   "desired_change": "Quiero que mi día siga en pie aunque la respuesta tarde",
+   "set_packets": [
+    {
+     "set": 1,
+     "theme": "scene",
+     "quiz": {
+      "id": "A6",
+      "dimension": "anxiety",
+      "prompt": "Si notas que esa persona tiene mala cara, ¿qué haces?",
+      "label": "No dejo de pensar en qué pude haber hecho mal",
+      "score": 3
+     },
+     "opening_answers": [
+      "Sí, me pasa mucho. Si llega con mala cara, me paso la noche pensando qué hice yo.",
+      "La semana pasada contestó con un «ok» seco y estuve toda la tarde releyendo el chat para ver dónde me había equivocado."
+     ],
+     "module_answers": [
+      "«¿Hice algo mal?», siempre esa primero. Aunque sepa que tenía una reunión.",
+      "Quiero comprobarlo. Le escribo otra vez o miro si está en línea.",
+      "Me alegra, pero me dura poco. Enseguida pienso que algún día dejará de hacerlo."
+     ],
+     "has_chat": true
+    },
+    {
+     "set": 2,
+     "theme": "repeat",
+     "quiz": {
+      "id": "A5",
+      "dimension": "anxiety",
+      "prompt": "Si después de una pelea esa persona no te escribe primero, ¿cómo reaccionas?",
+      "label": "Entro en pánico pensando que la relación se acabó",
+      "score": 3
+     },
+     "opening_answers": [
+      "Exacto. Si después de discutir no me escribe, no puedo concentrarme en nada hasta saber algo.",
+      "Casi siempre igual: discutimos, me callo, luego le escribo yo para arreglarlo aunque no haya sido mi culpa, y al final me siento peor."
+     ],
+     "module_answers": [
+      "Hago como si todo estuviera bien. Me da miedo que, si lo digo, se canse de mí.",
+      "Doy yo el primer paso, siempre. Esperar se me hace eterno."
+     ],
+     "has_chat": true
+    },
+    {
+     "set": 3,
+     "theme": "inner",
+     "quiz": {
+      "id": "A15",
+      "dimension": "anxiety",
+      "prompt": "Aunque te diga «te quiero», ¿qué sientes?",
+      "label": "Aunque lo escuche, la ansiedad de fondo no se va",
+      "score": 3
+     },
+     "opening_answers": [],
+     "module_answers": [],
+     "has_chat": false
+    },
+    {
+     "set": 4,
+     "theme": "coping",
+     "quiz": {
+      "id": "A10",
+      "dimension": "anxiety",
+      "prompt": "Cuando ves su nueva publicación en redes sociales, ¿qué haces?",
+      "label": "La reviso una y otra vez, dándole vueltas a lo que significa",
+      "score": 3
+     },
+     "opening_answers": [],
+     "module_answers": [],
+     "has_chat": false
+    },
+    {
+     "set": 5,
+     "theme": "strength",
+     "quiz": {
+      "id": "V9",
+      "dimension": "avoidance",
+      "prompt": "¿Qué sientes al mantener contacto todos los días?",
+      "label": "Me parece natural y agradable",
+      "score": 0
+     },
+     "opening_answers": [],
+     "module_answers": [],
+     "has_chat": false,
+     "perspective_answer": null
+    }
+   ]
+  }
+ }
+};

@@ -135,6 +135,8 @@ function AppContent() {
   // straight to "intro" for a returning session — instead of flashing the picker for
   // one frame before flipping away from it.
   const [step, setStep] = useState<StepId | null>(null);
+  // Persona test mode only: which sample deep report "qaReport" opens (5-set flow or the older one).
+  const [qaReportV2, setQaReportV2] = useState(false);
   const [sessionId] = useState(makeSessionId);
   const [nickname, setNickname] = useState("");
   const [isFemale, setIsFemale] = useState<boolean | null>(null);
@@ -392,7 +394,13 @@ function AppContent() {
           onOpenYearReport={() => setStep("yearReport")}
           qa={(() => {
             const mode = getQaMode();
-            return mode ? { level: mode.level, persona: mode.persona, onOpenSampleReport: () => setStep("qaReport") } : null;
+            if (!mode) return null;
+            const open = (v2: boolean) => () => {
+              setQaReportV2(v2);
+              setStep("qaReport");
+            };
+            const hasV2 = !!homeData && !!qaDeepReport(locale, homeData.nickname, true);
+            return { level: mode.level, persona: mode.persona, onOpenSampleReport: open(false), onOpenSampleReportV2: hasV2 ? open(true) : undefined };
           })()}
           onOpenSajuLearn={() => setStep("sajuLearn")}
           onOpenSettings={() => setStep("settings")}
@@ -402,7 +410,7 @@ function AppContent() {
       {step === "qaReport" && homeData && (() => {
         // Persona test mode only (dev web, opted in): a generated deep report opened directly,
         // skipping the paid quiz + chat flow. See dev/README.md.
-        const fixture = qaDeepReport(locale, homeData.nickname);
+        const fixture = qaDeepReport(locale, homeData.nickname, qaReportV2);
         if (!fixture) return null;
         return (
           <ReportScreen

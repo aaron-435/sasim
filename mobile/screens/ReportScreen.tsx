@@ -67,7 +67,7 @@ export type ReportContent = {
    * purchase is confirmed (POST /api/report/paid), so non-buyers never pay for pages they don't unlock. */
   locked_pending?: boolean;
   /** Item counts of the sealed half, sent with the token so page counts don't change on unlock. */
-  locked_shape?: { cross_analysis_quotes: number; strengths: number; weaknesses: number; behavior_guides: number };
+  locked_shape?: { cross_analysis_quotes: number; strengths: number; weaknesses: number; behavior_guides: number; set_cards_2to5?: number };
   title_line1: string;
   title_line2: string;
   subtitle: string;
@@ -92,6 +92,12 @@ export type ReportContent = {
    * in reports saved before this date and in requests without a moduleId. */
   module_map?: { title: string; body: string };
   module_deep?: { title: string; body: string };
+  /** 2026-10-02 (5-set chat flow, flowVersion 2): one "test × conversation" card per chat set.
+   * Card 1 is free (after the quiz reading); cards 2–5 are paid and arrive empty until the paid
+   * half is written. Their presence replaces the chat_*_note / answer_notes pages. Absent in
+   * reports from the 20-turn flow. */
+  set_card_1?: SetCard;
+  set_cards_2to5?: SetCard[];
   cross_analysis_quotes: string[];
   answer_notes: string[];
   /** 2026-09-20: a written reading under each chat-derived page (absent in older saved reports). */
@@ -115,6 +121,18 @@ export type ReportContent = {
   closing_title: string;
   closing_body: string;
 };
+
+/** Mirrors SetCard in lib/reportSets.ts: set/theme/quiz are attached by server code, quote/note by the model. */
+type SetCard = {
+  set: 1 | 2 | 3 | 4 | 5;
+  theme: SetTheme;
+  /** "What you picked in the test" — null when the set's candidate questions had no answer. */
+  quiz: { id: string; prompt: string; label: string; score: number } | null;
+  /** "What you said" — a short verbatim quote; empty for a set the chat never reached. */
+  quote: string;
+  note: string;
+};
+type SetTheme = "scene" | "repeat" | "inner" | "coping" | "strength";
 
 type PageDef = {
   key: string;
@@ -240,6 +258,11 @@ export default function ReportScreen({
       locale,
       // Asks the server for 3 free strengths + 1 locked core strength (older apps omit it and keep 4 paid).
       strengthsSplit: true,
+      // 5-set flow: all 30 answers (user's locale) plus chatExtract.set_packets above let the server
+      // write the test × conversation cards. It re-checks both and falls back to the old report
+      // when either is missing.
+      flowVersion: 2,
+      quizAnswers: quizDiagnosis.answers.map((a) => ({ qId: a.qId, dimension: a.dimension, prompt: a.prompt, label: a.label, score: a.score })),
     };
   }
 
@@ -319,6 +342,8 @@ export default function ReportScreen({
           module_map: content.module_map,
           // Without it the server writes the old four paid strengths, repeating the free three.
           strengths_preview: content.strengths_preview,
+          // Card 1 (free) so the paid cards 2–5 continue it instead of repeating it.
+          set_card_1: content.set_card_1,
         };
         const res = await fetch(`${API_BASE_URL}/api/report/paid`, {
           signal: controller.signal,
@@ -452,6 +477,11 @@ export default function ReportScreen({
     const strengthsList = placeholders(content.strengths, shape?.strengths, { title: "", body: "" });
     const weaknessesList = placeholders(content.weaknesses, shape?.weaknesses, { title: "", body: "" });
     const guidesList = placeholders(content.behavior_guides, shape?.behavior_guides, { title: "", body: "" });
+    // A 5-set report has card 1 from the start; the paid four may still be sealed (shape count).
+    const setCardsMode = !!content.set_card_1;
+    const paidCards = setCardsMode
+      ? placeholders<SetCard | null>(content.set_cards_2to5 ?? [], shape?.set_cards_2to5, null)
+      : [];
 
     const sortedKeys = ELEMENT_KEYS.slice().sort((a, b) => (resolvedElements[b] ?? 0) - (resolvedElements[a] ?? 0));
     const dominantKey = sortedKeys[0];
@@ -480,6 +510,14 @@ export default function ReportScreen({
         />
       ),
     });
+
+    if (content.set_card_1) {
+      body.push({
+        key: "set-card-1",
+        tocLabel: strings.report.sectionSetCardsToc,
+        node: <SetCardPage card={content.set_card_1} strings={strings} />,
+      });
+    }
 
     content.case_paragraphs.forEach((p, i) => {
       body.push({
@@ -554,7 +592,19 @@ export default function ReportScreen({
         locked: true,
         node: <ChatStoryPage chatExtract={chatExtract} strings={strings} />,
       });
+    }
 
+    // 5-set report: cards 2–5 take the place of the chat-note and answer-quote pages below.
+    paidCards.forEach((card, i) => {
+      body.push({
+        key: `set-card-${i + 2}`,
+        tocLabel: i === 0 ? strings.report.sectionSetCardsContinuedToc(paidCards.length) : undefined,
+        locked: true,
+        node: card ? <SetCardPage card={card} strings={strings} /> : null,
+      });
+    });
+
+    if (chatExtract && !setCardsMode) {
       const concern = chatExtract.primary_concern;
       const emotion = chatExtract.emotional_state;
       if ((typeof concern === "string" && concern.trim()) || (typeof emotion === "string" && emotion.trim())) {
@@ -602,7 +652,7 @@ export default function ReportScreen({
       }
     }
 
-    topAnswers.forEach((a, i) => {
+    (setCardsMode ? [] : topAnswers).forEach((a, i) => {
       body.push({
         key: `quiz-answer-${i}`,
         tocLabel: i === 0 ? strings.report.sectionAnswerQuotesToc : undefined,
@@ -1174,6 +1224,36 @@ function AnswerQuotePage({ eyebrow, prompt, answer, note }: { eyebrow: string; p
   );
 }
 
+/** One test × conversation card (5-set flow): the answer picked in the test, a short line the
+ * reader actually said in that chat set, and a three-sentence reading. A set the chat never
+ * reached has no quote; a set without a matching test answer has no answer block. Same type
+ * scale as AnswerQuotePage, with small labels so the two sources read apart. */
+function SetCardPage({ card, strings }: { card: SetCard; strings: Dictionary }) {
+  const theme = strings.report.setThemes[card.theme] ?? "";
+  return (
+    <PageShell>
+      <Eyebrow>{strings.report.setCardEyebrow(card.set, theme)}</Eyebrow>
+      {/* Three blocks can outgrow a small screen in es/en — scroll instead of clipping. */}
+      <ScrollView style={pageStyles.paywallScroll} contentContainerStyle={pageStyles.setCardMid} showsVerticalScrollIndicator={false}>
+        {!!card.quiz && (
+          <View>
+            <Text style={pageStyles.setCardLabel}>{strings.report.setCardQuizLabel}</Text>
+            <Text style={pageStyles.quotePrompt}>{card.quiz.prompt}</Text>
+            <Text style={pageStyles.setCardAnswer}>{sentenceLines(card.quiz.label)}</Text>
+          </View>
+        )}
+        {!!card.quote && (
+          <View style={card.quiz ? pageStyles.setCardBlockGap : undefined}>
+            <Text style={pageStyles.setCardLabel}>{strings.report.setCardQuoteLabel}</Text>
+            <Text style={pageStyles.pullQuote}>{`“${card.quote}”`}</Text>
+          </View>
+        )}
+        {!!card.note && <Text style={[pageStyles.caseBody, pageStyles.answerNote]}>{sentenceLines(card.note)}</Text>}
+      </ScrollView>
+    </PageShell>
+  );
+}
+
 /** Two very short chat-extract fields (a 2-6자 noun phrase and a single emotion word) that
  * don't carry enough text for a pull-quote page on their own — shown together as a small
  * labeled snapshot instead. */
@@ -1530,6 +1610,10 @@ const pageStyles = StyleSheet.create({
   answerQuoteSpacing: { marginTop: 10 },
   quotePrompt: { fontFamily: "Manrope_400Regular", fontSize: 12, lineHeight: 18, color: COLORS.footer },
   answerNote: { marginTop: 18 },
+  setCardMid: { flexGrow: 1, paddingTop: "8%", paddingBottom: 12 },
+  setCardLabel: { fontFamily: "Manrope_700Bold", fontSize: 11, letterSpacing: 1, color: COLORS.gold, marginBottom: 8 },
+  setCardAnswer: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 19, lineHeight: 27, color: COLORS.headline, marginTop: 6 },
+  setCardBlockGap: { marginTop: 26 },
   snapshotValue: {
     fontFamily: "CormorantGaramond_500Medium",
     fontVariant: ["lining-nums"],
