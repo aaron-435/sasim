@@ -22,6 +22,15 @@
 // quizPoolSize (default 4) trims the quiz-answer pool, so a run can exercise the quizAnswerPool
 // fallback (turn 14 then 7 drops its quote first) — see lib/chatPrompts.ts's QUIZ_QUOTE_TURN_INDEX.
 //
+// --flow v2 runs the 5-set, 25-turn flow (TODO 5, flowVersion 2): the persona brings all 30 answers of
+// its module's real quiz (mobile/lib/quiz), scored by V2_HIGH_DIMS below (its strong dimensions get
+// 2–3, the rest 0–1), and the simulated user is told the answers the bot is expected to quote. The run
+// stops on the server's final turn (isFinalTurn v2) and runs attachSetPackets like the route, so the
+// extract carries set_packets. --checkpoint finish taps "wrap up" at turn 10: the next request jumps to
+// turn 25 with no user message, like ChatScreen's handleWrapUpAtCheckpoint (default: continue).
+// v2 files also record each turn's set role and a `checks` block (expected vs. quoted answer per set ①,
+// the turn-24 fixed lead, set_packets) — judge-chat.mts scores set compliance on top.
+//
 // Every run writes scripts/out/sim_<timestamp>_<persona>_<moduleId>.json (transcript, extract,
 // context, per-turn latency and tokens, total cost) in addition to printing it. scripts/out/ is
 // git-ignored.
@@ -31,8 +40,12 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import OpenAI from "openai";
-import { getChatReply, extractChatSummary, chatSamplingParams, CHAT_MODEL, type ChatMessage, type ChatReasoningEffort } from "../lib/chat.ts";
-import type { ChatFormulation, ChatSessionContext, QuizAnswerQuote } from "../lib/chatPrompts.ts";
+import { getChatReply, extractChatSummary, attachSetPackets, chatSamplingParams, CHAT_MODEL, type ChatMessage, type ChatReasoningEffort } from "../lib/chat.ts";
+import { chatFlowVersion, effectiveSetTurnRole, isFinalTurn, type ChatFormulation, type ChatSessionContext, type QuizAnswerQuote } from "../lib/chatPrompts.ts";
+import { sanitizeQuizAnswers, selectAllSetQuizAnswers, TOTAL_TURNS_V2, type SetQuizAnswer, type SetTurnRole } from "../lib/chatSets.ts";
+import { getModuleChatSets, PERSPECTIVE_SHIFT_LEAD } from "../lib/modulePlaybooks.ts";
+import type { Locale } from "../lib/i18n/types.ts";
+import { getLocalizedQuestions, getModuleById } from "../mobile/lib/quiz/modules.ts";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 const USER_SIM_MODEL = "gpt-5.4-mini";
@@ -378,6 +391,51 @@ const SIM_FRAME: Record<string, string> = {
   es: "Estás hablando con un chatbot de acompañamiento emocional por mensajes. Responde una sola vez, con naturalidad, a lo que acaba de decir el bot. Solo tu mensaje, sin comillas.",
 };
 
+// ---- flow v2: 30 quiz answers per persona ----
+// The dimensions each persona scores high on (2–3 points), chosen to fit its situation; every other
+// dimension scores 0–1. Each module keeps at least one low dimension among set 5's candidates (so the
+// "low score" strength quote has something to pick), except modules 7/10 whose set 5 quotes high scores.
+const V2_HIGH_DIMS: Record<string, string[]> = {
+  attach: ["anxiety"],
+  attach_en: ["anxiety"],
+  money: ["scarcity", "avoidance"],
+  burnout: ["exhaustion", "cynicism"],
+  mask: ["imageManagement", "concealment"],
+  procrast: ["perfectionism", "avoidance"],
+  anger: ["suppression", "explosion"],
+  anger_es: ["suppression", "explosion"],
+  sensitive: ["overstimulation", "aestheticSensitivity", "lowSensoryThreshold"],
+  sleep: ["cognitiveArousal", "subconsciousLeak"],
+  family: ["enmeshment", "parentification"],
+  focus: ["distractibility", "hyperfocus"],
+  instinct: ["expressionSuppression", "confidenceLack"],
+};
+
+/** The persona's answers to all 30 questions of the module quiz, in the persona's language — the shape ChatScreen sends as context.quizAnswers. */
+function buildV2QuizAnswers(moduleId: string, locale: Locale, highDims: string[]): SetQuizAnswer[] {
+  const quiz = getModuleById(moduleId);
+  if (!quiz) throw new Error(`no quiz for ${moduleId}`);
+  const questions = getLocalizedQuestions(quiz, locale);
+  const strong = highDims.length ? highDims : [questions[0].dimension];
+  let hi = 0;
+  let lo = 0;
+  // Alternate 3/2 and 1/0 so ties and the "highest score wins" rule both get exercised.
+  return sanitizeQuizAnswers(questions.map((q) => {
+    const score = strong.includes(q.dimension) ? (hi++ % 2 === 0 ? 3 : 2) : lo++ % 2 === 0 ? 1 : 0;
+    const label = Array.isArray(q.options)
+      ? (q.options.find((o) => o.score === score) ?? q.options[q.options.length - 1]).label
+      : `${score >= 2 ? 8 : 3}/10`;
+    return { qId: q.id, dimension: q.dimension, prompt: q.prompt, label, score };
+  }));
+}
+
+// Told to the simulated user so a quoted answer doesn't surprise them into contradicting it.
+const V2_QUIZ_FRAME: Record<string, string> = {
+  ko: "상담 전에 앱의 심리 퀴즈에서 이렇게 답했다(챗봇이 인용하면 네가 실제로 고른 답이다):",
+  en: "Before the chat you took the app's quiz and answered like this (if the bot quotes one, it's really what you picked):",
+  es: "Antes de la charla hiciste el test de la app y respondiste así (si el bot cita alguna, es lo que de verdad elegiste):",
+};
+
 function resolvePersona(name: string): { situation: string; selfBlame: boolean; context: Ctx } {
   const p = PERSONAS[name];
   if (p) return { situation: p.situation, selfBlame: !!p.selfBlame, context: p.context };
@@ -403,11 +461,65 @@ async function userReply(situation: string, locale: string, history: ChatMessage
   return c.choices[0].message.content?.trim() ?? "";
 }
 
+// ---- flow v2 checks (deterministic; judge-chat.mts scores the same things by reading) ----
+type RoleRec = Pick<SetTurnRole, "kind" | "set" | "position" | "recapSets">;
+const roleTag = (r: RoleRec) =>
+  r.kind === "set" ? `S${r.set}-${r.position}${r.recapSets.length ? `+recap${r.recapSets.join("")}` : ""}` : r.kind;
+const normText = (t: string) => t.toLowerCase().replace(/[\s"'“”‘’「」.,!?¿¡…·:;()—-]+/g, "");
+
+interface V2Checks {
+  turnNumbers: number[];
+  /** Per set ①: the answer lib/chatSets.ts selects vs. whether its option label shows up in the bot's reply. */
+  quotes: { set: number; turn: number | null; expected: string | null; labelInReply: boolean | null }[];
+  /** Turn 24 starts with PERSPECTIVE_SHIFT_LEAD; null when the run never reached turn 24. */
+  perspectiveLead: boolean | null;
+  setPackets: { count: number; hasChat: boolean[]; quizIds: (string | null)[] } | null;
+}
+
+function v2Checks(
+  turns: { turn: number; role: RoleRec | null; bot: string[] }[],
+  setQuotes: (SetQuizAnswer | null)[],
+  locale: string,
+  packets: { has_chat: boolean; quiz: { id: string } | null }[] | undefined,
+): V2Checks {
+  const quotes = setQuotes.map((q, i) => {
+    const t = turns.find((x) => x.role?.kind === "set" && x.role.set === i + 1 && x.role.position === 1);
+    return {
+      set: i + 1,
+      turn: t?.turn ?? null,
+      expected: q ? `${q.qId} "${q.label}" (${q.score})` : null,
+      // Labels are sometimes paraphrased into the sentence; a miss here is a flag to read, not a verdict.
+      labelInReply: t && q ? normText(t.bot.join(" ")).includes(normText(q.label)) : null,
+    };
+  });
+  const t24 = turns.find((t) => t.role?.kind === "perspective");
+  const lead = PERSPECTIVE_SHIFT_LEAD[locale as Locale] ?? PERSPECTIVE_SHIFT_LEAD.ko;
+  return {
+    turnNumbers: turns.map((t) => t.turn),
+    quotes,
+    perspectiveLead: t24 ? t24.bot[0]?.trim() === lead : null,
+    setPackets: packets ? { count: packets.length, hasChat: packets.map((p) => p.has_chat), quizIds: packets.map((p) => p.quiz?.id ?? null) } : null,
+  };
+}
+
+function formatChecks(c: V2Checks): string {
+  return [
+    `turns: ${c.turnNumbers.join(",")}`,
+    ...c.quotes.map((q) => `set ${q.set} ① (turn ${q.turn ?? "–"}): expected ${q.expected ?? "none (fallback question)"} · label in reply: ${q.labelInReply ?? "–"}`),
+    `turn 24 fixed lead: ${c.perspectiveLead ?? "– (not reached)"}`,
+    `set_packets: ${c.setPackets ? `${c.setPackets.count} · has_chat ${c.setPackets.hasChat.join(",")} · quiz ${c.setPackets.quizIds.join(",")}` : "missing"}`,
+  ].join("\n");
+}
+
 const argv = process.argv.slice(2);
 const botModelAt = argv.indexOf("--bot-model");
 if (botModelAt >= 0) botModel = argv.splice(botModelAt, 2)[1];
 const reasoningAt = argv.indexOf("--reasoning");
 if (reasoningAt >= 0) reasoningEffort = argv.splice(reasoningAt, 2)[1] as ChatReasoningEffort;
+const flowAt = argv.indexOf("--flow");
+const flowV2 = flowAt >= 0 && argv.splice(flowAt, 2)[1] === "v2";
+const checkpointAt = argv.indexOf("--checkpoint");
+const checkpointChoice = checkpointAt >= 0 && argv.splice(checkpointAt, 2)[1] === "finish" ? "finish" : "continue";
 const args = argv.filter((a) => !a.startsWith("--"));
 const echoFormulation = !process.argv.includes("--no-formulation");
 const TURNS = Number(args[0] ?? 12);
@@ -422,22 +534,39 @@ await Promise.all(names.map((name) => usageStore.run(
   async () => {
     const run = usageStore.getStore()!;
     const persona = resolvePersona(name);
+    const moduleId = moduleOverride ?? persona.context.moduleId;
+    const baseLocale = (persona.context.locale ?? "ko") as Locale;
+    const quizAnswers = flowV2 && moduleId ? buildV2QuizAnswers(moduleId, baseLocale, V2_HIGH_DIMS[name] ?? []) : [];
     const ctx: Ctx = {
       ...persona.context,
-      moduleId: moduleOverride ?? persona.context.moduleId,
+      moduleId,
       quizAnswerPool: persona.context.quizAnswerPool?.slice(0, quizPoolSize),
+      ...(flowV2 && { flowVersion: 2, quizAnswers }),
     };
     if (moduleOverride && PERSONAS[name] && moduleOverride !== persona.context.moduleId) {
       console.warn(`! ${name} is written for ${persona.context.moduleId}, running it on ${moduleOverride}`);
     }
+    const flow = chatFlowVersion(ctx);
+    if (flowV2 && flow !== 2) throw new Error(`${name}: --flow v2 needs a module with set data and quiz answers (moduleId ${moduleId})`);
+    const chatSets = flow === 2 ? getModuleChatSets(moduleId) : undefined;
+    const setQuotes = chatSets ? selectAllSetQuizAnswers(chatSets, quizAnswers) : null;
     const locale = ctx.locale ?? "ko";
+    const situation = setQuotes
+      ? `${persona.situation}\n${V2_QUIZ_FRAME[locale] ?? V2_QUIZ_FRAME.ko}\n${setQuotes.filter((a): a is SetQuizAnswer => !!a).map((a) => `- "${a.prompt}" → "${a.label}"`).join("\n")}`
+      : persona.situation;
     const history: ChatMessage[] = [];
-    const turns: { turn: number; bot: string[]; user: string | null; botMs: number; botTokens: RunUsage["last"]; formulation: ChatFormulation | null }[] = [];
+    const turns: {
+      seq: number; turn: number; role: Pick<SetTurnRole, "kind" | "set" | "position" | "recapSets"> | null;
+      bot: string[]; user: string | null; botMs: number; botTokens: RunUsage["last"]; formulation: ChatFormulation | null;
+    }[] = [];
     // Echo the hidden memo back the way ChatScreen does (TODO Q1-c). --no-formulation drops it, to compare against the old behavior.
     let formulation: ChatFormulation | undefined;
     const started = Date.now();
-    for (let turn = 1; turn <= TURNS; turn++) {
+    for (let seq = 1; seq <= TURNS; seq++) {
+      // v2 "wrap up" at the checkpoint: the request right after turn 10 is turn 25, with no user reply in between.
+      const turn = flow === 2 && checkpointChoice === "finish" && seq === 11 ? TOTAL_TURNS_V2 : seq;
       const t0 = Date.now();
+      const role = flow === 2 ? effectiveSetTurnRole(turn, Math.floor((t0 - started) / 60000)) : null;
       run.phase = "bot";
       run.last = null;
       const reply = await getChatReply({ turnNumber: turn, history, context: ctx, sessionStartedAt: started, formulation });
@@ -445,18 +574,26 @@ await Promise.all(names.map((name) => usageStore.run(
       const botMs = Date.now() - t0;
       const botTokens = run.last;
       history.push({ role: "assistant", content: reply.lines.join("\n") });
+      // v2 ends where the route would attach the extract; the 20-turn flow keeps its fixed turn count.
+      const final = seq === TURNS || (flow === 2 && isFinalTurn(turn, Math.floor((Date.now() - started) / 60000), 2));
+      const skipReply = final || (flow === 2 && checkpointChoice === "finish" && turn === 10);
       run.phase = "userSim";
-      const user = turn === TURNS ? null : await userReply(persona.situation, locale, history, turn === 10);
+      const user = skipReply ? null : await userReply(situation, locale, history, turn === 10);
       if (user !== null) history.push({ role: "user", content: user });
-      turns.push({ turn, bot: reply.lines, user, botMs, botTokens, formulation: reply.formulation ?? null });
+      turns.push({
+        seq, turn, role: role && { kind: role.kind, set: role.set, position: role.position, recapSets: role.recapSets },
+        bot: reply.lines, user, botMs, botTokens, formulation: reply.formulation ?? null,
+      });
+      if (final) break;
     }
     // Same extraction call the route runs on the final turn, so a change to buildExtractionPrompt can be
-    // checked on the conversation it just produced.
+    // checked on the conversation it just produced. attachSetPackets is a no-op outside flow v2.
     run.phase = "extract";
-    const extract = await extractChatSummary(history, ctx);
+    const extract = attachSetPackets(await extractChatSummary(history, ctx), history, ctx);
     const totalCostUsd = Object.values(run.byPhase).reduce((sum, u) => sum + u.costUsd, 0);
+    const checks = setQuotes ? v2Checks(turns, setQuotes, locale, extract.set_packets) : null;
 
-    const file = join(OUT_DIR, `sim_${stamp}_${name}_${ctx.moduleId ?? "none"}${botModel ? `_${botModel}` : ""}${reasoningEffort ? `_${reasoningEffort}` : ""}.json`);
+    const file = join(OUT_DIR, `sim_${stamp}_${name}_${ctx.moduleId ?? "none"}${flow === 2 ? `_v2${checkpointChoice === "finish" ? "_finish" : ""}` : ""}${botModel ? `_${botModel}` : ""}${reasoningEffort ? `_${reasoningEffort}` : ""}.json`);
     writeFileSync(file, JSON.stringify({
       kind: "sim-chat",
       createdAt: new Date().toISOString(),
@@ -466,6 +603,10 @@ await Promise.all(names.map((name) => usageStore.run(
       moduleId: ctx.moduleId ?? null,
       locale,
       totalTurns: TURNS,
+      flowVersion: flow,
+      checkpoint: flow === 2 ? checkpointChoice : null,
+      setQuotes,
+      checks,
       echoFormulation,
       botModel: botModel ?? CHAT_MODEL,
       reasoningEffort: reasoningEffort ?? null,
@@ -477,7 +618,8 @@ await Promise.all(names.map((name) => usageStore.run(
       usage: { ...run.byPhase, totalCostUsd },
     }, null, 2));
 
-    const lines = turns.flatMap((t) => [`[${t.turn}] BOT: ${t.bot.join("\n   ")}`, ...(t.user === null ? [] : [`[${t.turn}] ME : ${t.user}`])]);
-    console.log(`\n===== ${name} · ${ctx.moduleId ?? "no module"} · ${locale} =====\n${lines.join("\n")}\n----- extract -----\n${JSON.stringify(extract, null, 2)}\n----- usage -----\nbot ${run.byPhase.bot.promptTokens}+${run.byPhase.bot.completionTokens} tok, total $${totalCostUsd.toFixed(4)}\n→ ${file}`);
+    const tag = (t: (typeof turns)[number]) => `${t.turn}${t.role ? ` ${roleTag(t.role)}` : ""}`;
+    const lines = turns.flatMap((t) => [`[${tag(t)}] BOT: ${t.bot.join("\n   ")}`, ...(t.user === null ? [] : [`[${t.turn}] ME : ${t.user}`])]);
+    console.log(`\n===== ${name} · ${ctx.moduleId ?? "no module"} · ${locale}${flow === 2 ? ` · v2 (checkpoint ${checkpointChoice})` : ""} =====\n${lines.join("\n")}\n----- extract -----\n${JSON.stringify(extract, null, 2)}${checks ? `\n----- v2 checks -----\n${formatChecks(checks)}` : ""}\n----- usage -----\nbot ${run.byPhase.bot.promptTokens}+${run.byPhase.bot.completionTokens} tok, total $${totalCostUsd.toFixed(4)}\n→ ${file}`);
   },
 )));

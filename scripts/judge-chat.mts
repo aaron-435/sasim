@@ -16,13 +16,27 @@
 // (2026-09-27 Q1-e: the judge now gets the pre-chat quiz answers, psych-test type and saju chart the
 // user already saw, so quoting them is not scored as invented, and ⑥ allows the one re-confirmation question turn 20 is told to ask.)
 //
+// (2026-10-02 TODO 5: v2 sim files — 5 sets, 25 turns — get the set structure instead of the 20-turn
+// stages, all 30 quiz answers as "real answers", the v2 turn numbers in t6/v_extension, and five extra
+// set-compliance items scored separately from the common ones: s_quote, s_axes, s_no_repeat_scene,
+// s_recap (judge) and s_lead (turn-24 fixed lead, checked in code). The common-item average stays
+// comparable with the q1e-* baseline; the set items get their own average row.)
+//
 // Writes scripts/out/<label>_<timestamp>.json (per-file scores with evidence, sim + judge cost) and a
 // .md summary table next to it. scripts/out/ is git-ignored.
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import OpenAI from "openai";
-import { getModulePlaybook, PLAYBOOK_STAGE_TURNS, type ModulePlaybook } from "../lib/modulePlaybooks.ts";
+import {
+  CHAT_SET_THEMES,
+  getModuleChatSets,
+  getModulePlaybook,
+  PERSPECTIVE_SHIFT_LEAD,
+  PLAYBOOK_STAGE_TURNS,
+  type ModuleChatSets,
+  type ModulePlaybook,
+} from "../lib/modulePlaybooks.ts";
 import type { Locale } from "../lib/i18n/types.ts";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
@@ -52,10 +66,21 @@ const ITEMS = [
   ["v_body_location", "위반: 몸 위치 질문"],
   ["v_extension", "위반: '하나만 더' 연장"],
 ] as const;
-type ItemKey = (typeof ITEMS)[number][0];
+// v2 (5-set flow) only. s_lead is decided in code, not by the judge.
+const SET_ITEMS = [
+  ["s_quote", "세트: ① 퀴즈 인용 정확도"],
+  ["s_axes", "세트: ③④⑤ 축 분리"],
+  ["s_no_repeat_scene", "세트: 같은 장면 반복 없음"],
+  ["s_recap", "세트: 시작 정리·재확인"],
+  ["s_lead", "세트: 24턴 고정 문구"],
+] as const;
+const JUDGED_SET_KEYS = SET_ITEMS.map(([k]) => k).filter((k) => k !== "s_lead");
+type CommonKey = (typeof ITEMS)[number][0];
+type SetKey = (typeof SET_ITEMS)[number][0];
+type ItemKey = CommonKey | SetKey;
 const VIOLATION_KEYS = ITEMS.map(([k]) => k).filter((k) => k.startsWith("v_"));
 
-const RUBRIC = `
+const RUBRIC_V1 = `
 각 항목을 0, 1, 2 중 하나로 채점한다. 해당 상황이 대화에 아예 없었을 때만 null(예: 사용자가 자책 발언을 한 적이 없으면 t7은 null, 대화가 6턴 미만이면 t6은 null).
 2 = 기준을 분명히 충족, 1 = 부분적이거나 한두 번만, 0 = 없거나 반대로 함.
 
@@ -84,6 +109,24 @@ const RUBRIC = `
 - v_extension: 대화를 끝낼 자리(10턴 점검, 20턴, 사용자의 종료 의사)에서 "하나만 더", "조금만 더 얘기해 볼까요" 식으로 사용자에게 대화를 더 이어 가자고 끌기. 20턴 끝의 "잠시만 기다려 주세요, (결과/리포트를) 살펴볼게요" 같은 문장은 앱이 리포트 화면으로 넘어가는 정해진 마무리 문구이므로 위반이 아니다.
 `.trim();
 
+// 5세트 흐름: 턴 번호가 다른 두 항목(t6, v_extension)만 바꾸고 세트 준수 항목을 더한다. 나머지 기준은 V1과 같아야 비교가 된다.
+const RUBRIC_V2 = RUBRIC_V1
+  .replace(
+    "6·13·17·20턴에서 새 질문(탐색 질문) 없이 지금까지를 정리하고 맞는지 재확인하는가.",
+    "6·16·21턴(세트를 여는 응답)의 앞머리와 10턴 중간 점검에서 지금까지를 정리하고 맞는지 재확인하는가. 6·16·21턴은 정리 뒤에 새 세트의 첫 질문이 이어지는 것이 정상이고, 그래서 이 턴의 재확인은 물음이 아니라 평서문 재확인·정정 허락 줄이다. 25턴 마지막 응답은 사용자가 더 답할 수 없는 자리라 재확인 질문 없이 \"이렇게 정리가 되겠군요\" 같은 평서문으로 맺는 것이 정상이다(물음이 있으면 감점).",
+  )
+  .replace("(10턴 점검, 20턴, 사용자의 종료 의사)", "(10턴 점검, 25턴, 사용자의 종료 의사)")
+  .replace("20턴 끝의 \"잠시만", "25턴 끝의 \"잠시만")
+  + `
+
+[세트 준수] (5세트 25턴 흐름. 아래 "세트 구조"와 "세트 ① 인용 기대값" 참고)
+- s_quote 세트 ① 퀴즈 인용 정확도: 각 세트 ①(1·6·11·16·21턴)이 기대값의 문항을 인용하는가(질문 뜻과 고른 답이 맞으면 문장을 다듬어도 된다). 기대값이 "없음"인 세트는 인용 없이 그 세트의 기본 질문 취지로 물어야 맞다. 다른 문항이나 목록에 없는 답을 인용하면 그 세트는 틀림. 대화가 끝나 도달하지 못한 세트는 빼고 판단한다. 전부 맞으면 2, 한 세트 틀리면 1, 둘 이상 틀리면 0.
+- s_axes ③④⑤ 축 분리: 각 세트의 ③④⑤ 질문이 서로 다른 축을 묻는가(같은 질문을 말만 바꿔 되묻지 않음), 각 질문 앞머리 한 줄이 직전 답을 받아 넘기는가.
+- s_no_repeat_scene 같은 장면 반복 없음: 세트가 바뀌어도 이미 충분히 들은 같은 장면·같은 질문으로 돌아가지 않고 세트 주제(장면→반복→속마음→대처→힘)대로 다른 층을 여는가.
+- s_recap 시작 정리·재확인: 6·16·21턴 앞머리에 직전 세트를 사용자 재료로 짧게 정리하고 맞는지 재확인한 뒤 새 세트로 넘어가는가, 11턴은 정리 없이 바로 세트 3을 여는가. 이 턴들의 유일한 질문은 세트 ① 인용 질문이라(질문은 응답당 하나), 재확인은 물음이 아니라 "제가 이렇게 들었어요, 다르면 고쳐 주세요" 같은 평서문 재확인·정정 허락 줄이 맞는 형태다. 정리가 없거나, 재확인·정정 허락 줄 없이 정리만 하면 그 턴은 틀림.`;
+
+const rubricFor = (v2: boolean) => (v2 ? RUBRIC_V2 : RUBRIC_V1);
+
 const OVERLAP: [string, string, string][] = [
   ["module1", "module9", "애착(1) vs 원가족(9): 지금의 친밀한 관계에서 거리 조절 vs 가족 체계 속 내 자리"],
   ["module4", "module11", "가면(4) vs 본능(11): 남 앞에서 보여 주는 모습 관리 vs 내가 원하는 것 자체를 삼킴"],
@@ -94,17 +137,26 @@ const OVERLAP: [string, string, string][] = [
   ["module2", "module4", "돈(2) vs 가면(4): 돈에 붙은 믿음과 감정 vs 사회적 이미지 전반"],
 ];
 
+interface SimQuizAnswer { qId: string; dimension: string; prompt: string; label: string; score: number }
 interface SimFile {
   persona: string;
+  flowVersion?: 1 | 2;
+  checkpoint?: "continue" | "finish" | null;
+  setQuotes?: (SimQuizAnswer | null)[] | null;
+  checks?: { perspectiveLead: boolean | null; quotes: { set: number; labelInReply: boolean | null }[] } | null;
   selfBlame?: boolean;
   situation: string;
   moduleId: string | null;
   locale: Locale;
   totalTurns: number;
-  turns: { turn: number; bot: string[]; user: string | null; botMs: number }[];
+  turns: { turn: number; bot: string[]; user: string | null; botMs: number; role?: { kind: string; set: number | null; position: number | null } | null }[];
   usage?: { totalCostUsd: number };
   botModel?: string;
-  context?: { psychTestType?: string; psychTestSummary?: string; dominantSajuElement?: string; quizAnswer?: { prompt: string; label: string }; quizAnswerPool?: { prompt: string; label: string }[] };
+  context?: {
+    psychTestType?: string; psychTestSummary?: string; dominantSajuElement?: string;
+    quizAnswer?: { prompt: string; label: string }; quizAnswerPool?: { prompt: string; label: string }[];
+    quizAnswers?: SimQuizAnswer[];
+  };
 }
 
 type Score = 0 | 1 | 2 | null;
@@ -116,8 +168,10 @@ interface JudgeResult {
   botModel: string;
   locale: string;
   turns: number;
-  scores: Record<ItemKey | "violations", Score>;
-  details: Record<ItemKey, ItemResult>;
+  flowVersion: 1 | 2;
+  /** Common items always; set items (s_*) only for v2 files. */
+  scores: Partial<Record<ItemKey, Score>> & { violations: Score };
+  details: Partial<Record<ItemKey, ItemResult>>;
   violationList: { turn: number; type: string; quote: string }[];
   summary: string;
   stats: { avgBotMs: number; openingRepeats: number };
@@ -125,7 +179,7 @@ interface JudgeResult {
   judgeUsage: { promptTokens: number; completionTokens: number; costUsd: number | null };
 }
 
-function playbookBlock(pb: ModulePlaybook, locale: Locale): string {
+function playbookBlock(pb: ModulePlaybook, locale: Locale, v2 = false): string {
   const stages = (Object.keys(pb.stages) as (keyof typeof pb.stages)[])
     .map((s) => `  ${s}(${PLAYBOOK_STAGE_TURNS[s].join("·")}턴): ${pb.stages[s]}`).join("\n");
   const overlaps = OVERLAP.filter(([a, b]) => a === pb.id || b === pb.id).map(([, , t]) => `  - ${t}`).join("\n");
@@ -134,8 +188,9 @@ function playbookBlock(pb: ModulePlaybook, locale: Locale): string {
     `전문 관점: ${pb.lens}`,
     `경계: ${pb.boundary}`,
     `시그니처 질문(${pb.signatureStage} 단계): ${pb.signatureQuestion[locale]}`,
-    `단계별 목표 질문(20턴 기준, 1·6·10·13·17·20턴은 고정 역할):\n${stages}`,
-    `19턴 관점 전환: ${pb.perspectiveShift.speaker} → ${pb.perspectiveShift.listener}`,
+    // v2 runs follow the sets (see "세트 구조"), not the 20-turn stages.
+    ...(v2 ? [] : [`단계별 목표 질문(20턴 기준, 1·6·10·13·17·20턴은 고정 역할):\n${stages}`]),
+    `${v2 ? 24 : 19}턴 관점 전환: ${pb.perspectiveShift.speaker} → ${pb.perspectiveShift.listener}`,
     `이지선다 축: ${pb.forcedChoiceAxes.map((a) => `${a.name}(${a.options[0][locale]} / ${a.options[1][locale]})`).join("; ")}`,
     `감정 팔레트: ${pb.emotionPalette.map((e) => e[locale]).join(", ")}`,
     `모순 축: ${pb.contradictions.join(" / ")}`,
@@ -144,9 +199,24 @@ function playbookBlock(pb: ModulePlaybook, locale: Locale): string {
   ].join("\n");
 }
 
+/** v2: the module's 5 sets — theme, focus, ③④⑤ questions — in place of the 20-turn stages. */
+function setsBlock(cs: ModuleChatSets, locale: Locale): string {
+  return cs.sets.map((s) => {
+    const th = CHAT_SET_THEMES[s.set];
+    const qs = s.questions.map((q, i) => `③④⑤`[i] + ` ${q.text[locale]}${q.signature ? " (★시그니처)" : ""}`).join(" / ");
+    return `  세트 ${s.set} ${th.name}(${th.description}) — ${s.focus}. ① 기본 질문(인용할 문항이 없을 때): ${s.fallbackQuestion[locale]}. ${qs}${s.alternate ? ` / 대체 질문: ${s.alternate.text[locale]}` : ""}`;
+  }).join("\n");
+}
+
+const SET_TURNS_TEXT = "턴 배치: 1 인사+세트1① · 2~5 세트1②~⑤ · 6 세트1 정리+세트2① · 7~9 세트2②~④ · 10 정리+중간 점검 · 11~15 세트3①~⑤(정리 없음) · 16 세트3 정리+세트4① · 17~20 세트4②~⑤ · 21 세트4 정리+세트5① · 22~23 세트5②③ · 24 고정 문구+관점 전환 · 25 마무리. ①은 퀴즈 답 인용, ②는 ①의 답을 파고드는 자유 서술, ③④⑤는 아래 모듈 질문(이미 답이 나온 질문은 같은 세트의 다른 축으로 바꿔도 된다).";
+
+function expectedQuotesBlock(sim: SimFile): string {
+  return (sim.setQuotes ?? []).map((q, i) => `  - 세트 ${i + 1} ①: ${q ? `${q.qId} "${q.prompt}" → "${q.label}" (${q.score}점)` : "없음(기본 질문으로 묻는다)"}`).join("\n");
+}
+
 function transcriptBlock(sim: SimFile): string {
   return sim.turns.map((t) => [
-    `[${t.turn}턴] 상담사: ${t.bot.join(" / ")}`,
+    `[${t.turn}턴${t.role?.kind === "set" ? ` · 세트${t.role.set}-${"①②③④⑤"[(t.role.position ?? 1) - 1]}` : ""}] 상담사: ${t.bot.join(" / ")}`,
     ...(t.user === null ? [] : [`[${t.turn}턴] 사용자: ${t.user}`]),
   ].join("\n")).join("\n");
 }
@@ -175,6 +245,9 @@ function priorResultsBlock(sim: SimFile): string {
 
 /** The pre-chat quiz answers the bot is told it may quote (sim context) — without these the judge reads a quote as invented. */
 function quizBlock(sim: SimFile): string {
+  if (sim.flowVersion === 2 && sim.context?.quizAnswers?.length) {
+    return sim.context.quizAnswers.map((a) => `  - ${a.qId} "${a.prompt}" → "${a.label}" (${a.score}점)`).join("\n");
+  }
   const quotes = [sim.context?.quizAnswer, ...(sim.context?.quizAnswerPool ?? [])].filter((q): q is { prompt: string; label: string } => !!q);
   return quotes.length ? quotes.map((q) => `  - "${q.prompt}" → "${q.label}"`).join("\n") : "  (없음)";
 }
@@ -185,10 +258,14 @@ async function judge(file: string, model: string): Promise<JudgeResult> {
   const sim = JSON.parse(readFileSync(file, "utf8")) as SimFile;
   const pb = getModulePlaybook(sim.moduleId);
   if (!pb) throw new Error(`${file}: no playbook for moduleId ${sim.moduleId}`);
+  const v2 = sim.flowVersion === 2;
+  const cs = v2 ? getModuleChatSets(sim.moduleId) : undefined;
+  if (v2 && !cs) throw new Error(`${file}: no chat sets for moduleId ${sim.moduleId}`);
+  const judgedKeys: ItemKey[] = [...ITEMS.map(([k]) => k), ...(v2 ? JUDGED_SET_KEYS : [])];
 
-  const system = `너는 심리 상담 대화 품질을 평가하는 엄격한 채점자다. 따뜻한 존댓말 상담 챗봇(20턴 구성)의 대화를 루브릭으로 채점한다. 점수는 관대하게 주지 않는다. 근거는 반드시 턴 번호와 짧은 인용으로 댄다. 대화가 영어나 스페인어여도 설명은 한국어로 쓴다.
+  const system = `너는 심리 상담 대화 품질을 평가하는 엄격한 채점자다. 따뜻한 존댓말 상담 챗봇(${v2 ? "5세트 25턴" : "20턴"} 구성)의 대화를 루브릭으로 채점한다. 점수는 관대하게 주지 않는다. 근거는 반드시 턴 번호와 짧은 인용으로 댄다. 대화가 영어나 스페인어여도 설명은 한국어로 쓴다.
 
-${RUBRIC}
+${rubricFor(v2)}
 
 출력은 JSON 객체 하나:
 {
@@ -196,15 +273,15 @@ ${RUBRIC}
   "violations": [ { "turn": 숫자, "type": "v_로 시작하는 항목 키", "quote": "문제 문장" } ],
   "summary": "이 대화의 가장 큰 강점 하나와 가장 큰 약점 하나, 두 문장"
 }
-항목 키: ${ITEMS.map(([k]) => k).join(", ")}. 모든 키를 빠짐없이 쓴다.`;
+항목 키: ${judgedKeys.join(", ")}. 모든 키를 빠짐없이 쓴다.`;
 
   const user = `## 모듈 플레이북 (이 대화가 목표로 해야 하는 전문성)
-${playbookBlock(pb, sim.locale)}
-
+${playbookBlock(pb, sim.locale, v2)}
+${cs ? `\n## 세트 구조 (이 대화의 실제 흐름)\n${SET_TURNS_TEXT}${sim.checkpoint === "finish" ? "\n이 대화는 사용자가 10턴 중간 점검에서 \"마무리\"를 골라 바로 25턴 마무리로 넘어갔다(세트 3~5와 24턴은 없음)." : ""}\n${setsBlock(cs, sim.locale)}\n\n## 세트 ① 인용 기대값 (서버가 퀴즈 점수로 고른 문항)\n${expectedQuotesBlock(sim)}\n` : ""}
 ## 사용자 정보
 언어: ${sim.locale}. 사용자가 상담 전에 앱에서 이미 본 결과(챗봇이 "아까 ~가 나왔던데"처럼 언급할 수 있으며, 지어낸 것이 아니다):
 ${priorResultsBlock(sim)}
-상담 전 퀴즈에서 사용자가 실제로 고른 답(챗봇이 인용할 수 있음):
+상담 전 퀴즈에서 사용자가 실제로 고른 답(챗봇이 인용할 수 있음${v2 ? ", 30문항 전부" : ""}):
 ${quizBlock(sim)}
 사용자는 시뮬레이션이며, 설정상 ${sim.selfBlame ? "자책 발언을 하는 성향이다" : "자책 발언 성향이 따로 없다(실제로 했는지는 대화를 보고 판단)"}.
 
@@ -220,15 +297,23 @@ ${transcriptBlock(sim)}`;
     });
     try {
       const parsed = JSON.parse(completion.choices[0]?.message?.content ?? "");
-      const details = {} as Record<ItemKey, ItemResult>;
-      const scores = {} as JudgeResult["scores"];
-      for (const [key] of ITEMS) {
+      const details: JudgeResult["details"] = {};
+      const scores = { violations: null } as JudgeResult["scores"];
+      for (const key of judgedKeys) {
         const it = parsed.items?.[key];
         if (!it || !isScore(it.score)) throw new Error(`bad or missing item ${key}: ${JSON.stringify(it)}`);
         details[key] = { score: it.score, evidence: String(it.evidence ?? "") };
         scores[key] = it.score;
       }
-      const vs = VIOLATION_KEYS.map((k) => scores[k]).filter((s): s is 0 | 1 | 2 => s !== null);
+      if (v2) {
+        // The fixed lead is prepended by code (lib/chat.ts prependPerspectiveLead), so check it exactly instead of asking the judge.
+        const t24 = sim.turns.find((t) => t.turn === 24);
+        const lead = PERSPECTIVE_SHIFT_LEAD[sim.locale] ?? PERSPECTIVE_SHIFT_LEAD.ko;
+        const ok = t24 ? t24.bot[0]?.trim() === lead : null;
+        scores.s_lead = ok === null ? null : ok ? 2 : 0;
+        details.s_lead = { score: scores.s_lead, evidence: t24 ? `24턴 첫 줄: "${t24.bot[0] ?? ""}" (기대: "${lead}")` : "24턴 없음(10턴 마무리 등)" };
+      }
+      const vs = VIOLATION_KEYS.map((k) => scores[k] ?? null).filter((s): s is 0 | 1 | 2 => s !== null);
       scores.violations = vs.length ? (Math.min(...vs) as 0 | 1 | 2) : null;
       const promptTokens = completion.usage?.prompt_tokens ?? 0;
       const completionTokens = completion.usage?.completion_tokens ?? 0;
@@ -239,6 +324,7 @@ ${transcriptBlock(sim)}`;
         moduleId: sim.moduleId,
         botModel: sim.botModel ?? "gpt-5.4-mini",
         locale: sim.locale,
+        flowVersion: v2 ? 2 : 1,
         turns: sim.turns.length,
         scores,
         details,
@@ -275,12 +361,19 @@ function summaryTable(results: JudgeResult[]): string {
     `| 항목 | ${cols.join(" | ")} | 평균 |`,
     `|---|${cols.map(() => "---:").join("|")}|---:|`,
   ];
-  for (const [key, label] of [...ITEMS, ["violations", "위반 종합(최저)"] as const]) {
-    const vals = results.map((r) => r.scores[key as ItemKey | "violations"]);
+  const anyV2 = results.some((r) => r.flowVersion === 2);
+  const rowsFor = [...ITEMS, ["violations", "위반 종합(최저)"] as const, ...(anyV2 ? SET_ITEMS : [])];
+  for (const [key, label] of rowsFor) {
+    const vals = results.map((r) => r.scores[key as ItemKey | "violations"] ?? null);
     rows.push(`| ${label} | ${vals.map(fmt).join(" | ")} | ${fmt(mean(vals))} |`);
   }
-  const quality = results.map((r) => mean(ITEMS.map(([k]) => r.scores[k])));
-  rows.push(`| **전 항목 평균** | ${quality.map(fmt).join(" | ")} | ${fmt(mean(quality))} |`);
+  // Common items only, so the average stays comparable with the 20-turn baselines (q1e-*).
+  const quality = results.map((r) => mean(ITEMS.map(([k]) => r.scores[k] ?? null)));
+  rows.push(`| **전 항목 평균** (공통) | ${quality.map(fmt).join(" | ")} | ${fmt(mean(quality))} |`);
+  if (anyV2) {
+    const setAvg = results.map((r) => (r.flowVersion === 2 ? mean(SET_ITEMS.map(([k]) => r.scores[k] ?? null)) : null));
+    rows.push(`| **세트 준수 평균** | ${setAvg.map(fmt).join(" | ")} | ${fmt(mean(setAvg))} |`);
+  }
   rows.push(`| 턴 수 | ${results.map((r) => r.turns).join(" | ")} | |`);
   rows.push(`| 챗봇 평균 응답(ms) | ${results.map((r) => r.stats.avgBotMs).join(" | ")} | |`);
   rows.push(`| 같은 시작 표현 반복 | ${results.map((r) => r.stats.openingRepeats).join(" | ")} | |`);
