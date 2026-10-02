@@ -1015,7 +1015,7 @@ export function getModulePlaybook(moduleId?: string | null): ModulePlaybook | un
 // 8·9장(세트 ③④⑤ 질문)을 코드로 옮긴 것이다. 위의 stages/signatureStage는
 // 구버전 20턴 흐름이 계속 쓰므로 그대로 둔다.
 //
-// 2026-10-02: 타입, 24턴 고정 문구, 모듈 1~4 추가(TODO 1).
+// 2026-10-02: 타입, 24턴 고정 문구, 모듈 1~4 추가(TODO 1). 모듈 5~11 추가(TODO 2).
 // ------------------------------------------------------------------
 
 /** 세트 번호. 1 장면, 2 반복, 3 속마음, 4 대처, 5 힘(11개 모듈 공통). */
@@ -1694,12 +1694,1082 @@ const MODULE4_SETS: ModuleChatSets = {
   ],
 };
 
-/** 모듈별 5세트 데이터. 아직 옮기지 않은 모듈은 비어 있다(TODO 2에서 5~11). */
+const MODULE5_SETS: ModuleChatSets = {
+  strengthScoreDirection: "low",
+  sets: [
+    {
+      set: 1,
+      focus: "시작하기 직전",
+      candidates: ["P2", "P6", "T3", "T5", "D1"],
+      fallbackQuestion: {
+        ko: "요즘 해야 하는데 자꾸 미뤄 두게 되는 일이 하나 있다면, 어떤 일이에요?",
+        en: "Is there one thing lately that you need to do but keep putting off? What is it?",
+        es: "¿Hay algo últimamente que tienes que hacer pero sigues dejando para después? ¿Qué es?",
+      },
+      questions: [
+        { text: MODULE5.signatureQuestion, free: true, signature: true },
+        {
+          text: {
+            ko: "그때 피하고 싶었던 건 지루함이에요, 잘 못할까 봐 겁나는 마음이에요?",
+            en: "In that moment, what were you trying to avoid: boredom, or the fear of not doing it well?",
+            es: "En ese momento, ¿qué querías evitar: el aburrimiento o el miedo a no hacerlo bien?",
+          },
+        },
+        {
+          text: {
+            ko: "그 일 대신 한 건 다른 일이었어요, 폰이었어요?",
+            en: "What did you do instead: some other task, or your phone?",
+            es: "¿Qué hiciste en su lugar: otra tarea o mirar el teléfono?",
+          },
+        },
+      ],
+    },
+    {
+      set: 2,
+      focus: "늘 같은 순서",
+      candidates: ["T7", "T8", "P3", "P8", "D5"],
+      fallbackQuestion: {
+        ko: "해야 할 일이 막힐 때마다 비슷하게 흘러가는 순서가 있다면, 보통 어떻게 흘러가요?",
+        en: "When a task gets stuck, is there a sequence things usually follow? How does it tend to go?",
+        es: "Cuando una tarea se atasca, ¿suele repetirse la misma secuencia? ¿Cómo suele ir?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "보통 멈추는 지점은 시작할 때예요, 끝내기 직전이에요?",
+            en: "Where do you usually stall: at the start, or right before you finish?",
+            es: "¿Dónde sueles frenarte: al empezar o justo antes de terminar?",
+          },
+        },
+        {
+          text: {
+            ko: "골라야 할 땐 빨리 고르고 후회하는 편이에요, 오래 고르다 놓치는 편이에요?",
+            en: "When you have to choose, do you pick fast and regret it, or deliberate so long the chance slips by?",
+            es: "Cuando te toca elegir, ¿eliges rápido y luego te arrepientes o lo piensas tanto que se te escapa la oportunidad?",
+          },
+        },
+      ],
+      alternate: {
+        text: {
+          ko: "미루는 일들이 늘 비슷한 종류예요, 그때그때 달라요?",
+          en: "Are the things you put off usually the same kind of thing, or does it vary?",
+          es: "Lo que dejas para después, ¿suele ser del mismo tipo o cambia cada vez?",
+        },
+      },
+    },
+    {
+      set: 3,
+      focus: "실패와 잘못된 선택",
+      candidates: ["P10", "P5", "D9", "D10"],
+      fallbackQuestion: {
+        ko: "그 일을 끝까지 해냈는데 결과가 별로라면, 가장 먼저 어떤 생각이 들 것 같아요?",
+        en: "If you saw that task through and the result wasn't great, what's the first thought you imagine having?",
+        es: "Si llevaras esa tarea hasta el final y el resultado no fuera bueno, ¿cuál crees que sería tu primer pensamiento?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "그 기준은 내가 정한 거예요, 누군가 기대한다고 느끼는 거예요?",
+            en: "That standard: is it one you set yourself, or one you feel someone expects of you?",
+            es: "Ese listón, ¿te lo pones tú o sientes que alguien lo espera de ti?",
+          },
+        },
+        {
+          text: {
+            ko: "대충 낸 결과가 별로라는 말을 들으면, 일이 별로인 거예요, 내가 별로인 거예요?",
+            en: "If someone said a rough piece of your work wasn't good, would that mean the work wasn't good, or that you weren't?",
+            es: "Si alguien te dijera que algo que entregaste sin pulir no está bien, ¿sentirías que falla el trabajo o que fallas tú?",
+          },
+        },
+        {
+          text: {
+            ko: "평가가 가장 신경 쓰이는 사람은 윗사람이에요, 가까운 사람이에요, 나 자신이에요?",
+            en: "Whose judgment weighs on you most: someone above you, someone close to you, or your own?",
+            es: "¿Qué juicio te pesa más: el de alguien por encima de ti, el de alguien cercano o el tuyo?",
+          },
+        },
+      ],
+    },
+    {
+      set: 4,
+      focus: "쌓였을 때",
+      candidates: ["T6", "T10", "D6", "D7"],
+      fallbackQuestion: {
+        ko: "미뤄 둔 일이 쌓였을 때, 결국 어떻게 해결하게 돼요?",
+        en: "When put-off tasks pile up, how do they usually end up getting dealt with?",
+        es: "Cuando se acumulan las tareas pendientes, ¿cómo terminas resolviéndolas?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "결국 움직이게 한 건 마감이었어요, 누가 옆에 있을 때였어요, 아주 작게 쪼갰을 때였어요?",
+            en: "What finally got you moving: a deadline, having someone around, or breaking it into tiny pieces?",
+            es: "¿Qué te puso en marcha al final: una fecha límite, tener a alguien cerca o dividirlo en partes muy pequeñas?",
+          },
+        },
+        {
+          text: {
+            ko: "미뤄 둔 걸 해치운 날은 후련해요, 그래도 자책이 남아요?",
+            en: "On the day you finally get it done, do you feel relief, or does some self-blame linger?",
+            es: "El día que por fin lo sacas adelante, ¿sientes alivio o te queda algo de reproche contigo?",
+          },
+        },
+        {
+          text: {
+            ko: "주변은 내가 미루는 걸 알아요, 티 안 나게 숨겨요?",
+            en: "Do the people around you know you put things off, or do you keep it out of sight?",
+            es: "¿La gente a tu alrededor sabe que lo dejas para después o lo mantienes en secreto?",
+          },
+        },
+      ],
+    },
+    {
+      set: 5,
+      focus: "해내는 쪽의 나",
+      candidates: ["P9", "D3", "T1", "P7"],
+      fallbackQuestion: {
+        ko: "일을 할 때 '이건 내가 꽤 잘 해낸다' 싶은 순간이 있다면, 어떤 때예요?",
+        en: "When it comes to getting things done, when do you catch yourself thinking, \"I'm actually pretty good at this\"?",
+        es: "A la hora de sacar cosas adelante, ¿en qué momentos piensas \"esto se me da bastante bien\"?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "'적당히 괜찮게' 해낸 장면을 상상하면 시원해요, 불안해요?",
+            en: "When you picture finishing something \"good enough\", does it feel freeing, or unsettling?",
+            es: "Cuando te imaginas terminando algo \"suficientemente bien\", ¿te da alivio o te inquieta?",
+          },
+        },
+      ],
+    },
+  ],
+};
+
+const MODULE6_SETS: ModuleChatSets = {
+  strengthScoreDirection: "low",
+  sets: [
+    {
+      set: 1,
+      focus: "화가 올라오는 순간",
+      candidates: ["S2", "S4", "E1", "E5", "R3"],
+      fallbackQuestion: {
+        ko: "최근에 화가 올라왔던 순간이 있었다면, 어떤 장면이었어요?",
+        en: "Think of a recent moment when anger rose up in you. What was happening?",
+        es: "Piensa en algún momento reciente en que sentiste que te subía el enfado. ¿Qué estaba pasando?",
+      },
+      questions: [
+        { text: MODULE6.signatureQuestion, signature: true },
+        {
+          text: {
+            ko: "화는 그 자리에서 바로 올라왔어요, 한참 뒤에 올라왔어요?",
+            en: "Did the anger come up right there in the moment, or much later?",
+            es: "¿El enfado te subió ahí mismo o mucho después?",
+          },
+        },
+        {
+          text: {
+            ko: "상대는 내가 화난 걸 알았어요, 몰랐어요?",
+            en: "Did the other person know you were angry, or not?",
+            es: "¿La otra persona se dio cuenta de tu enfado o no?",
+          },
+        },
+      ],
+    },
+    {
+      set: 2,
+      focus: "참다가, 지나고 나서",
+      candidates: ["S6", "S10", "E9", "E8", "R1", "R4"],
+      fallbackQuestion: {
+        ko: "화가 난 뒤에 늘 비슷하게 흘러가는 순서가 있다면, 보통 어떻게 흘러가요?",
+        en: "After you get angry, is there a sequence things usually follow? How does it tend to go?",
+        es: "Después de enfadarte, ¿suele repetirse la misma secuencia? ¿Cómo suele ir?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "그 화는 어디로 갔어요? 삼켰어요, 터졌어요, 계속 곱씹었어요?",
+            en: "Where did that anger go? Did you swallow it, let it burst out, or keep going over it?",
+            es: "¿A dónde fue ese enfado? ¿Te lo tragaste, estalló o le seguiste dando vueltas?",
+          },
+        },
+        {
+          text: {
+            ko: "같은 사람에게 같은 일로 화난 적이 또 있어요, 이번이 처음이에요?",
+            en: "Has the same person made you angry over the same thing before, or is this the first time?",
+            es: "¿Ya te había enfadado la misma persona por lo mismo o es la primera vez?",
+          },
+        },
+      ],
+      alternate: {
+        text: {
+          ko: "화가 가라앉는 데 몇 시간이면 돼요, 며칠 가요?",
+          en: "Does it take a few hours for the anger to settle, or does it last for days?",
+          es: "¿Se te pasa el enfado en unas horas o te dura días?",
+        },
+      },
+    },
+    {
+      set: 3,
+      focus: "화에 대한 믿음",
+      candidates: ["S7", "E10", "R8", "R10"],
+      fallbackQuestion: {
+        ko: "화가 날 때, 그 화에 대해 속으로 드는 생각이 있다면 어떤 거예요?",
+        en: "When you get angry, what do you tell yourself about that anger?",
+        es: "Cuando te enfadas, ¿qué te dices por dentro sobre ese enfado?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "그 순간 넘어온 선은 존중이었어요, 공정함이었어요, 내 시간이나 공간이었어요?",
+            en: "In that moment, which line got crossed: respect, fairness, or your time or space?",
+            es: "En ese momento, ¿qué límite se cruzó: el respeto, la justicia o tu tiempo o tu espacio?",
+          },
+        },
+        {
+          text: {
+            ko: "어릴 때 집에서 화는 내도 되는 거였어요, 참아야 하는 거였어요?",
+            en: "Growing up, was anger something you were allowed to show at home, or something you had to hold in?",
+            es: "En tu infancia, ¿en casa se podía mostrar el enfado o había que aguantarlo?",
+          },
+        },
+        {
+          text: {
+            ko: "화를 내고 나면 내가 나쁜 사람 같아요, 할 말을 한 것 같아요?",
+            en: "After you get angry, do you feel like a bad person, or like you said what needed saying?",
+            es: "Después de enfadarte, ¿sientes que hiciste algo malo o que dijiste lo que había que decir?",
+          },
+        },
+      ],
+    },
+    {
+      set: 4,
+      focus: "화를 다루는 방식",
+      candidates: ["S8", "S9", "R5", "R7", "R6"],
+      fallbackQuestion: {
+        ko: "화가 올라왔을 때 그걸 가라앉히려고 주로 어떻게 해요?",
+        en: "When anger rises, what do you usually do to bring it down?",
+        es: "Cuando te sube el enfado, ¿qué sueles hacer para calmarlo?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "화가 지나간 뒤 그 장면을 다시 떠올려요, 아예 덮어 둬요?",
+            en: "Once the anger passes, do you replay the scene, or bury it completely?",
+            es: "Cuando se te pasa el enfado, ¿vuelves a repasar la escena o la entierras del todo?",
+          },
+        },
+        {
+          text: {
+            ko: "화를 말로 꺼냈을 때 받아들여졌어요, 더 큰 싸움이 됐어요?",
+            en: "When you've put your anger into words, was it heard, or did it turn into a bigger fight?",
+            es: "Cuando has puesto tu enfado en palabras, ¿te escucharon o terminó en una pelea más grande?",
+          },
+        },
+        {
+          text: {
+            ko: "화를 편하게 털어놓을 수 있는 사람이 있어요, 없어요?",
+            en: "Is there someone you can vent your anger to freely, or not really?",
+            es: "¿Tienes a alguien con quien desahogar tu enfado con libertad o no realmente?",
+          },
+        },
+      ],
+    },
+    {
+      set: 5,
+      focus: "화 앞에서도 지키는 것",
+      candidates: ["E4", "E7", "R9"],
+      fallbackQuestion: {
+        ko: "화가 나는 상황에서도 '이건 내가 꽤 잘 지킨다' 싶은 게 있다면 뭐예요?",
+        en: "Even when you're angry, is there something you feel you hold on to pretty well?",
+        es: "Incluso con enfado, ¿hay algo que sientes que mantienes bastante bien?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "선을 말로 그을 수 있다면, 어떤 문장이 될까요?",
+            en: "If you could draw that line in words, what would the sentence be?",
+            es: "Si pudieras marcar ese límite con palabras, ¿qué frase dirías?",
+          },
+          free: true,
+        },
+      ],
+    },
+  ],
+};
+
+const MODULE7_SETS: ModuleChatSets = {
+  strengthScoreDirection: "high",
+  sets: [
+    {
+      set: 1,
+      focus: "과부하가 오는 순간",
+      candidates: ["X2", "X10", "X4", "L7", "L2"],
+      fallbackQuestion: {
+        ko: "최근에 머리가 꽉 차서 아무것도 안 들어오던 순간이 있었다면, 어디서 언제였어요?",
+        en: "Think of a recent moment when everything felt like too much and nothing could get in. Where and when was it?",
+        es: "Piensa en algún momento reciente en que todo era demasiado y ya no te entraba nada más. ¿Dónde y cuándo fue?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "그때 가장 먼저 들어온 건 소리였어요, 빛이나 냄새였어요, 사람이었어요?",
+            en: "What hit you first then: sound, light or smell, or people?",
+            es: "¿Qué te llegó primero en ese momento: el ruido, la luz o los olores, o la gente?",
+          },
+        },
+        {
+          text: {
+            ko: "압도되면 짜증이 나요, 멍해져요, 자리를 피하고 싶어요?",
+            en: "When it gets overwhelming, do you get irritable, go blank, or want to get out of there?",
+            es: "Cuando todo te desborda, ¿te irritas, te quedas en blanco o quieres irte de ahí?",
+          },
+        },
+        {
+          text: {
+            ko: "그 자리에서 버텼어요, 빠져나왔어요?",
+            en: "Did you stick it out, or step away?",
+            es: "¿Aguantaste ahí o te fuiste?",
+          },
+        },
+      ],
+    },
+    {
+      set: 2,
+      focus: "회복에 걸리는 시간",
+      candidates: ["X7", "X9", "X5", "A10"],
+      fallbackQuestion: {
+        ko: "자극이 많았던 하루 뒤에, 다시 나로 돌아오기까지 보통 어떻게 흘러가요?",
+        en: "After a day with a lot coming at you, how does it usually go until you feel like yourself again?",
+        es: "Después de un día con muchos estímulos, ¿cómo suele ir hasta que vuelves a sentirte tú?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "회복하는 데 몇 시간이면 돼요, 하루 넘게 걸려요?",
+            en: "Does it take a few hours to recover, or more than a day?",
+            es: "¿Te recuperas en unas horas o te lleva más de un día?",
+          },
+        },
+        {
+          text: {
+            ko: "과부하는 사람 많은 날에 와요, 일이 몰린 날에 와요?",
+            en: "Does the overload come on days with lots of people, or days when the work piles up?",
+            es: "¿La sobrecarga llega los días con mucha gente o los días en que se te acumula el trabajo?",
+          },
+        },
+      ],
+      alternate: {
+        text: {
+          ko: "일정이 갑자기 바뀌면 금방 맞춰요, 하루가 흔들려요?",
+          en: "When plans change suddenly, do you adjust quickly, or does it throw off your whole day?",
+          es: "Cuando los planes cambian de repente, ¿te adaptas rápido o se te desordena todo el día?",
+        },
+      },
+    },
+    {
+      set: 3,
+      focus: "남들은 모르는 감각",
+      candidates: ["A7", "A8", "X6", "L10"],
+      fallbackQuestion: {
+        ko: "남들은 아무렇지 않은데 나만 유독 크게 느낀다고 생각한 순간이 있다면, 언제였어요?",
+        en: "Was there a moment when something felt huge to you while others seemed not to notice at all? When was it?",
+        es: "¿Hubo algún momento en que algo te afectó mucho mientras a los demás parecía no pasarles nada? ¿Cuándo fue?",
+      },
+      questions: [
+        { text: MODULE7.signatureQuestion, free: true, signature: true },
+        {
+          text: {
+            ko: "'예민하다'는 말을 처음 들은 게 어릴 때였어요, 커서였어요?",
+            en: "When did you first hear \"you're too sensitive\": as a kid, or as an adult?",
+            es: "¿Cuándo te dijeron por primera vez que tenías demasiada sensibilidad: en tu infancia o más adelante?",
+          },
+        },
+        {
+          text: {
+            ko: "그 말을 들으면 서운해요, 그런가 보다 해요?",
+            en: "When you hear that, does it sting, or do you just let it go?",
+            es: "Cuando te lo dicen, ¿te duele o lo dejas pasar?",
+          },
+        },
+      ],
+    },
+    {
+      set: 4,
+      focus: "환경 조절",
+      candidates: ["X3", "L3", "L4", "L5", "X8"],
+      fallbackQuestion: {
+        ko: "버거운 자극을 줄이려고 평소에 하는 나만의 방법이 있다면, 어떤 거예요?",
+        en: "Do you have your own ways of cutting down on stimulation that's too much? What do you do?",
+        es: "¿Tienes tus propias maneras de reducir los estímulos cuando son demasiados? ¿Qué haces?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "충전되는 건 자연이에요, 음악이에요, 혼자만의 공간이에요?",
+            en: "What recharges you: nature, music, or a space of your own?",
+            es: "¿Qué te recarga: la naturaleza, la música o un espacio para ti?",
+          },
+        },
+        {
+          text: {
+            ko: "힘든 자리는 미리 피하는 편이에요, 일단 가서 견디는 편이에요?",
+            en: "With places that are hard on you, do you tend to avoid them ahead of time, or go and push through?",
+            es: "Con los sitios que se te hacen difíciles, ¿sueles evitarlos de antemano o vas y aguantas?",
+          },
+        },
+        {
+          text: {
+            ko: "주변에 내 감각을 이해해 주는 사람이 있어요, 설명하기를 포기했어요?",
+            en: "Is there someone around you who gets how you sense things, or have you given up explaining?",
+            es: "¿Hay alguien a tu alrededor que entiende cómo percibes las cosas o ya renunciaste a explicarlo?",
+          },
+        },
+      ],
+    },
+    {
+      set: 5,
+      focus: "깊이 감동하는 쪽",
+      candidates: ["A2", "A4", "A6", "A9", "A5"],
+      fallbackQuestion: {
+        ko: "최근에 무언가가 마음 깊이 와닿았던 순간이 있었다면, 어떤 거였어요?",
+        en: "Was there a recent moment when something moved you deeply? What was it?",
+        es: "¿Hubo hace poco algún momento en que algo te llegó muy hondo? ¿Qué fue?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "내 감각에 딱 맞는 하루라면 아침은 어떻게 시작할 것 같아요?",
+            en: "On a day that fit your senses just right, how would the morning begin?",
+            es: "En un día hecho a la medida de tus sentidos, ¿cómo empezaría la mañana?",
+          },
+          free: true,
+        },
+      ],
+    },
+  ],
+};
+
+const MODULE8_SETS: ModuleChatSets = {
+  strengthScoreDirection: "low",
+  sets: [
+    {
+      set: 1,
+      focus: "누운 직후",
+      candidates: ["C2", "C4", "C6", "S2", "S3"],
+      fallbackQuestion: {
+        ko: "최근에 잠이 잘 오지 않았던 밤이 있었다면, 누운 뒤 어떤 일이 있었어요?",
+        en: "Think of a recent night when sleep wouldn't come. What happened after you lay down?",
+        es: "Piensa en alguna noche reciente en que no te llegaba el sueño. ¿Qué pasó después de acostarte?",
+      },
+      questions: [
+        { text: MODULE8.signatureQuestion, free: true, signature: true },
+        {
+          text: {
+            ko: "그때 마음은 초조해요, 불안해요, 억울해요?",
+            en: "In those moments, does it feel more like restlessness, worry, or a sense of unfairness?",
+            es: "En esos momentos, ¿sientes más impaciencia, inquietud o una sensación de injusticia?",
+          },
+        },
+        {
+          text: {
+            ko: "몸은 풀려 있어요, 어딘가 힘이 들어가 있어요?",
+            en: "Is your body relaxed, or is there tension held somewhere?",
+            es: "¿Tienes el cuerpo relajado o hay tensión en alguna parte?",
+          },
+        },
+      ],
+    },
+    {
+      set: 2,
+      focus: "되감기",
+      candidates: ["C3", "C9", "C8", "D9"],
+      fallbackQuestion: {
+        ko: "밤에 자꾸 되감기듯 다시 떠오르는 장면이 있다면, 보통 어떤 장면이에요?",
+        en: "At night, is there a scene that keeps rewinding and replaying? What kind of scene is it usually?",
+        es: "Por la noche, ¿hay alguna escena que se te rebobina y se repite una y otra vez? ¿Qué tipo de escena suele ser?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "생각이 먼저 돌아요, 몸이 먼저 긴장해요?",
+            en: "What starts first: your thoughts spinning, or your body tensing up?",
+            es: "¿Qué empieza primero: los pensamientos dando vueltas o el cuerpo tensándose?",
+          },
+        },
+        {
+          text: {
+            ko: "머릿속 장면은 오늘 일이에요, 내일 일이에요, 오래된 일이에요?",
+            en: "Are the scenes in your head about today, tomorrow, or something from long ago?",
+            es: "Las escenas que te vienen a la cabeza, ¿son de hoy, de mañana o de algo de hace mucho?",
+          },
+        },
+      ],
+      alternate: {
+        text: {
+          ko: "잠이 흐트러지기 시작한 계기가 떠올라요, 늘 이랬어요?",
+          en: "Can you think of something that set off the sleep trouble, or has it always been like this?",
+          es: "¿Recuerdas algo que hiciera que empezaras a dormir peor o siempre ha sido así?",
+        },
+      },
+    },
+    {
+      set: 3,
+      focus: "밤에 떠오르는 것",
+      candidates: ["C5", "D3", "D5", "D7"],
+      fallbackQuestion: {
+        ko: "낮에는 괜찮다가 밤이 되면 유독 크게 느껴지는 게 있다면, 어떤 거예요?",
+        en: "Is there something that feels fine during the day but grows much bigger at night? What is it?",
+        es: "¿Hay algo que de día parece estar bien pero de noche se vuelve mucho más grande? ¿Qué es?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "밤이 하루 중 유일하게 온전한 내 시간이라 잠드는 걸 미룬 적 있어요, 없어요?",
+            en: "Have you ever stayed up because night is the only time that's fully yours, or not really?",
+            es: "¿Alguna vez has retrasado el momento de dormir porque la noche es el único rato realmente tuyo, o no?",
+          },
+        },
+        {
+          text: {
+            ko: "꿈은 거의 기억 안 나요, 생생하게 남아요?",
+            en: "Do you barely remember your dreams, or do they stay vivid?",
+            es: "¿Casi no recuerdas tus sueños o se te quedan muy vívidos?",
+          },
+        },
+        {
+          text: {
+            ko: "밤에 떠오르는 그 문제를 낮에 꺼내 볼 시간이 있어요, 없어요?",
+            en: "That thing that comes up at night: do you have time during the day to actually look at it, or not?",
+            es: "Eso que te viene por la noche, ¿tienes tiempo durante el día para mirarlo de frente o no?",
+          },
+        },
+      ],
+    },
+    {
+      set: 4,
+      focus: "밤의 습관과 다음 날",
+      candidates: ["C7", "S10", "S9", "D4", "D6"],
+      fallbackQuestion: {
+        ko: "잠이 안 오는 밤에 주로 어떻게 해요?",
+        en: "On nights when you can't sleep, what do you usually do?",
+        es: "Las noches en que no consigues dormir, ¿qué sueles hacer?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "잠들려고 해 본 방법이 효과가 있었어요, 오히려 더 신경 쓰였어요?",
+            en: "Has anything you've tried to fall asleep actually worked, or did it just make you more aware of it?",
+            es: "Lo que has probado para dormirte, ¿te ha funcionado o solo hizo que le dieras más vueltas?",
+          },
+        },
+        {
+          text: {
+            ko: "잠이 안 오면 누워서 버텨요, 일어나요?",
+            en: "When sleep won't come, do you stay in bed and wait it out, or get up?",
+            es: "Cuando no te llega el sueño, ¿te quedas en la cama esperando o te levantas?",
+          },
+        },
+        {
+          text: {
+            ko: "낮에 있었던 사람 일이 밤까지 따라와요, 밤엔 따로예요?",
+            en: "Do things with people from the day follow you into the night, or does night stay separate?",
+            es: "Lo que pasa con la gente durante el día, ¿te persigue hasta la noche o la noche queda aparte?",
+          },
+        },
+      ],
+    },
+    {
+      set: 5,
+      focus: "잠에서 잘 되는 쪽",
+      candidates: ["S4", "S7", "D2", "D8"],
+      fallbackQuestion: {
+        ko: "잠과 관련해서 '이건 그래도 괜찮다' 싶은 부분이 있다면 뭐예요?",
+        en: "When it comes to sleep, is there a part of it that still goes fine for you?",
+        es: "En lo que respecta al sueño, ¿hay alguna parte que todavía te funcione bien?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "편하게 잠드는 밤이라면, 불 끄기 직전 마지막 장면은 어떤 모습일까요?",
+            en: "On a night when you drift off easily, what would the last scene before lights-out look like?",
+            es: "En una noche en que te duermes con facilidad, ¿cómo sería la última escena antes de apagar la luz?",
+          },
+          free: true,
+        },
+      ],
+    },
+  ],
+};
+
+const MODULE9_SETS: ModuleChatSets = {
+  strengthScoreDirection: "low",
+  sets: [
+    {
+      set: 1,
+      focus: "최근 가족과의 순간",
+      candidates: ["EM5", "CO2", "CO8", "PA5"],
+      fallbackQuestion: {
+        ko: "최근에 가족과 통화하거나 만난 일이 있었다면, 그때 어떤 장면이 기억에 남아요?",
+        en: "Think of a recent call or visit with your family. What moment from it stays with you?",
+        es: "Piensa en alguna llamada o visita reciente con tu familia. ¿Qué momento se te quedó grabado?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "그 통화나 만남에서 주로 말하는 쪽이었어요, 듣는 쪽이었어요?",
+            en: "In that call or visit, were you mostly the one talking, or the one listening?",
+            es: "En esa llamada o visita, ¿eras más quien hablaba o quien escuchaba?",
+          },
+        },
+        {
+          text: {
+            ko: "끝나고 남은 건 죄책감이에요, 서운함이에요, 무거운 책임감이에요?",
+            en: "Afterward, what was left: guilt, hurt, or a heavy sense of responsibility?",
+            es: "Al terminar, ¿qué te quedó: culpa, dolor o un peso de responsabilidad?",
+          },
+        },
+        {
+          text: {
+            ko: "그 느낌은 금방 사라져요, 며칠 가요?",
+            en: "Does that feeling fade quickly, or stay for days?",
+            es: "¿Esa sensación se te pasa rápido o te dura días?",
+          },
+        },
+      ],
+    },
+    {
+      set: 2,
+      focus: "가족 안의 내 자리",
+      candidates: ["EM2", "EM9", "CO4", "PA3", "PA4"],
+      fallbackQuestion: {
+        ko: "가족 안에서 일이 생길 때마다 내가 늘 비슷하게 하게 되는 역할이 있다면, 어떤 거예요?",
+        en: "When something comes up in your family, is there a role you always seem to end up playing? What is it?",
+        es: "Cuando surge algo en tu familia, ¿hay un papel que siempre terminas haciendo? ¿Cuál es?",
+      },
+      questions: [
+        { text: MODULE9.signatureQuestion, signature: true },
+        {
+          text: {
+            ko: "그 자리는 스스로 맡았어요, 어쩌다 맡게 됐어요?",
+            en: "Did you take on that role yourself, or did it just end up being yours?",
+            es: "¿Ese papel lo asumiste por decisión propia o te tocó sin más?",
+          },
+        },
+      ],
+      alternate: {
+        text: {
+          ko: "가족끼리 다툴 때 가운데 끼는 편이에요, 자리를 피하는 편이에요?",
+          en: "When your family argues, do you tend to end up in the middle, or step away?",
+          es: "Cuando hay discusiones en tu familia, ¿sueles quedar en medio o te apartas?",
+        },
+      },
+    },
+    {
+      set: 3,
+      focus: "기대와 경계",
+      candidates: ["EM4", "EM6", "EM10", "CO7", "CO9"],
+      fallbackQuestion: {
+        ko: "가족의 기대와 내가 원하는 것이 다를 때, 마음속에서 어떤 생각이 커져요?",
+        en: "When what your family expects and what you want don't match, what thought grows louder inside you?",
+        es: "Cuando lo que tu familia espera y lo que tú quieres no coinciden, ¿qué pensamiento crece por dentro?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "그 자리를 내려놓으면 가족이 흔들릴 것 같아요, 의외로 괜찮을 것 같아요?",
+            en: "If you set that role down, do you think your family would be shaken, or turn out surprisingly fine?",
+            es: "Si dejaras ese papel, ¿crees que tu familia se tambalearía o que, sorprendentemente, estaría bien?",
+          },
+        },
+        {
+          text: {
+            ko: "가족은 지금의 나를 잘 알아요, 예전의 나로 기억해요?",
+            en: "Does your family really know who you are now, or do they remember who you used to be?",
+            es: "¿Tu familia conoce de verdad a quien eres hoy o te recuerda como eras antes?",
+          },
+        },
+        {
+          text: {
+            ko: "가족과 다른 선택을 할 때 미안함이 커요, 홀가분함이 커요?",
+            en: "When you choose differently from your family, is the bigger feeling guilt, or relief?",
+            es: "Cuando eliges algo distinto de lo que quiere tu familia, ¿pesa más la culpa o el alivio?",
+          },
+        },
+      ],
+    },
+    {
+      set: 4,
+      focus: "지금 관계로 번지는 것",
+      candidates: ["PA7", "PA8", "PA9", "EM7", "CO6"],
+      fallbackQuestion: {
+        ko: "가족과의 사이에서 마음이 무거울 때 주로 어떻게 해요?",
+        en: "When things with your family weigh on you, what do you usually do?",
+        es: "Cuando lo de tu familia te pesa, ¿qué sueles hacer?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "가족과의 연락 리듬은 내가 정해요, 가족이 정해요?",
+            en: "Who sets the rhythm of contact with your family: you, or them?",
+            es: "¿Quién marca el ritmo del contacto con tu familia: tú o tu familia?",
+          },
+        },
+        {
+          text: {
+            ko: "가족에게 선을 그어 본 적 있어요, 생각만 해 봤어요?",
+            en: "Have you ever drawn a line with your family, or only thought about it?",
+            es: "¿Alguna vez le has puesto un límite a tu familia o solo lo has pensado?",
+          },
+        },
+        {
+          text: {
+            ko: "그 자리, 지금 친구나 연인, 직장에서도 맡고 있어요, 거기선 달라요?",
+            en: "That role: do you play it with friends, a partner or at work too, or is it different there?",
+            es: "Ese papel, ¿también lo haces con tus amistades, tu pareja o en el trabajo, o ahí es distinto?",
+          },
+        },
+      ],
+    },
+    {
+      set: 5,
+      focus: "가족 사이에서 지켜 온 것",
+      candidates: ["EM3", "EM8", "CO3", "CO10", "PA6"],
+      fallbackQuestion: {
+        ko: "가족과의 관계에서 '이건 내가 잘 지켜 왔다' 싶은 게 있다면 뭐예요?",
+        en: "In your relationship with your family, is there something you feel you've protected well?",
+        es: "En tu relación con tu familia, ¿hay algo que sientes que has sabido cuidar bien?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "가족과 연결된 채로 나로 있을 수 있다면, 명절 하루는 어떤 모습일까요?",
+            en: "If you could stay connected to your family and still be fully yourself, what would a holiday look like?",
+            es: "Si pudieras seguir en contacto con tu familia sin dejar de ser tú, ¿cómo sería un día de fiesta familiar?",
+          },
+          free: true,
+        },
+      ],
+    },
+  ],
+};
+
+const MODULE10_SETS: ModuleChatSets = {
+  strengthScoreDirection: "high",
+  sets: [
+    {
+      set: 1,
+      focus: "일하는 중",
+      candidates: ["D1", "D8", "H1", "I1"],
+      fallbackQuestion: {
+        ko: "오늘이나 최근에 무언가에 집중하려던 시간이 있었다면, 그때 어떻게 흘러갔어요?",
+        en: "Think of a recent stretch when you were trying to focus on something. How did it go?",
+        es: "Piensa en algún rato reciente en que intentabas concentrarte en algo. ¿Cómo fue?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "그때 주의를 가져간 건 알림이었어요, 다른 생각이었어요, 더 하고 싶은 다른 일이었어요?",
+            en: "What pulled your attention away: a notification, another thought, or something else you'd rather be doing?",
+            es: "¿Qué se llevó tu atención: una notificación, otro pensamiento u otra cosa que te apetecía más hacer?",
+          },
+        },
+        {
+          text: {
+            ko: "흩어질 때 답답해요, 들떠요, 자책해요?",
+            en: "When your focus scatters, do you feel frustrated, buzzing, or hard on yourself?",
+            es: "Cuando se te dispersa la atención, ¿sientes frustración, te aceleras o te lo reprochas?",
+          },
+        },
+        {
+          text: {
+            ko: "그날 원래 일로 돌아왔어요, 못 돌아왔어요?",
+            en: "That day, did you make it back to what you'd meant to do, or not?",
+            es: "Ese día, ¿lograste volver a lo que tenías que hacer o no?",
+          },
+        },
+      ],
+    },
+    {
+      set: 2,
+      focus: "시작과 끝",
+      candidates: ["I3", "I9", "I6", "H9", "D9"],
+      fallbackQuestion: {
+        ko: "새로 시작한 일이 흐지부지될 때 늘 비슷하게 흘러가는 순서가 있다면, 보통 어떻게 흘러가요?",
+        en: "When something new you've started fizzles out, is there a sequence it usually follows? How does it go?",
+        es: "Cuando algo nuevo que empezaste se va apagando, ¿suele seguir la misma secuencia? ¿Cómo suele ir?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "새 일을 시작할 때 신나요, 막막해요?",
+            en: "When you start something new, are you excited, or at a loss where to begin?",
+            es: "Cuando empiezas algo nuevo, ¿te emociona o no sabes por dónde empezar?",
+          },
+        },
+        {
+          text: {
+            ko: "흥미가 식는 건 보통 초반이에요, 거의 끝날 때예요?",
+            en: "Does your interest usually cool off early on, or close to the end?",
+            es: "¿El interés se te suele enfriar al principio o casi al final?",
+          },
+        },
+      ],
+      alternate: {
+        text: {
+          ko: "마감이 코앞이면 오히려 집중이 돼요, 더 흩어져요?",
+          en: "When a deadline is right around the corner, do you actually focus better, or scatter even more?",
+          es: "Cuando la fecha límite está encima, ¿te concentras mejor o te dispersas todavía más?",
+        },
+      },
+    },
+    {
+      set: 3,
+      focus: "극과 극의 나",
+      candidates: ["H10", "H5", "I8", "D6"],
+      fallbackQuestion: {
+        ko: "집중이 잘 될 때의 나와 안 될 때의 나를 비교해 보면, 어떤 차이가 있어요?",
+        en: "If you compare yourself when focus comes easily with when it doesn't, what's the difference?",
+        es: "Si comparas cómo eres cuando te concentras con facilidad y cuando no, ¿qué diferencia hay?",
+      },
+      questions: [
+        { text: MODULE10.signatureQuestion, free: true, signature: true },
+        {
+          text: {
+            ko: "'집중을 못 한다'는 말을 들어 본 적 있어요, 없어요?",
+            en: "Have you ever been told \"you can't focus\", or not?",
+            es: "¿Alguna vez te han dicho que no logras concentrarte o no?",
+          },
+        },
+        {
+          text: {
+            ko: "집중이 안 될 때 내 탓 같아요, 환경 탓 같아요?",
+            en: "When you can't focus, does it feel like your fault, or the environment's?",
+            es: "Cuando no logras concentrarte, ¿sientes que es culpa tuya o del entorno?",
+          },
+        },
+      ],
+    },
+    {
+      set: 4,
+      focus: "일상의 비용",
+      candidates: ["D7", "D3", "I7", "I4", "H8"],
+      fallbackQuestion: {
+        ko: "주의가 흩어져서 일상에서 생기는 작은 불편이 있다면, 어떤 거예요?",
+        en: "Are there small everyday hassles that come from your attention scattering? What are they?",
+        es: "¿Hay pequeños tropiezos del día a día que vienen de que se te dispersa la atención? ¿Cuáles?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "집중하려고 쓰는 방법이 있어요, 될 때를 기다려요?",
+            en: "Do you have a method for getting yourself to focus, or do you wait until it just happens?",
+            es: "¿Tienes algún método para concentrarte o esperas a que llegue solo?",
+          },
+        },
+        {
+          text: {
+            ko: "순간적으로 결정한 일은 결과가 좋았던 적이 많아요, 후회가 많아요?",
+            en: "When you decide on impulse, has it more often turned out well, or left you with regrets?",
+            es: "Cuando decides por impulso, ¿suele salir bien o te deja más arrepentimiento?",
+          },
+        },
+        {
+          text: {
+            ko: "주변에 나랑 리듬이 맞는 사람이 있어요, 다들 너무 느리거나 빨라요?",
+            en: "Is there someone around you who moves at your rhythm, or does everyone feel too slow or too fast?",
+            es: "¿Hay alguien a tu alrededor que va a tu ritmo o todo el mundo te parece demasiado lento o demasiado rápido?",
+          },
+        },
+      ],
+    },
+    {
+      set: 5,
+      focus: "깊이 파고드는 힘",
+      candidates: ["H4", "H2"],
+      fallbackQuestion: {
+        ko: "한번 빠지면 누구보다 깊이 파고들었던 일이 있다면, 어떤 거였어요?",
+        en: "Is there something you got so into that you went deeper than anyone else? What was it?",
+        es: "¿Hay algo en lo que te metiste tanto que llegaste más hondo que nadie? ¿Qué fue?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "내 주의 방식에 맞춘 하루라면, 일은 어떻게 나눠져 있을까요?",
+            en: "On a day built around the way your attention works, how would the work be divided up?",
+            es: "En un día pensado para tu manera de prestar atención, ¿cómo estaría repartido el trabajo?",
+          },
+          free: true,
+        },
+      ],
+    },
+  ],
+};
+
+const MODULE11_SETS: ModuleChatSets = {
+  strengthScoreDirection: "low",
+  sets: [
+    {
+      set: 1,
+      focus: "시선을 받는 순간",
+      candidates: ["E3", "E2", "S9", "V2"],
+      fallbackQuestion: {
+        ko: "최근에 칭찬을 듣거나 사람들의 시선이 나에게 모였던 순간이 있었다면, 그때 어땠어요?",
+        en: "Think of a recent moment when you got a compliment or people's eyes were on you. How was it?",
+        es: "Piensa en algún momento reciente en que te hicieron un cumplido o todas las miradas estaban en ti. ¿Cómo fue?",
+      },
+      questions: [
+        { text: MODULE11.signatureQuestion, free: true, signature: true },
+        {
+          text: {
+            ko: "삼키고 나서 답답했어요, 아쉬웠어요, 안도했어요?",
+            en: "After you swallowed it, did you feel stifled, a little regretful, or relieved?",
+            es: "Después de tragártela, ¿sentiste ahogo, pena o alivio?",
+          },
+        },
+        {
+          text: {
+            ko: "그 자리에 있던 사람은 가까운 사이였어요, 잘 모르는 사이였어요?",
+            en: "Was the person there someone close to you, or someone you didn't know well?",
+            es: "¿La persona que estaba ahí era alguien cercano o alguien que no conocías bien?",
+          },
+        },
+      ],
+    },
+    {
+      set: 2,
+      focus: "누르는 방식",
+      candidates: ["E7", "V4", "V5", "E5"],
+      fallbackQuestion: {
+        ko: "하고 싶은 말이나 표현을 누르게 될 때, 늘 비슷하게 흘러가는 순서가 있다면 어떻게 흘러가요?",
+        en: "When you hold back something you want to say or show, is there a sequence it usually follows? How does it go?",
+        es: "Cuando te guardas algo que quieres decir o mostrar, ¿suele seguir la misma secuencia? ¿Cómo suele ir?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "'아무거나', '괜찮아'를 자주 말하는 편이에요, 가끔이에요?",
+            en: "Do you often say \"whatever's fine\" or \"I'm okay\", or only now and then?",
+            es: "¿Sueles decir \"lo que sea\" o \"estoy bien\" a menudo o solo de vez en cuando?",
+          },
+        },
+        {
+          text: {
+            ko: "주로 삼키는 자리는 여럿이 있을 때예요, 일대일일 때예요?",
+            en: "Where do you hold back most: in a group, or one-on-one?",
+            es: "¿Dónde te contienes más: en grupo o a solas con alguien?",
+          },
+        },
+      ],
+      alternate: {
+        text: {
+          ko: "칭찬을 들으면 고맙다고 받아요, 손사래부터 쳐요?",
+          en: "When someone compliments you, do you say thank you, or wave it off first?",
+          es: "Cuando alguien te hace un cumplido, ¿das las gracias o lo rechazas de entrada?",
+        },
+      },
+    },
+    {
+      set: 3,
+      focus: "거울 속 나",
+      candidates: ["S2", "S10", "S4", "E10", "S8"],
+      fallbackQuestion: {
+        ko: "나를 드러내는 게 조심스러워진 데에는 마음속에 어떤 생각이 있는 것 같아요?",
+        en: "When you think about why showing yourself feels risky, what belief seems to sit underneath it?",
+        es: "Cuando piensas en por qué te cuesta mostrarte, ¿qué idea parece haber debajo?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "원하는 걸 말했을 때 받아들여졌어요, 무시되거나 웃음거리가 됐어요?",
+            en: "When you've said what you wanted, was it taken seriously, or brushed aside or laughed at?",
+            es: "Cuando has dicho lo que querías, ¿te tomaron en serio o lo ignoraron o se rieron?",
+          },
+        },
+        {
+          text: {
+            ko: "원하는 걸 드러내면 이기적으로 보일 것 같아요, 어색할 것 같아요?",
+            en: "If you showed what you wanted, do you think you'd come across as selfish, or would it just feel awkward?",
+            es: "Si mostraras lo que quieres, ¿crees que parecería egoísmo o que simplemente sería incómodo?",
+          },
+        },
+        {
+          text: {
+            ko: "거울을 볼 때 먼저 눈에 들어오는 건 마음에 드는 데예요, 고치고 싶은 데예요?",
+            en: "When you look in the mirror, what catches your eye first: something you like, or something you'd change?",
+            es: "Cuando te miras al espejo, ¿qué ves primero: algo que te gusta o algo que cambiarías?",
+          },
+        },
+      ],
+    },
+    {
+      set: 4,
+      focus: "익숙한 것만",
+      candidates: ["V3", "V6", "V8", "E6", "E9"],
+      fallbackQuestion: {
+        ko: "낯선 자리나 즉흥적인 상황이 오면 주로 어떻게 해요?",
+        en: "When you're somewhere unfamiliar or something spontaneous comes up, what do you usually do?",
+        es: "Cuando estás en un sitio desconocido o surge algo improvisado, ¿qué sueles hacer?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "삼킨 마음은 잊혀져요, 혼자 채워요, 나중에 터져요?",
+            en: "What happens to the feelings you swallow: do they fade, do you make up for them on your own, or do they burst out later?",
+            es: "Lo que te tragas, ¿se te olvida, lo compensas por tu cuenta o estalla más adelante?",
+          },
+        },
+        {
+          text: {
+            ko: "원하는 걸 편하게 말할 수 있는 사람이 있어요, 없어요?",
+            en: "Is there someone you can easily tell what you want, or not really?",
+            es: "¿Hay alguien a quien puedas decirle lo que quieres sin esfuerzo o no realmente?",
+          },
+        },
+        {
+          text: {
+            ko: "혼자 있을 때는 노래하거나 춤추듯 자유로워요, 그때도 조심스러워요?",
+            en: "When you're alone, are you free enough to sing or dance around, or still careful even then?",
+            es: "Cuando estás a solas, ¿te sueltas a cantar o bailar o incluso ahí te contienes?",
+          },
+        },
+      ],
+    },
+    {
+      set: 5,
+      focus: "나답게 자유로운 쪽",
+      candidates: ["V10", "V7", "S3", "S5"],
+      fallbackQuestion: {
+        ko: "'이럴 땐 내가 꽤 나답다' 싶은 순간이 있다면, 어떤 때예요?",
+        en: "When do you catch yourself thinking, \"This is really me\"?",
+        es: "¿En qué momentos sientes \"aquí sí soy yo\"?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "나에게 작은 허락 하나를 준다면, 뭐부터 해 보고 싶어요?",
+            en: "If you gave yourself one small permission, what would you try first?",
+            es: "Si te dieras un pequeño permiso, ¿qué te gustaría probar primero?",
+          },
+          free: true,
+        },
+      ],
+    },
+  ],
+};
+
+/** 모듈별 5세트 데이터(11개 모듈). */
 export const MODULE_CHAT_SETS: Partial<Record<PlaybookModuleId, ModuleChatSets>> = {
   module1: MODULE1_SETS,
   module2: MODULE2_SETS,
   module3: MODULE3_SETS,
   module4: MODULE4_SETS,
+  module5: MODULE5_SETS,
+  module6: MODULE6_SETS,
+  module7: MODULE7_SETS,
+  module8: MODULE8_SETS,
+  module9: MODULE9_SETS,
+  module10: MODULE10_SETS,
+  module11: MODULE11_SETS,
 };
 
 /** 세트 데이터가 없는 모듈이나 알 수 없는 id면 undefined. */

@@ -30,11 +30,17 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
     - 구조: 세트 데이터는 기존 플레이북 객체에 넣지 않고 `MODULE_CHAT_SETS`(+ `getModuleChatSets()`)로 따로 뒀다. ★ 질문은 `MODULEn.signatureQuestion`을 그대로 참조한다(검사기가 문구 일치를 확인). 세트 2는 `questions` ③④ + `alternate`(⑤), 세트 5는 ③만. 24턴 고정 문구는 `PERSPECTIVE_SHIFT_LEAD`, 세트 주제(모델용)는 `CHAT_SET_THEMES`.
     - 기본 질문(후보가 없을 때)은 초안에 문구가 없어 세트의 focus에서 새로 썼다(ko/en/es). 사용자 문구 검토 권장.
 
-- [ ] 2. 플레이북 세트 데이터: 모듈 5~11
+- [x] 2. 플레이북 세트 데이터: 모듈 5~11
   - 선행: 1
   - 변경: `lib/modulePlaybooks.ts` 모듈 5~11 세트 데이터. 모듈 7·10은 세트 5 점수 방향 "높음".
   - QA: `npx tsc --noEmit`(루트) → exit 0
   - QA: `npx tsx scripts/check-playbook-sets.mts` → 11개 모듈 전부 오류 0
+  - 결과(2026-10-02):
+    - QA: `npx tsx scripts/check-playbook-sets.mts` → 24턴 고정 문구·module1~11 전부 오류 0, "전체 오류 0", exit 0
+    - QA: `npx tsc --noEmit`(루트) → exit 0
+    - 구조는 1번과 같다(`MODULE5_SETS`~`MODULE11_SETS`를 `MODULE_CHAT_SETS`에 등록). ★ 위치: 모듈 5·6·8·11 세트 1, 모듈 9 세트 2, 모듈 7·10 세트 3. 모듈 6·9의 ★는 선택형이라 `free` 없음.
+    - 모듈 10 세트 5 후보는 H4·H2 두 개만 넣었다. 초안의 H1·I1("1세트에서 안 쓴 경우")은 세트 1 후보와 겹쳐 "한 문항은 한 세트에서만" 규칙·검사기와 충돌한다. 두 문항이 모두 낮으면 기본 질문으로 묻는다.
+    - 기본 질문(후보 없을 때)은 1번처럼 세트 focus에서 새로 썼다(ko/en/es). 사용자 문구 검토 권장.
 
 ## 챗봇 서버
 
