@@ -44,7 +44,7 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
 
 ## 챗봇 서버
 
-- [ ] 3. 세트 로직 (순수 함수)
+- [x] 3. 세트 로직 (순수 함수)
   - 선행: 1
   - 변경: 새 `lib/chatSets.ts`
     - 턴 번호 → (세트, 위치, 정리 여부, 점검 턴, 관점 전환 턴, 마무리 턴) 매핑. SPEC 1의 턴 배치 그대로.
@@ -54,6 +54,12 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
   - 변경: 새 `scripts/check-chat-sets.mts` — 위 함수들의 사례 검사(턴 1·6·10·11·16·21·24·25 매핑, 동점, 후보 전부 0~1점, 세트 5 낮은/높은 방향, 10턴 조기 종료 기록에서 세트 3~5가 "대화 없음"인지).
   - QA: `npx tsc --noEmit`(루트) → exit 0
   - QA: `npx tsx scripts/check-chat-sets.mts` → 모든 사례 통과
+  - 결과(2026-10-02):
+    - QA: `npx tsx scripts/check-chat-sets.mts` → "통과 92 · 실패 0", exit 0 (턴 매핑 17, 인용 선택 15 + 11개 모듈 전체 33, 정제 6, 세트 묶음 21)
+    - QA: `npx tsc --noEmit`(루트) → exit 0
+    - QA(검사기 자체): 인용 하한 2→1점, 11턴에 세트 2 정리 추가, ①② 경계를 ①만으로 바꾼 3개 뮤테이션 → 9건 FAIL, exit 1. 원복 후 다시 92/92.
+    - 구조: `getSetTurnRole()`(턴 → kind `set`/`checkpoint`/`perspective`/`closing`, 세트, 위치, `recapSets`, `greeting`), `sanitizeQuizAnswers()`(ID·차원 형식, 0~3점, 중복 ID 제거, 최대 40개, 질문 300자·보기 200자), `selectSetQuizAnswer()`/`selectAllSetQuizAnswers()`, `buildSetPackets()`. 상수 `TOTAL_TURNS_V2`(25)·`CHECKPOINT_TURN_V2`(10)·`PERSPECTIVE_SHIFT_TURN_V2`(24)도 여기 둔다(4번에서 `chatPrompts.ts`가 가져다 쓰면 된다).
+    - 세트 재료 묶음(`SetPacket`, extract용 snake_case): `set`, `theme`, `quiz`(id·dimension·prompt·label·score 또는 null), `opening_answers`(①②), `module_answers`(③④⑤), `has_chat`, 세트 5만 `perspective_answer`(24턴 답, `closing` 근거). 답 원문은 600자에서 자른다. k번째 봇 메시지 = k턴, 그 뒤 첫 사용자 메시지 = k턴의 답으로 매핑하므로 마무리 버튼으로 25턴을 앞당겨 요청해도 실제 대화한 턴만 들어간다. 10턴 답("조금 더" 뒤 사용자가 쓴 말)은 어느 세트에도 넣지 않는다.
 
 - [ ] 4. 챗봇 프롬프트·라우트 v2
   - 선행: 2, 3
