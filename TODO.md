@@ -81,7 +81,7 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
     - 라우트: `context.quizAnswers`를 `sanitizeQuizAnswers()`로 거른 뒤 쓰고, 마지막 턴이면 `attachSetPackets()`가 extract에 `set_packets`를 붙인다(`ChatExtract.set_packets` optional). `TIME_LIMIT_MINUTES_V2 = 30`, `isFinalTurn(turn, elapsed, flowVersion)`. 기존 `TOTAL_TURNS`/`TIME_LIMIT_MINUTES`(20/20)는 웹 `components/ChatScreen.jsx`가 쓰므로 그대로.
     - 실제 모델 응답(인용 정확도, 24턴 문구)은 5번 sim-chat에서 확인한다.
 
-- [ ] 5. sim-chat / judge-chat v2
+- [x] 5. sim-chat / judge-chat v2
   - 선행: 4
   - 변경: `scripts/sim-chat.mts` — `--flow v2`면 페르소나가 30문항 답을 갖고 25턴을 돈다(페르소나별 30문항 답은 모듈 유형에 맞게 스크립트 안에서 정한다). `--checkpoint finish`면 10턴에서 마무리. 결과 JSON에 세트 재료 묶음과 턴별 세트 위치를 남긴다.
   - 변경: `scripts/judge-chat.mts` — v2 결과면 루브릭에 세트 준수(세트 ① 인용 정확도, ③④⑤ 축 분리, 같은 장면 반복 없음), 세트 시작 정리·재확인, 24턴 고정 문구 항목을 더한다.
@@ -89,6 +89,13 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
   - QA: `npx tsx --env-file=.env.local scripts/sim-chat.mts 25 <모듈1 ko 페르소나> module1 --flow v2` → 25턴 완주, 1·6·11·16·21턴 인용 문항이 `check-chat-sets` 선택 결과와 같음, 24턴이 고정 문구로 시작, `set_packets` 5개. (OpenAI 비용 발생, 1회만)
   - QA: 같은 명령에 `--checkpoint finish` → 11턴째가 마무리, `set_packets` 세트 3~5 "대화 없음"
   - QA: `npx tsx --env-file=.env.local scripts/judge-chat.mts <위 결과 파일>` → 채점표 생성, 세트 준수 항목이 채워짐
+  - 결과(2026-10-02):
+    - QA: `npx tsc --noEmit`(루트) → exit 0. 루트 tsconfig는 `.mts`를 포함하지 않아, 스크래치 tsconfig(루트 설정 상속 + `scripts/sim-chat.mts`·`judge-chat.mts`만 include)로 따로 `tsc -p` → exit 0
+    - QA: `npx tsx --env-file=.env.local scripts/sim-chat.mts 25 attach module1 --flow v2` → 25턴 완주(턴 1~25), 세트 ① 인용 1턴 A6·6턴 A5·11턴 A15·16턴 A14·21턴 V9 = `selectAllSetQuizAnswers` 선택값과 같고 5개 모두 보기 문구가 응답에 그대로 들어감, 24턴 첫 줄 "마지막으로 묻고 싶은 게 있어요." 일치, `set_packets` 5개(모두 `has_chat: true`, 세트 5 `perspective_answer` 있음). 비용 $0.073. 파일 `scripts/out/sim_20261002T075129_attach_module1_v2.json`
+    - QA: 같은 명령 + `--checkpoint finish` → 요청 턴 1~10, 25(11번째가 마무리, 10턴 뒤 사용자 답 없음), `set_packets` 세트 1·2 `has_chat: true`, 세트 3~5 `false`(인용 문항은 남음, 원문 0개, `perspective_answer: null`). 비용 $0.023. 파일 `..._v2_finish.json`
+    - QA: `npx tsx --env-file=.env.local scripts/judge-chat.mts --label q5-v2 <위 두 파일>` → `scripts/out/q5-v2_20261002T075557.{json,md}`. 세트 준수 항목 채워짐: ① 인용 2/2, ③④⑤ 축 2/2, 장면 반복 없음 2/2, 시작 정리·재확인 1/0, 24턴 고정 문구 2/–. 세트 준수 평균 1.80 / 1.50. 공통 항목 평균 1.56 / 1.56(참고: `q1e-baseline` 1.17, `q1e-mini` 1.63 — 정식 비교는 11번). 채점 비용 $0.37.
+    - sim-chat: `--flow v2`면 페르소나별 강한 차원(`V2_HIGH_DIMS`, 2~3점)과 나머지(0~1점)로 실제 퀴즈 30문항 답을 만들고, 사용자 시뮬레이터에게 인용될 5문항을 알려 준다. 서버의 마지막 턴(v2 `isFinalTurn`)에서 멈추고 extract에 `attachSetPackets`를 붙인다. 결과 JSON에 `flowVersion`, `checkpoint`, `setQuotes`, 턴별 `seq`·`turn`·`role`(세트·위치·정리), 결정론적 `checks`(인용 일치·24턴 문구·`set_packets`)가 남는다. `--flow` 없이 돌리면 20턴 흐름 그대로.
+    - judge-chat: v2 파일이면 20턴 단계 대신 세트 구조·턴 배치·세트 ① 기대값·30문항 답을 채점자에게 주고, t6·v_extension의 턴 번호만 v2로 바꾼다. 세트 항목 `s_quote`·`s_axes`·`s_no_repeat_scene`·`s_recap`은 채점자, `s_lead`는 코드가 24턴 첫 줄로 판정. 표의 "전 항목 평균"은 공통 항목만이라 `q1e-*`와 그대로 비교되고, "세트 준수 평균" 줄이 따로 붙는다.
 
 ## 앱 대화
 
@@ -159,4 +166,15 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
 
 (작업 중 발견한 범위 밖 이슈를 여기 적는다.)
 
+- (5번 sim/judge, 프롬프트 품질 — 11번 최종 비교 전에 볼 것) `q5-v2` 채점: ① 세트 시작 정리 뒤 재확인이 빠짐(16턴, finish 대화의 6턴) — `s_recap` 1/0. ② 11턴이 "정리 없이 세트 3"이어야 하는데 "지금까지 비슷한 장면이…"로 앞머리 정리를 함. ③ "둘 다 아니면 편하게"·"~군요" 재진술 틀이 7회 이상 반복(`no_repeat` 0, 기준선과 같음). ④ 25턴 마무리에 "이 정리가 맞을까요?" 질문이 대기 안내 앞에 남음(사용자가 답할 수 없는 자리). 모두 `lib/chatPrompts.ts` v2 지시문 쪽 문제.
+  - ③④ 해결(2026-10-02, 사용자 요청): v2 전용으로 출구 문장은 세트 ③ 자리(3·8·13·18턴)에만 턴별로 다른 뜻으로 붙이고 "둘 다 아니면 편하게" 표현 금지, 재진술 앞머리 모양을 턴마다 4가지(따옴표 인용·명사 끝·질문에 녹이기·"~라고 하셨어요") 중 하나로 정하고 "~군요/~네요" 끝맺음 금지, v2 예시 대화의 재진술·출구 문장 교체, 25턴은 확인 질문 대신 "이렇게 정리가 되겠군요" 같은 평서문으로 맺기(judge v2 t6 기준도 맞춤). 20턴 흐름 프롬프트는 그대로(`dump-chat-prompt --legacy` module1·module7 × ko/en/es × 1~20턴, 수정 전 출력과 diff 0).
+    - QA: `sim-chat.mts 25 attach module1 --flow v2` 재실행(`sim_20261002T080940_…`) → "둘 다 아니면" 류 10회 → 0회(출구는 3·8·13·18턴에만 서로 다른 표현), 첫 줄 "~군요/~네요" 끝 18턴 → 3턴, 25턴 물음표 1 → 0("…이야기로 정리되겠군요."), 인용 5/5·24턴 문구·`set_packets` 5개 그대로.
+    - QA: `judge-chat.mts --label q5-v2-fix` → `no_repeat` 0 → 1, 자연스러움 1 → 2, 공통 평균 1.56 → 1.69. `s_recap`은 0(①② 미해결, 그대로 남음).
+  - ①② 해결(2026-10-02, 사용자 요청): 세트를 여는 6·16·21턴 지시에 lines 순서(정리 → 재확인·정정 허락 한 줄 필수 → 인용 → 질문)를 명시. 그래도 빠지면 `lib/chat.ts`의 `ensureRecapRecheck()`가 질문 줄 밖에 정정 허락 표현이 없을 때 턴별 언어별 한 줄을 인용 줄 앞(못 찾으면 질문 앞)에 끼운다(위기 안내 응답은 그대로). 11턴은 재진술 지시를 빼고 "정리 없이, 계속하겠다는 답은 짧은 한 구절로만 받고 바로 인용"으로 바꿈. judge v2 `s_recap`·t6 기준에 "이 턴의 재확인은 물음이 아니라 평서문 재확인·정정 허락 줄(질문은 세트 ① 하나)"을 명시(설계와 맞춤).
+    - QA: `ensureRecapRecheck` 스크래치 사례 8건(없음→인용 앞 삽입, 이미 있음, 질문 줄에만 있음, 인용 못 찾음, en, es, 위기, 다른 턴) 기대대로. `dump-chat-prompt --legacy` 120건 diff 0, 루트 tsc·스크립트 tsc exit 0, `check-chat-sets` 92/92.
+    - QA: `sim-chat.mts 25 attach module1 --flow v2` 재실행(`sim_20261002T081646_…`) → 6턴은 서버 보충 줄, 16·21턴은 모델이 직접 정정 허락 줄을 씀, 11턴 "좋아요, 이어서 조금 더 볼게요." 뒤 바로 인용. 인용 5/5·24턴 문구·`set_packets` 5개·25턴 평서문 맺음 유지. `judge-chat --label q5-v2-recap` → `s_recap` 0 → 2, 세트 준수 평균 2.00, 공통 평균 1.69. 남은 감점: t6 1(10턴 중간 점검에서 정리 뒤 재확인 없이 계속 여부만 물음).
+  - 10턴 중간 점검 해결(2026-10-02, 사용자 요청): 점검 지시의 "정정 허락 줄은 쓰지 않는다"를 없애고 lines 순서(정리 → 재확인 한 줄 필수 → 인정 한 줄 → 계속 여부 질문)를 명시. 재확인 줄이 빠지면 `ensureRecapRecheck()`가 10턴용 언어별 한 줄("제가 들은 모습과 다른 데가 있다면, 이어서 이야기하면서 고쳐 주셔도 돼요.")을 질문 앞에 끼운다(es 패턴에 `correg` 추가). 계속 여부 질문은 사용자 뜻을 묻는 중립 형태로 고정("조금 더 나눠 볼까요?"처럼 계속을 제안하는 형태 금지 — 중간 실행 `q5-v2-checkpoint`에서 '연장' 위반으로 잡힘).
+    - QA: 스크래치 사례 3건 추가(10턴 없음→질문 앞 삽입, 이미 있음, es) 기대대로. `dump-chat-prompt --legacy` 120건 diff 0, 루트 tsc exit 0, `npm run lint` 경고·오류 없음.
+    - QA: `sim-chat.mts 25 attach module1 --flow v2`(`sim_20261002T083650_…`) → 10턴 정리 → 재확인 줄(서버 보충) → "조금 더 이야기를 나누고 싶으신가요, 아니면 여기서 마무리해도 괜찮으신가요?". `judge-chat --label q5-v2-checkpoint2` → t6 2, 위반 5종 모두 2(위반 목록 비어 있음), `no_repeat`·자연스러움 2, 세트 준수 평균 2.00, 공통 평균 1.69.
+    - 참고(이번 수정과 무관한 채점 편차): 중간 실행 `q5-v2-checkpoint`(`sim_20261002T083258_…`)에서 13·22턴 한 줄 안의 "~나요? 반대로 ~나요?" 질문 2개, t7(18턴 "예민한 사람처럼 보일까 봐요" 뒤 리프레이밍 없음), t5 0이 잡혔다. 질문 2개는 `enforceOneQuestionPerReply`가 줄 단위라 한 줄 안의 물음표 둘을 못 거르는 문제 — 11번 최종 비교에서 다시 볼 것.
 - (6번) 앱 홈 무료 안내 문구 `freeNote`가 "무료 20분 리딩"(ko) / "Free 20-minute reading"(en) / "Lectura gratis de 20 minutos"(es) — 새 흐름은 30분. `mobile/lib/i18n/{ko,en,es}.ts` 42·66행 부근. 13번 OTA 전에 고칠지 결정 필요.
