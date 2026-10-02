@@ -197,10 +197,14 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
     - QA: 루트 `npx tsc --noEmit` exit 0, `npm run lint` 경고·오류 없음, `npm run build` exit 0, mobile tsc exit 0.
     - 비용: 시뮬레이션 약 $0.35 + 채점 약 $0.93.
 
-- [ ] 12. 문서
+- [x] 12. 문서
   - 선행: 11
   - 변경: `PRODUCT.md`의 "20-turn" 표기 2곳을 25턴으로. `/wiki`로 `WIKI.md` 챗봇(AI 상담 행, 검증 도구)·리포트(카드, 30문항) 흐름 갱신.
   - QA: `grep -n "20-turn" PRODUCT.md` → 결과 없음
+  - 결과(2026-10-03):
+    - 변경: `PRODUCT.md` 33행(25턴 5세트 + 검사 × 대화 카드), 43행(25턴, 10턴 점검에서 일찍 마무리 가능).
+    - 변경: `WIKI.md` — AI 상담 행 라벨을 "앱: 5세트 25턴, 웹·구버전 앱: 20턴"으로, 행 앞머리에 두 흐름 구분 한 줄, "개편 진행 중" → "구현, 지금 앱의 기본". 리포트에 PDF 카드 규칙 한 단락. 검증 도구에 v2 최종 비교(`q11-final*`, 비교표는 11번) 포인터, 옛 "TODO 15번"을 `TODO_2026-09-23.md` 15번으로. 저장소 지도 `scripts/` 목록에 `judge-chat`·`dump-chat-prompt`·`check-*` 추가.
+    - QA: `grep -n "20-turn" PRODUCT.md` → 결과 없음(exit 1). `grep -n "개편 진행 중\|TODO 15번" WIKI.md` → 결과 없음(exit 1).
 
 ## 사용자 실행 (마지막)
 
