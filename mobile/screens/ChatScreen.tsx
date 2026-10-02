@@ -28,8 +28,11 @@ import { COLORS } from "../theme/colors";
 // (web's server-side prompt builder) — that file isn't ported here since prompt building
 // stays server-side; these are the only pieces the client needs, for the countdown display
 // and for knowing which turn to show the continue/wrap-up choice after.
-const TOTAL_TURNS = 20;
-const TIME_LIMIT_MINUTES = 20;
+// 2026-10-02: the app always sends flowVersion 2 (5 sets × 5 turns), so these mirror
+// TOTAL_TURNS_V2 / TIME_LIMIT_MINUTES_V2, not the 20/20 the web chat still uses.
+const FLOW_VERSION = 2;
+const TOTAL_TURNS = 25;
+const TIME_LIMIT_MINUTES = 30;
 const CHECKPOINT_TURN = 10;
 const EARLY_FINISH_SECONDS = 7 * 60;
 
@@ -38,7 +41,7 @@ type HistoryEntry = { role: "user" | "assistant"; content: string };
 
 export type ChatExtract = Record<string, unknown>;
 
-// Ported from components/ChatScreen.jsx (messenger style, 20-turn counseling chat after
+// Ported from components/ChatScreen.jsx (messenger style, 25-turn counseling chat after
 // a quiz module). The opener (turn 1) fires automatically on mount, same as web.
 export default function ChatScreen({
   nickname,
@@ -127,6 +130,16 @@ export default function ChatScreen({
         .filter((a) => a.qId !== headlineAnswerRaw?.qId)
         .slice(0, 4)
         .map((a) => ({ prompt: a.prompt, label: a.label }));
+      // flowVersion 2: all 30 answers in the user's locale. The server picks each set's ① quote
+      // from these (lib/chatSets.ts) and sanitizes them; quizAnswer/quizAnswerPool above stay
+      // for its 20-turn fallback.
+      const quizAnswers = quizDiagnosis.answers.map((a) => ({
+        qId: a.qId,
+        dimension: a.dimension,
+        prompt: a.prompt,
+        label: a.label,
+        score: a.score,
+      }));
 
       try {
         const res = await fetch(`${API_BASE_URL}/api/chat`, {
@@ -145,6 +158,8 @@ export default function ChatScreen({
               quizAnswerPool,
               moduleId: quizDiagnosis.moduleId,
               locale,
+              flowVersion: FLOW_VERSION,
+              quizAnswers,
             },
             history: apiHistory,
             sessionId,

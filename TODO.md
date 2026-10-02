@@ -92,11 +92,15 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
 
 ## 앱 대화
 
-- [ ] 6. ChatScreen v2
+- [x] 6. ChatScreen v2
   - 선행: 4
   - 변경: `mobile/screens/ChatScreen.tsx` — 대화 요청 `context`에 `flowVersion: 2`와 30문항 답(문항 ID, 차원, 질문, 고른 보기, 점수, 사용자 언어 문구)을 보낸다. `TOTAL_TURNS` 25, `TIME_LIMIT_MINUTES` 30(서버 상수와 맞춘다는 기존 주석 유지). 중간 점검·조기 종료 로직은 그대로.
   - QA: `cd mobile && ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit` → exit 0
   - (사용자 확인) 앱은 항상 프로덕션 API를 부르므로 실제 25턴 대화는 웹 배포 후 13번에서 확인한다.
+  - 결과(2026-10-02):
+    - 변경: `FLOW_VERSION = 2`, `TOTAL_TURNS` 25, `TIME_LIMIT_MINUTES` 30(서버 `TOTAL_TURNS_V2`·`TIME_LIMIT_MINUTES_V2`와 맞춤, 주석 유지). `context`에 `flowVersion`과 `quizAnswers`(QuizScreen이 기록한 30문항 `{qId, dimension, prompt, label, score}`, 사용자 언어 문구 그대로)를 더함. 기존 `quizAnswer`·`quizAnswerPool`은 서버의 20턴 폴백용으로 남김. 중간 점검(10턴)·7분 조기 종료·마무리 버튼은 손대지 않음(모두 `TOTAL_TURNS`로 점프하므로 25턴 마무리로 감).
+    - QA: `cd mobile && ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit` → exit 0
+    - QA(보완): 스크래치 스크립트로 11개 모듈 × ko/en/es의 실제 문항(`getLocalizedQuestions`)으로 앱과 같은 모양의 30문항을 만들어 JSON 왕복 후 서버 `sanitizeQuizAnswers` → 33건 모두 30/30 통과, 질문·보기 문구 잘림 없음, `selectAllSetQuizAnswers`가 세트별 인용 문항을 고름(`npx tsx <scratchpad>/check-payload.mts` → `ALL OK`).
 
 ## 리포트
 
@@ -154,3 +158,5 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
 ## 발견 사항
 
 (작업 중 발견한 범위 밖 이슈를 여기 적는다.)
+
+- (6번) 앱 홈 무료 안내 문구 `freeNote`가 "무료 20분 리딩"(ko) / "Free 20-minute reading"(en) / "Lectura gratis de 20 minutos"(es) — 새 흐름은 30분. `mobile/lib/i18n/{ko,en,es}.ts` 42·66행 부근. 13번 OTA 전에 고칠지 결정 필요.
