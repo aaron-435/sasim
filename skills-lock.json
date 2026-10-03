@@ -55,6 +55,12 @@
       "skillPath": "skills/react-navigation/SKILL.md",
       "computedHash": "f09111c137b0bac6e43ff5ff57297afc93ae51583797acf779733ace4d1ced60"
     },
+    "redesign-existing-projects": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/redesign-skill/SKILL.md",
+      "computedHash": "b405eee0e0e80fc243f731d9aa368bca307e356db7e6157d27101d369dac6726"
+    },
     "upgrading-react-native": {
       "source": "callstackincubator/agent-skills",
       "sourceType": "github",

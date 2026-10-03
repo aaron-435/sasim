@@ -4,13 +4,14 @@ Product truth (users, positioning, principles, brand commitments) lives in `PROD
 
 ## Design skills
 
-Three design skills are installed in `.claude/skills/`. Which one applies depends on the surface:
+Four design skills are installed in `.claude/skills/`. Which one applies depends on the surface:
 
 | Skill | Use for | Notes |
 |---|---|---|
 | `impeccable` | All app UI work: critique, audit, polish, layout, typeset, animate, harden, onboard | Platform is `adaptive`, so its iOS + Android references apply. Native commands have `.native.md` variants (audit, adapt). |
 | `emil-design-eng` | Motion, press feedback, gestures, component feel | Examples are CSS/web. Translate them to RN `Animated` (`useNativeDriver: true`, transform/opacity only) instead of copying CSS. |
 | `design-taste-frontend` | The web landing surface (`app/`, `components/`) only | The skill says it is for landing pages, not multi-step product UI. Don't apply it to `mobile/` screens. |
+| `redesign-existing-projects` | Audit pass on an existing screen to spot generic/AI-looking patterns before `impeccable` fixes them | CSS/web examples; translate to RN styles. Palette and fonts stay fixed (see below). |
 
 ### Taste dials for the web landing
 
@@ -23,7 +24,7 @@ Set conversationally here instead of editing the skill file (it says overrides h
 ### Fixed constraints any skill must respect
 
 - Palette: Celadon & Hanji (`mobile/theme/colors.ts`). Don't propose Obsidian & Gold or a new palette unless the user asks for a rebrand.
-- Fonts: Cormorant Garamond for display moments, Manrope for UI text.
+- Fonts: being re-selected (user decision 2026-10-03, `SPEC.md` item 7). Until the user picks new fonts there, keep Cormorant Garamond for display moments and Manrope for UI text, and reference fonts through shared tokens rather than hard-coded family names.
 - Pressure rule (decided 2026-09-19, the "middle path"): mild tension and curiosity are allowed — name what's coming and lock the why/what-to-do ("today asks you to pace yourself — why and what to do open with Pro"), and strong metaphors ("a headwind") are fine inside subscriber content. Still off-limits: fake countdowns or scarcity, "unlucky day" red alerts, health/death/accident/disaster predictions, flat negative predictions ("you will lose money"), and a negative prediction placed directly above a paywall as the hook. Reasons: store/consumer-protection rules for a subscription product, and vulnerable users. See `PRODUCT.md` principles.
 - Any new motion honors reduced motion (`AccessibilityInfo.isReduceMotionEnabled()` on native).
 - UI changes must stay OTA-shippable unless the user approves a native build: no new native dependencies without asking.
