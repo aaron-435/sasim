@@ -8,7 +8,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
-import { FONTS } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 type CityResult = { id: string; cityDisplay: string; countryDisplay: string };
 
@@ -123,10 +123,12 @@ export default function CityScreen({
   return (
     <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.city} onBack={onBack}>
       <View style={styles.top}>
-        <Text style={styles.heading}>{strings.city.heading}</Text>
+        <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.city.heading}</Text>
         <TextInput
           style={styles.input}
           placeholder={strings.city.placeholder}
+          accessibilityLabel={strings.city.heading}
+          maxFontSizeMultiplier={MAX_FONT_SCALE.control}
           placeholderTextColor={COLORS.placeholder}
           value={query}
           onChangeText={setQuery}
@@ -140,19 +142,25 @@ export default function CityScreen({
           // from the underlying city-timezones dataset (see lib/worldCities.ts), so
           // pointing people to a same-timezone major city is a real, correct fallback,
           // not just a UX band-aid.
-          <Text style={styles.noResultsHint}>{strings.city.noResultsHint}</Text>
+          <Text style={styles.noResultsHint} accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.city.noResultsHint}</Text>
         )}
         {results.length > 0 && (
           <View style={styles.resultsBox}>
             {results.map((r) => (
-              <Pressable key={r.id} style={styles.resultRow} onPress={() => handlePick(r)}>
-                <Text style={styles.resultCity}>{r.cityDisplay}</Text>
-                <Text style={styles.resultCountry}>{r.countryDisplay}</Text>
+              <Pressable
+                key={r.id}
+                style={styles.resultRow}
+                onPress={() => handlePick(r)}
+                accessibilityRole="button"
+                accessibilityLabel={`${r.cityDisplay}, ${r.countryDisplay}`}
+              >
+                <Text style={styles.resultCity} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{r.cityDisplay}</Text>
+                <Text style={styles.resultCountry} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{r.countryDisplay}</Text>
               </Pressable>
             ))}
           </View>
         )}
-        {error && <Text style={styles.error}>{error}</Text>}
+        {error && <Text style={styles.error} accessibilityRole="alert" accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{error}</Text>}
       </View>
 
       <View style={styles.middle}>

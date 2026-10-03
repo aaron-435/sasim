@@ -5,7 +5,7 @@ import OnboardingShell from "../components/OnboardingShell";
 import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
-import { FONTS } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 export default function GenderScreen({
   isFemale,
@@ -22,19 +22,29 @@ export default function GenderScreen({
   return (
     <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.gender} onBack={onBack}>
       <View style={styles.top}>
-        <Text style={styles.heading}>{strings.gender.heading}</Text>
-        <View style={styles.row}>
+        <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.gender.heading}</Text>
+        <View style={styles.row} accessibilityRole="radiogroup" accessibilityLabel={strings.gender.heading}>
           <Pressable
             style={[styles.option, isFemale === false && styles.optionActive]}
             onPress={() => onChange(false)}
+            accessibilityRole="radio"
+            accessibilityLabel={strings.gender.male}
+            accessibilityState={{ selected: isFemale === false, checked: isFemale === false }}
+            aria-selected={isFemale === false}
+            aria-checked={isFemale === false}
           >
-            <Text style={[styles.optionLabel, isFemale === false && styles.optionLabelActive]}>{strings.gender.male}</Text>
+            <Text style={[styles.optionLabel, isFemale === false && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.gender.male}</Text>
           </Pressable>
           <Pressable
             style={[styles.option, isFemale === true && styles.optionActive]}
             onPress={() => onChange(true)}
+            accessibilityRole="radio"
+            accessibilityLabel={strings.gender.female}
+            accessibilityState={{ selected: isFemale === true, checked: isFemale === true }}
+            aria-selected={isFemale === true}
+            aria-checked={isFemale === true}
           >
-            <Text style={[styles.optionLabel, isFemale === true && styles.optionLabelActive]}>{strings.gender.female}</Text>
+            <Text style={[styles.optionLabel, isFemale === true && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.gender.female}</Text>
           </Pressable>
         </View>
       </View>

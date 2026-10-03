@@ -9,7 +9,7 @@ import { dobFieldOrder, dobSeparator } from "../lib/dobOrder";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { getZodiac, toISODateString } from "../lib/zodiac";
-import { FONTS } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 export default function DobScreen({
   year,
@@ -40,6 +40,7 @@ export default function DobScreen({
   const values = { year, month, day };
   const setters = { year: onChangeYear, month: onChangeMonth, day: onChangeDay };
   const maxLens = { year: 4, month: 2, day: 2 };
+  const labels = { year: strings.dob.yearLabel, month: strings.dob.monthLabel, day: strings.dob.dayLabel };
   const placeholders = { year: strings.dob.yearPlaceholder, month: strings.dob.monthPlaceholder, day: strings.dob.dayPlaceholder };
 
   const iso = toISODateString(year, month, day);
@@ -55,15 +56,17 @@ export default function DobScreen({
   return (
     <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.dob} onBack={onBack}>
       <View style={styles.top}>
-        <Text style={styles.heading}>{strings.dob.heading}</Text>
+        <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.dob.heading}</Text>
         <View style={styles.row}>
           {order.map((field, i) => (
             <Fragment key={field}>
-              {i > 0 && <Text style={styles.dot}>{dobSeparator(locale)}</Text>}
+              {i > 0 && <Text style={styles.dot} importantForAccessibility="no" accessibilityElementsHidden maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{dobSeparator(locale)}</Text>}
               <TextInput
                 ref={refs[field]}
                 style={[styles.input, field === "year" ? styles.yearInput : styles.shortInput]}
                 placeholder={placeholders[field]}
+                accessibilityLabel={labels[field]}
+                maxFontSizeMultiplier={MAX_FONT_SCALE.control}
                 placeholderTextColor={COLORS.placeholder}
                 value={values[field]}
                 onChangeText={(v) => {
@@ -81,13 +84,13 @@ export default function DobScreen({
         </View>
 
         {zodiac && (
-          <View style={styles.zodiacCard}>
-            <Text style={styles.zodiacSymbol}>{zodiac.symbol}</Text>
-            <Text style={styles.zodiacLabel}>{strings.common.zodiacLabels[zodiac.nameKey]}</Text>
+          <View style={styles.zodiacCard} accessible accessibilityLabel={strings.common.zodiacLabels[zodiac.nameKey]}>
+            <Text style={styles.zodiacSymbol} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{zodiac.symbol}</Text>
+            <Text style={styles.zodiacLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.common.zodiacLabels[zodiac.nameKey]}</Text>
           </View>
         )}
 
-        {isTooYoung && <Text style={styles.ageWarning}>{strings.dob.ageWarning(MIN_AGE)}</Text>}
+        {isTooYoung && <Text style={styles.ageWarning} accessibilityLiveRegion="polite" accessibilityRole="alert" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.dob.ageWarning(MIN_AGE)}</Text>}
       </View>
 
       <View style={styles.middle}>

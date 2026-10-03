@@ -23,10 +23,13 @@
   - QA: mobile tsc(큰 스택) → exit 0. `grep -rn "dailyInsight\|getDailyInsight" mobile --include=*.ts --include=*.tsx --exclude-dir=node_modules` → 결과 없음(exit 1), `lib/i18n/dailyInsight.ts`와 ko/en/es `dailyInsight` 문장 묶음 삭제. mobile-web 미리보기(mobile 프리셋): `?qa=free&persona=mia` 홈 히어로 "Your own rhythm" + 판단 없는 한 줄 + "Read today's overview" → 운세 무료 총론 제목도 "Your own rhythm"(수정 전엔 홈 "새로 시작하기 좋은 날" 대 총론 "방향을 바꾸지 말 것"으로 반대). ko·es 문구 화면 확인. `?qa=all&persona=jordan` 운세 열기 → 뒤로 → 히어로 "Today's fortune · A hand to catch you · See today in full"(열린 상태).
   - 메모: 앱 안 흐름은 Home이 단계 전환마다 다시 마운트되며 열람 기록을 새로 읽으므로 원래부터 정상이었다(포커스 재읽기 코드 불필요). 진단의 "기다리고 있어요"는 QA 모드가 페이지를 새로 불러올 때마다 열람 기록을 지우는 탓으로 보임(아래 발견 사항).
 
-- [ ] 2. 온보딩 접근성 + 동작 줄이기 + 배경 기본값
+- [x] 2. 온보딩 접근성 + 동작 줄이기 + 배경 기본값
   - 변경: `components/OnboardingShell.tsx`(뒤로 버튼 라벨), `components/AuraNextButton.tsx`, `screens/{Language,Intro,Nickname,Gender,Dob,Tob,City,Concern,VerifyCode}Screen.tsx`(역할·라벨·선택 상태), `components/GoldAura.tsx`·`screens/IntroScreen.tsx`(`isReduceMotionEnabled`면 반복·진입 애니메이션 끔), `components/PatternBackground.tsx`(`backgroundColor: COLORS.background`). 대상 화면 Text에 `maxFontSizeMultiplier` 상한.
   - QA: mobile tsc exit 0. 대상 파일마다 `grep -c "accessibilityRole"` 수 ≥ 그 파일의 Pressable 수(표로 기록). `grep -n "isReduceMotionEnabled" mobile/components/GoldAura.tsx mobile/screens/IntroScreen.tsx` → 각 1건 이상.
   - (사용자 확인) iOS 실기기 VoiceOver로 언어→관심사까지 진행, 설정 > 손쉬운 사용 > 동작 줄이기 켜고 인트로·후광이 멈추는지.
+  - QA: mobile tsc(큰 스택) → exit 0. Pressable 수/accessibilityRole 수: OnboardingShell 1/2, AuraNextButton 1/1, Language 1/2, Intro 0/3, Nickname 0/1, Gender 2/4, Dob 0/2, Tob 3/4, City 1/3, Concern 2/4, VerifyCode 1/3(모든 파일 역할 수 ≥ Pressable 수). `grep -c isReduceMotionEnabled` → GoldAura 1, IntroScreen 1. mobile-web 미리보기(mobile 프리셋, en)에서 DOM 확인: 언어 버튼 3개 라벨, 인트로 "Get started"·약관 링크 role=link, 뒤로 "Back", 진행 막대 progressbar 1~6/6, 성별·오전/오후 radio + aria-checked/selected가 선택에 따라 바뀜, "모름" checkbox 켜면 시·분·오전/오후 aria-disabled, "다음"이 입력 전 aria-disabled=true → 입력 후 해제, 도시 결과 "Seoul, South Korea" 버튼. 콘솔 오류 없음. 화면 모양은 수정 전과 같음(태어난 시간 스크린샷).
+  - 메모: 관심사(Concern) 화면은 도시 제출(`/api/saju`, 운영 DB 기록) 뒤라 웹에서 열지 않았고 코드·tsc로만 확인. 글자 크기 상한은 `theme/fonts.ts`의 `MAX_FONT_SCALE`(display 1.3 / control 1.4 / body 1.6). react-native-web 0.21은 `accessibilityState`를 DOM에 옮기지 않아 기존 화면처럼 `aria-*`를 함께 달았고, "다음" 버튼은 `disabled` prop으로 비활성 상태를 알린다(손으로 단 aria-disabled는 Pressable이 덮어씀).
+  - [ ] (사용자 확인, 위 절차) 동작 줄이기·VoiceOver·글자 크기는 네이티브에서만 확인된다. 글자 크기는 설정 > 손쉬운 사용 > 디스플레이 및 텍스트 크기 > 더 큰 텍스트를 최대로 두고 온보딩 각 화면이 겹치지 않는지.
 
 - [ ] 3. 퀴즈·Q&A 접근성 + 슬라이더 무응답 진행 막기
   - 변경: `screens/QuizScreen.tsx`(슬라이더 accessibilityValue·라벨, 건드리기 전 "다음" 비활성 대신 안내 한 줄과 함께 진행 막기), `screens/{QA,QASubcategory,QAQuestion}Screen.tsx` 역할·라벨.

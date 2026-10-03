@@ -45,6 +45,7 @@ export const en: typeof ko = {
     ageNoticeSuffix: "",
     termsLinkLabel: "Terms of Service",
     privacyLinkLabel: "Privacy Policy",
+    startLabel: "Get started",
   },
 
   verifyCode: {
@@ -55,6 +56,7 @@ export const en: typeof ko = {
     skipLabel: "No code, start fresh",
     errorDefault: "This code is invalid or has already been used.",
     errorNetwork: "A network error kept us from checking your code.",
+    inputLabel: "6-digit verification code",
   },
 
   nickname: {
@@ -75,6 +77,9 @@ export const en: typeof ko = {
     monthPlaceholder: "MM",
     dayPlaceholder: "DD",
     ageWarning: (minAge: number) => `Sorry, you must be ${minAge} or older to use this app.`,
+    yearLabel: "Birth year",
+    monthLabel: "Birth month",
+    dayLabel: "Birth day",
   },
 
   tob: {
@@ -84,6 +89,9 @@ export const en: typeof ko = {
     minutePlaceholder: "MM",
     periodAM: "AM",
     periodPM: "PM",
+    unknownTimeA11y: "I don't know my birth time",
+    hourLabel: "Hour",
+    minuteLabel: "Minute",
   },
 
   city: {

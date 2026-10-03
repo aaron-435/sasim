@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Animated, Easing, StyleSheet, View } from "react-native";
+import { AccessibilityInfo, Animated, Easing, StyleSheet, View } from "react-native";
 
 // The slow-breathing gold rings used to fill otherwise-empty space behind a focal
 // element (the intro screen's CTA, and now reused behind every onboarding step). Sized
@@ -9,14 +9,36 @@ export default function GoldAura({ size = 260, children }: { size?: number; chil
   const pulse = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    // The breathing loop never ends, so it follows Reduce Motion live: the rings sit
+    // still at rest while the setting is on and resume if it's turned off.
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, { toValue: 1, duration: 2600, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
         Animated.timing(pulse, { toValue: 0, duration: 2600, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
       ])
     );
-    loop.start();
-    return () => loop.stop();
+    let cancelled = false;
+    let running = false;
+    const apply = (reduceMotion: boolean) => {
+      if (cancelled || running === !reduceMotion) return;
+      running = !reduceMotion;
+      if (reduceMotion) {
+        loop.stop();
+        pulse.setValue(0);
+      } else {
+        // A stopped loop stays finished until reset (Animated's loop keeps an
+        // isFinished flag), so reset before every (re)start.
+        loop.reset();
+        loop.start();
+      }
+    };
+    AccessibilityInfo.isReduceMotionEnabled().catch(() => false).then(apply);
+    const sub = AccessibilityInfo.addEventListener("reduceMotionChanged", apply);
+    return () => {
+      cancelled = true;
+      sub.remove();
+      loop.stop();
+    };
   }, [pulse]);
 
   const outerScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.12] });

@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "../components/PatternBackground";
 import { LOCALES, LOCALE_LABELS, useLocale, type Locale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
-import { FONTS } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 // The very first screen, before IntroScreen — picked manually here rather than
 // auto-detected from the device locale (explicit user choice per product decision).
@@ -25,17 +25,24 @@ export default function LanguageScreen({ onNext }: { onNext: () => void }) {
         <View style={styles.content}>
           <View style={styles.brandRow}>
             <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.brandLabel}>FATESAID</Text>
+            <Text style={styles.brandLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>FATESAID</Text>
           </View>
           {/* No dictionary lookup here on purpose — the user hasn't picked a locale
               yet, so this heading is shown in all three languages at once rather than
               guessing one. */}
-          <Text style={styles.heading}>언어를 선택하세요 · Choose your language · Elige tu idioma</Text>
+          <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>언어를 선택하세요 · Choose your language · Elige tu idioma</Text>
 
           <View style={styles.optionList}>
             {LOCALES.map((locale) => (
-              <Pressable key={locale} style={styles.option} onPress={() => handlePick(locale)}>
-                <Text style={styles.optionLabel}>{LOCALE_LABELS[locale]}</Text>
+              <Pressable
+                key={locale}
+                style={styles.option}
+                onPress={() => handlePick(locale)}
+                accessibilityRole="button"
+                accessibilityLabel={LOCALE_LABELS[locale]}
+                accessibilityLanguage={locale}
+              >
+                <Text style={styles.optionLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{LOCALE_LABELS[locale]}</Text>
               </Pressable>
             ))}
           </View>

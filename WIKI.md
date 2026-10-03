@@ -19,7 +19,7 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 | `components/` | 웹 UI(JSX). Landing, OnboardingWizard, QAChat 등. AppFlow에 모듈 선택·퀴즈·챗·리포트 화면 코드도 남아 있다(웹에서 실제로 노출되는 범위는 `(미확인)`, 메모리상 웹은 Q&A 전용 광고 표면) |
 | `lib/` | 서버/공용 로직. 사주 엔진, 프롬프트, LLM 호출, 결제 검증, i18n, 콘텐츠 |
 | `middleware.ts` | `/api/*`에 CORS 허용 헤더. 인증 없는 공개 API + `lib/rateLimit.ts` |
-| `mobile/` | Expo SDK 57 / React Native 0.86 앱. 별도 `package.json`. `screens/`, `lib/`, `components/`, `theme/`. `theme/colors.ts`(팔레트)와 `theme/fonts.ts`(글꼴 토큰 `FONTS.display/regular/medium/semibold/bold`) — 화면은 글꼴 이름을 직접 쓰지 않고 토큰만 참조, 실제 로딩은 `App.tsx`의 `useFonts` |
+| `mobile/` | Expo SDK 57 / React Native 0.86 앱. 별도 `package.json`. `screens/`, `lib/`, `components/`, `theme/`. `theme/colors.ts`(팔레트)와 `theme/fonts.ts`(글꼴 토큰 `FONTS.display/regular/medium/semibold/bold`) — 화면은 글꼴 이름을 직접 쓰지 않고 토큰만 참조, 실제 로딩은 `App.tsx`의 `useFonts`. 같은 파일의 `MAX_FONT_SCALE`(display/control/body)이 시스템 글자 크기 상한(`maxFontSizeMultiplier`)이며 온보딩 화면부터 적용 |
 | `supabase/schema.sql` | 테이블: `sessions`, `saju_results`, `quiz_results`, `chat_sessions`, `report_results`, `llm_usage_log`. 일부는 배포 DB에 SQL Editor로 직접 실행해야 했다(파일 주석 참고) |
 | `scripts/` | 개발용 스크립트: `validate-manseryeok`, `sim-chat`, `judge-chat`, `dump-chat-prompt`, `check-chat-sets`, `check-playbook-sets`, `usage-report`, `gen-qa-fixtures`, `gen-reconciled` (용도는 5장) |
 

@@ -69,6 +69,7 @@ export const ko = {
     ageNoticeSuffix: "에 동의합니다",
     termsLinkLabel: "이용약관",
     privacyLinkLabel: "개인정보처리방침",
+    startLabel: "시작하기",
   },
 
   verifyCode: {
@@ -78,6 +79,7 @@ export const ko = {
     skipLabel: "코드가 없어요, 새로 시작할게요",
     errorDefault: "유효하지 않거나 이미 사용된 코드입니다.",
     errorNetwork: "네트워크 오류로 코드를 확인하지 못했습니다.",
+    inputLabel: "6자리 인증코드",
   },
 
   nickname: {
@@ -98,6 +100,9 @@ export const ko = {
     monthPlaceholder: "MM",
     dayPlaceholder: "DD",
     ageWarning: (minAge: number) => `죄송하지만 만 ${minAge}세 이상만 이용할 수 있어요.`,
+    yearLabel: "태어난 해",
+    monthLabel: "태어난 달",
+    dayLabel: "태어난 날",
   },
 
   tob: {
@@ -107,6 +112,9 @@ export const ko = {
     minutePlaceholder: "분",
     periodAM: "오전",
     periodPM: "오후",
+    unknownTimeA11y: "태어난 시간을 몰라요",
+    hourLabel: "시",
+    minuteLabel: "분",
   },
 
   city: {

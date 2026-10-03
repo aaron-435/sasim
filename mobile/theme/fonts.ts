@@ -10,3 +10,12 @@ export const FONTS = {
   semibold: "Manrope_600SemiBold",
   bold: "Manrope_700Bold",
 } as const;
+
+// Caps for `maxFontSizeMultiplier` so text follows the system text size without
+// breaking fixed layouts (SPEC 2026-10-03 item 2). Large display headings grow less;
+// labels inside side-by-side controls (gender, AM/PM, inputs) sit in between.
+export const MAX_FONT_SCALE = {
+  display: 1.3,
+  control: 1.4,
+  body: 1.6,
+} as const;

@@ -1,6 +1,6 @@
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useEffect, useRef } from "react";
-import { Animated, Easing, Linking, StyleSheet, View } from "react-native";
+import { AccessibilityInfo, Animated, Easing, Linking, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AuraNextButton from "../components/AuraNextButton";
@@ -8,7 +8,7 @@ import PatternBackground from "../components/PatternBackground";
 import { API_BASE_URL } from "../config";
 import { useStrings, useLocale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
-import { FONTS } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 export default function IntroScreen({ onNext }: { onNext: () => void }) {
   const strings = useStrings();
@@ -22,10 +22,24 @@ export default function IntroScreen({ onNext }: { onNext: () => void }) {
   const ctaAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.stagger(180, [
-      Animated.timing(contentAnim, { toValue: 1, duration: 550, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-      Animated.timing(ctaAnim, { toValue: 1, duration: 450, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-    ]).start();
+    let cancelled = false;
+    AccessibilityInfo.isReduceMotionEnabled()
+      .catch(() => false)
+      .then((reduceMotion) => {
+        if (cancelled) return;
+        if (reduceMotion) {
+          contentAnim.setValue(1);
+          ctaAnim.setValue(1);
+          return;
+        }
+        Animated.stagger(180, [
+          Animated.timing(contentAnim, { toValue: 1, duration: 550, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+          Animated.timing(ctaAnim, { toValue: 1, duration: 450, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+        ]).start();
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [contentAnim, ctaAnim]);
 
   const contentStyle = {
@@ -43,14 +57,14 @@ export default function IntroScreen({ onNext }: { onNext: () => void }) {
         <Animated.View style={[styles.content, contentStyle]}>
           <View style={styles.brandRow}>
             <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.brandLabel}>FATESAID</Text>
+            <Text style={styles.brandLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>FATESAID</Text>
           </View>
-          <Text style={styles.headline}>
+          <Text style={styles.headline} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>
             {strings.intro.headlineLine1}
             {"\n"}
             {strings.intro.headlineLine2}
           </Text>
-          <Text style={styles.subheadline}>{strings.intro.subheadline}</Text>
+          <Text style={styles.subheadline} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.intro.subheadline}</Text>
         </Animated.View>
 
         {/* Absolutely centered on the FULL screen, independent of how much space the
@@ -60,21 +74,21 @@ export default function IntroScreen({ onNext }: { onNext: () => void }) {
             broke the button's touches under react-native-web. */}
         <View style={styles.centerLayer}>
           <Animated.View style={ctaStyle}>
-            <AuraNextButton onPress={onNext} size={260} />
+            <AuraNextButton onPress={onNext} size={260} accessibilityLabel={strings.intro.startLabel} />
           </Animated.View>
         </View>
 
         <View style={{ flex: 1 }} />
 
-        <Text style={styles.footer}>
+        <Text style={styles.footer} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>
           {strings.intro.freeNote}
           {"\n"}
           {strings.intro.ageNoticePrefix}{" "}
-          <Text style={styles.footerLink} onPress={() => Linking.openURL(termsUrl)}>
+          <Text style={styles.footerLink} accessibilityRole="link" onPress={() => Linking.openURL(termsUrl)}>
             {strings.intro.termsLinkLabel}
           </Text>{" "}
           {strings.intro.ageNoticeAnd}{" "}
-          <Text style={styles.footerLink} onPress={() => Linking.openURL(privacyUrl)}>
+          <Text style={styles.footerLink} accessibilityRole="link" onPress={() => Linking.openURL(privacyUrl)}>
             {strings.intro.privacyLinkLabel}
           </Text>
           {strings.intro.ageNoticeSuffix}

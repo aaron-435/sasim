@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Image, StyleSheet, View } from "react-native";
+import { COLORS } from "../theme/colors";
 
 // The celadon-jade taegeuk/wave motif baked at ~4.5% opacity onto the jade-charcoal
 // background color itself (mobile/assets/patterns/onboarding-bg.png) — one flat image
@@ -35,6 +36,9 @@ export default function PatternBackground({ children }: { children: ReactNode })
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    // Shows the palette background (not white) while the pattern image is still
+    // decoding or if it fails to load.
+    backgroundColor: COLORS.background,
   },
   fillSize: {
     width: "100%",

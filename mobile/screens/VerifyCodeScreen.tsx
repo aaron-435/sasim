@@ -6,7 +6,7 @@ import OnboardingShell from "../components/OnboardingShell";
 import { API_BASE_URL } from "../config";
 import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
-import { FONTS } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 const CODE_LENGTH = 6;
 
@@ -58,11 +58,13 @@ export default function VerifyCodeScreen({
   return (
     <OnboardingShell onBack={onBack}>
       <View style={styles.top}>
-        <Text style={styles.heading}>{strings.verifyCode.heading}</Text>
-        <Text style={styles.subtext}>{strings.verifyCode.subtext}</Text>
+        <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.verifyCode.heading}</Text>
+        <Text style={styles.subtext} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.verifyCode.subtext}</Text>
         <TextInput
           style={styles.input}
           placeholder={strings.verifyCode.placeholder}
+          accessibilityLabel={strings.verifyCode.inputLabel}
+          maxFontSizeMultiplier={MAX_FONT_SCALE.control}
           placeholderTextColor={COLORS.placeholder}
           value={code}
           onChangeText={(v) => setCode(v.replace(/[^0-9]/g, "").slice(0, CODE_LENGTH))}
@@ -70,7 +72,7 @@ export default function VerifyCodeScreen({
           maxLength={CODE_LENGTH}
           autoFocus
         />
-        {error && <Text style={styles.error}>{error}</Text>}
+        {error && <Text style={styles.error} accessibilityRole="alert" accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{error}</Text>}
       </View>
 
       {/* Skip sits right under the button, inside the same centered group, rather than
@@ -82,8 +84,14 @@ export default function VerifyCodeScreen({
         ) : (
           <AuraNextButton disabled={!canSubmit} onPress={handleVerify} size={190} />
         )}
-        <Pressable onPress={onSkip} hitSlop={12} style={styles.skipButton}>
-          <Text style={styles.skipLabel}>{strings.verifyCode.skipLabel}</Text>
+        <Pressable
+          onPress={onSkip}
+          hitSlop={12}
+          style={styles.skipButton}
+          accessibilityRole="button"
+          accessibilityLabel={strings.verifyCode.skipLabel}
+        >
+          <Text style={styles.skipLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.verifyCode.skipLabel}</Text>
         </Pressable>
       </View>
     </OnboardingShell>

@@ -7,7 +7,7 @@ import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { to24HourString } from "../lib/zodiac";
-import { FONTS } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 export default function TobScreen({
   hour,
@@ -45,9 +45,17 @@ export default function TobScreen({
     <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.tob} onBack={onBack}>
       <View style={styles.top}>
         <View style={styles.headerRow}>
-          <Text style={styles.heading}>{strings.tob.heading}</Text>
-          <Pressable onPress={onToggleUnknown} hitSlop={8} style={styles.unknownButton}>
-            <Text style={[styles.unknownLabel, timeUnknown && styles.unknownLabelActive]}>{strings.tob.unknownTime}</Text>
+          <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.tob.heading}</Text>
+          <Pressable
+            onPress={onToggleUnknown}
+            hitSlop={8}
+            style={styles.unknownButton}
+            accessibilityRole="checkbox"
+            accessibilityLabel={strings.tob.unknownTimeA11y}
+            accessibilityState={{ checked: timeUnknown }}
+            aria-checked={timeUnknown}
+          >
+            <Text style={[styles.unknownLabel, timeUnknown && styles.unknownLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.tob.unknownTime}</Text>
           </Pressable>
         </View>
 
@@ -55,6 +63,10 @@ export default function TobScreen({
           <TextInput
             style={[styles.input, styles.shortInput, timeUnknown && styles.inputDisabled]}
             placeholder={strings.tob.hourPlaceholder}
+            accessibilityLabel={strings.tob.hourLabel}
+            accessibilityState={{ disabled: timeUnknown }}
+            aria-disabled={timeUnknown}
+            maxFontSizeMultiplier={MAX_FONT_SCALE.control}
             placeholderTextColor={COLORS.placeholder}
             value={hour}
             editable={!timeUnknown}
@@ -67,11 +79,15 @@ export default function TobScreen({
             maxLength={2}
             autoFocus={!timeUnknown}
           />
-          <Text style={styles.colon}>:</Text>
+          <Text style={styles.colon} importantForAccessibility="no" accessibilityElementsHidden maxFontSizeMultiplier={MAX_FONT_SCALE.control}>:</Text>
           <TextInput
             ref={minuteRef}
             style={[styles.input, styles.shortInput, timeUnknown && styles.inputDisabled]}
             placeholder={strings.tob.minutePlaceholder}
+            accessibilityLabel={strings.tob.minuteLabel}
+            accessibilityState={{ disabled: timeUnknown }}
+            aria-disabled={timeUnknown}
+            maxFontSizeMultiplier={MAX_FONT_SCALE.control}
             placeholderTextColor={COLORS.placeholder}
             value={minute}
             editable={!timeUnknown}
@@ -81,15 +97,27 @@ export default function TobScreen({
           />
           <Pressable
             style={[styles.periodButton, period === "AM" && styles.periodButtonActive, timeUnknown && styles.inputDisabled]}
-            onPress={() => !timeUnknown && onChangePeriod("AM")}
+            onPress={() => onChangePeriod("AM")}
+            disabled={timeUnknown}
+            accessibilityRole="radio"
+            accessibilityLabel={strings.tob.periodAM}
+            accessibilityState={{ selected: period === "AM", checked: period === "AM" }}
+            aria-selected={period === "AM"}
+            aria-checked={period === "AM"}
           >
-            <Text style={[styles.periodLabel, period === "AM" && styles.periodLabelActive]}>{strings.tob.periodAM}</Text>
+            <Text style={[styles.periodLabel, period === "AM" && styles.periodLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.tob.periodAM}</Text>
           </Pressable>
           <Pressable
             style={[styles.periodButton, period === "PM" && styles.periodButtonActive, timeUnknown && styles.inputDisabled]}
-            onPress={() => !timeUnknown && onChangePeriod("PM")}
+            onPress={() => onChangePeriod("PM")}
+            disabled={timeUnknown}
+            accessibilityRole="radio"
+            accessibilityLabel={strings.tob.periodPM}
+            accessibilityState={{ selected: period === "PM", checked: period === "PM" }}
+            aria-selected={period === "PM"}
+            aria-checked={period === "PM"}
           >
-            <Text style={[styles.periodLabel, period === "PM" && styles.periodLabelActive]}>{strings.tob.periodPM}</Text>
+            <Text style={[styles.periodLabel, period === "PM" && styles.periodLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.tob.periodPM}</Text>
           </Pressable>
         </View>
       </View>

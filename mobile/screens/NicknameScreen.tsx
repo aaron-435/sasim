@@ -6,7 +6,7 @@ import OnboardingShell from "../components/OnboardingShell";
 import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
-import { FONTS } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 const MAX_LENGTH = 20;
 
@@ -28,11 +28,13 @@ export default function NicknameScreen({
   return (
     <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.nickname} onBack={onBack}>
       <View style={styles.top}>
-        <Text style={styles.heading}>{strings.nickname.heading}</Text>
-        <Text style={styles.subtext}>{strings.nickname.subtext}</Text>
+        <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.nickname.heading}</Text>
+        <Text style={styles.subtext} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.nickname.subtext}</Text>
         <TextInput
           style={[styles.input, focused && styles.inputFocused]}
           placeholder={strings.nickname.placeholder}
+          accessibilityLabel={strings.nickname.heading}
+          maxFontSizeMultiplier={MAX_FONT_SCALE.control}
           placeholderTextColor={COLORS.placeholder}
           value={value}
           onChangeText={onChange}

@@ -45,6 +45,7 @@ export const es: typeof ko = {
     ageNoticeSuffix: "",
     termsLinkLabel: "Términos de servicio",
     privacyLinkLabel: "Política de privacidad",
+    startLabel: "Empezar",
   },
 
   verifyCode: {
@@ -55,6 +56,7 @@ export const es: typeof ko = {
     skipLabel: "No tengo código, empezar de nuevo",
     errorDefault: "Este código no es válido o ya se ha usado.",
     errorNetwork: "Un problema de conexión nos impidió verificar tu código.",
+    inputLabel: "Código de verificación de 6 dígitos",
   },
 
   nickname: {
@@ -75,6 +77,9 @@ export const es: typeof ko = {
     monthPlaceholder: "MM",
     dayPlaceholder: "DD",
     ageWarning: (minAge: number) => `Lo sentimos, necesitas tener al menos ${minAge} años para usar la app.`,
+    yearLabel: "Año de nacimiento",
+    monthLabel: "Mes de nacimiento",
+    dayLabel: "Día de nacimiento",
   },
 
   tob: {
@@ -84,6 +89,9 @@ export const es: typeof ko = {
     minutePlaceholder: "MM",
     periodAM: "AM",
     periodPM: "PM",
+    unknownTimeA11y: "No sé mi hora de nacimiento",
+    hourLabel: "Hora",
+    minuteLabel: "Minutos",
   },
 
   city: {

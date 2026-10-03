@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "./PatternBackground";
 import { COLORS } from "../theme/colors";
 import { ONBOARDING_STEP_IDS } from "../lib/onboardingSteps";
+import { useStrings } from "../lib/i18n";
 
 const TOTAL_STEPS = ONBOARDING_STEP_IDS.length;
 
@@ -16,16 +17,31 @@ export default function OnboardingShell({
   onBack: () => void;
   children: React.ReactNode;
 }) {
+  const strings = useStrings();
   return (
     <PatternBackground>
       <SafeAreaView style={styles.root}>
         <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
           <View style={styles.header}>
-            <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
+            <Pressable
+              onPress={onBack}
+              hitSlop={12}
+              style={styles.backButton}
+              accessibilityRole="button"
+              accessibilityLabel={strings.common.backLabel}
+            >
               <ArrowLeft size={20} strokeWidth={2} color={COLORS.subheadline} />
             </Pressable>
             {stepIndex !== undefined && (
-              <View style={styles.progressRow}>
+              <View
+                style={styles.progressRow}
+                accessible
+                accessibilityRole="progressbar"
+                accessibilityValue={{ min: 1, max: TOTAL_STEPS, now: stepIndex + 1 }}
+                aria-valuemin={1}
+                aria-valuemax={TOTAL_STEPS}
+                aria-valuenow={stepIndex + 1}
+              >
                 {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
                   <View key={i} style={[styles.progressSegment, i <= stepIndex && styles.progressSegmentActive]} />
                 ))}

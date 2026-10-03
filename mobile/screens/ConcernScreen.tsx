@@ -6,7 +6,7 @@ import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
-import { FONTS } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 // 2026-09-19: 온보딩 마지막 단계 — "지금 가장 궁금한 것"을 가볍게 물어, 이후
 // ModuleSelectScreen이 추천 모듈을 보여줄 수 있게 한다(mobile/lib/userConcern.ts
@@ -26,22 +26,32 @@ export default function ConcernScreen({
   return (
     <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.concern} onBack={onBack}>
       <View style={styles.top}>
-        <Text style={styles.heading}>{strings.concern.heading}</Text>
-        <Text style={styles.subheading}>{strings.concern.subheading}</Text>
-        <View style={styles.column}>
+        <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.concern.heading}</Text>
+        <Text style={styles.subheading} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.subheading}</Text>
+        <View style={styles.column} accessibilityRole="radiogroup" accessibilityLabel={strings.concern.heading}>
           <Pressable
             style={[styles.option, value === "romance" && styles.optionActive]}
             onPress={() => onChange("romance")}
+            accessibilityRole="radio"
+            accessibilityLabel={`${strings.concern.romanceLabel}, ${strings.concern.romanceHint}`}
+            accessibilityState={{ selected: value === "romance", checked: value === "romance" }}
+            aria-selected={value === "romance"}
+            aria-checked={value === "romance"}
           >
-            <Text style={[styles.optionLabel, value === "romance" && styles.optionLabelActive]}>{strings.concern.romanceLabel}</Text>
-            <Text style={styles.optionHint}>{strings.concern.romanceHint}</Text>
+            <Text style={[styles.optionLabel, value === "romance" && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.romanceLabel}</Text>
+            <Text style={styles.optionHint} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.romanceHint}</Text>
           </Pressable>
           <Pressable
             style={[styles.option, value === "career" && styles.optionActive]}
             onPress={() => onChange("career")}
+            accessibilityRole="radio"
+            accessibilityLabel={`${strings.concern.careerLabel}, ${strings.concern.careerHint}`}
+            accessibilityState={{ selected: value === "career", checked: value === "career" }}
+            aria-selected={value === "career"}
+            aria-checked={value === "career"}
           >
-            <Text style={[styles.optionLabel, value === "career" && styles.optionLabelActive]}>{strings.concern.careerLabel}</Text>
-            <Text style={styles.optionHint}>{strings.concern.careerHint}</Text>
+            <Text style={[styles.optionLabel, value === "career" && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.careerLabel}</Text>
+            <Text style={styles.optionHint} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.careerHint}</Text>
           </Pressable>
         </View>
       </View>
