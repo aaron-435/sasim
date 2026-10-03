@@ -388,6 +388,10 @@ export const es: typeof ko = {
     combinedTypeSuffix: "· tipo combinado",
     combinedTypeHook: "Un patrón en el que aparecen varias tendencias a la vez.",
     progressLabel: (current: number, total: number) => `${current} / ${total}`,
+    sliderHint: "Mueve el control hasta el punto que más se parezca a ti.",
+    sliderValueText: (value: number, min: number, max: number, minLabel: string, maxLabel: string) =>
+      `${value} de ${max}. ${min} es ${minLabel}, ${max} es ${maxLabel}`,
+    progressA11yLabel: (current: number, total: number) => `Pregunta ${current} de ${total}`,
   },
 
   chat: {

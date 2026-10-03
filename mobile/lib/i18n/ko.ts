@@ -414,6 +414,10 @@ export const ko = {
     combinedTypeSuffix: "복합형",
     combinedTypeHook: "여러 성향이 함께 나타나는 패턴입니다.",
     progressLabel: (current: number, total: number) => `${current} / ${total}`,
+    sliderHint: "막대를 움직여 지금 나와 가까운 쪽을 골라 주세요.",
+    sliderValueText: (value: number, min: number, max: number, minLabel: string, maxLabel: string) =>
+      `${max}점 중 ${value}점. ${min}은 ${minLabel}, ${max}은 ${maxLabel}`,
+    progressA11yLabel: (current: number, total: number) => `${total}문항 중 ${current}번째`,
   },
 
   chat: {

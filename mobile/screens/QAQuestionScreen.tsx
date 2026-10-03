@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import { COLORS } from "../theme/colors";
-import { FONTS } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 type Question = { id: string; text_ko: string; text_en?: string; text_es?: string };
 type Subcategory = { id: string; name_ko: string; name_en?: string; name_es?: string; questions: Question[] };
@@ -30,18 +30,24 @@ export default function QAQuestionScreen({
       <ScrollView contentContainerStyle={styles.content}>
         <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
-          <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
+          <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
         </Pressable>
 
         <View style={styles.header}>
-          <Text style={styles.subcategoryLabel}>{localizedText(subcategory.name_ko, subcategory.name_en, subcategory.name_es, locale)}</Text>
-          <Text style={styles.heading}>{strings.qa.subcategoryHeading}</Text>
+          <Text style={styles.subcategoryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{localizedText(subcategory.name_ko, subcategory.name_en, subcategory.name_es, locale)}</Text>
+          <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.qa.subcategoryHeading}</Text>
         </View>
 
         {subcategory.questions.map((q) => (
-          <Pressable key={q.id} style={styles.card} onPress={() => onSelect(q)}>
+          <Pressable
+            key={q.id}
+            style={styles.card}
+            onPress={() => onSelect(q)}
+            accessibilityRole="button"
+            accessibilityLabel={localizedText(q.text_ko, q.text_en, q.text_es, locale)}
+          >
             <MessageCircleQuestion size={15} strokeWidth={1.75} color={COLORS.subheadline} style={styles.cardIcon} />
-            <Text style={styles.cardLabel}>{localizedText(q.text_ko, q.text_en, q.text_es, locale)}</Text>
+            <Text style={styles.cardLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{localizedText(q.text_ko, q.text_en, q.text_es, locale)}</Text>
           </Pressable>
         ))}
       </ScrollView>

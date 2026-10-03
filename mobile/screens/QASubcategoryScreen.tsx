@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import { COLORS } from "../theme/colors";
-import { FONTS } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 type Subcategory = {
   id: string;
@@ -37,20 +37,26 @@ export default function QASubcategoryScreen({
       <ScrollView contentContainerStyle={styles.content}>
         <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
-          <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
+          <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
         </Pressable>
 
         <View style={styles.header}>
           <View style={styles.categoryRow}>
             <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.categoryLabel}>{localizedText(category.name_ko, category.name_en, category.name_es, locale)}</Text>
+            <Text style={styles.categoryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{localizedText(category.name_ko, category.name_en, category.name_es, locale)}</Text>
           </View>
-          <Text style={styles.heading}>{strings.qa.categoryHeading}</Text>
+          <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.qa.categoryHeading}</Text>
         </View>
 
         {category.subcategories.map((sub) => (
-          <Pressable key={sub.id} style={styles.card} onPress={() => onSelect(sub)}>
-            <Text style={styles.cardLabel}>{localizedText(sub.name_ko, sub.name_en, sub.name_es, locale)}</Text>
+          <Pressable
+            key={sub.id}
+            style={styles.card}
+            onPress={() => onSelect(sub)}
+            accessibilityRole="button"
+            accessibilityLabel={localizedText(sub.name_ko, sub.name_en, sub.name_es, locale)}
+          >
+            <Text style={styles.cardLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{localizedText(sub.name_ko, sub.name_en, sub.name_es, locale)}</Text>
             <ArrowRight size={16} strokeWidth={2.25} color={COLORS.gold} />
           </Pressable>
         ))}

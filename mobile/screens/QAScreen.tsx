@@ -20,7 +20,7 @@ import type { NormalizedSajuResult } from "../lib/saju";
 import { COLORS } from "../theme/colors";
 import QAQuestionScreen from "./QAQuestionScreen";
 import QASubcategoryScreen from "./QASubcategoryScreen";
-import { FONTS } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 type Question = { id: string; text_ko: string; text_en?: string; text_es?: string };
 type Subcategory = { id: string; name_ko: string; name_en?: string; name_es?: string; questions: Question[] };
@@ -250,7 +250,7 @@ export default function QAScreen({
           <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
         </Pressable>
         <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
-        <Text style={styles.headerLabel}>{strings.qa.headerLabel}</Text>
+        <Text style={styles.headerLabel} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.headerLabel}</Text>
       </View>
 
       <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContent}>
@@ -260,8 +260,14 @@ export default function QAScreen({
               <View key={i} style={styles.pickerRow}>
                 <View style={styles.pickerBubble}>
                   {CATEGORIES.map((cat) => (
-                    <Pressable key={cat.id} style={styles.optionButton} onPress={() => handlePickCategory(cat)}>
-                      <Text style={styles.optionLabel}>{localizedText(cat.name_ko, cat.name_en, cat.name_es, locale)}</Text>
+                    <Pressable
+                      key={cat.id}
+                      style={styles.optionButton}
+                      onPress={() => handlePickCategory(cat)}
+                      accessibilityRole="button"
+                      accessibilityLabel={localizedText(cat.name_ko, cat.name_en, cat.name_es, locale)}
+                    >
+                      <Text style={styles.optionLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{localizedText(cat.name_ko, cat.name_en, cat.name_es, locale)}</Text>
                     </Pressable>
                   ))}
                 </View>
@@ -276,15 +282,24 @@ export default function QAScreen({
                     style={[styles.subscribeButton, purchasing && styles.subscribeButtonDisabled]}
                     disabled={purchasing || restoring}
                     onPress={handleSubscribe}
+                    accessibilityRole="button"
+                    accessibilityLabel={purchasing ? strings.qa.subscribing : `${strings.qa.subscribeButton} · ${priceLabel}`}
+                    accessibilityState={{ disabled: purchasing || restoring, busy: purchasing }}
                   >
-                    <Text style={styles.subscribeButtonText}>
+                    <Text style={styles.subscribeButtonText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
                       {purchasing ? strings.qa.subscribing : `${strings.qa.subscribeButton} · ${priceLabel}`}
                     </Text>
                   </Pressable>
-                  <Pressable style={styles.restoreLink} disabled={purchasing || restoring} onPress={handleRestore}>
-                    <Text style={styles.restoreLinkText}>{restoring ? strings.qa.restoring : strings.qa.restoreButton}</Text>
+                  <Pressable
+                    style={styles.restoreLink}
+                    disabled={purchasing || restoring}
+                    onPress={handleRestore}
+                    accessibilityRole="button"
+                    accessibilityLabel={restoring ? strings.qa.restoring : strings.qa.restoreButton}
+                  >
+                    <Text style={styles.restoreLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{restoring ? strings.qa.restoring : strings.qa.restoreButton}</Text>
                   </Pressable>
-                  {purchaseNotice && <Text style={styles.subscribeNoticeText}>{purchaseNotice}</Text>}
+                  {purchaseNotice && <Text style={styles.subscribeNoticeText} accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{purchaseNotice}</Text>}
                 </View>
               </View>
             );
@@ -300,10 +315,10 @@ export default function QAScreen({
 
         {errorText && (
           <View style={styles.errorCard}>
-            <Text style={styles.errorText}>{errorText}</Text>
-            <Pressable onPress={handleRetry} style={styles.retryButton}>
+            <Text style={styles.errorText} accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{errorText}</Text>
+            <Pressable onPress={handleRetry} style={styles.retryButton} accessibilityRole="button" accessibilityLabel={strings.common.retryLabel}>
               <RefreshCw size={13} strokeWidth={2} color={COLORS.gold} />
-              <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
+              <Text style={styles.retryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.retryLabel}</Text>
             </Pressable>
           </View>
         )}

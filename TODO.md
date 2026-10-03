@@ -31,9 +31,12 @@
   - 메모: 관심사(Concern) 화면은 도시 제출(`/api/saju`, 운영 DB 기록) 뒤라 웹에서 열지 않았고 코드·tsc로만 확인. 글자 크기 상한은 `theme/fonts.ts`의 `MAX_FONT_SCALE`(display 1.3 / control 1.4 / body 1.6). react-native-web 0.21은 `accessibilityState`를 DOM에 옮기지 않아 기존 화면처럼 `aria-*`를 함께 달았고, "다음" 버튼은 `disabled` prop으로 비활성 상태를 알린다(손으로 단 aria-disabled는 Pressable이 덮어씀).
   - [ ] (사용자 확인, 위 절차) 동작 줄이기·VoiceOver·글자 크기는 네이티브에서만 확인된다. 글자 크기는 설정 > 손쉬운 사용 > 디스플레이 및 텍스트 크기 > 더 큰 텍스트를 최대로 두고 온보딩 각 화면이 겹치지 않는지.
 
-- [ ] 3. 퀴즈·Q&A 접근성 + 슬라이더 무응답 진행 막기
+- [x] 3. 퀴즈·Q&A 접근성 + 슬라이더 무응답 진행 막기
   - 변경: `screens/QuizScreen.tsx`(슬라이더 accessibilityValue·라벨, 건드리기 전 "다음" 비활성 대신 안내 한 줄과 함께 진행 막기), `screens/{QA,QASubcategory,QAQuestion}Screen.tsx` 역할·라벨.
   - QA: mobile tsc exit 0. 웹 미리보기 퀴즈 1번 문항에서 슬라이더를 건드리지 않고 "다음" → 진행 안 됨, 건드린 뒤 → 진행(스크린샷). 대상 파일 accessibilityRole 수 ≥ Pressable 수.
+  - QA: mobile tsc(큰 스택) → exit 0. Pressable 수/`accessibilityRole="button"` 수: Quiz 5/5, QA 5/5, QASubcategory 2/2, QAQuestion 2/2. mobile-web 미리보기(mobile 프리셋): `?qa=all&persona=jordan&lang=en` 모듈 11 1번(슬라이더) — 건드리지 않고 "Next" → 1/30 그대로 + 안내 "Move the slider to the point that feels closest to you."(aria-live), 숫자·버튼이 흐리게. 슬라이더를 8로 옮기면 안내가 사라지고 "Next" → 2/30(스크린샷). 슬라이더 DOM: role=slider, 라벨=문항, aria-valuenow 5, valuetext "5 out of 10. 1 is Not hard at all, 10 is Very hard". 진행 막대 role=progressbar "Question 1 of 30". 2번(선택형) 선택지 4개 버튼 라벨. `?qa=all&persona=lucia&lang=es` Q&A 주제 8개·하위 주제 5개·질문 20개 모두 버튼 라벨(빈 라벨 0), 각 화면 제목 role=heading. 콘솔 오류 없음.
+  - 메모: 대상 화면 Text에 `MAX_FONT_SCALE` 상한도 달았다(SPEC 2번 대상 화면). Q&A 말풍선(`components/ChatBubbles`)은 채팅 화면과 공유라 손대지 않았다. 질문을 고르면 유료 답변 API가 불리므로 질문 목록까지만 확인. 구독·복원·다시 시도 버튼은 코드·tsc로만 확인.
+  - [ ] (사용자 확인) iOS 실기기 VoiceOver로 퀴즈 슬라이더 문항에서 위·아래 쓸기로 값이 바뀌고 "8, 10점 중…"처럼 읽히는지, 값을 바꾼 뒤 "다음"이 진행되는지.
 
 - [ ] 4. 신년 리포트를 페이지 넘김으로
   - 변경: `screens/YearReportScreen.tsx`를 섹션 단위 페이지 + 진행 표시 + 이전/다음으로. 가능한 범위에서 `ReportScreen.tsx`의 페이지 넘김 부품을 공용 컴포넌트로 빼서 둘 다 사용.
