@@ -4,10 +4,11 @@ import Lock from "lucide-react-native/icons/lock";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import ReportPager, { readerChromeButtonStyle, type ReaderPage } from "../components/ReportPager";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import type { CompatibilityResult } from "../lib/compatibility";
-import { useLocale, useStrings } from "../lib/i18n";
+import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
 import { exportReportPdf, pdfErrorMessage } from "../lib/reportPdf";
 import { getRevenueCatUserId, getYearReportPackage, hasYearReportEntitlement, isUnavailableMessage, purchaseIssueDetail, purchaseYearReport, restoreReports } from "../lib/purchases";
 import { qaYearReport } from "../dev/qaMode";
@@ -63,6 +64,7 @@ export default function YearReportScreen({
   const [notice, setNotice] = useState<string | null>(null);
   const [msgIndex, setMsgIndex] = useState(0);
   const [exporting, setExporting] = useState(false);
+  const [pageIndex, setPageIndex] = useState(0);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -269,75 +271,34 @@ export default function YearReportScreen({
   }
 
   if (phase === "reader" && report) {
+    const pages = yearReaderPages(report, strings, nickname);
     return (
-      <SafeAreaView style={styles.root}>
-        <ScrollView contentContainerStyle={styles.content}>
-          {backButton}
-          <Text style={styles.heading} accessibilityRole="header">
-            {report.title}
-          </Text>
-          <Text style={styles.subtitle}>{report.subtitle}</Text>
-
-          <Pressable style={styles.pdfButton} onPress={handleExportPdf} disabled={exporting} accessibilityRole="button">
-            {exporting ? (
-              <ActivityIndicator size="small" color={COLORS.gold} />
-            ) : (
-              <>
-                <Download size={16} strokeWidth={1.75} color={COLORS.gold} />
-                <Text style={styles.pdfButtonLabel}>{strings.pdf.button}</Text>
-              </>
-            )}
+      <ReportPager
+        pages={pages}
+        pageIndex={pageIndex}
+        onPageIndexChange={setPageIndex}
+        onBack={onBack}
+        labels={{ back: strings.common.backLabel, previous: strings.report.previousPageLabel, next: strings.report.nextPageLabel }}
+        trailing={
+          <Pressable
+            onPress={handleExportPdf}
+            disabled={exporting}
+            hitSlop={8}
+            style={readerChromeButtonStyle}
+            accessibilityRole="button"
+            accessibilityLabel={exporting ? strings.pdf.preparing : strings.pdf.button}
+          >
+            {exporting ? <ActivityIndicator size="small" color={COLORS.subheadline} /> : <Download size={18} strokeWidth={1.75} color={COLORS.subheadline} />}
           </Pressable>
-
-          <Text style={styles.chapterHeading} accessibilityRole="header">{strings.yearReport.chapterOverview}</Text>
-          {paragraphs(report.overview).map((p, i) => (
-            <Text key={i} style={styles.body}>
-              {p}
-            </Text>
-          ))}
-
-          {(["wealth", "love", "career", "study", "health"] as const).map((key) => (
-            <View key={key} style={styles.card}>
-              <Text style={styles.cardHeading} accessibilityRole="header">{report.chapters[key].heading}</Text>
-              {paragraphs(report.chapters[key].body).map((p, i) => (
-                <Text key={i} style={styles.body}>
-                  {p}
-                </Text>
-              ))}
-            </View>
-          ))}
-
-          <Text style={[styles.chapterHeading, styles.sectionGap]} accessibilityRole="header">{strings.yearReport.timelineHeading}</Text>
-          <Text style={styles.timelineNote}>{strings.yearReport.timelineNote}</Text>
-          <View style={styles.list}>
-            {report.months.map((m, i) => {
-              const calendarMonth = ((i + 1) % 12) + 1; // saju months run from 입춘 (Feb) to the next January
-              return (
-                <View key={i} style={[styles.monthRow, i > 0 && styles.rowDivider]}>
-                  <Text style={styles.monthName}>{strings.yearReport.monthName(calendarMonth)}</Text>
-                  <View style={styles.monthText}>
-                    <Text style={styles.monthHeadline}>{m.headline}</Text>
-                    <Text style={styles.monthBody}>{m.body}</Text>
-                  </View>
-                </View>
-              );
-            })}
-          </View>
-
-          <Text style={[styles.chapterHeading, styles.sectionGap]} accessibilityRole="header">{strings.yearReport.planHeading}</Text>
-          {report.action_plan.map((a, i) => (
-            <View key={i} style={styles.card}>
-              <Text style={styles.cardHeading} accessibilityRole="header">{a.title}</Text>
-              <Text style={styles.body}>{a.body}</Text>
-            </View>
-          ))}
-
-          <Text style={[styles.closing, styles.sectionGap]}>{report.closing}</Text>
-
-          <Text style={styles.disclaimer}>{strings.report.disclaimer1}</Text>
-          <Text style={styles.disclaimer}>{strings.report.disclaimer2}</Text>
-        </ScrollView>
-      </SafeAreaView>
+        }
+        footer={
+          pageIndex === pages.length - 1 ? (
+            <Pressable onPress={onBack} style={styles.homeButton} accessibilityRole="button">
+              <Text style={styles.homeButtonLabel}>{strings.report.homeButtonLabel}</Text>
+            </Pressable>
+          ) : null
+        }
+      />
     );
   }
 
@@ -391,6 +352,148 @@ export default function YearReportScreen({
   );
 }
 
+// ------------------------------------------------------------------
+// Reader pages: one section per page, same order as before (cover, the year at a glance,
+// five life areas, the 12-month timeline in quarters, the action plan, closing). Each page
+// scrolls on its own when the text runs longer than the screen.
+// ------------------------------------------------------------------
+
+const MONTHS_PER_PAGE = 3;
+
+function yearReaderPages(report: YearReportContent, strings: Dictionary, nickname: string): ReaderPage[] {
+  const y = strings.yearReport;
+  const pages: ReaderPage[] = [];
+  pages.push({ key: "overview", node: <SectionPage eyebrow={y.chapterOverview} body={report.overview} /> });
+  const areaLabels = { wealth: y.chapterWealth, love: y.chapterLove, career: y.chapterCareer, study: y.chapterStudy, health: y.chapterHealth };
+  (["wealth", "love", "career", "study", "health"] as const).forEach((key) => {
+    pages.push({ key, node: <SectionPage eyebrow={areaLabels[key]} title={report.chapters[key].heading} body={report.chapters[key].body} /> });
+  });
+  for (let start = 0; start < report.months.length; start += MONTHS_PER_PAGE) {
+    pages.push({
+      key: `months-${start}`,
+      node: <TimelinePage strings={strings} months={report.months.slice(start, start + MONTHS_PER_PAGE)} offset={start} showNote={start === 0} />,
+    });
+  }
+  pages.push({ key: "plan", node: <PlanPage heading={y.planHeading} steps={report.action_plan} /> });
+  pages.push({ key: "closing", node: <ClosingPage closing={report.closing} disclaimers={[strings.report.disclaimer1, strings.report.disclaimer2]} /> });
+  // The cover counts itself in the page total.
+  const total = pages.length + 1;
+  pages.unshift({
+    key: "cover",
+    node: (
+      <CoverPage
+        eyebrow={y.heading(report.year)}
+        title={report.title}
+        subtitle={report.subtitle}
+        nickname={`${nickname}${strings.report.nicknameSuffix}`}
+        totalPagesLabel={strings.report.totalPagesLabel(total)}
+      />
+    ),
+  });
+  return pages;
+}
+
+function PageScroll({ children, center }: { children: React.ReactNode; center?: boolean }) {
+  return (
+    <ScrollView style={pageStyles.scroll} contentContainerStyle={[pageStyles.scrollContent, center && pageStyles.scrollCenter]} showsVerticalScrollIndicator={false}>
+      {children}
+    </ScrollView>
+  );
+}
+
+function CoverPage({ eyebrow, title, subtitle, nickname, totalPagesLabel }: { eyebrow: string; title: string; subtitle: string; nickname: string; totalPagesLabel: string }) {
+  return (
+    <View style={pageStyles.cover}>
+      <Text style={pageStyles.eyebrow}>{eyebrow}</Text>
+      <View style={pageStyles.coverMid}>
+        <Text style={pageStyles.coverTitle} accessibilityRole="header">
+          {title}
+        </Text>
+        <View style={pageStyles.coverRule} />
+        <Text style={pageStyles.coverSub}>{subtitle}</Text>
+        <Text style={pageStyles.coverName}>{nickname}</Text>
+      </View>
+      <Text style={pageStyles.coverFoot}>{totalPagesLabel}</Text>
+    </View>
+  );
+}
+
+function SectionPage({ eyebrow, title, body }: { eyebrow: string; title?: string; body: string }) {
+  return (
+    <PageScroll>
+      <Text style={pageStyles.eyebrow} accessibilityRole={title ? undefined : "header"}>
+        {eyebrow}
+      </Text>
+      {title ? (
+        <Text style={pageStyles.title} accessibilityRole="header">
+          {title}
+        </Text>
+      ) : null}
+      {paragraphs(body).map((p, i) => (
+        <Text key={i} style={pageStyles.body}>
+          {p}
+        </Text>
+      ))}
+    </PageScroll>
+  );
+}
+
+function TimelinePage({ strings, months, offset, showNote }: { strings: Dictionary; months: YearReportContent["months"]; offset: number; showNote: boolean }) {
+  // Saju months run from 입춘 (Feb) to the next January.
+  const calendarMonth = (i: number) => ((offset + i + 1) % 12) + 1;
+  const range = `${strings.yearReport.monthName(calendarMonth(0))} – ${strings.yearReport.monthName(calendarMonth(months.length - 1))}`;
+  return (
+    <PageScroll>
+      <Text style={pageStyles.eyebrow}>{strings.yearReport.timelineHeading}</Text>
+      <Text style={pageStyles.title} accessibilityRole="header">
+        {range}
+      </Text>
+      {showNote && <Text style={pageStyles.note}>{strings.yearReport.timelineNote}</Text>}
+      {months.map((m, i) => (
+        <View key={i} style={[pageStyles.monthBlock, i > 0 && pageStyles.monthDivider]}>
+          <Text style={pageStyles.monthName}>{strings.yearReport.monthName(calendarMonth(i))}</Text>
+          <Text style={pageStyles.monthHeadline}>{m.headline}</Text>
+          <Text style={pageStyles.monthBody}>{m.body}</Text>
+        </View>
+      ))}
+    </PageScroll>
+  );
+}
+
+function PlanPage({ heading, steps }: { heading: string; steps: YearReportContent["action_plan"] }) {
+  return (
+    <PageScroll>
+      <Text style={pageStyles.eyebrow} accessibilityRole="header">
+        {heading}
+      </Text>
+      {steps.map((a, i) => (
+        <View key={i} style={pageStyles.step}>
+          <Text style={pageStyles.stepIndex}>{String(i + 1).padStart(2, "0")}</Text>
+          <View style={pageStyles.stepText}>
+            <Text style={pageStyles.stepTitle}>{a.title}</Text>
+            <Text style={pageStyles.monthBody}>{a.body}</Text>
+          </View>
+        </View>
+      ))}
+    </PageScroll>
+  );
+}
+
+function ClosingPage({ closing, disclaimers }: { closing: string; disclaimers: string[] }) {
+  return (
+    <PageScroll center>
+      <Text style={pageStyles.closing}>{closing}</Text>
+      <View style={pageStyles.disclaimers}>
+        {disclaimers.map((d, i) => (
+          <Text key={i} style={pageStyles.disclaimer}>
+            {d}
+          </Text>
+        ))}
+      </View>
+    </PageScroll>
+  );
+}
+
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 48 },
@@ -403,10 +506,6 @@ const styles = StyleSheet.create({
   retryLabel: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.gold },
   heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 30, lineHeight: 36, color: COLORS.headline, marginTop: 4 },
   subtitle: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginTop: 8, marginBottom: 20 },
-  pdfButton: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, minHeight: 44, alignSelf: "flex-start", paddingHorizontal: 16, borderRadius: 999, borderWidth: 1, borderColor: "rgba(111,169,139,0.45)", marginBottom: 22 },
-  pdfButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.gold },
-  chapterHeading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 22, color: COLORS.headline, marginBottom: 10 },
-  sectionGap: { marginTop: 30 },
   body: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 23, color: COLORS.headline, marginBottom: 12 },
   card: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 16, padding: 18, marginTop: 14 },
   cardHeading: { fontFamily: FONTS.semibold, fontSize: 16, lineHeight: 23, color: COLORS.gold, marginBottom: 10 },
@@ -414,13 +513,6 @@ const styles = StyleSheet.create({
   list: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, overflow: "hidden" },
   rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: COLORS.border },
   vsProNote: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.subheadline, marginTop: 4, marginBottom: 14 },
-  timelineNote: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: -4, marginBottom: 10 },
-  monthRow: { flexDirection: "row", gap: 14, paddingVertical: 12, paddingHorizontal: 16 },
-  monthName: { width: 40, fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold },
-  monthText: { flex: 1, gap: 2 },
-  monthHeadline: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.headline },
-  monthBody: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.subheadline },
-  closing: { fontFamily: FONTS.display, fontSize: 19, lineHeight: 28, color: COLORS.headline },
   disclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.subheadline, marginTop: 16 },
   lockedNote: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold, marginTop: 22, marginBottom: 10 },
   lockedRow: { flexDirection: "row", alignItems: "center", gap: 12, minHeight: 48, paddingHorizontal: 16 },
@@ -432,4 +524,39 @@ const styles = StyleSheet.create({
   restoreButton: { minHeight: 44, alignItems: "center", justifyContent: "center", marginTop: 4 },
   restoreLabel: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, textDecorationLine: "underline" },
   notice: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: "#E0A296", textAlign: "center", marginTop: 4 },
+  homeButton: { marginHorizontal: 22, marginBottom: 16, marginTop: 6, borderWidth: 1, borderColor: COLORS.border, borderRadius: 12, paddingVertical: 14, alignItems: "center" },
+  homeButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
+});
+
+const pageStyles = StyleSheet.create({
+  scroll: { flex: 1 },
+  scrollContent: { paddingHorizontal: 26, paddingTop: 20, paddingBottom: 40 },
+  scrollCenter: { flexGrow: 1, justifyContent: "center" },
+  eyebrow: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold, marginBottom: 12 },
+  title: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, lineHeight: 33, color: COLORS.headline, marginBottom: 18 },
+  body: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 25, color: COLORS.headline, marginBottom: 16 },
+  note: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: -8, marginBottom: 14 },
+
+  cover: { flex: 1, paddingHorizontal: 26, paddingTop: 20, paddingBottom: 24 },
+  coverMid: { flex: 1, justifyContent: "flex-start", paddingTop: "16%" },
+  coverTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 32, lineHeight: 40, color: COLORS.headline },
+  coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: 18 },
+  coverSub: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 23, color: COLORS.subheadline },
+  coverName: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline, marginTop: 22 },
+  coverFoot: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 1.5, color: COLORS.footer },
+
+  monthBlock: { paddingVertical: 16, gap: 4 },
+  monthDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: COLORS.border },
+  monthName: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold },
+  monthHeadline: { fontFamily: FONTS.semibold, fontSize: 15.5, lineHeight: 22, color: COLORS.headline },
+  monthBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 22, color: COLORS.subheadline },
+
+  step: { flexDirection: "row", gap: 14, paddingVertical: 14 },
+  stepIndex: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 22, lineHeight: 26, color: COLORS.gold, width: 30 },
+  stepText: { flex: 1, gap: 4 },
+  stepTitle: { fontFamily: FONTS.semibold, fontSize: 15.5, lineHeight: 22, color: COLORS.headline },
+
+  closing: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 21, lineHeight: 32, color: COLORS.headline },
+  disclaimers: { marginTop: 36 },
+  disclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.footer, marginTop: 8 },
 });

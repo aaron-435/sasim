@@ -1,12 +1,12 @@
-import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import BookOpen from "lucide-react-native/icons/book-open";
 import Download from "lucide-react-native/icons/download";
 import Lock from "lucide-react-native/icons/lock";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import CalcSourceBadge from "../components/CalcSourceBadge";
+import ReportPager, { readerChromeButtonStyle } from "../components/ReportPager";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
@@ -174,9 +174,6 @@ export default function ReportScreen({
 }) {
   const strings = useStrings();
   const { locale } = useLocale();
-  // Read live (not once at module load) so rotation, iPad Split View and window resizes
-  // keep the pager's page width and offsets correct.
-  const { width: screenWidth } = useWindowDimensions();
   const LOADING_MESSAGES = strings.report.loadingMessages;
   const [content, setContent] = useState<ReportContent | null>(savedContent ?? null);
   const [errorText, setErrorText] = useState<string | null>(null);
@@ -190,7 +187,6 @@ export default function ReportScreen({
   const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
   const mountedRef = useRef(true);
   const firedRef = useRef(false);
-  const scrollRef = useRef<ScrollView>(null);
   const [exporting, setExporting] = useState(false);
   const resolvedElements = elements ?? DEFAULT_ELEMENTS;
 
@@ -835,14 +831,7 @@ export default function ReportScreen({
   }
 
   function goTo(index: number) {
-    const clamped = Math.max(0, Math.min(pages.length - 1, index));
-    scrollRef.current?.scrollTo({ x: clamped * screenWidth, animated: true });
-    setPageIndex(clamped);
-  }
-
-  function handleMomentumEnd(e: NativeSyntheticEvent<NativeScrollEvent>) {
-    const idx = Math.round(e.nativeEvent.contentOffset.x / screenWidth);
-    setPageIndex(idx);
+    setPageIndex(Math.max(0, Math.min(pages.length - 1, index)));
   }
 
   if (errorText) {
@@ -870,86 +859,40 @@ export default function ReportScreen({
     );
   }
 
-  const progressPct = ((pageIndex + 1) / pages.length) * 100;
   const onPaywall = !lockedOpen && !!pages[pageIndex]?.locked;
 
   return (
-    <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
-      <View style={styles.chrome}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.chromeBack} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
-          <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
-        </Pressable>
-        <View
-          style={styles.progressTrack}
-          accessibilityRole="progressbar"
-          accessibilityValue={{ min: 0, max: pages.length, now: pageIndex + 1, text: `${pageIndex + 1} / ${pages.length}` }}
-          aria-valuemin={0}
-          aria-valuemax={pages.length}
-          aria-valuenow={pageIndex + 1}
-          aria-valuetext={`${pageIndex + 1} / ${pages.length}`}
-        >
-          <View style={[styles.progressFill, { width: `${progressPct}%` }]} />
-        </View>
-        <Text style={styles.progressCount} accessibilityLiveRegion="polite">
-          {String(pageIndex + 1).padStart(2, "0")}/{String(pages.length).padStart(2, "0")}
-        </Text>
-        {lockedOpen && (
+    <ReportPager
+      pages={pages}
+      pageIndex={pageIndex}
+      onPageIndexChange={setPageIndex}
+      onBack={onBack}
+      labels={{ back: strings.common.backLabel, previous: strings.report.previousPageLabel, next: strings.report.nextPageLabel }}
+      // None on a paywall page: the zones sat on top of — and swallowed the taps meant for —
+      // the paywall's buy, bundle and restore buttons. Swiping still turns pages everywhere.
+      edgeTaps={!onPaywall}
+      trailing={
+        lockedOpen ? (
           <Pressable
             onPress={handleExportPdf}
             disabled={exporting}
             hitSlop={8}
-            style={styles.chromePdf}
+            style={readerChromeButtonStyle}
             accessibilityRole="button"
             accessibilityLabel={exporting ? strings.pdf.preparing : strings.pdf.button}
           >
             {exporting ? <ActivityIndicator size="small" color={COLORS.subheadline} /> : <Download size={18} strokeWidth={1.75} color={COLORS.subheadline} />}
           </Pressable>
-        )}
-      </View>
-
-      <View style={styles.pagerWrap}>
-        <ScrollView
-          ref={scrollRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onMomentumScrollEnd={handleMomentumEnd}
-        >
-          {pages.map((p) => (
-            <View key={p.key} style={{ width: screenWidth }}>
-              {p.node}
-            </View>
-          ))}
-        </ScrollView>
-
-        {/* Edge tap zones only, and none on a paywall page. These used to cover the whole
-            pager above the pages, so they sat on top of — and swallowed the taps meant
-            for — the paywall's buy, bundle and restore buttons. Swiping still turns pages
-            everywhere. */}
-        {!onPaywall && (
-          <>
-            <Pressable
-              style={styles.tapLeft}
-              onPress={() => goTo(pageIndex - 1)}
-              accessibilityRole="button"
-              accessibilityLabel={strings.report.previousPageLabel}
-            />
-            <Pressable
-              style={styles.tapRight}
-              onPress={() => goTo(pageIndex + 1)}
-              accessibilityRole="button"
-              accessibilityLabel={strings.report.nextPageLabel}
-            />
-          </>
-        )}
-      </View>
-
-      {pageIndex === pages.length - 1 && (
-        <Pressable onPress={onBack} style={styles.homeButton}>
-          <Text style={styles.homeButtonLabel}>{strings.report.homeButtonLabel}</Text>
-        </Pressable>
-      )}
-    </SafeAreaView>
+        ) : null
+      }
+      footer={
+        pageIndex === pages.length - 1 ? (
+          <Pressable onPress={onBack} style={styles.homeButton}>
+            <Text style={styles.homeButtonLabel}>{strings.report.homeButtonLabel}</Text>
+          </Pressable>
+        ) : null
+      }
+    />
   );
 }
 
@@ -1514,17 +1457,6 @@ const styles = StyleSheet.create({
   retryButton: { alignSelf: "flex-start", minHeight: 44, justifyContent: "center", paddingHorizontal: 4 },
   retryLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.gold },
   backLabel: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.subheadline },
-
-  chrome: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 18, paddingTop: 10, paddingBottom: 8 },
-  chromeBack: { padding: 10, minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", marginLeft: -10 },
-  chromePdf: { width: 44, height: 44, alignItems: "center", justifyContent: "center", marginRight: -10 },
-  progressTrack: { flex: 1, height: 3, borderRadius: 2, backgroundColor: "rgba(217,201,163,0.16)", overflow: "hidden" },
-  progressFill: { height: "100%", borderRadius: 2, backgroundColor: COLORS.headline },
-  progressCount: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline, letterSpacing: 0.5, minWidth: 44, textAlign: "right" },
-
-  pagerWrap: { flex: 1, position: "relative" },
-  tapLeft: { position: "absolute", top: 0, bottom: 0, left: 0, width: "16%" },
-  tapRight: { position: "absolute", top: 0, bottom: 0, right: 0, width: "16%" },
 
   homeButton: { marginHorizontal: 22, marginBottom: 16, marginTop: 6, borderWidth: 1, borderColor: COLORS.border, borderRadius: 12, paddingVertical: 14, alignItems: "center" },
   homeButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },

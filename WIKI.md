@@ -44,7 +44,7 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 | 심층 리포트 | `/api/report`, `/api/report/paid`, `/api/report/unlock`, `/api/report-pdf` | `ReportScreen`, `MyReportsScreen` |
 | 오늘/올해 운세 | `/api/dailyFortune`, `/api/yearFortune` | `FortuneScreen`, `HomeScreen` |
 | 궁합 | `/api/compatibility` | `CompatibilityScreen` |
-| 신년 리포트 | `/api/yearReport` (`lib/yearReport*.ts`) | `YearReportScreen` |
+| 신년 리포트 | `/api/yearReport` (`lib/yearReport*.ts`) | `YearReportScreen` (구매 전 미리보기는 세로 스크롤, 구매 후 읽기는 심층 리포트와 같은 페이지 넘김: 표지 → 한눈에 보기 → 5개 영역 → 12개월 3개월씩 4쪽 → 실행 계획 → 마무리) |
 | 사주 유형·공유 카드 | 유형 분류는 서버(`lib/sajuType.ts`)에서 하고 `/api/saju`, `/api/verification-code` 응답에 실린다. 앱의 `mobile/lib/sajuType.ts`는 타입 정의뿐이라 서버와 키를 맞춰야 한다 | `TypeScreen`, `ShareCardsScreen` |
 
 ### 리포트 (무료/유료 분리)
@@ -59,6 +59,8 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 PDF(`/api/report-pdf` → `lib/pdf/reportPdf.tsx`)도 같은 규칙이다: 라우트가 `set_card_1`·`set_cards_2to5`를 세트 자리에 맞는 것만 받아 정리하고, 카드가 있으면 카드 1은 심리테스트 분석 뒤, 카드 2~5는 "직접 나눈 이야기" 자리에 넣으며 상담 카드·`chat_*_note`·"내가 고른 답" 섹션은 뺀다. 카드가 없는 이전 리포트는 예전 PDF 그대로다.
 
 페이월(`ReportScreen`의 `PaywallPage`)은 잠긴 페이지 전체를 한 장으로 대신하고, 카드 안에 목차(`tocEntries`)에서 잠긴 항목의 제목을 자물쇠와 함께 나열한다(신년 리포트 미리보기의 잠긴 챕터 목록과 같은 모양). 모듈 페이지 제목과 핵심 강점 라벨은 목차를 통해 자동으로 들어간다. 카드는 세로 스크롤 영역이라 작은 화면에서도 잘리지 않는다.
+
+리포트 읽기 화면의 공용 부품: `mobile/components/ReportPager.tsx`(상단 바 뒤로·진행 막대·쪽 카운터·선택 버튼, 가로 페이지 넘김, 양 가장자리 탭, 하단 슬롯). 심층 리포트와 신년 리포트가 함께 쓰고, 현재 쪽은 화면이 들고 있어 목차 점프도 같은 값으로 움직인다. 심층 리포트는 페이월 쪽에서 가장자리 탭을 끈다.
 
 계산 근거 배지: 공용 `mobile/components/CalcSourceBadge.tsx`(문구 `common.calcSourceBadge`)가 심층 리포트 커버와 사주 유형 화면(`TypeScreen`) 히어로 카드에 붙는다. 정적 텍스트이고 탭 대상이 아니다.
 
