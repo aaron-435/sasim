@@ -67,7 +67,11 @@ const ES_AGE_AS_SUBJECT =
 // A card note talking about the reader's words ("~라고 했어요", "you said", "la frase").
 const NOTE_CHAT_REFERENCE =
   /[다라]고\s?(했|하셨|말)|말씀하|한 말|그 말|이 말|대화에서|\byou (said|told|mentioned)\b|\byour (words|phrase)\b|\bthe (phrase|sentence|quote)\b|\bin (our|the) (chat|conversation)\b|\bdijiste\b|\bcontaste\b|\bmencionaste\b|\bla frase\b|\btus palabras\b|\ben la conversaci[oó]n\b/i;
-const MODULE_META = /이\s?모듈|\bthis module\b|\beste m[oó]dulo\b/i;
+// "This module" / "this part of the report" in body text: the reader is reading about their love life or
+// their work, not a module (rule 11). Checked in every body string except the subtitle, which names
+// "모듈 N" on purpose (2026-10-03: lucia oheng_intro "En este módulo de amor y apego… esta parte del informe").
+const MODULE_META =
+  /이\s?모듈|이 리포트의 이 부분|리포트의 이 (부분|페이지)|\bthis module\b|\bthis (part|section) of (the|your) report\b|\beste m[oó]dulo\b|\besta (parte|secci[oó]n) del informe\b/i;
 const HANGUL_OR_HANJA = /[ㄱ-ㆎ가-힣一-鿿]/;
 const HANGUL_OR_HANJA_ALL = /[ㄱ-ㆎ가-힣一-鿿]/g;
 // A letter from any script other than Hangul, Han and Latin (Devanagari, Cyrillic, kana, Arabic…). A ko
@@ -210,12 +214,6 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
   if (c.module_deep && part !== "free" && c.module_deep.body.trim() && titleRepeatsInOpening(c.module_deep.title, c.module_deep.body)) {
     problems.push(`module_deep.body: 첫 문장이 페이지 제목("${c.module_deep.title}")을 그대로 되풀이함 — 제목은 화면에 따로 표시되니 되풀이하지 말고 바로 내용으로 시작할 것`);
   }
-  // "이 모듈에서는" on a module page is a meta phrase: the reader never sees the word "module" (rule 11,
-  // TODO 7 2026-10-02 found it left in module_map).
-  for (const [key, page] of [["module_map", c.module_map], ["module_deep", c.module_deep]] as const) {
-    const m = page?.body.match(MODULE_META);
-    if (m) problems.push(`${key}.body: "${m[0]}" 같은 메타 표현 — 독자에게는 모듈이라는 말이 보이지 않으니 빼고 주제를 직접 말할 것`);
-  }
   // The core strength (paid) must not be one of the three free ones under another wording (TODO F2-a).
   if (c.strengths_preview?.length && c.strengths.length && part !== "free") {
     // Same title, or a shared content word ("Repair instinct" / "Repair courage", "끝까지 챙김" / "끝까지 버팀").
@@ -277,6 +275,8 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
     const foreign = text.match(OTHER_SCRIPT_ALL);
     if (foreign) problems.push(`${path}: 다른 나라 문자가 섞여 있음 ("${Array.from(new Set(foreign)).join(", ")}") — 그 글자를 빼고 이 언어로만 쓸 것`);
     if (META_LEAK.test(text)) problems.push(`${path}: 지시문/데이터 누락을 언급하는 메타 발언`);
+    const meta = path !== "subtitle" ? text.match(MODULE_META) : null;
+    if (meta) problems.push(`${path}: "${meta[0]}" 같은 메타 표현 — 독자에게는 모듈·리포트 구성이 보이지 않으니 빼고 이 사람의 영역을 일상의 말로 직접 말할 것`);
     if (locale === "es") {
       const m = text.match(ES_GENDERED_READER) ?? text.match(ES_STYLE_SLIP);
       if (m) problems.push(`${path}: 스페인어 스타일 위반 ("${m[0]}") — 독자 성별 표지·usted·carta 금지`);

@@ -265,4 +265,10 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
     - QA: 스크래치("🌳 목 강하다", "⛰️ 토", "💎 Metal", "© ™ #1 40%") → 이모지만 빠지고 앞 공백 정리, ©™·#·숫자 유지. 실제 PDF 확인은 위 항목과 같은 이유로 못 함.
 - (2026-10-03 리포트 생성) lucia 무료 절반의 `oheng_intro` "Cinco Elementos" 대문자가 3회 연속 안 고쳐짐 — 검사 메시지가 "성별 표지·usted·carta 금지"라 수정 모델이 뭘 고칠지 몰랐음. 대문자 전용 메시지로 분리함(`reportQuality.ts`). 리포트 재생성으로는 미확인.
 - (2026-10-03 리포트 생성) jisoo `closing_body`가 24턴 답("그만 좀 확인하고 일찍 자라고 했을 거예요")이 아니라 `desired_change`("알람 없이 걷고 싶다")로 맺고, 같은 바람이 `strengths_preview[2]`에도 나와 겹침. 3번 수정(24턴 답은 closing에만)은 지켜졌지만 closing이 24턴 답을 쓰지 않는 문제가 남음.
+  - 해결(2026-10-03, 사용자 요청): `lib/reportPrompts.ts` 섹션별 근거의 closing_body 줄에 실제 24턴 답 원문을 넣고 "'바라는 변화'로 대신하지 않는다", "인용은 따옴표로 묶고 이 사람의 말임을 밝힌다" 추가. strengths_preview 줄에 "'바라는 변화'는 강점 근거가 아님" 추가.
+    - QA: `gen-qa-fixtures.mts --v2-only`(4회차) → jisoo closing이 24턴 답으로 맺음, strengths_preview에서 바라는 변화 사라짐. 단 그 회차는 따옴표 없이 붙여서 따옴표 지시를 추가했는데, 이건 재생성으로 미확인.
 - (2026-10-03 리포트 생성) lucia `oheng_intro`에 "En este módulo de amor y apego"·"esta parte del informe" 같은 메타 표현. "이 모듈" 검사는 모듈 페이지만 봄 — oheng_intro 프롬프트가 "이번 모듈 주제"라고 쓰는 것과 관련.
+  - 해결(2026-10-03, 사용자 요청): oheng_intro 지시에 "주제는 이 사람의 실제 영역을 일상의 말로 직접, 다른 영역과 대비하지 않음, '이 모듈'·'이 리포트'·'이 부분' 금지". 규칙 11을 "본문에 '이 모듈'·'이 리포트의 이 부분' 금지(부제 '모듈 N' 예외)"로. `reportQuality.ts` `MODULE_META`를 모듈 페이지만이 아니라 부제 밖 모든 본문에 적용하고 "esta parte del informe" 등 추가(연간 리포트 검사에는 넣지 않음).
+    - QA: 이전 픽스처 2개의 "este módulo"·"esta parte del informe" 잡힘, 현재 픽스처 오탐 0. 4회차 생성 → lucia oheng_intro "En amor, …"로 메타 표현 없음. 단 jisoo oheng_intro가 지시문 예시를 따라 "연애가 아니라 일할 때"라고 대비해서 예시를 빼고 "대비하지 않음"으로 바꿈 — 재생성으로 미확인.
+    - 참고: 앞 커밋의 "Cinco Elementos" 메시지 분리는 연간 리포트 검사에도 같이 들어감(원래 같은 문제를 잡던 줄이라 메시지만 바뀜).
+- (2026-10-03 리포트 4회차) lucia 무료 절반 `quiz_reading`의 "atrapada"(독자 성별 표지)가 final gate까지 안 고쳐진 채 출고. 품질 루프가 이 종류를 자주 못 고침 — Cinco Elementos처럼 메시지를 구체화("atrapada → 명사·동사로, 예: 'sentir que no hay salida'")하는 게 다음 후보.

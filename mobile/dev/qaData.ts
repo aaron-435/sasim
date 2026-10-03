@@ -3368,48 +3368,47 @@ export const QA_YEAR_REPORT: Record<string, any> = {
 export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: any; chatExtract: any }> = {
  "lucia": {
   "content": {
-   "title_line1": "Cuando un silencio pequeño te cambia todo el día",
-   "title_line2": "y tu cabeza empieza a buscar la grieta antes de que exista.",
-   "subtitle": "Módulo 1 · Amor y apego — reporte profundo — saju × psicología × acompañamiento integrado",
-   "opening_scene": "De noche, con el chat todavía abierto, relees un «ok» seco una y otra vez. El dedo vuelve al mismo lugar, como si en la pantalla fuera a aparecer la parte que faltó. En tu cabeza no entra primero la explicación; entra la pregunta de qué hiciste mal. Y mientras más miras, más crece esa necesidad de comprobarlo con otro mensaje o mirando si la otra persona está en línea. Lucía, ¿te está pasando esto últimamente?",
-   "case_tag": "CASO DE EJEMPLO — Marina, 30 y tantos, en una relación que se activa con cada respuesta",
+   "title_line1": "Cuando un «ok» seco te deja sin suelo",
+   "title_line2": "y tu cabeza empieza a buscar el error antes que la calma",
+   "subtitle": "Módulo 1: Amor y apego — informe profundo — saju × prueba psicológica × acompañamiento integrado",
+   "opening_scene": "La pantalla se queda quieta y, aun así, tú no. Ves un «ok» seco después de una discusión y vuelves a leer el chat como si en algún punto fuera a aparecer la frase exacta donde se torció todo. No te basta con saber que la otra persona tenía una reunión; tu mente insiste en la misma pregunta: qué hiciste mal. Mientras pasa la noche, el cuerpo sigue en alerta y la cabeza sigue revisando, una y otra vez, el mismo mensaje. Lucía, ¿te pasa esto últimamente?",
+   "case_tag": "CASO DE EJEMPLO — Marta, treintañera, una relación que se enfría por momentos",
    "case_paragraphs": [
-    "Marina pasa la tarde revisando el chat después de una respuesta breve. No le basta con leerla una vez; vuelve al mismo punto, como si ahí estuviera escondido el error. Su mapa muestra una tierra muy fuerte y un metal vacío, así que la presión pesa más que el apoyo cuando aparece el silencio. Y tú también podrías estar viviendo esa misma tensión.",
-    "En el trabajo te mantienes funcional, pero en la relación te quedas pendiente de la señal más pequeña. Si la otra persona tarda, tu mente empieza a rellenar huecos antes de escuchar nada real. Esa mezcla de urgencia y vigilancia se parece mucho a tu ritmo cuando algo cambia de tono."
+    "Marta recibe un mensaje corto después de discutir y se queda mirando la pantalla, esperando una explicación que no llega. En lugar de dejar pasar la tarde, relee el chat, busca el punto exacto del fallo y termina escribiendo ella para arreglarlo, aunque no haya sido su culpa. Su mapa muestra una tierra muy dominante y un metal vacío, así que la presión pesa más de lo que ordena. Tú también puedes reconocer ese impulso de correr a cerrar la grieta antes de que se haga más grande."
    ],
-   "oheng_intro": "En tus Cinco Elementos, tierra está en 38% y domina el mapa, mientras metal queda en 0% y apenas aparece. En un Maestro del Día agua, esa tierra fuerte se vive como una presión que te pone peso encima, y el metal ausente deja menos apoyo claro para ordenar lo que sientes. Por eso, cuando el vínculo se mueve, no solo lo notas: lo sientes como una carga que ocupa toda la escena.",
-   "quiz_reading": "Tu perfil sale como Apego ansioso, con Ansiedad en 85% y Evitación en 10%, y esa combinación se nota enseguida en tus respuestas. Cuando notas menos cariño o un silencio raro, tu cabeza no se queda quieta: empieza a revisar qué pasó y a buscar señales en todo. Por dentro quieres cercanía, pero la espera te empuja a leer cada gesto como si allí se decidiera la relación.",
+   "oheng_intro": "Tu tierra está en 38% y domina el mapa, mientras que el metal está en 0% y queda muy bajo. En tu Maestro del Día agua, la tierra se siente como una fuerza que te presiona con reglas, deberes y peso, y el metal como una fuerza que te salva con apoyo, aprendizaje y protección. En amor, esa mezcla se nota cuando una respuesta tarda y tu mente no se queda quieta hasta encontrar una explicación.",
+   "quiz_reading": "Tu ansiedad marca 85% y tu evitación 10%, y eso encaja con un apego ansioso muy claro. Lo que se ve no es distancia emocional: es una mente que se queda atrapada cuando la señal baja, como cuando un «ok» seco te obliga a releer todo el chat. Por fuera respondes, pero por dentro la pregunta sigue abierta mucho después de que la otra persona haya hablado.",
    "element_readings": {
     "wood": {
-     "heading": "🌳 madera — poco margen para respirar",
-     "body": "Madera está en 13%, así que aparece poco y no lleva el mando del mapa. En un día en que esperas una respuesta, esa madera se nota como impulso contenido: quieres avanzar, preguntar, mover la conversación, pero algo se queda atrás. No desaparece del todo; simplemente sale en ráfagas cortas, justo cuando lees un «ok» seco y te cuesta dejar pasar la duda. Lucía, aquí el impulso existe, pero no siempre encuentra espacio para sostenerse."
+     "heading": "🌳 madera — inquietud que pide dirección",
+     "body": "Tu madera está en 13%, así que aparece baja y no empuja con fuerza por sí sola. Eso se nota en que, cuando algo te altera en la relación, no vas directo a soltar lo primero que sientes; primero miras, relees y tratas de entender dónde se torció. En ti, la madera no entra como impulso desordenado, sino como una búsqueda tensa de sentido. Y por eso una señal pequeña puede quedarse dando vueltas más tiempo del que te gustaría."
     },
     "fire": {
-     "heading": "🔥 fuego — presencia que calienta rápido",
-     "body": "Fuego está en 25%, así que tiene un peso medio y sí entra en tu manera de vincularte. En un vínculo que te importa, ese fuego se ve en la rapidez con la que te activas cuando algo cambia de tono o aparece una reacción fría. También explica que la intensidad no te resulte extraña: cuando quieres claridad, la buscas con mucha energía, no a medias. Lucía, tu fuego no es discreto; se enciende de golpe cuando sientes distancia."
+     "heading": "🔥 fuego — calor que todavía sostiene el vínculo",
+     "body": "Tu fuego está en 25%, así que no es un recurso escaso ni una explosión fuera de control. Hay una parte tuya que sigue queriendo acercarse, responder y mantener vivo el contacto incluso después de una discusión. Ese calor se ve cuando escribes tú para arreglarlo, antes de que el silencio crezca. En amor, tu fuego no se apaga; más bien sigue buscando una forma de volver a encender la conversación."
     },
     "earth": {
-     "heading": "⛰️ tierra — peso que lo ocupa todo",
-     "body": "Tierra está en 38%, así que es la fuerza más marcada de tu mapa. Como tu Maestro del Día es agua, esta tierra se vive como una presión que te aprieta con reglas, deberes y sensación de evaluación. Por eso una respuesta breve no se queda en una frase: se convierte en una escena completa donde sientes que debes encontrar el fallo. Lucía, cuando la tierra domina así, la mente no descansa hasta intentar poner orden."
+     "heading": "⛰️ tierra — peso que aprieta y no suelta",
+     "body": "Tu tierra está en 38%, así que es el eje más fuerte de tu mapa. En tu Maestro del Día agua, esta tierra se siente como presión, deber y una especie de piso que a veces te aplasta antes de darte apoyo. En la relación, eso aparece cuando un «ok» seco o una mala cara te hacen pensar de inmediato que hiciste algo mal. La tierra te da aguante, pero también hace que el error imaginado pese demasiado."
     },
     "metal": {
-     "heading": "💎 metal — apoyo que casi no asoma",
-     "body": "Metal está en 0%, así que apenas aparece en tu distribución. En tu mapa, la tierra puede alimentar el metal, y esa es la vía que te da un poco de estructura cuando todo se vuelve emocional. Por eso, cuando hay apoyo claro, escucha o una explicación simple, tu sistema respira mejor y deja de buscar grietas por todas partes. Lucía, ese apoyo te ordena más de lo que parece."
+     "heading": "💎 metal — apoyo que falta y se vuelve muy visible",
+     "body": "Tu metal está en 0%, así que aparece muy bajo en tu mapa. En tu Maestro del Día agua, el metal es la fuerza que te salva con apoyo, aprendizaje y protección, y aquí se ve poco. Por eso, cuando la relación se mueve raro, te cuesta sentir un borde claro que ordene lo que pasa y te calme desde fuera. Ese vacío no te vuelve frío; te deja más vulnerable a buscar respuesta donde todavía no la hay."
     },
     "water": {
-     "heading": "💧 agua — sensibilidad que lee todo",
-     "body": "Agua está en 25%, así que tiene un peso medio y sí forma parte de cómo percibes el vínculo. Como tu Maestro del Día es agua, lo que pasa alrededor no te toca de lejos: lo registras por dentro, con mucha sensibilidad a los cambios de tono. Por eso un silencio o un «ok» seco no te parecen pequeños; te llegan como señales que cambian el clima entero. Lucía, tu agua capta antes de que todo se diga."
+     "heading": "💧 agua — sensibilidad que capta el cambio al instante",
+     "body": "Tu agua está en 25%, así que se mueve con presencia suficiente para notar matices y cambios de tono. Esa sensibilidad encaja con que una respuesta tarde y tú sientas enseguida que algo cambió, aunque la otra persona solo esté ocupada. En la práctica, tu agua no se queda quieta: pregunta, mira, vuelve a leer y trata de entender lo que no se dijo. En amor, esa atención fina hace que percibas antes que nadie cuándo baja la temperatura."
     }
    },
-   "upcoming_period_preview_heading": "",
-   "upcoming_period_preview_body": "",
+   "upcoming_period_preview_heading": "A los 38 años, el fuego abre otro tramo",
+   "upcoming_period_preview_body": "A los 38 años, el fuego empieza a ganar fuerza en tu ciclo de diez años. Eso significa que el mapa entra en otra etapa, y la sensación ya no será la misma que ahora. Se nota como una luz más viva al fondo del pasillo, aunque todavía no estés caminando por ahí.",
    "module_map": {
     "title": "Tu alarma en las relaciones",
-    "body": "En las relaciones, tu alarma se enciende con señales muy concretas: un «ok» seco después de una discusión, una mala cara al llegar, o un silencio que deja la conversación abierta. Cuando eso pasa, no te alejas; te acercas con más intensidad, escribes de nuevo o miras si la otra persona está en línea para comprobar qué ocurre. El patrón no es frialdad ni distancia, sino una forma de buscar seguridad cuando la respuesta tarda. Y cuanto más intentas arreglarlo en ese momento, más peso se te queda encima después."
+    "body": "Cuando la otra persona responde con un «ok» seco o llega con mala cara, se te enciende una alarma muy precisa. Primero aparece la pregunta de qué hiciste mal; después viene el impulso de escribir otra vez, mirar si está en línea o repasar el chat para encontrar la grieta. Esa secuencia es muy de apego ansioso: la señal pequeña activa la búsqueda, y la búsqueda intenta calmarte aunque al final te deje peor. Tú no te cierras del todo; al contrario, te acercas con más fuerza cuando notas distancia."
    },
    "module_deep": {
     "title": "Una relación que sea tu base segura",
-    "body": "Lo que más te ayuda no es pedir confirmación sin pausa, sino acordar una forma concreta de volver al centro cuando algo se mueve. Puedes decir algo tan simple como: «Si te noto raro, prefiero que me digas en una frase si necesitas espacio o si solo estás ocupado». Eso te da un borde claro sin convertir la relación en una prueba constante. Lucía, con tu nivel de ansiedad, la distancia útil no es desaparecer: es poder respirar sin perder el contacto."
+    "body": "Para ti, una base segura no se construye con promesas grandes, sino con señales que se repiten sin jugar al escondite. Te conviene pedir algo muy concreto, como: «si estás ocupado, dime solo eso y yo me quedo tranquila». Ese tipo de frase le baja volumen a la espera y te saca del bucle de interpretar cada silencio. Lucía, tu necesidad no es control; es saber dónde estás parada mientras el vínculo sigue vivo."
    },
    "set_card_1": {
     "set": 1,
@@ -3421,83 +3420,83 @@ export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: an
      "score": 3
     },
     "quote": "Sí, me pasa mucho. Si llega con mala cara, me paso la noche pensando qué hice yo.",
-    "note": "Tu mente toma una señal pequeña y la convierte enseguida en una búsqueda de culpa. Eso muestra una sensibilidad muy alta a la reacción de la otra persona y una necesidad de confirmar que todo sigue bien. Lucía, no estás leyendo solo un gesto; estás intentando proteger el vínculo."
+    "note": "Esa respuesta y la escena del chat seco muestran que tu mente no se queda solo en el hecho, sino que va directo a buscar responsabilidad propia. Ahí se ve una forma de leer la señal afectiva con mucha intensidad y muy poca pausa. Lo que aparece no es indiferencia, sino una vigilancia interna que intenta prevenir otro alejamiento."
    },
    "strengths_preview": [
     {
      "title": "Lectura fina",
-     "body": "Tú percibes enseguida cuando cambia el tono de una relación, y eso te da una lectura fina de lo que pasa entre dos personas. Cuando aparece una señal pequeña, como un «ok» seco o una respuesta que tarda, tu atención se activa y buscas entender qué significa para el vínculo. Esa sensibilidad te ayuda a notar antes que otras personas cuándo algo se enfría y a cuidar la cercanía con mucha precisión. Lucía, ves el clima del vínculo con mucha claridad."
+     "body": "Tu respuesta sobre el contacto diario fue clara: \"Me parece natural y agradable\". Eso muestra que, cuando el vínculo tiene un ritmo estable, puedes reconocerlo con facilidad y te resulta cómodo sostenerlo. En tu día a día, esa capacidad te ayuda a notar rápido cuándo algo cambia de tono, incluso antes de que se diga en voz alta."
     },
     {
-     "title": "Entrega directa",
-     "body": "Cuando algo se pone difícil, dijiste que se lo cuentas a esa persona antes que a nadie. Esa respuesta muestra una manera directa de entrar en el vínculo, sin esconder lo importante. También se nota en que, si hace falta, das el primer paso para arreglarlo. Lucía, tu forma de querer no se queda en la intención."
+     "title": "Vínculo firme",
+     "body": "También dijiste \"Casi nunca\" ante la idea de estar bien incluso sin esa persona. Lejos de sonar vacío, eso habla de una inversión real en el vínculo y de una forma de amar que no se queda a medias. Tú no entras con distancia calculada; entras de verdad, y eso da mucha consistencia a lo que construyes."
     },
     {
-     "title": "Vuelta al vínculo",
-     "body": "Dijiste que casi nunca piensas que estarías bien incluso sin esa persona, y eso habla de una apuesta real por la relación. En vez de soltar, tiendes a volver a unir lo que se afloja. Esa insistencia no nace de indiferencia, sino de importancia. Lucía, cuando algo cuenta de verdad para ti, intentas volver a atarlo."
+     "title": "Primer paso",
+     "body": "Tu manera de acercarte para sostener la relación encaja con otra conducta muy clara: cuando hay roce, das el primer paso para volver a unir lo que se aflojó. No te quedas esperando a que todo se resuelva por sí mismo; actúas para retomar el hilo. Esa disposición a reparar es una fuerza concreta en tu manera de querer."
     }
    ],
-   "upcoming_period_heading": "A los 38 años, se abre una etapa de fuego",
-   "upcoming_period_body": "A los 38 años, el fuego toma más espacio en tu mapa y cambia el tono de lo que vienes viviendo. Lo que ahora se te queda dando vueltas por dentro empieza a empujarte hacia afuera, con más impulso para actuar y menos margen para quedarte sin una sola lectura. Lucía, te conviene llegar a ese tramo con más claridad sobre qué necesitas pedir y cómo quieres sostener el vínculo cuando algo te mueve. Así, ese cambio no te encuentra improvisando, sino con una forma más limpia de hablar y de responder.",
+   "upcoming_period_heading": "A los 38 años, se abre un ciclo de fuego",
+   "upcoming_period_body": "Desde los 38 años, el fuego toma más espacio en tu mapa y eso cambia el tono de tus días. Lo que antes se te quedaba dando vueltas puede empezar a moverse con más decisión, y tus reacciones en el vínculo se vuelven más visibles, más rápidas, menos contenidas. Para ti, Lucía, conviene llegar a esa etapa con una forma más clara de pedir confirmación sin dejar que la espera te arrastre entera. Si hoy aprendes a nombrar lo que necesitas en una frase simple, ese cambio te encuentra con más suelo bajo los pies.",
    "cross_analysis_quotes": [
-    "Tu tierra en 38% no solo pesa: también hace que la ansiedad busque seguridad inmediata, y por eso tu cabeza quiere cerrar el hueco antes de que crezca. En un Maestro del Día agua, esa presión se siente como carga, mientras el metal en 0% deja menos apoyo claro para ordenar lo que te pasa. Lucía, no es que te falte interés; te sobra intensidad cuando la relación se mueve.",
-    "Tu metal en 0% explica por qué la confirmación externa no te deja en paz del todo, aunque la escuches. Y como tu agua necesita apoyo, la ansiedad no se calma solo con una frase bonita; necesita una estructura que te ayude a sostener lo que sientes sin perderte en la revisión. Lucía, tu mente no busca drama: busca un borde firme donde descansar."
+    "Tierra al 38% y metal al 0%: en tu mapa, la presión pesa más de lo que te sostiene. Eso hace que sientas más el peso de las reglas, las responsabilidades y la exigencia. También explica por qué te cuesta encontrar un apoyo que te calme de verdad cuando aparece la duda.",
+    "Cuando falta metal, la ansiedad no encuentra apoyo y la mente se queda revisando señales. En tu caso, eso se nota cuando buscas una pista en el chat, en el tono o en una publicación. Entonces te quedas dando vueltas a lo mismo en lugar de sentirte sostenida."
    ],
    "answer_notes": [],
    "chat_snapshot_note": "",
    "chat_trigger_note": "",
    "chat_repeat_note": "",
    "chat_fear_note": "",
-   "psychology_fact_heading": "Bowlby y la teoría del apego",
-   "psychology_fact_body": "John Bowlby propuso que el apego organiza cómo buscamos seguridad en nuestras relaciones cercanas. En tu caso, eso se ve muy claro: cuando aparece un silencio, tu sistema no se queda quieto, sino que intenta recuperar seguridad revisando, preguntando o volviendo a escribir. La teoría del apego ayuda a entender que no estás exagerando por gusto, sino respondiendo con mucha sensibilidad a la distancia percibida. Lucía, tu reacción tiene lógica dentro de ese sistema: primero quieres asegurar el vínculo, y luego ya intentas entenderlo.",
-   "psychology_takeaway": "No te calma oír cualquier cosa; te calma sentir que el vínculo sigue en pie. Cuando la base no se siente firme, tu mente trabaja horas extra para comprobarlo.",
+   "psychology_fact_heading": "Apego ansioso y base segura",
+   "psychology_fact_body": "En el apego ansioso, la mente busca señales de continuidad cuando la otra persona baja el ritmo. John Bowlby y Mary Ainsworth describieron cómo la seguridad del vínculo se nota en la forma en que una persona usa la cercanía para regularse. En tu caso, la respuesta tardía, el «ok» seco y la revisión repetida del chat encajan con esa búsqueda de confirmación. No es que no quieras intimidad; es que la intimidad, cuando tiembla, te deja pendiente de cada señal.",
+   "psychology_takeaway": "Tu alarma no se enciende por falta de amor, sino por falta de señal clara. Cuando el vínculo se vuelve silencioso, tu mente intenta llenar el hueco antes de que el cuerpo se calme.",
    "strengths": [
     {
-     "title": "Dirección clara",
-     "body": "Tu Maestro del Día agua no se queda inmóvil: cuando algo importa, busca una dirección y se mueve hacia ella. Eso se nota en que, aunque te duela, das el primer paso para arreglarlo y no dejas que el vínculo se enfríe por inercia. Lucía, esa forma de avanzar le da continuidad a la relación incluso cuando por dentro hay ruido. Y cuando decides actuar, no lo haces a medias: entras con intención."
+     "title": "Inicio claro",
+     "body": "Lucía, tu mapa no muestra una retirada fría; muestra una capacidad real de entrar en el vínculo con decisión. Con la tierra tan fuerte y el agua como Maestro del Día, sabes sostener presencia cuando algo te importa de verdad. También tienes una apertura muy clara a la intimidad: cuando hay cercanía, no te cierras, sino que te implicas con naturalidad y te importa de verdad lo que pasa entre tú y la otra persona. Eso te da una base afectiva muy viva, incluso cuando la ansiedad aparece."
     }
    ],
    "weaknesses": [
     {
-     "title": "Lectura total",
-     "body": "Cuando aparece un «ok» seco o una mala cara, tu mente convierte una señal pequeña en una explicación completa. No lo haces por capricho, sino porque tu ansiedad quiere cerrar la incógnita cuanto antes. Lucía, el problema no es mirar; es cuando una sola pista toma el mando de todo el día."
+     "title": "Lectura rápida",
+     "body": "Cuando ves mala cara o un mensaje seco, tu mente corre a preguntarse qué hiciste mal. Esa lectura tan veloz te deja poco espacio para esperar una explicación completa y te empuja a revisar, escribir o repasar el chat. Lucía, el problema no es que notes el cambio; es que lo conviertes enseguida en culpa propia."
     },
     {
-     "title": "Culpa rápida",
-     "body": "Tu respuesta más automática es preguntarte qué hiciste mal, incluso antes de saber si hubo algo que resolver. Eso te deja mirando hacia dentro con demasiada dureza y te quita espacio para leer la escena con más calma. Lucía, no todo silencio nace de un error tuyo."
+     "title": "Pausa corta",
+     "body": "Después de discutir, te callas y luego escribes tú para arreglarlo, aunque no fuera tu parte. Esa secuencia te alivia un momento, pero después te deja peor porque el gesto de reparar nace mezclado con miedo. Lucía, tu impulso de resolver es fuerte, pero la prisa te quita aire."
     },
     {
-     "title": "Revisión repetida",
-     "body": "Volver al chat, mirar si está en línea o releer una publicación te da un alivio corto, pero luego te deja más enganchada. La repetición intenta darte control, aunque al final alimente más la duda. Lucía, tu mente cree que revisar aclara, pero muchas veces solo alarga la tensión."
+     "title": "Ansiedad de fondo",
+     "body": "Aunque te digan «te quiero», la ansiedad no se va del todo. Eso muestra que no te basta una frase suelta cuando la seguridad del vínculo todavía no se siente firme en el cuerpo. Lucía, lo que pides no es un gesto brillante: es continuidad."
     },
     {
-     "title": "Paz frágil",
-     "body": "Incluso cuando te dicen que todo va bien, la ansiedad de fondo no termina de irse. Eso te deja con una tranquilidad que dura poco y con la necesidad de volver a comprobar. Lucía, el punto no es que no quieras creer; es que todavía no encuentras una base que se sienta estable de verdad."
+     "title": "Revisión constante",
+     "body": "Tú vuelves una y otra vez a lo que publicó la otra persona y a lo que puede significar. Esa costumbre te mantiene atenta, pero también te deja demasiado tiempo dentro de la misma duda. Lucía, mirar mucho no siempre aclara; a veces solo alarga la inquietud."
     }
    ],
-   "fit_good": "Te va mejor un día con respuestas claras y un ritmo de contacto que no te obligue a adivinar tanto. Si trabajas o vives la relación con acuerdos simples y mensajes directos, tu cabeza deja de rellenar huecos todo el tiempo. Lucía, cuando sabes qué esperar, rindes mucho mejor emocionalmente.",
-   "fit_bad": "Te pesa mucho un entorno donde todo queda medio dicho y cada respuesta cambia de tono sin aviso. Si la otra persona se mueve entre silencios, ambigüedad y mensajes cortos, tu atención se queda en eso y te cuesta seguir con tu día. Lucía, la incertidumbre repetida te deja sin suelo.",
+   "fit_good": "Te va bien un entorno donde puedas hablar con la otra persona sin tener que adivinar su tono todo el tiempo. Un día sano para ti tiene mensajes claros, una respuesta que no se alarga sin motivo y un momento breve para decir «necesito saber que estamos bien». También te convienen relaciones donde el contacto diario se viva como algo natural y agradable, no como una prueba constante. Lucía, cuando hay claridad, tu presencia se vuelve mucho más firme.",
+   "fit_bad": "Te pesa un entorno donde todo cambia de tono sin explicación y donde la respuesta tarda mientras tú sigues esperando. Un día así te deja revisando, interpretando y preguntándote si hiciste algo mal antes de poder seguir con lo tuyo. También te desgasta un vínculo donde hablar parece una carga y la otra persona deja que tú siempre pongas el primer paso. Lucía, la ambigüedad te consume más de lo que parece.",
    "behavior_guides": [
     {
-     "title": "Chequeo breve",
-     "body": "Cuando notes una señal que te active, espera diez minutos antes de volver a escribir o revisar. En ese rato, anota una sola frase sobre lo que viste y otra sobre lo que estás imaginando. Lucía, eso te ayuda a separar dato y miedo sin pelearte con ninguno."
+     "title": "Frase breve",
+     "body": "Cuando notes mala cara o un silencio raro, espera diez minutos antes de volver a escribir. Usa ese tiempo para mandar una sola frase clara: «si puedes, dime si todo está bien». Después deja el chat cerrado y vuelve a tu día."
     },
     {
-     "title": "Frase puente",
-     "body": "Si la conversación se pone tensa, usa una frase corta y directa: «Prefiero entenderlo bien antes de sacar conclusiones». Dila una sola vez y deja que la otra persona responda. Lucía, así pides claridad sin entrar enseguida en persecución."
+     "title": "Chequeo único",
+     "body": "Si ves una publicación que te activa, mírala una sola vez y nombra en voz baja qué te hizo pensar. No vuelvas a abrirla durante una hora. Así separas lo que viste de lo que tu mente inventó alrededor."
     },
     {
-     "title": "Corte de revisión",
-     "body": "Cuando te descubras mirando el chat o una publicación por tercera vez, cierra la pantalla y cambia de lugar físicamente. Haz algo que ocupe las manos durante quince minutos, no para distraerte del todo, sino para cortar el bucle. Lucía, tu ansiedad baja más cuando rompes la repetición que cuando la sigues afinando."
+     "title": "Pausa de arreglo",
+     "body": "Después de una discusión, no escribas para arreglarlo en el primer impulso. Toma veinte minutos, camina o respira, y luego decide si vas a dar el primer paso desde calma. Si escribes, que sea para aclarar, no para calmar el miedo."
     },
     {
-     "title": "Pedido concreto",
-     "body": "En vez de pedir tranquilidad en general, pide una acción concreta: una llamada corta, una hora para hablar o una frase clara sobre lo que pasó. Hazlo en el momento en que todavía puedes hablar sin acumular demasiada presión. Lucía, una petición precisa te da más apoyo que una búsqueda infinita de señales."
+     "title": "Pedido directo",
+     "body": "Cuando necesites seguridad, dilo con una frase corta y concreta. Por ejemplo: «si hoy no puedes hablar, solo dime cuándo sí». Repite esa forma de pedirla siempre que la espera te saque de eje."
     }
    ],
-   "mindset_guide": "Tu mente ahora mismo funciona como un chat abierto que no se cierra solo. Si una señal pequeña entra, se queda dando vueltas hasta que alguien la ordena. No necesitas pensar menos; necesitas poner un borde más firme alrededor de lo que interpretas. Lucía, cuando la calma no llega sola, la seguridad se construye con una frase clara y un límite claro.",
-   "closing_title": "Lo que ya no se queda igual",
-   "closing_body": "A los 38 años, el fuego entra con más fuerza en tu mapa y cambia la manera en que se mueve tu vínculo. Lo que hoy te toma toda la tarde, después empieza a pedir una respuesta más rápida, más directa y más visible. En ese tramo, la relación deja de sostenerse solo en lo que imaginas y empieza a necesitar una forma más clara de mostrarse. Lucía, lo que más cambia no es tu necesidad de cercanía: es que ya no te alcanza con adivinarla.",
+   "mindset_guide": "Tu mente trata el silencio como si fuera una grieta, y por eso llena el hueco con culpa. Pero una relación no se sostiene con adivinanzas; se sostiene con señales que vuelven. Piensa en tu vínculo como en una luz de casa: no necesitas que brille todo el tiempo, pero sí que encienda cuando hace falta. Lucía, pedir esa luz no te hace pesada; te hace precisa.",
+   "closing_title": "Lo que queda en pie",
+   "closing_body": "Desde los 38 años, el fuego cambia el ritmo de tu mapa y deja menos espacio para vivir en la duda. Esa etapa te encuentra con más impulso para decir lo que necesitas y con menos paciencia para quedarte mirando señales sueltas. En tu relación, eso se nota como un día más claro: menos vueltas innecesarias, menos peso en el pecho y más capacidad de seguir con tu vida aunque una respuesta tarde. Lucía, la frase que mejor te deja cerrada esta lectura es esta: no necesitas perseguir cada silencio para saber que el vínculo sigue ahí.",
    "set_cards_2to5": [
     {
      "set": 2,
@@ -3508,8 +3507,8 @@ export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: an
       "label": "Entro en pánico pensando que la relación se acabó",
       "score": 3
      },
-     "quote": "Exacto. Si después de discutir no me escribe, no puedo concentrarme en nada hasta saber algo.",
-     "note": "Ese salto al pánico muestra que, después de un conflicto, tu mente no espera a ver qué pasa: rellena el vacío con la peor lectura posible. Eso habla de una alarma relacional muy sensible, que intenta proteger el vínculo reaccionando antes de tener datos. Lucía, cuando te pase, nómbralo como alarma y no como verdad."
+     "quote": "Doy yo el primer paso, siempre. Esperar se me hace eterno.",
+     "note": "Esa respuesta y el «ok» seco muestran que, cuando aparece distancia, tu mente salta directo al final antes que a una explicación. Ahí se ve una vigilancia afectiva muy intensa, no una frialdad ni una forma de dejar pasar las cosas. Lucía, lo tuyo no es esperar sentada: es reaccionar con fuerza cuando la señal se corta."
     },
     {
      "set": 3,
@@ -3521,7 +3520,7 @@ export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: an
       "score": 3
      },
      "quote": "",
-     "note": "Aunque escuches un «te quiero», tu cuerpo no suelta la tensión de fondo enseguida. Eso muestra que tu seguridad no depende solo de oír palabras, sino de sentir una base estable que no se mueva con cada silencio. Lucía, no estás pidiendo demasiado: estás buscando una calma que todavía no termina de asentarse."
+     "note": "Aunque lo escuches, la ansiedad de fondo no se va. Eso muestra que una frase por sí sola no te da calma duradera. Lo que necesitas es una señal que se sostenga con el tiempo."
     },
     {
      "set": 4,
@@ -3533,7 +3532,7 @@ export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: an
       "score": 3
      },
      "quote": "",
-     "note": "Ahí se ve un intento de leer más allá de la superficie para no quedarte a ciegas. También se nota el precio: cuanto más miras, más peso le das a una señal pequeña y más espacio ocupa en tu día. Lucía, esa revisión repetida termina por agrandar la ansiedad en vez de calmarla."
+     "note": "Esa forma de revisar la publicación y darle vueltas al sentido deja ver una mente que intenta dominar la incertidumbre leyendo cada detalle. No es simple curiosidad: es una manera de buscar suelo cuando la señal cambia. Lucía, ahí tu cabeza trabaja sin descanso para reducir la duda, aunque termine alimentándola."
     },
     {
      "set": 5,
@@ -3545,7 +3544,7 @@ export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: an
       "score": 0
      },
      "quote": "",
-     "note": "Tu mejor versión no necesita distancia para sentirse bien con el contacto diario; lo vive como algo simple y cómodo. Eso dice que la cercanía, cuando no viene con amenaza, se te acomoda con naturalidad. Lucía, ahí hay una base valiosa para construir vínculo sin estar midiendo cada gesto."
+     "note": "Esa respuesta muestra que, cuando el contacto es diario, tú no lo vives como presión sino como un ritmo cómodo. También encaja con que casi nunca te venga la idea de estar bien sin esa persona: tu vínculo se siente real y presente, no decorativo. Lucía, ahí hay una manera muy limpia de sostener cercanía sin fingir distancia."
     }
    ]
   },
@@ -3911,47 +3910,47 @@ export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: an
  },
  "jisoo": {
   "content": {
-   "title_line1": "알람이 울리기도 전에 이미 하루를 다 써버리는 사람",
-   "title_line2": "멈추지 않는 확인 속에서, 마음은 아직 결과를 놓지 못해요",
+   "title_line1": "지쳐도 멈추지 않는 확인의 밤",
+   "title_line2": "끝까지 붙잡는 마음이 먼저 닳아 있는 하루예요",
    "subtitle": "모듈 3 번아웃 심층 리포트 — 사주 × 심리검사 × 상담 통합",
-   "opening_scene": "일요일 밤부터 쌓이는 메신저 알림을 보면서 잠이 얕아지고, 월요일 아침이 오기도 전에 벌써 몸이 무거워져요. 알람을 끄고 누운 채로 오늘 해야 할 일 목록을 떠올리면, 시작도 하기 전에 진이 빠진다고 했어요. 지하철에서도 내일 보고서 문장을 고치고, 누우면 오늘 보낸 메일을 머릿속에서 다시 읽고 있어요. 쉬려고 누워도 일 생각이 따라붙는 하루, 지수님도 요즘 이런 모습 아니세요?",
-   "case_tag": "가상 사례 — 민준, 30대 초반, 프로젝트가 몰린 직장인",
+   "opening_scene": "일요일 밤부터 메신저 알림이 하나씩 쌓이는 걸 보면서, 지수님은 잠이 먼저 얇아져요. 지하철 안에서도 내일 보고서 문장을 고치고, 머릿속에서는 오늘 보낸 메일을 다시 읽고 있어요. 몸은 이미 지쳤는데, 생각은 계속 일 쪽에 붙어 있어요. 쉬어도 쉬는 것 같지 않다는 말이 딱 이런 밤을 가리켜요. 지수님, 요즘 이런 모습 아니세요?",
+   "case_tag": "가상 사례 — 민지, 30대 초반, 기획직",
    "case_paragraphs": [
-    "민준은 금요일까지 몰아서 버티고 주말에는 쓰러지듯 자요. 그래도 월요일이 되면 몸은 그대로 피곤하고, 새로 들어온 요청 앞에서는 또 한 번 숨이 막혀요. 그의 사주는 토가 강하고 수가 비어 있어서, 일과 책임을 붙잡는 힘은 크지만 쉬어 복원되는 감각은 약해요. 당신도 이렇게 버티는 쪽만 계속 커지고 있나요?"
+    "민지는 금요일까지 몰아서 버티고 주말에 쓰러지듯 잠들어요. 월요일 아침이 오면 다시 메신저 알림부터 확인하느라, 쉬는 동안에도 머리가 일을 놓지 못해요. 사주에서도 토가 강하고 수가 약해서, 붙잡는 힘은 센데 숨을 돌리는 쪽이 비어 있어요. 당신도 비슷하게, 쉬는 시간까지 일의 그림자에 잡혀 있나요?"
    ],
-   "oheng_intro": "토 50%가 가장 강하고, 수 0%가 비어 있어요. 토는 지수님이 현실과 일을 붙잡는 기운이라서, 맡은 일을 끝까지 놓지 않는 힘이 분명해요. 다만 수가 비어 있어서, 그 힘을 잠깐 내려놓고 다시 채워 주는 감각은 이번 번아웃 주제에서 아주 얇게 나타나요.",
-   "quiz_reading": "지수님은 소진 84%, 효능감 저하 71%가 함께 높고, 냉소 16%는 낮게 나왔어요. 유형 이름 그대로 에너지는 바닥에 닿아 있는데, 일에 대한 애정과 결과물에 대한 진심은 아직 남아 있는 조합이에요. 그래서 하루는 무기력하게 흐르는데도, 메일을 대충 넘기지 못하고 계속 고치게 돼요.",
+   "oheng_intro": "지수님 사주는 토 50%가 우세하고, 수 0%가 약해요. 토는 지수님이 다루는 기운, 그러니까 현실과 재물과 일을 붙잡는 힘으로 읽히고, 수는 지수님을 살려 주는 지원과 배움과 보호의 힘으로 비어요. 이번 번아웃은 연애가 아니라 일할 때 드러나는 구조라서, 붙잡는 쪽은 과한데 살려 주는 쪽은 비어 있는 장면으로 보이면 딱 맞아요.",
+   "quiz_reading": "지수님은 소진이 84%로 높고, 효능감 저하가 71%로 보통 이상으로 올라와 있어요. 유형 이름이 소진형인 이유가 화면에 그대로 드러나고, 아침에 눈뜨자마자 이미 지쳐 있고 간단한 메일 답장만 떠올려도 진이 빠지는 흐름과 정확히 맞아떨어져요. 그런데 냉소는 16%로 낮아서, 일 자체를 놓아버린 상태가 아니라 지친 채로도 아직 진심을 붙들고 있는 쪽이에요.",
    "element_readings": {
     "wood": {
-     "heading": "🌳 목 강하다 — 오늘 할 일을 먼저 붙드는 줄기",
-     "body": "목 33%는 지수님 안에서 이미 강하게 자라고 있어요. 아침에 눈뜨자마자 할 일 목록이 먼저 떠오르고, 지하철에서도 보고서 문장을 고치는 모습이 딱 이 기운이에요. 갑 일간 기준으로 보면 목은 지수님 자신을 이루는 기운이라, 생각이 곧 움직임으로 이어지려는 힘이 분명해요. 다만 이번 번아웃에서는 그 힘이 쉬는 방향보다 일을 계속 이어 붙이는 방향으로 더 자주 쓰이고 있어요."
+     "heading": "🌳 목 강하다 — 생각이 자라나는 속도",
+     "body": "목 33%는 지수님 안에서 생각과 계획이 자라나는 힘이 꽤 강하다는 뜻이에요. 아침에 눈뜨자마자 오늘 할 일을 떠올리고, 지하철에서도 보고서 문장을 고치는 장면이 바로 이 힘의 얼굴이에요. 생각이 빨리 자라니 일의 윤곽을 놓치지 않지만, 그만큼 머리가 쉬지 못하고 계속 앞질러 가요. 그래서 지수님은 멈춘다기보다, 생각이 먼저 달려 나가서 몸을 끌고 가는 쪽에 가까워요."
     },
     "fire": {
-     "heading": "🔥 화 약하다 — 열은 있는데 불꽃이 오래 못 가는 상태",
-     "body": "화 0%는 겉으로 보이는 열감이 많이 비어 있는 편이에요. 그런데 냉소가 낮고 일의 결과물에 대한 진심은 남아 있어서, 마음속 열정 자체가 꺼진 건 아니에요. 밤에 누워서도 메일을 다시 읽고, 머리는 각성돼 있는데 몸은 지쳐 있는 장면이 바로 이 비어 있는 화를 보여 줘요. 지수님은 식은 사람이 아니라, 식을 틈 없이 계속 써버린 사람이에요."
+     "heading": "🔥 화 약하다 — 바로 타오르는 온도",
+     "body": "화 0%는 뜨거운 추진이나 순간적인 활력이 잘 드러나지 않는 쪽이에요. 지수님은 일에 대한 애정이 분명한데도, 그 애정이 금세 타오르는 열기보다는 오래 버티는 쪽으로 남아 있어요. 그래서 겉으로는 차분해 보여도, 안쪽에서는 해야 할 일을 끝까지 붙들고 있는 힘이 계속 쓰여요. 빨리 달아오르지 않으니, 대신 오래 지치는 방식으로 나타나요."
     },
     "earth": {
-     "heading": "⛰️ 토 강하다 — 현실과 책임을 끝까지 붙잡는 바닥",
-     "body": "토 50%는 지수님이 일을 현실로 붙잡는 힘이 아주 크다는 뜻이에요. 맡은 게 계속 늘어나도 거절을 잘 못 하고, 잘한다는 말을 들으면 일이 더 오는 흐름이 반복돼요. 갑 일간 기준으로 토는 지수님이 다루는 기운이라, 결과와 책임을 손에서 놓지 않는 쪽으로 강하게 작동해요. 그래서 버티는 힘은 분명한데, 그만큼 손을 펴는 순간이 적어져요."
+     "heading": "⛰️ 토 강하다 — 현실을 붙드는 손",
+     "body": "토 50%는 지수님이 현실과 일을 아주 세게 붙잡는 구조예요. 맡은 일이 계속 늘어도 거절을 잘 못 하고, 잘한다는 말을 들으면 일이 더 오는 흐름이 이 힘 위에서 굴러가요. 그래서 지수님은 일이 많은데도 대충 넘기지 못하고, 끝까지 책임을 붙들어요. 그 손이 단단한 만큼, 한 번 무너지기 시작하면 지치는 감각도 아주 분명하게 와요."
     },
     "metal": {
-     "heading": "💎 금 보통 — 확인하고 다듬는 날카로운 손끝",
-     "body": "금 17%는 과하지도 적지도 않은 정도로 남아 있어요. 그래서 지수님은 혼자 끝까지 해내면서도, 새 프로젝트 리드처럼 중요한 자리에서는 두 번 세 번 확인하게 돼요. 결과물을 대충 넘기지 못하고 후배가 이해됐다고 말할 때 힘이 나는 것도 이 금의 모습이에요. 확인과 정리는 분명히 지수님을 지탱하지만, 지금은 그 손끝이 자꾸 쉬지 못하게 만들고 있어요."
+     "heading": "💎 금 보통 — 기준을 세우는 선",
+     "body": "금 17%는 기준과 확인의 감각이 적당히 살아 있는 수치예요. 새 프로젝트를 맡았을 때 남들보다 두세 번 더 확인하는 모습이 여기와 잘 맞아요. 지수님은 대충 넘어가면 마음이 불편한 편이라, 결과물의 모양을 끝까지 다듬으려 해요. 그래서 금은 지수님을 날카롭게 몰아붙이기보다, 일을 망치지 않게 선을 세워 주는 쪽으로 보여요."
     },
     "water": {
-     "heading": "💧 수 약하다 — 지수를 살려 주는 물길이 마른 자리",
-     "body": "수 0%는 지수님에게 쉬어도 다시 살아나는 감각이 얇다는 뜻이에요. 그래도 금이 수를 살려 주듯, 지수님 안의 확인하는 힘과 정리하는 힘이 이 비어 있는 자리를 조금 메워 주고 있어요. 퇴근 후 동생과 통화한 10분이 채워 주는 느낌이 있었던 것도, 바로 그 물길이 잠깐 열린 순간이에요. 수가 비어 있으면 버티는 힘은 남아도, 마음을 적셔 다시 시작하게 하는 장면은 쉽게 오지 않아요."
+     "heading": "💧 수 약하다 — 살려 주는 숨",
+     "body": "수 0%는 지수님에게 쉬게 하고 받아 주는 숨이 크게 비어 있다는 뜻이에요. 다만 이 약한 수는 금이 수를 살려 주는 흐름으로 채워지기 때문에, 완전히 끊긴 상태로만 보지는 않아요. 실제로 퇴근 후 동생과 통화하는 10분이 채워 주는 시간으로 남아 있고, 그 짧은 연결이 지수님을 잠깐이라도 살려요. 하지만 평소에는 지원과 회복이 먼저 떠오르기보다, 혼자 끝까지 버티는 쪽이 앞서요."
     }
    },
    "upcoming_period_preview_heading": "",
    "upcoming_period_preview_body": "",
    "module_map": {
     "title": "에너지 수지표",
-    "body": "요즘 지수님 하루에서 먼저 빠져나가는 건 에너지예요. 금요일까지 몰아서 버티고, 주말에 쓰러지듯 자도 월요일이면 피로가 그대로 남아 있어요. 반대로 조금이라도 채워 주는 건 후배가 자료를 이해했다고 말해 주는 순간과 동생과 통화한 10분이에요. 소진은 높고 냉소는 낮아서, 지쳐도 일을 놓아버리진 못하는 쪽으로 기울어 있어요."
+    "body": "지수님은 요구가 자원보다 훨씬 크게 쏠려 있어요. 일의 양이 늘고, 확인은 더 길어지고, 쉬는 시간은 짧아지는데도 혼자 끝까지 해내려는 쪽으로 에너지가 계속 빠져나가요. 반면 자원 쪽에서는 퇴근 후 동생과 통화하는 10분, 후배가 자료를 보고 이해됐다고 말해 주는 순간처럼 아주 작은 장면만 살아 있어요. 그래서 소진은 높고, 냉소는 낮고, 효능감은 흔들리는데도 일을 놓지는 못하는 구조가 또렷해요."
    },
    "module_deep": {
     "title": "다시 채우는 순서",
-    "body": "지금부터는 먼저 맡는 양을 줄이고, 그다음 확인 횟수를 줄이고, 마지막으로 도움을 받는 쪽으로 옮겨 가면 돼요. 지수님은 이미 결과를 놓지 않는 힘이 충분하니까, 그 힘을 더 써서 버티기보다 덜 새는 구조를 만드는 게 맞아요. 금요일까지 몰아붙이는 방식 대신, 중간에 한 번씩 멈춰서 누가 무엇을 대신 볼 수 있는지 정리해 두세요. 36세부터 45세까지는 지원과 배움의 흐름이 더 또렷해질 수 있는 시기이니, 지금은 혼자 끝까지 해내는 습관을 조금씩 덜어 두는 연습을 해 두면 좋아요. 혼자 끝까지 해내는 습관을 줄이는 게 약해지는 일이 아니라, 지수님 일을 오래 가게 하는 준비예요."
+    "body": "먼저 내려놓아야 하는 건, 지수님이 혼자 다 확인해야 한다는 감각이에요. 그다음 채워야 하는 건, 퇴근 후 동생과 통화한 10분처럼 짧아도 실제로 숨이 돌아오는 자원이예요. 마지막으로 바꿔야 하는 건, 괜찮냐는 질문에 자동으로 괜찮다고 답하는 습관이에요. 이번 번아웃은 일을 더 줄이라는 이야기보다, 요구를 받는 방식과 회복을 받는 방식의 순서를 다시 짜야 한다는 신호예요. 그 순서가 바뀌면 지수님은 같은 하루를 덜 무겁게 들고 갈 수 있어요."
    },
    "set_card_1": {
     "set": 1,
@@ -3962,9 +3961,84 @@ export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: an
      "label": "눈뜨자마자 이미 지쳐있다",
      "score": 3
     },
-    "quote": "일요일 밤부터 메신저 알림이 하나씩 쌓이는 게 보이면 잠도 설쳐요.",
-    "note": "아침의 피로와 밤의 불안이 따로가 아니라 한 덩어리로 이어져 있어요. 지수님은 일이 시작되기 전부터 이미 몸이 반응하는 편이에요. 그래서 다음 날이 아니라 전날 밤부터 마음이 먼저 소진돼요."
+    "quote": "맞아요. 알람 끄고 누운 채로 오늘 해야 할 일 목록부터 떠올리는데, 그때 벌써 진이 빠져요.",
+    "note": "아침에 눈을 뜨자마자 오늘 해야 할 일이 먼저 떠올라서, 시작하기도 전에 이미 지친 상태를 보여 줘요. 지수님은 하루를 여유 있게 여는 편이 아니라, 눈을 뜨는 순간부터 일의 무게를 먼저 느끼는 쪽이에요. 그래서 아침은 회복의 시간이 아니라 피로가 먼저 올라오는 시간이 돼 있어요."
    },
+   "strengths_preview": [
+    {
+     "title": "책임감",
+     "body": "지수님은 지쳐도 결과물을 대충 넘기지 못하는 힘이 있어요. 후배가 자료를 보고 덕분에 이해됐다고 했을 때 기분이 좋아지는 걸 보면, 남에게 도움이 되는 결과를 끝까지 지키려는 마음이 분명해요. 아무나 쉽게 놓아 버릴 일을 지수님은 마지막까지 붙들고 완성하려고 해요."
+    },
+    {
+     "title": "버티는 힘",
+     "body": "금요일까지 몰아서 버티고 주말에 쓰러지는 흐름이 몇 달째 반복돼도, 지수님은 결국 다시 일어난다고 말해요. 일주일 내내 방전 상태라고 답했는데도 일을 완전히 밀어내지 않고 계속 이어 가는 건, 버티는 힘이 실제로 있다는 뜻이에요. 몸은 바닥나 있어도 책임을 끊지 않는 버팀이 지수님 안에 남아 있어요."
+    },
+    {
+     "title": "잘하고 싶은 마음",
+     "body": "새 프로젝트 리드를 맡았을 때 기쁘기보다 무서웠다고 했지만, 그 말은 맡은 일을 가볍게 보지 않는다는 뜻이기도 해요. 인정받을 때 살아 있는 느낌이 들고, 결과물이 좋을 때만 마음이 놓이는 결이 분명해요. 그래서 지수님은 대충 해도 되는 사람보다, 끝까지 잘해 내고 싶은 사람에 더 가까워요."
+    }
+   ],
+   "upcoming_period_heading": "36세부터 시작되는 수의 계절",
+   "upcoming_period_body": "36세부터 45세까지는 지수님한테 비어 있던 지원의 숨이 들어오는 구간이에요. 지금까지는 일을 붙드는 힘이 너무 앞서서 혼자 확인하고 혼자 버티는 쪽으로만 에너지가 빠졌다면, 그 뒤에는 사람에게 맡기고 배우고 보호받는 장면이 조금씩 생겨요. 그래서 같은 일도 예전처럼 전부 혼자 들고 가지 않아도 되고, 결과를 지키는 방식이 더 단단해져요. 지금은 끝까지 혼자 버티는 습관을 조금 덜어 두는 연습이 가장 실용적이에요.",
+   "cross_analysis_quotes": [
+    "토가 강해서 지수님은 현실과 재물과 일을 붙잡는 힘이 분명하고, 소진 84%와 효능감 저하 71%는 그 힘이 너무 오래 혼자 버틴 흔적을 그대로 보여 줘요. 지금 필요한 건 더 세게 잡는 일이 아니라, 잡는 손 옆에 쉬게 둘 자리를 하나 만드는 일이에요. 일을 놓는 사람이 아니라, 일을 붙드는 방식이 바뀌는 사람이에요.",
+    "수가 약해서 지수님은 지원과 배움과 보호를 받는 쪽이 비어 있고, 그래서 냉소 16%처럼 마음을 접기보다 확인을 더 하게 돼요. “내가 감당 못 할 것 같아 두렵다”는 답은 바로 그 빈자리를 정확히 짚어요. 도움을 받는 순간이 약함의 증거가 아니라, 지수님한테는 버티는 구조를 다시 짜는 시작이에요."
+   ],
+   "answer_notes": [],
+   "chat_snapshot_note": "",
+   "chat_trigger_note": "",
+   "chat_repeat_note": "",
+   "chat_fear_note": "",
+   "psychology_fact_heading": "볼비의 애착 이론",
+   "psychology_fact_body": "볼비는 사람이 힘들 때 누구에게 기대고 싶은지를 아주 오래 봤어요. 애착 이론은 불안할수록 도움을 찾고, 안정감을 다시 붙잡으려는 경향이 생긴다고 설명해요. 지수님은 일을 혼자 끝까지 확인하는 쪽이 강해서, 기대는 행동보다 스스로 버티는 행동이 먼저 나와요. 그래서 “쉬면 뒤처질 것 같다”는 감각이 단순한 성실함이 아니라, 안전을 혼자 확보하려는 방식처럼 읽혀요.",
+   "psychology_takeaway": "혼자 버티는 힘은 강점이지만, 계속 혼자만 버티면 금세 소진돼요. 지수님한테 필요한 건 더 참고 더 버티는 일이 아니라, 기대도 되는 구조를 만드는 일이에요.",
+   "strengths": [
+    {
+     "title": "방향 감각",
+     "body": "지수님은 일이 몰려도 결과물은 대충 넘기지 않고 끝까지 다듬는 힘이 있어요. 지쳐도 후배가 자료를 보고 이해됐다고 하면 보람을 느끼고, 그 반응을 다음 일로 이어 가는 동력으로 삼아요. 또 아침에 알람 없이 일어나 한강을 따라 아무 목적 없이 걷고 싶다고 말한 것처럼, 바쁜 흐름 속에서도 스스로의 속도를 되찾고 싶어 하는 마음이 분명해요."
+    }
+   ],
+   "weaknesses": [
+    {
+     "title": "과부하",
+     "body": "지수님은 맡는 양이 늘어날수록 먼저 거절하기보다 더 확인하는 쪽으로 가요. “이미 한계라 거절하고 싶어진다”는 답이 나올 만큼, 들어오는 일의 양이 감당선을 빠르게 넘겨요. 그래서 힘이 없는 게 아니라, 들어오는 양이 지수님보다 자주 앞서가요."
+    },
+    {
+     "title": "자기 의심",
+     "body": "새 프로젝트 리드를 맡았을 때 기쁘기보다 무서웠다는 말에는, 시작보다 책임의 무게를 먼저 보는 습관이 들어 있어요. 실수 하나가 그동안 쌓은 걸 무너뜨릴 것 같다고 느끼는 만큼, 스스로를 평가하는 눈이 아주 엄격해요. 그래서 능력이 없어서 흔들리는 게 아니라, 능력을 너무 높은 기준으로 재고 있어요."
+    },
+    {
+     "title": "과각성",
+     "body": "지수님은 누워도 오늘 보낸 메일을 다시 읽고, 생각을 끄려고 유튜브를 틀어도 새벽 두 시가 되기 쉬워요. 몸은 지쳤는데 머리는 계속 돌아가서, 쉬는 시간이 오히려 긴장 연장처럼 느껴져요. 멈추지 못하는 밤이 반복되면, 다음 날 아침의 피로가 더 빨리 올라와요."
+    },
+    {
+     "title": "혼자 버팀",
+     "body": "팀장님이 괜찮냐고 물었을 때도 괜찮다고 한 건, 지수님이 도움을 청하는 순간을 마지막 카드처럼 아끼고 있기 때문이에요. 부탁하는 순간 스스로 감당 못 한다고 인정하는 것 같아서 혼자 끝까지 하게 돼요. 그래서 겉으로는 단단해 보여도, 안에서는 이미 자주 과하게 버티고 있어요."
+    }
+   ],
+   "fit_good": "지수님은 해야 할 범위가 분명하고, 결과 기준이 또렷한 자리에서 더 잘 맞아요. 중간중간 누구한테 맡길지 정할 수 있고, 후배가 자료를 이해했는지 바로 확인되는 환경이면 힘이 덜 새요. 퇴근 뒤에도 메일이 계속 쏟아지는 구조보다, 하루 안에 선이 그어지는 일정이 훨씬 맞아요.",
+   "fit_bad": "지수님은 일의 양은 계속 늘어나는데, 누가 어디까지 책임지는지 애매한 자리에서 금방 소모돼요. 잘한다는 말을 들을수록 일이 더 붙는 환경은 잠깐은 버텨도 오래 가면 숨이 막혀요. 금요일까지 몰아붙이고 주말에 쓰러지는 흐름이 반복되는 곳이면, 몸보다 먼저 마음이 닳아요.",
+   "behavior_guides": [
+    {
+     "title": "멈춤 메모",
+     "body": "오늘 받은 요청이 새로 들어오면, 바로 답하기 전에 메모장에 한 줄만 적어 두세요. “지금 내 한계가 맞는지”를 30초만 확인하고, 가능하면 바로 답하지 말고 10분 뒤에 다시 보세요. 그 짧은 멈춤이 지수님한테는 거절과 수락을 구분하는 첫 번째 숨이 돼요."
+    },
+    {
+     "title": "퇴근 차단",
+     "body": "퇴근 후 30분은 메일 알림을 끄고, 노트북을 가방 안에 넣은 채로 두세요. 그 시간에는 일을 정리하지 말고 동생에게 연락하거나 집 안에서 완전히 다른 행동 하나만 하세요. 머리를 끄는 데 실패하는 밤을 줄이려면, 몸이 먼저 일에서 떨어지는 시간이 필요해요."
+    },
+    {
+     "title": "확인 줄이기",
+     "body": "잠들기 전에는 오늘 보낸 메일을 다시 읽지 않는 규칙을 3일만 시험해 보세요. 대신 내일 아침에 볼 한 줄만 적고, 그 외의 수정은 출근 후로 미루세요. 지수님은 확인을 줄이는 연습이 곧 체력을 아끼는 연습이에요."
+    },
+    {
+     "title": "도움 요청",
+     "body": "이번 주에 딱 한 번, 작은 일 하나를 부탁해 보세요. 자료 정리든 일정 확인이든 좋고, 부탁한 뒤에는 설명을 덧붙이지 말고 멈추세요. 지수님한테는 부탁하는 순간이 약해지는 순간이 아니라, 버티는 방식을 바꾸는 순간이에요."
+    }
+   ],
+   "mindset_guide": "지수님은 쉬면 뒤처질 거라는 생각을 너무 오래 혼자 들고 있었어요. 하지만 불안은 경고등이지 판결문이 아니에요. 지금 필요한 건 더 세게 밟는 발이 아니라, 잠깐 멈춰도 꺼지지 않는 엔진을 만드는 일이에요. 확인을 줄이는 건 포기가 아니라, 일의 무게를 다시 나누는 일이에요.",
+   "closing_title": "혼자 버틴 자리에",
+   "closing_body": "36세부터 45세까지는 지수님에게 수의 숨이 들어오는 시기예요. 지금처럼 혼자 확인하고 혼자 버티던 하루가 그대로 이어지지 않고, 지원을 받는 장면이 분명히 늘어요. 번아웃의 무게도 그때는 지금보다 덜 눌러요. 친구였다면 그만 좀 확인하고 오늘은 일찍 자라고 했을 거예요. 그 정도면 충분히 했다고요.",
    "set_cards_2to5": [
     {
      "set": 2,
@@ -3975,8 +4049,8 @@ export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: an
       "label": "이미 한계라 거절하고 싶어진다",
       "score": 3
      },
-     "quote": "쉬어도 크게 달라지지 않아요.",
-     "note": "지수님은 일이 밀릴수록 더 버티려는 쪽으로 움직이는데, 이 답은 그 버팀이 이미 한계까지 갔다는 신호예요. 거절이 약해서가 아니라, 지금은 맡는 양이 지수님의 회복 속도를 앞지르고 있다는 뜻으로 읽혀요. 한 번에 다 막으려 하지 말고, 들어오는 일을 순서대로 줄여 보는 게 먼저예요."
+     "quote": "보통 금요일까지 몰아서 버티고, 주말에 쓰러지듯 자고, 일요일 저녁부터 다시 불안해져요. 그게 몇 달째 반복이에요.",
+     "note": "지수님은 일이 밀릴 때 무조건 더 받는 쪽으로만 움직이지 않아요. 몸과 마음이 이미 한계에 닿았다는 감각을 먼저 알아차리는 사람이에요. 지금은 그 감각을 늦게 인정하기보다, 처음 올라오는 순간에 바로 멈추는 연습이 필요해요."
     },
     {
      "set": 3,
@@ -3988,7 +4062,7 @@ export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: an
       "score": 2
      },
      "quote": "네, 새 프로젝트 리드를 맡았을 때 사실 기쁘기보다 무서웠어요. 언젠가 제가 별거 아니라는 게 드러날 것 같아서요.",
-     "note": "지수님은 새 역할이 오면 기대보다 먼저 무게를 계산하는 편이에요. 이 답은 자신감이 없다는 말이 아니라, 실수 하나가 쌓은 것을 무너뜨릴까 봐 끝까지 책임지려는 마음이 크다는 뜻이에요. 그래서 시작 전에 스스로를 몰아붙이기보다, 맡을 범위를 먼저 나누는 쪽이 더 맞아요."
+     "note": "지수님은 새 역할이 오면 흥분보다 먼저 무게를 계산하는 쪽이에요. 책임을 가볍게 보는 사람이 아니라, 책임의 크기를 끝까지 의식하는 사람이에요. 그래서 두려움이 크다고 해서 약한 게 아니라, 무게를 진짜로 느끼고 있다는 뜻이에요."
     },
     {
      "set": 4,
@@ -3999,8 +4073,8 @@ export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: an
       "label": "몸은 지쳤는데 머리는 각성돼 있다",
       "score": 3
      },
-     "quote": "그거 완전 저예요. 누우면 오늘 보낸 메일을 머릿속에서 다시 읽어요.",
-     "note": "지수님은 쉬는 시간에도 일을 끊지 못하고, 누운 뒤에도 메일을 다시 읽는 쪽이에요. 이 답은 몸의 피로보다 확인 습관이 더 늦게 꺼진다는 걸 보여 줘요. 잠들기 직전엔 일을 해결하려 하지 말고, 오늘 보낸 확인을 멈추는 쪽이 더 중요해요."
+     "quote": "그럴 땐 유튜브를 틀어 놓고 잠들 때까지 봐요. 생각을 끄려고요. 근데 그러면 새벽 두 시가 돼요.",
+     "note": "지수님은 쉬는 시간에도 일을 완전히 끊지 못해요. 누워서도 메일을 다시 읽고, 잠들기 전까지 생각을 붙들고 있어요. 몸이 먼저 닳는 만큼, 머리를 멈추는 방식부터 따로 만들어야 해요."
     },
     {
      "set": 5,
@@ -4012,84 +4086,9 @@ export const QA_DEEP_REPORT_V2: Record<string, { content: any; quizDiagnosis: an
       "score": 0
      },
      "quote": "네, 그건 맞아요. 지쳐도 결과물은 대충 넘기지 못해요. 그게 저를 힘들게도 하지만요.",
-     "note": "지수님은 지쳐도 결과물을 대충 넘기지 못하는 사람이에요. 이 답은 소진이 커도 일의 의미를 놓지 않았다는 뜻이라서, 남아 있는 진심이 아직 분명하다는 걸 보여 줘요. 그 진심은 스스로를 몰아세우는 데 쓰기보다, 덜 지치는 방식으로 옮겨 가야 해요."
+     "note": "지수님은 지쳐도 결과를 대충 넘기지 않는 사람이에요. 후배가 자료를 보고 이해됐다고 했을 때 기분이 좋아진다는 답이 그걸 보여 줘요. 마음이 남아 있는 사람이라서, 무너진 뒤에도 다시 품질을 챙기려는 힘이 있어요."
     }
-   ],
-   "strengths_preview": [
-    {
-     "title": "책임감",
-     "body": "지수님은 일이 늘어도 결과물을 대충 넘기지 못해요. 후배가 자료를 보고 덕분에 이해됐다고 했을 때 기분이 좋아졌다는 답이 그걸 보여 줘요. 지쳐도 맡은 것의 결을 지키려는 힘이 분명해서, 일이 몰릴수록 오히려 더 성실한 얼굴이 나와요."
-    },
-    {
-     "title": "버티는 힘",
-     "body": "금요일까지 몰아서 버티고 주말에 쓰러지듯 자는 흐름이 몇 달째 반복돼도, 지수님은 여전히 다음 주를 다시 시작해요. 쉬어도 크게 달라지지 않았다고 답했는데도 결국 월요일을 맞이하는 건, 버티는 힘이 약해서가 아니에요. 몸은 지쳐도 흐름을 끊지 않고 계속 이어 가는 힘이 있어요."
-    },
-    {
-     "title": "잘하고 싶은 마음",
-     "body": "새 프로젝트 리드를 맡았을 때 무섭다고 답했지만, 그 안에는 잘해 내고 싶은 마음이 분명히 들어 있어요. 실수 하나가 쌓은 걸 무너뜨릴까 봐 두 번 세 번 확인하는 태도도 같은 결이에요. 결과를 진심으로 신경 쓰는 사람만이 이렇게까지 스스로를 점검해요."
-    }
-   ],
-   "upcoming_period_heading": "36세부터, 물길이 살아나는 다음 장",
-   "upcoming_period_body": "36세부터 45세까지는 지수님이 혼자 버티는 방식보다, 받쳐 주는 손길과 배움의 흐름이 더 또렷해질 수 있는 구간이에요. 지금은 결과를 끝까지 붙잡느라 몸이 먼저 닳아 있지만, 그 뒤에는 도움을 받는 일이 어색하지 않은 쪽으로 일의 감각이 바뀔 수 있어요. 그래서 지금부터는 모든 걸 직접 확인하려는 습관을 조금씩 덜어 두는 연습이 필요해요. 그래야 그 시기에 들어왔을 때, 지수님이 이미 지쳐 있는 상태로 새 흐름을 맞지 않게 돼요.",
-   "cross_analysis_quotes": [
-    "토가 일을 붙잡는 힘이라면, 소진 84%와 효능감 저하 71%는 그 힘이 너무 오래 혼자 버틴 결과로 읽혀요. 지금은 지쳐서 버티는 감각이 앞서지만, 일에 대한 애정은 아직 남아 있어요. 그래서 결과를 놓지 않으려는 마음과 이미 바닥난 에너지가 함께 보이는 상태예요.",
-    "지금 지수님은 결과를 놓지 않는 쪽에 서 있지만, 수가 살아나는 시기에는 지원과 배움이 들어와서 그 긴장감이 한결 덜어질 수 있어요. 36세부터 45세까지는 수 기운이 강해지는 시기라서, 혼자 끝까지 버티는 방식보다 도움을 받는 흐름이 더 자연스러워질 수 있어요. 그때는 일의 무게를 혼자 다 떠안지 않아도 되는 쪽으로 숨통이 트일 수 있어요."
-   ],
-   "answer_notes": [],
-   "chat_snapshot_note": "",
-   "chat_trigger_note": "",
-   "chat_repeat_note": "",
-   "chat_fear_note": "",
-   "psychology_fact_heading": "볼비의 애착 이론",
-   "psychology_fact_body": "볼비의 애착 이론은 사람이 불안할 때 누구에게 기대고, 어떻게 안전감을 회복하는지를 보는 틀이에요. 지수님은 괜찮냐는 질문에도 괜찮다고 하고, 혼자 끝까지 확인한 뒤에야 마음을 놓는 쪽으로 보였어요. 이건 도움을 싫어해서가 아니라, 쉬면 뒤처질까 봐 스스로를 더 단단히 붙잡는 방식으로 읽혀요. 그래서 지수님에게 필요한 건 의지 부족을 고치는 일이 아니라, 기대어도 흐트러지지 않는 경험을 조금씩 늘리는 일이에요.",
-   "psychology_takeaway": "혼자 버티는 힘이 길어질수록, 기대는 연습은 더 늦어져요. 지수님은 약해서가 아니라 너무 오래 혼자 잘해 왔어요.",
-   "strengths": [
-    {
-     "title": "방향 감각",
-     "body": "갑목인 지수님은 흐름을 그냥 흘려보내지 않고, 먼저 어디로 가야 하는지 세우는 힘이 있어요. 새 프로젝트 리드를 맡았을 때 무섭다고 했어도, 그 안에서 해야 할 방향을 놓치지 않았어요. 그래서 일이 많아져도 지수님 손에서는 기준이 쉽게 무너지지 않아요. 처음부터 끝까지 확인하는 태도도 결국 방향을 잃지 않으려는 힘이에요."
-    }
-   ],
-   "weaknesses": [
-    {
-     "title": "과도한 확인",
-     "body": "지수님은 한 번 끝낸 뒤에도 메일을 머릿속에서 다시 읽고, 부탁하는 순간 감당 못 한다고 느낄까 봐 혼자 처리해요. 그래서 몸은 이미 지쳤는데도 머리는 계속 일을 붙잡고 있어요. 확인이 꼼꼼함으로 보일 때도 있지만, 지금은 에너지를 새는 구멍이 되기 쉬워요."
-    },
-    {
-     "title": "쉬지 못함",
-     "body": "쉬어도 크게 달라지지 않았다고 답한 건, 휴식이 부족해서가 아니라 쉬는 동안에도 마음이 일을 놓지 못하기 때문이에요. 카페에 가도 노트북을 챙겨 가고, 잠들 때까지 유튜브를 켜 두는 흐름이 그걸 보여 줘요. 쉬는 시간 자체보다, 쉬는 동안 일의 손을 내려놓는 감각이 더 필요해요."
-    },
-    {
-     "title": "자기 의심",
-     "body": "새로운 역할이 오면 감당 못 할 것 같다고 느끼고, 중요한 결정을 내릴 자격이 없다고까지 답했어요. 실수 하나가 쌓은 걸 무너뜨릴까 봐 두 번 세 번 확인하는 것도 같은 결이에요. 지수님은 능력이 없어서가 아니라, 기준을 높게 잡는 만큼 스스로를 먼저 의심하는 쪽이에요."
-    },
-    {
-     "title": "부담 과잉",
-     "body": "지수님은 일이 늘어도 결과물을 대충 넘기지 못하고, 잘한다는 말을 들으면 일이 더 오는 구조를 버티고 있어요. 그래서 맡은 양이 자꾸 커지고, 거절은 더 어려워져요. 지금의 부담은 의지가 약해서가 아니라, 맡는 폭이 회복 속도보다 넓어서 생기는 거예요."
-    }
-   ],
-   "fit_good": "하루 중 확인해야 할 일이 많아도, 역할과 경계가 분명한 자리에서 지수님은 더 안정적으로 움직여요. 누가 무엇을 맡는지 정해져 있고, 중간에 수시로 끼어드는 요청이 적은 환경이 잘 맞아요. 퇴근 뒤에 일 생각을 끊기 어려운 편이라서, 결과를 한 번에 모아 확인하는 흐름이 지수님에게 더 편해요.",
-   "fit_bad": "메신저가 계속 울리고, 새 요청이 수시로 들어오는 자리에서는 지수님이 하루 종일 일에 붙들려요. 끝이 보이지 않는 상황에서 “조금만 더”가 반복되면, 주말에 쓰러지듯 자는 흐름이 더 짙어져요. 누가 괜찮냐고 물었을 때 대답만 괜찮다고 하고 넘기는 분위기는 지수님을 더 빨리 소진시켜요.",
-   "behavior_guides": [
-    {
-     "title": "확인 멈춤",
-     "body": "퇴근 10분 전에는 오늘 보낸 메일을 다시 열지 말고, 내일 확인할 것만 메모로 옮겨 두세요. 누웠을 때는 메신저 알림을 끄고 20분만 화면 없이 버텨 보세요. 새벽까지 이어지던 재확인을 끊는 연습은 짧게, 매일 하는 쪽이 더 맞아요."
-    },
-    {
-     "title": "요청 정리",
-     "body": "새 일이 들어오면 바로 받지 말고, 오늘 처리할 것과 내일로 넘길 것을 먼저 나눠 적으세요. 지수님은 거절을 길게 설명할수록 더 지치니, 짧게 범위만 말하는 편이 좋아요. 한 번에 하나만 받는 방식으로 일의 폭을 줄여 보세요."
-    },
-    {
-     "title": "회복 확보",
-     "body": "금요일 퇴근 뒤에는 일을 이어 붙이지 말고, 30분만 완전히 비워 두세요. 그 시간에는 유튜브 대신 걷기나 통화처럼 머리를 덜 쓰는 걸 넣어 보세요. 주말 전체를 바꾸기보다, 시작 부분에 회복 시간을 먼저 붙이는 게 중요해요."
-    },
-    {
-     "title": "도움 요청",
-     "body": "혼자 끝내려는 순간이 오면, 바로 옆 사람에게 한 가지 확인만 부탁해 보세요. 부탁은 감당 못 한다는 뜻이 아니라, 지수님 일이 오래 가게 만드는 조정이에요. 한 주에 한 번만이라도 도움을 말로 꺼내는 연습을 해 보세요."
-    }
-   ],
-   "mindset_guide": "지수님은 이미 오래 달려온 나무처럼 서 있어요. 그런데 나무도 뿌리만으로 버티지 않아요. 물이 드나드는 자리를 만들어야 줄기가 덜 마르듯, 지수님도 혼자 다 쥐는 방식에서 조금씩 손을 풀어야 해요. 확인은 지키는 힘이지만, 계속 쥐고 있으면 숨길이 막혀요.",
-   "closing_title": "혼자 버틴 자리에서",
-   "closing_body": "36세부터 45세까지, 수 기운이 강해지는 흐름이 열릴 수 있습니다. 지금의 지수님은 메신저 알림 하나에도 몸이 먼저 반응하지만, 그 뒤에는 지원과 배움이 들어오는 쪽으로 장면이 바뀔 수 있어요. 그래서 무겁던 일의 감각이 조금 가벼워지고, 혼자 끝까지 쥐고 있던 부담도 덜어질 수 있습니다. 친구였다면 그만 좀 확인하고 오늘은 일찍 자라고 했을 거예요. 그 말이 지수님에게는, 이제는 정말 충분히 버텼다는 뜻으로 남아요."
+   ]
   },
   "quizDiagnosis": {
    "moduleId": "module3",
