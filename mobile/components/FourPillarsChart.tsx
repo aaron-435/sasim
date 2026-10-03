@@ -64,7 +64,16 @@ export function strongestElements(elements: Record<string, number>): El[] {
   return ELEMENT_ORDER.filter((k) => (elements[k] ?? 0) === max) as El[];
 }
 
-export default function FourPillarsChart({ fourPillars, elements }: { fourPillars: unknown; elements: Record<string, number> }) {
+export default function FourPillarsChart({
+  fourPillars,
+  elements,
+  centered = false,
+}: {
+  fourPillars: unknown;
+  elements: Record<string, number>;
+  /** Center the caption lines, for centered layouts like the type share card. */
+  centered?: boolean;
+}) {
   const strings = useStrings();
   const t = strings.fourPillarsChart;
   const [width, setWidth] = useState(0);
@@ -195,7 +204,7 @@ export default function FourPillarsChart({ fourPillars, elements }: { fourPillar
           </Svg>
         )}
       </View>
-      <View style={styles.captions}>
+      <View style={[styles.captions, centered && styles.captionsCentered]}>
         {!!mostLine && (
           <Text style={styles.captionStrong} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>
             {mostLine}
@@ -213,6 +222,7 @@ const styles = StyleSheet.create({
   root: { width: "100%" },
   canvas: { width: "100%", height: HEIGHT },
   captions: { marginTop: 10, gap: 2 },
+  captionsCentered: { alignItems: "center" },
   captionStrong: { color: COLORS.headline, fontFamily: FONTS.semibold, fontSize: 14, lineHeight: 20 },
   caption: { color: COLORS.subheadline, fontFamily: FONTS.regular, fontSize: 13, lineHeight: 19 },
 });

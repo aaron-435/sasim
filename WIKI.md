@@ -62,7 +62,7 @@ PDF(`/api/report-pdf` → `lib/pdf/reportPdf.tsx`)도 같은 규칙이다: 라�
 
 리포트 읽기 화면의 공용 부품: `mobile/components/ReportPager.tsx`(상단 바 뒤로·진행 막대·쪽 카운터·선택 버튼, 가로 페이지 넘김, 양 가장자리 탭, 하단 슬롯). 심층 리포트와 신년 리포트가 함께 쓰고, 현재 쪽은 화면이 들고 있어 목차 점프도 같은 값으로 움직인다. 심층 리포트는 페이월 쪽에서 가장자리 탭을 끈다. 첫 장에는 한 번만 보이는 넘기기 안내가 뜨고(한 장 넘기면 리포트 종류별로 기기에 저장, `lib/readerHint.ts`), 두 리포트의 마지막 장은 공용 `mobile/components/ReportClosingPage.tsx`다: 맺음말 → 한 줄 요약(심층=`psychology_takeaway` 첫 문장, 신년=부제) + 공유(텍스트)·PDF → 다음 할 일 카드(심층=기기에 리포트가 없는 다음 검사 추천, 같은 track 우선, 탭하면 그 퀴즈로 / 신년=실행 계획 1단계, 탭하면 실행 계획 쪽으로) → 작은 면책.
 
-사주 원국 그림: 공용 `mobile/components/FourPillarsChart.tsx`가 저장된 사주 결과의 `fourPillars`(네 기둥, 시주는 시간 모름이면 null)와 `elements`(오행 비율)로 그린다(`react-native-svg`). 기둥마다 위 천간·아래 지지 칸에 언어별 오행 이름(한자는 작은 보조), 일간 칸에 "나" 표시, 아래 오행 분포 막대, 캡션 두 줄("가장 많은 기운"은 동률이면 모두, "당신 자신"은 일간)로 두 개념을 나눈다. 모양이 맞지 않는 이전 데이터면 그리지 않는다. 지금은 홈의 "나의 사주 원국" 칸에 쓰인다(탭 불가라 테두리 카드 없이).
+사주 원국 그림: 공용 `mobile/components/FourPillarsChart.tsx`가 저장된 사주 결과의 `fourPillars`(네 기둥, 시주는 시간 모름이면 null)와 `elements`(오행 비율)로 그린다(`react-native-svg`). 기둥마다 위 천간·아래 지지 칸에 언어별 오행 이름(한자는 작은 보조), 일간 칸에 "나" 표시, 아래 오행 분포 막대, 캡션 두 줄("가장 많은 기운"은 동률이면 모두, "당신 자신"은 일간)로 두 개념을 나눈다. 모양이 맞지 않는 이전 데이터면 그리지 않는다. 홈의 "나의 사주 원국" 칸(탭 불가라 테두리 카드 없이)과 사주 유형 화면(`TypeScreen`, 히어로 카드 아래 + 그 화면의 공유 카드 맨 위, 공유 카드에선 캡션 가운데 정렬)에 쓰인다. 영역 공유 카드(`ShareCardsScreen`, 9:16 고정)에는 없다.
 
 계산 근거 배지: 공용 `mobile/components/CalcSourceBadge.tsx`(문구 `common.calcSourceBadge`)가 심층 리포트 커버와 사주 유형 화면(`TypeScreen`) 히어로 카드에 붙는다. 정적 텍스트이고 탭 대상이 아니다.
 

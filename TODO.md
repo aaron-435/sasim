@@ -75,10 +75,13 @@
   - 메모: 공용 `mobile/components/FourPillarsChart.tsx`(`parseFourPillars`, `strongestElements` 함께 내보냄 — 9번에서 재사용). 폭은 onLayout으로 재서 칸 폭 52~76pt, 넓은 화면에선 기둥 묶음을 가운데로(18번 iPad 대비). 문구는 `strings.fourPillarsChart`(ko 오행 이름은 시안대로 나무/불/흙/쇠/물). 홈 카드는 테두리·배경 없이 그려 아래 기능 목록(테두리 카드)과 구분, 섹션 제목 "나의 사주 원국 / My saju chart / Mi carta saju". 인사말 아래 "가장 강한 오행 · ⛰️ 토" 줄과 설명 한 줄(`home.elementBadgePrefix`·`identityHint`)은 그림 캡션이 같은 구분을 하면서 동률을 둘 다 말하므로 지웠다(서버 `dominantElement` 하나만 말해 그림과 어긋나던 문제). 오행 막대 성장 애니메이션은 막대와 함께 사라졌고 새 동작은 없다. 7번 시안 파일 `dev/ChartSketches.tsx`와 `index.ts`의 `?sketch=chart` 분기 삭제.
   - [ ] (사용자 확인) iOS 시뮬레이터 dev-client에서 홈 원국 그림의 한자(보조 표기)가 시스템 글꼴로 정상 표시되는지, VoiceOver가 그림을 한 덩어리로 요약해 읽는지.
 
-- [ ] 9. 타입 화면·사주 타입 공유 카드에 원국 적용
+- [x] 9. 타입 화면·사주 타입 공유 카드에 원국 적용
   - 선행: 8
   - 변경: `screens/TypeScreen.tsx`, `screens/ShareCardsScreen.tsx`·`lib/shareCardContent.ts`(사주 타입 카드). view-shot 캡처 크기 확인.
   - QA: mobile tsc exit 0. 타입 화면과 공유 카드 미리보기 스크린샷. (사용자 확인) 실기기에서 공유 카드 이미지 저장 후 원국이 잘리지 않는지.
+  - QA: mobile tsc(큰 스택) → exit 0. mobile-web 미리보기(이 세션이 띄운 8082 서버, mobile 프리셋) 타입 화면: `?qa=all&persona=jordan`(en) 히어로 아래 "My saju chart" + 네 기둥 그림, 동률 캡션 "Most present · Earth & Metal, 38% each" / "Your core · Water", 아래 공유 카드 맨 위(FATESAID 아래)에 같은 그림 + 가운데 정렬 캡션 + 구분선. `?qa=all&persona=jisoo`(ko, 시간 모름) 화면·공유 카드 모두 시주 칸 빗금 + "시간 모름", "가장 많은 기운 · 흙 50%" / "당신 자신 · 나무". `?qa=all&persona=lucia`(es) "Más presente · Tierra 38%" / "Tu esencia · Agua", 공유 카드 좁은 폭(칸 52pt)에서도 "Madera"·"Fuego" 잘림 없음. role=img 요약 라벨 언어별 정상. 콘솔 오류 없음.
+  - 메모: "사주 타입 공유 카드"는 `TypeScreen` 안의 공유 카드(내용 높이 그대로, `captureRef` 너비 1080)다. `ShareCardsScreen`(돈·연애·올해 카드, 9:16 고정 상자)은 원국과 무관한 영역 카드라 손대지 않았고 `lib/shareCardContent.ts`도 그대로. 공유 카드는 고정 비율이 아니어서 그림이 들어가도 잘리지 않고 길이만 늘어난다. 섹션 제목은 홈과 같은 `home.myChartTitle`을 재사용해 새 문구 없음. `FourPillarsChart`에 캡션 가운데 정렬 옵션(`centered`) 추가. 타입 화면의 "지금 나를 움직이는 것"(mode) 문구는 오행 이름을 말하지 않아(Jordan: "The chart leans toward what presses on you") 동률 캡션과 어긋나지 않는다.
+  - [ ] (사용자 확인) iOS 시뮬레이터 dev-client 또는 실기기에서 타입 화면 "결과 공유하기" → 저장한 PNG에 원국 그림(SVG)이 빠지거나 잘리지 않고 찍히는지, 한자가 정상 표시되는지.
 
 ## P2
 
@@ -149,3 +152,5 @@
 - (6번 중) 심층 리포트 심리검사 분석 쪽 부제 "Module 1 · Love & Attachment Analysis"(`ReportScreen.tsx`의 `quizAnalysisSuffix` 줄)에 아직 "Module N"이 붙는다. 표지·다음 검사 카드는 `moduleDisplayTitle`로 뺐으니 10번(모듈 번호 제거) 때 같이 정리.
 - (6번 중) 서버 리포트 프롬프트(`lib/reportPrompts.ts:298`)가 여전히 81자짜리 `subtitle`을 쓰게 한다. 앱 표지는 더 이상 쓰지 않지만 PDF 표지(`lib/pdf/reportPdf.tsx:315` `coverSubtitle`)는 그대로 81자를 보여 준다. PDF 표지도 앱처럼 짧게 만들지, 프롬프트 형식 지시를 바꿀지 검토(서버 프롬프트·PDF는 이번 SPEC 범위 밖).
 - (7번 중, 8번에서 홈은 해결: 인사말 아래 단일 오행 줄 삭제, 그림 캡션이 동률을 둘 다 표시. 타입 화면 설명은 9번에서 확인) 오행 동률이 흔하다(8글자라 12.5% 단위). Jordan은 흙·쇠가 37.5%로 같은데 서버 `dominantElement`/`sajuType.dominantElement`는 하나만(흙) 고른다. 홈 "가장 강한 오행" 문구·타입 설명이 동률일 때 한쪽만 말하는지 8~9번 적용 때 확인(원국 그림 캡션은 둘 다 표시하기로).
+- (9번 중) 타입 화면 공유 카드 미리보기 안의 원국 그림도 role=img라 화면 읽기가 같은 요약을 두 번 읽는다(공유 카드의 유형·인물 글도 원래 화면과 중복). 공유 카드 미리보기 전체를 접근성에서 하나로 묶거나 숨길지 검토. 같은 화면의 "결과 공유하기" Pressable에 `accessibilityRole`이 없다.
+- (9번 중) 동률일 때 타입 화면 "지금 나를 움직이는 것" 아이콘은 서버 `dominantElement` 하나(Jordan: 산=흙)만 보여 준다. 문구는 오행 이름을 말하지 않아 모순은 아니지만, 그림 캡션은 "흙 & 쇠"라 아이콘만 보면 한쪽만 고른 것처럼 보일 수 있음.

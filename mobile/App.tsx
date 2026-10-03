@@ -478,6 +478,8 @@ function AppContent() {
         <TypeScreen
           nickname={homeData.nickname}
           sajuType={homeData.sajuResult.sajuType}
+          fourPillars={homeData.sajuResult.fourPillars}
+          elements={homeData.sajuResult.elements ?? null}
           onBack={() => setStep("home")}
         />
       )}

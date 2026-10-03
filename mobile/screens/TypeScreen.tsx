@@ -11,6 +11,7 @@ import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
 import CalcSourceBadge from "../components/CalcSourceBadge";
+import FourPillarsChart, { parseFourPillars } from "../components/FourPillarsChart";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
@@ -25,10 +26,15 @@ const ELEMENT_ICON = { wood: TreePine, fire: Flame, earth: Mountain, metal: Gem,
 export default function TypeScreen({
   nickname,
   sajuType,
+  fourPillars,
+  elements,
   onBack,
 }: {
   nickname: string;
   sajuType: SajuType;
+  /** The stored reading's `fourPillars` / `elements`, drawn by FourPillarsChart (hidden for odd shapes). */
+  fourPillars: unknown;
+  elements: Record<string, number> | null;
   onBack: () => void;
 }) {
   const strings = useStrings();
@@ -42,6 +48,7 @@ export default function TypeScreen({
   const ArchetypeIcon = ELEMENT_ICON[sajuType.dayMasterElement];
   const ModeIcon = ELEMENT_ICON[sajuType.dominantElement];
   const tint = ELEMENT_COLORS[sajuType.dayMasterElement] ?? COLORS.gold;
+  const showChart = !!elements && parseFourPillars(fourPillars) !== null;
 
   async function handleShare() {
     if (sharing) return;
@@ -85,6 +92,17 @@ export default function TypeScreen({
           </View>
         </View>
 
+        {showChart && elements && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionLabel, styles.chartLabel]} accessibilityRole="header">
+              {strings.home.myChartTitle}
+            </Text>
+            {/* The archetype below reads the day stem ("your core") and the mode reads the
+                chart's majority ("most present"); the chart's two captions keep them apart. */}
+            <FourPillarsChart fourPillars={fourPillars} elements={elements} />
+          </View>
+        )}
+
         <View style={styles.section}>
           <View style={styles.sectionHeaderRow}>
             <ArchetypeIcon size={16} strokeWidth={2} color={tint} />
@@ -126,6 +144,15 @@ export default function TypeScreen({
           <Image source={require("../assets/patterns/onboarding-bg.png")} resizeMode="cover" style={StyleSheet.absoluteFill} />
           <View style={styles.shareCardInner}>
             <Text style={styles.shareBrandLabel}>FATESAID</Text>
+
+            {showChart && elements && (
+              <>
+                <View style={styles.shareChart}>
+                  <FourPillarsChart fourPillars={fourPillars} elements={elements} centered />
+                </View>
+                <View style={styles.shareDivider} />
+              </>
+            )}
 
             <View style={styles.shareCardMid}>
               <View style={[styles.shareIconBubble, { backgroundColor: `${tint}22` }]}>
@@ -290,6 +317,9 @@ const styles = StyleSheet.create({
     color: COLORS.subheadline,
     marginTop: 10,
   },
+  chartLabel: {
+    marginBottom: 12,
+  },
   celebrityList: {
     gap: 12,
   },
@@ -334,6 +364,7 @@ const styles = StyleSheet.create({
   },
   shareBrandLabel: { fontFamily: FONTS.bold, fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: 28 },
   shareCardMid: { alignItems: "center", width: "100%" },
+  shareChart: { width: "100%" },
   shareDivider: { width: "60%", height: 1, backgroundColor: COLORS.border, marginVertical: 26 },
   shareCelebRow: { width: "100%", alignItems: "center", marginTop: 16 },
   shareCelebName: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.headline, marginTop: 4 },
