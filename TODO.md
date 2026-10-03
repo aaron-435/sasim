@@ -213,13 +213,21 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
   - 순서: 커밋 → `git push origin main`(웹·API) → Vercel Ready 확인 → 프로덕션에서 구버전 앱으로 대화 2~3턴과 기존 리포트가 그대로인지 확인 → OTA(`cd mobile && npx --yes eas-cli update --branch production --environment production --message "챗봇 5세트 개편 + 검사×대화 카드" --non-interactive`) → TestFlight 앱 완전 종료 후 두 번 열기.
   - 확인할 것: 모듈 2개 25턴 대화(1·6·11·16·21턴 퀴즈 인용, 24턴 "마지막으로 묻고 싶은 게 있어요"), 10턴 "마무리"로 끝낸 대화 1개, 새 리포트의 무료 카드 1장·유료 카드 4장(구매 가능할 때), 이전에 만든 리포트가 그대로 열리는지.
   - (사용자 확인) 실기기와 RevenueCat 구매가 필요해 자동화할 수 없다.
+  - 배포 전 점검(2026-10-03, 에이전트 실행): 1~12번은 모두 커밋됨. `origin/main` 대비 미푸시 커밋 14개(`f90dd8c`~`a4323fb`). 작업 트리 변경은 `CLAUDE.md`(리브랜드 메모, 이번 배치와 무관)뿐.
+    - QA: 루트 `npx tsc --noEmit` → exit 0. `npm run lint` → 경고·오류 없음. `npm run build` → 라우트 표 출력까지 성공.
+    - QA: `mobile/`의 tsc(큰 스택) → exit 0.
+    - OTA 전 결정 필요: 앱 홈 `freeNote`가 아직 "무료 20분 리딩"(발견 사항 6번 항목). → 2026-10-03 30분으로 수정함.
 
 ## 발견 사항
 
 (작업 중 발견한 범위 밖 이슈를 여기 적는다.)
 
 - (7번 리포트 생성) 한국어 리포트 `weaknesses[3].body`에 힌디 문자 "शांत"가 섞여 나왔는데 통과됨. 결정론적 검사의 다른 문자 검사는 en/es의 한글·한자만 본다 — ko에도 한글·라틴·숫자·문장부호 밖 문자(데바나가리·키릴 등)를 잡는 검사가 필요. `lib/reportQuality.ts` `checkReportDeterministic`. (v2와 무관, 구버전 리포트에도 해당)
+  - 해결(2026-10-03, 사용자 요청): `lib/reportQuality.ts`에 `OTHER_SCRIPT_ALL`(한글·한자·라틴이 아닌 글자 덩어리) 검사를 모든 언어에 추가. 결합 모음 기호까지 덩어리로 잡는다("शांत" 통째로). tsconfig가 ES5라 `u` 플래그 리터럴 대신 `new RegExp`.
+    - QA: 스크래치 사례(ko 데바나가리·키릴, en 히라가나 → 잡힘. 한자 "木(목)"·이모지·%·스페인어 악센트 → 통과) 기대대로. 루트 `npx tsc --noEmit` exit 0, `npm run lint` 경고·오류 없음. 실제 리포트 재생성으로는 확인하지 않음.
 - (7번 리포트 생성) `strengths_preview[2]`가 24턴 관점 전환 답(closing 재료)을 근거로 써서 `closing_body`와 같은 말이 두 번 나옴. 8번이나 11번에서 섹션별 근거 지시에 "24턴 답은 closing에만" 한 줄 추가 검토. 또 `module_map`에 "이 모듈에서는" 메타 표현이 남음(기존 규칙 11 위반, 검사 없음).
+  - 해결(2026-10-03, 사용자 요청): `lib/reportPrompts.ts` 섹션별 근거에서 strengths_preview는 24턴 답을 쓰지 않고, closing_body 줄에 "이 답은 closing_body에만" 명시. 규칙 11에 "module_map·module_deep 본문에는 '이 모듈'을 쓰지 않는다" 추가. `reportQuality.ts`에 `MODULE_META`(이 모듈 / this module / este módulo) 검사를 module_map·module_deep 본문에 추가.
+    - QA: 스크래치 사례(ko·en 모듈 페이지의 "이 모듈"·"this module" → 잡힘, 없는 본문 → 통과). 루트 tsc·lint 통과. 프롬프트 효과(중복이 사라지는지)는 리포트 재생성 전이라 미확인.
 
 - (5번 sim/judge, 프롬프트 품질 — 11번 최종 비교 전에 볼 것) `q5-v2` 채점: ① 세트 시작 정리 뒤 재확인이 빠짐(16턴, finish 대화의 6턴) — `s_recap` 1/0. ② 11턴이 "정리 없이 세트 3"이어야 하는데 "지금까지 비슷한 장면이…"로 앞머리 정리를 함. ③ "둘 다 아니면 편하게"·"~군요" 재진술 틀이 7회 이상 반복(`no_repeat` 0, 기준선과 같음). ④ 25턴 마무리에 "이 정리가 맞을까요?" 질문이 대기 안내 앞에 남음(사용자가 답할 수 없는 자리). 모두 `lib/chatPrompts.ts` v2 지시문 쪽 문제.
   - ③④ 해결(2026-10-02, 사용자 요청): v2 전용으로 출구 문장은 세트 ③ 자리(3·8·13·18턴)에만 턴별로 다른 뜻으로 붙이고 "둘 다 아니면 편하게" 표현 금지, 재진술 앞머리 모양을 턴마다 4가지(따옴표 인용·명사 끝·질문에 녹이기·"~라고 하셨어요") 중 하나로 정하고 "~군요/~네요" 끝맺음 금지, v2 예시 대화의 재진술·출구 문장 교체, 25턴은 확인 질문 대신 "이렇게 정리가 되겠군요" 같은 평서문으로 맺기(judge v2 t6 기준도 맞춤). 20턴 흐름 프롬프트는 그대로(`dump-chat-prompt --legacy` module1·module7 × ko/en/es × 1~20턴, 수정 전 출력과 diff 0).
@@ -235,6 +243,8 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
 - (9번 픽스처) 카드 `note`가 인용을 되풀이하는 경우가 있다: jisoo 카드 1 note 첫 문장이 원문("알람을 끄고 … 설친다고 했어요")을 거의 그대로 다시 씀(규칙 6 "인용을 되풀이하지 말고"). 또 lucia 카드 4(세트 4, 퀴즈 A10 SNS 확인)의 note가 세트 3 재료("te quiero"·"la palabra de cariño")를 해설함 — 카드와 세트 재료가 어긋남. 둘 다 결정론적 검사로는 안 잡힌다. 11번 최종 비교에서 리뷰어 루브릭이나 프롬프트 한 줄("카드 N의 note는 세트 N 재료만") 검토.
 - (9번 픽스처) lucia 무료 절반이 `oheng_intro` 2문장(3문장 기준) 결함 1건을 못 고친 채 출고됨 — 품질 루프의 기존 동작(v2와 무관).
 - (6번) 앱 홈 무료 안내 문구 `freeNote`가 "무료 20분 리딩"(ko) / "Free 20-minute reading"(en) / "Lectura gratis de 20 minutos"(es) — 새 흐름은 30분. `mobile/lib/i18n/{ko,en,es}.ts` 42·66행 부근. 13번 OTA 전에 고칠지 결정 필요.
+  - 해결(2026-10-03, 사용자 요청): `mobile/lib/i18n/{ko,en,es}.ts`를 30분으로("무료 30분 리딩" / "Free 30-minute reading" / "Lectura gratis de 30 minutos"). 웹 `lib/i18n`은 20턴 흐름이라 그대로 둠.
+    - QA: `mobile/`의 tsc(큰 스택) exit 0.
 - (10번) `app/api/report-pdf/route.ts`의 `cleanDeep()`이 `oheng_intro`·`quiz_reading`(그리고 구버전 `chat_*_note`)을 옮기지 않아, `reportPdf.tsx`가 그 자리를 그리도록 되어 있어도 PDF에는 늘 빠진다(구버전·v2 공통, 이번 변경 전부터). 넣을지 결정 필요.
 - (11번) v2 en 대화 한국어 섞임·24턴 고정 문구 중복 — 11번에서 해결. 한글 줄 제거 백스톱은 20턴 흐름 비한국어 응답에도 걸린다(프롬프트는 그대로, 응답 후처리만).
 - (11번) 5번·9번 발견 사항의 "11번에서 볼 것"(한 줄 안 질문 2개, 카드 note가 다른 세트 재료를 해설) 중 질문 2개는 최종 3건(family·anger_es·attach_en 재실행)에서 위반 점수 2(위반 없음)였지만, 첫 attach_en 실행에서는 1이 나왔다 — 해결된 것은 아니다. 카드 note 문제는 리포트를 다시 생성하지 않아 확인하지 못함 — 남아 있음.

@@ -39,7 +39,7 @@ export const en: typeof ko = {
     headlineLine1: "Your fate has already spoken.",
     headlineLine2: "Now it's your turn to answer.",
     subheadline: "Want to change your fate? Analyze your saju and start now.",
-    freeNote: "Free 20-minute reading · No credit card needed",
+    freeNote: "Free 30-minute reading · No credit card needed",
     ageNoticePrefix: "You must be 14 or older to use this app · By continuing, you agree to the",
     ageNoticeAnd: "and",
     ageNoticeSuffix: "",
