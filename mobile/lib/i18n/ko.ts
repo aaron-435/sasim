@@ -355,11 +355,14 @@ export const ko = {
   },
 
   fortune: {
-    headerLabel: "오늘의 운세",
+    tabHeadings: { daily: "오늘의 운세", weekly: "이번 주 운세", month: "이달의 운세", yearly: "신년 운세" },
     dailyTab: "오늘",
-    weeklyTab: "이번주",
+    weeklyTab: "이번 주",
     monthTab: "이달",
     yearlyTab: "신년",
+    areasLabel: "영역별로 보면",
+    detailsLabel: "오늘 더 알아보기",
+    yearDetailsLabel: "올해 더 알아보기",
     yearHeading: (year: number) => `${year}년의 리듬`,
     careerLabel: "직장운",
     studyLabel: "학업운",
@@ -405,9 +408,9 @@ export const ko = {
     hapBadge: "합",
     chungBadge: "전환",
     luckyPointLabel: "오늘의 행운 포인트",
-    luckyColorLabel: "행운의 색",
-    luckyNumberLabel: "행운의 숫자",
-    luckyDirectionLabel: "행운의 방향",
+    luckyColorLabel: "색",
+    luckyNumberLabel: "숫자",
+    luckyDirectionLabel: "방향",
   },
 
 

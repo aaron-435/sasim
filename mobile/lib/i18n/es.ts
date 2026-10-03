@@ -329,11 +329,14 @@ export const es: typeof ko = {
   },
 
   fortune: {
-    headerLabel: "Lectura diaria",
+    tabHeadings: { daily: "Tu lectura de hoy", weekly: "Tu semana", month: "Tu mes", yearly: "El año que viene" },
     dailyTab: "Hoy",
-    weeklyTab: "Esta semana",
-    monthTab: "Este mes",
-    yearlyTab: "Año que viene",
+    weeklyTab: "Semana",
+    monthTab: "Mes",
+    yearlyTab: "Año",
+    areasLabel: "Por áreas",
+    detailsLabel: "Más sobre hoy",
+    yearDetailsLabel: "Más sobre este año",
     yearHeading: (year: number) => `Tu ritmo en ${year}`,
     careerLabel: "Trabajo",
     studyLabel: "Estudios",
@@ -379,9 +382,9 @@ export const es: typeof ko = {
     hapBadge: "Vínculo",
     chungBadge: "Cambio",
     luckyPointLabel: "Puntos de suerte de hoy",
-    luckyColorLabel: "Color de la suerte",
-    luckyNumberLabel: "Número de la suerte",
-    luckyDirectionLabel: "Dirección de la suerte",
+    luckyColorLabel: "Color",
+    luckyNumberLabel: "Número",
+    luckyDirectionLabel: "Dirección",
   },
 
 

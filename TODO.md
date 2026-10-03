@@ -127,9 +127,11 @@
   - QA: mobile tsc(큰 스택) → exit 0. 루트 `npx tsc --noEmit` → exit 0, `npm run lint && npm run build` → 경고·오류 없음, exit 0, `/api/report-pdf` nft에 새 TTF 3개 포함. `npx expo install --check` → 글꼴 패키지 경고 없음(남은 6개 패치 버전 경고는 변경 전에도 동일, 발견 사항). Node로 react-pdf에 새 TTF를 등록해 렌더 → `/BaseFont` Newsreader-Medium·PlusJakartaSans-Regular/SemiBold, 스페인어 악센트 정상(pdftoppm 이미지 확인). mobile-web 미리보기(mobile 프리셋) `?qa=all&persona=lucia`(es) 홈·심층 리포트 1쪽, `jisoo`(ko) 홈·리포트 1쪽, `jordan`(en) 홈·운세: `document.fonts`에서 새 글꼴 로드 완료, 화면 텍스트 font-family가 전부 Newsreader_*/PlusJakartaSans_*(대체 없음, 한글은 의도대로 시스템 글꼴). `grep -n "Cormorant\|Manrope" CLAUDE.md PRODUCT.md` → 결과 없음(새 문구로 교체).
   - [ ] (사용자 확인) 실기기에서 OTA(웹 배포 후 `eas update`) 받은 뒤 홈 인사말·리포트 표지 부제(이탤릭)·운세 본문이 새 글꼴로 보이는지, Android에서 리포트 인용문이 기울임으로 보이는지.
 
-- [ ] 15. 운세 화면 카드 개편
+- [x] 15. 운세 화면 카드 개편
   - 변경: `screens/FortuneScreen.tsx` 오늘 탭 — 개요 주인공, 영역별 운세 묶음, 세부 펼치기, 대문자 소제목 정리, 상단 제목을 탭에 맞게, es 탭 라벨 넘침 해결. 무료/구독 경계와 페이월 문구 유지.
   - QA: mobile tsc exit 0. `?qa=all&persona=lucia`(es)와 `?qa=free&persona=mia` 오늘·연간 탭 스크린샷. 페이월이 여전히 잠긴 항목을 정확히 나열.
+  - 적용(2026-10-04): 오늘 탭 8장 → 4덩어리. ① 주인공 카드(오늘의 리듬 이름 + 총론 제목·본문 + 공유, 연속 배지) ② "영역별로 보면" 한 카드 안에 재물·애정·건강 줄 ③ 행운 포인트(항목 라벨을 "색/숫자/방향"으로 줄여 es 두 줄 접힘 해소) ④ "오늘 더 알아보기" — 12운성·12신살을 접힌 줄로, 탭하면 펼침(애니메이션 없음, `aria-expanded`). 연간 탭도 같은 구조(주인공 + 재물·애정·직장·학업·건강 묶음 + 12운성·신살 접기, 합/충 메모는 주인공 카드 안 인용 줄). 소제목 대문자·자간 제거(문장형 13pt). 상단 제목 `fortune.headerLabel` → `fortune.tabHeadings[tab]`(오늘의 운세/이번 주 운세/이달의 운세/신년 운세, Today's Fortune/Your Week/Your Month/The Year Ahead, Tu lectura de hoy/Tu semana/Tu mes/El año que viene). 탭은 테두리 상자 4개 → 세그먼트 컨트롤 하나(`tablist`), 라벨을 짧게(Week/Month/Year, Semana/Mes/Año, 이번 주) + `numberOfLines={1}`. 월별 흐름 칩에 역할·선택 상태. 등장 애니메이션은 4덩어리로 줄였고 기존 동작 줄이기 분기 그대로. 무료 화면·페이월 코드는 그대로.
+  - QA: mobile tsc(큰 스택) → exit 0. `grep -c 'textTransform: "uppercase"' mobile/screens/FortuneScreen.tsx` → 0. mobile-web 미리보기(다른 세션이 띄운 8082 서버를 브라우저 창에서 직접 열기, mobile 프리셋 375×812): `?qa=all&persona=lucia`(es) 오늘 — 제목 "Tu lectura de hoy", 주인공 "Tu ritmo de hoy / Un ritmo receptivo / Un rayo de sol", "Por áreas" 안 Dinero·Amor·Salud, 행운 "Color/Número/Dirección" 한 줄, "Más sobre hoy" 2줄 접힘 → "Plenitud" 탭하면 본문 펼침(aria-expanded true). 탭 4개 모두 글자 넘침 없음(scrollWidth ≤ clientWidth), aria-selected 정상. 연간 — 제목 "El año que viene", 신년 리포트 카드 → 주인공 "Tu ritmo en 2027 / Un ritmo de iniciativa" → Por áreas 5줄 → Más sobre este año → Flujo mensual. `?qa=free&persona=mia`(en) 무료 총론 카드 + "What Pro opens" 혜택 5개·구독 버튼·약관 문구가 수정 전과 같음. `?qa=all&persona=jisoo`(ko) 오늘 "오늘의 운세 / 오늘의 리듬 · 고르는 리듬 / 영역별로 보면". `?qa=all&persona=jordan`(en) Week 탭 제목 "Your Week", 탭 넘침 없음, 최고의 날·조절할 날·날짜 목록 정상. 콘솔 오류 없음.
 
 - [ ] 16. 행운의 방향 숨김 + 엔진 용어 정리
   - 변경: `screens/FortuneScreen.tsx`(en/es에서 방향 숨김), `lib/dailyFortuneContent.ts` 필요 시, 리포트 면책의 "manseryeok engine" 등 내부 용어를 각 언어 표현으로(`lib/i18n/*`).
@@ -176,3 +178,5 @@
 - (12번 중) 궁합에서 상대 이름을 비우면 이름 자리에 입력 칸 예시 문구가 그대로 들어간다("p. ej. Diego", "예: 민준", "e.g. Jamie" — `CompatibilityScreen.tsx`의 `otherDisplayName`이 `namePlaceholder`로 대체). 이번 개편으로 결과 맨 위·공유 카드에 크게 보이므로 "상대"/"Them"/"La otra persona" 같은 중립 표현으로 바꾸는 것을 검토.
 - (14번 중) `cd mobile && npx expo install --check`가 expo·expo-font·expo-notifications·expo-sharing·expo-updates 등 6개 패치 버전 차이를 경고한다(글꼴 변경 전에도 동일). 올릴 때 네이티브 빌드가 필요한지 확인 후 별도 작업으로.
 - (14번 중) 운세 화면 탭 라벨이 en에서도 칸을 꽉 채운다("This Month", "Year Ahead" — Plus Jakarta Sans가 Manrope보다 약간 넓음). 15번(es 탭 넘침)에서 같이 처리.
+- (15번 중) 무료 페이월 혜택 "Today's full reading"은 재물·애정·건강·행운만 나열하고, 구독자에게 열리는 12운성·12신살("오늘 더 알아보기")은 말하지 않는다(수정 전에도 같음). 빠뜨린 것이라 잘못된 약속은 아니지만, 혜택 문구에 넣을지 검토.
+- (15번 중) 16번에서 en/es 행운의 방향을 숨기면 행운 카드가 2칸이 된다. 이번에 라벨을 "색/숫자/방향"으로 줄였으니 16번에서 2칸 배치만 확인하면 된다.
