@@ -106,10 +106,18 @@
 
 ## 추가 범위
 
-- [ ] 13. 글꼴 후보 비교 시안 (사용자 확인)
+- [x] 13. 글꼴 후보 비교 시안 (사용자 확인)
   - 선행: 0
   - 변경: 없음(스크래치에서 웹 미리보기에 후보 글꼴을 임시 주입하거나 HTML 비교 시안). 조건: 스페인어 악센트·한글(짝 글꼴 가능)·무료·`@expo-google-fonts/*`로 OTA 가능.
   - QA: 홈·리포트 1쪽·운세 3화면 × 후보 2~3조합(+ 현행) 비교를 사용자에게 보여주고 선택 결과를 기록. (사용자 확인) 선택.
+  - 시안(2026-10-04, 코드 변경 없음): Playwright 헤드리스(2배율, 375×812)로 mobile-web `?qa=all&persona=jordan|jisoo|lucia` 홈·운세 오늘 탭·심층 리포트 1쪽에 `@expo-google-fonts` TTF(unpkg)를 임시 주입해 36장 촬영. 비교표 `.playwright-mcp/compare-{home,fortune,report}.png`, 한글 제목 확대 `compare-ko-display-2x.png`(추적 안 되는 임시 폴더).
+    - 현행: Cormorant Garamond 500 + Manrope, 한글은 시스템 글꼴
+    - A 따뜻한 세리프: Fraunces 500 + Figtree, 한글 제목 고운바탕(한 굵기 약 8.4MB)
+    - B 에디토리얼: Instrument Serif(굵기 하나, 이탤릭 별도) + DM Sans, 한글 제목 나눔명조(한 굵기 약 3.1MB)
+    - C 단정한 뉴스페이퍼: Newsreader 500 + Plus Jakarta Sans, 한글 제목 나눔명조
+    - 공통 메모: 라틴 후보는 한 굵기 40~120KB(현행 Cormorant 667KB). 크기는 그대로 두고 바꿨기 때문에 A·C는 제목이 한 줄 더 길어짐(14번에서 크기 조정). 리포트 부제 이탤릭은 지금도 합성 기울임이라 14번에서 이탤릭 파일을 함께 넣을지 정해야 함. 한글 본문(UI)은 모든 안에서 시스템 글꼴 유지(용량 0).
+  - 선택 결과(2026-10-04 사용자): C — 표시용 Newsreader, UI용 Plus Jakarta Sans. 한글은 제목·본문 모두 시스템 글꼴 유지(나눔명조 넣지 않음). 14번은 이 조합으로 진행.
+  - QA: Playwright 헤드리스 2배율 스크린샷 36장 → 비교표 3장 + 한글 확대 1장을 사용자에게 보여주고 선택 받음.
 
 - [ ] 14. 고른 글꼴 적용
   - 선행: 0, 13
