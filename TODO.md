@@ -17,9 +17,11 @@
 
 ## P1
 
-- [ ] 1. 홈 운세 미리보기를 실제 계산 기반으로
+- [x] 1. 홈 운세 미리보기를 실제 계산 기반으로
   - 변경: `mobile/screens/HomeScreen.tsx` 히어로 teaser 분기(리듬 이름 + 판단 없는 한 줄), 운세를 연 뒤 돌아오면 opened 상태로 갱신(포커스 시 `fortuneOpenState` 다시 읽기), 무료 CTA 문구. `lib/i18n/{ko,en,es}.ts` 새 키. `lib/i18n/dailyInsight.ts`와 쓰지 않게 된 키 삭제.
   - QA: mobile tsc exit 0. `grep -rn "dailyInsight\|getDailyInsight" mobile/` → 결과 없음. `?qa=free&persona=mia`로 홈 → 운세 이동 시 두 화면 문장이 서로 반대말을 하지 않음(스크린샷 2장). `?qa=all&persona=jordan`에서 운세를 연 뒤 홈 히어로가 열린 상태.
+  - QA: mobile tsc(큰 스택) → exit 0. `grep -rn "dailyInsight\|getDailyInsight" mobile --include=*.ts --include=*.tsx --exclude-dir=node_modules` → 결과 없음(exit 1), `lib/i18n/dailyInsight.ts`와 ko/en/es `dailyInsight` 문장 묶음 삭제. mobile-web 미리보기(mobile 프리셋): `?qa=free&persona=mia` 홈 히어로 "Your own rhythm" + 판단 없는 한 줄 + "Read today's overview" → 운세 무료 총론 제목도 "Your own rhythm"(수정 전엔 홈 "새로 시작하기 좋은 날" 대 총론 "방향을 바꾸지 말 것"으로 반대). ko·es 문구 화면 확인. `?qa=all&persona=jordan` 운세 열기 → 뒤로 → 히어로 "Today's fortune · A hand to catch you · See today in full"(열린 상태).
+  - 메모: 앱 안 흐름은 Home이 단계 전환마다 다시 마운트되며 열람 기록을 새로 읽으므로 원래부터 정상이었다(포커스 재읽기 코드 불필요). 진단의 "기다리고 있어요"는 QA 모드가 페이지를 새로 불러올 때마다 열람 기록을 지우는 탓으로 보임(아래 발견 사항).
 
 - [ ] 2. 온보딩 접근성 + 동작 줄이기 + 배경 기본값
   - 변경: `components/OnboardingShell.tsx`(뒤로 버튼 라벨), `components/AuraNextButton.tsx`, `screens/{Language,Intro,Nickname,Gender,Dob,Tob,City,Concern,VerifyCode}Screen.tsx`(역할·라벨·선택 상태), `components/GoldAura.tsx`·`screens/IntroScreen.tsx`(`isReduceMotionEnabled`면 반복·진입 애니메이션 끔), `components/PatternBackground.tsx`(`backgroundColor: COLORS.background`). 대상 화면 Text에 `maxFontSizeMultiplier` 상한.
@@ -123,3 +125,5 @@
 ## 발견 사항
 
 (작업 중 발견한 범위 밖 이슈를 여기 적는다.)
+
+- (1번 중) `mobile/dev/qaMode.ts:89` QA 프리셋이 `?persona=`로 페이지를 불러올 때마다 `fatesaid_fortune_open_state`를 지워, 새로고침하면 운세를 열었어도 홈이 다시 "기다리고 있어요"로 보인다. dev 전용이지만 재진단 때 오래된 상태로 오인될 수 있음 — 페르소나가 바뀔 때만 지우게 할지 검토.

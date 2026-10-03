@@ -188,7 +188,8 @@ export const en: typeof ko = {
     todaySealedTitle: "Today's energy is waiting for you",
     todayOpenCta: "Open it",
     todayRevisitCta: "See today in full",
-    todayUnlockCta: "Open the full reading",
+    todayOverviewCta: "Read today's overview",
+    todayTeaserBody: "See what today's rhythm means for you in the free overview.",
     todayFullCta: "See the full reading",
     todayProNote: "Your full day, week, month and year ahead open with Pro",
     proChip: (price: string) => `Pro · ${price}`,
@@ -362,34 +363,6 @@ export const en: typeof ko = {
     luckyDirectionLabel: "Lucky direction",
   },
 
-  dailyInsight: {
-    wood: [
-      "Today has an especially good flow for starting something new. Even a small plan planted today will grow well. Working with others also leads to good outcomes today.",
-      "Your urge to grow gets a natural boost today. The more flexibly you think, the clearer the path looks — take your time instead of rushing.",
-      "Good timing to start something you've been putting off. Today you'll feel in your bones that a first step matters more than a perfect plan.",
-    ],
-    fire: [
-      "You don't need to hide what you want to say today. Reaching out first works in your favor, and with all that energy, remember to take a short break too.",
-      "Your passion comes through naturally today. Don't just let that spark of excitement pass — write it down, it could be a big hint later.",
-      "The more actively you move, the better the response you'll get today. Just watch that emotions don't get ahead of you — pausing a beat before you speak helps.",
-    ],
-    earth: [
-      "Steadying yourself without overdoing it is today's answer. Opening up to someone you trust helps, and keeping even small promises builds real trust.",
-      "Sorting things out step by step will lighten your mind. Today, be the one who brings stability — that's ultimately what protects you too.",
-      "Better to sit on a decision for a day than rush it. The patience you show today will come back as a much sturdier result later.",
-    ],
-    metal: [
-      "When a decision is needed, push through on principle. Drawing a clear line actually brings comfort today, and your judgment is sharper than usual.",
-      "A good flow for tackling things you've been putting off. Tell yourself it's okay not to be perfect, and wrap things up lightly today.",
-      "A good day to balance principle and flexibility. Keep the standard you've set, but give the other side's view a listen too.",
-    ],
-    water: [
-      "The deeper your thoughts go, the less you need to rush. You may especially need time alone today — don't force yourself to fill it.",
-      "Your intuition lands pretty accurately today. Riding the flow is a strategy in itself, so you don't have to explain the feelings you had today.",
-      "Even without showing it, a lot gets sorted out inside you today. You can quietly trust the conclusion you reach.",
-    ],
-    default: ["Take a moment today to check in on your own elemental balance. Saju isn't a fixed fate — it's a map for reading the flow."],
-  },
 
   moduleSelect: {
     badge: "Psych Test",

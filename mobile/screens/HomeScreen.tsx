@@ -17,7 +17,6 @@ import { DAILY_FORTUNE_CONTENT, getOverview } from "../lib/dailyFortuneContent";
 import { ELEMENT_COLORS, ELEMENT_ORDER, elementWithEmoji } from "../lib/elements";
 import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
 import { useLocale, useStrings } from "../lib/i18n";
-import { getDailyInsight } from "../lib/i18n/dailyInsight";
 import { hasQaProEntitlement } from "../lib/purchases";
 import { getLastQuestion, type LastQuestion } from "../lib/qaHistory";
 import { listSavedReports } from "../lib/reportStorage";
@@ -199,13 +198,14 @@ export default function HomeScreen({
     Animated.spring(heroPress, { toValue: 1, useNativeDriver: true, speed: 40, bounciness: 6 }).start();
   }
 
-  const insight = getDailyInsight(strings, dominantElement);
   const opened = today.kind === "opened" ? getOverview(fortuneContent, today.fortune.compatibility!.relation, today.fortune.dayMaster.pillarIndex) : null;
   const headline =
     opened?.headline ?? (today.kind === "teaser" && today.relation ? strings.fortune.rhythmNames[today.relation] : null);
   const heroTitle = today.kind === "sealed" ? strings.home.todaySealedTitle : strings.home.todayTitle;
-  // Free users get the generic (free) daily insight — not the day's relation headline,
-  // which can read as a warning ("a headwind") sitting right above an upsell.
+  // Free users see today's real rhythm name (the headline) plus a fixed, judgment-free line
+  // pointing at the free overview. 2026-10-03: this used to be a rotating generic sentence
+  // (a per-element sentence bank) that could contradict the real overview one tap later. The relation's own
+  // body text stays off Home for free users so a warning-toned day never sits above a CTA.
   const heroBody =
     today.kind === "sealed"
       ? strings.fortune.sealBody
@@ -215,7 +215,7 @@ export default function HomeScreen({
           ? strings.fortune.loadErrorText
           : today.kind === "loading"
             ? null
-            : insight;
+            : strings.home.todayTeaserBody;
   const heroCta =
     today.kind === "sealed"
       ? strings.home.todayOpenCta
@@ -223,7 +223,7 @@ export default function HomeScreen({
         ? strings.home.todayRevisitCta
         : today.kind === "error"
           ? strings.common.retryLabel
-          : strings.home.todayUnlockCta;
+          : strings.home.todayOverviewCta;
   // No price or "Pro" tag on Home — the price lives on the screen the card opens, which
   // lays out everything Pro includes. Only the streak shows here.
   const heroChip =

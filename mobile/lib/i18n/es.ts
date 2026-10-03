@@ -188,7 +188,8 @@ export const es: typeof ko = {
     todaySealedTitle: "La energía de hoy te está esperando",
     todayOpenCta: "Ábrela",
     todayRevisitCta: "Ver el día de hoy en detalle",
-    todayUnlockCta: "Abrir la lectura completa",
+    todayOverviewCta: "Leer el resumen de hoy",
+    todayTeaserBody: "Descubre qué significa el ritmo de hoy para ti en el resumen gratuito.",
     todayFullCta: "Ver la lectura completa",
     todayProNote: "Tu día, tu semana, tu mes y el año que viene, completos, se abren con Pro",
     proChip: (price: string) => `Pro · ${price}`,
@@ -362,34 +363,6 @@ export const es: typeof ko = {
     luckyDirectionLabel: "Dirección de la suerte",
   },
 
-  dailyInsight: {
-    wood: [
-      "Hoy hay un flujo especialmente bueno para empezar algo nuevo. Hasta un plan pequeño que siembres hoy puede crecer bien, y trabajar con otras personas también da buenos resultados.",
-      "Tu impulso por crecer recibe un empujón natural hoy. Cuanto más flexible sea tu forma de pensar, más claro se verá el camino — tómate tu tiempo en vez de apresurarte.",
-      "Buen momento para empezar algo que has estado postergando. Hoy sentirás en carne propia que dar el primer paso importa más que tener un plan perfecto.",
-    ],
-    fire: [
-      "Hoy no necesitas ocultar lo que quieres decir. Dar el primer paso juega a tu favor y, con tanta energía, no olvides hacer también una pausa breve.",
-      "Tu pasión se muestra de forma natural hoy. No dejes pasar esa chispa de entusiasmo que sientes — anótala, podría ser una gran pista más adelante.",
-      "Cuanto más te muevas con decisión, mejor será la respuesta que recibas hoy. Solo cuida que las emociones no se adelanten — pausar un momento antes de hablar ayuda.",
-    ],
-    earth: [
-      "Hoy la clave es mantener la estabilidad sin exigirte de más. Abrirte a alguien de confianza ayuda, y cumplir hasta las promesas pequeñas construye confianza de verdad.",
-      "Ordenar las cosas paso a paso te aliviará la mente. Hoy, sé quien aporta estabilidad — eso es, al final, lo que también te protege a ti.",
-      "Mejor dejar reposar una decisión un día que apresurarla. La paciencia que muestres hoy volverá como un resultado mucho más sólido más adelante.",
-    ],
-    metal: [
-      "Cuando haga falta decidir, actúa con tus principios. Trazar un límite claro hoy en realidad te dará tranquilidad, y tu juicio estará más agudo de lo habitual.",
-      "Buen momento para resolver lo que has estado postergando. Recuérdate que está bien no ser perfecto, y cierra las cosas hoy con ligereza.",
-      "Buen día para equilibrar principios y flexibilidad. Mantén el criterio que has fijado, pero escucha también el punto de vista del otro.",
-    ],
-    water: [
-      "Cuanto más profundos sean tus pensamientos, menos necesitas apresurarte. Hoy podrías necesitar especialmente tiempo a solas — no te fuerces a llenarlo.",
-      "Tu intuición acierta bastante hoy. Dejarte llevar por el curso del día también es una estrategia, así que no tienes que explicar lo que sentiste.",
-      "Aunque no lo muestres, hoy se ordenan muchas cosas por dentro. Puedes confiar en silencio en la conclusión a la que llegues.",
-    ],
-    default: ["Tómate un momento hoy para revisar el equilibrio de tus propios elementos. El saju no es un destino fijo: es un mapa para leer el flujo."],
-  },
 
   moduleSelect: {
     badge: "Test psicológico",
