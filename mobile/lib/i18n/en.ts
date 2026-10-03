@@ -386,7 +386,25 @@ export const en: typeof ko = {
   moduleSelect: {
     badge: "Psych Test",
     heading: "Which psych test would you like to take?",
-    recommendedBadge: "Recommended",
+    recommendedTitle: "Good places to start",
+    recommendedReasonForConcern: (concern: string) => `Picked to match what's on your mind: ${concern}.`,
+    recommendedReasonDefault: "New here? These three are a good way in.",
+    meta: "About 5 min · 30 questions",
+    showAll: (count: number) => `All tests · ${count} more`,
+    showLess: "Show less",
+    blurbs: {
+      module1: "See whether getting close makes you anxious or makes you pull away.",
+      module2: "Why money makes you uneasy, and how you tend to spend it.",
+      module3: "Where your energy is leaking, and how worn out you really are.",
+      module4: "The gap between who you are with people and who you are alone.",
+      module5: "Why starting takes so long and finishing feels so hard.",
+      module6: "Whether you hold anger in, let it out, or keep replaying it.",
+      module7: "How easily noise, light and the mood in a room wear you out.",
+      module8: "Whether it's your mind or your body that keeps you from sleeping well.",
+      module9: "What the family you grew up in still shapes in how you relate.",
+      module10: "Whether your focus scatters easily or locks in and won't let go.",
+      module11: "How much you hold back what you want to say and do.",
+    } as Record<string, string>,
   },
 
   quiz: {

@@ -85,9 +85,11 @@
 
 ## P2
 
-- [ ] 10. 검사 목록 단순화
+- [x] 10. 검사 목록 단순화
   - 변경: `screens/ModuleSelectScreen.tsx` — 추천 3개 크게(쉬운 한 줄 + 추천 이유 + "약 5분 · 30문항"), 나머지 "모든 검사"로 접기, "Module N"·임상 용어 부제 제거. `lib/i18n/*`.
   - QA: mobile tsc exit 0. `grep -rn "Module [0-9]\|Módulo [0-9]\|모듈 [0-9]" mobile/lib/i18n` 에서 검사 목록용 문구 없음. 첫 화면에 보이는 선택지 4개 이하(스크린샷, en·es).
+  - QA: mobile tsc(큰 스택) → exit 0. `grep -rn "Module [0-9]\|Módulo [0-9]\|모듈 [0-9]" mobile/lib/i18n` → `STYLE_GUIDE.md` 설명 1줄뿐(UI 문구 없음), 화면 파일에 "Module N"·`subtitle` 참조 없음(exit 1). mobile-web 미리보기(이 세션이 띄운 8082 서버, mobile 프리셋): `?qa=all&persona=jordan&lang=en`(관심사 일상) "Good places to start" + "Picked to match what's on your mind: Myself & daily life." + Burnout·Money·Follow-Through 큰 카드(쉬운 한 줄 + "About 5 min · 30 questions") + "All tests · 8 more" — 접힌 상태 role=button 5개(뒤로 + 선택지 4개). 펼치면 "Show less"(aria-expanded=true) + 나머지 8개 목록, 각 버튼 라벨에 번호 없음. 카드 탭 → Burnout 퀴즈 1/30. `?qa=all&persona=lucia&lang=es`(관심사 관계) "Buenos tests para empezar · Elegidos según lo que te importa ahora: Relaciones." + Amor y apego·Familia de origen·La máscara + "Todos los tests · 8 más". `?qa=free&persona=jisoo&lang=ko` "먼저 해 보기 좋은 검사 · 지금 궁금하다고 고른 '나 자신과 일상'에 맞춰 골랐어요." + 번아웃·돈·실행력. 콘솔 오류 없음.
+  - 메모: 추천 3개는 관심사별 고정 목록(관계: 연애&애착·원가족·가면 / 일상: 번아웃·돈·실행력 / 미선택: 연애&애착·돈·번아웃, 미선택 경로는 코드·tsc로만 확인). 관계 track 모듈이 2개뿐이라 셋째는 사람 사이 피로를 다루는 가면으로 골랐다. 모듈 `title`의 "모듈 N ·"은 서버 프롬프트·저장 결과에 쓰이므로 데이터는 그대로 두고, `ReportScreen`에 있던 `moduleDisplayTitle`을 `lib/quiz/modules.ts`로 옮겨 검사 목록·리포트에서 함께 쓴다(발견 사항의 리포트 심리검사 분석 쪽 부제 "Module 1 · …"도 이걸로 정리). 쉬운 한 줄은 `strings.moduleSelect.blurbs`(11개 × ko/en/es), 소요 시간은 SPEC 가정대로 고정 "약 5분 · 30문항". 접기는 애니메이션 없음. 임상 부제(`subtitle`)는 화면에서만 뺐고 데이터는 그대로.
 
 - [ ] 11. Q&A 주제 묶기 + 남은 질문 수
   - 변경: `screens/QAScreen.tsx`(첫 화면 주제 5개 이하로 묶는 표시용 매핑, 질문 은행은 그대로), 헤더에 오늘 남은 수(`lib/qaQuota.ts`).
@@ -149,8 +151,9 @@
 (작업 중 발견한 범위 밖 이슈를 여기 적는다.)
 
 - (1번 중) `mobile/dev/qaMode.ts:89` QA 프리셋이 `?persona=`로 페이지를 불러올 때마다 `fatesaid_fortune_open_state`를 지워, 새로고침하면 운세를 열었어도 홈이 다시 "기다리고 있어요"로 보인다. dev 전용이지만 재진단 때 오래된 상태로 오인될 수 있음 — 페르소나가 바뀔 때만 지우게 할지 검토.
-- (6번 중) 심층 리포트 심리검사 분석 쪽 부제 "Module 1 · Love & Attachment Analysis"(`ReportScreen.tsx`의 `quizAnalysisSuffix` 줄)에 아직 "Module N"이 붙는다. 표지·다음 검사 카드는 `moduleDisplayTitle`로 뺐으니 10번(모듈 번호 제거) 때 같이 정리.
+- (6번 중, 10번에서 해결) 심층 리포트 심리검사 분석 쪽 부제 "Module 1 · Love & Attachment Analysis"(`ReportScreen.tsx`의 `quizAnalysisSuffix` 줄)에 아직 "Module N"이 붙는다. 표지·다음 검사 카드는 `moduleDisplayTitle`로 뺐으니 10번(모듈 번호 제거) 때 같이 정리.
 - (6번 중) 서버 리포트 프롬프트(`lib/reportPrompts.ts:298`)가 여전히 81자짜리 `subtitle`을 쓰게 한다. 앱 표지는 더 이상 쓰지 않지만 PDF 표지(`lib/pdf/reportPdf.tsx:315` `coverSubtitle`)는 그대로 81자를 보여 준다. PDF 표지도 앱처럼 짧게 만들지, 프롬프트 형식 지시를 바꿀지 검토(서버 프롬프트·PDF는 이번 SPEC 범위 밖).
 - (7번 중, 8번에서 홈은 해결: 인사말 아래 단일 오행 줄 삭제, 그림 캡션이 동률을 둘 다 표시. 타입 화면 설명은 9번에서 확인) 오행 동률이 흔하다(8글자라 12.5% 단위). Jordan은 흙·쇠가 37.5%로 같은데 서버 `dominantElement`/`sajuType.dominantElement`는 하나만(흙) 고른다. 홈 "가장 강한 오행" 문구·타입 설명이 동률일 때 한쪽만 말하는지 8~9번 적용 때 확인(원국 그림 캡션은 둘 다 표시하기로).
 - (9번 중) 타입 화면 공유 카드 미리보기 안의 원국 그림도 role=img라 화면 읽기가 같은 요약을 두 번 읽는다(공유 카드의 유형·인물 글도 원래 화면과 중복). 공유 카드 미리보기 전체를 접근성에서 하나로 묶거나 숨길지 검토. 같은 화면의 "결과 공유하기" Pressable에 `accessibilityRole`이 없다.
 - (9번 중) 동률일 때 타입 화면 "지금 나를 움직이는 것" 아이콘은 서버 `dominantElement` 하나(Jordan: 산=흙)만 보여 준다. 문구는 오행 이름을 말하지 않아 모순은 아니지만, 그림 캡션은 "흙 & 쇠"라 아이콘만 보면 한쪽만 고른 것처럼 보일 수 있음.
+- (10번 중) 퀴즈 화면 상단 kicker("MODULE 3 · BURNOUT", `QuizScreen.tsx`)와 `MyReportsScreen.tsx`에는 여전히 모듈 번호가 보인다. `moduleDisplayTitle`로 같이 정리할지 검토(이번 항목은 검사 목록 범위).

@@ -386,7 +386,25 @@ export const es: typeof ko = {
   moduleSelect: {
     badge: "Test psicológico",
     heading: "¿Qué test psicológico quieres hacer?",
-    recommendedBadge: "Recomendado",
+    recommendedTitle: "Buenos tests para empezar",
+    recommendedReasonForConcern: (concern: string) => `Elegidos según lo que te importa ahora: ${concern}.`,
+    recommendedReasonDefault: "Si es tu primera vez, estos tres son un buen punto de partida.",
+    meta: "Unos 5 min · 30 preguntas",
+    showAll: (count: number) => `Todos los tests · ${count} más`,
+    showLess: "Ver menos",
+    blurbs: {
+      module1: "Descubre si la cercanía te inquieta o te lleva a tomar distancia.",
+      module2: "Por qué el dinero te incomoda y cómo sueles gastarlo.",
+      module3: "Por dónde se te va la energía y cuánto cansancio cargas.",
+      module4: "La distancia entre quien eres con la gente y quien eres a solas.",
+      module5: "Por qué te cuesta tanto empezar y aún más terminar.",
+      module6: "Si te guardas lo que te molesta, lo sueltas de golpe o le das vueltas.",
+      module7: "Cuánto te desgastan el ruido, la luz y el ambiente a tu alrededor.",
+      module8: "Si lo que no te deja dormir bien es la mente o el cuerpo.",
+      module9: "La huella que tu familia de origen sigue dejando en tus relaciones.",
+      module10: "Si tu atención se dispersa con facilidad o se engancha y no se suelta.",
+      module11: "Cuánto te guardas lo que quieres decir y hacer.",
+    } as Record<string, string>,
   },
 
   quiz: {

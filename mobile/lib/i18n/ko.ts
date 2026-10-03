@@ -412,7 +412,25 @@ export const ko = {
   moduleSelect: {
     badge: "심리테스트",
     heading: "어떤 심리테스트를 진행할까요?",
-    recommendedBadge: "추천",
+    recommendedTitle: "먼저 해 보기 좋은 검사",
+    recommendedReasonForConcern: (concern: string) => `지금 궁금하다고 고른 ‘${concern}’에 맞춰 골랐어요.`,
+    recommendedReasonDefault: "처음이라면 이 세 가지부터 시작해 보세요.",
+    meta: "약 5분 · 30문항",
+    showAll: (count: number) => `모든 검사 보기 · ${count}개 더`,
+    showLess: "접기",
+    blurbs: {
+      module1: "가까워질수록 불안해지는지, 거리를 두게 되는지 봐요.",
+      module2: "돈 앞에서 마음이 불편해지는 이유와 쓰는 습관을 봐요.",
+      module3: "에너지가 어디서 새고 있는지, 얼마나 지쳐 있는지 봐요.",
+      module4: "사람들 앞의 나와 혼자일 때의 나, 그 차이를 봐요.",
+      module5: "시작이 늦어지고 끝맺기 어려운 이유를 봐요.",
+      module6: "화를 참는지, 터뜨리는지, 오래 곱씹는지 봐요.",
+      module7: "소리·빛·분위기에 얼마나 쉽게 지치는지 봐요.",
+      module8: "잠을 방해하는 게 생각인지 몸인지 봐요.",
+      module9: "자라온 집이 지금의 관계에 남긴 흔적을 봐요.",
+      module10: "주의가 쉽게 흩어지는지, 한번 빠지면 못 나오는지 봐요.",
+      module11: "하고 싶은 말과 행동을 얼마나 눌러 두는지 봐요.",
+    } as Record<string, string>,
   },
 
   quiz: {

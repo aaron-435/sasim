@@ -259,6 +259,10 @@ export const MODULES: ModuleDefinition[] = [
   },
 ];
 
+/** "Module 3 · Burnout" → "Burnout". The number stays in `title` because the server prompts
+ * and stored results use it; screens show this instead (the numbering means nothing to a reader). */
+export const moduleDisplayTitle = (title: string) => title.replace(/^(모듈|Module|Módulo)\s*\d+\s*·\s*/, "");
+
 export function getModuleById(id: string): ModuleDefinition | undefined {
   return MODULES.find((m) => m.id === id);
 }

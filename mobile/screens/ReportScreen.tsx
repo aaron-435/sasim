@@ -17,7 +17,7 @@ import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
 import { elementWithEmoji } from "../lib/elements";
 import { listSavedReports, saveReport } from "../lib/reportStorage";
-import { getModuleById, MODULES, type ModuleDefinition } from "../lib/quiz/modules";
+import { getModuleById, moduleDisplayTitle, MODULES, type ModuleDefinition } from "../lib/quiz/modules";
 import { exportReportPdf, pdfErrorMessage } from "../lib/reportPdf";
 import { BUNDLE_PRICE, bundleDiscountPercent, formatUsd, fullIndividualTotal, REPORT_PRICE, TOTAL_MODULES } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
@@ -47,9 +47,6 @@ function recommendNextModule(currentId: string, takenIds: Set<string>): { module
   if (same) return { module: same, sameTrack: true };
   return open[0] ? { module: open[0], sameTrack: false } : null;
 }
-
-/** "Module 3 · Burnout" → "Burnout" (the list's numbering means nothing on its own). */
-const moduleDisplayTitle = (title: string) => title.replace(/^(모듈|Module|Módulo)\s*\d+\s*·\s*/, "");
 
 /** Puts each sentence on its own line so a page reads as short deliberate beats instead of one
  * dense block. It breaks at sentence ends only — an earlier version also broke at every comma,
@@ -546,7 +543,7 @@ export default function ReportScreen({
       node: (
         <QuizAnalysisPage
           title={quizDiagnosis.typeInfo?.title ?? ""}
-          subtitle={`${quizDiagnosis.moduleTitle ?? strings.report.defaultModuleTitle} ${strings.report.quizAnalysisSuffix}`}
+          subtitle={`${moduleDisplayTitle(quizDiagnosis.moduleTitle ?? strings.report.defaultModuleTitle)} ${strings.report.quizAnalysisSuffix}`}
           hook={quizDiagnosis.typeInfo?.hook}
           dimensionResults={quizDiagnosis.dimensionResults}
           dimensionShortNames={quizDiagnosis.dimensionShortNames}
