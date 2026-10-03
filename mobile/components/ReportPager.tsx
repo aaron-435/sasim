@@ -1,8 +1,10 @@
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import ArrowRight from "lucide-react-native/icons/arrow-right";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "./AppText";
+import { hasSeenReaderHint, markReaderHintSeen, type ReaderHintId } from "../lib/readerHint";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
 
@@ -10,6 +12,10 @@ import { FONTS } from "../theme/fonts";
 // report (YearReportScreen): a top bar (back, progress bar, "03/13" counter, an optional
 // action such as the PDF button), one full-width page per idea that turns by swiping, and
 // narrow tap zones at both edges for previous/next.
+//
+// First open only: a quiet "swipe to turn" note sits over the bottom of page one until the
+// reader turns a page once (remembered per report kind, lib/readerHint.ts). Static, so no
+// reduced-motion handling is needed.
 //
 // Controlled: the screen owns pageIndex (so a table of contents can jump to a page) and the
 // pager scrolls to it whenever it changes.
@@ -25,6 +31,7 @@ export default function ReportPager({
   edgeTaps = true,
   trailing,
   footer,
+  swipeHint,
 }: {
   pages: ReaderPage[];
   pageIndex: number;
@@ -37,6 +44,8 @@ export default function ReportPager({
   trailing?: ReactNode;
   /** Shown under the pages (e.g. a home button on the last page). */
   footer?: ReactNode;
+  /** One-time first-page note; `id` keys the "already seen" flag. */
+  swipeHint?: { id: ReaderHintId; label: string };
 }) {
   // Read live (not once at module load) so rotation, iPad Split View and window resizes
   // keep the page width and offsets correct.
@@ -46,6 +55,25 @@ export default function ReportPager({
   // inside the horizontal scroller collapses to its content, which left cover footers and
   // centred closings floating at the top.
   const [pageHeight, setPageHeight] = useState<number | undefined>(undefined);
+
+  // Hidden until storage answers, so a returning reader never sees it flash.
+  const [hintVisible, setHintVisible] = useState(false);
+  const hintId = swipeHint?.id;
+  useEffect(() => {
+    if (!hintId) return;
+    let alive = true;
+    hasSeenReaderHint(hintId).then((seen) => {
+      if (alive && !seen) setHintVisible(true);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [hintId]);
+  useEffect(() => {
+    if (!hintVisible || pageIndex === 0 || !hintId) return;
+    setHintVisible(false);
+    markReaderHintSeen(hintId);
+  }, [hintVisible, pageIndex, hintId]);
 
   // Also re-applied once the pager is measured, so a page chosen before layout still lands.
   useEffect(() => {
@@ -93,6 +121,15 @@ export default function ReportPager({
           ))}
         </ScrollView>
 
+        {hintVisible && pageIndex === 0 && swipeHint && (
+          <View style={styles.hintWrap} pointerEvents="none">
+            <View style={styles.hint}>
+              <Text style={styles.hintLabel}>{swipeHint.label}</Text>
+              <ArrowRight size={14} strokeWidth={2} color={COLORS.gold} />
+            </View>
+          </View>
+        )}
+
         {/* Edge tap zones only. Covering the whole pager would swallow taps meant for
             buttons on the pages themselves. */}
         {edgeTaps && (
@@ -119,6 +156,19 @@ const styles = StyleSheet.create({
   progressFill: { height: "100%", borderRadius: 2, backgroundColor: COLORS.headline },
   progressCount: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline, letterSpacing: 0.5, minWidth: 44, textAlign: "right" },
   pagerWrap: { flex: 1, position: "relative" },
+  hintWrap: { position: "absolute", left: 0, right: 0, bottom: 64, alignItems: "center", paddingHorizontal: 24 },
+  hint: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.background,
+  },
+  hintLabel: { fontFamily: FONTS.medium, fontSize: 13, lineHeight: 18, color: COLORS.headline, flexShrink: 1 },
   tapLeft: { position: "absolute", top: 0, bottom: 0, left: 0, width: "16%" },
   tapRight: { position: "absolute", top: 0, bottom: 0, right: 0, width: "16%" },
 });

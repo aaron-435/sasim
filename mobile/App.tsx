@@ -202,6 +202,12 @@ function AppContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeData]);
 
+  // A report's closing page recommends another module: straight into that module's quiz.
+  function openModuleQuiz(id: string) {
+    setModuleId(id);
+    setStep("quiz");
+  }
+
   // Clears the persisted saju reading and every raw onboarding field, then drops the
   // user back at "intro" — the only way to re-onboard once a reading is auto-restored
   // on launch (see the effect above). Exposed from Settings.
@@ -423,6 +429,7 @@ function AppContent() {
             sessionId={sessionId}
             savedContent={fixture.content as ReportContent}
             onBack={() => setStep("home")}
+            onOpenModule={openModuleQuiz}
           />
         );
       })()}
@@ -551,6 +558,7 @@ function AppContent() {
           sessionId={sessionId}
           savedContent={savedReport?.content ?? null}
           onBack={() => setStep(savedReport ? "myReports" : "home")}
+          onOpenModule={openModuleQuiz}
         />
       )}
     </SafeAreaProvider>

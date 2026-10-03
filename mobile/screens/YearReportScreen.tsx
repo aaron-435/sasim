@@ -2,8 +2,9 @@ import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import Download from "lucide-react-native/icons/download";
 import Lock from "lucide-react-native/icons/lock";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, Share, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import ReportClosingPage from "../components/ReportClosingPage";
 import ReportPager, { readerChromeButtonStyle, type ReaderPage } from "../components/ReportPager";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
@@ -216,6 +217,16 @@ export default function YearReportScreen({
     }
   }
 
+  // Plain-text share of the report's one-line summary (its subtitle) plus the app's address.
+  async function handleShare() {
+    if (!report) return;
+    try {
+      await Share.share({ message: `"${report.subtitle}"\n\n${strings.reader.shareCredit} · ${strings.yearReport.heading(report.year)}\n${API_BASE_URL}` });
+    } catch {
+      // dismissed or unsupported (web without navigator.share) — nothing to report
+    }
+  }
+
   async function handleExportPdf() {
     if (exporting || !report) return;
     setExporting(true);
@@ -271,7 +282,11 @@ export default function YearReportScreen({
   }
 
   if (phase === "reader" && report) {
-    const pages = yearReaderPages(report, strings, nickname);
+    const pages = yearReaderPages(report, strings, nickname, {
+      onShare: handleShare,
+      pdf: { label: strings.pdf.button, busyLabel: strings.pdf.preparing, busy: exporting, onPress: handleExportPdf },
+      onOpenPlan: setPageIndex,
+    });
     return (
       <ReportPager
         pages={pages}
@@ -279,6 +294,7 @@ export default function YearReportScreen({
         onPageIndexChange={setPageIndex}
         onBack={onBack}
         labels={{ back: strings.common.backLabel, previous: strings.report.previousPageLabel, next: strings.report.nextPageLabel }}
+        swipeHint={{ id: "year", label: strings.reader.swipeHint }}
         trailing={
           <Pressable
             onPress={handleExportPdf}
@@ -360,7 +376,14 @@ export default function YearReportScreen({
 
 const MONTHS_PER_PAGE = 3;
 
-function yearReaderPages(report: YearReportContent, strings: Dictionary, nickname: string): ReaderPage[] {
+type ClosingActions = {
+  onShare: () => void;
+  pdf: { label: string; busyLabel: string; busy: boolean; onPress: () => void };
+  /** Jumps the reader to a page index (the closing's "next step" card returns to the plan). */
+  onOpenPlan: (pageIndex: number) => void;
+};
+
+function yearReaderPages(report: YearReportContent, strings: Dictionary, nickname: string, actions: ClosingActions): ReaderPage[] {
   const y = strings.yearReport;
   const pages: ReaderPage[] = [];
   pages.push({ key: "overview", node: <SectionPage eyebrow={y.chapterOverview} body={report.overview} /> });
@@ -375,7 +398,33 @@ function yearReaderPages(report: YearReportContent, strings: Dictionary, nicknam
     });
   }
   pages.push({ key: "plan", node: <PlanPage heading={y.planHeading} steps={report.action_plan} /> });
-  pages.push({ key: "closing", node: <ClosingPage closing={report.closing} disclaimers={[strings.report.disclaimer1, strings.report.disclaimer2]} /> });
+  // +1 for the cover added below.
+  const planPageIndex = pages.length;
+  const firstStep = report.action_plan[0];
+  pages.push({
+    key: "closing",
+    node: (
+      <ReportClosingPage
+        body={report.closing}
+        summaryEyebrow={strings.reader.summaryEyebrow}
+        summary={report.subtitle}
+        share={{ label: strings.reader.shareLabel, onPress: actions.onShare }}
+        pdf={actions.pdf}
+        next={
+          firstStep
+            ? {
+                eyebrow: strings.reader.nextStepEyebrow,
+                title: firstStep.title,
+                body: strings.reader.nextStepBody,
+                ctaLabel: strings.reader.nextStepCta,
+                onPress: () => actions.onOpenPlan(planPageIndex),
+              }
+            : null
+        }
+        disclaimers={[strings.report.disclaimer1, strings.report.disclaimer2]}
+      />
+    ),
+  });
   // The cover counts itself in the page total.
   const total = pages.length + 1;
   pages.unshift({
@@ -393,9 +442,9 @@ function yearReaderPages(report: YearReportContent, strings: Dictionary, nicknam
   return pages;
 }
 
-function PageScroll({ children, center }: { children: React.ReactNode; center?: boolean }) {
+function PageScroll({ children }: { children: React.ReactNode }) {
   return (
-    <ScrollView style={pageStyles.scroll} contentContainerStyle={[pageStyles.scrollContent, center && pageStyles.scrollCenter]} showsVerticalScrollIndicator={false}>
+    <ScrollView style={pageStyles.scroll} contentContainerStyle={pageStyles.scrollContent} showsVerticalScrollIndicator={false}>
       {children}
     </ScrollView>
   );
@@ -479,21 +528,6 @@ function PlanPage({ heading, steps }: { heading: string; steps: YearReportConten
   );
 }
 
-function ClosingPage({ closing, disclaimers }: { closing: string; disclaimers: string[] }) {
-  return (
-    <PageScroll center>
-      <Text style={pageStyles.closing}>{closing}</Text>
-      <View style={pageStyles.disclaimers}>
-        {disclaimers.map((d, i) => (
-          <Text key={i} style={pageStyles.disclaimer}>
-            {d}
-          </Text>
-        ))}
-      </View>
-    </PageScroll>
-  );
-}
-
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 48 },
@@ -531,7 +565,6 @@ const styles = StyleSheet.create({
 const pageStyles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 26, paddingTop: 20, paddingBottom: 40 },
-  scrollCenter: { flexGrow: 1, justifyContent: "center" },
   eyebrow: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold, marginBottom: 12 },
   title: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, lineHeight: 33, color: COLORS.headline, marginBottom: 18 },
   body: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 25, color: COLORS.headline, marginBottom: 16 },
@@ -556,7 +589,4 @@ const pageStyles = StyleSheet.create({
   stepText: { flex: 1, gap: 4 },
   stepTitle: { fontFamily: FONTS.semibold, fontSize: 15.5, lineHeight: 22, color: COLORS.headline },
 
-  closing: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 21, lineHeight: 32, color: COLORS.headline },
-  disclaimers: { marginTop: 36 },
-  disclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.footer, marginTop: 8 },
 });

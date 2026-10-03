@@ -3,9 +3,10 @@ import Download from "lucide-react-native/icons/download";
 import Lock from "lucide-react-native/icons/lock";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, Share, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import CalcSourceBadge from "../components/CalcSourceBadge";
+import ReportClosingPage, { type ClosingNext } from "../components/ReportClosingPage";
 import ReportPager, { readerChromeButtonStyle } from "../components/ReportPager";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
@@ -15,7 +16,8 @@ import { findNextDecadeAge } from "../lib/decadeTransition";
 import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
 import { elementWithEmoji } from "../lib/elements";
-import { saveReport } from "../lib/reportStorage";
+import { listSavedReports, saveReport } from "../lib/reportStorage";
+import { getModuleById, MODULES, type ModuleDefinition } from "../lib/quiz/modules";
 import { exportReportPdf, pdfErrorMessage } from "../lib/reportPdf";
 import { BUNDLE_PRICE, bundleDiscountPercent, formatUsd, fullIndividualTotal, REPORT_PRICE, TOTAL_MODULES } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
@@ -34,6 +36,19 @@ const ELEMENT_KEYS = ["wood", "fire", "earth", "metal", "water"] as const;
 const DIMENSION_BAR_COLORS = ["#C1503B", "#3E6EA0", "#B98A4E", "#4E8368", "#8B6BB0"];
 const DEFAULT_ELEMENTS: Record<string, number> = { fire: 20, earth: 20, wood: 20, metal: 20, water: 20 };
 const PAPER_BG = "#EFE7D8";
+
+/** The closing page's "test to try next": one the reader hasn't taken, from the same track as
+ * this report when possible (the reason line says which). Null once every module is done. */
+function recommendNextModule(currentId: string, takenIds: Set<string>): { module: ModuleDefinition; sameTrack: boolean } | null {
+  const track = getModuleById(currentId)?.track;
+  const open = MODULES.filter((m) => m.id !== currentId && !takenIds.has(m.id));
+  const same = open.find((m) => m.track === track);
+  if (same) return { module: same, sameTrack: true };
+  return open[0] ? { module: open[0], sameTrack: false } : null;
+}
+
+/** "Module 3 · Burnout" → "Burnout" (the list's numbering means nothing on its own). */
+const moduleDisplayTitle = (title: string) => title.replace(/^(모듈|Module|Módulo)\s*\d+\s*·\s*/, "");
 
 /** Puts each sentence on its own line so a page reads as short deliberate beats instead of one
  * dense block. It breaks at sentence ends only — an earlier version also broke at every comma,
@@ -158,6 +173,7 @@ export default function ReportScreen({
   sessionId,
   savedContent,
   onBack,
+  onOpenModule,
 }: {
   nickname: string;
   elements: Record<string, number> | null;
@@ -171,6 +187,8 @@ export default function ReportScreen({
   /** A report reopened from "My reports" — skips generation entirely. */
   savedContent?: ReportContent | null;
   onBack: () => void;
+  /** Starts another module's test (the closing page's recommendation). Without it the card is hidden. */
+  onOpenModule?: (moduleId: string) => void;
 }) {
   const strings = useStrings();
   const { locale } = useLocale();
@@ -188,6 +206,7 @@ export default function ReportScreen({
   const mountedRef = useRef(true);
   const firedRef = useRef(false);
   const [exporting, setExporting] = useState(false);
+  const [takenModuleIds, setTakenModuleIds] = useState<Set<string> | null>(null);
   const resolvedElements = elements ?? DEFAULT_ELEMENTS;
 
   // The single highest-scoring (most extreme) literal answer for each of this module's
@@ -223,6 +242,18 @@ export default function ReportScreen({
       mountedRef.current = false;
     };
   }, []);
+
+  // Which modules already have a report on this device — the closing page recommends a new one.
+  useEffect(() => {
+    listSavedReports().then((saved) => {
+      if (mountedRef.current) setTakenModuleIds(new Set(saved.map((r) => r.moduleId)));
+    });
+  }, []);
+
+  const nextModule = useMemo(
+    () => (takenModuleIds ? recommendNextModule(quizDiagnosis.moduleId, takenModuleIds) : null),
+    [takenModuleIds, quizDiagnosis.moduleId],
+  );
 
   useEffect(() => {
     if (content) return;
@@ -737,11 +768,38 @@ export default function ReportScreen({
 
     body.push({ key: "mindset", locked: true, node: <MindsetPage label={strings.report.sectionMindset} body={content.mindset_guide} /> });
 
+    const summary = splitLead(noHanja(content.psychology_takeaway ?? "")).lead.trim();
+    const next: ClosingNext | null =
+      nextModule && onOpenModule
+        ? {
+            eyebrow: strings.reader.nextModuleEyebrow,
+            title: moduleDisplayTitle(nextModule.module.title[locale] ?? nextModule.module.title.ko),
+            body: !nextModule.sameTrack
+              ? strings.reader.nextModuleReasonNew
+              : nextModule.module.track === "romance"
+                ? strings.reader.nextModuleReasonRomance
+                : strings.reader.nextModuleReasonCareer,
+            meta: strings.reader.nextModuleMeta,
+            ctaLabel: strings.reader.nextModuleCta,
+            onPress: () => onOpenModule(nextModule.module.id),
+          }
+        : null;
     body.push({
       key: "closing",
       tocLabel: strings.report.tocClosing,
       locked: true,
-      node: <ClosingPage title={content.closing_title} body={content.closing_body} disclaimer1={strings.report.disclaimer1} disclaimer2={strings.report.disclaimer2} />,
+      node: (
+        <ReportClosingPage
+          title={content.closing_title}
+          body={sentenceLines(content.closing_body)}
+          summaryEyebrow={strings.reader.summaryEyebrow}
+          summary={summary}
+          share={{ label: strings.reader.shareLabel, onPress: () => handleShare(summary) }}
+          pdf={{ label: strings.pdf.button, busyLabel: strings.pdf.preparing, busy: exporting, onPress: handleExportPdf }}
+          next={next}
+          disclaimers={[strings.report.disclaimer1, strings.report.disclaimer2]}
+        />
+      ),
     });
 
     const tocEntries = body
@@ -795,7 +853,17 @@ export default function ReportScreen({
       ...gated,
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, resolvedElements, chatExtract, unlocked, lockedOpen, unlockState, ownedCount, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, topAnswers, decadePreviewLine]);
+  }, [content, resolvedElements, chatExtract, unlocked, lockedOpen, unlockState, ownedCount, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, topAnswers, decadePreviewLine, nextModule, onOpenModule, exporting]);
+
+  // Plain-text share of the report's one-line takeaway plus the app's address.
+  async function handleShare(summary: string) {
+    if (!summary) return;
+    try {
+      await Share.share({ message: `"${summary}"\n\n${strings.reader.shareCredit}\n${API_BASE_URL}` });
+    } catch {
+      // dismissed or unsupported (web without navigator.share) — nothing to report
+    }
+  }
 
   // PDF of the whole report — only offered once it's unlocked. The server re-verifies the
   // purchase (app/api/report-pdf), so this button is a convenience, not the gate.
@@ -868,6 +936,7 @@ export default function ReportScreen({
       onPageIndexChange={setPageIndex}
       onBack={onBack}
       labels={{ back: strings.common.backLabel, previous: strings.report.previousPageLabel, next: strings.report.nextPageLabel }}
+      swipeHint={{ id: "deep", label: strings.reader.swipeHint }}
       // None on a paywall page: the zones sat on top of — and swallowed the taps meant for —
       // the paywall's buy, bundle and restore buttons. Swiping still turns pages everywhere.
       edgeTaps={!onPaywall}
@@ -1317,25 +1386,6 @@ function MindsetPage({ label, body }: { label: string; body: string }) {
   );
 }
 
-function ClosingPage({ title, body, disclaimer1, disclaimer2 }: { title: string; body: string; disclaimer1: string; disclaimer2: string }) {
-  return (
-    <PageShell>
-      <View style={pageStyles.elemMid}>
-        <Text style={pageStyles.closingTitle} accessibilityRole="header">{title}</Text>
-        <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
-      </View>
-      <View style={pageStyles.closingBrand}>
-        <View style={pageStyles.brandRow}>
-          <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-          <Text style={pageStyles.brandLabel}>FATESAID</Text>
-        </View>
-        <Text style={pageStyles.disclaimer}>{disclaimer1}</Text>
-        <Text style={pageStyles.disclaimer}>{disclaimer2}</Text>
-      </View>
-    </PageShell>
-  );
-}
-
 // Gates everything past the free preview (opening scene, case study, quiz analysis, saju
 // analysis) — the actionable half of the report. Real IAP added 2026-09-16: the bundle
 // (all 11 at a fixed price) is only offered while the user owns none of them yet, since
@@ -1586,9 +1636,6 @@ const pageStyles = StyleSheet.create({
 
   fitLabel: { fontFamily: FONTS.bold, fontSize: 12, marginBottom: 4 },
 
-  closingTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 25, lineHeight: 32, color: COLORS.headline, marginBottom: 4 },
-  closingBrand: { paddingTop: 20, borderTopWidth: 1, borderTopColor: COLORS.border },
-  disclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.footer, marginTop: 10 },
 
   paywallScroll: { flex: 1 },
   paywallMid: { flexGrow: 1, justifyContent: "center", paddingVertical: 4 },

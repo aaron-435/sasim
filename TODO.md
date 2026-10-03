@@ -45,10 +45,13 @@
   - 메모: 공용 `components/ReportPager.tsx`(상단 바·가로 페이지·가장자리 탭·하단 슬롯)를 두 화면이 쓴다. 웹에서 페이지가 내용 높이로 줄어 표지 하단 문구가 위로 붙던 문제를 페이지에 측정 높이를 주는 것으로 고쳐 심층 리포트 표지("PREVIEW · 16 OF 42 PAGES")도 이제 화면 아래에 붙는다. 첫 장 안내·마지막 장 재설계는 5번 범위라 마무리 페이지는 기존 내용(맺음말·면책)만 옮겼다.
   - [ ] (사용자 확인) iOS 실기기·시뮬레이터에서 신년 리포트를 옆으로 쓸어 넘길 때 긴 장(한눈에 보기 등)의 세로 스크롤과 가로 넘김이 서로 방해하지 않는지.
 
-- [ ] 5. 두 리포트의 첫 장 안내와 마지막 페이지
+- [x] 5. 두 리포트의 첫 장 안내와 마지막 페이지
   - 선행: 4
   - 변경: 공용 리포트 부품에 첫 장 넘기기 안내(한 번 본 뒤 저장해서 숨김), 마지막 페이지(한 줄 요약·공유·다음 검사 추천 또는 다음 행동·PDF 저장·작은 면책). `lib/i18n/*`.
   - QA: mobile tsc exit 0. 심층·신년 리포트 각각 첫 장 안내 → 다시 열면 없음, 마지막 장 구성 스크린샷(ko·en·es 중 2개 언어).
+  - QA: mobile tsc(큰 스택) → exit 0. mobile-web 미리보기(다른 세션이 띄운 8082 서버, 같은 폴더라 변경 반영, mobile 프리셋): `?qa=all&persona=jordan`(en) 심층 리포트 1쪽 하단에 "Swipe or tap the right edge to turn the page" → 한 장 넘기면 사라지고 `fatesaid_reader_hint_seen_deep=1` → 새로고침 후 다시 열면 안내 없음. 마지막 장(41/41): 맺음말 → "If you keep one line" + 한 줄 요약 + Share·Save as PDF → "A test to try next · Money · 약 5분·30문항 · Start this test" → 작은 면책, 카드 탭 시 Module 2 퀴즈 1/30으로 이동. `?qa=all&persona=lucia`(es) 신년 리포트 1쪽 안내 "Desliza o toca el borde derecho para avanzar"(한 줄) → 넘기면 저장, 다시 열면 없음. 마지막 장(13/13): 맺음말 → "Si te quedas con una línea" + 부제 요약 + Compartir·Guardar como PDF → "Tu siguiente paso"(실행 계획 1단계 제목) → 면책, 카드 탭 시 12/13 실행 계획으로 이동. 회귀: `?qa=free&persona=mia` 심층 리포트 17/17 페이월 그대로, 새 마지막 장은 잠금 상태라 안 보임. 콘솔 오류 없음.
+  - 메모: 공용 `components/ReportClosingPage.tsx`(두 리포트 마지막 장), `ReportPager`의 `swipeHint`(저장은 `lib/readerHint.ts`, 리포트 종류별 키). 한 줄 요약은 심층=`psychology_takeaway` 첫 문장, 신년=`subtitle`. 공유는 RN `Share`로 요약 한 줄 + 앱 주소 텍스트(새 의존성 없음). 다음 검사는 기기에 저장된 리포트가 없는 모듈 중 같은 track 우선(`App.tsx`의 `openModuleQuiz`로 바로 퀴즈). 안내는 정적이라 동작 줄이기 대상 없음. 웹은 `navigator.share`가 없으면 공유가 조용히 무시된다.
+  - [ ] (사용자 확인) iOS 시뮬레이터·실기기에서 마지막 장 "공유하기"를 누르면 공유 시트에 요약 한 줄과 주소가 뜨는지, 심층 리포트 "다음 검사" 카드가 퀴즈로 넘어가는지, 첫 장 안내가 한 번 넘긴 뒤 다시 열면 없는지.
 
 - [ ] 6. 리포트 사소한 문제 묶음
   - 변경: `screens/ReportScreen.tsx` — 1쪽 제목·부제 간격, 본문 문단 간격, 81자 대문자 표지 소제목(짧게 또는 문장형), 페이월 "42쪽 중 26쪽"과 페이지 카운터 일치, 강점 % 막대가 "나쁨" 색(빨강)으로 보이지 않게.
