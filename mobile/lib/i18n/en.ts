@@ -450,6 +450,8 @@ export const en: typeof ko = {
     errorNetwork: "A network error kept us from getting an answer.",
     subcategoryHeading: "Pick the question you're curious about",
     categoryHeading: "Narrow it down a bit more",
+    topicGroups: { love: "Love & People", work: "Work & Money", self: "You & Your Wellbeing", timing: "Timing & Change", today: "Today & This Week" },
+    remainingToday: (left: number, limit: number) => `${left} of ${limit} left today`,
     subscribeButton: "Subscribe",
     subscribing: "Processing...",
     restoreButton: "Restore Purchases",

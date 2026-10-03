@@ -7,7 +7,6 @@ import { BackHandler, Pressable, ScrollView, StyleSheet, View } from "react-nati
 import Text from "../components/AppText";
 import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { SafeAreaView } from "react-native-safe-area-context";
-import questionBank from "../data/questionBank.json";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
@@ -16,19 +15,14 @@ import { isUnavailableMessage, purchaseIssueDetail, purchaseQaPro, restoreQaPro 
 import { useMonthlyPrice } from "../lib/useMonthlyPrice";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { saveLastQuestion } from "../lib/qaHistory";
+import { onlySubcategory, QA_TOPIC_GROUPS, type QaQuestion, type QaSubcategory, type QaTopicGroup } from "../lib/qaTopicGroups";
 import type { NormalizedSajuResult } from "../lib/saju";
 import { COLORS } from "../theme/colors";
 import QAQuestionScreen from "./QAQuestionScreen";
 import QASubcategoryScreen from "./QASubcategoryScreen";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
-type Question = { id: string; text_ko: string; text_en?: string; text_es?: string };
-type Subcategory = { id: string; name_ko: string; name_en?: string; name_es?: string; questions: Question[] };
-type Category = { id: string; name_ko: string; name_en?: string; name_es?: string; subcategories: Subcategory[] };
-
 type Message = { role: "bot" | "user"; text: string } | { role: "picker" } | { role: "subscribe" };
-
-const CATEGORIES = questionBank.categories as Category[];
 
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -59,8 +53,10 @@ export default function QAScreen({
   const { locale } = useLocale();
   const [messages, setMessages] = useState<Message[]>([]);
   const [view, setView] = useState<"chat" | "subcategory" | "question">("chat");
-  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
-  const [activeSubcategory, setActiveSubcategory] = useState<Subcategory | null>(null);
+  const [activeGroup, setActiveGroup] = useState<QaTopicGroup | null>(null);
+  const [activeSubcategory, setActiveSubcategory] = useState<QaSubcategory | null>(null);
+  // Today's count for the header ("N of M left today"); null until storage has answered.
+  const [quota, setQuota] = useState<{ used: number; limit: number } | null>(null);
   const [busy, setBusy] = useState(false);
   const [errorText, setErrorText] = useState<string | null>(null);
   const [retryQuestion, setRetryQuestion] = useState<string | null>(null);
@@ -99,6 +95,7 @@ export default function QAScreen({
 
       const [usage, dailyLimit] = await Promise.all([getUsageToday(), getDailyLimit()]);
       if (!mountedRef.current) return;
+      setQuota({ used: usage, limit: dailyLimit });
       if (usage >= dailyLimit) {
         await wait(700);
         if (!mountedRef.current) return;
@@ -118,17 +115,21 @@ export default function QAScreen({
 
   const onBubbleLayout = useReplyScroll(scrollRef, messages.map((m) => m.role));
 
+  // A group with a single subcategory (today) skips the subcategory screen, so its
+  // question list steps back straight to the chat.
+  const questionBackView = activeGroup && onlySubcategory(activeGroup) ? "chat" : "subcategory";
+
   // Android hardware back inside the category/question pickers steps back one level,
   // same as their on-screen back buttons, instead of App.tsx's handler dropping the
   // user all the way to Home. Added after App's listener, so RN asks this one first.
   useEffect(() => {
     if (view === "chat") return;
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
-      setView(view === "question" ? "subcategory" : "chat");
+      setView(view === "question" ? questionBackView : "chat");
       return true;
     });
     return () => sub.remove();
-  }, [view]);
+  }, [view, questionBackView]);
 
   async function requestAnswer(questionText: string) {
     setBusy(true);
@@ -157,6 +158,8 @@ export default function QAScreen({
       saveLastQuestion(questionText, json.lines as string[]);
 
       const [usageAfter, dailyLimit] = await Promise.all([incrementUsageToday(), getDailyLimit()]);
+      if (!mountedRef.current) return;
+      setQuota({ used: usageAfter, limit: dailyLimit });
       await wait(700);
       if (!mountedRef.current) return;
 
@@ -175,17 +178,23 @@ export default function QAScreen({
     }
   }
 
-  function handlePickCategory(cat: Category) {
-    setActiveCategory(cat);
-    setView("subcategory");
+  function handlePickGroup(group: QaTopicGroup) {
+    setActiveGroup(group);
+    const only = onlySubcategory(group);
+    if (only) {
+      setActiveSubcategory(only);
+      setView("question");
+    } else {
+      setView("subcategory");
+    }
   }
 
-  function handlePickSubcategory(sub: Subcategory) {
+  function handlePickSubcategory(sub: QaSubcategory) {
     setActiveSubcategory(sub);
     setView("question");
   }
 
-  function handleSelectQuestion(q: Question) {
+  function handleSelectQuestion(q: QaQuestion) {
     const questionText = localizedText(q.text_ko, q.text_en, q.text_es, locale);
     setView("chat");
     pushUser(questionText);
@@ -199,6 +208,9 @@ export default function QAScreen({
 
   async function unlockAfterEntitlementChange() {
     refreshRoutineNotification(strings).catch(() => {});
+    Promise.all([getUsageToday(), getDailyLimit()]).then(([used, limit]) => {
+      if (mountedRef.current) setQuota({ used, limit });
+    });
     await wait(500);
     if (!mountedRef.current) return;
     pushBot(strings.qa.promptCategory);
@@ -236,12 +248,14 @@ export default function QAScreen({
     }
   }
 
-  if (view === "subcategory" && activeCategory) {
-    return <QASubcategoryScreen category={activeCategory} onBack={() => setView("chat")} onSelect={handlePickSubcategory} />;
+  if (view === "subcategory" && activeGroup) {
+    return <QASubcategoryScreen group={activeGroup} onBack={() => setView("chat")} onSelect={handlePickSubcategory} />;
   }
   if (view === "question" && activeSubcategory) {
-    return <QAQuestionScreen subcategory={activeSubcategory} onBack={() => setView("subcategory")} onSelect={handleSelectQuestion} />;
+    return <QAQuestionScreen subcategory={activeSubcategory} onBack={() => setView(questionBackView)} onSelect={handleSelectQuestion} />;
   }
+
+  const remainingLabel = quota ? strings.qa.remainingToday(Math.max(0, quota.limit - quota.used), quota.limit) : null;
 
   return (
     <SafeAreaView style={styles.root}>
@@ -249,8 +263,17 @@ export default function QAScreen({
         <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
           <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
         </Pressable>
-        <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
-        <Text style={styles.headerLabel} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.headerLabel}</Text>
+        <View style={styles.headerText}>
+          <View style={styles.headerTitleRow}>
+            <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
+            <Text style={styles.headerLabel} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.headerLabel}</Text>
+          </View>
+          {remainingLabel && (
+            <Text style={styles.remaining} accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
+              {remainingLabel}
+            </Text>
+          )}
+        </View>
       </View>
 
       <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContent}>
@@ -259,15 +282,15 @@ export default function QAScreen({
             return (
               <View key={i} style={styles.pickerRow}>
                 <View style={styles.pickerBubble}>
-                  {CATEGORIES.map((cat) => (
+                  {QA_TOPIC_GROUPS.map((group) => (
                     <Pressable
-                      key={cat.id}
+                      key={group.id}
                       style={styles.optionButton}
-                      onPress={() => handlePickCategory(cat)}
+                      onPress={() => handlePickGroup(group)}
                       accessibilityRole="button"
-                      accessibilityLabel={localizedText(cat.name_ko, cat.name_en, cat.name_es, locale)}
+                      accessibilityLabel={strings.qa.topicGroups[group.id]}
                     >
-                      <Text style={styles.optionLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{localizedText(cat.name_ko, cat.name_en, cat.name_es, locale)}</Text>
+                      <Text style={styles.optionLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.topicGroups[group.id]}</Text>
                     </Pressable>
                   ))}
                 </View>
@@ -346,12 +369,28 @@ const styles = StyleSheet.create({
     padding: 4,
     marginRight: 2,
   },
+  headerText: {
+    flex: 1,
+    gap: 3,
+  },
+  headerTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
   headerLabel: {
+    flexShrink: 1,
     fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 1.5,
     color: COLORS.gold,
     textTransform: "uppercase",
+  },
+  remaining: {
+    paddingLeft: 22,
+    fontFamily: FONTS.medium,
+    fontSize: 12,
+    color: COLORS.subheadline,
   },
   scroll: {
     flex: 1,

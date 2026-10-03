@@ -450,6 +450,8 @@ export const es: typeof ko = {
     errorNetwork: "Un problema de conexión nos impidió obtener una respuesta.",
     subcategoryHeading: "Elige la pregunta que te interese",
     categoryHeading: "Elige con más detalle",
+    topicGroups: { love: "Amor y vínculos", work: "Trabajo y dinero", self: "Tú y tu bienestar", timing: "Momento y cambio", today: "Hoy y esta semana" },
+    remainingToday: (left: number, limit: number) => `Te quedan ${left} de ${limit} hoy`,
     subscribeButton: "Suscribirme",
     subscribing: "Procesando...",
     restoreButton: "Restaurar compras",

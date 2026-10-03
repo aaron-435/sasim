@@ -476,6 +476,8 @@ export const ko = {
     errorNetwork: "네트워크 오류로 답변을 가져오지 못했습니다.",
     subcategoryHeading: "궁금한 질문을 골라주세요",
     categoryHeading: "더 자세히 골라주세요",
+    topicGroups: { love: "사랑과 사람", work: "일과 돈", self: "나 자신과 마음", timing: "시기와 변화", today: "오늘과 이번 주" },
+    remainingToday: (left: number, limit: number) => `오늘 ${limit}개 중 ${left}개 남음`,
     subscribeButton: "구독하기",
     subscribing: "처리 중...",
     restoreButton: "구매 복원",

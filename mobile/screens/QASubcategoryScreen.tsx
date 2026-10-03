@@ -6,32 +6,26 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
+import type { QaSubcategory, QaTopicGroup } from "../lib/qaTopicGroups";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
-type Subcategory = {
-  id: string;
-  name_ko: string;
-  name_en?: string;
-  name_es?: string;
-  questions: { id: string; text_ko: string; text_en?: string; text_es?: string }[];
-};
-type Category = { id: string; name_ko: string; name_en?: string; name_es?: string; subcategories: Subcategory[] };
-
-// Ported from components/QASubcategoryPage.jsx — full-screen 중분류 picker for one
-// 대분류. No third tier in the data today, so picking a subcategory always goes
-// straight to QAQuestionScreen (see that file's caller for the branch point).
+// Ported from components/QASubcategoryPage.jsx — full-screen 중분류 picker. In the app it
+// shows one display group (lib/qaTopicGroups.ts), which can hold more than one bank
+// category; those then read as labelled sections. No third tier in the data today, so
+// picking a subcategory always goes straight to QAQuestionScreen.
 export default function QASubcategoryScreen({
-  category,
+  group,
   onBack,
   onSelect,
 }: {
-  category: Category;
+  group: QaTopicGroup;
   onBack: () => void;
-  onSelect: (sub: Subcategory) => void;
+  onSelect: (sub: QaSubcategory) => void;
 }) {
   const strings = useStrings();
   const { locale } = useLocale();
+  const sectioned = group.categories.length > 1;
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -43,22 +37,31 @@ export default function QASubcategoryScreen({
         <View style={styles.header}>
           <View style={styles.categoryRow}>
             <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.categoryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{localizedText(category.name_ko, category.name_en, category.name_es, locale)}</Text>
+            <Text style={styles.categoryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.topicGroups[group.id]}</Text>
           </View>
           <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.qa.categoryHeading}</Text>
         </View>
 
-        {category.subcategories.map((sub) => (
-          <Pressable
-            key={sub.id}
-            style={styles.card}
-            onPress={() => onSelect(sub)}
-            accessibilityRole="button"
-            accessibilityLabel={localizedText(sub.name_ko, sub.name_en, sub.name_es, locale)}
-          >
-            <Text style={styles.cardLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{localizedText(sub.name_ko, sub.name_en, sub.name_es, locale)}</Text>
-            <ArrowRight size={16} strokeWidth={2.25} color={COLORS.gold} />
-          </Pressable>
+        {group.categories.map((category) => (
+          <View key={category.id} style={sectioned && styles.section}>
+            {sectioned && (
+              <Text style={styles.sectionLabel} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
+                {localizedText(category.name_ko, category.name_en, category.name_es, locale)}
+              </Text>
+            )}
+            {category.subcategories.map((sub) => (
+              <Pressable
+                key={sub.id}
+                style={styles.card}
+                onPress={() => onSelect(sub)}
+                accessibilityRole="button"
+                accessibilityLabel={localizedText(sub.name_ko, sub.name_en, sub.name_es, locale)}
+              >
+                <Text style={styles.cardLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{localizedText(sub.name_ko, sub.name_en, sub.name_es, locale)}</Text>
+                <ArrowRight size={16} strokeWidth={2.25} color={COLORS.gold} />
+              </Pressable>
+            ))}
+          </View>
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -111,6 +114,15 @@ const styles = StyleSheet.create({
     fontVariant: ["lining-nums"],
     fontSize: 24,
     color: COLORS.headline,
+  },
+  section: {
+    marginBottom: 14,
+  },
+  sectionLabel: {
+    fontFamily: FONTS.medium,
+    fontSize: 13,
+    color: COLORS.subheadline,
+    marginBottom: 10,
   },
   card: {
     flexDirection: "row",
