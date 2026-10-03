@@ -67,10 +67,13 @@
   - QA: mobile tsc(큰 스택) → exit 0. mobile-web 미리보기(다른 세션이 띄운 8082 서버, mobile 프리셋) `?sketch=chart&persona=jordan|jisoo|lucia`에서 시안 3개(A 네 기둥 + 분포 막대 / B 오행 고리 / C 여덟 칸 직조)를 en·ko(시주 없음)·es로 확인, 겹침·잘림 없음, 콘솔 오류 없음. **사용자 선택: A · 네 기둥 + 분포 막대** (2026-10-03).
   - 메모: 시안은 `mobile/dev/ChartSketches.tsx`(dev 전용, 문구 하드코딩), 진입은 `index.ts`의 `__DEV__` + `?sketch=chart` 분기. 8번에서 A를 `components/`로 옮긴 뒤 시안 파일과 분기는 지운다. A 구성: 기둥마다 위 천간(둥근 칸)·아래 지지(모난 칸), 칸 안 주 표기는 언어별 오행 이름, 한자는 작은 보조. 일간 칸에 밝은 테두리 + "나/You/Tú" 배지, 아래 분포 막대에서 가장 강한 오행은 진하게, 캡션 두 줄 "가장 많은 기운 · 흙 38%" / "당신 자신 · 물"로 두 개념을 나눈다. 시주 없음은 빗금 점선 칸 + "시간 모름". 동률(Jordan 흙·쇠 37.5%)은 둘 다 표시.
 
-- [ ] 8. 원국 컴포넌트 구현 + 홈 적용
+- [x] 8. 원국 컴포넌트 구현 + 홈 적용
   - 선행: 7
   - 변경: `components/`에 원국 컴포넌트, `screens/HomeScreen.tsx` 오행 막대 카드 교체(탭 불가 카드는 목록처럼 보이지 않게). 데이터는 저장된 `fourPillars`.
   - QA: mobile tsc exit 0. jordan·mia·jisoo(시간 있음/없음 섞어서) 홈 스크린샷에서 그림이 깨지지 않음.
+  - QA: mobile tsc(큰 스택) → exit 0. mobile-web 미리보기(다른 세션이 띄운 8082 서버를 브라우저 창에서 직접 열기, mobile 프리셋) 홈: `?qa=all&persona=jordan`(en) 네 기둥 + 분포 막대, 동률 캡션 "Most present · Earth & Metal, 38% each" / "Your core · Water", 일간 칸 "You" 배지. `?qa=all&persona=jisoo`(ko, 시간 모름) 시주 칸 빗금 점선 + "시간 모름", 막대 합 100%(6글자), "가장 많은 기운 · 흙 50%" / "당신 자신 · 나무". `?qa=all&persona=lucia`(es) "Más presente · Tierra 38%" / "Tu esencia · Agua", 칸 글자 잘림 없음. `?qa=free&persona=mia`(en) 무료 상태에서도 정상. 그림 전체가 role=img + 언어별 요약 라벨(예: "나의 사주 원국. 태어난 해: 위 흙, 아래 나무. … 시: 시간 모름. …"). 콘솔 오류 없음.
+  - 메모: 공용 `mobile/components/FourPillarsChart.tsx`(`parseFourPillars`, `strongestElements` 함께 내보냄 — 9번에서 재사용). 폭은 onLayout으로 재서 칸 폭 52~76pt, 넓은 화면에선 기둥 묶음을 가운데로(18번 iPad 대비). 문구는 `strings.fourPillarsChart`(ko 오행 이름은 시안대로 나무/불/흙/쇠/물). 홈 카드는 테두리·배경 없이 그려 아래 기능 목록(테두리 카드)과 구분, 섹션 제목 "나의 사주 원국 / My saju chart / Mi carta saju". 인사말 아래 "가장 강한 오행 · ⛰️ 토" 줄과 설명 한 줄(`home.elementBadgePrefix`·`identityHint`)은 그림 캡션이 같은 구분을 하면서 동률을 둘 다 말하므로 지웠다(서버 `dominantElement` 하나만 말해 그림과 어긋나던 문제). 오행 막대 성장 애니메이션은 막대와 함께 사라졌고 새 동작은 없다. 7번 시안 파일 `dev/ChartSketches.tsx`와 `index.ts`의 `?sketch=chart` 분기 삭제.
+  - [ ] (사용자 확인) iOS 시뮬레이터 dev-client에서 홈 원국 그림의 한자(보조 표기)가 시스템 글꼴로 정상 표시되는지, VoiceOver가 그림을 한 덩어리로 요약해 읽는지.
 
 - [ ] 9. 타입 화면·사주 타입 공유 카드에 원국 적용
   - 선행: 8
@@ -145,4 +148,4 @@
 - (1번 중) `mobile/dev/qaMode.ts:89` QA 프리셋이 `?persona=`로 페이지를 불러올 때마다 `fatesaid_fortune_open_state`를 지워, 새로고침하면 운세를 열었어도 홈이 다시 "기다리고 있어요"로 보인다. dev 전용이지만 재진단 때 오래된 상태로 오인될 수 있음 — 페르소나가 바뀔 때만 지우게 할지 검토.
 - (6번 중) 심층 리포트 심리검사 분석 쪽 부제 "Module 1 · Love & Attachment Analysis"(`ReportScreen.tsx`의 `quizAnalysisSuffix` 줄)에 아직 "Module N"이 붙는다. 표지·다음 검사 카드는 `moduleDisplayTitle`로 뺐으니 10번(모듈 번호 제거) 때 같이 정리.
 - (6번 중) 서버 리포트 프롬프트(`lib/reportPrompts.ts:298`)가 여전히 81자짜리 `subtitle`을 쓰게 한다. 앱 표지는 더 이상 쓰지 않지만 PDF 표지(`lib/pdf/reportPdf.tsx:315` `coverSubtitle`)는 그대로 81자를 보여 준다. PDF 표지도 앱처럼 짧게 만들지, 프롬프트 형식 지시를 바꿀지 검토(서버 프롬프트·PDF는 이번 SPEC 범위 밖).
-- (7번 중) 오행 동률이 흔하다(8글자라 12.5% 단위). Jordan은 흙·쇠가 37.5%로 같은데 서버 `dominantElement`/`sajuType.dominantElement`는 하나만(흙) 고른다. 홈 "가장 강한 오행" 문구·타입 설명이 동률일 때 한쪽만 말하는지 8~9번 적용 때 확인(원국 그림 캡션은 둘 다 표시하기로).
+- (7번 중, 8번에서 홈은 해결: 인사말 아래 단일 오행 줄 삭제, 그림 캡션이 동률을 둘 다 표시. 타입 화면 설명은 9번에서 확인) 오행 동률이 흔하다(8글자라 12.5% 단위). Jordan은 흙·쇠가 37.5%로 같은데 서버 `dominantElement`/`sajuType.dominantElement`는 하나만(흙) 고른다. 홈 "가장 강한 오행" 문구·타입 설명이 동률일 때 한쪽만 말하는지 8~9번 적용 때 확인(원국 그림 캡션은 둘 다 표시하기로).

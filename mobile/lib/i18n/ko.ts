@@ -213,8 +213,6 @@ export const ko = {
     featureReportsLabel: "내 리포트",
     featureReportsDescription: "지금까지 만든 심층 리포트 다시 보기",
     greeting: (nickname: string) => `안녕하세요, ${nickname}님`,
-    elementBadgePrefix: "가장 강한 오행 ·",
-    identityHint: "타입은 태어난 날의 오행(일간)에서, '가장 강한 오행'은 내 차트에서 비중이 가장 큰 오행에서 나와요.",
     todayTitle: "오늘의 운세",
     todaySealedTitle: "오늘의 기운이 기다리고 있어요",
     todayOpenCta: "열어보기",
@@ -224,7 +222,7 @@ export const ko = {
     todayFullCta: "전체 운세 보기",
     todayProNote: "하루·이번 주·이달·신년 흐름 전체는 Pro에서 열려요",
     proChip: (price: string) => `Pro · ${price}`,
-    myChartTitle: "나의 오행",
+    myChartTitle: "나의 사주 원국",
     featuresTitle: "더 알아보기",
     featureQaLabel: "사주 Q&A",
     featureQaDescription: "궁금한 순간, 지금 바로 물어보세요",
@@ -237,6 +235,19 @@ export const ko = {
     learnMoreLink: "Fatesaid 활용법 · 사주 더 알아보기",
     settingsLabel: "설정",
     typeBadgeHint: "나의 사주 유형 자세히 보기",
+  },
+
+  fourPillarsChart: {
+    a11yTitle: "나의 사주 원국",
+    elementNames: { wood: "나무", fire: "불", earth: "흙", metal: "쇠", water: "물" },
+    pillars: { year: "태어난 해", month: "달", day: "날", hour: "시" },
+    you: "나",
+    core: (element: string) => `당신 자신 · ${element}`,
+    most: (names: string[], percent: number) =>
+      names.length > 1 ? `가장 많은 기운 · ${names.join("·")} 각 ${percent}%` : `가장 많은 기운 · ${names[0]} ${percent}%`,
+    unknownHour: "시간 모름",
+    unknownHourLines: ["시간", "모름"],
+    a11yPair: (top: string, bottom: string) => `위 ${top}, 아래 ${bottom}`,
   },
 
   sajuType: {

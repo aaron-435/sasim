@@ -190,8 +190,6 @@ export const en: typeof ko = {
     featureReportsLabel: "My reports",
     featureReportsDescription: "Reopen the in-depth reports you've made",
     greeting: (nickname: string) => `Hi, ${nickname}`,
-    elementBadgePrefix: "Strongest element ·",
-    identityHint: "Your type comes from your Day Master, the element of the day you were born. Strongest element is the one your chart has most of.",
     todayTitle: "Today's fortune",
     todaySealedTitle: "Today's energy is waiting for you",
     todayOpenCta: "Open it",
@@ -201,7 +199,7 @@ export const en: typeof ko = {
     todayFullCta: "See the full reading",
     todayProNote: "Your full day, week, month and year ahead open with Pro",
     proChip: (price: string) => `Pro · ${price}`,
-    myChartTitle: "My five elements",
+    myChartTitle: "My saju chart",
     featuresTitle: "Explore more",
     featureQaLabel: "Saju Q&A",
     featureQaDescription: "Got a question? Ask it right now",
@@ -214,6 +212,19 @@ export const en: typeof ko = {
     learnMoreLink: "How to use Fatesaid · Learn about Saju",
     settingsLabel: "Settings",
     typeBadgeHint: "Open your saju type",
+  },
+
+  fourPillarsChart: {
+    a11yTitle: "Your four pillars",
+    elementNames: { wood: "Wood", fire: "Fire", earth: "Earth", metal: "Metal", water: "Water" },
+    pillars: { year: "Year", month: "Month", day: "Day", hour: "Hour" },
+    you: "You",
+    core: (element: string) => `Your core · ${element}`,
+    most: (names: string[], percent: number) =>
+      names.length > 1 ? `Most present · ${names.join(" & ")}, ${percent}% each` : `Most present · ${names[0]} ${percent}%`,
+    unknownHour: "Time unknown",
+    unknownHourLines: ["Time", "unknown"],
+    a11yPair: (top: string, bottom: string) => `${top} over ${bottom}`,
   },
 
   sajuType: {

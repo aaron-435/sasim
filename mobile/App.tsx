@@ -384,8 +384,8 @@ function AppContent() {
       {step === "home" && homeData && (
         <HomeScreen
           nickname={homeData.nickname}
-          dominantElement={homeData.sajuResult.dominantElement}
           elements={homeData.sajuResult.elements}
+          fourPillars={homeData.sajuResult.fourPillars}
           sajuType={homeData.sajuResult.sajuType ?? null}
           selfDayMasterChar={dayMasterCharOf(homeData)}
           selfDayBranch={dayBranchOf(homeData)}

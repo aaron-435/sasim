@@ -12,9 +12,9 @@ import { useEffect, useRef, useState } from "react";
 import { AccessibilityInfo, AppState, Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
+import FourPillarsChart, { parseFourPillars } from "../components/FourPillarsChart";
 import PatternBackground from "../components/PatternBackground";
 import { DAILY_FORTUNE_CONTENT, getOverview } from "../lib/dailyFortuneContent";
-import { ELEMENT_COLORS, ELEMENT_ORDER, elementWithEmoji } from "../lib/elements";
 import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
 import { useLocale, useStrings } from "../lib/i18n";
 import { hasQaProEntitlement } from "../lib/purchases";
@@ -35,7 +35,9 @@ import { FONTS } from "../theme/fonts";
 //   1. today's fortune as the one filled surface, right under the greeting — sealed /
 //      opened + streak for subscribers, a one-line teaser + honest "Pro" chip for free
 //      users (the old row looked free and then hit a paywall);
-//   2. the five-element chart as "my chart";
+//   2. the five-element chart as "my chart" (since 2026-10-03 the four-pillars picture,
+//      which also carries the "most present element" vs "your core" distinction that used
+//      to sit under the greeting);
 //   3. the remaining features as one quiet grouped list, ordered by the onboarding
 //      concern; the chat/report prerequisite is folded into the psych test row's
 //      description (the saju type has its own entry: the badge under the greeting);
@@ -73,8 +75,8 @@ function firstSentence(text: string): string {
 
 export default function HomeScreen({
   nickname,
-  dominantElement,
   elements,
+  fourPillars,
   sajuType,
   selfDayMasterChar,
   selfDayBranch,
@@ -92,8 +94,9 @@ export default function HomeScreen({
   onOpenSettings,
 }: {
   nickname: string;
-  dominantElement: string | null;
   elements: Record<string, number> | null;
+  /** The stored reading's `fourPillars`, drawn by FourPillarsChart (null/odd shapes hide it). */
+  fourPillars: unknown;
   sajuType: SajuType | null;
   selfDayMasterChar: string | null;
   selfDayBranch: string | null;
@@ -162,11 +165,10 @@ export default function HomeScreen({
     };
   }, [selfDayMasterChar, selfDayBranch, reloadKey]);
 
-  // One authored moment: the hero settles into place and the chart bars grow. Everything
+  // One authored moment: the hero settles into place. Everything
   // starts visible, so nothing is lost if an animation never runs, and Reduce Motion
   // (iOS) / Remove animations (Android) skips straight to the end state.
   const heroSettle = useRef(new Animated.Value(0)).current;
-  const barGrowth = useRef(new Animated.Value(0)).current;
   const heroPress = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -177,13 +179,9 @@ export default function HomeScreen({
         if (cancelled) return;
         if (reduceMotion) {
           heroSettle.setValue(1);
-          barGrowth.setValue(1);
           return;
         }
         Animated.timing(heroSettle, { toValue: 1, duration: 520, easing: Easing.out(Easing.exp), useNativeDriver: true }).start();
-        // Bar width is a layout property, so this one stays JS-driven — fine for a one-off
-        // entrance on five thin bars.
-        Animated.timing(barGrowth, { toValue: 1, duration: 850, delay: 200, easing: Easing.out(Easing.cubic), useNativeDriver: false }).start();
       });
     return () => {
       cancelled = true;
@@ -270,10 +268,7 @@ export default function HomeScreen({
   };
   const features = FEATURE_ORDER[preferredTrack ?? "default"].filter((key) => featureMeta[key].available);
 
-  const maxPercent = elements ? Math.max(...ELEMENT_ORDER.map((k) => elements[k] ?? 0), 1) : 1;
-  const elementName = dominantElement
-    ? elementWithEmoji(dominantElement, strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement)
-    : null;
+  const showChart = !!elements && !!parseFourPillars(fourPillars);
 
   return (
     <PatternBackground>
@@ -299,11 +294,6 @@ export default function HomeScreen({
               {strings.home.greeting(nickname)}
             </Text>
             <View style={styles.identityRow}>
-              {elementName && (
-                <Text style={styles.elementLine}>
-                  {strings.home.elementBadgePrefix} {elementName}
-                </Text>
-              )}
               {sajuType && (
                 <Pressable
                   style={styles.typeBadge}
@@ -318,7 +308,6 @@ export default function HomeScreen({
                 </Pressable>
               )}
             </View>
-            {!!elementName && !!sajuType && <Text style={styles.identityHint}>{strings.home.identityHint}</Text>}
           </View>
 
           {selfDayMasterChar && (
@@ -372,35 +361,14 @@ export default function HomeScreen({
           </Pressable>
           )}
 
-          {elements && (
+          {showChart && elements && (
             <View style={styles.section}>
               <Text style={styles.sectionTitle} accessibilityRole="header">
                 {strings.home.myChartTitle}
               </Text>
-              <View style={styles.chartCard}>
-                {ELEMENT_ORDER.map((key) => {
-                  const value = elements[key] ?? 0;
-                  const widthPct = Math.max((value / maxPercent) * 100, 4);
-                  const label = elementWithEmoji(key, strings.common.elementLabels[key as keyof typeof strings.common.elementLabels]);
-                  return (
-                    <View key={key} style={styles.elementRow} accessible accessibilityLabel={`${label} ${Math.round(value)}%`}>
-                      <Text style={styles.elementRowLabel}>{label}</Text>
-                      <View style={styles.elementBarTrack}>
-                        <Animated.View
-                          style={[
-                            styles.elementBarFill,
-                            {
-                              backgroundColor: ELEMENT_COLORS[key],
-                              width: barGrowth.interpolate({ inputRange: [0, 1], outputRange: ["0%", `${widthPct}%`] }),
-                            },
-                          ]}
-                        />
-                      </View>
-                      <Text style={styles.elementRowValue}>{Math.round(value)}%</Text>
-                    </View>
-                  );
-                })}
-              </View>
+              {/* Unboxed on purpose: the grouped feature list below is the only bordered card
+                  besides the hero, so the static chart can't read as something to tap. */}
+              <FourPillarsChart fourPillars={fourPillars} elements={elements} />
             </View>
           )}
 
@@ -512,18 +480,12 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     color: COLORS.headline,
   },
-  identityHint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: 10 },
   identityRow: {
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "center",
     gap: 12,
     marginTop: 10,
-  },
-  elementLine: {
-    fontFamily: FONTS.medium,
-    fontSize: 13,
-    color: COLORS.subheadline,
   },
   typeBadge: {
     flexDirection: "row",
@@ -618,44 +580,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: COLORS.headline,
     marginBottom: 12,
-  },
-  chartCard: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 14,
-    padding: 16,
-    gap: 12,
-  },
-  elementRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  elementRowLabel: {
-    minWidth: 68,
-    fontFamily: FONTS.medium,
-    fontSize: 13,
-    color: COLORS.headline,
-  },
-  elementBarTrack: {
-    flex: 1,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "rgba(255,255,255,0.06)",
-    overflow: "hidden",
-  },
-  elementBarFill: {
-    height: "100%",
-    borderRadius: 4,
-  },
-  elementRowValue: {
-    minWidth: 40,
-    textAlign: "right",
-    fontFamily: FONTS.medium,
-    fontSize: 13,
-    fontVariant: ["tabular-nums"],
-    color: COLORS.subheadline,
   },
   list: {
     backgroundColor: COLORS.inputBg,

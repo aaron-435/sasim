@@ -190,8 +190,6 @@ export const es: typeof ko = {
     featureReportsLabel: "Mis informes",
     featureReportsDescription: "Vuelve a abrir los informes profundos que ya creaste",
     greeting: (nickname: string) => `Hola, ${nickname}`,
-    elementBadgePrefix: "Elemento más fuerte ·",
-    identityHint: "Tu tipo sale de tu Maestro del Día, el elemento del día en que naciste. El elemento más fuerte es el que más pesa en tu mapa.",
     todayTitle: "Tu lectura de hoy",
     todaySealedTitle: "La energía de hoy te está esperando",
     todayOpenCta: "Ábrela",
@@ -201,7 +199,7 @@ export const es: typeof ko = {
     todayFullCta: "Ver la lectura completa",
     todayProNote: "Tu día, tu semana, tu mes y el año que viene, completos, se abren con Pro",
     proChip: (price: string) => `Pro · ${price}`,
-    myChartTitle: "Mis cinco elementos",
+    myChartTitle: "Mi carta saju",
     featuresTitle: "Explora más",
     featureQaLabel: "Preguntas de saju",
     featureQaDescription: "¿Tienes una duda? Pregúntala ahora mismo",
@@ -214,6 +212,19 @@ export const es: typeof ko = {
     learnMoreLink: "Cómo usar Fatesaid · Aprende sobre el saju",
     settingsLabel: "Ajustes",
     typeBadgeHint: "Abrir tu tipo de saju",
+  },
+
+  fourPillarsChart: {
+    a11yTitle: "Tus cuatro pilares",
+    elementNames: { wood: "Madera", fire: "Fuego", earth: "Tierra", metal: "Metal", water: "Agua" },
+    pillars: { year: "Año", month: "Mes", day: "Día", hour: "Hora" },
+    you: "Tú",
+    core: (element: string) => `Tu esencia · ${element}`,
+    most: (names: string[], percent: number) =>
+      names.length > 1 ? `Más presente · ${names.join(" y ")}, ${percent}% cada uno` : `Más presente · ${names[0]} ${percent}%`,
+    unknownHour: "Hora desconocida",
+    unknownHourLines: ["Hora", "desconocida"],
+    a11yPair: (top: string, bottom: string) => `${top} sobre ${bottom}`,
   },
 
   sajuType: {
