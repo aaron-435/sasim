@@ -9,9 +9,9 @@ const nextConfig = {
       "/api/report-pdf": [
         "./node_modules/@expo-google-fonts/noto-sans-kr/400Regular/NotoSansKR_400Regular.ttf",
         "./node_modules/@expo-google-fonts/noto-sans-kr/700Bold/NotoSansKR_700Bold.ttf",
-        "./node_modules/@expo-google-fonts/manrope/400Regular/Manrope_400Regular.ttf",
-        "./node_modules/@expo-google-fonts/manrope/600SemiBold/Manrope_600SemiBold.ttf",
-        "./node_modules/@expo-google-fonts/cormorant-garamond/500Medium/CormorantGaramond_500Medium.ttf",
+        "./node_modules/@expo-google-fonts/plus-jakarta-sans/400Regular/PlusJakartaSans_400Regular.ttf",
+        "./node_modules/@expo-google-fonts/plus-jakarta-sans/600SemiBold/PlusJakartaSans_600SemiBold.ttf",
+        "./node_modules/@expo-google-fonts/newsreader/500Medium/Newsreader_500Medium.ttf",
       ],
     },
   },

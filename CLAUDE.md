@@ -24,7 +24,7 @@ Set conversationally here instead of editing the skill file (it says overrides h
 ### Fixed constraints any skill must respect
 
 - Palette: Celadon & Hanji (`mobile/theme/colors.ts`). Don't propose Obsidian & Gold or a new palette unless the user asks for a rebrand.
-- Fonts: being re-selected (user decision 2026-10-03, `SPEC.md` item 7). Until the user picks new fonts there, keep Cormorant Garamond for display moments and Manrope for UI text, and reference fonts through shared tokens rather than hard-coded family names.
+- Fonts: Newsreader for display moments and Plus Jakarta Sans for UI text (user pick 2026-10-04; Korean stays on the system font). Reference them only through `FONTS` in `mobile/theme/fonts.ts`, never by family name; use `FONTS.displayItalic` instead of `fontStyle: "italic"`. The PDF (`lib/pdf/reportPdf.tsx`) uses the same faces.
 - Pressure rule (decided 2026-09-19, the "middle path"): mild tension and curiosity are allowed — name what's coming and lock the why/what-to-do ("today asks you to pace yourself — why and what to do open with Pro"), and strong metaphors ("a headwind") are fine inside subscriber content. Still off-limits: fake countdowns or scarcity, "unlucky day" red alerts, health/death/accident/disaster predictions, flat negative predictions ("you will lose money"), and a negative prediction placed directly above a paywall as the hook. Reasons: store/consumer-protection rules for a subscription product, and vulnerable users. See `PRODUCT.md` principles.
 - Any new motion honors reduced motion (`AccessibilityInfo.isReduceMotionEnabled()` on native).
 - UI changes must stay OTA-shippable unless the user approves a native build: no new native dependencies without asking.

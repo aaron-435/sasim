@@ -119,10 +119,13 @@
   - 선택 결과(2026-10-04 사용자): C — 표시용 Newsreader, UI용 Plus Jakarta Sans. 한글은 제목·본문 모두 시스템 글꼴 유지(나눔명조 넣지 않음). 14번은 이 조합으로 진행.
   - QA: Playwright 헤드리스 2배율 스크린샷 36장 → 비교표 3장 + 한글 확대 1장을 사용자에게 보여주고 선택 받음.
 
-- [ ] 14. 고른 글꼴 적용
+- [x] 14. 고른 글꼴 적용
   - 선행: 0, 13
   - 변경: `mobile/package.json`(글꼴 JS 패키지), `App.tsx` 로딩, 글꼴 토큰 값, `lib/reportPdf.ts`·공유 카드의 글꼴, 루트 `CLAUDE.md` Fonts 줄과 `PRODUCT.md` 글꼴 문구.
   - QA: mobile tsc exit 0. `cd mobile && npx expo install --check` 경고 없음. ko·en·es 홈·리포트 스크린샷에서 글꼴 대체(시스템 글꼴로 떨어짐) 없음. `grep -n "Cormorant\|Manrope" CLAUDE.md PRODUCT.md`가 새 결정과 일치. (사용자 확인) 실기기 OTA 후 글꼴 로드.
+  - 적용(2026-10-04): 앱은 `@expo-google-fonts/newsreader`(500 + 500 이탤릭)·`plus-jakarta-sans`(400/500/600/700)로 교체하고 Cormorant·Manrope 패키지 제거. `theme/fonts.ts`에 `FONTS.displayItalic` 추가 — 리포트 표지 부제·인용문, 홈 철학 문장이 합성 기울임(`fontStyle: "italic"`) 대신 진짜 이탤릭을 씀(ko 철학 문장은 정체). 공유 카드·원국 그림 SVG는 토큰을 쓰므로 자동 반영. PDF는 루트 패키지 교체 + `lib/pdf/reportPdf.tsx` 등록 + `next.config.mjs` 파일 포함 목록 교체(ko는 Noto Sans KR 그대로). 글자 크기는 스크린샷상 줄넘김이 문제없어 바꾸지 않음.
+  - QA: mobile tsc(큰 스택) → exit 0. 루트 `npx tsc --noEmit` → exit 0, `npm run lint && npm run build` → 경고·오류 없음, exit 0, `/api/report-pdf` nft에 새 TTF 3개 포함. `npx expo install --check` → 글꼴 패키지 경고 없음(남은 6개 패치 버전 경고는 변경 전에도 동일, 발견 사항). Node로 react-pdf에 새 TTF를 등록해 렌더 → `/BaseFont` Newsreader-Medium·PlusJakartaSans-Regular/SemiBold, 스페인어 악센트 정상(pdftoppm 이미지 확인). mobile-web 미리보기(mobile 프리셋) `?qa=all&persona=lucia`(es) 홈·심층 리포트 1쪽, `jisoo`(ko) 홈·리포트 1쪽, `jordan`(en) 홈·운세: `document.fonts`에서 새 글꼴 로드 완료, 화면 텍스트 font-family가 전부 Newsreader_*/PlusJakartaSans_*(대체 없음, 한글은 의도대로 시스템 글꼴). `grep -n "Cormorant\|Manrope" CLAUDE.md PRODUCT.md` → 결과 없음(새 문구로 교체).
+  - [ ] (사용자 확인) 실기기에서 OTA(웹 배포 후 `eas update`) 받은 뒤 홈 인사말·리포트 표지 부제(이탤릭)·운세 본문이 새 글꼴로 보이는지, Android에서 리포트 인용문이 기울임으로 보이는지.
 
 - [ ] 15. 운세 화면 카드 개편
   - 변경: `screens/FortuneScreen.tsx` 오늘 탭 — 개요 주인공, 영역별 운세 묶음, 세부 펼치기, 대문자 소제목 정리, 상단 제목을 탭에 맞게, es 탭 라벨 넘침 해결. 무료/구독 경계와 페이월 문구 유지.
@@ -171,3 +174,5 @@
 - (9번 중) 동률일 때 타입 화면 "지금 나를 움직이는 것" 아이콘은 서버 `dominantElement` 하나(Jordan: 산=흙)만 보여 준다. 문구는 오행 이름을 말하지 않아 모순은 아니지만, 그림 캡션은 "흙 & 쇠"라 아이콘만 보면 한쪽만 고른 것처럼 보일 수 있음.
 - (10번 중) 퀴즈 화면 상단 kicker("MODULE 3 · BURNOUT", `QuizScreen.tsx`)와 `MyReportsScreen.tsx`에는 여전히 모듈 번호가 보인다. `moduleDisplayTitle`로 같이 정리할지 검토(이번 항목은 검사 목록 범위).
 - (12번 중) 궁합에서 상대 이름을 비우면 이름 자리에 입력 칸 예시 문구가 그대로 들어간다("p. ej. Diego", "예: 민준", "e.g. Jamie" — `CompatibilityScreen.tsx`의 `otherDisplayName`이 `namePlaceholder`로 대체). 이번 개편으로 결과 맨 위·공유 카드에 크게 보이므로 "상대"/"Them"/"La otra persona" 같은 중립 표현으로 바꾸는 것을 검토.
+- (14번 중) `cd mobile && npx expo install --check`가 expo·expo-font·expo-notifications·expo-sharing·expo-updates 등 6개 패치 버전 차이를 경고한다(글꼴 변경 전에도 동일). 올릴 때 네이티브 빌드가 필요한지 확인 후 별도 작업으로.
+- (14번 중) 운세 화면 탭 라벨이 en에서도 칸을 꽉 채운다("This Month", "Year Ahead" — Plus Jakarta Sans가 Manrope보다 약간 넓음). 15번(es 탭 넘침)에서 같이 처리.

@@ -28,7 +28,7 @@ export const maxDuration = 60;
 const LOCALES: Locale[] = ["ko", "en", "es"];
 const MAX_BODY_CHARS = 400_000;
 
-// The PDF fonts (Noto Sans KR / Manrope) have no emoji glyphs, so the element headings' 🌳🔥⛰️💎💧 printed as
+// The PDF fonts (Noto Sans KR / Plus Jakarta Sans) have no emoji glyphs, so the element headings' 🌳🔥⛰️💎💧 printed as
 // broken boxes (TODO 10). Emoji stay in the app; every PDF string drops them. RegExp from a string because
 // tsconfig targets ES5, which rejects the "u" flag on a literal.
 const EMOJI = new RegExp(String.raw`[\p{Extended_Pictographic}\p{Regional_Indicator}\u{1F3FB}-\u{1F3FF}\u20E3\uFE0F\u200D]`, "gu");

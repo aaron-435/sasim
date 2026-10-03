@@ -9,8 +9,8 @@
  *
  * Layout: a dark cover page in the app's celadon, then paper-toned pages (the same #EFE7D8 family
  * the in-app report's table-of-contents page uses) with generous margins, a running header and
- * page numbers. Hangul needs a Hangul font, so ko uses Noto Sans KR; en/es use Manrope for text
- * and Cormorant Garamond for display type — the same faces as the app.
+ * page numbers. Hangul needs a Hangul font, so ko uses Noto Sans KR; en/es use Plus Jakarta Sans for
+ * text and Newsreader for display type — the same faces as the app.
  * ------------------------------------------------------------------
  */
 
@@ -35,13 +35,13 @@ function registerFonts() {
     ],
   });
   Font.register({
-    family: "Manrope",
+    family: "PlusJakartaSans",
     fonts: [
-      { src: fontDir("manrope", "400Regular", "Manrope_400Regular.ttf"), fontWeight: 400 },
-      { src: fontDir("manrope", "600SemiBold", "Manrope_600SemiBold.ttf"), fontWeight: 600 },
+      { src: fontDir("plus-jakarta-sans", "400Regular", "PlusJakartaSans_400Regular.ttf"), fontWeight: 400 },
+      { src: fontDir("plus-jakarta-sans", "600SemiBold", "PlusJakartaSans_600SemiBold.ttf"), fontWeight: 600 },
     ],
   });
-  Font.register({ family: "Cormorant", src: fontDir("cormorant-garamond", "500Medium", "CormorantGaramond_500Medium.ttf"), fontWeight: 500 });
+  Font.register({ family: "Newsreader", src: fontDir("newsreader", "500Medium", "Newsreader_500Medium.ttf"), fontWeight: 500 });
   // No hyphenation: it mangles Korean and adds nothing for the short paragraphs used here.
   Font.registerHyphenationCallback((word) => [word]);
 }
@@ -169,8 +169,8 @@ const LABELS: Record<Locale, Labels> = {
 // ---- styles ----------------------------------------------------------------------------------
 
 function makeStyles(locale: Locale) {
-  const body = locale === "ko" ? "NotoSansKR" : "Manrope";
-  const display = locale === "ko" ? "NotoSansKR" : "Cormorant";
+  const body = locale === "ko" ? "NotoSansKR" : "PlusJakartaSans";
+  const display = locale === "ko" ? "NotoSansKR" : "Newsreader";
   const displayWeight = locale === "ko" ? 700 : 500;
   return StyleSheet.create({
     coverPage: { backgroundColor: C.coverBg, padding: 64, justifyContent: "space-between", fontFamily: body },

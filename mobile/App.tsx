@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
-import { useFonts, CormorantGaramond_500Medium } from "@expo-google-fonts/cormorant-garamond";
-import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from "@expo-google-fonts/manrope";
+import { useFonts, Newsreader_500Medium, Newsreader_500Medium_Italic } from "@expo-google-fonts/newsreader";
+import { PlusJakartaSans_400Regular, PlusJakartaSans_500Medium, PlusJakartaSans_600SemiBold, PlusJakartaSans_700Bold } from "@expo-google-fonts/plus-jakarta-sans";
 import { useEffect, useRef, useState } from "react";
 import { BackHandler } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -121,11 +121,12 @@ export default function App() {
 
 function AppContent() {
   const [fontsLoaded] = useFonts({
-    CormorantGaramond_500Medium,
-    Manrope_400Regular,
-    Manrope_500Medium,
-    Manrope_600SemiBold,
-    Manrope_700Bold,
+    Newsreader_500Medium,
+    Newsreader_500Medium_Italic,
+    PlusJakartaSans_400Regular,
+    PlusJakartaSans_500Medium,
+    PlusJakartaSans_600SemiBold,
+    PlusJakartaSans_700Bold,
   });
   const { ready: localeReady, hasStoredLocale, locale } = useLocale();
   const strings = useStrings();

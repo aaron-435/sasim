@@ -1557,7 +1557,7 @@ const pageStyles = StyleSheet.create({
 
   coverMid: { flex: 1, justifyContent: "flex-start", paddingTop: "18%" },
   coverTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 27, lineHeight: 36, color: COLORS.headline, marginBottom: 4 },
-  coverTitle2: { fontFamily: FONTS.display, fontStyle: "italic", fontVariant: ["lining-nums"], fontSize: 20, lineHeight: 28, color: COLORS.footer, marginTop: 10 },
+  coverTitle2: { fontFamily: FONTS.displayItalic, fontVariant: ["lining-nums"], fontSize: 20, lineHeight: 28, color: COLORS.footer, marginTop: 10 },
   coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: 16 },
   coverSub: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline },
   coverSource: { marginTop: 22, marginBottom: 28 },
@@ -1611,8 +1611,7 @@ const pageStyles = StyleSheet.create({
 
   quoteMid: { flex: 1, justifyContent: "flex-start", paddingTop: "22%" },
   pullQuote: {
-    fontFamily: FONTS.display,
-    fontStyle: "italic",
+    fontFamily: FONTS.displayItalic,
     fontVariant: ["lining-nums"],
     fontSize: 21,
     lineHeight: 32,

@@ -40,6 +40,7 @@ Saju and psychology fused on one person's data: a real calendar-based saju calcu
 
 - Name: Fatesaid. Tagline (ko): "운명은 이미 말했습니다, 이제 답할 차례는 당신입니다".
 - Palette direction confirmed by the user on 2026-09-19: keep "Celadon & Hanji"; do not return to the earlier "Obsidian & Gold".
+- Fonts picked by the user on 2026-10-04: Newsreader for display moments (with its real italic for quotes and subtitles) and Plus Jakarta Sans for UI text, in the app, share cards and the PDF. Korean stays on the system font (PDF: Noto Sans KR); no Korean webfont is shipped.
 - Voice: warm counselor, never cynical. The AI chat is a completed 25-turn conversation (the user may wrap up early at the turn-10 check-in) with safety and no-direct-advice rules; no forced cut-offs or fake urgency timers.
 - Classical saju terms are re-expressed for EN/ES readers in non-frightening language rather than translated literally.
 

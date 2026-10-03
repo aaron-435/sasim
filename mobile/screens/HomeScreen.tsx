@@ -629,14 +629,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   philosophyLine: {
-    fontFamily: FONTS.display,
-    fontStyle: "italic",
+    fontFamily: FONTS.displayItalic,
     fontSize: 16,
     lineHeight: 23,
     color: COLORS.subheadline,
   },
   philosophyLineKo: {
-    fontStyle: "normal",
+    fontFamily: FONTS.display,
   },
   learnMoreLink: {
     flexDirection: "row",
