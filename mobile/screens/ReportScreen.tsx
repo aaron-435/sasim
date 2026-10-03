@@ -3,7 +3,7 @@ import Download from "lucide-react-native/icons/download";
 import Lock from "lucide-react-native/icons/lock";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, ScrollView, Share, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, Share, StyleSheet, View, type StyleProp, type TextStyle } from "react-native";
 import Text from "../components/AppText";
 import CalcSourceBadge from "../components/CalcSourceBadge";
 import ReportClosingPage, { type ClosingNext } from "../components/ReportClosingPage";
@@ -33,7 +33,8 @@ const ELEMENT_COLOR: Record<string, string> = {
   water: "#3E6EA0",
 };
 const ELEMENT_KEYS = ["wood", "fire", "earth", "metal", "water"] as const;
-const DIMENSION_BAR_COLORS = ["#C1503B", "#3E6EA0", "#B98A4E", "#4E8368", "#8B6BB0"];
+// Celadon-led, no red: a high share on a dimension (82% anxiety) is a tendency, not a warning.
+const DIMENSION_BAR_COLORS = [COLORS.gold, "#7FA8D6", "#C2A86B", "#9C8FBF", "#8FB09B"];
 const DEFAULT_ELEMENTS: Record<string, number> = { fire: 20, earth: 20, wood: 20, metal: 20, water: 20 };
 const PAPER_BG = "#EFE7D8";
 
@@ -70,6 +71,23 @@ function sentenceLines(text: string): string {
     .map((s) => s.trim())
     .filter(Boolean)
     .join("\n");
+}
+
+/** Body prose with a small gap between sentences. One Text with "\n" breaks (sentenceLines) left
+ * no space between beats, so a 5-sentence page read as a solid wall; a full blank line was too
+ * loose. The style's outer margins move to the wrapper so the block sits where the Text did. */
+function Prose({ text, style }: { text: string; style: StyleProp<TextStyle> }) {
+  const { marginTop, marginBottom, ...textStyle } = StyleSheet.flatten(style) ?? {};
+  const lines = sentenceLines(text).split("\n");
+  return (
+    <View style={{ marginTop, marginBottom }}>
+      {lines.map((line, i) => (
+        <Text key={i} style={[textStyle, i > 0 && pageStyles.sentenceGap]}>
+          {line}
+        </Text>
+      ))}
+    </View>
+  );
 }
 
 type ElementReading = { heading: string; body: string };
@@ -811,7 +829,7 @@ export default function ReportScreen({
     const firstLockedBodyIdx = body.findIndex((p) => p.locked);
     const paywallPageIndex = !lockedOpen && firstLockedBodyIdx >= 0 ? firstLockedBodyIdx + 2 : null;
 
-    const lockedTotal = body.filter((p) => p.locked).length;
+    const lockedChapterCount = tocEntries.filter((e) => e.locked).length;
     // One paywall page in place of every locked page (was ~29 identical copies to swipe
     // through). The full page count still shows on the cover and in the paywall note.
     let paywallPlaced = false;
@@ -828,8 +846,8 @@ export default function ReportScreen({
           ) : (
             <PaywallPage
               ownedCount={ownedCount}
-              lockedCount={lockedTotal}
-              totalCount={body.length + 2}
+              lockedCount={lockedChapterCount}
+              totalCount={tocEntries.length}
               lockedChapters={tocEntries.filter((e) => e.locked).map((e) => e.label)}
               strings={strings}
               purchasing={purchasing}
@@ -848,7 +866,23 @@ export default function ReportScreen({
     const total = body.length + 2;
 
     return [
-      { key: "cover", node: <CoverPage title1={content.title_line1} title2={content.title_line2} subtitle={content.subtitle} nickname={`${nickname}${strings.report.nicknameSuffix}`} previewLabel={lockedOpen ? "" : strings.report.previewLabel} totalPagesLabel={lockedOpen ? strings.report.totalPagesLabel(total) : strings.report.previewPagesLabel(body.filter((p) => !p.locked).length + 2, total)} /> },
+      {
+        key: "cover",
+        node: (
+          <CoverPage
+            // The server's subtitle runs ~80 characters ("Module 1 · … deep report — saju × psychological
+            // test × counseling integration"); the cover kicker is built here instead.
+            kicker={`${moduleDisplayTitle(quizDiagnosis.moduleTitle ?? strings.report.defaultModuleTitle)} · ${strings.report.coverKicker}`}
+            title1={content.title_line1}
+            title2={content.title_line2}
+            nickname={`${nickname}${strings.report.nicknameSuffix}`}
+            previewLabel={lockedOpen ? "" : strings.report.previewLabel}
+            // Preview counts are in chapters, the TOC's unit: a page count ("16 of 42") never matched
+            // the reader's counter, which only spans the preview pages plus one paywall page.
+            totalPagesLabel={lockedOpen ? strings.report.totalPagesLabel(total) : strings.report.previewChaptersLabel(tocEntries.length - lockedChapterCount, tocEntries.length)}
+          />
+        ),
+      },
       { key: "toc", node: <TocPage eyebrow={strings.report.tocEyebrow} title={strings.report.tocTitle} entries={tocEntries} paywallPageIndex={paywallPageIndex} onSelect={goTo} /> },
       ...gated,
     ];
@@ -980,16 +1014,16 @@ function Eyebrow({ children, ink }: { children: React.ReactNode; ink?: boolean }
 }
 
 function CoverPage({
+  kicker,
   title1,
   title2,
-  subtitle,
   nickname,
   previewLabel,
   totalPagesLabel,
 }: {
+  kicker: string;
   title1: string;
   title2: string;
-  subtitle: string;
   nickname: string;
   previewLabel: string;
   totalPagesLabel: string;
@@ -1001,12 +1035,10 @@ function CoverPage({
         <Text style={pageStyles.brandLabel}>FATESAID</Text>
       </View>
       <View style={pageStyles.coverMid}>
-        <Eyebrow>{subtitle}</Eyebrow>
-        <Text style={pageStyles.coverTitle}>
-          {title1}
-          {"\n"}
-          {title2}
-        </Text>
+        <Eyebrow>{kicker}</Eyebrow>
+        <Text style={pageStyles.coverTitle} accessibilityRole="header">{title1}</Text>
+        {/* Its own line, smaller and quieter: in one Text the two lines read as one run-on title. */}
+        {!!title2 && <Text style={pageStyles.coverTitle2}>{title2}</Text>}
         <View style={pageStyles.coverRule} />
         <Text style={pageStyles.coverSub}>{nickname}</Text>
         <View style={pageStyles.coverSource}>
@@ -1076,7 +1108,7 @@ function CaseStudyPage({ tag, body }: { tag?: string; body: string }) {
   return (
     <PageShell>
       {tag && <Text style={pageStyles.caseTag}>{tag}</Text>}
-      <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
+      <Prose style={pageStyles.caseBody} text={body} />
     </PageShell>
   );
 }
@@ -1104,7 +1136,7 @@ function QuizAnalysisPage({
     <PageShell>
       <Text style={pageStyles.dataTitle} accessibilityRole="header">{title}</Text>
       <Text style={pageStyles.dataSubtitle}>{subtitle}</Text>
-      {hook && <Text style={pageStyles.caseBody}>{sentenceLines(hook)}</Text>}
+      {hook && <Prose style={pageStyles.caseBody} text={hook} />}
       <View style={pageStyles.bars}>
         {dimensionResults?.map((r, i) => (
           <View key={r.dimension} style={pageStyles.barRow}>
@@ -1120,8 +1152,8 @@ function QuizAnalysisPage({
           </View>
         ))}
       </View>
-      {!!nuancedSummary && <Text style={pageStyles.dataNote}>{sentenceLines(nuancedSummary)}</Text>}
-      {!!reading && <Text style={[pageStyles.dataNote, pageStyles.readingNote]}>{sentenceLines(reading)}</Text>}
+      {!!nuancedSummary && <Prose style={pageStyles.dataNote} text={nuancedSummary} />}
+      {!!reading && <Prose style={[pageStyles.dataNote, pageStyles.readingNote]} text={reading} />}
     </PageShell>
   );
 }
@@ -1146,7 +1178,7 @@ function OhengBarsPage({ title, elements, dominantKey, intro }: { title: string;
           </View>
         ))}
       </View>
-      {!!intro && <Text style={pageStyles.dataNote}>{sentenceLines(intro)}</Text>}
+      {!!intro && <Prose style={pageStyles.dataNote} text={intro} />}
     </PageShell>
   );
 }
@@ -1163,7 +1195,7 @@ function ElementReadingPage({ pct, reading, elementKey }: { pct: number; reading
       <View style={pageStyles.elemMid}>
         <Text style={pageStyles.elemNum}>{Math.round(pct)}%</Text>
         <Text style={pageStyles.elemHeading} accessibilityRole="header">{headingWithEmoji(elementKey, reading.heading)}</Text>
-        <Text style={pageStyles.caseBody}>{sentenceLines(reading.body)}</Text>
+        <Prose style={pageStyles.caseBody} text={reading.body} />
       </View>
     </PageShell>
   );
@@ -1174,7 +1206,7 @@ function ForecastPage({ heading, body, note }: { heading: string; body: string; 
     <PageShell>
       <View style={pageStyles.elemMid}>
         <Text style={pageStyles.elemHeading} accessibilityRole="header">{heading}</Text>
-        <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
+        <Prose style={pageStyles.caseBody} text={body} />
       </View>
       <Text style={pageStyles.narrativeCaption}>{note}</Text>
     </PageShell>
@@ -1184,7 +1216,7 @@ function ForecastPage({ heading, body, note }: { heading: string; body: string; 
 function ChatStoryPage({ chatExtract, strings }: { chatExtract: ChatExtract; strings: Dictionary }) {
   return (
     <PageShell>
-      <Text style={pageStyles.caseBody}>{sentenceLines(strings.report.chatStoryIntro)}</Text>
+      <Prose style={pageStyles.caseBody} text={strings.report.chatStoryIntro} />
       <View style={pageStyles.chatQuoteBox}>
         <View style={pageStyles.chatQuoteHeader}>
           <BookOpen size={13} strokeWidth={2} color="#7FA8D6" />
@@ -1192,7 +1224,7 @@ function ChatStoryPage({ chatExtract, strings }: { chatExtract: ChatExtract; str
         </View>
         <Text style={pageStyles.chatQuoteText}>&quot;{String(chatExtract.summary_quote || chatExtract.trigger_point || "")}&quot;</Text>
       </View>
-      {!!chatExtract.integrated_summary && <Text style={pageStyles.caseBody}>{sentenceLines(String(chatExtract.integrated_summary))}</Text>}
+      {!!chatExtract.integrated_summary && <Prose style={pageStyles.caseBody} text={String(chatExtract.integrated_summary)} />}
     </PageShell>
   );
 }
@@ -1213,7 +1245,7 @@ function QuotePage({ quote, eyebrow, note, leadOnly }: { quote: string; eyebrow?
       {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
       <View style={pageStyles.quoteMid}>
         <Text style={pageStyles.pullQuote}>{sentenceLines(lead)}</Text>
-        {!!rest && <Text style={[pageStyles.caseBody, pageStyles.answerNote]}>{sentenceLines(rest)}</Text>}
+        {!!rest && <Prose style={[pageStyles.caseBody, pageStyles.answerNote]} text={rest} />}
       </View>
     </PageShell>
   );
@@ -1231,7 +1263,7 @@ function AnswerQuotePage({ eyebrow, prompt, answer, note }: { eyebrow: string; p
       <View style={pageStyles.quoteMid}>
         <Text style={pageStyles.quotePrompt}>{prompt}</Text>
         <Text style={[pageStyles.pullQuote, pageStyles.answerQuoteSpacing]}>{sentenceLines(answer)}</Text>
-        {!!note && <Text style={[pageStyles.caseBody, pageStyles.answerNote]}>{sentenceLines(note)}</Text>}
+        {!!note && <Prose style={[pageStyles.caseBody, pageStyles.answerNote]} text={note} />}
       </View>
     </PageShell>
   );
@@ -1261,7 +1293,7 @@ function SetCardPage({ card, strings }: { card: SetCard; strings: Dictionary }) 
             <Text style={pageStyles.pullQuote}>{`“${card.quote}”`}</Text>
           </View>
         )}
-        {!!card.note && <Text style={[pageStyles.caseBody, pageStyles.answerNote]}>{sentenceLines(card.note)}</Text>}
+        {!!card.note && <Prose style={[pageStyles.caseBody, pageStyles.answerNote]} text={card.note} />}
       </ScrollView>
     </PageShell>
   );
@@ -1301,7 +1333,7 @@ function ConcernSnapshotPage({
             <Text style={pageStyles.snapshotValue}>{emotion}</Text>
           </>
         )}
-        {!!note && <Text style={[pageStyles.caseBody, pageStyles.answerNote]}>{sentenceLines(note)}</Text>}
+        {!!note && <Prose style={[pageStyles.caseBody, pageStyles.answerNote]} text={note} />}
       </View>
     </PageShell>
   );
@@ -1326,7 +1358,7 @@ function BreatherPage({
         <Text style={pageStyles.breatherLabelText}>{label}</Text>
       </View>
       <Text style={pageStyles.breatherTitle} accessibilityRole="header">{heading}</Text>
-      <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
+      <Prose style={pageStyles.caseBody} text={body} />
       <View style={pageStyles.takeawayBox}>
         <Text style={pageStyles.takeawayText}>
           <Text style={pageStyles.takeawayBold}>{takeawayLabel} </Text>
@@ -1344,7 +1376,7 @@ function CardPage({ kind, indexLabel, title, body }: { kind: "jade" | "warm" | "
       <Text style={[pageStyles.cardIndex, { color }]}>{indexLabel}</Text>
       <View style={pageStyles.cardMid}>
         <Text style={pageStyles.cardTitle} accessibilityRole="header">{title}</Text>
-        <Text style={pageStyles.cardBody}>{sentenceLines(body)}</Text>
+        <Prose style={pageStyles.cardBody} text={body} />
       </View>
     </PageShell>
   );
@@ -1357,7 +1389,7 @@ function FitPage({ kind, label, body }: { kind: "good" | "bad"; label: string; b
     <PageShell>
       <View style={pageStyles.elemMid}>
         <Text style={[pageStyles.fitLabel, { color }]}>{label}</Text>
-        <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
+        <Prose style={pageStyles.caseBody} text={body} />
       </View>
     </PageShell>
   );
@@ -1369,7 +1401,7 @@ function ModulePage({ eyebrow, title, body }: { eyebrow: string; title: string; 
       <Eyebrow>{eyebrow}</Eyebrow>
       <View style={pageStyles.elemMid}>
         <Text style={pageStyles.elemHeading} accessibilityRole="header">{noHanja(title)}</Text>
-        <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
+        <Prose style={pageStyles.caseBody} text={body} />
       </View>
     </PageShell>
   );
@@ -1380,7 +1412,7 @@ function MindsetPage({ label, body }: { label: string; body: string }) {
     <PageShell>
       <Eyebrow>{label}</Eyebrow>
       <View style={pageStyles.elemMid}>
-        <Text style={pageStyles.caseBody}>{sentenceLines(body)}</Text>
+        <Prose style={pageStyles.caseBody} text={body} />
       </View>
     </PageShell>
   );
@@ -1528,6 +1560,7 @@ const pageStyles = StyleSheet.create({
 
   coverMid: { flex: 1, justifyContent: "flex-start", paddingTop: "18%" },
   coverTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 27, lineHeight: 36, color: COLORS.headline, marginBottom: 4 },
+  coverTitle2: { fontFamily: FONTS.display, fontStyle: "italic", fontVariant: ["lining-nums"], fontSize: 20, lineHeight: 28, color: COLORS.footer, marginTop: 10 },
   coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: 16 },
   coverSub: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline },
   coverSource: { marginTop: 22, marginBottom: 28 },
@@ -1561,6 +1594,7 @@ const pageStyles = StyleSheet.create({
     marginBottom: 20,
     overflow: "hidden",
   },
+  sentenceGap: { marginTop: 9 },
   caseBody: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 25, color: "#C7C3D1", marginTop: 12 },
 
   dataTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 22, color: COLORS.headline, marginTop: 20, marginBottom: 6 },

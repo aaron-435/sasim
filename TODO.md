@@ -53,9 +53,11 @@
   - 메모: 공용 `components/ReportClosingPage.tsx`(두 리포트 마지막 장), `ReportPager`의 `swipeHint`(저장은 `lib/readerHint.ts`, 리포트 종류별 키). 한 줄 요약은 심층=`psychology_takeaway` 첫 문장, 신년=`subtitle`. 공유는 RN `Share`로 요약 한 줄 + 앱 주소 텍스트(새 의존성 없음). 다음 검사는 기기에 저장된 리포트가 없는 모듈 중 같은 track 우선(`App.tsx`의 `openModuleQuiz`로 바로 퀴즈). 안내는 정적이라 동작 줄이기 대상 없음. 웹은 `navigator.share`가 없으면 공유가 조용히 무시된다.
   - [ ] (사용자 확인) iOS 시뮬레이터·실기기에서 마지막 장 "공유하기"를 누르면 공유 시트에 요약 한 줄과 주소가 뜨는지, 심층 리포트 "다음 검사" 카드가 퀴즈로 넘어가는지, 첫 장 안내가 한 번 넘긴 뒤 다시 열면 없는지.
 
-- [ ] 6. 리포트 사소한 문제 묶음
+- [x] 6. 리포트 사소한 문제 묶음
   - 변경: `screens/ReportScreen.tsx` — 1쪽 제목·부제 간격, 본문 문단 간격, 81자 대문자 표지 소제목(짧게 또는 문장형), 페이월 "42쪽 중 26쪽"과 페이지 카운터 일치, 강점 % 막대가 "나쁨" 색(빨강)으로 보이지 않게.
   - QA: mobile tsc exit 0. `?qa=free&persona=mia` 페이월 쪽 카운터와 문구 숫자가 같음, 1·4쪽 스크린샷.
+  - QA: mobile tsc(큰 스택) → exit 0. mobile-web 미리보기(다른 세션이 띄운 8082 서버, mobile 프리셋): `?qa=free&persona=mia`(en) 표지 소제목 "LOVE & ATTACHMENT · DEEP REPORT"(35자, 수정 전 81자), 제목 두 줄 뒤 부제가 작은 기울임 한 줄로 분리, 하단 "PREVIEW · 7 OF 15 CHAPTERS OPEN". 4쪽: Anxiety 82% 막대가 청자색(수정 전 빨강), 본문 문장 사이 9px 간격. 17/17 페이월 "8 of 15 chapters are locked" = 아래 잠긴 장 8줄과 일치, 표지 "7 of 15"와 합이 맞고 쪽수 숫자는 카운터 하나만 남음. `?qa=free&persona=lucia`(es) 표지 "AMOR Y APEGO · INFORME PROFUNDO", "7 DE 15 CAPÍTULOS ABIERTOS"(DOM 텍스트로도 확인). 콘솔 오류는 화면 파일과 문구 파일을 따로 저장한 사이의 핫리로드 1건(`previewChaptersLabel is not a function`, 같은 스택이 버퍼에 남음)뿐이고 새로 불러온 화면은 라벨을 정상 표시.
+  - 메모: 표지 소제목은 서버 `subtitle`(프롬프트가 "~ 심층 리포트 — 사주 × 심리검사 × 상담 통합" 형식을 지시) 대신 앱이 `모듈 이름 · 심층 리포트`로 만든다(서버 프롬프트는 범위 밖). 쪽수 대신 장(목차 항목) 수로 통일: 카운터는 미리보기 쪽 + 페이월 1쪽만 세므로 "42쪽"과 맞출 수 없었다. 구매 후 표지는 "N PAGES"가 카운터와 같아 그대로. 본문 문장 간격은 `Prose`(문장마다 Text, 바깥 여백은 감싸는 View로)로 caseBody·dataNote·cardBody에만 적용, 인용·서사(표시 글꼴) 문장은 그대로. 막대 색은 청자·하늘·모래·보라·세이지(빨강 없음).
 
 ## 개성: 사주 원국 시각화
 
@@ -139,3 +141,5 @@
 (작업 중 발견한 범위 밖 이슈를 여기 적는다.)
 
 - (1번 중) `mobile/dev/qaMode.ts:89` QA 프리셋이 `?persona=`로 페이지를 불러올 때마다 `fatesaid_fortune_open_state`를 지워, 새로고침하면 운세를 열었어도 홈이 다시 "기다리고 있어요"로 보인다. dev 전용이지만 재진단 때 오래된 상태로 오인될 수 있음 — 페르소나가 바뀔 때만 지우게 할지 검토.
+- (6번 중) 심층 리포트 심리검사 분석 쪽 부제 "Module 1 · Love & Attachment Analysis"(`ReportScreen.tsx`의 `quizAnalysisSuffix` 줄)에 아직 "Module N"이 붙는다. 표지·다음 검사 카드는 `moduleDisplayTitle`로 뺐으니 10번(모듈 번호 제거) 때 같이 정리.
+- (6번 중) 서버 리포트 프롬프트(`lib/reportPrompts.ts:298`)가 여전히 81자짜리 `subtitle`을 쓰게 한다. 앱 표지는 더 이상 쓰지 않지만 PDF 표지(`lib/pdf/reportPdf.tsx:315` `coverSubtitle`)는 그대로 81자를 보여 준다. PDF 표지도 앱처럼 짧게 만들지, 프롬프트 형식 지시를 바꿀지 검토(서버 프롬프트·PDF는 이번 SPEC 범위 밖).
