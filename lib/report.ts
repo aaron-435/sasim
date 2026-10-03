@@ -141,7 +141,7 @@ function parseReport(parsed: Record<string, unknown>, context: ReportContext): R
   const strengths = asBulletList(parsed.strengths);
   // 5세트 흐름: 카드 수는 세트 수로 고정(무료 1 + 유료 4). 모델이 덜 쓰면 빈 note로 채워 품질 검사가 잡게 한다.
   const sets = context.reportSets ?? null;
-  const paidCards = Array.isArray(parsed.set_cards_2to5) ? parsed.set_cards_2to5 : [];
+  const paidCards = pickPaidCards(parsed.set_cards_2to5);
   return {
     title_line1: String(parsed.title_line1 ?? ""),
     title_line2: String(parsed.title_line2 ?? ""),
@@ -157,7 +157,7 @@ function parseReport(parsed: Record<string, unknown>, context: ReportContext): R
     module_map: asModulePage(parsed.module_map, pages?.module_map.title[locale]),
     module_deep: asModulePage(parsed.module_deep, pages?.module_deep.title[locale]),
     set_card_1: sets ? buildSetCard(parsed.set_card_1, 1, context.moduleId, sets) : undefined,
-    set_cards_2to5: sets ? ([2, 3, 4, 5] as const).map((n, i) => buildSetCard(paidCards[i], n, context.moduleId, sets)) : undefined,
+    set_cards_2to5: sets ? ([2, 3, 4, 5] as const).map((n) => buildSetCard(paidCards[n], n, context.moduleId, sets)) : undefined,
     strengths_preview: preview.length ? preview : undefined,
     upcoming_period_heading: String(parsed.upcoming_period_heading ?? ""),
     upcoming_period_body: String(parsed.upcoming_period_body ?? ""),
@@ -327,6 +327,21 @@ export function acceptFieldwise(current: ReportContent, patched: ReportContent, 
     }
   }
   return { accepted, count };
+}
+
+/** The paid cards keyed by set number (2–5). The model often writes all five sets into set_cards_2to5
+ * despite "exactly 4", and taking the first four put set 1's note on card 2, set 2's on card 3 and so on
+ * (2026-10-03, raw lucia output). Cards carry their "set" now; without it, a 5-long array drops its first. */
+export function pickPaidCards(value: unknown): Record<number, unknown> {
+  const list = Array.isArray(value) ? value : [];
+  const setOf = (v: unknown) => (v && typeof v === "object" ? Number((v as Record<string, unknown>).set) : NaN);
+  const out: Record<number, unknown> = {};
+  if (list.length > 0 && list.every((v) => Number.isInteger(setOf(v)))) {
+    for (const v of list) if (setOf(v) >= 2 && setOf(v) <= 5 && !(setOf(v) in out)) out[setOf(v)] = v;
+    return out;
+  }
+  (list.length >= 5 ? list.slice(list.length - 4) : list).forEach((v, i) => (out[i + 2] = v));
+  return out;
 }
 
 const PAID_ROOTS: ReadonlySet<string> = new Set(LOCKED_KEYS);

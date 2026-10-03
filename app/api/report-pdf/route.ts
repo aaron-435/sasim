@@ -28,7 +28,13 @@ export const maxDuration = 60;
 const LOCALES: Locale[] = ["ko", "en", "es"];
 const MAX_BODY_CHARS = 400_000;
 
-const str = (v: unknown, max = 6000): string => (typeof v === "string" ? v.slice(0, max) : "");
+// The PDF fonts (Noto Sans KR / Manrope) have no emoji glyphs, so the element headings' 🌳🔥⛰️💎💧 printed as
+// broken boxes (TODO 10). Emoji stay in the app; every PDF string drops them. RegExp from a string because
+// tsconfig targets ES5, which rejects the "u" flag on a literal.
+const EMOJI = new RegExp(String.raw`[\p{Extended_Pictographic}\p{Regional_Indicator}\u{1F3FB}-\u{1F3FF}\u20E3\uFE0F\u200D]`, "gu");
+const KEEP = new Set(["©", "®", "™"]); // pictographic by Unicode, but plain text glyphs the fonts have
+const stripEmoji = (t: string) => t.replace(EMOJI, (m) => (KEEP.has(m) ? m : "")).replace(/^[ \t]+/gm, "").replace(/[ \t]{2,}/g, " ");
+const str = (v: unknown, max = 6000): string => (typeof v === "string" ? stripEmoji(v.slice(0, max)) : "");
 const obj = (v: unknown): Record<string, unknown> => (v && typeof v === "object" ? (v as Record<string, unknown>) : {});
 const arr = (v: unknown, max = 40): unknown[] => (Array.isArray(v) ? v.slice(0, max) : []);
 
@@ -81,6 +87,8 @@ function cleanDeep(raw: unknown): DeepPdfContent | null {
     title_line2: str(c.title_line2, 200),
     subtitle: str(c.subtitle, 400),
     opening_scene: str(c.opening_scene),
+    oheng_intro: str(c.oheng_intro),
+    quiz_reading: str(c.quiz_reading),
     case_tag: str(c.case_tag, 200),
     case_paragraphs: arr(c.case_paragraphs, 8).map((p) => str(p)),
     element_readings: readings,

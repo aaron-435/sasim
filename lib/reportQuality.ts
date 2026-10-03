@@ -278,8 +278,11 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
     if (foreign) problems.push(`${path}: 다른 나라 문자가 섞여 있음 ("${Array.from(new Set(foreign)).join(", ")}") — 그 글자를 빼고 이 언어로만 쓸 것`);
     if (META_LEAK.test(text)) problems.push(`${path}: 지시문/데이터 누락을 언급하는 메타 발언`);
     if (locale === "es") {
-      const m = text.match(ES_GENDERED_READER) ?? text.match(ES_STYLE_SLIP) ?? text.match(ES_CAPITALIZED_ELEMENTS);
+      const m = text.match(ES_GENDERED_READER) ?? text.match(ES_STYLE_SLIP);
       if (m) problems.push(`${path}: 스페인어 스타일 위반 ("${m[0]}") — 독자 성별 표지·usted·carta 금지`);
+      // Its own message: under the generic one above, the fixer never lowercased it (lucia, 3 runs on 2026-10-03).
+      const cap = text.match(ES_CAPITALIZED_ELEMENTS);
+      if (cap) problems.push(`${path}: "${cap[0]}"를 대문자로 씀 — 본문에서는 소문자 "cinco elementos"로 쓸 것`);
     }
     if (fictional) continue;
     for (const m of Array.from(text.matchAll(/(\d{1,3})(?:[.,]\d+)?\s?(?:%|percent\b|por ciento\b|퍼센트|프로)/gi))) {
@@ -381,8 +384,11 @@ export function checkYearReportDeterministic(c: YearReportContent, locale: Local
     if (locale !== "ko" && HANGUL_OR_HANJA.test(text)) problems.push(`${path}: 한국어/한자가 섞여 있음`);
     if (META_LEAK.test(text)) problems.push(`${path}: 지시문/데이터 누락을 언급하는 메타 발언`);
     if (locale === "es") {
-      const m = text.match(ES_GENDERED_READER) ?? text.match(ES_STYLE_SLIP) ?? text.match(ES_CAPITALIZED_ELEMENTS);
+      const m = text.match(ES_GENDERED_READER) ?? text.match(ES_STYLE_SLIP);
       if (m) problems.push(`${path}: 스페인어 스타일 위반 ("${m[0]}") — 독자 성별 표지·usted·carta 금지`);
+      // Its own message: under the generic one above, the fixer never lowercased it (lucia, 3 runs on 2026-10-03).
+      const cap = text.match(ES_CAPITALIZED_ELEMENTS);
+      if (cap) problems.push(`${path}: "${cap[0]}"를 대문자로 씀 — 본문에서는 소문자 "cinco elementos"로 쓸 것`);
     }
   }
   return Array.from(new Set(problems));

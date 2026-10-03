@@ -145,6 +145,21 @@ export function describeQuizAnswersByDimension(answers: readonly SetQuizAnswer[]
 }
 
 /** 세트 재료 묶음 5개를 프롬프트 줄로. 대화 없는 세트는 후보 문항 답을 근거로 쓰라고 적는다. */
+/** One line per card slot for the output schema (index 0 = set 1). The paid cards used to share one generic
+ * description, and the model wrote their notes off by one set (2026-10-03 fixtures: jisoo card 3's note read
+ * set 2's "rest doesn't recover"), so each slot now names its set, its quiz answer and whether it had chat. */
+export function describeCardSlots(sets: ReportSetsInput, moduleId: string | undefined): string[] {
+  const chatSets = getModuleChatSets(moduleId);
+  return SET_NUMBERS.map((n) => {
+    const p = sets.setPackets[n - 1];
+    const theme = CHAT_SET_THEMES[n];
+    const quiz = chatSets ? cardQuizFor(chatSets, n, sets.quizAnswers) : null;
+    const answer = quiz ? `"${quiz.label}"` : "(없음)";
+    const chat = p?.has_chat ? `대화 있음 — quote는 세트 ${n}의 답 원문에서만` : "대화 없음 — quote는 빈 문자열, note는 이 검사 답 하나로만";
+    return `세트 ${n} · ${theme.name} 카드. 이 카드의 '검사에서 고른 답': ${answer}. ${chat}`;
+  });
+}
+
 export function describeSetPackets(sets: ReportSetsInput, moduleId: string | undefined): string {
   const chatSets = getModuleChatSets(moduleId);
   return SET_NUMBERS.map((n) => {

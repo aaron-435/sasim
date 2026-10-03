@@ -26,7 +26,7 @@ import type { ChatExtract } from "./chat";
 import type { Locale } from "./i18n/types";
 import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 import { getModulePlaybook, type ModulePlaybook } from "./modulePlaybooks";
-import { describeQuizAnswersByDimension, describeSetPackets, type ReportSetsInput } from "./reportSets";
+import { describeCardSlots, describeQuizAnswersByDimension, describeSetPackets, type ReportSetsInput } from "./reportSets";
 
 const ELEMENT_HANJA: Record<ElementKey, string> = {
   wood: "목", fire: "화", earth: "토", metal: "금", water: "수",
@@ -234,7 +234,8 @@ const STYLE_EXCERPT = `
  * this field exists at all (a literal Q&A pair alone read as flat with no interpretation). */
 export type ReportPart = "full" | "free" | "paid";
 
-function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase: boolean, part: ReportPart, playbook: ModulePlaybook | undefined, locale: Locale, split: boolean, v2: boolean): string {
+function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase: boolean, part: ReportPart, playbook: ModulePlaybook | undefined, locale: Locale, split: boolean, cardSlots: string[] | null): string {
+  const v2 = !!cardSlots;
   // Only some modules carry a "someone like you" story; a report for the others goes straight from
   // the psych-test page to the saju chart. Empty values keep the shape the app expects.
   const caseFields = includeCase
@@ -280,15 +281,16 @@ function buildOutputSchema(topAnswerCount: number, hasChat: boolean, includeCase
     : `"strengths": [{"title": "강점 제목 (${strengthTitleRule})", "body": "3문장 설명 — 이 사람의 실제 데이터에서 나온 구체적 장면 하나 포함. 이 배열 항목은 정확히 4개, 각 항목이 화면 한 장씩 차지함"}]`;
   // 2026-10-02 (5세트 흐름): 검사 × 대화 카드. 세트·주제·'검사에서 고른 답'은 코드가 세트 재료 묶음에서 붙이고
   // (lib/reportSets.ts buildSetCard), 모델은 인용(quote)과 읽어 주기(note)만 쓴다. 카드 1은 무료, 2~5는 유료.
-  const cardRule = (n: string) =>
-    `"quote": "세트 ${n}의 '답 원문'(①~⑤) 중 하나에서 글자 그대로 옮긴 짧은 인용 — 한 문장이나 구(대략 8~60자), 고치거나 요약하거나 번역하지 말고 원문 그대로. 따옴표는 붙이지 않는다. 그 세트가 '대화 없음'이면 빈 문자열", "note": "'읽어 주기' 정확히 3문장 — 검사에서 고른 답과 대화에서 한 말이 함께 가리키는 것(1), 그게 이 사람의 어떤 면인지 이해로 짚기(1), 건네는 한마디(1). 화면에 질문·답·인용이 따로 보이므로 그대로 되풀이하지 않고, 인용이나 그 세트 답 원문을 말만 바꿔 다시 옮기지도 않는다. 이 카드의 note는 이 세트(카드 번호 = 세트 번호)의 '검사에서 고른 답'과 이 세트의 답 원문만 해설한다 — 다른 세트의 검사 답·원문·장면을 가져오지 않는다. 대화 없는 세트는 인용이 없으므로 '그 말'·'이 문장'·'라고 했어요'처럼 대화를 가리키지 말고, 이 카드의 '검사에서 고른 답' 하나로 같은 구성의 3문장"`;
+  const cardRule = (n: string, slot = "") =>
+    `"set": ${n}, "quote": "${slot ? `[${slot}] ` : ""}세트 ${n}의 '답 원문'(①~⑤) 중 하나에서 글자 그대로 옮긴 짧은 인용 — 한 문장이나 구(대략 8~60자), 고치거나 요약하거나 번역하지 말고 원문 그대로. 따옴표는 붙이지 않는다. 그 세트가 '대화 없음'이면 빈 문자열", "note": "'읽어 주기' 정확히 3문장 — 검사에서 고른 답과 대화에서 한 말이 함께 가리키는 것(1), 그게 이 사람의 어떤 면인지 이해로 짚기(1), 건네는 한마디(1). 화면에 질문·답·인용이 따로 보이므로 그대로 되풀이하지 않고, 인용이나 그 세트 답 원문을 말만 바꿔 다시 옮기지도 않는다. 이 카드의 note는 이 세트(카드 번호 = 세트 번호)의 '검사에서 고른 답'과 이 세트의 답 원문만 해설한다 — 다른 세트의 검사 답·원문·장면을 가져오지 않는다. 대화 없는 세트는 인용이 없으므로 '그 말'·'이 문장'·'라고 했어요'처럼 대화를 가리키지 말고, 이 카드의 '검사에서 고른 답' 하나로 같은 구성의 3문장"`;
   const setCardFreeField = v2
     ? `
-  "set_card_1": {${cardRule("1")}},`
+  "set_card_1": {${cardRule("1", cardSlots?.[0])}},`
     : "";
+  // 모델이 세트 1까지 5장을 쓰는 일이 잦았다(2026-10-03) — 규칙 6에서 세트 1을 넣지 말라고 못 박고, 파서는 "set"으로 짝짓는다.
   const setCardsPaidField = v2
     ? `,
-  "set_cards_2to5": [{${cardRule("N(이 배열은 정확히 4개이고 순서대로 세트 2, 3, 4, 5)")}}]`
+  "set_cards_2to5": [${[2, 3, 4, 5].map((n) => `\n    {${cardRule(String(n), cardSlots?.[n - 1])}}`).join(",")}\n  ]`
     : "";
   const freeFields = `
   "title_line1": "리포트 제목 1행 — 시적이고 은유적, 이 사람의 핵심 패턴을 압축",
@@ -482,7 +484,7 @@ ${STYLE_EXCERPT}
 3. 수치 표현은 일관되게: 오행 30% 이상 "강하다/우세", 15~29% "보통", 14% 이하 "약하다/적다"이며 같은 값은 어느 페이지에서나 같은 말로 부른다. 심리검사 축은 데이터의 방향·강도 표기와 모순되는 말을 쓰지 않는다.
 4. 나이는 "다가오는 대운 시기" 줄의 숫자만 그대로 쓴다. 계산·추측·이미 지난 시기를 쓰지 않고, 그 줄이 "정보 없음"이면 숫자 없이 쓴다. 이 기운 전환은 실제 계산값이므로 upcoming_period_preview_body, upcoming_period_body, closing_body에서 "~일 수도 있어요"처럼 흐리지 말고 확정된 사실로 쓴다. 스페인어로 쓸 때는 나이 숫자를 문장의 문법적 주어로 쓰지 않는다(예: "38 años marca..."는 단수·복수 수 불일치 오류이고, "38 años desde ahora" 같은 구문은 "지금부터 38년 후"로 오독된다) — 반드시 "A los 38 años," 또는 "Desde los 38 años,"처럼 나이를 부사적 전치사구로 앞세워 문장을 시작하고, 같은 리포트 안에서 나이를 가리킬 때는 그중 하나의 형태로 통일해서 쓴다.
 5. track이 career면 일·커리어 맥락, romance면 관계·연애 맥락으로 사례와 환경 조언을 맞춘다.
-${sets ? `6. 검사 × 대화 카드(set_card_1, set_cards_2to5)의 quote는 세트 재료 묶음의 '답 원문'에서 글자 그대로 잘라 온다(맞춤법·띄어쓰기도 원문 그대로, 번역 금지). 원문이 없는 세트는 빈 문자열이다. note는 질문·답·인용을 되풀이하거나 말만 바꿔 다시 옮기지 말고 그 답들이 함께 보여 주는 새 관점 하나를 짚는다. 카드 N의 note는 세트 N의 재료만 쓴다(대화 없는 세트는 그 카드의 검사 답만).` : `6. answer_notes는 "실제로 답한 문항들"과 같은 순서·개수로 쓰고, 질문이나 답을 되풀이하지 말고 그 답이 보여주는 새 관점 하나를 짚는다.`}
+${sets ? `6. 검사 × 대화 카드(set_card_1, set_cards_2to5)의 quote는 세트 재료 묶음의 '답 원문'에서 글자 그대로 잘라 온다(맞춤법·띄어쓰기도 원문 그대로, 번역 금지). 원문이 없는 세트는 빈 문자열이다. note는 질문·답·인용을 되풀이하거나 말만 바꿔 다시 옮기지 말고 그 답들이 함께 보여 주는 새 관점 하나를 짚는다. 카드 N의 note는 세트 N의 재료만 쓴다(대화 없는 세트는 그 카드의 검사 답만). set_cards_2to5에는 세트 2, 3, 4, 5 카드 정확히 4장만 쓰고 각 카드에 "set" 번호를 적는다 — 세트 1 카드는 set_card_1(무료 구간)의 몫이라 이 배열에 다시 넣지 않는다.` : `6. answer_notes는 "실제로 답한 문항들"과 같은 순서·개수로 쓰고, 질문이나 답을 되풀이하지 말고 그 답이 보여주는 새 관점 하나를 짚는다.`}
 7. 이번 모듈의 주제(돈/번아웃/애착 등)가 element_readings와 mindset_guide의 실제 소재다. 같은 사주로 다른 모듈 리포트가 있어도 겹치지 않게, 어느 모듈에나 붙는 일반론·범용 은유는 쓰지 않는다.
 
 ### 안전
@@ -502,7 +504,7 @@ ${sets ? `6. 검사 × 대화 카드(set_card_1, set_cards_2to5)의 quote는 세
 ${scopeNote}
 
 ## 출력 스키마
-${buildOutputSchema(sets ? 0 : context.topAnswers?.length ?? 0, !sets && !!context.chatExtract, !!context.includeCase, part, playbook, locale, strengthsSplitFor(context), !!sets)}
+${buildOutputSchema(sets ? 0 : context.topAnswers?.length ?? 0, !sets && !!context.chatExtract, !!context.includeCase, part, playbook, locale, strengthsSplitFor(context), sets ? describeCardSlots(sets, context.moduleId) : null)}
 
 ## 이번 리포트의 데이터
 - 닉네임: ${context.nickname}

@@ -244,6 +244,9 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
   - 원인 보충(2026-10-03): lucia는 10턴 마무리라 세트 3~5에 대화가 없는데, 카드 3~5 note가 세트 2 대화나 앞 카드의 검사 답을 해설함(카드 4는 없는 인용을 "La frase…"로 가리킴).
   - 해결(2026-10-03, 사용자 요청): `lib/reportPrompts.ts` 카드 note 지시와 규칙 6에 "카드 N은 세트 N 재료만, 인용·답 원문을 말만 바꿔 옮기지 않기, 대화 없는 세트는 그 카드의 검사 답만·대화 언급 금지" 추가. 리뷰어(`buildReviewPrompt`) 5번 항목에 note의 인용 재진술·다른 세트 재료 해설 추가. `reportQuality.ts` `NOTE_CHAT_REFERENCE`: 대화 없는 세트 카드의 note가 대화를 가리키면(라고 했어요 / you said / la frase 등) 잡음.
     - QA: v2 픽스처에 결정론적 검사 → lucia `set_cards_2to5[2].note`("La frase") 잡힘, jisoo 오탐 0. 인용 재진술(jisoo 카드 1)은 말을 바꾼 재진술이라 코드로는 못 잡고 리뷰어 몫 — 리포트 재생성 전이라 미확인.
+  - 진짜 원인(2026-10-03, 리포트 3회 생성): 모델이 `set_cards_2to5`에 세트 1~5 다섯 장을 쓰고, 파서가 앞 4장을 세트 2~5에 붙여 note가 한 칸씩 밀렸다(유료 프롬프트를 직접 한 번 호출해 확인 — 모델의 note 자체는 각 세트에 맞았음). jisoo(대화 있음)에서도 같은 밀림.
+  - 해결: `lib/report.ts` `pickPaidCards()` — 카드의 `"set"` 번호로 짝짓고, 번호가 없는데 5장이면 첫 장을 버림. 스키마에 카드마다 `"set"`·세트·검사 답·대화 유무를 적고(`describeCardSlots`), 규칙 6에 "세트 1은 이 배열에 넣지 않음" 추가.
+    - QA: 스크래치 5건(5장 번호 없음, 4장, 5장 번호 있음, 섞인 순서, 3장) 모두 바르게 짝지음. `gen-qa-fixtures.mts --v2-only` 3회차 → jisoo·lucia 카드 10장 모두 자기 세트의 검사 답·원문을 해설(lucia 3~5: te quiero → SNS → 매일 연락).
 - (9번 픽스처) lucia 무료 절반이 `oheng_intro` 2문장(3문장 기준) 결함 1건을 못 고친 채 출고됨 — 품질 루프의 기존 동작(v2와 무관).
   - 해결(2026-10-03, 사용자 요청): `lib/report.ts` `acceptFieldwise()` — 수정 호출 결과를 필드 하나씩, 코드 검사 건수가 늘지 않을 때만 받는다(예전엔 묶음 전체를 받거나 버림).
     - QA: 스크래치(lucia에 oheng_intro 3문장 수정 + 일부러 망친 strengths_preview[0]) → oheng만 받고 망친 필드는 버림, 13 → 12. 단 이 예시는 예전 로직도 13 → 13으로 받아들였을 경우라, 실제 미수정 원인이 이것이었는지는 로그가 없어 확정 못 함(수정 모델이 다시 2문장을 썼을 수도 있음).
@@ -251,8 +254,15 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
   - 해결(2026-10-03, 사용자 요청): `mobile/lib/i18n/{ko,en,es}.ts`를 30분으로("무료 30분 리딩" / "Free 30-minute reading" / "Lectura gratis de 30 minutos"). 웹 `lib/i18n`은 20턴 흐름이라 그대로 둠.
     - QA: `mobile/`의 tsc(큰 스택) exit 0.
 - (10번) `app/api/report-pdf/route.ts`의 `cleanDeep()`이 `oheng_intro`·`quiz_reading`(그리고 구버전 `chat_*_note`)을 옮기지 않아, `reportPdf.tsx`가 그 자리를 그리도록 되어 있어도 PDF에는 늘 빠진다(구버전·v2 공통, 이번 변경 전부터). 넣을지 결정 필요.
+  - 해결(2026-10-03, 사용자 결정: 넣기): `cleanDeep()`에 `oheng_intro`·`quiz_reading` 추가(렌더러는 이미 그 자리를 그림). 구버전 `chat_*_note`는 그대로 뺌.
+    - QA: 루트 tsc exit 0, lint 통과. 실제 PDF 확인은 못 함 — 예전 절차(로컬 `next dev` + RevenueCat 목 서버)는 이번 세션에서 권한 검사에 막혔고, tsx 직접 렌더링은 기존 `@react-pdf` ESM 오류(`ERR_PACKAGE_PATH_NOT_EXPORTED`). (user check) 배포 뒤 앱에서 PDF 저장 → 오행 페이지 위 소개 문단, 검사 결과 아래 해설 문단이 보이는지.
 - (11번) v2 en 대화 한국어 섞임·24턴 고정 문구 중복 — 11번에서 해결. 한글 줄 제거 백스톱은 20턴 흐름 비한국어 응답에도 걸린다(프롬프트는 그대로, 응답 후처리만).
 - (11번) 5번·9번 발견 사항의 "11번에서 볼 것"(한 줄 안 질문 2개, 카드 note가 다른 세트 재료를 해설) 중 질문 2개는 최종 3건(family·anger_es·attach_en 재실행)에서 위반 점수 2(위반 없음)였지만, 첫 attach_en 실행에서는 1이 나왔다 — 해결된 것은 아니다. 카드 note 문제는 리포트를 다시 생성하지 않아 확인하지 못함 — 남아 있음.
   - 질문 2개 해결(2026-10-03, 사용자 요청): `lib/chat.ts` `collapseInlineQuestions()`를 `enforceOneQuestionPerReply` 앞에 적용. 한 줄 안 두 번째 질문이 반대로/아니면/혹은/또는·or·o로 시작하면 "~나요, 아니면 ~나요?"로 합치고, 아니면 첫 실질 질문만 남김(앞의 짧은 맞장구 "그렇죠?"는 버림). 인용 안 물음표("왜 나만?")는 문장 끝으로 보지 않음.
     - QA: 스크래치 8건(ko 반대로·맞장구·그리고, en Or, es ¿O, 인용 안 물음표, 질문 1개, 질문 없음) 기대대로. 루트 tsc exit 0, lint 경고·오류 없음, `check-chat-sets` 92/92. sim/judge 재실행은 안 함(OpenAI 비용).
 - (10번) PDF의 오행 읽기 제목 앞 이모지(🌲 등)가 Noto Sans KR/Manrope에 없는 글리프라 깨진 기호로 찍힌다(ko 4쪽 "보통 — 확인하고…" 앞). 이번 변경 전부터 있던 문제.
+  - 해결(2026-10-03, 사용자 결정: 이모지 모두 빼기): `app/api/report-pdf/route.ts`의 `str()`이 PDF로 가는 모든 글에서 이모지(Extended_Pictographic·국기·피부색·변형 선택자·ZWJ)를 지움. ©®™는 남김. 앱 화면의 이모지는 그대로(프롬프트가 원소 제목에 일부러 넣음).
+    - QA: 스크래치("🌳 목 강하다", "⛰️ 토", "💎 Metal", "© ™ #1 40%") → 이모지만 빠지고 앞 공백 정리, ©™·#·숫자 유지. 실제 PDF 확인은 위 항목과 같은 이유로 못 함.
+- (2026-10-03 리포트 생성) lucia 무료 절반의 `oheng_intro` "Cinco Elementos" 대문자가 3회 연속 안 고쳐짐 — 검사 메시지가 "성별 표지·usted·carta 금지"라 수정 모델이 뭘 고칠지 몰랐음. 대문자 전용 메시지로 분리함(`reportQuality.ts`). 리포트 재생성으로는 미확인.
+- (2026-10-03 리포트 생성) jisoo `closing_body`가 24턴 답("그만 좀 확인하고 일찍 자라고 했을 거예요")이 아니라 `desired_change`("알람 없이 걷고 싶다")로 맺고, 같은 바람이 `strengths_preview[2]`에도 나와 겹침. 3번 수정(24턴 답은 closing에만)은 지켜졌지만 closing이 24턴 답을 쓰지 않는 문제가 남음.
+- (2026-10-03 리포트 생성) lucia `oheng_intro`에 "En este módulo de amor y apego"·"esta parte del informe" 같은 메타 표현. "이 모듈" 검사는 모듈 페이지만 봄 — oheng_intro 프롬프트가 "이번 모듈 주제"라고 쓰는 것과 관련.
