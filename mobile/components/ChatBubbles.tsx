@@ -2,6 +2,7 @@ import { memo, useEffect, useRef } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 import Text from "./AppText";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 // Shared by ChatScreen (quiz→counseling chat) and QAScreen (saju Q&A) — both used to
 // carry byte-identical copies of these bubbles, the typing indicator and their styles.
@@ -78,13 +79,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   bubbleTextBot: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 14.5,
     lineHeight: 22,
     color: COLORS.headline,
   },
   bubbleTextUser: {
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 14.5,
     lineHeight: 22,
     color: COLORS.ctaText,

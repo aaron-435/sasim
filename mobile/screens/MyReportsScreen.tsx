@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { listSavedReports, type SavedReport } from "../lib/reportStorage";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 // Reopen a report generated earlier — see lib/reportStorage.ts for why this exists.
 export default function MyReportsScreen({ onOpen, onBack }: { onOpen: (report: SavedReport) => void; onBack: () => void }) {
@@ -60,14 +61,14 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
   backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", minHeight: 44, marginLeft: -8, paddingHorizontal: 8 },
-  backLabel: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline },
-  heading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginTop: 4, marginBottom: 16 },
-  empty: { fontFamily: "Manrope_400Regular", fontSize: 14, lineHeight: 21, color: COLORS.subheadline },
+  backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
+  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginTop: 4, marginBottom: 16 },
+  empty: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline },
   list: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, overflow: "hidden" },
   row: { flexDirection: "row", alignItems: "center", gap: 14, minHeight: 60, paddingVertical: 12, paddingHorizontal: 16 },
   rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: COLORS.border },
   rowPressed: { backgroundColor: "rgba(111,169,139,0.08)" },
   rowText: { flex: 1, gap: 2 },
-  rowTitle: { fontFamily: "Manrope_600SemiBold", fontSize: 15, color: COLORS.headline },
-  rowDate: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline },
+  rowTitle: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline },
+  rowDate: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
 });

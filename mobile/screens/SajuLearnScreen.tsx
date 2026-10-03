@@ -4,6 +4,7 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 // Split out from HomeScreen's home.philosophy* block (2026-09-16) — the home screen
 // keeps just the quote + three principles as a short, emotionally-anchored teaser, and
@@ -66,9 +67,9 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
   backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },
-  backLabel: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline },
+  backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   pageTitle: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 24,
     lineHeight: 31,
@@ -78,14 +79,14 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: COLORS.border, marginVertical: 8 },
   section: { marginTop: 24 },
   sectionHeading: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 20,
     color: COLORS.headline,
     marginBottom: 10,
   },
   sectionBody: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 14,
     lineHeight: 22,
     color: COLORS.subheadline,
@@ -98,6 +99,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
   },
-  termLabel: { fontFamily: "Manrope_700Bold", fontSize: 14, color: COLORS.gold },
-  termBody: { fontFamily: "Manrope_400Regular", fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, marginTop: 6 },
+  termLabel: { fontFamily: FONTS.bold, fontSize: 14, color: COLORS.gold },
+  termBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, marginTop: 6 },
 });

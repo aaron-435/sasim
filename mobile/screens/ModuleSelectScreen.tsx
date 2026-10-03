@@ -8,6 +8,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { MODULES } from "../lib/quiz/modules";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 // Ported from components/ModuleSelect.jsx — picks which of the 11 30-question modules
 // to run. Same list web uses (lib/modules.ts, copied verbatim into mobile/lib/quiz/).
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   backLabel: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13,
     color: COLORS.subheadline,
   },
@@ -113,14 +114,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   badgeLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
     textTransform: "uppercase",
   },
   heading: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 24,
     color: COLORS.headline,
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   cardTitle: {
-    fontFamily: "Manrope_700Bold",
+    fontFamily: FONTS.bold,
     fontSize: 15,
     color: COLORS.headline,
   },
@@ -160,12 +161,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   recommendedBadgeText: {
-    fontFamily: "Manrope_700Bold",
+    fontFamily: FONTS.bold,
     fontSize: 12,
     color: "#7CB597",
   },
   cardSubtitle: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12.5,
     color: COLORS.subheadline,
   },

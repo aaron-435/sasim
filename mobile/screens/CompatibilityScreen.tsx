@@ -15,6 +15,7 @@ import type { CompatibilityResult } from "../lib/compatibility";
 import { formatSajuTypeName } from "../lib/sajuTypeContent";
 import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 type CityResult = { id: string; cityDisplay: string; countryDisplay: string };
 
@@ -405,12 +406,12 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
   backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },
-  backLabel: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline },
-  heading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline },
-  subtitle: { fontFamily: "Manrope_400Regular", fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 8, marginBottom: 20 },
-  fieldLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.subheadline, marginTop: 18, marginBottom: 8 },
+  backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
+  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline },
+  subtitle: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 8, marginBottom: 20 },
+  fieldLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.subheadline, marginTop: 18, marginBottom: 8 },
   input: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 15,
     color: COLORS.headline,
     backgroundColor: COLORS.inputBg,
@@ -451,13 +452,13 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   optionActive: { backgroundColor: "rgba(111,169,139,0.12)", borderColor: "rgba(111,169,139,0.4)" },
-  optionLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 13.5, color: COLORS.subheadline },
+  optionLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.subheadline },
   optionLabelActive: { color: COLORS.gold },
   resultsBox: { marginTop: 6, backgroundColor: "#131219", borderWidth: 1, borderColor: COLORS.border, borderRadius: 10, overflow: "hidden" },
   resultRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 13, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: COLORS.border },
-  resultCity: { fontFamily: "Manrope_500Medium", fontSize: 14.5, color: COLORS.headline },
-  resultCountry: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline },
-  error: { fontFamily: "Manrope_400Regular", fontSize: 12.5, color: COLORS.danger, marginTop: 14 },
+  resultCity: { fontFamily: FONTS.medium, fontSize: 14.5, color: COLORS.headline },
+  resultCountry: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
+  error: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.danger, marginTop: 14 },
   submitButton: {
     alignItems: "center",
     justifyContent: "center",
@@ -467,7 +468,7 @@ const styles = StyleSheet.create({
     marginTop: 28,
   },
   submitButtonDisabled: { opacity: 0.4 },
-  submitButtonLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 15, color: COLORS.ctaText },
+  submitButtonLabel: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.ctaText },
   scoreCard: {
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
@@ -477,12 +478,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
     gap: 4,
   },
-  scoreLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12.5, color: COLORS.subheadline, letterSpacing: 0.3 },
-  scoreValue: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 48 },
-  relationHeadline: { fontFamily: "Manrope_600SemiBold", fontSize: 15, color: COLORS.headline, marginTop: 4 },
-  otherTypeLine: { fontFamily: "Manrope_500Medium", fontSize: 13.5, color: COLORS.gold, marginTop: 18, textAlign: "center" },
-  relationBody: { fontFamily: "Manrope_400Regular", fontSize: 14.5, lineHeight: 22, color: COLORS.subheadline, marginTop: 12 },
-  bondNote: { fontFamily: "Manrope_500Medium", fontSize: 13.5, lineHeight: 20, color: COLORS.gold, marginTop: 16 },
+  scoreLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.subheadline, letterSpacing: 0.3 },
+  scoreValue: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 48 },
+  relationHeadline: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline, marginTop: 4 },
+  otherTypeLine: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.gold, marginTop: 18, textAlign: "center" },
+  relationBody: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 22, color: COLORS.subheadline, marginTop: 12 },
+  bondNote: { fontFamily: FONTS.medium, fontSize: 13.5, lineHeight: 20, color: COLORS.gold, marginTop: 16 },
   shareCard: {
     // Deliberately no fixed aspectRatio — the content below (body + good-point + caution,
     // and sometimes a bond note) varies in length across relations/locales, and a hard
@@ -500,14 +501,14 @@ const styles = StyleSheet.create({
     paddingVertical: "9%",
     alignItems: "center",
   },
-  shareBrandLabel: { fontFamily: "Manrope_700Bold", fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: 28 },
+  shareBrandLabel: { fontFamily: FONTS.bold, fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: 28 },
   shareCardMid: { alignItems: "center", width: "100%" },
-  shareEyebrow: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 4 },
-  shareNames: { fontFamily: "Manrope_600SemiBold", fontSize: 17, color: COLORS.headline, textAlign: "center" },
-  shareScore: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 88, lineHeight: 96, marginTop: 12 },
-  shareScoreLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 12, letterSpacing: 0.5, color: COLORS.subheadline },
-  shareHeadline: { fontFamily: "Manrope_600SemiBold", fontSize: 18, color: COLORS.headline, textAlign: "center", marginTop: 22, lineHeight: 26 },
-  shareBody: { fontFamily: "Manrope_400Regular", fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, textAlign: "center", marginTop: 14 },
+  shareEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 4 },
+  shareNames: { fontFamily: FONTS.semibold, fontSize: 17, color: COLORS.headline, textAlign: "center" },
+  shareScore: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 88, lineHeight: 96, marginTop: 12 },
+  shareScoreLabel: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 0.5, color: COLORS.subheadline },
+  shareHeadline: { fontFamily: FONTS.semibold, fontSize: 18, color: COLORS.headline, textAlign: "center", marginTop: 22, lineHeight: 26 },
+  shareBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, textAlign: "center", marginTop: 14 },
   shareDetailBlock: {
     width: "100%",
     backgroundColor: "rgba(255,255,255,0.04)",
@@ -516,10 +517,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 14,
   },
-  shareDetailLabel: { fontFamily: "Manrope_700Bold", fontSize: 10.5, letterSpacing: 1.5, textTransform: "uppercase" },
-  shareDetailText: { fontFamily: "Manrope_400Regular", fontSize: 13, lineHeight: 20, color: COLORS.headline, marginTop: 6 },
-  shareBondNote: { fontFamily: "Manrope_500Medium", fontSize: 12.5, lineHeight: 19, color: COLORS.gold, textAlign: "center", marginTop: 16 },
-  shareFooter: { fontFamily: "Manrope_500Medium", fontSize: 12.5, color: COLORS.subheadline, textAlign: "center", marginTop: 30 },
+  shareDetailLabel: { fontFamily: FONTS.bold, fontSize: 10.5, letterSpacing: 1.5, textTransform: "uppercase" },
+  shareDetailText: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.headline, marginTop: 6 },
+  shareBondNote: { fontFamily: FONTS.medium, fontSize: 12.5, lineHeight: 19, color: COLORS.gold, textAlign: "center", marginTop: 16 },
+  shareFooter: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, textAlign: "center", marginTop: 30 },
   shareButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -530,7 +531,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     marginTop: 28,
   },
-  shareButtonLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 14.5, color: COLORS.ctaText },
+  shareButtonLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.ctaText },
   tryAgainButton: { alignItems: "center", paddingVertical: 14, marginTop: 10 },
-  tryAgainLabel: { fontFamily: "Manrope_500Medium", fontSize: 13.5, color: COLORS.subheadline },
+  tryAgainLabel: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.subheadline },
 });

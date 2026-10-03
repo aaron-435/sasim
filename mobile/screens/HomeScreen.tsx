@@ -28,6 +28,7 @@ import { comingSajuYear } from "../lib/sajuYear";
 import { fetchTodayFortune, type TodayFortune } from "../lib/todayFortune";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 // 2026-09-19 redesign (Impeccable critique of this screen, 25/40): Home used to be a
 // feature menu — seven same-size solid jade cards under a permanent philosophy essay,
@@ -492,7 +493,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   brandLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
@@ -505,13 +506,13 @@ const styles = StyleSheet.create({
     marginRight: -12,
   },
   greeting: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 30,
     lineHeight: 36,
     color: COLORS.headline,
   },
-  identityHint: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: 10 },
+  identityHint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: 10 },
   identityRow: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -520,7 +521,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   elementLine: {
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 13,
     color: COLORS.subheadline,
   },
@@ -537,7 +538,7 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   typeBadgeText: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 13,
     color: COLORS.gold,
   },
@@ -555,7 +556,7 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     flex: 1,
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 24,
     lineHeight: 29,
@@ -569,18 +570,18 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   heroChipText: {
-    fontFamily: "Manrope_700Bold",
+    fontFamily: FONTS.bold,
     fontSize: 12,
     color: COLORS.ctaText,
   },
   heroHeadline: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 16,
     lineHeight: 23,
     color: COLORS.ctaText,
   },
   heroBody: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 14,
     lineHeight: 21,
     color: HERO_SECONDARY,
@@ -605,7 +606,7 @@ const styles = StyleSheet.create({
     minHeight: 24,
   },
   heroCta: {
-    fontFamily: "Manrope_700Bold",
+    fontFamily: FONTS.bold,
     fontSize: 14,
     color: COLORS.ctaText,
   },
@@ -613,7 +614,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   sectionTitle: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 15,
     color: COLORS.headline,
     marginBottom: 12,
@@ -633,7 +634,7 @@ const styles = StyleSheet.create({
   },
   elementRowLabel: {
     minWidth: 68,
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 13,
     color: COLORS.headline,
   },
@@ -651,7 +652,7 @@ const styles = StyleSheet.create({
   elementRowValue: {
     minWidth: 40,
     textAlign: "right",
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 13,
     fontVariant: ["tabular-nums"],
     color: COLORS.subheadline,
@@ -683,7 +684,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   listRowLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 15,
     color: COLORS.headline,
   },
@@ -691,20 +692,20 @@ const styles = StyleSheet.create({
     color: COLORS.subheadline,
   },
   listRowDescription: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13,
     color: COLORS.subheadline,
   },
   qaPanel: { marginTop: 24, borderWidth: 1, borderStyle: "dashed", borderColor: "rgba(224,162,150,0.6)", borderRadius: 12, padding: 14, gap: 8 },
-  qaTitle: { fontFamily: "Manrope_600SemiBold", fontSize: 12, color: "#E0A296" },
+  qaTitle: { fontFamily: FONTS.semibold, fontSize: 12, color: "#E0A296" },
   qaButton: { minHeight: 44, justifyContent: "center", alignSelf: "flex-start" },
-  qaButtonLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 13.5, color: COLORS.gold, textDecorationLine: "underline" },
+  qaButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.gold, textDecorationLine: "underline" },
   footer: {
     marginTop: 30,
     gap: 4,
   },
   philosophyLine: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontStyle: "italic",
     fontSize: 16,
     lineHeight: 23,
@@ -721,7 +722,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   learnMoreLinkText: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 13,
     color: COLORS.gold,
   },

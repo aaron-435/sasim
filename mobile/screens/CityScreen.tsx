@@ -8,6 +8,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 type CityResult = { id: string; cityDisplay: string; countryDisplay: string };
 
@@ -170,13 +171,13 @@ const styles = StyleSheet.create({
     marginTop: "6%",
   },
   heading: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 22,
     color: COLORS.headline,
   },
   input: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 16,
     color: COLORS.headline,
     backgroundColor: COLORS.inputBg,
@@ -207,24 +208,24 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.border,
   },
   resultCity: {
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 14.5,
     color: COLORS.headline,
   },
   resultCountry: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13,
     color: COLORS.subheadline,
   },
   noResultsHint: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12.5,
     lineHeight: 19,
     color: COLORS.subheadline,
     marginTop: 10,
   },
   error: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12.5,
     color: COLORS.danger,
     marginTop: 10,

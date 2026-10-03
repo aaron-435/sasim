@@ -8,6 +8,7 @@ import PatternBackground from "../components/PatternBackground";
 import { API_BASE_URL } from "../config";
 import { useStrings, useLocale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 export default function IntroScreen({ onNext }: { onNext: () => void }) {
   const strings = useStrings();
@@ -100,14 +101,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   brandLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
     textTransform: "uppercase",
   },
   headline: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 32,
     lineHeight: 40,
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   subheadline: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 14.5,
     lineHeight: 24,
     color: COLORS.subheadline,
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   footer: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12,
     lineHeight: 18,
     color: COLORS.footer,

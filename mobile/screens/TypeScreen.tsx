@@ -18,6 +18,7 @@ import { getCelebritiesForType } from "../lib/sajuTypeCelebrities";
 import { formatSajuTypeName, getTypePieces } from "../lib/sajuTypeContent";
 import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 const ELEMENT_ICON = { wood: TreePine, fire: Flame, earth: Mountain, metal: Gem, water: Droplets } as const;
 
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   backLabel: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13,
     color: COLORS.subheadline,
   },
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   brandLabel: {
-    fontFamily: "Manrope_700Bold",
+    fontFamily: FONTS.bold,
     fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
@@ -237,14 +238,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   typeName: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 28,
     color: COLORS.headline,
     marginTop: 4,
   },
   greeting: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13,
     color: COLORS.subheadline,
   },
@@ -265,25 +266,25 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   sectionLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12.5,
     letterSpacing: 0.3,
     color: COLORS.subheadline,
   },
   pieceName: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 22,
     color: COLORS.headline,
   },
   pieceTagline: {
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 13.5,
     color: COLORS.gold,
     marginTop: 4,
   },
   pieceBody: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 14.5,
     lineHeight: 22,
     color: COLORS.subheadline,
@@ -299,18 +300,18 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   celebrityName: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 14.5,
     color: COLORS.headline,
   },
   celebrityMeta: {
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 12,
     color: COLORS.gold,
     marginTop: 2,
   },
   celebrityBlurb: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13.5,
     lineHeight: 20,
     color: COLORS.subheadline,
@@ -331,20 +332,20 @@ const styles = StyleSheet.create({
     paddingVertical: "9%",
     alignItems: "center",
   },
-  shareBrandLabel: { fontFamily: "Manrope_700Bold", fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: 28 },
+  shareBrandLabel: { fontFamily: FONTS.bold, fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: 28 },
   shareCardMid: { alignItems: "center", width: "100%" },
   shareDivider: { width: "60%", height: 1, backgroundColor: COLORS.border, marginVertical: 26 },
   shareCelebRow: { width: "100%", alignItems: "center", marginTop: 16 },
-  shareCelebName: { fontFamily: "Manrope_600SemiBold", fontSize: 14, color: COLORS.headline, marginTop: 4 },
-  shareCelebMeta: { fontFamily: "Manrope_500Medium", fontSize: 12, color: COLORS.gold, marginTop: 2 },
-  shareCelebBlurb: { fontFamily: "Manrope_400Regular", fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: 6 },
+  shareCelebName: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.headline, marginTop: 4 },
+  shareCelebMeta: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.gold, marginTop: 2 },
+  shareCelebBlurb: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: 6 },
   shareIconBubble: { width: 52, height: 52, borderRadius: 26, alignItems: "center", justifyContent: "center", marginBottom: 14 },
-  shareEyebrow: { fontFamily: "Manrope_700Bold", fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 6 },
-  shareTitle: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 34, color: COLORS.headline },
-  shareTagline: { fontFamily: "Manrope_500Medium", fontSize: 14, color: COLORS.gold, textAlign: "center", marginTop: 8 },
-  shareBody: { fontFamily: "Manrope_400Regular", fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, textAlign: "center", marginTop: 14 },
-  shareTypeLine: { fontFamily: "Manrope_500Medium", fontSize: 12, color: COLORS.headline, marginTop: 26 },
-  shareFooter: { fontFamily: "Manrope_500Medium", fontSize: 12.5, color: COLORS.subheadline, textAlign: "center", marginTop: 30 },
+  shareEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 6 },
+  shareTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 34, color: COLORS.headline },
+  shareTagline: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.gold, textAlign: "center", marginTop: 8 },
+  shareBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, textAlign: "center", marginTop: 14 },
+  shareTypeLine: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.headline, marginTop: 26 },
+  shareFooter: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, textAlign: "center", marginTop: 30 },
   shareButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -356,7 +357,7 @@ const styles = StyleSheet.create({
     marginTop: 32,
   },
   shareButtonLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 14.5,
     color: COLORS.ctaText,
   },

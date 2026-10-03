@@ -6,6 +6,7 @@ import OnboardingShell from "../components/OnboardingShell";
 import { API_BASE_URL } from "../config";
 import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 const CODE_LENGTH = 6;
 
@@ -94,13 +95,13 @@ const styles = StyleSheet.create({
     marginTop: "6%",
   },
   heading: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 26,
     color: COLORS.headline,
   },
   subtext: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13.5,
     lineHeight: 20,
     color: COLORS.subheadline,
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   input: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 20,
     letterSpacing: 6,
     textAlign: "center",
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   error: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12.5,
     color: COLORS.danger,
     marginTop: 10,
@@ -135,7 +136,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   skipLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 13,
     color: COLORS.subheadline,
     textDecorationLine: "underline",

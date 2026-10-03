@@ -23,6 +23,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { findTopAnswers, findTopAnswersOverall } from "../lib/quiz/quizProfile";
 import type { QuizDiagnosis } from "./QuizScreen";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 // TOTAL_TURNS/TIME_LIMIT_MINUTES/CHECKPOINT_TURN mirror lib/chatPrompts.ts's exports
 // (web's server-side prompt builder) — that file isn't ported here since prompt building
@@ -365,7 +366,7 @@ const styles = StyleSheet.create({
   },
   headerLabel: {
     flex: 1,
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 1.5,
     color: COLORS.gold,
@@ -377,7 +378,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   countdownLabel: {
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 12,
     color: COLORS.footer,
   },
@@ -400,7 +401,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   errorText: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13,
     color: "#E0A296",
   },
@@ -408,7 +409,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   retryLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12.5,
     color: COLORS.gold,
   },
@@ -426,7 +427,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   doneBadgeLabel: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12,
     color: COLORS.footer,
   },
@@ -442,7 +443,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   headerFinishLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 11,
     color: "#C7C3D1",
   },
@@ -464,7 +465,7 @@ const styles = StyleSheet.create({
     paddingVertical: 13,
   },
   checkpointButtonPrimaryLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 13.5,
     color: COLORS.ctaText,
   },
@@ -479,7 +480,7 @@ const styles = StyleSheet.create({
     paddingVertical: 13,
   },
   checkpointButtonSecondaryLabel: {
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 13.5,
     color: "#C7C3D1",
   },
@@ -494,7 +495,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 15,
     color: COLORS.headline,
     backgroundColor: COLORS.inputBg,

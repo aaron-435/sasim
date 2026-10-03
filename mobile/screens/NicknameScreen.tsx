@@ -6,6 +6,7 @@ import OnboardingShell from "../components/OnboardingShell";
 import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 const MAX_LENGTH = 20;
 
@@ -56,20 +57,20 @@ const styles = StyleSheet.create({
     marginTop: "6%",
   },
   heading: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 26,
     color: COLORS.headline,
   },
   subtext: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13.5,
     color: COLORS.subheadline,
     marginTop: 10,
     marginBottom: 24,
   },
   input: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 16,
     color: COLORS.headline,
     backgroundColor: COLORS.inputBg,

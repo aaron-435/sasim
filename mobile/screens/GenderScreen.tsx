@@ -5,6 +5,7 @@ import OnboardingShell from "../components/OnboardingShell";
 import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 export default function GenderScreen({
   isFemale,
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
     marginTop: "6%",
   },
   heading: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 26,
     color: COLORS.headline,
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(111,169,139,0.4)",
   },
   optionLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 14.5,
     color: COLORS.subheadline,
   },

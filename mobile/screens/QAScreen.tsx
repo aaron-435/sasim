@@ -20,6 +20,7 @@ import type { NormalizedSajuResult } from "../lib/saju";
 import { COLORS } from "../theme/colors";
 import QAQuestionScreen from "./QAQuestionScreen";
 import QASubcategoryScreen from "./QASubcategoryScreen";
+import { FONTS } from "../theme/fonts";
 
 type Question = { id: string; text_ko: string; text_en?: string; text_es?: string };
 type Subcategory = { id: string; name_ko: string; name_en?: string; name_es?: string; questions: Question[] };
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
     marginRight: 2,
   },
   headerLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 1.5,
     color: COLORS.gold,
@@ -368,7 +369,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   optionLabel: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 14,
     color: COLORS.headline,
   },
@@ -392,7 +393,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   subscribeButtonText: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 14.5,
     color: COLORS.ctaText,
   },
@@ -401,12 +402,12 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   restoreLinkText: {
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 12.5,
     color: COLORS.subheadline,
   },
   subscribeNoticeText: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12,
     color: "#E0A296",
     textAlign: "center",
@@ -420,7 +421,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   errorText: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13,
     color: "#E0A296",
   },
@@ -431,7 +432,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   retryLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12.5,
     color: COLORS.gold,
   },

@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 type Question = { id: string; text_ko: string; text_en?: string; text_es?: string };
 type Subcategory = { id: string; name_ko: string; name_en?: string; name_es?: string; questions: Question[] };
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   backLabel: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13,
     color: COLORS.subheadline,
   },
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   subcategoryLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   heading: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 24,
     color: COLORS.headline,
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   cardLabel: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 14,
     lineHeight: 21,
     color: COLORS.headline,

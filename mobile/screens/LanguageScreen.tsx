@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "../components/PatternBackground";
 import { LOCALES, LOCALE_LABELS, useLocale, type Locale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 // The very first screen, before IntroScreen — picked manually here rather than
 // auto-detected from the device locale (explicit user choice per product decision).
@@ -62,14 +63,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   brandLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
     textTransform: "uppercase",
   },
   heading: {
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 15,
     lineHeight: 24,
     color: COLORS.headline,
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
   },
   optionLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 16,
     color: COLORS.headline,
   },

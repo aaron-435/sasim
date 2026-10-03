@@ -22,6 +22,7 @@ import {
   type QuizAnswerRecord,
 } from "../lib/quiz/quizProfile";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 const ELEMENT_COLORS: Record<string, string> = {
   wood: "#4E8368",
@@ -284,7 +285,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   progressLabel: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12,
     color: COLORS.footer,
   },
@@ -300,14 +301,14 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   moduleLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 1.5,
     color: COLORS.gold,
     textTransform: "uppercase",
   },
   prompt: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 22,
     lineHeight: 30,
@@ -326,7 +327,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
   },
   optionLabel: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 14.5,
     color: COLORS.headline,
   },
@@ -336,12 +337,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   sliderEdgeLabel: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12,
     color: COLORS.subheadline,
   },
   sliderValue: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 28,
     color: COLORS.gold,
@@ -356,7 +357,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   sliderButtonLabel: {
-    fontFamily: "Manrope_700Bold",
+    fontFamily: FONTS.bold,
     fontSize: 14,
     color: COLORS.ctaText,
   },
@@ -373,7 +374,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   doneBadgeLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 1.5,
     color: COLORS.gold,
@@ -406,19 +407,19 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   elementChipLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12,
     color: "#C7C3D1",
   },
   resultTitle: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 28,
     color: COLORS.headline,
     marginBottom: 10,
   },
   resultHook: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13.5,
     lineHeight: 22,
     color: "#C7C3D1",
@@ -433,18 +434,18 @@ const styles = StyleSheet.create({
     borderTopColor: "rgba(111,169,139,0.18)",
   },
   resultModuleTitle: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12,
     color: COLORS.footer,
   },
   resultBrand: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 13,
     color: COLORS.gold,
   },
   moreDetailNote: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12.5,
     lineHeight: 20,
     color: COLORS.footer,
@@ -463,7 +464,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   continueLabel: {
-    fontFamily: "Manrope_700Bold",
+    fontFamily: FONTS.bold,
     fontSize: 15,
     color: COLORS.ctaText,
   },
@@ -475,7 +476,7 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   restartLabel: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12,
     color: COLORS.footer,
   },

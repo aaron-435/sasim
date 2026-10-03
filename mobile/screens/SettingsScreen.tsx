@@ -10,6 +10,7 @@ import { getNotificationPreference, setNotificationPreference, type Notification
 import { applyNotificationPreference } from "../lib/routineNotification";
 import { hasQaProEntitlement } from "../lib/purchases";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 const NOTIFICATION_OPTIONS: NotificationPreference[] = ["off", "daily", "weekly"];
 
@@ -140,10 +141,10 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
   backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },
-  backLabel: { fontFamily: "Manrope_400Regular", fontSize: 13, color: COLORS.subheadline },
-  heading: { fontFamily: "CormorantGaramond_500Medium", fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginBottom: 24 },
+  backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
+  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginBottom: 24 },
   sectionLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 1.5,
     color: COLORS.subheadline,
@@ -180,11 +181,11 @@ const styles = StyleSheet.create({
     borderColor: "rgba(111,169,139,0.4)",
   },
   optionTextWrap: { flex: 1, gap: 3 },
-  optionLabel: { fontFamily: "Manrope_600SemiBold", fontSize: 14.5, color: COLORS.headline },
+  optionLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.headline },
   optionLabelActive: { color: COLORS.gold },
-  optionDescription: { fontFamily: "Manrope_400Regular", fontSize: 12, color: COLORS.footer },
+  optionDescription: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.footer },
   warning: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12.5,
     lineHeight: 19,
     color: COLORS.danger,
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   resetLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 14,
     color: COLORS.danger,
   },

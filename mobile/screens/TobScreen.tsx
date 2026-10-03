@@ -7,6 +7,7 @@ import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { to24HourString } from "../lib/zodiac";
+import { FONTS } from "../theme/fonts";
 
 export default function TobScreen({
   hour,
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   heading: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 26,
     color: COLORS.headline,
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   unknownLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12.5,
     color: COLORS.footer,
   },
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   input: {
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 17,
     textAlign: "center",
     color: COLORS.headline,
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(111,169,139,0.4)",
   },
   periodLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 13,
     color: COLORS.subheadline,
   },

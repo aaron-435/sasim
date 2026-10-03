@@ -6,6 +6,7 @@ import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 // 2026-09-19: 온보딩 마지막 단계 — "지금 가장 궁금한 것"을 가볍게 물어, 이후
 // ModuleSelectScreen이 추천 모듈을 보여줄 수 있게 한다(mobile/lib/userConcern.ts
@@ -57,13 +58,13 @@ const styles = StyleSheet.create({
     marginTop: "6%",
   },
   heading: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 26,
     color: COLORS.headline,
   },
   subheading: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13.5,
     lineHeight: 20,
     color: COLORS.subheadline,
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(111,169,139,0.4)",
   },
   optionLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 15,
     color: COLORS.subheadline,
   },
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     color: COLORS.gold,
   },
   optionHint: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12.5,
     color: COLORS.footer,
   },

@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import { COLORS } from "../theme/colors";
+import { FONTS } from "../theme/fonts";
 
 type Subcategory = {
   id: string;
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   backLabel: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 13,
     color: COLORS.subheadline,
   },
@@ -93,14 +94,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   categoryLabel: {
-    fontFamily: "Manrope_600SemiBold",
+    fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 2,
     color: COLORS.gold,
     textTransform: "uppercase",
   },
   heading: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 24,
     color: COLORS.headline,
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   cardLabel: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 14.5,
     color: COLORS.headline,
     flex: 1,

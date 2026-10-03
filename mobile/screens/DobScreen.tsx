@@ -9,6 +9,7 @@ import { dobFieldOrder, dobSeparator } from "../lib/dobOrder";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { getZodiac, toISODateString } from "../lib/zodiac";
+import { FONTS } from "../theme/fonts";
 
 export default function DobScreen({
   year,
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
     marginTop: "6%",
   },
   heading: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 26,
     color: COLORS.headline,
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   input: {
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 17,
     textAlign: "center",
     color: COLORS.headline,
@@ -149,18 +150,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   zodiacSymbol: {
-    fontFamily: "CormorantGaramond_500Medium",
+    fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 26,
     color: COLORS.gold,
   },
   zodiacLabel: {
-    fontFamily: "Manrope_500Medium",
+    fontFamily: FONTS.medium,
     fontSize: 14,
     color: COLORS.headline,
   },
   ageWarning: {
-    fontFamily: "Manrope_400Regular",
+    fontFamily: FONTS.regular,
     fontSize: 12.5,
     color: COLORS.danger,
     marginTop: 14,
