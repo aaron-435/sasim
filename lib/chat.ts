@@ -133,7 +133,53 @@ function hasHangul(line: string): boolean {
  * drop the earlier one(s), which in every observed violation were pure
  * follow-up questions with no reflection content worth preserving.
  */
+// A second question that opens with one of these is the other half of a binary choice
+// ("~나요? 반대로 ~나요?"), so it is folded into one question instead of dropped.
+const ALTERNATIVE_LEAD = /^(?:반대로|아니면|혹은|또는|or rather|or|o bien|o más bien|o)(?=[\s,])[\s,]*/i;
+
+/**
+ * One line holding two questions ("혼자 정리하나요? 반대로 누군가에게 털어놓나요?") slipped past the
+ * line-based check below (TODO 5, judge runs q5-v2-checkpoint and attach_en). A follow-up that offers
+ * the other side of a choice is joined into one question; otherwise the first real question stays and
+ * the rest are dropped (a short tag like "그렇죠?" before it is dropped instead).
+ */
+export function collapseInlineQuestions(line: string): string {
+  // A "?" inside a quote ("“왜 나만?” 하는 마음") doesn't end a sentence — hide it while splitting.
+  const QUOTED_Q = "\u0000";
+  const masked = line.replace(/[?？](?=[”"’'»」』)])/g, QUOTED_Q);
+  const parts = masked.match(/[^?？]+[?？]+|[^?？]+$/g);
+  if (!parts) return line;
+  const isQ = (t: string) => /[?？]\s*$/.test(t);
+  if (parts.filter(isQ).length <= 1) return line;
+  const unmask = (t: string) => t.split(QUOTED_Q).join("?");
+  const qs = parts.map((t, i) => ({ t, i })).filter((p) => isQ(p.t));
+  const core = (t: string) => t.replace(/[\s?？¿¡.,]/g, "");
+  // Tag questions ("그렇죠?", "right?", "¿verdad?") are short; a real question is longer.
+  const main = qs.find((q) => core(q.t).length > 6) ?? qs[0];
+  const next = qs.find((q) => q.i > main.i);
+  const out: string[] = [];
+  parts.forEach((t, i) => {
+    if (isQ(t) && i !== main.i) return;
+    out.push(t);
+  });
+  if (next) {
+    const rest = next.t.trim().replace(/^¿/, "");
+    const lead = rest.match(ALTERNATIVE_LEAD);
+    if (lead) {
+      const leadWord = lead[0].trim().replace(/,$/, "").toLowerCase();
+      const word = /[가-힣]/.test(leadWord) ? "아니면" : leadWord.startsWith("or") ? "or" : "o";
+      let tail = rest.slice(lead[0].length);
+      if (word === "or" && !/^I\b/.test(tail)) tail = tail.charAt(0).toLowerCase() + tail.slice(1);
+      const idx = out.indexOf(main.t);
+      out[idx] = `${main.t.replace(/[?？]+\s*$/, "")}, ${word} ${tail}`;
+      if (/\s$/.test(main.t)) out[idx] += " ";
+    }
+  }
+  return unmask(out.join("").replace(/\s{2,}/g, " ").trim());
+}
+
 function enforceOneQuestionPerReply(lines: string[]): string[] {
+  lines = lines.map(collapseInlineQuestions);
   const questionIndices = lines.reduce<number[]>((acc, line, i) => {
     if (isQuestionLine(line)) acc.push(i);
     return acc;

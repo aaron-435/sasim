@@ -64,6 +64,9 @@ const META_LEAK = /\b(prompt|json|schema)\b|(se describe|se indica|se menciona|s
 // of a clause is the slip; "N años desde ahora" reads as "38 years from now" anywhere. (TODO Q2, 2026-09-28)
 const ES_AGE_AS_SUBJECT =
   /(?:^|[.!?;:—–]\s*|[¡¿]|,\s*|\b(?:pero|mientras|cuando|porque|que)\s+)(?:(?:los|tus|esos|estos|sus)\s+)?\d{1,2}\s+años\b|\b\d{1,2}\s+años\s+(?:desde|a partir de|de) (?:ahora|hoy)\b/i;
+// A card note talking about the reader's words ("~라고 했어요", "you said", "la frase").
+const NOTE_CHAT_REFERENCE =
+  /[다라]고\s?(했|하셨|말)|말씀하|한 말|그 말|이 말|대화에서|\byou (said|told|mentioned)\b|\byour (words|phrase)\b|\bthe (phrase|sentence|quote)\b|\bin (our|the) (chat|conversation)\b|\bdijiste\b|\bcontaste\b|\bmencionaste\b|\bla frase\b|\btus palabras\b|\ben la conversaci[oó]n\b/i;
 const MODULE_META = /이\s?모듈|\bthis module\b|\beste m[oó]dulo\b/i;
 const HANGUL_OR_HANJA = /[ㄱ-ㆎ가-힣一-鿿]/;
 const HANGUL_OR_HANJA_ALL = /[ㄱ-ㆎ가-힣一-鿿]/g;
@@ -185,6 +188,10 @@ function checkSetCards(c: ReportContent, ctx: ReportContext): string[] {
     }
     const n = card.note.trim() ? countSentences(card.note) : 0;
     if (n !== 3) out.push(`${path}.note: 읽어 주기는 3문장이어야 하는데 ${n}문장 — 검사 답과 대화의 말을 잇는 해석 3문장으로 쓸 것`);
+    // A set without chat has no quote, so a note pointing at "what you said" is reading another set's
+    // material (TODO 9, lucia card 4: "La frase deja claro…" on a no-chat set).
+    const talk = !packet?.has_chat ? card.note.match(NOTE_CHAT_REFERENCE) : null;
+    if (talk) out.push(`${path}.note: 세트 ${set}에는 대화가 없는데 대화의 말("${talk[0]}")을 가리킴 — 다른 세트 재료를 쓰지 말고 이 카드의 검사 답("${card.quiz?.label ?? ""}") 하나로 3문장을 쓸 것`);
   }
   return out;
 }
@@ -352,7 +359,7 @@ export function buildReviewPrompt(ctx: ReportContext): string {
 2. 겁주기: 건강 악화·사고·죽음·재난·이별·파산에 대한 예측, 의학적 진단, 단정적 부정 예측, 불안을 부추기는 압박.
 3. 완전한 일반론: 이 사람의 데이터(수치, 답한 문항, 상담 내용) 어느 것도 언급하지 않아서 누구에게나 붙여 쓸 수 있는 문단.
 4. 언어 품질: 이 언어(${locale})에서 명백히 부자연스러운 직역투, 뜻이 모호한 단어, 독자 성별을 드러내는 표현, 말투 불일치(존댓말/반말 혼용), 다른 언어 단어 섞임.
-5. 모순·중복: 페이지끼리 사실이 서로 다르다(같은 원소를 어디선 강하다, 어디선 약하다고 함). 또는 strengths[0](유료 핵심 강점)이 strengths_preview(무료 강점 3개) 중 하나와 이름만 바꾼 같은 강점이다.
+5. 모순·중복: 페이지끼리 사실이 서로 다르다(같은 원소를 어디선 강하다, 어디선 약하다고 함). 또는 strengths[0](유료 핵심 강점)이 strengths_preview(무료 강점 3개) 중 하나와 이름만 바꾼 같은 강점이다.${ctx.reportSets ? " 또는 set_card_*의 note가 그 카드의 인용(quote)이나 그 세트 답 원문을 말만 바꿔 다시 옮긴다. 또는 카드 N의 note가 세트 N이 아닌 다른 세트의 검사 답·원문·장면을 해설한다(근거 데이터의 세트 재료 묶음에서 세트별 '카드의 검사에서 고른 답'과 원문을 대조할 것. 대화 없는 세트의 note는 그 카드의 검사 답만 다뤄야 한다)." : ""}
 6. 메타 발언: 데이터가 없다/지시를 받았다/필드·프롬프트를 언급.
 
 ## 근거 데이터

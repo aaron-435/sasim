@@ -15,7 +15,7 @@ import { FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 import { LOCKED_KEYS, splitLocked } from "./reportLock";
 import { getModulePlaybook } from "./modulePlaybooks";
 import { buildSetCard, type SetCard } from "./reportSets";
-import { buildReviewPrompt, checkReportDeterministic, describeReportData, getAt, setAt, stripHanja } from "./reportQuality";
+import { buildReviewPrompt, checkReportDeterministic, describeReportData, flattenStrings, getAt, setAt, stripHanja } from "./reportQuality";
 import { logLlmUsage } from "./llmUsage";
 
 const client = new OpenAI({
@@ -310,6 +310,25 @@ JSON 객체 하나만: {"fixes": {"<필드 경로>": "<다시 쓴 문장>"}} —
   }
 }
 
+/** Takes the rewritten fields one at a time, keeping each only if the code findings don't go up. A
+ * single rewrite that added a finding used to discard the whole batch, so an unrelated fix (lucia
+ * oheng_intro, 2 → 3 sentences) shipped unfixed (TODO 9, 2026-10-02). */
+export function acceptFieldwise(current: ReportContent, patched: ReportContent, countFindings: (c: ReportContent) => number) {
+  let accepted = current;
+  let count = countFindings(current);
+  for (const [path, next] of flattenStrings(patched)) {
+    if (next === getAt(accepted, path)) continue;
+    const trial: ReportContent = JSON.parse(JSON.stringify(accepted));
+    if (!setAt(trial, path, next)) continue;
+    const n = countFindings(trial);
+    if (n <= count) {
+      accepted = trial;
+      count = n;
+    }
+  }
+  return { accepted, count };
+}
+
 const PAID_ROOTS: ReadonlySet<string> = new Set(LOCKED_KEYS);
 const rootOf = (path: string) => path.split(/[.[]/)[0];
 
@@ -345,9 +364,9 @@ async function runReport(context: ReportContext, sessionId?: string): Promise<Re
     if (problems.length === 0) return;
     const before = check(current).length;
     const patched = await patchFields(context, current, problems, sessionId);
-    const after = check(patched).length;
-    console.info(`[report:${part}] ${label}: ${problems.length} finding(s), code findings ${before} → ${after}`);
-    if (after <= before) current = patched;
+    const { accepted, count } = acceptFieldwise(current, patched, (c) => check(c).length);
+    console.info(`[report:${part}] ${label}: ${problems.length} finding(s), code findings ${before} → ${count}`);
+    current = accepted;
   };
 
   await fixOnce(check(current), "code checks");

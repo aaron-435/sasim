@@ -241,11 +241,18 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
     - QA: `sim-chat.mts 25 attach module1 --flow v2`(`sim_20261002T083650_…`) → 10턴 정리 → 재확인 줄(서버 보충) → "조금 더 이야기를 나누고 싶으신가요, 아니면 여기서 마무리해도 괜찮으신가요?". `judge-chat --label q5-v2-checkpoint2` → t6 2, 위반 5종 모두 2(위반 목록 비어 있음), `no_repeat`·자연스러움 2, 세트 준수 평균 2.00, 공통 평균 1.69.
     - 참고(이번 수정과 무관한 채점 편차): 중간 실행 `q5-v2-checkpoint`(`sim_20261002T083258_…`)에서 13·22턴 한 줄 안의 "~나요? 반대로 ~나요?" 질문 2개, t7(18턴 "예민한 사람처럼 보일까 봐요" 뒤 리프레이밍 없음), t5 0이 잡혔다. 질문 2개는 `enforceOneQuestionPerReply`가 줄 단위라 한 줄 안의 물음표 둘을 못 거르는 문제 — 11번 최종 비교에서 다시 볼 것.
 - (9번 픽스처) 카드 `note`가 인용을 되풀이하는 경우가 있다: jisoo 카드 1 note 첫 문장이 원문("알람을 끄고 … 설친다고 했어요")을 거의 그대로 다시 씀(규칙 6 "인용을 되풀이하지 말고"). 또 lucia 카드 4(세트 4, 퀴즈 A10 SNS 확인)의 note가 세트 3 재료("te quiero"·"la palabra de cariño")를 해설함 — 카드와 세트 재료가 어긋남. 둘 다 결정론적 검사로는 안 잡힌다. 11번 최종 비교에서 리뷰어 루브릭이나 프롬프트 한 줄("카드 N의 note는 세트 N 재료만") 검토.
+  - 원인 보충(2026-10-03): lucia는 10턴 마무리라 세트 3~5에 대화가 없는데, 카드 3~5 note가 세트 2 대화나 앞 카드의 검사 답을 해설함(카드 4는 없는 인용을 "La frase…"로 가리킴).
+  - 해결(2026-10-03, 사용자 요청): `lib/reportPrompts.ts` 카드 note 지시와 규칙 6에 "카드 N은 세트 N 재료만, 인용·답 원문을 말만 바꿔 옮기지 않기, 대화 없는 세트는 그 카드의 검사 답만·대화 언급 금지" 추가. 리뷰어(`buildReviewPrompt`) 5번 항목에 note의 인용 재진술·다른 세트 재료 해설 추가. `reportQuality.ts` `NOTE_CHAT_REFERENCE`: 대화 없는 세트 카드의 note가 대화를 가리키면(라고 했어요 / you said / la frase 등) 잡음.
+    - QA: v2 픽스처에 결정론적 검사 → lucia `set_cards_2to5[2].note`("La frase") 잡힘, jisoo 오탐 0. 인용 재진술(jisoo 카드 1)은 말을 바꾼 재진술이라 코드로는 못 잡고 리뷰어 몫 — 리포트 재생성 전이라 미확인.
 - (9번 픽스처) lucia 무료 절반이 `oheng_intro` 2문장(3문장 기준) 결함 1건을 못 고친 채 출고됨 — 품질 루프의 기존 동작(v2와 무관).
+  - 해결(2026-10-03, 사용자 요청): `lib/report.ts` `acceptFieldwise()` — 수정 호출 결과를 필드 하나씩, 코드 검사 건수가 늘지 않을 때만 받는다(예전엔 묶음 전체를 받거나 버림).
+    - QA: 스크래치(lucia에 oheng_intro 3문장 수정 + 일부러 망친 strengths_preview[0]) → oheng만 받고 망친 필드는 버림, 13 → 12. 단 이 예시는 예전 로직도 13 → 13으로 받아들였을 경우라, 실제 미수정 원인이 이것이었는지는 로그가 없어 확정 못 함(수정 모델이 다시 2문장을 썼을 수도 있음).
 - (6번) 앱 홈 무료 안내 문구 `freeNote`가 "무료 20분 리딩"(ko) / "Free 20-minute reading"(en) / "Lectura gratis de 20 minutos"(es) — 새 흐름은 30분. `mobile/lib/i18n/{ko,en,es}.ts` 42·66행 부근. 13번 OTA 전에 고칠지 결정 필요.
   - 해결(2026-10-03, 사용자 요청): `mobile/lib/i18n/{ko,en,es}.ts`를 30분으로("무료 30분 리딩" / "Free 30-minute reading" / "Lectura gratis de 30 minutos"). 웹 `lib/i18n`은 20턴 흐름이라 그대로 둠.
     - QA: `mobile/`의 tsc(큰 스택) exit 0.
 - (10번) `app/api/report-pdf/route.ts`의 `cleanDeep()`이 `oheng_intro`·`quiz_reading`(그리고 구버전 `chat_*_note`)을 옮기지 않아, `reportPdf.tsx`가 그 자리를 그리도록 되어 있어도 PDF에는 늘 빠진다(구버전·v2 공통, 이번 변경 전부터). 넣을지 결정 필요.
 - (11번) v2 en 대화 한국어 섞임·24턴 고정 문구 중복 — 11번에서 해결. 한글 줄 제거 백스톱은 20턴 흐름 비한국어 응답에도 걸린다(프롬프트는 그대로, 응답 후처리만).
 - (11번) 5번·9번 발견 사항의 "11번에서 볼 것"(한 줄 안 질문 2개, 카드 note가 다른 세트 재료를 해설) 중 질문 2개는 최종 3건(family·anger_es·attach_en 재실행)에서 위반 점수 2(위반 없음)였지만, 첫 attach_en 실행에서는 1이 나왔다 — 해결된 것은 아니다. 카드 note 문제는 리포트를 다시 생성하지 않아 확인하지 못함 — 남아 있음.
+  - 질문 2개 해결(2026-10-03, 사용자 요청): `lib/chat.ts` `collapseInlineQuestions()`를 `enforceOneQuestionPerReply` 앞에 적용. 한 줄 안 두 번째 질문이 반대로/아니면/혹은/또는·or·o로 시작하면 "~나요, 아니면 ~나요?"로 합치고, 아니면 첫 실질 질문만 남김(앞의 짧은 맞장구 "그렇죠?"는 버림). 인용 안 물음표("왜 나만?")는 문장 끝으로 보지 않음.
+    - QA: 스크래치 8건(ko 반대로·맞장구·그리고, en Or, es ¿O, 인용 안 물음표, 질문 1개, 질문 없음) 기대대로. 루트 tsc exit 0, lint 경고·오류 없음, `check-chat-sets` 92/92. sim/judge 재실행은 안 함(OpenAI 비용).
 - (10번) PDF의 오행 읽기 제목 앞 이모지(🌲 등)가 Noto Sans KR/Manrope에 없는 글리프라 깨진 기호로 찍힌다(ko 4쪽 "보통 — 확인하고…" 앞). 이번 변경 전부터 있던 문제.
