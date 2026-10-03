@@ -49,6 +49,7 @@ export default function CompatibilityScreen({
   const [hour, setHour] = useState("");
   const [minute, setMinute] = useState("");
   const [period, setPeriod] = useState<"AM" | "PM">("AM");
+  const [focusedField, setFocusedField] = useState<"name" | "year" | "month" | "day" | "hour" | "minute" | "city" | null>(null);
 
   const [cityQuery, setCityQuery] = useState("");
   const [cityResults, setCityResults] = useState<CityResult[]>([]);
@@ -181,10 +182,16 @@ export default function CompatibilityScreen({
             <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
           </Pressable>
 
-          <View style={[styles.scoreCard, { borderColor: `${tint}55` }]}>
-            <Text style={styles.scoreLabel}>{strings.compatibility.scoreLabel}</Text>
-            <Text style={[styles.scoreValue, { color: tint }]}>{result.compatibility.score}</Text>
-            <Text style={styles.relationHeadline}>{relationCopy.headline}</Text>
+          <View style={[styles.resultHero, { borderColor: `${tint}55` }]}>
+            <Text style={styles.resultNames}>
+              {selfNickname} · {otherDisplayName}
+            </Text>
+            <Text style={styles.relationHeadline} accessibilityRole="header">
+              {relationCopy.headline}
+            </Text>
+            <Text style={styles.scoreLine}>
+              {strings.compatibility.scoreLabel} · <Text style={[styles.scoreValue, { color: tint }]}>{result.compatibility.score}</Text>
+            </Text>
           </View>
 
           {result.other.sajuType && (
@@ -197,39 +204,50 @@ export default function CompatibilityScreen({
 
           {result.compatibility.stemBond && <Text style={styles.bondNote}>{content.bondNote}</Text>}
 
-          <View ref={shareCardRef} collapsable={false} style={styles.shareCard}>
-            <Image source={require("../assets/patterns/onboarding-bg.png")} resizeMode="cover" style={StyleSheet.absoluteFill} />
-            <View style={styles.shareCardInner}>
-              <Text style={styles.shareBrandLabel}>FATESAID</Text>
+          {/* The image is a separate artifact from the reading above, so it gets a labelled
+              frame and carries the good-point / caution split instead of repeating the body. */}
+          <View style={styles.previewFrame}>
+            <Text style={styles.previewLabel}>{strings.compatibility.sharePreviewLabel}</Text>
+            <View ref={shareCardRef} collapsable={false} style={styles.shareCard}>
+              <Image source={require("../assets/patterns/onboarding-bg.png")} resizeMode="cover" style={StyleSheet.absoluteFill} />
+              <View style={styles.shareCardInner}>
+                <Text style={styles.shareBrandLabel}>FATESAID</Text>
 
-              <View style={styles.shareCardMid}>
-                <Text style={styles.shareEyebrow}>{strings.compatibility.shareCardEyebrow}</Text>
-                <Text style={styles.shareNames}>
-                  {selfNickname} · {otherDisplayName}
-                </Text>
-                <Text style={[styles.shareScore, { color: tint }]}>{result.compatibility.score}</Text>
-                <Text style={styles.shareScoreLabel}>{strings.compatibility.scoreLabel}</Text>
-                <Text style={styles.shareHeadline}>{relationCopy.headline}</Text>
-                <Text style={styles.shareBody}>{relationCopy.body}</Text>
+                <View style={styles.shareCardMid}>
+                  <Text style={styles.shareEyebrow}>{strings.compatibility.shareCardEyebrow}</Text>
+                  <Text style={styles.shareNames}>
+                    {selfNickname} · {otherDisplayName}
+                  </Text>
+                  <Text style={styles.shareHeadline}>{relationCopy.headline}</Text>
+                  <Text style={styles.shareScoreLine}>
+                    {strings.compatibility.scoreLabel} · <Text style={{ color: tint }}>{result.compatibility.score}</Text>
+                  </Text>
 
-                <View style={styles.shareDetailBlock}>
-                  <Text style={[styles.shareDetailLabel, { color: "#8FBF9E" }]}>{strings.compatibility.shareCardGoodPointLabel}</Text>
-                  <Text style={styles.shareDetailText}>{relationCopy.goodPoint}</Text>
+                  <View style={styles.shareDetailBlock}>
+                    <Text style={[styles.shareDetailLabel, { color: "#8FBF9E" }]}>{strings.compatibility.shareCardGoodPointLabel}</Text>
+                    <Text style={styles.shareDetailText}>{relationCopy.goodPoint}</Text>
+                  </View>
+
+                  <View style={styles.shareDetailBlock}>
+                    <Text style={[styles.shareDetailLabel, { color: "#D9A26C" }]}>{strings.compatibility.shareCardCautionLabel}</Text>
+                    <Text style={styles.shareDetailText}>{relationCopy.caution}</Text>
+                  </View>
+
+                  {result.compatibility.stemBond && <Text style={styles.shareBondNote}>{content.bondNote}</Text>}
                 </View>
 
-                <View style={styles.shareDetailBlock}>
-                  <Text style={[styles.shareDetailLabel, { color: "#D9A26C" }]}>{strings.compatibility.shareCardCautionLabel}</Text>
-                  <Text style={styles.shareDetailText}>{relationCopy.caution}</Text>
-                </View>
-
-                {result.compatibility.stemBond && <Text style={styles.shareBondNote}>{content.bondNote}</Text>}
+                <Text style={styles.shareFooter}>{strings.compatibility.shareCardFooter}</Text>
               </View>
-
-              <Text style={styles.shareFooter}>{strings.compatibility.shareCardFooter}</Text>
             </View>
           </View>
 
-          <Pressable style={styles.shareButton} onPress={handleShare} disabled={sharing}>
+          <Pressable
+            style={styles.shareButton}
+            onPress={handleShare}
+            disabled={sharing}
+            accessibilityRole="button"
+            accessibilityLabel={strings.compatibility.shareButton}
+          >
             {sharing ? (
               <ActivityIndicator color={COLORS.ctaText} />
             ) : (
@@ -240,7 +258,7 @@ export default function CompatibilityScreen({
             )}
           </Pressable>
 
-          <Pressable style={styles.tryAgainButton} onPress={handleTryAgain}>
+          <Pressable style={styles.tryAgainButton} onPress={handleTryAgain} accessibilityRole="button">
             <Text style={styles.tryAgainLabel}>{strings.compatibility.tryAgainButton}</Text>
           </Pressable>
         </ScrollView>
@@ -261,7 +279,9 @@ export default function CompatibilityScreen({
 
         <Text style={styles.fieldLabel}>{strings.compatibility.nameLabel}</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, focusedField === "name" && styles.inputFocused]}
+          onFocus={() => setFocusedField("name")}
+          onBlur={() => setFocusedField(null)}
           accessibilityLabel={strings.compatibility.nameLabel}
           placeholder={strings.compatibility.namePlaceholder}
           placeholderTextColor={COLORS.placeholder}
@@ -269,7 +289,8 @@ export default function CompatibilityScreen({
           onChangeText={setOtherName}
         />
 
-        <View style={styles.row} accessibilityRole="radiogroup">
+        <Text style={styles.fieldLabel}>{strings.compatibility.genderLabel}</Text>
+        <View style={styles.row} accessibilityRole="radiogroup" accessibilityLabel={strings.compatibility.genderLabel}>
           <Pressable
             style={[styles.option, isFemale === false && styles.optionActive]}
             onPress={() => setIsFemale(false)}
@@ -299,7 +320,9 @@ export default function CompatibilityScreen({
               {i > 0 && <Text style={styles.dot}>{dobSeparator(locale)}</Text>}
               <TextInput
                 ref={dobRefs[field]}
-                style={[styles.input, field === "year" ? styles.yearInput : styles.shortInput]}
+                style={[styles.input, field === "year" ? styles.yearInput : styles.shortInput, focusedField === field && styles.inputFocused]}
+                onFocus={() => setFocusedField(field)}
+                onBlur={() => setFocusedField(null)}
                 accessibilityLabel={`${strings.compatibility.dobHeading}: ${dobPlaceholders[field]}`}
                 placeholder={dobPlaceholders[field]}
                 placeholderTextColor={COLORS.placeholder}
@@ -332,7 +355,9 @@ export default function CompatibilityScreen({
           {!timeUnknown && (
             <>
               <TextInput
-                style={[styles.input, styles.shortInput]}
+                style={[styles.input, styles.shortInput, focusedField === "hour" && styles.inputFocused]}
+                onFocus={() => setFocusedField("hour")}
+                onBlur={() => setFocusedField(null)}
                 accessibilityLabel={`${strings.compatibility.timeHeading}: ${strings.tob.hourPlaceholder}`}
                 placeholder={strings.tob.hourPlaceholder}
                 placeholderTextColor={COLORS.placeholder}
@@ -343,7 +368,9 @@ export default function CompatibilityScreen({
               />
               <Text style={styles.dot}>:</Text>
               <TextInput
-                style={[styles.input, styles.shortInput]}
+                style={[styles.input, styles.shortInput, focusedField === "minute" && styles.inputFocused]}
+                onFocus={() => setFocusedField("minute")}
+                onBlur={() => setFocusedField(null)}
                 accessibilityLabel={`${strings.compatibility.timeHeading}: ${strings.tob.minutePlaceholder}`}
                 placeholder={strings.tob.minutePlaceholder}
                 placeholderTextColor={COLORS.placeholder}
@@ -366,7 +393,9 @@ export default function CompatibilityScreen({
 
         <Text style={styles.fieldLabel}>{strings.compatibility.cityHeading}</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, focusedField === "city" && styles.inputFocused]}
+          onFocus={() => setFocusedField("city")}
+          onBlur={() => setFocusedField(null)}
           accessibilityLabel={strings.compatibility.cityHeading}
           placeholder={strings.compatibility.cityPlaceholder}
           placeholderTextColor={COLORS.placeholder}
@@ -379,6 +408,8 @@ export default function CompatibilityScreen({
               <Pressable
                 key={r.id}
                 style={styles.resultRow}
+                accessibilityRole="button"
+                accessibilityLabel={`${r.cityDisplay}, ${r.countryDisplay}`}
                 onPress={() => {
                   setSelectedCity(r);
                   setCityQuery(`${r.cityDisplay}, ${r.countryDisplay}`);
@@ -394,7 +425,13 @@ export default function CompatibilityScreen({
 
         {error && <Text style={styles.error}>{error}</Text>}
 
-        <Pressable style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]} onPress={handleSubmit} disabled={!canSubmit || submitting}>
+        <Pressable
+          style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]}
+          onPress={handleSubmit}
+          disabled={!canSubmit || submitting}
+          accessibilityRole="button"
+          accessibilityLabel={strings.compatibility.submitButton}
+        >
           {submitting ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.submitButtonLabel}>{strings.compatibility.submitButton}</Text>}
         </Pressable>
       </ScrollView>
@@ -420,7 +457,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 16,
     paddingVertical: 13,
+    // Web only: drop the browser's default focus ring; the focused border below is the cue.
+    outlineStyle: "solid",
+    outlineWidth: 0,
   },
+  inputFocused: { borderColor: COLORS.gold },
   row: { flexDirection: "row", alignItems: "center", gap: 8 },
   yearInput: { flex: 2.3, minWidth: 0, textAlign: "center" },
   shortInput: { flex: 1.2, minWidth: 0, textAlign: "center" },
@@ -454,7 +495,7 @@ const styles = StyleSheet.create({
   optionActive: { backgroundColor: "rgba(111,169,139,0.12)", borderColor: "rgba(111,169,139,0.4)" },
   optionLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.subheadline },
   optionLabelActive: { color: COLORS.gold },
-  resultsBox: { marginTop: 6, backgroundColor: "#131219", borderWidth: 1, borderColor: COLORS.border, borderRadius: 10, overflow: "hidden" },
+  resultsBox: { marginTop: 6, backgroundColor: COLORS.background, borderWidth: 1, borderColor: COLORS.border, borderRadius: 10, overflow: "hidden" },
   resultRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 13, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: COLORS.border },
   resultCity: { fontFamily: FONTS.medium, fontSize: 14.5, color: COLORS.headline },
   resultCountry: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
@@ -469,21 +510,33 @@ const styles = StyleSheet.create({
   },
   submitButtonDisabled: { opacity: 0.4 },
   submitButtonLabel: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.ctaText },
-  scoreCard: {
+  resultHero: {
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderRadius: 20,
     paddingVertical: 28,
+    paddingHorizontal: 20,
     marginTop: 8,
-    gap: 4,
   },
-  scoreLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.subheadline, letterSpacing: 0.3 },
-  scoreValue: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 48 },
-  relationHeadline: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline, marginTop: 4 },
+  resultNames: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.subheadline, textAlign: "center" },
+  relationHeadline: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 36, color: COLORS.headline, textAlign: "center", marginTop: 10 },
+  scoreLine: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, marginTop: 12 },
+  scoreValue: { fontFamily: FONTS.semibold, fontVariant: ["lining-nums"] },
   otherTypeLine: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.gold, marginTop: 18, textAlign: "center" },
   relationBody: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 22, color: COLORS.subheadline, marginTop: 12 },
   bondNote: { fontFamily: FONTS.medium, fontSize: 13.5, lineHeight: 20, color: COLORS.gold, marginTop: 16 },
+  previewFrame: {
+    marginTop: 32,
+    padding: 14,
+    paddingTop: 12,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderColor: COLORS.disabledText,
+    backgroundColor: COLORS.inputBg,
+  },
+  previewLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.footer, textAlign: "center", marginBottom: 10 },
   shareCard: {
     // Deliberately no fixed aspectRatio — the content below (body + good-point + caution,
     // and sometimes a bond note) varies in length across relations/locales, and a hard
@@ -494,7 +547,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     backgroundColor: COLORS.background,
-    marginTop: 28,
   },
   shareCardInner: {
     paddingHorizontal: "9%",
@@ -505,10 +557,8 @@ const styles = StyleSheet.create({
   shareCardMid: { alignItems: "center", width: "100%" },
   shareEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 4 },
   shareNames: { fontFamily: FONTS.semibold, fontSize: 17, color: COLORS.headline, textAlign: "center" },
-  shareScore: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 88, lineHeight: 96, marginTop: 12 },
-  shareScoreLabel: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 0.5, color: COLORS.subheadline },
-  shareHeadline: { fontFamily: FONTS.semibold, fontSize: 18, color: COLORS.headline, textAlign: "center", marginTop: 22, lineHeight: 26 },
-  shareBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, textAlign: "center", marginTop: 14 },
+  shareHeadline: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 36, color: COLORS.headline, textAlign: "center", marginTop: 18 },
+  shareScoreLine: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.subheadline, textAlign: "center", marginTop: 10, marginBottom: 8 },
   shareDetailBlock: {
     width: "100%",
     backgroundColor: "rgba(255,255,255,0.04)",

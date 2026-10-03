@@ -97,9 +97,12 @@
   - QA: mobile tsc(큰 스택) → exit 0. `git diff --stat mobile/data/questionBank.json` → 출력 없음(변경 없음). mobile-web 미리보기(다른 세션이 띄운 8082 서버를 브라우저 창에서 직접 열기, mobile 프리셋): `?qa=free&persona=mia`(en) 헤더 "1 of 1 left today", 주제 5개 Love & People · Work & Money · You & Your Wellbeing · Timing & Change · Today & This Week. Love & People → 섹션 "Love & Relationships"(5) + "Family & Relationships"(4). Today & This Week → 중간 화면 없이 질문 목록으로, 뒤로 → 채팅. `?qa=pro&persona=lucia`(es, 오늘 사용량 3으로 설정) 헤더 제목 아래 "Te quedan 7 de 10 hoy", 제목 "PREGUNTAS DE SAJU · RESPUESTA DE IA" 잘림 없음, Trabajo y dinero → "Trabajo y estudios"(4) + "Dinero y éxito"(3). `?qa=free&persona=jisoo`(ko, 사용량 1) "오늘 1개 중 0개 남음" + 한도 안내·구독 버튼. 콘솔 오류 없음. 확인 뒤 테스트용 사용량 키는 지움.
   - 메모: 묶음은 `mobile/lib/qaTopicGroups.ts`(사랑과 사람=love+family, 일과 돈=career+wealth, 나 자신과 마음=self+wellbeing, 시기와 변화=timing, 오늘과 이번 주=daily). 여러 분류가 합쳐진 묶음은 `QASubcategoryScreen`에서 원래 분류 이름이 섹션 제목이 되고, 하위 주제가 하나뿐인 묶음(오늘)은 질문 목록으로 바로 간다(뒤로·Android 뒤로도 채팅으로). 남은 수는 첫 인사 때·답변 뒤·구독/복원 뒤에 갱신. es에서 오른쪽에 두면 제목이 잘리고 두 줄로 접혀 제목 아래 줄로 옮겼다. 웹 Q&A와 질문 은행은 그대로 8개 분류.
 
-- [ ] 12. 궁합 화면 정리
+- [x] 12. 궁합 화면 정리
   - 변경: `screens/CompatibilityScreen.tsx` — 관계 이름 맨 위 크게, 점수는 작은 보조, 반복 문단 제거, 공유 카드 미리보기 틀, 폼 간격·성별 라벨·포커스 테두리 `COLORS.gold`. 궁합 공유 카드도 같은 위계.
   - QA: mobile tsc exit 0. 결과·공유 카드·폼 스크린샷. `grep -nE "#[0-9A-Fa-f]{6}" mobile/screens/CompatibilityScreen.tsx` 결과를 검토해 포커스 테두리가 하드코딩 금색이 아니라 `COLORS` 토큰임을 기록.
+  - QA: mobile tsc(큰 스택) → exit 0. `grep -nE "#[0-9A-Fa-f]{6}" mobile/screens/CompatibilityScreen.tsx` → 2줄(227·232, 공유 카드 "좋은 점"/"주의할 점" 라벨 색 `#8FBF9E`·`#D9A26C`, 포커스와 무관). 포커스 테두리는 `inputFocused: { borderColor: COLORS.gold }`, 도시 결과 상자의 옛 팔레트 `#131219`는 `COLORS.background`로. Pressable 10개 / `accessibilityRole` 13개. mobile-web 미리보기(다른 세션이 띄운 8082 서버를 브라우저 창에서 직접 열기, mobile 프리셋): `?qa=all&persona=jordan&lang=en` 폼 — 이름·성별 사이에 "Their gender" 라벨(radiogroup 라벨도 같음), 포커스한 입력 칸 계산 테두리 rgb(111,169,139)=청자색·outline 0px(수정 전 브라우저 기본 노란 링). 결과 — 맨 위 "Jordan · Sam" → 관계 이름 "You're the one who fuels them"(표시 글꼴 30) → 작은 "Compatibility points · 82", 본문 문단은 화면에 한 번. 아래 점선 틀 "Share image preview" 안의 공유 카드도 관계 이름이 크고 점수는 작은 한 줄, 본문 대신 좋은 점·주의할 점만(수정 전 본문 화면 1 + 카드 1 + 좋은/주의 = 같은 뜻 세 번). `?qa=all&persona=lucia&lang=es` "Eres quien desafía" / "Puntos de compatibilidad · 58" / "Vista previa de la imagen para compartir", 잘림 없음. `?qa=all&persona=jisoo&lang=ko` "지수 · 민준" / "내가 받는 쪽" / "궁합 포인트 · 82" / "공유 이미지 미리보기". 콘솔 오류 없음.
+  - 메모: 새 문구 `compatibility.genderLabel`·`sharePreviewLabel`(ko/en/es). 웹 포커스 링은 `outlineStyle: "solid"` + `outlineWidth: 0`으로 끄고 테두리 색으로 대신한다(RN 타입이 `"none"`을 받지 않고, Chrome은 `auto`일 때 폭 0을 무시). 공유 카드는 그대로 `captureRef` 너비 1080(내용 높이), 미리보기 틀은 캡처 대상 밖이라 저장 이미지에 들어가지 않는다. 결과 화면 버튼 3개·도시 결과 줄에 역할·라벨 추가. 새 동작 없음.
+  - [ ] (사용자 확인) iOS 시뮬레이터 dev-client 또는 실기기에서 궁합 결과 "결과 공유하기" → 저장된 PNG에 점선 틀·"미리보기" 글자가 들어가지 않고 카드만 찍히는지, 관계 이름이 크게 보이는지.
 
 ## 추가 범위
 
@@ -159,3 +162,4 @@
 - (9번 중) 타입 화면 공유 카드 미리보기 안의 원국 그림도 role=img라 화면 읽기가 같은 요약을 두 번 읽는다(공유 카드의 유형·인물 글도 원래 화면과 중복). 공유 카드 미리보기 전체를 접근성에서 하나로 묶거나 숨길지 검토. 같은 화면의 "결과 공유하기" Pressable에 `accessibilityRole`이 없다.
 - (9번 중) 동률일 때 타입 화면 "지금 나를 움직이는 것" 아이콘은 서버 `dominantElement` 하나(Jordan: 산=흙)만 보여 준다. 문구는 오행 이름을 말하지 않아 모순은 아니지만, 그림 캡션은 "흙 & 쇠"라 아이콘만 보면 한쪽만 고른 것처럼 보일 수 있음.
 - (10번 중) 퀴즈 화면 상단 kicker("MODULE 3 · BURNOUT", `QuizScreen.tsx`)와 `MyReportsScreen.tsx`에는 여전히 모듈 번호가 보인다. `moduleDisplayTitle`로 같이 정리할지 검토(이번 항목은 검사 목록 범위).
+- (12번 중) 궁합에서 상대 이름을 비우면 이름 자리에 입력 칸 예시 문구가 그대로 들어간다("p. ej. Diego", "예: 민준", "e.g. Jamie" — `CompatibilityScreen.tsx`의 `otherDisplayName`이 `namePlaceholder`로 대체). 이번 개편으로 결과 맨 위·공유 카드에 크게 보이므로 "상대"/"Them"/"La otra persona" 같은 중립 표현으로 바꾸는 것을 검토.

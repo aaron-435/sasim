@@ -333,6 +333,7 @@ export const ko = {
     heading: "궁합",
     subtitle: "상대방의 생년월일을 입력하면 두 사람의 사주 흐름을 비교해드려요.",
     nameLabel: "상대방 이름 (또는 애칭)",
+    genderLabel: "상대방 성별",
     namePlaceholder: "예: 민준",
     dobHeading: "상대방 생년월일",
     timeHeading: "상대방 태어난 시간 (선택)",
@@ -350,6 +351,7 @@ export const ko = {
     shareCardGoodPointLabel: "좋은 점",
     shareCardCautionLabel: "주의할 점",
     shareCardFooter: "Fatesaid에서 나의 사주 궁합 확인하기",
+    sharePreviewLabel: "공유 이미지 미리보기",
   },
 
   fortune: {

@@ -307,6 +307,7 @@ export const es: typeof ko = {
     heading: "Compatibilidad",
     subtitle: "Escribe la fecha de nacimiento de la otra persona para ver cómo se combinan los dos mapas.",
     nameLabel: "Nombre de la otra persona (o apodo)",
+    genderLabel: "Género de esa persona",
     namePlaceholder: "p. ej. Diego",
     dobHeading: "Fecha de nacimiento de esa persona",
     timeHeading: "Hora de nacimiento (opcional)",
@@ -324,6 +325,7 @@ export const es: typeof ko = {
     shareCardGoodPointLabel: "Lo que funciona bien",
     shareCardCautionLabel: "Lo que conviene cuidar",
     shareCardFooter: "Descubre tu compatibilidad en Fatesaid",
+    sharePreviewLabel: "Vista previa de la imagen para compartir",
   },
 
   fortune: {

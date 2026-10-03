@@ -307,6 +307,7 @@ export const en: typeof ko = {
     heading: "Compatibility",
     subtitle: "Enter the other person's birth date to compare how your two charts flow together.",
     nameLabel: "Their name (or nickname)",
+    genderLabel: "Their gender",
     namePlaceholder: "e.g. Jamie",
     dobHeading: "Their birth date",
     timeHeading: "Their birth time (optional)",
@@ -324,6 +325,7 @@ export const en: typeof ko = {
     shareCardGoodPointLabel: "The Good Part",
     shareCardCautionLabel: "Watch Out For",
     shareCardFooter: "Check your own compatibility on Fatesaid",
+    sharePreviewLabel: "Share image preview",
   },
 
   fortune: {
