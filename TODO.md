@@ -272,3 +272,8 @@ SPEC: `SPEC.md` (설계 근거: `CHAT_SETS_DRAFT.md`). 이전 작업: `TODO_2026
     - QA: 이전 픽스처 2개의 "este módulo"·"esta parte del informe" 잡힘, 현재 픽스처 오탐 0. 4회차 생성 → lucia oheng_intro "En amor, …"로 메타 표현 없음. 단 jisoo oheng_intro가 지시문 예시를 따라 "연애가 아니라 일할 때"라고 대비해서 예시를 빼고 "대비하지 않음"으로 바꿈 — 재생성으로 미확인.
     - 참고: 앞 커밋의 "Cinco Elementos" 메시지 분리는 연간 리포트 검사에도 같이 들어감(원래 같은 문제를 잡던 줄이라 메시지만 바뀜).
 - (2026-10-03 리포트 4회차) lucia 무료 절반 `quiz_reading`의 "atrapada"(독자 성별 표지)가 final gate까지 안 고쳐진 채 출고. 품질 루프가 이 종류를 자주 못 고침 — Cinco Elementos처럼 메시지를 구체화("atrapada → 명사·동사로, 예: 'sentir que no hay salida'")하는 게 다음 후보.
+  - 원인 보충: `lib/promptLocale.ts` 스페인어 용어집이 "Cinco Elementos"(대문자)를 쓰라고 지시하는데 검사는 대문자를 위반으로 잡고 있었다(09-21 결정은 본문 소문자). 앞서 3회 연속 안 고쳐진 이유.
+  - 해결(2026-10-03, 사용자 요청): 용어집을 "cinco elementos"(문장 안 소문자)로. `reportQuality.ts` 심층 리포트 검사에서 성별 형용사를 별도 메시지로 분리하고 고치는 법(명사·동사로, 예시 2개)을 적음, usted·carta 메시지는 용어집대로 "tus Cuatro Pilares"·"tu mapa". `protegid` 어간 추가. "이번 모듈"도 메타 패턴에 추가. closing_body가 24턴 답과 거의 안 겹치면(한국어 글자쌍·그 외 4자 이상 단어 겹침 0.35 미만) 잡는 검사(`echoRatio`) 추가 — 프롬프트만으로는 회차마다 들쭉날쭉(겹침 1.00 ↔ 0.11).
+    - QA: 픽스처 5개 회차에 검사 → 24턴 답 안 쓴 2회 잡힘, 쓴 2회 통과, "이번 모듈" 잡힘. `gen-qa-fixtures.mts --v2-only` 5·6회차: "Cinco Elementos"·"atrapada" 사라짐. jisoo closing이 24턴 답을 따옴표로 인용해 맺음("그 정도면 충분히 했다고요"), oheng_intro 메타 표현·대비 없음. 루트 tsc·lint·mobile tsc 통과.
+    - 남음: 6회차 lucia 무료 `opening_scene` "quedarte pegada"가 구체 메시지에도 final gate까지 안 고쳐짐(수정 결과 로그가 없어 원인 미확인), `oheng_intro` "protegido"는 이번에 추가한 어간이라 그 회차에선 검사 밖이었음. "protegid" 어간은 "datos protegidos"처럼 독자가 아닌 말도 잡음(다른 어간과 같은 한계).
+- (2026-10-03) `lib/legalContent.ts` 스페인어 법률 문서에 "Cinco Elementos" 대문자 4곳 — 법률 문서라 손대지 않음, 표기 통일 여부는 결정 필요.

@@ -40,6 +40,26 @@ export function countSentences(text: string): number {
     .filter((t) => t.length > 1).length;
 }
 
+/** How much of `source` shows up in `text`: shared character pairs for Korean, shared words (4+ letters)
+ * otherwise. 1 = all of it. */
+function echoRatio(source: string, text: string, locale: Locale): number {
+  if (locale === "ko") {
+    const pairs = (t: string) => {
+      const n = normalizeForQuote(t);
+      const out = new Set<string>();
+      for (let i = 0; i < n.length - 1; i++) out.add(n.slice(i, i + 2));
+      return out;
+    };
+    const a = pairs(source);
+    const b = pairs(text);
+    return a.size ? Array.from(a).filter((x) => b.has(x)).length / a.size : 1;
+  }
+  const words = (t: string) => new Set(t.toLowerCase().split(/[^a-záéíóúüñ]+/).filter((w) => w.length >= 4));
+  const a = words(source);
+  const b = words(text);
+  return a.size ? Array.from(a).filter((x) => b.has(x)).length / a.size : 1;
+}
+
 /** Every string in the report with its path (e.g. "strengths[2].body"). */
 export function flattenStrings(value: unknown, path = "report", out: [string, string][] = []): [string, string][] {
   if (typeof value === "string") out.push([path, value]);
@@ -54,7 +74,7 @@ export function flattenStrings(value: unknown, path = "report", out: [string, st
 }
 
 const ES_GENDERED_READER =
-  /(?<!\b(?:he|has|ha|hemos|han|había|habías|habrás|apego)\s)\b(atrapad|agotad|cansad|abrumad|sobrecargad|desbordad|preocupad|ansios|estresad|frustrad|aislad|agobiad|vaciad|quemad|inquiet|conectad|desconectad|bloquead|desorientad|saturad|exhaust|sobrepasad|expuest|pegad)[ao]s?\b/i;
+  /(?<!\b(?:he|has|ha|hemos|han|había|habías|habrás|apego)\s)\b(atrapad|agotad|cansad|abrumad|sobrecargad|desbordad|preocupad|ansios|estresad|frustrad|aislad|agobiad|vaciad|quemad|inquiet|conectad|desconectad|bloquead|desorientad|saturad|exhaust|sobrepasad|expuest|pegad|protegid)[ao]s?\b/i;
 const ES_STYLE_SLIP = /\busted(es)?\b|\b[a-záéíóúñ]{3,}x\b|\bcargarse\b|\bdescolocar|\bsu carta\b|\btu carta\b|\bla carta\b|\bvuestr/i;
 const ES_CAPITALIZED_ELEMENTS = /\bCinco Elementos\b/; // running text uses lowercase "cinco elementos"
 const META_LEAK = /\b(prompt|json|schema)\b|(se describe|se indica|se menciona|se da) aquí|named here|(only|sole|one) (supporting |direct )?relationship (that|which|here|named)|the only relationship|(único|única) relación|(only|sole) (supporting )?(relationship|relation) (named|given|provided|listed)|(único|única) (relación|apoyo) (nombrad|indicad|dad)[ao]|no (future )?age range|age range (is )?(not|un)specified|not specified|no se especifica|edad no (está )?especificad|\bfree (preview|strengths?)\b|\b(vista previa|fortalezas?) gratuitas?\b|무료 (강점|미리보기)/i;
@@ -71,7 +91,7 @@ const NOTE_CHAT_REFERENCE =
 // their work, not a module (rule 11). Checked in every body string except the subtitle, which names
 // "모듈 N" on purpose (2026-10-03: lucia oheng_intro "En este módulo de amor y apego… esta parte del informe").
 const MODULE_META =
-  /이\s?모듈|이 리포트의 이 부분|리포트의 이 (부분|페이지)|\bthis module\b|\bthis (part|section) of (the|your) report\b|\beste m[oó]dulo\b|\besta (parte|secci[oó]n) del informe\b/i;
+  /이\s?모듈|이번\s?모듈|이 리포트의 이 부분|리포트의 이 (부분|페이지)|\bthis module\b|\bthis (part|section) of (the|your) report\b|\beste m[oó]dulo\b|\besta (parte|secci[oó]n) del informe\b/i;
 const HANGUL_OR_HANJA = /[ㄱ-ㆎ가-힣一-鿿]/;
 const HANGUL_OR_HANJA_ALL = /[ㄱ-ㆎ가-힣一-鿿]/g;
 // A letter from any script other than Hangul, Han and Latin (Devanagari, Cyrillic, kana, Arabic…). A ko
@@ -214,6 +234,12 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
   if (c.module_deep && part !== "free" && c.module_deep.body.trim() && titleRepeatsInOpening(c.module_deep.title, c.module_deep.body)) {
     problems.push(`module_deep.body: 첫 문장이 페이지 제목("${c.module_deep.title}")을 그대로 되풀이함 — 제목은 화면에 따로 표시되니 되풀이하지 말고 바로 내용으로 시작할 것`);
   }
+  // The closing must lean on the reader's own 24th-turn answer when there is one. The prompt alone held in
+  // one run and not the next (jisoo, 2026-10-03: overlap 1.00 when it quoted it, 0.11 when it didn't).
+  const perspective = ctx.reportSets?.setPackets[4]?.perspective_answer;
+  if (perspective && part !== "free" && c.closing_body.trim() && echoRatio(perspective, c.closing_body, locale) < 0.35) {
+    problems.push(`closing_body: 마지막 문장이 이 사람의 24턴 답("${perspective}")에 기대지 않음 — 그 말을 따옴표로 짧게 인용하거나 뜻을 받아, 이 사람이 스스로 한 말임을 밝히며 맺을 것`);
+  }
   // The core strength (paid) must not be one of the three free ones under another wording (TODO F2-a).
   if (c.strengths_preview?.length && c.strengths.length && part !== "free") {
     // Same title, or a shared content word ("Repair instinct" / "Repair courage", "끝까지 챙김" / "끝까지 버팀").
@@ -278,8 +304,12 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
     const meta = path !== "subtitle" ? text.match(MODULE_META) : null;
     if (meta) problems.push(`${path}: "${meta[0]}" 같은 메타 표현 — 독자에게는 모듈·리포트 구성이 보이지 않으니 빼고 이 사람의 영역을 일상의 말로 직접 말할 것`);
     if (locale === "es") {
-      const m = text.match(ES_GENDERED_READER) ?? text.match(ES_STYLE_SLIP);
-      if (m) problems.push(`${path}: 스페인어 스타일 위반 ("${m[0]}") — 독자 성별 표지·usted·carta 금지`);
+      // Gendered adjectives get their own message with the fix spelled out: under the generic one the fixer
+      // kept "atrapada" through the final gate (lucia quiz_reading, 2026-10-03).
+      const g = text.match(ES_GENDERED_READER);
+      if (g) problems.push(`${path}: 독자를 가리키는 성별 형용사 "${g[0]}" — 독자의 성별을 모르니 형용사를 빼고 명사·동사로 바꿀 것(예: "te sientes atrapada" → "sientes que no hay salida", "estás agotada" → "te falta energía")`);
+      const m = text.match(ES_STYLE_SLIP);
+      if (m) problems.push(`${path}: 스페인어 스타일 위반 ("${m[0]}") — usted·carta 금지, tú로 쓰고 사주 전체는 "carta" 대신 "tus Cuatro Pilares"·"tu mapa"로`);
       // Its own message: under the generic one above, the fixer never lowercased it (lucia, 3 runs on 2026-10-03).
       const cap = text.match(ES_CAPITALIZED_ELEMENTS);
       if (cap) problems.push(`${path}: "${cap[0]}"를 대문자로 씀 — 본문에서는 소문자 "cinco elementos"로 쓸 것`);
