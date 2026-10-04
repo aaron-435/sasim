@@ -1,9 +1,11 @@
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import Download from "lucide-react-native/icons/download";
 import Lock from "lucide-react-native/icons/lock";
+import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, ScrollView, Share, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import CalcSourceBadge from "../components/CalcSourceBadge";
 import ReportClosingPage from "../components/ReportClosingPage";
 import ReportPager, { readerChromeButtonStyle, type ReaderPage } from "../components/ReportPager";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -406,6 +408,8 @@ function yearReaderPages(report: YearReportContent, strings: Dictionary, nicknam
     key: "closing",
     node: (
       <ReportClosingPage
+        // Titled like the deep report's closing page, so both readers end the same way.
+        title={y.chapterClosing}
         body={report.closing}
         summaryEyebrow={strings.reader.summaryEyebrow}
         summary={report.subtitle}
@@ -454,6 +458,11 @@ function PageScroll({ children }: { children: React.ReactNode }) {
 function CoverPage({ eyebrow, title, subtitle, nickname, totalPagesLabel }: { eyebrow: string; title: string; subtitle: string; nickname: string; totalPagesLabel: string }) {
   return (
     <View style={pageStyles.cover}>
+      {/* Same masthead and source line as the deep report's cover, so both paid reports open alike. */}
+      <View style={pageStyles.brandRow}>
+        <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
+        <Text style={pageStyles.brandLabel}>FATESAID</Text>
+      </View>
       <Text style={pageStyles.eyebrow}>{eyebrow}</Text>
       <View style={pageStyles.coverMid}>
         <Text style={pageStyles.coverTitle} accessibilityRole="header">
@@ -462,6 +471,9 @@ function CoverPage({ eyebrow, title, subtitle, nickname, totalPagesLabel }: { ey
         <View style={pageStyles.coverRule} />
         <Text style={pageStyles.coverSub}>{subtitle}</Text>
         <Text style={pageStyles.coverName}>{nickname}</Text>
+        <View style={pageStyles.coverSource}>
+          <CalcSourceBadge align="start" />
+        </View>
       </View>
       <Text style={pageStyles.coverFoot}>{totalPagesLabel}</Text>
     </View>
@@ -558,7 +570,7 @@ const styles = StyleSheet.create({
   oneTime: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: 12 },
   restoreButton: { minHeight: 44, alignItems: "center", justifyContent: "center", marginTop: 4 },
   restoreLabel: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, textDecorationLine: "underline" },
-  notice: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: "#E0A296", textAlign: "center", marginTop: 4 },
+  notice: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.danger, textAlign: "center", marginTop: 4 },
   homeButton: { marginHorizontal: 22, marginBottom: 16, marginTop: 6, borderWidth: 1, borderColor: COLORS.border, borderRadius: 12, paddingVertical: 14, alignItems: "center" },
   homeButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
 });
@@ -577,6 +589,9 @@ const pageStyles = StyleSheet.create({
   coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: 18 },
   coverSub: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 23, color: COLORS.subheadline },
   coverName: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline, marginTop: 22 },
+  coverSource: { marginTop: 22 },
+  brandRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 18 },
+  brandLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 3, color: COLORS.gold, textTransform: "uppercase" },
   coverFoot: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 1.5, color: COLORS.footer },
 
   monthBlock: { paddingVertical: 16, gap: 4 },

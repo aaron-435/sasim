@@ -23,6 +23,7 @@ export default function GenderScreen({
     <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.gender} onBack={onBack}>
       <View style={styles.top}>
         <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.gender.heading}</Text>
+        <Text style={styles.why} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.gender.why}</Text>
         <View style={styles.row} accessibilityRole="radiogroup" accessibilityLabel={strings.gender.heading}>
           <Pressable
             style={[styles.option, isFemale === false && styles.optionActive]}
@@ -65,6 +66,13 @@ const styles = StyleSheet.create({
     fontVariant: ["lining-nums"],
     fontSize: 26,
     color: COLORS.headline,
+  },
+  why: {
+    fontFamily: FONTS.regular,
+    fontSize: 13.5,
+    lineHeight: 20,
+    color: COLORS.subheadline,
+    marginTop: 10,
   },
   row: {
     flexDirection: "row",

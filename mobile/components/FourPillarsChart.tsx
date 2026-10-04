@@ -204,6 +204,18 @@ export default function FourPillarsChart({
           </Svg>
         )}
       </View>
+      {/* Legend for the stacked bar, so the mix doesn't rely on colour alone. Hidden from
+          screen readers: the chart's own label already states the strongest element(s). */}
+      <View style={[styles.legend, centered && styles.legendCentered]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+        {ELEMENT_ORDER.map((k) => (
+          <View key={k} style={styles.legendItem}>
+            <View style={[styles.legendDot, { backgroundColor: ELEMENT_COLORS[k] }]} />
+            <Text style={styles.legendText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
+              {t.elementNames[k as El]} {Math.round(elements[k] ?? 0)}%
+            </Text>
+          </View>
+        ))}
+      </View>
       <View style={[styles.captions, centered && styles.captionsCentered]}>
         {!!mostLine && (
           <Text style={styles.captionStrong} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>
@@ -221,6 +233,11 @@ export default function FourPillarsChart({
 const styles = StyleSheet.create({
   root: { width: "100%" },
   canvas: { width: "100%", height: HEIGHT },
+  legend: { flexDirection: "row", flexWrap: "wrap", columnGap: 12, rowGap: 4, marginTop: 8 },
+  legendCentered: { justifyContent: "center" },
+  legendItem: { flexDirection: "row", alignItems: "center", gap: 5 },
+  legendDot: { width: 8, height: 8, borderRadius: 2 },
+  legendText: { color: COLORS.footer, fontFamily: FONTS.medium, fontSize: 12, lineHeight: 16 },
   captions: { marginTop: 10, gap: 2 },
   captionsCentered: { alignItems: "center" },
   captionStrong: { color: COLORS.headline, fontFamily: FONTS.semibold, fontSize: 14, lineHeight: 20 },

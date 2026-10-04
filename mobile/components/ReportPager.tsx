@@ -6,13 +6,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "./AppText";
 import { hasSeenReaderHint, markReaderHintSeen, type ReaderHintId } from "../lib/readerHint";
 import { COLORS } from "../theme/colors";
-import { readableColumn } from "../theme/layout";
+import { READABLE_MAX_WIDTH, readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
 
 // The page-turning reader shared by the in-depth report (ReportScreen) and the year-ahead
 // report (YearReportScreen): a top bar (back, progress bar, "03/13" counter, an optional
 // action such as the PDF button), one full-width page per idea that turns by swiping, and
-// narrow tap zones at both edges for previous/next.
+// tap zones for previous/next that live only in the page margin: on a phone a strip inside the
+// pages' own side padding, on a wide screen the empty gutter beside the reading column. They
+// never cover page content, so a contents row or a button near the edge still gets its tap.
 //
 // First open only: a quiet "swipe to turn" note sits over the bottom of page one until the
 // reader turns a page once (remembered per report kind, lib/readerHint.ts). Static, so no
@@ -20,6 +22,9 @@ import { FONTS } from "../theme/fonts";
 //
 // Controlled: the screen owns pageIndex (so a table of contents can jump to a page) and the
 // pager scrolls to it whenever it changes.
+
+// Narrower than the pages' 26pt side padding, so the strip never overlaps text or buttons.
+const EDGE_STRIP = 22;
 
 export type ReaderPage = { key: string; node: ReactNode };
 
@@ -88,6 +93,8 @@ export default function ReportPager({
   }
 
   const total = pages.length;
+  // Margin-only tap zones (pages pad 26pt; READABLE_MAX_WIDTH is the column's max width).
+  const edgeZoneWidth = Math.max(EDGE_STRIP, (screenWidth - READABLE_MAX_WIDTH) / 2 + EDGE_STRIP);
   const progressPct = total > 0 ? ((pageIndex + 1) / total) * 100 : 0;
 
   return (
@@ -136,8 +143,8 @@ export default function ReportPager({
             buttons on the pages themselves. */}
         {edgeTaps && (
           <>
-            <Pressable style={styles.tapLeft} onPress={() => goTo(pageIndex - 1)} accessibilityRole="button" accessibilityLabel={labels.previous} />
-            <Pressable style={styles.tapRight} onPress={() => goTo(pageIndex + 1)} accessibilityRole="button" accessibilityLabel={labels.next} />
+            <Pressable style={[styles.tapLeft, { width: edgeZoneWidth }]} onPress={() => goTo(pageIndex - 1)} accessibilityRole="button" accessibilityLabel={labels.previous} />
+            <Pressable style={[styles.tapRight, { width: edgeZoneWidth }]} onPress={() => goTo(pageIndex + 1)} accessibilityRole="button" accessibilityLabel={labels.next} />
           </>
         )}
       </View>
@@ -172,6 +179,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   hintLabel: { fontFamily: FONTS.medium, fontSize: 13, lineHeight: 18, color: COLORS.headline, flexShrink: 1 },
-  tapLeft: { position: "absolute", top: 0, bottom: 0, left: 0, width: "16%" },
-  tapRight: { position: "absolute", top: 0, bottom: 0, right: 0, width: "16%" },
+  tapLeft: { position: "absolute", top: 0, bottom: 0, left: 0 },
+  tapRight: { position: "absolute", top: 0, bottom: 0, right: 0 },
 });

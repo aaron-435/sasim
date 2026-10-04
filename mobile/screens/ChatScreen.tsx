@@ -1,6 +1,5 @@
 import { useReplyScroll } from "../lib/useReplyScroll";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
-import Clock from "lucide-react-native/icons/clock";
 import Send from "lucide-react-native/icons/send";
 import ShieldCheck from "lucide-react-native/icons/shield-check";
 import Sparkles from "lucide-react-native/icons/sparkles";
@@ -27,13 +26,20 @@ import { FONTS } from "../theme/fonts";
 
 // TOTAL_TURNS/TIME_LIMIT_MINUTES/CHECKPOINT_TURN mirror lib/chatPrompts.ts's exports
 // (web's server-side prompt builder) — that file isn't ported here since prompt building
-// stays server-side; these are the only pieces the client needs, for the countdown display
+// stays server-side; these are the only pieces the client needs, for the set progress label
 // and for knowing which turn to show the continue/wrap-up choice after.
+// 2026-10-04: no visible clock. A ticking MM:SS that turned red in the last minute put
+// pressure on an emotional conversation (PRODUCT: no fake urgency timers); the header shows
+// which of the five sets the user is in instead. The server keeps its own time budget.
 // 2026-10-02: the app always sends flowVersion 2 (5 sets × 5 turns), so these mirror
 // TOTAL_TURNS_V2 / TIME_LIMIT_MINUTES_V2, not the 20/20 the web chat still uses.
 const FLOW_VERSION = 2;
 const TOTAL_TURNS = 25;
-const TIME_LIMIT_MINUTES = 30;
+const TURNS_PER_SET = 5;
+// The server still wraps a v2 chat up at 30 minutes and starts steering toward it at 27
+// (lib/chatPrompts.ts buildTimeNoticeV2). From that point the header says so in words, so the
+// ending isn't a surprise; no countdown, no warning colour.
+const WRAP_UP_SECONDS = 27 * 60;
 const CHECKPOINT_TURN = 10;
 const EARLY_FINISH_SECONDS = 7 * 60;
 
@@ -240,11 +246,9 @@ export default function ChatScreen({
   }
 
   const elapsedSeconds = Math.max(0, Math.floor((now - sessionStartedAt) / 1000));
-  const remainingSeconds = Math.max(0, TIME_LIMIT_MINUTES * 60 - elapsedSeconds);
-  const timeUp = remainingSeconds <= 0;
-  const countdownLabel = timeUp
-    ? strings.chat.timeUpLabel
-    : `${String(Math.floor(remainingSeconds / 60)).padStart(2, "0")}:${String(remainingSeconds % 60).padStart(2, "0")}`;
+  const totalSets = TOTAL_TURNS / TURNS_PER_SET;
+  const wrappingUp = elapsedSeconds >= WRAP_UP_SECONDS;
+  const currentSet = Math.min(totalSets, Math.max(1, Math.ceil(Math.max(turn, 1) / TURNS_PER_SET)));
   const showCheckpoint = turn === CHECKPOINT_TURN && !checkpointDismissed && !done && !isTyping && !errorText;
   const canFinishEarly =
     !done && !isTyping && !errorText && !showCheckpoint && (turn > CHECKPOINT_TURN || elapsedSeconds >= EARLY_FINISH_SECONDS);
@@ -264,9 +268,12 @@ export default function ChatScreen({
             {strings.chat.headerLabel}
           </Text>
           {!done && (
-            <View style={styles.countdown}>
-              <Clock size={12} strokeWidth={2} color={remainingSeconds <= 60 ? "#CB6249" : COLORS.footer} />
-              <Text style={[styles.countdownLabel, remainingSeconds <= 60 && styles.countdownLabelWarn]}>{countdownLabel}</Text>
+            <View
+              style={styles.countdown}
+              accessible
+              accessibilityLabel={wrappingUp ? strings.chat.timeUpLabel : strings.chat.setProgressA11y(currentSet, totalSets)}
+            >
+              <Text style={styles.countdownLabel}>{wrappingUp ? strings.chat.timeUpLabel : strings.chat.setProgress(currentSet, totalSets)}</Text>
             </View>
           )}
           {canFinishEarly && (
@@ -295,7 +302,7 @@ export default function ChatScreen({
           {errorText && !isTyping && (
             <View style={styles.errorCard}>
               <Text style={styles.errorText}>{errorText}</Text>
-              <Pressable onPress={handleRetry} style={styles.retryButton}>
+              <Pressable onPress={handleRetry} style={styles.retryButton} accessibilityRole="button">
                 <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
               </Pressable>
             </View>
@@ -311,10 +318,10 @@ export default function ChatScreen({
 
         {showCheckpoint && (
           <View style={styles.checkpointRow}>
-            <Pressable style={styles.checkpointButtonSecondary} onPress={handleWrapUpAtCheckpoint}>
+            <Pressable style={styles.checkpointButtonSecondary} onPress={handleWrapUpAtCheckpoint} accessibilityRole="button">
               <Text style={styles.checkpointButtonSecondaryLabel}>{strings.chat.checkpointFinishButton}</Text>
             </Pressable>
-            <Pressable style={styles.checkpointButtonPrimary} onPress={handleContinueAtCheckpoint}>
+            <Pressable style={styles.checkpointButtonPrimary} onPress={handleContinueAtCheckpoint} accessibilityRole="button">
               <Text style={styles.checkpointButtonPrimaryLabel}>{strings.chat.checkpointContinueButton}</Text>
             </Pressable>
           </View>
@@ -332,7 +339,7 @@ export default function ChatScreen({
               onFocus={scrollToLatest}
               returnKeyType="send"
             />
-            <Pressable style={[styles.sendButton, isTyping && styles.sendButtonBusy]} onPress={handleSend} disabled={isTyping} accessibilityRole="button" accessibilityState={{ disabled: isTyping }}>
+            <Pressable style={[styles.sendButton, isTyping && styles.sendButtonBusy]} onPress={handleSend} disabled={isTyping} accessibilityRole="button" accessibilityLabel={strings.chat.sendLabel} accessibilityState={{ disabled: isTyping }}>
               <Send size={16} strokeWidth={2} color={COLORS.ctaText} />
             </Pressable>
           </View>
@@ -357,7 +364,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "#1C1B24",
+    borderBottomColor: COLORS.border,
   },
   backButton: {
     minHeight: 44,
@@ -368,9 +375,8 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FONTS.semibold,
     fontSize: 12,
-    letterSpacing: 1.5,
+    letterSpacing: 0.2,
     color: COLORS.gold,
-    textTransform: "uppercase",
   },
   countdown: {
     flexDirection: "row",
@@ -381,9 +387,6 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.medium,
     fontSize: 12,
     color: COLORS.footer,
-  },
-  countdownLabelWarn: {
-    color: COLORS.danger,
   },
   scroll: {
     flex: 1,
@@ -403,7 +406,7 @@ const styles = StyleSheet.create({
   errorText: {
     fontFamily: FONTS.regular,
     fontSize: 13,
-    color: "#E0A296",
+    color: COLORS.danger,
   },
   retryButton: {
     alignSelf: "flex-start",
@@ -444,8 +447,8 @@ const styles = StyleSheet.create({
   },
   headerFinishLabel: {
     fontFamily: FONTS.semibold,
-    fontSize: 11,
-    color: "#C7C3D1",
+    fontSize: 12,
+    color: COLORS.headline,
   },
   checkpointRow: {
     flexDirection: "row",
@@ -482,7 +485,7 @@ const styles = StyleSheet.create({
   checkpointButtonSecondaryLabel: {
     fontFamily: FONTS.medium,
     fontSize: 13.5,
-    color: "#C7C3D1",
+    color: COLORS.headline,
   },
   inputRow: {
     flexDirection: "row",
@@ -491,7 +494,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 20,
     borderTopWidth: 1,
-    borderTopColor: "#1C1B24",
+    borderTopColor: COLORS.border,
   },
   input: {
     flex: 1,

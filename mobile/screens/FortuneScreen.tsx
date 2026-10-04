@@ -421,7 +421,13 @@ export default function FortuneScreen({
   if (!entitled) {
     // The free half of "today": the overview is open to everyone; wealth, love, health, lucky
     // points, the week, the month and the year stay with Pro.
-    const freeOverview = daily?.compatibility ? getOverview(content, daily.compatibility.relation, daily.dayMaster.pillarIndex) : null;
+    // On a pace-yourself day the full overview stays with Pro, so a warning-toned reading never
+    // sits directly above the subscribe card (pressure rule); free users get a neutral pacing line.
+    const freeOverview = !daily?.compatibility
+      ? null
+      : daily.compatibility.relation === "otherChallengesSelf"
+        ? { headline: strings.fortune.paceFreeHeadline, body: strings.fortune.paceFreeBody }
+        : getOverview(content, daily.compatibility.relation, daily.dayMaster.pillarIndex);
     return (
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.content}>
@@ -463,12 +469,18 @@ export default function FortuneScreen({
                 </View>
               ))}
             </View>
-            <Pressable style={[styles.subscribeButton, purchasing && styles.buttonDisabled]} disabled={purchasing || restoring} onPress={handleSubscribe}>
+            <Pressable
+              style={[styles.subscribeButton, purchasing && styles.buttonDisabled]}
+              disabled={purchasing || restoring}
+              onPress={handleSubscribe}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: purchasing || restoring, busy: purchasing }}
+            >
               <Text style={styles.subscribeButtonText}>
                 {purchasing ? strings.qa.subscribing : `${strings.qa.subscribeButton} · ${priceLabel}`}
               </Text>
             </Pressable>
-            <Pressable style={styles.restoreLink} disabled={purchasing || restoring} onPress={handleRestore}>
+            <Pressable style={styles.restoreLink} disabled={purchasing || restoring} onPress={handleRestore} accessibilityRole="button" accessibilityState={{ disabled: purchasing || restoring, busy: restoring }}>
               <Text style={styles.restoreLinkText}>{restoring ? strings.qa.restoring : strings.qa.restoreButton}</Text>
             </Pressable>
             <Text style={styles.renewNote}>{strings.fortune.autoRenewNote}</Text>
@@ -540,7 +552,13 @@ export default function FortuneScreen({
         {tab === "daily" && !dailyLoading && dailyError && <ErrorNotice text={dailyError} retryLabel={strings.common.retryLabel} onRetry={retryDaily} />}
 
         {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && !revealed && (
-          <Pressable onPress={handleOpenDaily} onPressIn={handleSealPressIn} onPressOut={handleSealPressOut}>
+          <Pressable
+            onPress={handleOpenDaily}
+            onPressIn={handleSealPressIn}
+            onPressOut={handleSealPressOut}
+            accessibilityRole="button"
+            accessibilityLabel={`${strings.fortune.sealHeading}. ${strings.fortune.sealButtonLabel}`}
+          >
             <Animated.View style={[styles.sealCard, { transform: [{ scale: sealScale }] }]}>
               <View style={styles.sealIconRing}>
                 <Sparkles size={20} strokeWidth={1.75} color={COLORS.gold} />
@@ -796,11 +814,17 @@ export default function FortuneScreen({
 
             {monthlyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
             {!monthlyLoading && monthlyError && <ErrorNotice text={monthlyError} retryLabel={strings.common.retryLabel} onRetry={retryMonthly} />}
+            {/* The Bond/Shift badges below mean nothing without a key. */}
+            {!monthlyLoading && !monthlyError && monthly?.some((m) => m.compatibility && m.branchRelation !== "none") && (
+              <Text style={styles.branchLegend}>{strings.fortune.branchLegend}</Text>
+            )}
             {!monthlyLoading && !monthlyError && monthly && (
               <View style={styles.weekList}>
                 {monthly
                   .filter((m) => m.compatibility)
-                  .map((m) => (
+                  .map((m, i, rows) => (
+                    // Neighbouring months often share the same relation copy; say "same flow" instead
+                    // of printing the identical paragraph twice. Full text, no 2-line cut-off.
                     <View key={m.monthIndex} style={styles.monthRow}>
                       <View style={styles.monthRowHeader}>
                         <Text style={styles.monthRowDate}>
@@ -819,9 +843,11 @@ export default function FortuneScreen({
                           )}
                         </View>
                       </View>
-                      <Text style={styles.monthRowText} numberOfLines={2}>
-                        {domainText(m.compatibility!.relation, monthlyDomain)}
-                      </Text>
+                      {i > 0 && domainText(rows[i - 1].compatibility!.relation, monthlyDomain) === domainText(m.compatibility!.relation, monthlyDomain) ? (
+                        <Text style={styles.monthRowSame}>{strings.fortune.monthSameAsPrevious}</Text>
+                      ) : (
+                        <Text style={styles.monthRowText}>{domainText(m.compatibility!.relation, monthlyDomain)}</Text>
+                      )}
                     </View>
                   ))}
               </View>
@@ -875,7 +901,7 @@ const styles = StyleSheet.create({
   legalLink: { minHeight: 44, justifyContent: "center" },
   legalLinkText: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.subheadline, textDecorationLine: "underline" },
   restoreLinkText: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline },
-  noticeText: { fontFamily: FONTS.regular, fontSize: 12, color: "#E0A296", textAlign: "center" },
+  noticeText: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.danger, textAlign: "center" },
   // One segmented control instead of four bordered boxes; short labels so es fits.
   tabRow: {
     flexDirection: "row",
@@ -891,10 +917,10 @@ const styles = StyleSheet.create({
   tabButtonActive: { backgroundColor: "rgba(111,169,139,0.14)" },
   tabLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.subheadline },
   tabLabelActive: { color: COLORS.gold },
-  // #E0A296 (was #CB6249, 4.3:1) — the same soft coral as noticeText, 7:1 on the background.
-  errorText: { fontFamily: FONTS.regular, fontSize: 13, color: "#E0A296", marginTop: 20 },
+  // COLORS.danger (was #CB6249, 4.3:1 — then a one-off #E0A296): the palette error color, passes 4.5:1.
+  errorText: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.danger, marginTop: 20 },
   errorBlock: { marginTop: 20, alignItems: "flex-start" },
-  errorBlockText: { fontFamily: FONTS.regular, fontSize: 13, color: "#E0A296" },
+  errorBlockText: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.danger },
   retryButton: { minHeight: 44, justifyContent: "center" },
   retryLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.gold },
   sealCard: {
@@ -1037,7 +1063,9 @@ const styles = StyleSheet.create({
   monthRowDate: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.headline },
   monthRowRight: { flexDirection: "row", alignItems: "center", gap: 6 },
   monthRowStage: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.subheadline },
+  branchLegend: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.footer, marginTop: 10 },
   monthRowText: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline },
+  monthRowSame: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer },
   branchBadge: { borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 },
   branchBadgeHap: { backgroundColor: "rgba(111,169,139,0.15)" },
   branchBadgeChung: { borderWidth: 1, borderColor: "rgba(217,201,163,0.35)" },

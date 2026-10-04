@@ -24,14 +24,10 @@ import { COLORS } from "../theme/colors";
 import type { ChatExtract } from "./ChatScreen";
 import type { QuizDiagnosis } from "./QuizScreen";
 import { FONTS } from "../theme/fonts";
+import { ELEMENT_COLORS } from "../lib/elements";
 
-const ELEMENT_COLOR: Record<string, string> = {
-  wood: "#4E8368",
-  fire: "#C1503B",
-  earth: "#B98A4E",
-  metal: "#C7CAD1",
-  water: "#3E6EA0",
-};
+// One source for element colours (lib/elements.ts); the quiz used to carry a drifted copy.
+const ELEMENT_COLOR = ELEMENT_COLORS;
 const ELEMENT_KEYS = ["wood", "fire", "earth", "metal", "water"] as const;
 // Celadon-led, no red: a high share on a dimension (82% anxiety) is a tendency, not a warning.
 const DIMENSION_BAR_COLORS = [COLORS.gold, "#7FA8D6", "#C2A86B", "#9C8FBF", "#8FB09B"];
@@ -938,10 +934,10 @@ export default function ReportScreen({
       <SafeAreaView style={styles.centerRoot}>
         <View style={styles.errorCard}>
           <Text style={styles.errorText}>{errorText}</Text>
-          <Pressable onPress={fetchReport} style={styles.retryButton}>
+          <Pressable onPress={fetchReport} style={styles.retryButton} accessibilityRole="button">
             <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
           </Pressable>
-          <Pressable onPress={onBack} style={styles.retryButton}>
+          <Pressable onPress={onBack} style={styles.retryButton} accessibilityRole="button">
             <Text style={styles.backLabel}>{strings.report.homeLinkLabel}</Text>
           </Pressable>
         </View>
@@ -987,7 +983,7 @@ export default function ReportScreen({
       }
       footer={
         pageIndex === pages.length - 1 ? (
-          <Pressable onPress={onBack} style={styles.homeButton}>
+          <Pressable onPress={onBack} style={styles.homeButton} accessibilityRole="button">
             <Text style={styles.homeButtonLabel}>{strings.report.homeButtonLabel}</Text>
           </Pressable>
         ) : null
@@ -1004,6 +1000,17 @@ export default function ReportScreen({
 
 function PageShell({ paper, children }: { paper?: boolean; children: React.ReactNode }) {
   return <View style={[pageStyles.shell, paper ? pageStyles.shellPaper : pageStyles.shellDark]}>{children}</View>;
+}
+
+/** Body of a short page, label included: sits at the optical middle instead of hanging from the
+ * top over an empty lower two-thirds, and scrolls (top-aligned) when a long es/en text outgrows
+ * the screen. The label goes inside so it stays with the text it names. */
+function CenteredBody({ children }: { children: React.ReactNode }) {
+  return (
+    <ScrollView style={pageStyles.centeredScroll} contentContainerStyle={pageStyles.centeredBody} showsVerticalScrollIndicator={false}>
+      {children}
+    </ScrollView>
+  );
 }
 
 function Eyebrow({ children, ink }: { children: React.ReactNode; ink?: boolean }) {
@@ -1063,6 +1070,7 @@ function TocPage({
   paywallPageIndex: number | null;
   onSelect: (pageIndex: number) => void;
 }) {
+  const strings = useStrings();
   return (
     <PageShell paper>
       <Text style={pageStyles.tocEyebrow}>{eyebrow}</Text>
@@ -1075,7 +1083,7 @@ function TocPage({
             hitSlop={6}
             onPress={() => onSelect(e.locked ? (paywallPageIndex ?? e.pageNumber - 1) : e.pageNumber - 1)}
             accessibilityRole="button"
-            accessibilityLabel={e.label}
+            accessibilityLabel={e.locked ? strings.report.tocLockedA11y(e.label) : e.label}
           >
             <Text style={pageStyles.tocIdx}>{String(i + 1).padStart(2, "0")}</Text>
             <Text style={pageStyles.tocName} numberOfLines={2}>
@@ -1239,11 +1247,11 @@ function QuotePage({ quote, eyebrow, note, leadOnly }: { quote: string; eyebrow?
   const { lead, rest } = leadOnly ? splitLead(quote) : { lead: quote, rest: note ?? "" };
   return (
     <PageShell>
-      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-      <View style={pageStyles.quoteMid}>
+      <CenteredBody>
+        {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
         <Text style={pageStyles.pullQuote}>{sentenceLines(lead)}</Text>
         {!!rest && <Prose style={[pageStyles.caseBody, pageStyles.answerNote]} text={rest} />}
-      </View>
+      </CenteredBody>
     </PageShell>
   );
 }
@@ -1256,12 +1264,12 @@ function QuotePage({ quote, eyebrow, note, leadOnly }: { quote: string; eyebrow?
 function AnswerQuotePage({ eyebrow, prompt, answer, note }: { eyebrow: string; prompt: string; answer: string; note?: string }) {
   return (
     <PageShell>
-      <Eyebrow>{eyebrow}</Eyebrow>
-      <View style={pageStyles.quoteMid}>
+      <CenteredBody>
+        <Eyebrow>{eyebrow}</Eyebrow>
         <Text style={pageStyles.quotePrompt}>{prompt}</Text>
         <Text style={[pageStyles.pullQuote, pageStyles.answerQuoteSpacing]}>{sentenceLines(answer)}</Text>
         {!!note && <Prose style={[pageStyles.caseBody, pageStyles.answerNote]} text={note} />}
-      </View>
+      </CenteredBody>
     </PageShell>
   );
 }
@@ -1370,11 +1378,11 @@ function CardPage({ kind, indexLabel, title, body }: { kind: "jade" | "warm" | "
   const color = kind === "jade" ? COLORS.gold : kind === "warm" ? "#C1846A" : "#7FA8D6";
   return (
     <PageShell>
-      <Text style={[pageStyles.cardIndex, { color }]}>{indexLabel}</Text>
-      <View style={pageStyles.cardMid}>
+      <CenteredBody>
+        <Text style={[pageStyles.cardIndex, pageStyles.cardIndexCentered, { color }]}>{indexLabel}</Text>
         <Text style={pageStyles.cardTitle} accessibilityRole="header">{title}</Text>
         <Prose style={pageStyles.cardBody} text={body} />
-      </View>
+      </CenteredBody>
     </PageShell>
   );
 }
@@ -1498,14 +1506,27 @@ function PaywallPage({
           )}
           {!!decadePreviewLine && <Text style={pageStyles.paywallDecadePreview}>{decadePreviewLine}</Text>}
 
-          <Pressable style={[pageStyles.paywallBuyButton, busy && pageStyles.paywallButtonDisabled]} onPress={onBuyModule} disabled={busy}>
+          <Pressable
+            style={[pageStyles.paywallBuyButton, busy && pageStyles.paywallButtonDisabled]}
+            onPress={onBuyModule}
+            disabled={busy}
+            accessibilityRole="button"
+            accessibilityLabel={strings.report.paywallBuyLabel(formatUsd(REPORT_PRICE))}
+            accessibilityState={{ disabled: busy, busy: purchasing }}
+          >
             {purchasing ? <ActivityIndicator color={COLORS.background} /> : <Text style={pageStyles.paywallBuyButtonLabel}>{strings.report.paywallBuyLabel(formatUsd(REPORT_PRICE))}</Text>}
           </Pressable>
 
           <Text style={pageStyles.paywallOneTime}>{strings.report.paywallOneTimeNote}</Text>
 
           {ownedCount < TOTAL_MODULES && (
-            <Pressable style={[pageStyles.paywallBundleButton, busy && pageStyles.paywallButtonDisabled]} onPress={onBuyBundle} disabled={busy}>
+            <Pressable
+              style={[pageStyles.paywallBundleButton, busy && pageStyles.paywallButtonDisabled]}
+              onPress={onBuyBundle}
+              disabled={busy}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: busy }}
+            >
               <Text style={pageStyles.paywallBundleButtonLabel}>{strings.report.paywallBundleBuyLabel(formatUsd(BUNDLE_PRICE))}</Text>
               <Text style={pageStyles.paywallBundleSub}>
                 {ownedCount === 0
@@ -1532,7 +1553,7 @@ const styles = StyleSheet.create({
   centerRoot: { flex: 1, backgroundColor: COLORS.background, alignItems: "center", justifyContent: "center", paddingHorizontal: 32, gap: 16 },
   loadingText: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline, textAlign: "center" },
   errorCard: { width: "100%", backgroundColor: "rgba(203,98,73,0.08)", borderWidth: 1, borderColor: "rgba(203,98,73,0.35)", borderRadius: 12, padding: 16, gap: 12 },
-  errorText: { fontFamily: FONTS.regular, fontSize: 13, color: "#E0A296" },
+  errorText: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.danger },
   retryButton: { alignSelf: "flex-start", minHeight: 44, justifyContent: "center", paddingHorizontal: 4 },
   retryLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.gold },
   backLabel: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.subheadline },
@@ -1549,11 +1570,12 @@ const pageStyles = StyleSheet.create({
   brandRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 18 },
   brandLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 3, color: COLORS.gold, textTransform: "uppercase" },
 
-  eyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 16 },
+  // Sentence case, like the fortune screen: these labels run to 40+ characters ("What you actually answered · …").
+  eyebrow: { fontFamily: FONTS.semibold, fontSize: 13, letterSpacing: 0.2, color: COLORS.gold, marginBottom: 16 },
   eyebrowInk: { color: "#5C5237" },
 
   pageFoot: { marginTop: "auto", flexDirection: "row", justifyContent: "space-between" },
-  pageFootText: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 1.5, color: COLORS.footer, textTransform: "uppercase" },
+  pageFootText: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 0.2, color: COLORS.footer },
 
   coverMid: { flex: 1, justifyContent: "flex-start", paddingTop: "18%" },
   coverTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 27, lineHeight: 36, color: COLORS.headline, marginBottom: 4 },
@@ -1562,10 +1584,11 @@ const pageStyles = StyleSheet.create({
   coverSub: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline },
   coverSource: { marginTop: 22, marginBottom: 28 },
 
-  tocEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: "#5C5237", marginTop: 24, marginBottom: 12 },
+  tocEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: "#5C5237", marginTop: 24, marginBottom: 12 },
   tocTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 24, lineHeight: 31, color: "#22301F", marginBottom: 26 },
-  tocList: { gap: 15 },
-  tocRow: { flexDirection: "row", alignItems: "baseline", gap: 8 },
+  // Rows carry their own vertical padding (plus hitSlop) so each is a ~44pt target, not 16pt text.
+  tocList: { gap: 0 },
+  tocRow: { flexDirection: "row", alignItems: "baseline", gap: 8, paddingVertical: 8 },
   tocIdx: { fontFamily: FONTS.semibold, fontSize: 12, color: "#5C5237", width: 18 },
   tocName: { fontFamily: FONTS.semibold, fontSize: 13, color: "#22301F", flexShrink: 1 },
   tocDots: { flex: 1, borderBottomWidth: 1, borderBottomColor: "#B7A97D", borderStyle: "dotted", marginBottom: 3 },
@@ -1592,11 +1615,11 @@ const pageStyles = StyleSheet.create({
     overflow: "hidden",
   },
   sentenceGap: { marginTop: 9 },
-  caseBody: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 25, color: "#C7C3D1", marginTop: 12 },
+  caseBody: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 25, color: COLORS.headline, marginTop: 12 },
 
   dataTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 22, color: COLORS.headline, marginTop: 20, marginBottom: 6 },
   dataSubtitle: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.footer, marginBottom: 18 },
-  dataNote: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 22, color: "#C7C3D1", marginTop: 18 },
+  dataNote: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 22, color: COLORS.headline, marginTop: 18 },
   readingNote: { marginTop: 14 },
   bars: { gap: 14, marginVertical: 10 },
   barRow: { gap: 5 },
@@ -1609,7 +1632,8 @@ const pageStyles = StyleSheet.create({
   elemNum: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 56, lineHeight: 60, color: COLORS.gold, marginBottom: 6 },
   elemHeading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 21, lineHeight: 28, color: COLORS.headline, marginBottom: 4 },
 
-  quoteMid: { flex: 1, justifyContent: "flex-start", paddingTop: "22%" },
+  centeredScroll: { flex: 1 },
+  centeredBody: { flexGrow: 1, justifyContent: "center", paddingTop: 12, paddingBottom: 56 },
   pullQuote: {
     fontFamily: FONTS.displayItalic,
     fontVariant: ["lining-nums"],
@@ -1624,7 +1648,7 @@ const pageStyles = StyleSheet.create({
   quotePrompt: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 18, color: COLORS.footer },
   answerNote: { marginTop: 18 },
   setCardMid: { flexGrow: 1, paddingTop: "8%", paddingBottom: 12 },
-  setCardLabel: { fontFamily: FONTS.bold, fontSize: 11, letterSpacing: 1, color: COLORS.gold, marginBottom: 8 },
+  setCardLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: COLORS.gold, marginBottom: 8 },
   setCardAnswer: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 19, lineHeight: 27, color: COLORS.headline, marginTop: 6 },
   setCardBlockGap: { marginTop: 26 },
   snapshotValue: {
@@ -1639,7 +1663,7 @@ const pageStyles = StyleSheet.create({
 
   chatQuoteBox: { backgroundColor: "rgba(62,110,160,0.08)", borderWidth: 1, borderColor: "rgba(62,110,160,0.35)", borderRadius: 10, padding: 16, marginVertical: 14 },
   chatQuoteHeader: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 },
-  chatQuoteLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 1, color: "#7FA8D6" },
+  chatQuoteLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: "#7FA8D6" },
   chatQuoteText: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 15, lineHeight: 24, color: COLORS.headline },
 
   breatherLabelBox: {
@@ -1653,16 +1677,17 @@ const pageStyles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 16,
   },
-  breatherLabelText: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 1, textTransform: "uppercase", color: COLORS.gold },
+  breatherLabelText: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: COLORS.gold },
   breatherTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 19, lineHeight: 25, color: COLORS.headline },
   takeawayBox: { marginTop: 18, backgroundColor: "rgba(255,255,255,0.03)", borderWidth: 1, borderColor: COLORS.border, borderRadius: 8, padding: 14 },
-  takeawayText: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 20, color: "#C7C3D1" },
+  takeawayText: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 20, color: COLORS.headline },
   takeawayBold: { fontFamily: FONTS.bold, color: COLORS.gold },
 
-  cardIndex: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 1.5, textTransform: "uppercase", marginTop: 20 },
-  cardMid: { flex: 1, justifyContent: "flex-start", paddingTop: "20%" },
+  cardIndex: { fontFamily: FONTS.semibold, fontSize: 13, letterSpacing: 0.2, marginTop: 20 },
+  // Inside the centred group the label sits right above its title, not pinned to the page top.
+  cardIndexCentered: { marginTop: 0, marginBottom: 12 },
   cardTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 30, color: COLORS.headline, marginBottom: 14 },
-  cardBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 23, color: "#C7C3D1" },
+  cardBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 23, color: COLORS.headline },
 
   fitLabel: { fontFamily: FONTS.bold, fontSize: 12, marginBottom: 4 },
 
@@ -1675,7 +1700,7 @@ const pageStyles = StyleSheet.create({
   paywallChapterDivider: { borderTopWidth: 1, borderTopColor: "rgba(111,169,139,0.1)" },
   paywallChapterLabel: { flex: 1, fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline },
   paywallTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 19, color: COLORS.headline, textAlign: "center", marginTop: 4 },
-  paywallBody: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 21, color: "#C7C3D1", textAlign: "center" },
+  paywallBody: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 21, color: COLORS.headline, textAlign: "center" },
   paywallButtonDisabled: { opacity: 0.6 },
   paywallBuyButton: { width: "100%", backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 14, alignItems: "center", marginTop: 8 },
   paywallBuyButtonLabel: { fontFamily: FONTS.bold, fontSize: 14, color: COLORS.background },
@@ -1684,9 +1709,9 @@ const pageStyles = StyleSheet.create({
   paywallBundleButtonLabel: { fontFamily: FONTS.bold, fontSize: 13, color: COLORS.headline },
   paywallBundleSub: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.subheadline, textAlign: "center" },
   paywallLockedNote: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.gold, textAlign: "center" },
-  paywallDecadePreview: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: "#C7C3D1", textAlign: "center" },
+  paywallDecadePreview: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.headline, textAlign: "center" },
   paywallRestoreButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 8 },
   paywallDisclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.subheadline, textAlign: "center", marginTop: 14, paddingHorizontal: 6 },
   paywallRestoreLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline, marginTop: 4, textDecorationLine: "underline" },
-  paywallNotice: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: "#E0A296", textAlign: "center", marginTop: 4 },
+  paywallNotice: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.danger, textAlign: "center", marginTop: 4 },
 });

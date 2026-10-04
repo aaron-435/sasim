@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: "#1C1B24",
+    borderBottomColor: COLORS.border,
   },
   backButton: {
     minHeight: 44,
@@ -382,9 +382,8 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     fontFamily: FONTS.semibold,
     fontSize: 12,
-    letterSpacing: 1.5,
+    letterSpacing: 0.2,
     color: COLORS.gold,
-    textTransform: "uppercase",
   },
   remaining: {
     paddingLeft: 22,
@@ -463,7 +462,7 @@ const styles = StyleSheet.create({
   subscribeNoticeText: {
     fontFamily: FONTS.regular,
     fontSize: 12,
-    color: "#E0A296",
+    color: COLORS.danger,
     textAlign: "center",
   },
   errorCard: {
@@ -477,7 +476,7 @@ const styles = StyleSheet.create({
   errorText: {
     fontFamily: FONTS.regular,
     fontSize: 13,
-    color: "#E0A296",
+    color: COLORS.danger,
   },
   retryButton: {
     flexDirection: "row",

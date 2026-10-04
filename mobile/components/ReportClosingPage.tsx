@@ -20,6 +20,16 @@ export type ClosingNext = {
   onPress: () => void;
 };
 
+/** Keeps the writer's own line breaks; a single unbroken block becomes two-sentence paragraphs. */
+function closingParagraphs(text: string): string[] {
+  const byBreaks = text.split(/\n+/).map((p) => p.trim()).filter(Boolean);
+  if (byBreaks.length > 1) return byBreaks;
+  const sentences = text.split(/(?<=[.!?…。])\s+/).filter(Boolean);
+  const groups: string[] = [];
+  for (let i = 0; i < sentences.length; i += 2) groups.push(sentences.slice(i, i + 2).join(" "));
+  return groups.length ? groups : [text];
+}
+
 export default function ReportClosingPage({
   title,
   body,
@@ -46,7 +56,11 @@ export default function ReportClosingPage({
           {title}
         </Text>
       ) : null}
-      <Text style={styles.body}>{body}</Text>
+      {closingParagraphs(body).map((para, i) => (
+        <Text key={i} style={[styles.body, i > 0 && styles.bodyNext]}>
+          {para}
+        </Text>
+      ))}
 
       {summary ? (
         <View style={styles.summaryBlock}>
@@ -108,6 +122,7 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 26, paddingTop: 28, paddingBottom: 40 },
   title: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 25, lineHeight: 32, color: COLORS.headline, marginBottom: 14 },
   body: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 25, color: COLORS.headline },
+  bodyNext: { marginTop: 14 },
 
   summaryBlock: { marginTop: 32, paddingTop: 24, borderTopWidth: 1, borderTopColor: COLORS.border },
   eyebrow: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.gold, marginBottom: 10 },
@@ -135,5 +150,5 @@ const styles = StyleSheet.create({
   nextCtaLabel: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.gold },
 
   disclaimers: { marginTop: 36 },
-  disclaimer: { fontFamily: FONTS.regular, fontSize: 11.5, lineHeight: 17, color: COLORS.footer, marginTop: 8 },
+  disclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.footer, marginTop: 8 },
 });

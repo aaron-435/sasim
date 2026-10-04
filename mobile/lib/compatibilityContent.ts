@@ -87,7 +87,7 @@ const en: CompatibilityContent = {
       caution: "The pressure isn't always comfortable, so it helps to check, out loud, that it's coming from care.",
     },
   },
-  bondNote: "On top of that, your two day-masters form a classic bond pair — this combination carries an extra pull that isn't easy to explain.",
+  bondNote: "On top of that, the elements at the core of your two charts form one of saju's classic pairings — this combination carries an extra pull that isn't easy to explain.",
 };
 
 const es: CompatibilityContent = {
@@ -123,7 +123,7 @@ const es: CompatibilityContent = {
       caution: "La presión no siempre es cómoda, así que ayuda confirmar en voz alta que viene del cariño.",
     },
   },
-  bondNote: "Además, los dos Maestros del Día forman un vínculo clásico: esta combinación trae una atracción extra que no es fácil de explicar.",
+  bondNote: "Además, los elementos que están en el centro de sus dos cartas forman una de las parejas clásicas del saju: esta combinación trae una atracción extra que no es fácil de explicar.",
 };
 
 export const COMPATIBILITY_CONTENT: Record<Locale, CompatibilityContent> = { ko, en, es };

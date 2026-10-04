@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { listSavedReports, type SavedReport } from "../lib/reportStorage";
 import { COLORS } from "../theme/colors";
+import { moduleDisplayTitle } from "../lib/quiz/modules";
 import { FONTS } from "../theme/fonts";
 
 // Reopen a report generated earlier — see lib/reportStorage.ts for why this exists.
@@ -45,7 +46,7 @@ export default function MyReportsScreen({ onOpen, onBack }: { onOpen: (report: S
             >
               <FileText size={20} strokeWidth={1.75} color={COLORS.gold} />
               <View style={styles.rowText}>
-                <Text style={styles.rowTitle}>{r.moduleTitle}</Text>
+                <Text style={styles.rowTitle}>{moduleDisplayTitle(r.moduleTitle)}</Text>
                 <Text style={styles.rowDate}>{strings.myReports.savedOn(new Date(r.savedAt).toLocaleDateString(locale))}</Text>
               </View>
               <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />

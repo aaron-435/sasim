@@ -155,10 +155,46 @@
 
 ## 마무리
 
-- [ ] 19. 재진단 + 문서 갱신
+- [x] 19. 재진단 + 문서 갱신
   - 선행: 1~18
   - 변경: `/impeccable critique` 앱 전체 재실행, `WIKI.md`(원국 컴포넌트, 리포트 공용 페이지 부품, 글꼴 토큰, iPad 레이아웃), `PRODUCT.md` 해당 줄.
   - QA: 새 진단 점수가 27/40 초과, 결과 파일 경로 기록. mobile tsc exit 0.
+  - 적용(2026-10-04): `/impeccable critique` 앱 전체를 두 에이전트로 재실행(A 디자인 리뷰: mobile-web 8082 헤드리스 Playwright 375×812 + iPad 1회, 온보딩은 도시 화면까지 실제로·제출 안 함, 채팅은 소스만 / B 탐지기 CLI + 화면 6곳 오버레이). WIKI는 원국 그림·리포트 공용 부품(ReportPager·ReportClosingPage)·글꼴 토큰·iPad 기둥이 각 항목 때 이미 반영돼 있어 진단 기록 위치 한 줄만 추가. `PRODUCT.md`: 홈 무료 핵심에 원국 그림, iPad 가운데 기둥(640pt), 신년 리포트 페이지 넘김 + 공용 마지막 장, 미정 항목을 "가운데 기둥 이상의 태블릿 레이아웃"으로.
+  - QA: 진단 결과 `.impeccable/critique/2026-10-04T01-35-17Z__mobile-screens.md` → 29/40(이전 27, P0 0·P1 3). 탐지기 CLI `impeccable detect --json mobile/screens`·`mobile/components` → `[]` exit 0(여전히 RN StyleSheet를 못 읽음, 픽스처로 확인), 오버레이 진짜 지적은 리포트 대문자 eyebrow·자간·11.5px 면책뿐(차트 SVG 대비 105건은 오탐). mobile tsc(큰 스택) → exit 0. 새 P1 3개는 아래 발견 사항(이번 SPEC 범위 밖, 다음 작업 후보).
+
+## 재진단 후속 (2026-10-04, 사용자 요청: 19번 재진단의 P1+P2 전부를 한 번에)
+
+- [x] 20. 재진단 P1+P2 일괄 수정
+  - 변경:
+    - 압박 규칙: `mobile/lib/dailyFortuneContent.ts` pressing 리듬(otherChallengesSelf)의 재물·건강 문구와 총론 1·2번 변형의 건강("작은 탈")·지출 예측 문장을 결과 예측 없는 속도 조절 조언으로(ko/en/es). 무료 운세는 그 리듬의 날 총론 대신 중립 문구 `fortune.paceFreeHeadline/Body`(`FortuneScreen.tsx` 무료 분기). 신년 미리보기 "단련되는 해" 개요를 성장 먼저로(`mobile/lib/yearFortuneContent.ts`, 웹 사본 `lib/yearFortuneContent.ts`는 그대로 — 앱 화면만 씀).
+    - 궁합: 날짜 검증(`lib/zodiac.ts` `toISODateString`이 없는 날짜(2/31 등)도 거르게 — 온보딩 생년월일에도 적용), 칸 아래 오류 문구 `compatibility.dobInvalid`, 비활성 버튼 이유 한 줄, 이름을 비우면 예시 문구 대신 "상대/Them/La otra persona"(`unnamedOther`, `otherTypeLabelUnnamed`).
+    - 리포트 넘김: `ReportPager` 가장자리 탭을 16% → 여백 안 22pt 띠(넓은 화면은 기둥 밖 여백까지). 목차 줄을 약 44pt 터치 높이로.
+    - 접근성: 구매 버튼(리포트 단건·번들, 운세 구독·복원)·운세 봉인 카드·리포트 재시도/홈·타입 공유·채팅 재시도/점검 버튼에 역할(필요 시 라벨·상태), 채팅 보내기 라벨 `chat.sendLabel`, `ChatBubbles` 타이핑 점이 동작 줄이기면 멈춤.
+    - 온보딩: 인트로 문구에서 "운명을 바꾸고 싶나요?"·"무료 30분 리딩" 삭제(실제 계산 설명 + "사주 풀이는 무료 · 가입 없이 시작"), 인증 코드 화면을 순서에서 빼고 인트로 아래 링크로(`App.tsx` 흐름·뒤로 대상), 언어 목록·머리말 en → es → ko, 성별 화면에 묻는 이유 한 줄(`gender.why`).
+    - 정리: 팔레트 밖 색 `#1C1B24`·`#131219`·`#E0A296`을 `COLORS.border/background/danger`로(dev QA 패널 제외), 퀴즈·리포트 오행 색을 `lib/elements.ts` 하나로, 12운성 en 이름 5개를 쉬운 말로(Birth → A Fresh Start, Conception → A Seed Planted 등), 궁합 "day-masters" 문구, 퀴즈·내 리포트의 "Module N" 접두어 제거, 퀴즈 슬라이더 미조작 상태는 "–"와 흐린 손잡이, 리포트 소제목·카드 번호를 문장형으로(대문자·자간 제거, "Weakness" → "Growth edge"/"Punto a cuidar"/"보완할 점"), 마지막 장 본문 문단 간격·면책 12pt, 궁합 공유 카드 라벨 12pt, 원국 그림 분포 막대에 범례.
+  - QA: mobile tsc(큰 스택) → exit 0. mobile-web 미리보기(8082, mobile 프리셋): 홈 원국 범례 "Fire 13% · Earth 38% · Metal 38% · Water 13%"(jordan). 심층 리포트 가장자리 탭 실측 left 0·width 22 / left 353·width 22, 목차 05번 줄 오른쪽 쪽 번호(x=340) 탭 → 12쪽으로 이동(progressbar 12), 마지막 장(41/41) 문단 간격. 새 온보딩(localStorage 비움, `?qa=off`): 언어 English 먼저 → 인트로 새 문구·코드 링크 → 링크는 인증 화면, 뒤로 → 인트로, 화살표 → 바로 닉네임 → 성별 화면 이유 문구. 궁합(lucia, es): 31/02/1990 → "Revisa la fecha…" + 버튼 비활성, 미입력 시 이유 한 줄, 28/02로 고치고 이름 비운 채 제출 → "Lucía · La otra persona"·"Su perfil · …". 퀴즈 1번 kicker "BURNOUT"(모듈 번호 없음), 값 "–"·흐린 손잡이. 콘솔 오류 없음. pressing 날 무료 운세는 날짜를 고를 수 없어 코드로만 확인.
+  - QA(재진단): `/impeccable critique` 두 에이전트 재실행 → `.impeccable/critique/2026-10-04T02-16-28Z__mobile-screens.md` 30/40(27 → 29 → 30, P1 3 → 1). 탐지기 CLI `[]` exit 0, Pressable/Touchable 103개 전부 역할 있음, 오버레이 진짜 지적은 목차 eyebrow(경계선)뿐. 이번 수정 항목은 A 리뷰가 화면에서 모두 해결로 확인(pressing 날 무료 문구는 jisoo가 마침 그 리듬이라 ko/en 실제 확인).
+  - [ ] (사용자 확인) 실기기 VoiceOver로 리포트 구매 버튼·운세 구독 버튼이 "버튼"으로 읽히는지, 동작 줄이기 켜고 채팅 타이핑 점이 멈춰 있는지, 리포트 오른쪽 가장자리를 눌러 넘김이 되는지(22pt 띠).
+
+- [x] 21. 재진단(30/40) P1·P2·P3 일괄 수정 (2026-10-04 사용자: 채팅 시계는 숨기고 세트 진행 표시, 나머지도 지금)
+  - 변경:
+    - 채팅: 헤더의 30분 카운트다운(마지막 1분 빨강)을 없애고 "이야기 2 / 5"(`chat.setProgress`, 화면 읽기 `setProgressA11y`)로. 서버는 여전히 30분에 대화를 마무리하고 27분부터 마무리로 이끈다(`lib/chatPrompts.ts` `isFinalTurn`·`buildTimeNoticeV2`) — 그래서 27분부터는 헤더가 색 없이 "정리 중"(`chat.timeUpLabel`)으로 바뀌어 끝이 갑작스럽지 않게 한다(재진단 3회차 지적 반영). 조기 마무리 7분 조건은 그대로.
+    - 홈: 히어로 아래 핵심 흐름 카드("5분 심리테스트로 시작하기" / 리포트가 있으면 "다음 심리테스트 해 보기" → 검사 목록), 목록에서 심리테스트 줄 제거(보통 4줄). 하다 만 퀴즈·상담 이어 하기는 진행 상태를 기기에 저장하는 구조가 없어 이번엔 안 함(발견 사항).
+    - 용어: 원국 캡션 "Your core" → "Your Day Master (you)"(es "Tu Maestro del Día (tú)", ko "나의 일간(나를 뜻하는 기운)"), 타입 화면 유형 이름 아래 한 줄 설명(`sajuType.typeGloss`), 연간 탭 월별 흐름에 합/전환 배지 범례(`fortune.branchLegend`, 배지 있는 달이 있을 때만).
+    - 리포트: 짧은 카드·인용·답변 페이지를 위에 매단 배치(위 16~22%) → 라벨까지 한 덩어리로 화면 가운데(`CenteredBody`, 길면 세로 스크롤 — 라벨을 위에 두고 본문만 가운데 두었더니 떨어져 보인다는 재진단 지적으로 라벨도 안으로), 신년 리포트 표지에 FATESAID 머리글과 계산 근거 줄, 목차·영역 라벨 en 문장형, "Weaknesses/puntos débiles/취약점" → "growth edges/puntos a cuidar/보완할 점"(카드 이름과 맞춤), 운세 섹션 라벨 en 문장형, 잠긴 목차 줄 화면 읽기 "잠김 · 누르면 잠금 해제 화면으로".
+    - Q&A: 질문 목록 처음 6개 + "질문 N개 더 보기".
+    - 작은 것: 미조작 슬라이더 화면 읽기 값 "아직 고르지 않음", 범례에 0% 오행도 표시, 설정 언어 목록 en → es → ko, 설정에 "구독·법적 고지" 섹션 복원(구매 복원·구독 관리·약관·개인정보 — 문구 키는 있었는데 화면에서 빠져 있었음), 본문색 `#C7C3D1` 10곳 → `COLORS.headline`, pressing 날 무료 문구 2문장 → 5문장, 신년 "투자에 유리" 문구와 12운성 병/Winding Down의 "몸이 쉽게 지친다" 문구를 속도 조절로(ko/en/es), 채팅 조기 마무리 라벨 12pt.
+  - QA: mobile tsc(큰 스택) → exit 0. mobile-web(8082, mobile 프리셋): 홈 핵심 흐름 카드·범례 "Wood 0% · Fire 13% …"·캡션 "Your Day Master (you) · Water"(jordan), 리포트 29/41 "Directional sense" 카드 본문이 화면 가운데, 타입 화면 설명 줄, Q&A "My Current Job" 질문 6개 + 더 보기, 설정(lucia, es) "Suscripción y legal" 아래 Restaurar compras·Gestionar suscripción·Términos, 연간 탭에 "Bond: a month…" 범례. 콘솔 오류 없음. 채팅 헤더는 퀴즈를 끝내야 열려 소스로만 확인.
+  - QA(재진단 3회차): `/impeccable critique` 두 에이전트 → `.impeccable/critique/2026-10-04T02-58-13Z__mobile-screens.md` 30/40(27 → 29 → 30 → 30), P1 3 → 1 → 0, 열 항목 모두 3점. 탐지기 CLI `[]` exit 0, Pressable 107개 모두 역할, `#C7C3D1` 0곳. 이번 수정은 모두 해결로 확인. 진단 뒤 지적 2개(채팅 30분 마무리 예고, 리포트 라벨 분리)를 고치고 mobile tsc(큰 스택) exit 0, mobile-web 리포트 29쪽에서 "Growth edge · 01 of 04" 라벨이 제목 바로 위에 함께 가운데 오는 것 확인(4회차 진단은 돌리지 않음).
+  - [ ] (사용자 확인) 실기기에서 설정 "구매 복원"이 RevenueCat 복원 후 알림을 띄우는지, "구독 관리"가 App Store/Play 구독 화면을 여는지, 채팅 헤더에 "이야기 N / 5"가 턴에 맞게 바뀌는지.
+
+- [x] 22. 재진단 3회차 P3 수정 (2026-10-04 사용자: 30분 상한은 예고만 두고 유지, 남은 P3 지금)
+  - 변경:
+    - 소제목 표기 통일: 대문자·넓은 자간 라벨 14곳을 문장형(자간 0.2)으로 — 퀴즈 모듈 라벨·완료 배지, 검사 목록 배지, Q&A 헤더·하위 주제·질문 목록 라벨, 설정 섹션, 채팅 헤더, 리포트 목차 eyebrow·표지 쪽수·psychology 라벨, 타입·궁합 공유 카드 eyebrow·라벨. 브랜드 표시 FATESAID만 대문자 유지. 원문도 문장형으로(en "Preview", "41 pages", "Saju compatibility", "Free AI counseling" / es "Vista previa", "páginas" / ko "미리보기", "41쪽").
+    - 타입 화면 공유 카드를 궁합처럼 점선 틀 "공유 이미지 미리보기" 안에(`sajuType.sharePreviewLabel`), 카드 내용은 화면 읽기에서 숨김(같은 글을 두 번 읽지 않게). 틀은 캡처 밖.
+    - 연간 탭 월별 흐름: 앞달과 같은 문구면 "앞달과 같은 흐름이 이어져요"(`fortune.monthSameAsPrevious`)로 대신하고, 2줄 잘림 없앰.
+    - 신년 리포트 마지막 장에 제목 "한 해를 맺으며 / Closing the year / Para cerrar el año"(`yearReport.chapterClosing`), 리포트 세트 카드 라벨 11 → 12pt.
+  - QA: mobile tsc(큰 스택) → exit 0. `grep -rn 'textTransform: "uppercase"' mobile/screens mobile/components` → 브랜드 라벨 4곳만(리포트·신년 표지, 인트로, 언어). mobile-web(8082, mobile 프리셋): 타입 화면 공유 카드가 "Share image preview" 점선 틀 안, eyebrow "Who you're born as" 문장형. 연간 탭 월별 흐름(jordan) "Mar 2027 · The same flow carries on from the month before." 6곳, 나머지 달은 전체 문장. 콘솔 오류 없음.
 
 ## 사용자 실행 (마지막)
 
@@ -166,7 +202,7 @@
   - 순서·확인 항목은 `TODO_2026-10-02.md` 13번 그대로. 이번 배치 작업 전에 먼저 끝내는 것을 권장(미푸시 커밋 14개가 쌓여 있음).
 
 - [ ] B. (사용자 실행) 이번 배치 배포와 실기기 확인
-  - 선행: A, 19
+  - 선행: A, 19, 20, 21, 22(운세 pressing 문구 수정 포함 — 2026-10-04 사용자 결정: 그 문구를 고친 뒤 이번 배치와 함께 배포).
   - 순서: 커밋 → (웹 파일을 바꿨으면) `git push origin main` → Vercel Ready 확인 → OTA(`cd mobile && npx --yes eas-cli update --branch production --environment production --message "디자인 진단 수정 배치" --non-interactive`) → TestFlight 앱 완전 종료 후 두 번 열기.
   - 확인할 것: 새 글꼴 로드, VoiceOver로 온보딩, 동작 줄이기, 홈 원국 그림, 공유 카드 저장, 신년·심층 리포트 넘김과 마지막 장, iPad.
   - (사용자 확인) 실기기·RevenueCat이 필요해 자동화할 수 없다.
@@ -192,3 +228,20 @@
 - (17번 중) VIN-V·SUN-O·FLM-O·FLM-W·MTN-H·FLD-H 6개 유형은 후보 약 200명 중 스페인어권·한국 인물이 하나도 맞지 않았다(목 일간 + 수 편중 등 조합이 드묾). 후보를 더 넣어 볼 수 있음.
 - (18번 중) iPad 세로(1024×1366)에서 두 리포트 표지는 내용이 위에 몰리고 아래가 크게 빈다(휴대폰 비율로 짠 표지). 표지만 세로 가운데 정렬할지 재진단 때 판단.
 - (18번 중) `ReportPager`의 `footer`(마지막 장 "홈으로" 버튼 줄)는 화면 전체 폭 막대로 남겨 두었다(위 테두리 선이 전체 폭). 기둥 폭으로 맞출지 재진단 때 판단.
+- (19번 재진단, P1) 압박 규칙 위반: 운세 "pressing" 리듬의 영역 문구가 모든 사용자에게 건강("작은 탈이 나기 쉬운"/"pick up a minor ailment")·재물("예상치 못한 지출… 투자는 미루는 게 안전") 결과를 예측한다(`mobile/lib/dailyFortuneContent.ts` ko 166~168, en 288~290, es 약 412). 같은 리듬의 무료 총론("A headwind", "자갈길")이 페이월 "What Pro opens" 바로 위에 온다(`FortuneScreen.tsx` 424~466). 페이싱 조언으로 고치고 무료는 중립 한 줄로.
+- (19번 재진단, P1) 궁합 폼 날짜 검증 없음: `CompatibilityScreen.tsx:80` `canSubmit`이 채워졌는지만 봐서 13/40/2030도 결과가 나온다. 생년월일 화면의 범위 검사 재사용 + 칸 아래 오류 문구. (12번 발견 사항의 이름 칸 예시 문구 대체 문제와 같이)
+- (19번 재진단, P1) `ReportPager.tsx` 137~141 가장자리 탭(양쪽 16%)이 내용 위에 있어 목차 줄 오른쪽(쪽 번호)을 누르면 그 장으로 가지 않고 다음 쪽으로 넘어간다(웹 확인). 마지막 장 "이 검사 시작하기" 오른쪽도 무반응 추정, 네이티브에서 세로 스크롤 시작을 막을 수 있음. 탭 영역을 기둥 밖 여백으로 옮기거나 상호작용·스크롤 페이지에선 끄기.
+- (19번 재진단, P2) 접근성 잔여: 구매 버튼 역할 없음(`ReportScreen.tsx` 1501·1508, `FortuneScreen.tsx` 466·471), 운세 봉인 카드 543 라벨 없음, 리포트 재시도·홈 941·944·990, 타입 공유 204, 채팅 298·314·317과 아이콘만 있는 보내기 335, `ChatBubbles.tsx:26` 타이핑 점 반복이 동작 줄이기 무시.
+- (19번 재진단, P2) 온보딩 약속·순서: 인트로 "Want to change your fate?" + "Free 30-minute reading · No credit card needed"(`mobile/lib/i18n/en.ts` 41~42, es·ko 동일)가 없는 기능을 약속하고 홈의 "사주는 점이 아니다"와 어긋남. 인증 코드 화면이 모든 신규 설치자에게 닉네임 앞에 나옴, 언어 목록 한국어가 맨 위, 성별을 묻는 이유 없음.
+- (19번 재진단) 그 밖: 팔레트 밖 색 `#1C1B24`·`#131219`(Chat 360·494, City 204, QA 365, Quiz 344)와 `#E0A296` 9곳(`COLORS.danger` 있음), Quiz·Report 오행 색 값이 서로 다름. 신년 리포트·연간 탭 12운성 용어("quiet-storage tone", "Conception / Incubation"). Q&A "사랑과 사람" 하위 화면 선택지 9개. 퀴즈 슬라이더가 5에 놓여 있어 이미 답한 것처럼 보임. 마지막 장 본문 줄 사이 문단 간격 없음. 신년 미리보기 무료 문구("A Year of Being Tempered… pressure grows heavier")가 구매 버튼 위 — 압박 규칙 경계선.
+- (20번 중) 신년 리포트 본문의 12운성 용어("quiet-storage tone", "unexpected-turn note")는 서버 프롬프트(`lib/yearReport*.ts`)가 만드는 문장이라 앱에서 못 고친다(SPEC 제외 범위). 프롬프트에 용어 대신 쉬운 말을 쓰라고 지시할지 별도 작업으로.
+- (20번 중) 인트로 화면의 전체 화면 버튼 층(`centerLayer`, zIndex 1)이 아래 약관·개인정보 링크 위에 덮여 있었을 수 있다. 이번에 코드 링크와 바닥글에 zIndex 2를 줘 웹에서 탭되는 것을 확인했지만, 네이티브에서 약관 링크가 이전에 눌렸는지는 확인하지 않았다.
+- (20번 중) 서버 사본 `lib/yearFortuneContent.ts`·`lib/twelveStagesContent.ts`는 앱과 문구가 달라졌다(앱 화면만 바꿈). 서버에서는 `lib/yearFortune.ts`·`lib/yearReportPrompts.ts`가 쓰므로, 맞추려면 웹 배포 → OTA 순서의 별도 작업(신년 리포트 12운성 용어 문제와 같이).
+- (20번 재진단, P1) 채팅 화면 30분 카운트다운(`ChatScreen.tsx:36` `TIME_LIMIT_MINUTES`, 242~247·266~270, 마지막 1분 `#CB6249` 빨강)이 PRODUCT의 "강제 종료·가짜 긴급 타이머 없음"과 어긋난다. 시계 대신 "세트 2/5" 진행 표시, 시간 예산은 보이지 않게 + 부드러운 마무리. (채팅은 이번 SPEC 제외 범위)
+- (20번 재진단, P2) 홈에서 핵심 흐름(검사 → 상담 → 리포트)이 같은 모양 5줄 중 4~5번째, 하다 만 퀴즈·상담 이어 하기 없음. 용어 불일치("Your core" vs 리포트 "Day Master", 유형 이름 설명 없음, 연간 탭 "Bond/Shift"). 리포트 쪽 2/3가 빈 페이지, 신년 표지에 브랜드·KASI·목차 없음, 목차 대소문자 혼용("Core Strength & Weaknesses" vs 카드 "Growth edge"). Q&A 하위 주제당 질문 20개(거의 같은 질문 포함).
+- (20번 재진단, 작은 것) 미조작 슬라이더가 화면은 "–"인데 화면 읽기는 "5 out of 10"(`QuizScreen.tsx` 279~283), 범례가 0% 오행을 숨김(리포트 3쪽은 없는 나무를 말함), 설정 화면 언어 목록은 여전히 한국어 먼저(`SettingsScreen.tsx:88`), 잠긴 목차 줄에 잠김 상태 없음, `#C7C3D1` 본문색 11곳(Chat/Quiz/Report), pressing 날 무료 문구가 2문장(다른 날 7문장), 연간 탭 "favorable for investments"·Q&A 투자 질문(재정 예측 규칙 점검), 구독자 12운성 "Winding Down: Body and mind tire more easily" 문구.
+- (21번 중) 하다 만 퀴즈·상담 이어 하기: 퀴즈 답과 상담 기록(서버 숨김 메모 `formulation` 포함)을 기기에 저장하는 구조가 없다. 저장 범위·만료(30분 예산과의 관계)를 정해야 하는 기능이라 별도 `/spec`으로.
+- (21번 중) Q&A 질문 은행(`mobile/data/questionBank.json`)에 거의 같은 질문이 있다("unexpected good luck" / "unexpectedly good news"). 은행 정리는 데이터 작업이라 별도로. "Investing & Building Wealth" 하위 주제가 재정 예측 규칙에 맞는지도 같이 검토.
+- (21번 중) 퀴즈 "다음" 버튼이 화면 위쪽(y≈300)에 있어 한 손 조작에 멀다. 하단 고정으로 옮길지 레이아웃 작업으로.
+- (21번 재진단) 남은 P2·P3: 하다 만 퀴즈·상담 이어 하기(위 발견 사항), v2 채팅에 30분 상한 자체를 둘지(제품 결정), 리포트 쪽이 위 정렬·가운데 정렬로 번갈아 보임과 짧은 카드 두 장을 한 쪽에 묶는 안, 대문자·자간 소제목 약 12곳(퀴즈 373·460, 검사 목록 173, Q&A 387·110·104, 설정 190, 리포트 목차·쪽 수·breather, 공유 카드)과 서버 제목의 Title Case, 타입 공유 미리보기 틀 없음(궁합처럼 "공유 이미지 미리보기" 틀), 월별 흐름 같은 문구 두 달씩 반복·2줄 잘림, 원국 그림 탭/설명, Q&A 질문을 누르면 확인 없이 하루 1개를 씀, 설정의 "주간 알림"을 무료 사용자에게도 보임, 리포트 강조색·종이 팔레트(`#7FA8D6`·`#5C5237` 등)가 팔레트 문서에 없음, 11px 라벨(`ReportScreen.tsx` setCardLabel, 원국 SVG).
+- (22번) 30분 상한은 2026-10-04 사용자 결정으로 유지(27분부터 "정리 중" 예고만). 아직 남은 것: 이어 하기, 리포트 쪽 정렬 번갈아 보임·짧은 카드 묶기, 서버 제목 Title Case, 원국 그림 탭/설명, Q&A 질문 한 번 탭에 하루 몫 사용(확인 없음), 설정 주간 알림을 무료 사용자에게도 보임, 리포트 강조색·종이 팔레트 문서화, 원국 SVG 11px 글자.

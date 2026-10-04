@@ -148,11 +148,11 @@ const ko: DailyFortuneContent = {
       overviewVariants: [
         {
           headline: "역풍이 부는 하루",
-          body: "오늘은 가려는 방향과 반대쪽에서 바람이 불어오는 것 같은, 유독 진도가 안 나가는 느낌을 받을 수 있는 날이에요. 일이 뜻대로 안 풀리거나 예상치 못한 걸림돌이 생기더라도, 이건 방향이 틀려서가 아니라 잠시 속도를 늦추라는 신호에 가깝습니다. 무리해서 역풍을 거슬러 전진하려 하면 오히려 체력만 크게 소모될 수 있어요. 오늘은 큰 결정을 새로 내리기보다, 이미 정한 방향을 유지하면서 버티는 데 집중하는 게 낫습니다. 사람들과의 관계에서도 사소한 오해나 마찰이 생기기 쉬운 하루라, 감정적으로 바로 반응하기보다 한 박자 쉬고 대응하는 게 훨씬 안전해요. 재정 면에서는 예상치 못한 지출이 생길 수 있으니 큰 지출이나 투자는 다음으로 미루는 게 좋습니다. 역풍은 영원히 불지 않으니, 오늘 하루만 잘 버티면 내일은 분명 바람의 방향이 달라질 거예요.",
+          body: "오늘은 가려는 방향과 반대쪽에서 바람이 불어오는 것 같은, 유독 진도가 안 나가는 느낌을 받을 수 있는 날이에요. 일이 뜻대로 안 풀리거나 예상치 못한 걸림돌이 생기더라도, 이건 방향이 틀려서가 아니라 잠시 속도를 늦추라는 신호에 가깝습니다. 무리해서 역풍을 거슬러 전진하려 하면 오히려 체력만 크게 소모될 수 있어요. 오늘은 큰 결정을 새로 내리기보다, 이미 정한 방향을 유지하면서 버티는 데 집중하는 게 낫습니다. 사람들과의 관계에서도 사소한 오해나 마찰이 생기기 쉬운 하루라, 감정적으로 바로 반응하기보다 한 박자 쉬고 대응하는 게 훨씬 안전해요. 돈에 관한 큰 결정도 하루쯤 묵혀 두면 더 또렷하게 보일 거예요. 역풍은 영원히 불지 않으니, 오늘 하루만 잘 버티면 내일은 분명 바람의 방향이 달라질 거예요.",
         },
         {
           headline: "자갈길을 걷는 날",
-          body: "평소보다 발밑이 울퉁불퉁하게 느껴지는, 걸음걸음이 조심스러워지는 하루예요. 사소한 일에서 자꾸 걸리는 느낌이 들거나, 순조롭게 될 줄 알았던 일이 예상보다 더디게 흘러갈 수 있습니다. 다만 자갈길이라고 해서 길을 잘못 든 건 아니에요 — 단지 오늘은 평소보다 천천히, 신경 써서 걸어야 하는 구간일 뿐입니다. 급하게 걸으면 발을 헛디딜 수 있으니, 오늘만큼은 속도를 늦추고 한 걸음 한 걸음 확인하며 나아가세요. 관계에서도 작은 말 한마디가 평소보다 크게 오해를 살 수 있는 날이라, 하고 싶은 말이 있다면 한 번 더 다듬어서 전달하는 게 좋습니다. 건강이나 컨디션 면에서도 크지 않은 탈이 나기 쉬우니 무리한 일정은 피하세요. 자갈길을 다 지나고 나면, 오늘 조심했던 걸음들이 오히려 더 단단한 다리를 만들어줄 거예요.",
+          body: "평소보다 발밑이 울퉁불퉁하게 느껴지는, 걸음걸음이 조심스러워지는 하루예요. 사소한 일에서 자꾸 걸리는 느낌이 들거나, 순조롭게 될 줄 알았던 일이 예상보다 더디게 흘러갈 수 있습니다. 다만 자갈길이라고 해서 길을 잘못 든 건 아니에요 — 단지 오늘은 평소보다 천천히, 신경 써서 걸어야 하는 구간일 뿐입니다. 급하게 걸으면 발을 헛디딜 수 있으니, 오늘만큼은 속도를 늦추고 한 걸음 한 걸음 확인하며 나아가세요. 관계에서도 작은 말 한마디가 평소보다 크게 오해를 살 수 있는 날이라, 하고 싶은 말이 있다면 한 번 더 다듬어서 전달하는 게 좋습니다. 일정도 빽빽하게 채우기보다 사이사이 여백을 두는 편이 오늘의 걸음에 맞습니다. 자갈길을 다 지나고 나면, 오늘 조심했던 걸음들이 오히려 더 단단한 다리를 만들어줄 거예요.",
         },
         {
           headline: "좁은 문을 지나는 하루",
@@ -163,9 +163,9 @@ const ko: DailyFortuneContent = {
           body: "예상보다 큰 파도가 연이어 밀려오는 것처럼, 오늘은 여러 일이 한꺼번에 몰려와 정신없게 느껴질 수 있는 날이에요. 하나씩 순서대로 처리하려 해도 자꾸 다음 파도가 밀려오는 것 같은 압박감이 들 수 있습니다. 이럴 때일수록 모든 파도를 다 막으려 하기보다, 지금 눈앞의 파도 하나에만 집중하는 게 훨씬 효율적이에요. 급한 대로 대응하려다 오히려 실수가 생길 수 있으니, 우선순위를 정하고 하나씩 처리해나가세요. 사람들과의 관계에서도 예민해지기 쉬운 하루라, 평소라면 넘어갔을 말에도 신경이 곤두설 수 있습니다. 감정적으로 대응하기보다 파도가 잠잠해질 때까지 잠시 거리를 두는 것도 방법이에요. 파도는 결국 지나가고, 오늘 버텨낸 만큼 내일은 훨씬 잔잔하게 느껴질 겁니다.",
         },
       ],
-      wealth: "예상치 못한 지출이나 재정적인 걸림돌이 생기기 쉬운 날이에요. 큰 결정이나 투자는 오늘보다 다음으로 미루는 게 안전합니다.",
+      wealth: "돈 문제는 새로 벌이기보다 정리하기 좋은 날이에요. 큰 결정은 하루 묵혀 두고, 오늘은 지출 내역을 한번 훑어보며 흐름을 확인해 보세요.",
       love: "관계에서 오해나 작은 마찰이 생기기 쉬운 날이에요. 감정적으로 대응하기보다 한 박자 쉬고 대화하면 오히려 더 가까워질 수 있습니다.",
-      health: "컨디션이 평소보다 떨어지거나 작은 탈이 나기 쉬운 날이에요. 무리하지 말고 평소보다 여유 있게 움직이세요.",
+      health: "속도를 한 칸 낮추면 더 오래 버틸 수 있는 날이에요. 일정 사이에 숨 고를 틈을 넣고, 평소보다 여유 있게 움직이세요.",
     },
   },
   weeklyBestDayIntro: "이번 주 가장 잘 맞는 기운의 날",
@@ -270,11 +270,11 @@ const en: DailyFortuneContent = {
       overviewVariants: [
         {
           headline: "A headwind",
-          body: "Today may feel like a wind is blowing straight against the direction you're trying to go — progress feels unusually slow. If things don't go as planned or an unexpected obstacle shows up, it's less a sign you're headed the wrong way and more a cue to slow down for now. Forcing your way straight into the headwind risks burning through your energy for nothing. Rather than making a big new decision today, focus on holding your ground and sticking with the direction you already chose. Small misunderstandings or friction are more likely in relationships today, so pausing before reacting emotionally is far safer than responding right away. Financially, unexpected expenses may show up, so it's better to put off any big purchase or investment. Headwinds never last forever — get through today, and the wind is bound to shift by tomorrow.",
+          body: "Today may feel like a wind is blowing straight against the direction you're trying to go — progress feels unusually slow. If things don't go as planned or an unexpected obstacle shows up, it's less a sign you're headed the wrong way and more a cue to slow down for now. Forcing your way straight into the headwind risks burning through your energy for nothing. Rather than making a big new decision today, focus on holding your ground and sticking with the direction you already chose. Small misunderstandings or friction are more likely in relationships today, so pausing before reacting emotionally is far safer than responding right away. A big money decision will look clearer after a day of letting it sit. Headwinds never last forever — get through today, and the wind is bound to shift by tomorrow.",
         },
         {
           headline: "Walking a gravel path",
-          body: "Today the ground underfoot feels rougher than usual, and every step calls for a little more care. Small things may keep tripping you up, or something that seemed like it would go smoothly may drag on longer than expected. But a gravel path doesn't mean you took a wrong turn — it just means today is a stretch that calls for walking slower and paying closer attention. Rushing risks a misstep, so slow down and check your footing with each step today. A single offhand comment can be taken the wrong way more easily than usual in relationships, so it's worth smoothing out what you want to say before you say it. Physically, minor ailments are more likely too, so avoid overloading your schedule. Once you're past the gravel, the careful steps you took today will end up building a sturdier bridge.",
+          body: "Today the ground underfoot feels rougher than usual, and every step calls for a little more care. Small things may keep tripping you up, or something that seemed like it would go smoothly may drag on longer than expected. But a gravel path doesn't mean you took a wrong turn — it just means today is a stretch that calls for walking slower and paying closer attention. Rushing risks a misstep, so slow down and check your footing with each step today. A single offhand comment can be taken the wrong way more easily than usual in relationships, so it's worth smoothing out what you want to say before you say it. Leaving a little space in your schedule fits today's pace better than packing it full. Once you're past the gravel, the careful steps you took today will end up building a sturdier bridge.",
         },
         {
           headline: "Passing through a narrow gate",
@@ -285,9 +285,9 @@ const en: DailyFortuneContent = {
           body: "Today may feel like wave after wave is arriving all at once, leaving you scrambling. Even trying to handle things one at a time, the pressure of the next wave already rolling in can feel relentless. In moments like this, it's far more effective to focus on the one wave right in front of you than to try to block them all. Trying to react to everything at once risks mistakes — set your priorities and work through them one by one. Relationships may feel more sensitive than usual too, so something you'd normally shrug off might get under your skin today. Rather than reacting emotionally, it can help to simply put some distance between you until the waves settle. The waves will pass eventually, and the more you hold steady today, the calmer tomorrow will feel.",
         },
       ],
-      wealth: "Unexpected expenses or financial snags are more likely today. It's safer to put off any big decision or investment until another day.",
+      wealth: "Money matters suit tidying up more than starting something new today. Let any big decision sit for a day, and use the time to look over where your spending has been going.",
       love: "Misunderstandings or small friction are more likely in your relationships today. Pausing before reacting, instead of responding emotionally, can actually bring you closer.",
-      health: "You may feel a bit below your usual baseline, or pick up a minor ailment. Don't push yourself — move at an easier pace than usual today.",
+      health: "Dropping your pace by a gear helps you go the distance today. Leave some breathing room between plans and move a little easier than usual.",
     },
   },
   weeklyBestDayIntro: "Your best-matched day this week",
@@ -392,11 +392,11 @@ const es: DailyFortuneContent = {
       overviewVariants: [
         {
           headline: "Viento en contra",
-          body: "Hoy puede parecer que sopla un viento justo contra la dirección en la que quieres ir, y el avance se siente especialmente lento. Si las cosas no salen como planeabas o aparece un obstáculo inesperado, no es señal de que vayas mal, sino más bien un aviso para bajar el ritmo por ahora. Forzar el paso de frente contra el viento solo te haría gastar energía en balde. En lugar de tomar una gran decisión nueva hoy, concéntrate en mantener tu posición y seguir con el rumbo que ya elegiste. Los pequeños malentendidos o roces son más probables hoy en las relaciones, así que hacer una pausa antes de reaccionar es mucho más seguro que responder de inmediato. En lo económico pueden surgir gastos inesperados, así que es mejor aplazar cualquier compra o inversión grande. Ningún viento en contra dura para siempre: aguanta hoy, y mañana el viento cambiará de dirección.",
+          body: "Hoy puede parecer que sopla un viento justo contra la dirección en la que quieres ir, y el avance se siente especialmente lento. Si las cosas no salen como planeabas o aparece un obstáculo inesperado, no es señal de que vayas mal, sino más bien un aviso para bajar el ritmo por ahora. Forzar el paso de frente contra el viento solo te haría gastar energía en balde. En lugar de tomar una gran decisión nueva hoy, concéntrate en mantener tu posición y seguir con el rumbo que ya elegiste. Los pequeños malentendidos o roces son más probables hoy en las relaciones, así que hacer una pausa antes de reaccionar es mucho más seguro que responder de inmediato. Una decisión grande sobre dinero se verá más clara si la dejas reposar un día. Ningún viento en contra dura para siempre: aguanta hoy, y mañana el viento cambiará de dirección.",
         },
         {
           headline: "Un camino de grava",
-          body: "Hoy el suelo bajo tus pies se siente más áspero de lo normal, y cada paso pide un poco más de cuidado. Pequeñas cosas pueden seguir haciéndote tropezar, o algo que parecía que saldría sin problemas puede alargarse más de lo esperado. Pero un camino de grava no significa que hayas tomado el rumbo equivocado; solo quiere decir que hoy es un tramo que pide caminar más despacio y con más atención. Ir con prisa aumenta el riesgo de dar un mal paso, así que baja la velocidad y comprueba dónde pisas. Un comentario hecho sin darle importancia puede malinterpretarse con más facilidad de lo normal, así que conviene pulir lo que quieres decir antes de decirlo. También en lo físico son más probables las molestias pequeñas, así que evita cargar de más tu agenda. Cuando dejes atrás la grava, los pasos cuidadosos de hoy habrán construido una base más firme.",
+          body: "Hoy el suelo bajo tus pies se siente más áspero de lo normal, y cada paso pide un poco más de cuidado. Pequeñas cosas pueden seguir haciéndote tropezar, o algo que parecía que saldría sin problemas puede alargarse más de lo esperado. Pero un camino de grava no significa que hayas tomado el rumbo equivocado; solo quiere decir que hoy es un tramo que pide caminar más despacio y con más atención. Ir con prisa aumenta el riesgo de dar un mal paso, así que baja la velocidad y comprueba dónde pisas. Un comentario hecho sin darle importancia puede malinterpretarse con más facilidad de lo normal, así que conviene pulir lo que quieres decir antes de decirlo. Dejar algo de espacio en tu agenda encaja mejor con el ritmo de hoy que llenarla del todo. Cuando dejes atrás la grava, los pasos cuidadosos de hoy habrán construido una base más firme.",
         },
         {
           headline: "Una puerta estrecha",
@@ -407,9 +407,9 @@ const es: DailyFortuneContent = {
           body: "Hoy puede parecer que llegan olas una detrás de otra, todas a la vez, y que vas corriendo de un lado a otro. Aunque intentes ocuparte de las cosas de una en una, la presión de la siguiente ola que ya se acerca puede sentirse implacable. En momentos así, es mucho más eficaz concentrarte en la ola que tienes justo delante que intentar detenerlas todas. Reaccionar a todo a la vez aumenta el riesgo de errores, así que define tus prioridades y ve paso a paso. Las relaciones también pueden sentirse más delicadas de lo normal, y algo que habitualmente dejarías pasar hoy puede afectarte de verdad. En vez de reaccionar desde la emoción, puede ayudarte poner algo de distancia hasta que las olas se calmen. Las olas acaban pasando, y cuanto más firme te mantengas hoy, más tranquilo se sentirá mañana.",
         },
       ],
-      wealth: "Hoy es más probable que aparezcan gastos inesperados o algún tropiezo económico. Es más seguro dejar cualquier decisión o inversión importante para otro día.",
+      wealth: "Hoy el dinero pide ordenar más que empezar algo nuevo. Deja reposar un día cualquier decisión grande y aprovecha para repasar en qué se te ha ido el gasto.",
       love: "Hoy los malentendidos o los pequeños roces son más probables en tus relaciones. Hacer una pausa antes de reaccionar, en lugar de responder desde la emoción, puede acercarlos más.",
-      health: "Puede que te notes algo por debajo de tu nivel habitual, o que aparezca alguna molestia leve. No te exijas: muévete hoy a un ritmo más tranquilo de lo normal.",
+      health: "Bajar una marcha te ayuda a llegar más lejos hoy. Deja huecos para respirar entre un plan y otro, y muévete con un poco más de calma de lo habitual.",
     },
   },
   weeklyBestDayIntro: "Tu día con mejor energía esta semana",

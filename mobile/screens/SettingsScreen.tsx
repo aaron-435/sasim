@@ -5,15 +5,18 @@ import { ActivityIndicator, Alert, Linking, Platform, Pressable, ScrollView, Sty
 import { API_BASE_URL } from "../config";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LOCALES, LOCALE_LABELS, useLocale, useStrings, type Locale } from "../lib/i18n";
+import { LOCALE_LABELS, useLocale, useStrings, type Locale } from "../lib/i18n";
 import { getNotificationPreference, setNotificationPreference, type NotificationPreference } from "../lib/notificationPreference";
 import { applyNotificationPreference } from "../lib/routineNotification";
-import { hasQaProEntitlement } from "../lib/purchases";
+import { hasQaProEntitlement, restoreReports } from "../lib/purchases";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
 
 const NOTIFICATION_OPTIONS: NotificationPreference[] = ["off", "daily", "weekly"];
 
+
+// Same order as the first-run language picker: target markets (EN, ES) first.
+const LANGUAGE_ORDER: Locale[] = ["en", "es", "ko"];
 export default function SettingsScreen({ onBack, onLogout }: { onBack: () => void; onLogout: () => void }) {
   const strings = useStrings();
   const { locale, setLocale } = useLocale();
@@ -66,6 +69,23 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
     commitNotificationPreference(pref);
   }
 
+  // Restore lives here too, not only on paywalls: someone on a new phone looks for it in Settings.
+  const [restoring, setRestoring] = useState(false);
+  async function handleRestore() {
+    if (restoring) return;
+    setRestoring(true);
+    const ok = await restoreReports();
+    setRestoring(false);
+    Alert.alert(ok ? strings.settings.restoreDone : strings.settings.restoreFailed);
+  }
+  const manageSubscriptionUrl =
+    Platform.OS === "android" ? "https://play.google.com/store/account/subscriptions" : "https://apps.apple.com/account/subscriptions";
+  const legalLinks = [
+    { label: strings.settings.manageSubscription, url: manageSubscriptionUrl },
+    { label: strings.settings.termsLinkSettings, url: `${API_BASE_URL}/terms?lang=${locale}` },
+    { label: strings.settings.privacyLinkSettings, url: `${API_BASE_URL}/privacy?lang=${locale}` },
+  ];
+
   function handleResetPress() {
     Alert.alert(strings.settings.resetConfirmTitle, strings.settings.resetConfirmBody, [
       { text: strings.settings.cancelLabel, style: "cancel" },
@@ -85,7 +105,7 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
 
         <Text style={styles.sectionLabel} accessibilityRole="header">{strings.settings.languageSectionLabel}</Text>
         <View style={styles.optionList}>
-          {LOCALES.map((l: Locale) => (
+          {LANGUAGE_ORDER.map((l: Locale) => (
             <Pressable
               key={l}
               style={[styles.option, l === locale && styles.optionActive]}
@@ -128,6 +148,25 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
         </View>
         {permissionDenied && <Text style={styles.warning}>{strings.settings.notificationPermissionDenied}</Text>}
 
+        <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.legalSectionLabel}</Text>
+        <View style={styles.optionList}>
+          <Pressable
+            style={styles.option}
+            onPress={handleRestore}
+            disabled={restoring}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: restoring, busy: restoring }}
+          >
+            <Text style={styles.optionLabel}>{strings.qa.restoreButton}</Text>
+            {restoring && <ActivityIndicator size="small" color={COLORS.gold} />}
+          </Pressable>
+          {legalLinks.map((link) => (
+            <Pressable key={link.label} style={styles.option} onPress={() => Linking.openURL(link.url)} accessibilityRole="link">
+              <Text style={styles.optionLabel}>{link.label}</Text>
+            </Pressable>
+          ))}
+        </View>
+
         <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.resetSectionLabel}</Text>
         <Pressable style={styles.resetRow} onPress={handleResetPress} accessibilityRole="button">
           <Text style={styles.resetLabel}>{strings.settings.resetButton}</Text>
@@ -146,9 +185,8 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontFamily: FONTS.semibold,
     fontSize: 12,
-    letterSpacing: 1.5,
+    letterSpacing: 0.2,
     color: COLORS.subheadline,
-    textTransform: "uppercase",
     marginBottom: 12,
   },
   sectionSpacing: { marginTop: 28 },

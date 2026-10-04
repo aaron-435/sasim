@@ -1,5 +1,6 @@
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import MessageCircleQuestion from "lucide-react-native/icons/message-circle-question-mark";
+import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +15,8 @@ type Subcategory = { id: string; name_ko: string; name_en?: string; name_es?: st
 // Ported from components/QAQuestionPage.jsx — scrollable question list for one 중분류
 // (~20 questions each). Picking one is the only action here; it's handed back to
 // QAScreen, which pushes it as a chat message and fires the actual answer request.
+const INITIAL_QUESTIONS = 6;
+
 export default function QAQuestionScreen({
   subcategory,
   onBack,
@@ -25,6 +28,11 @@ export default function QAQuestionScreen({
 }) {
   const strings = useStrings();
   const { locale } = useLocale();
+  // ~20 questions per subcategory is a wall when a free user gets one a day: show the first
+  // few, the rest behind one tap.
+  const [expanded, setExpanded] = useState(false);
+  const visible = expanded ? subcategory.questions : subcategory.questions.slice(0, INITIAL_QUESTIONS);
+  const hiddenCount = subcategory.questions.length - visible.length;
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -38,7 +46,7 @@ export default function QAQuestionScreen({
           <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.qa.subcategoryHeading}</Text>
         </View>
 
-        {subcategory.questions.map((q) => (
+        {visible.map((q) => (
           <Pressable
             key={q.id}
             style={styles.card}
@@ -50,6 +58,11 @@ export default function QAQuestionScreen({
             <Text style={styles.cardLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{localizedText(q.text_ko, q.text_en, q.text_es, locale)}</Text>
           </Pressable>
         ))}
+        {hiddenCount > 0 && (
+          <Pressable onPress={() => setExpanded(true)} style={styles.moreButton} accessibilityRole="button" accessibilityLabel={strings.qa.moreQuestions(hiddenCount)}>
+            <Text style={styles.moreLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.moreQuestions(hiddenCount)}</Text>
+          </Pressable>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -86,9 +99,8 @@ const styles = StyleSheet.create({
   subcategoryLabel: {
     fontFamily: FONTS.semibold,
     fontSize: 12,
-    letterSpacing: 2,
+    letterSpacing: 0.2,
     color: COLORS.gold,
-    textTransform: "uppercase",
     marginBottom: 10,
   },
   heading: {
@@ -118,5 +130,17 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     color: COLORS.headline,
     flex: 1,
+  },
+  moreButton: {
+    minHeight: 44,
+    alignSelf: "flex-start",
+    justifyContent: "center",
+    paddingHorizontal: 4,
+    marginTop: 4,
+  },
+  moreLabel: {
+    fontFamily: FONTS.semibold,
+    fontSize: 14,
+    color: COLORS.gold,
   },
 });

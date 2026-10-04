@@ -87,6 +87,7 @@ export default function TypeScreen({
             </View>
           </View>
           <Text style={styles.typeName}>{typeName}</Text>
+          <Text style={styles.typeGloss}>{strings.sajuType.typeGloss}</Text>
           <Text style={styles.greeting}>{strings.home.greeting(nickname)}</Text>
           <View style={styles.sourceRow}>
             <CalcSourceBadge />
@@ -141,67 +142,79 @@ export default function TypeScreen({
           </View>
         )}
 
-        <View ref={cardRef} collapsable={false} style={styles.shareCard}>
-          <Image source={require("../assets/patterns/onboarding-bg.png")} resizeMode="cover" style={StyleSheet.absoluteFill} />
-          <View style={styles.shareCardInner}>
-            <Text style={styles.shareBrandLabel}>FATESAID</Text>
+        {/* Same labelled frame as the compatibility share card: the image repeats this screen, so
+            it must read as a preview of what gets shared, and screen readers skip its copy. */}
+        <View style={styles.previewFrame}>
+          <Text style={styles.previewLabel}>{strings.sajuType.sharePreviewLabel}</Text>
+          <View ref={cardRef} collapsable={false} style={styles.shareCard} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            <Image source={require("../assets/patterns/onboarding-bg.png")} resizeMode="cover" style={StyleSheet.absoluteFill} />
+            <View style={styles.shareCardInner}>
+              <Text style={styles.shareBrandLabel}>FATESAID</Text>
 
-            {showChart && elements && (
-              <>
-                <View style={styles.shareChart}>
-                  <FourPillarsChart fourPillars={fourPillars} elements={elements} centered />
+              {showChart && elements && (
+                <>
+                  <View style={styles.shareChart}>
+                    <FourPillarsChart fourPillars={fourPillars} elements={elements} centered />
+                  </View>
+                  <View style={styles.shareDivider} />
+                </>
+              )}
+
+              <View style={styles.shareCardMid}>
+                <View style={[styles.shareIconBubble, { backgroundColor: `${tint}22` }]}>
+                  <ArchetypeIcon size={22} strokeWidth={1.75} color={tint} />
                 </View>
-                <View style={styles.shareDivider} />
-              </>
-            )}
-
-            <View style={styles.shareCardMid}>
-              <View style={[styles.shareIconBubble, { backgroundColor: `${tint}22` }]}>
-                <ArchetypeIcon size={22} strokeWidth={1.75} color={tint} />
+                <Text style={styles.shareEyebrow}>{strings.sajuType.archetypeLabel}</Text>
+                <Text style={styles.shareTitle}>{archetype.name}</Text>
+                <Text style={styles.shareTagline}>{archetype.tagline}</Text>
+                <Text style={styles.shareBody}>{archetype.body}</Text>
               </View>
-              <Text style={styles.shareEyebrow}>{strings.sajuType.archetypeLabel}</Text>
-              <Text style={styles.shareTitle}>{archetype.name}</Text>
-              <Text style={styles.shareTagline}>{archetype.tagline}</Text>
-              <Text style={styles.shareBody}>{archetype.body}</Text>
-            </View>
 
-            <View style={styles.shareDivider} />
+              <View style={styles.shareDivider} />
 
-            <View style={styles.shareCardMid}>
-              <View style={[styles.shareIconBubble, { backgroundColor: `${ELEMENT_COLORS[sajuType.dominantElement]}22` }]}>
-                <ModeIcon size={22} strokeWidth={1.75} color={ELEMENT_COLORS[sajuType.dominantElement]} />
-              </View>
-              <Text style={styles.shareEyebrow}>{strings.sajuType.modeLabel}</Text>
-              <Text style={styles.shareTitle}>{mode.name}</Text>
-              <Text style={styles.shareTagline}>{mode.tagline}</Text>
-              <Text style={styles.shareBody}>{mode.body}</Text>
-            </View>
-
-            {celebrities.length > 0 && (
-              <>
-                <View style={styles.shareDivider} />
-                <View style={styles.shareCardMid}>
-                  <Text style={styles.shareEyebrow}>{strings.sajuType.celebritiesLabel}</Text>
-                  {/* Share card keeps its original two-person height; the screen above shows up to three. */}
-                  {celebrities.slice(0, 2).map((c) => (
-                    <View key={c.name} style={styles.shareCelebRow}>
-                      <Text style={styles.shareCelebName}>{celebrityDisplayName(c, locale)}</Text>
-                      <Text style={styles.shareCelebMeta}>
-                        {c.field[locale]} · {strings.sajuType.celebrityBirthYear(c.birthYear)}
-                      </Text>
-                      <Text style={styles.shareCelebBlurb}>{c.blurb[locale]}</Text>
-                    </View>
-                  ))}
+              <View style={styles.shareCardMid}>
+                <View style={[styles.shareIconBubble, { backgroundColor: `${ELEMENT_COLORS[sajuType.dominantElement]}22` }]}>
+                  <ModeIcon size={22} strokeWidth={1.75} color={ELEMENT_COLORS[sajuType.dominantElement]} />
                 </View>
-              </>
-            )}
+                <Text style={styles.shareEyebrow}>{strings.sajuType.modeLabel}</Text>
+                <Text style={styles.shareTitle}>{mode.name}</Text>
+                <Text style={styles.shareTagline}>{mode.tagline}</Text>
+                <Text style={styles.shareBody}>{mode.body}</Text>
+              </View>
 
-            <Text style={styles.shareTypeLine}>{strings.sajuType.shareCardTypeLine(nickname, typeName)}</Text>
-            <Text style={styles.shareFooter}>{strings.sajuType.shareCardFooter}</Text>
+              {celebrities.length > 0 && (
+                <>
+                  <View style={styles.shareDivider} />
+                  <View style={styles.shareCardMid}>
+                    <Text style={styles.shareEyebrow}>{strings.sajuType.celebritiesLabel}</Text>
+                    {/* Share card keeps its original two-person height; the screen above shows up to three. */}
+                    {celebrities.slice(0, 2).map((c) => (
+                      <View key={c.name} style={styles.shareCelebRow}>
+                        <Text style={styles.shareCelebName}>{celebrityDisplayName(c, locale)}</Text>
+                        <Text style={styles.shareCelebMeta}>
+                          {c.field[locale]} · {strings.sajuType.celebrityBirthYear(c.birthYear)}
+                        </Text>
+                        <Text style={styles.shareCelebBlurb}>{c.blurb[locale]}</Text>
+                      </View>
+                    ))}
+                  </View>
+                </>
+              )}
+
+              <Text style={styles.shareTypeLine}>{strings.sajuType.shareCardTypeLine(nickname, typeName)}</Text>
+              <Text style={styles.shareFooter}>{strings.sajuType.shareCardFooter}</Text>
+            </View>
           </View>
         </View>
 
-        <Pressable style={styles.shareButton} onPress={handleShare} disabled={sharing}>
+        <Pressable
+          style={styles.shareButton}
+          onPress={handleShare}
+          disabled={sharing}
+          accessibilityRole="button"
+          accessibilityLabel={strings.sajuType.shareButton}
+          accessibilityState={{ disabled: sharing, busy: sharing }}
+        >
           {sharing ? (
             <ActivityIndicator color={COLORS.ctaText} />
           ) : (
@@ -273,6 +286,14 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: COLORS.headline,
     marginTop: 4,
+  },
+  typeGloss: {
+    fontFamily: FONTS.regular,
+    fontSize: 13,
+    lineHeight: 19,
+    color: COLORS.subheadline,
+    textAlign: "center",
+    paddingHorizontal: 8,
   },
   greeting: {
     fontFamily: FONTS.regular,
@@ -353,12 +374,22 @@ const styles = StyleSheet.create({
   // Deliberately no fixed aspectRatio, same reasoning as CompatibilityScreen's share
   // card — the mode copy's length varies across types/locales, so the card grows to
   // fit its content instead of risking a clipped fixed-height box.
+  previewFrame: {
+    marginTop: 32,
+    padding: 14,
+    paddingTop: 12,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderColor: COLORS.disabledText,
+    backgroundColor: COLORS.inputBg,
+  },
+  previewLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.footer, textAlign: "center", marginBottom: 10 },
   shareCard: {
     width: "100%",
     borderRadius: 20,
     overflow: "hidden",
     backgroundColor: COLORS.background,
-    marginTop: 32,
   },
   shareCardInner: {
     paddingHorizontal: "9%",
@@ -374,7 +405,7 @@ const styles = StyleSheet.create({
   shareCelebMeta: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.gold, marginTop: 2 },
   shareCelebBlurb: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: 6 },
   shareIconBubble: { width: 52, height: 52, borderRadius: 26, alignItems: "center", justifyContent: "center", marginBottom: 14 },
-  shareEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 6 },
+  shareEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: COLORS.gold, marginBottom: 6 },
   shareTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 34, color: COLORS.headline },
   shareTagline: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.gold, textAlign: "center", marginTop: 8 },
   shareBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, textAlign: "center", marginTop: 14 },

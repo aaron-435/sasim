@@ -1,6 +1,6 @@
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useEffect, useRef } from "react";
-import { AccessibilityInfo, Animated, Easing, Linking, StyleSheet, View } from "react-native";
+import { AccessibilityInfo, Animated, Easing, Linking, Pressable, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AuraNextButton from "../components/AuraNextButton";
@@ -10,7 +10,7 @@ import { useStrings, useLocale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
-export default function IntroScreen({ onNext }: { onNext: () => void }) {
+export default function IntroScreen({ onNext, onVerifyCode }: { onNext: () => void; onVerifyCode: () => void }) {
   const strings = useStrings();
   const { locale } = useLocale();
   // 2026-09-13: web's /terms and /privacy now read this — without it, a
@@ -79,6 +79,12 @@ export default function IntroScreen({ onNext }: { onNext: () => void }) {
         </View>
 
         <View style={{ flex: 1 }} />
+
+        {/* Web-to-app handoff is the minority path, so it waits behind a quiet link instead of
+            being a screen every store install has to pass. */}
+        <Pressable onPress={onVerifyCode} style={styles.verifyLink} accessibilityRole="button" hitSlop={8}>
+          <Text style={styles.verifyLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.intro.verifyCodeLink}</Text>
+        </Pressable>
 
         <Text style={styles.footer} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>
           {strings.intro.freeNote}
@@ -151,7 +157,23 @@ const styles = StyleSheet.create({
     // ate every tap on the button underneath it.
     zIndex: 1,
   },
+  // zIndex above centerLayer (1): that full-screen layer otherwise sits on top of these taps.
+  verifyLink: {
+    alignSelf: "center",
+    minHeight: 44,
+    justifyContent: "center",
+    paddingHorizontal: 12,
+    marginBottom: 6,
+    zIndex: 2,
+  },
+  verifyLinkText: {
+    fontFamily: FONTS.medium,
+    fontSize: 13.5,
+    color: COLORS.gold,
+    textDecorationLine: "underline",
+  },
   footer: {
+    zIndex: 2,
     fontFamily: FONTS.regular,
     fontSize: 12,
     lineHeight: 18,

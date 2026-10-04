@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "../components/PatternBackground";
-import { LOCALES, LOCALE_LABELS, useLocale, type Locale } from "../lib/i18n";
+import { LOCALE_LABELS, useLocale, type Locale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
@@ -11,6 +11,9 @@ import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 // auto-detected from the device locale (explicit user choice per product decision).
 // A real settings screen to change it later doesn't exist yet; this picker's choice
 // is the only way to set it for now, persisted via LocaleContext/AsyncStorage.
+
+// Target markets first (EN, ES); Korean is shipped but not the default audience.
+const LANGUAGE_ORDER: Locale[] = ["en", "es", "ko"];
 export default function LanguageScreen({ onNext }: { onNext: () => void }) {
   const { setLocale } = useLocale();
 
@@ -30,10 +33,10 @@ export default function LanguageScreen({ onNext }: { onNext: () => void }) {
           {/* No dictionary lookup here on purpose — the user hasn't picked a locale
               yet, so this heading is shown in all three languages at once rather than
               guessing one. */}
-          <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>언어를 선택하세요 · Choose your language · Elige tu idioma</Text>
+          <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>Choose your language · Elige tu idioma · 언어를 선택하세요</Text>
 
           <View style={styles.optionList}>
-            {LOCALES.map((locale) => (
+            {LANGUAGE_ORDER.map((locale) => (
               <Pressable
                 key={locale}
                 style={styles.option}

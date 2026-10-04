@@ -55,9 +55,11 @@ type FeatureKey = "qa" | "yearReport" | "quiz" | "compat" | "cards" | "reports";
 
 // "romance" is the "사람과의 관계" concern — lead with the relationship feature there.
 const FEATURE_ORDER: Record<Track | "default", FeatureKey[]> = {
-  romance: ["compat", "yearReport", "cards", "qa", "quiz", "reports"],
-  career: ["qa", "yearReport", "cards", "quiz", "compat", "reports"],
-  default: ["qa", "yearReport", "cards", "quiz", "compat", "reports"],
+  // The psych test is not a list row: it is the product's core loop (test → chat → report)
+  // and gets its own card under the hero.
+  romance: ["compat", "yearReport", "cards", "qa", "reports"],
+  career: ["qa", "yearReport", "cards", "compat", "reports"],
+  default: ["qa", "yearReport", "cards", "compat", "reports"],
 };
 
 const FEATURE_ICONS = { qa: HelpCircle, quiz: Brain, compat: Users, cards: Share2, yearReport: CalendarDays, reports: FileText } as const;
@@ -362,6 +364,24 @@ export default function HomeScreen({
           </Pressable>
           )}
 
+          <Pressable
+            onPress={onOpenQuiz}
+            style={({ pressed }) => [styles.pathCard, pressed && styles.listRowPressed]}
+            accessibilityRole="button"
+            accessibilityLabel={`${hasSavedReports ? strings.home.pathTitleNext : strings.home.pathTitle}. ${strings.home.pathBody}`}
+          >
+            <View style={styles.pathEyebrowRow}>
+              <Brain size={14} strokeWidth={1.75} color={COLORS.gold} />
+              <Text style={styles.pathEyebrow}>{strings.home.pathEyebrow}</Text>
+            </View>
+            <Text style={styles.pathTitle}>{hasSavedReports ? strings.home.pathTitleNext : strings.home.pathTitle}</Text>
+            <Text style={styles.pathBody}>{strings.home.pathBody}</Text>
+            <View style={styles.pathCtaRow}>
+              <Text style={styles.pathCta}>{strings.home.pathCta}</Text>
+              <ArrowRight size={15} strokeWidth={2} color={COLORS.gold} />
+            </View>
+          </Pressable>
+
           {showChart && elements && (
             <View style={styles.section}>
               <Text style={styles.sectionTitle} accessibilityRole="header">
@@ -577,6 +597,20 @@ const styles = StyleSheet.create({
   section: {
     marginTop: 30,
   },
+  pathCard: {
+    marginTop: 16,
+    padding: 18,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(111,169,139,0.35)",
+    backgroundColor: "rgba(111,169,139,0.06)",
+  },
+  pathEyebrowRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 },
+  pathEyebrow: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold },
+  pathTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 21, lineHeight: 27, color: COLORS.headline },
+  pathBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 6 },
+  pathCtaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 14 },
+  pathCta: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.gold },
   sectionTitle: {
     fontFamily: FONTS.semibold,
     fontSize: 15,

@@ -62,7 +62,7 @@ const ko: YearFortuneContent = {
     selfChallengesOther: {
       headline: "주도하는 해",
       overview: "내가 상황을 이끌고 다스리는 힘이 강해지는 해예요. 원하는 걸 밀어붙이기 좋지만, 너무 통제하려 들면 주변과 마찰이 생길 수 있어요.",
-      wealth: "재물을 적극적으로 만들어가기 좋은 해예요. 투자나 사업적 시도에 유리하지만 과욕은 주의하세요.",
+      wealth: "스스로 벌이를 만들어 가려는 힘이 큰 해예요. 직접 움직여 키울 수 있는 일에 힘을 싣고, 큰 약속은 한 번 더 따져 보세요.",
       love: "주도권을 쥐고 관계를 이끌어가는 흐름이에요. 다만 상대를 너무 내 뜻대로 이끌려 하면 갈등이 생길 수 있어요.",
       career: "성과를 밀어붙이기 좋은 해예요. 리더십을 발휘할 기회가 많아지니 자신 있게 나서보세요.",
       study: "목표를 정해두고 밀어붙이면 성과가 나는 해예요. 다만 완벽주의는 오히려 발목을 잡을 수 있어요.",
@@ -70,7 +70,7 @@ const ko: YearFortuneContent = {
     },
     otherChallengesSelf: {
       headline: "단련되는 해",
-      overview: "외부의 압박이나 책임이 커지는 해예요. 편하지만은 않아도, 그 압박이 나를 한 단계 성장시키는 계기가 될 수 있어요.",
+      overview: "맡는 몫이 늘어나면서 한 단계 단단해지는 해예요. 쉬어 가는 틈을 스스로 챙기면, 이 시기에 쌓은 힘이 그대로 다음 단계의 바탕이 됩니다.",
       wealth: "지출을 조여야 하는 상황이 생기기 쉬운 해예요. 계획적으로 관리하면 오히려 단단해지는 계기가 돼요.",
       love: "관계에서 책임감이 커지는 해예요. 부담스러울 수 있지만, 그만큼 관계가 깊어지는 시기이기도 해요.",
       career: "책임이 무거워지는 해예요. 힘들어도 이 시기를 잘 넘기면 확실한 성장으로 이어져요.",
@@ -160,7 +160,7 @@ const en: YearFortuneContent = {
     selfChallengesOther: {
       headline: "A Year of Taking the Lead",
       overview: "Your ability to steer and take charge grows stronger this year. Good for pushing toward what you want, but trying to control everything can create friction.",
-      wealth: "A good year to actively build wealth — favorable for investments or business moves, but watch for overreach.",
+      wealth: "Your drive to build income runs high this year. Put it into work you can shape yourself, and give big commitments a second look.",
       love: "You'll tend to take the lead in relationships. Just don't push things too far in your own direction, or it can spark conflict.",
       career: "A good year to push results through. More chances to lead — step up with confidence.",
       study: "Setting a goal and pushing through it pays off this year — though perfectionism can actually hold you back.",
@@ -168,7 +168,7 @@ const en: YearFortuneContent = {
     },
     otherChallengesSelf: {
       headline: "A Year of Being Tempered",
-      overview: "Outside pressure or responsibility grows heavier this year. It's not always comfortable, but that pressure can be exactly what pushes you to the next level.",
+      overview: "A year that builds strength: you take on more, and carrying it well is what moves you up a level. Make room for rest along the way, and what you build now becomes the ground for what comes next.",
       wealth: "Spending may need tightening this year — managing it deliberately can actually leave you sturdier.",
       love: "Responsibility in relationships grows heavier this year. It can feel like a burden, but it's also when bonds deepen.",
       career: "Responsibility gets heavier this year. Push through it well and it turns into real, visible growth.",
@@ -258,7 +258,7 @@ const es: YearFortuneContent = {
     selfChallengesOther: {
       headline: "Un año para llevar la iniciativa",
       overview: "Crece tu capacidad de dirigir y de tomar el mando este año. Es bueno para ir tras lo que quieres, pero intentar controlarlo todo puede generar fricciones.",
-      wealth: "Buen año para generar dinero de forma activa: favorece las inversiones y los proyectos de negocio, pero cuida no excederte.",
+      wealth: "Este año tienes mucho impulso para generar ingresos. Ponlo en lo que puedes construir tú, y revisa dos veces los compromisos grandes.",
       love: "Tenderás a llevar la iniciativa en las relaciones. Procura no imponer demasiado tu manera de hacer las cosas, o puede surgir algún conflicto.",
       career: "Buen año para sacar resultados adelante. Habrá más ocasiones de liderar: da el paso con confianza.",
       study: "Ponerte una meta y ir tras ella da frutos este año, aunque el perfeccionismo puede acabar frenándote.",
@@ -266,7 +266,7 @@ const es: YearFortuneContent = {
     },
     otherChallengesSelf: {
       headline: "Un año que te fortalece",
-      overview: "Crecen la presión y la responsabilidad externas este año. No siempre será cómodo, pero esa presión puede ser justo lo que te impulse al siguiente nivel.",
+      overview: "Un año que te hace más fuerte: asumes más, y llevarlo bien es lo que te hace subir de nivel. Guarda espacio para descansar por el camino, y lo que construyas ahora será la base de lo que viene.",
       wealth: "Puede que este año toque ajustar los gastos; llevarlos con orden puede dejarte en una posición más firme.",
       love: "La responsabilidad en las relaciones pesa más este año. Puede sentirse como una carga, pero también es una etapa en la que los vínculos se profundizan.",
       career: "La responsabilidad pesa más este año. Si la llevas bien, se convierte en un crecimiento real y visible.",

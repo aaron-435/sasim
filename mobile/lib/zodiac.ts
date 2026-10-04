@@ -35,6 +35,8 @@ export function toISODateString(year: string, month: string, day: string): strin
   if (!Number.isInteger(y) || y < 1900 || y > 9999) return "";
   if (!Number.isInteger(m) || m < 1 || m > 12) return "";
   if (!Number.isInteger(d) || d < 1 || d > 31) return "";
+  // Reject days the month doesn't have (02-31, 04-31, 02-29 outside leap years).
+  if (new Date(Date.UTC(y, m - 1, d)).getUTCDate() !== d) return "";
   const iso = `${String(y).padStart(4, "0")}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
   if (iso > new Date().toISOString().split("T")[0]) return "";
   return iso;

@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   },
   resultsBox: {
     marginTop: 6,
-    backgroundColor: "#131219",
+    backgroundColor: COLORS.background,
     borderWidth: 1,
     borderColor: COLORS.border,
     borderRadius: 10,

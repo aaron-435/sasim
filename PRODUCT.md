@@ -20,7 +20,7 @@ Saju and psychology fused on one person's data: a real calendar-based saju calcu
 
 ## Operating Context
 
-- Primary product: native app (React Native / Expo) on iOS and Android, currently dark appearance only. iPad support is enabled in the build config.
+- Primary product: native app (React Native / Expo) on iOS and Android, currently dark appearance only. iPad support is enabled in the build config; on wide screens (iPad) content sits in a centered reading column (max 640pt) rather than a tablet-specific layout.
 - Web (fatesaidapp.com, Next.js) is a lead-gen surface only: ad traffic lands on a landing page (real-calculation pitch, labelled fictional report sample, FAQ, single "see my chart, free" CTA), gets a free taste of Q&A, and is sent to install the app. No payment or login on web.
 - No account or signup: anonymous session data; purchases authenticate through the OS store sheet (Apple ID / Google account), restored via restore-purchases.
 - Daily-use rituals: opening today's fortune (streak), daily Q&A quota, a local reminder notification.
@@ -28,13 +28,13 @@ Saju and psychology fused on one person's data: a real calendar-based saju calcu
 ## Capabilities and Constraints
 
 - Onboarding: language → intro (or web verification-code handoff) → nickname, gender, birth date, birth time (unknown allowed), birth city (worldwide) → concern (relationships vs. self & daily life) → Home.
-- Free core: saju reading (five-element distribution, saju type among 50, decade fortune), compatibility with another person, 1 Q&A question/day.
+- Free core: saju reading (a four-pillars chart with the five-element distribution, saju type among 50, decade fortune), compatibility with another person, 1 Q&A question/day.
 - Subscription ($7.99/month, RevenueCat): 10 Q&A questions/day, daily/weekly/this-month/year fortune.
 - 11 psych-test modules → 25-turn AI counseling chat (five 5-turn sets, each opening on one of the user's own quiz answers) → paginated deep report whose test × conversation cards tie those answers to what the user said; the report's back half is sold per module ($14.99) or as a bundle.
 - Share cards exported as images for social stories: saju type, compatibility, and 9:16 domain cards (how I find money, what sets my heart racing free; my bright spot this year is Pro).
-- Year-ahead report (one-time purchase per year, `year_report_<year>`): five life areas, a 12-month timeline, a four-step action plan; generated on the server only after it verifies the purchase with RevenueCat. Finished reports (year and deep) can be exported as a magazine-style PDF via the OS share sheet.
+- Year-ahead report (one-time purchase per year, `year_report_<year>`), read in the same paged format as the deep report, both ending on a shared closing page (one-line summary, share, PDF, next step): five life areas, a 12-month timeline, a four-step action plan; generated on the server only after it verifies the purchase with RevenueCat. Finished reports (year and deep) can be exported as a magazine-style PDF via the OS share sheet.
 - Delivery: EAS OTA updates for JS-only changes; anything adding a native dependency needs a new store build.
-- Undecided: account/auth provider for cross-device sync; tablet-specific layouts; light appearance.
+- Undecided: account/auth provider for cross-device sync; tablet-specific layouts beyond the centered column (e.g. two-column); light appearance.
 
 ## Brand Commitments
 

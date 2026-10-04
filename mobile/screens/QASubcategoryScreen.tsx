@@ -105,9 +105,8 @@ const styles = StyleSheet.create({
   categoryLabel: {
     fontFamily: FONTS.semibold,
     fontSize: 12,
-    letterSpacing: 2,
+    letterSpacing: 0.2,
     color: COLORS.gold,
-    textTransform: "uppercase",
   },
   heading: {
     fontFamily: FONTS.display,

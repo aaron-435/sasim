@@ -10,7 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { elementWithEmoji } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
-import { getLocalizedQuestions, getModuleById, resolveModuleLocale } from "../lib/quiz/modules";
+import { getLocalizedQuestions, getModuleById, moduleDisplayTitle, resolveModuleLocale } from "../lib/quiz/modules";
 import {
   classifyProfile,
   computeAllDimensionResults,
@@ -23,14 +23,8 @@ import {
 } from "../lib/quiz/quizProfile";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { ELEMENT_COLORS } from "../lib/elements";
 
-const ELEMENT_COLORS: Record<string, string> = {
-  wood: "#4E8368",
-  fire: "#CB6249",
-  earth: "#B98A4E",
-  metal: "#C7C3D1",
-  water: "#3E6EA0",
-};
 
 export type QuizDiagnosis = {
   moduleId: string;
@@ -202,7 +196,7 @@ export default function QuizScreen({
             <Text style={styles.resultTitle} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{diagnosis.typeInfo.title}</Text>
             <Text style={styles.resultHook} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{diagnosis.typeInfo.hook}</Text>
             <View style={styles.resultFooter}>
-              <Text style={styles.resultModuleTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{moduleTitle}</Text>
+              <Text style={styles.resultModuleTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{moduleDisplayTitle(moduleTitle)}</Text>
               <Text style={styles.resultBrand} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.brand}</Text>
             </View>
           </View>
@@ -223,7 +217,10 @@ export default function QuizScreen({
   }
 
   const sliderOptions = current.options as { minLabel: string; maxLabel: string };
-  const sliderValueText = strings.quiz.sliderValueText(sliderValue, 1, 10, sliderOptions.minLabel, sliderOptions.maxLabel);
+  // Untouched, the thumb only sits at the midpoint by default; announce that instead of "5 of 10".
+  const sliderValueText = sliderTouched
+    ? strings.quiz.sliderValueText(sliderValue, 1, 10, sliderOptions.minLabel, sliderOptions.maxLabel)
+    : strings.quiz.sliderUnset;
 
   return (
     <SafeAreaView style={styles.root}>
@@ -248,7 +245,7 @@ export default function QuizScreen({
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.moduleRow}>
           <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-          <Text style={styles.moduleLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{moduleTitle}</Text>
+          <Text style={styles.moduleLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{moduleDisplayTitle(moduleTitle)}</Text>
         </View>
         <Text style={styles.prompt} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{current.prompt}</Text>
 
@@ -287,9 +284,11 @@ export default function QuizScreen({
               aria-valuemax={10}
               aria-valuenow={sliderValue}
               aria-valuetext={sliderValueText}
-              minimumTrackTintColor={COLORS.gold}
+              // Untouched: no filled track, muted thumb and a dash, so the default middle
+              // position doesn't read as an answer already given.
+              minimumTrackTintColor={sliderTouched ? COLORS.gold : COLORS.border}
               maximumTrackTintColor={COLORS.border}
-              thumbTintColor={COLORS.gold}
+              thumbTintColor={sliderTouched ? COLORS.gold : COLORS.footer}
             />
             <Text
               style={[styles.sliderValue, !sliderTouched && styles.sliderValueUntouched]}
@@ -297,7 +296,7 @@ export default function QuizScreen({
               accessibilityElementsHidden
               importantForAccessibility="no-hide-descendants"
             >
-              {sliderValue}
+              {sliderTouched ? sliderValue : "–"}
             </Text>
             {showSliderHint && (
               <Text style={styles.sliderHint} maxFontSizeMultiplier={MAX_FONT_SCALE.body} accessibilityLiveRegion="polite" aria-live="polite">
@@ -341,7 +340,7 @@ const styles = StyleSheet.create({
   progressTrack: {
     flex: 1,
     height: 3,
-    backgroundColor: "#1C1B24",
+    backgroundColor: COLORS.border,
     borderRadius: 2,
     overflow: "hidden",
   },
@@ -369,9 +368,8 @@ const styles = StyleSheet.create({
   moduleLabel: {
     fontFamily: FONTS.semibold,
     fontSize: 12,
-    letterSpacing: 1.5,
+    letterSpacing: 0.2,
     color: COLORS.gold,
-    textTransform: "uppercase",
   },
   prompt: {
     fontFamily: FONTS.display,
@@ -456,9 +454,8 @@ const styles = StyleSheet.create({
   doneBadgeLabel: {
     fontFamily: FONTS.semibold,
     fontSize: 12,
-    letterSpacing: 1.5,
+    letterSpacing: 0.2,
     color: COLORS.gold,
-    textTransform: "uppercase",
   },
   resultCard: {
     width: "100%",
@@ -489,7 +486,7 @@ const styles = StyleSheet.create({
   elementChipLabel: {
     fontFamily: FONTS.semibold,
     fontSize: 12,
-    color: "#C7C3D1",
+    color: COLORS.headline,
   },
   resultTitle: {
     fontFamily: FONTS.display,
@@ -502,7 +499,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
     fontSize: 13.5,
     lineHeight: 22,
-    color: "#C7C3D1",
+    color: COLORS.headline,
     marginBottom: 20,
   },
   resultFooter: {

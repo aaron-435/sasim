@@ -10,6 +10,7 @@ import { API_BASE_URL } from "../config";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
 import { dobFieldOrder, dobSeparator } from "../lib/dobOrder";
+import { toISODateString } from "../lib/zodiac";
 import { COMPATIBILITY_CONTENT } from "../lib/compatibilityContent";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { formatSajuTypeName } from "../lib/sajuTypeContent";
@@ -77,7 +78,10 @@ export default function CompatibilityScreen({
   const dobMaxLens = { year: 4, month: 2, day: 2 };
   const dobPlaceholders = { year: strings.dob.yearPlaceholder, month: strings.dob.monthPlaceholder, day: strings.dob.dayPlaceholder };
 
-  const canSubmit = !!selfDayMasterChar && isFemale !== null && year.length === 4 && month.length > 0 && day.length > 0;
+  const dobComplete = year.length === 4 && month.length > 0 && day.length > 0;
+  // Same rule as onboarding: a real calendar day, not in the future.
+  const dobInvalid = dobComplete && toISODateString(year, month, day) === "";
+  const canSubmit = !!selfDayMasterChar && isFemale !== null && dobComplete && !dobInvalid;
 
   function onChangeCityQuery(v: string) {
     setCityQuery(v);
@@ -173,7 +177,9 @@ export default function CompatibilityScreen({
     const content = COMPATIBILITY_CONTENT[locale] ?? COMPATIBILITY_CONTENT.ko;
     const relationCopy = content.relations[result.compatibility.relation];
     const tint = ELEMENT_COLORS[result.compatibility.selfDayMasterElement] ?? COLORS.gold;
-    const otherDisplayName = otherName.trim() || strings.compatibility.namePlaceholder;
+    // A blank name must not fall back to the input's example text ("e.g. Jamie").
+    const hasOtherName = otherName.trim().length > 0;
+    const otherDisplayName = hasOtherName ? otherName.trim() : strings.compatibility.unnamedOther;
 
     return (
       <SafeAreaView style={styles.root}>
@@ -197,7 +203,9 @@ export default function CompatibilityScreen({
 
           {result.other.sajuType && (
             <Text style={styles.otherTypeLine}>
-              {strings.compatibility.otherTypeLabel(otherDisplayName, formatSajuTypeName(locale, result.other.sajuType))}
+              {hasOtherName
+                ? strings.compatibility.otherTypeLabel(otherDisplayName, formatSajuTypeName(locale, result.other.sajuType))
+                : strings.compatibility.otherTypeLabelUnnamed(formatSajuTypeName(locale, result.other.sajuType))}
             </Text>
           )}
 
@@ -340,6 +348,11 @@ export default function CompatibilityScreen({
             </Fragment>
           ))}
         </View>
+        {dobInvalid && (
+          <Text style={styles.fieldError} accessibilityLiveRegion="polite" aria-live="polite">
+            {strings.compatibility.dobInvalid}
+          </Text>
+        )}
 
         <Text style={styles.fieldLabel}>{strings.compatibility.timeHeading}</Text>
         <View style={styles.row}>
@@ -425,6 +438,8 @@ export default function CompatibilityScreen({
         )}
 
         {error && <Text style={styles.error}>{error}</Text>}
+        {/* Say why the button is dimmed instead of leaving a silent disabled state. */}
+        {!error && !canSubmit && !dobInvalid && <Text style={styles.submitHint}>{strings.compatibility.errorMissing}</Text>}
 
         <Pressable
           style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]}
@@ -501,6 +516,8 @@ const styles = StyleSheet.create({
   resultCity: { fontFamily: FONTS.medium, fontSize: 14.5, color: COLORS.headline },
   resultCountry: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   error: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.danger, marginTop: 14 },
+  fieldError: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.danger, marginTop: 8 },
+  submitHint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, marginTop: 14 },
   submitButton: {
     alignItems: "center",
     justifyContent: "center",
@@ -556,7 +573,7 @@ const styles = StyleSheet.create({
   },
   shareBrandLabel: { fontFamily: FONTS.bold, fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: 28 },
   shareCardMid: { alignItems: "center", width: "100%" },
-  shareEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 2, textTransform: "uppercase", color: COLORS.gold, marginBottom: 4 },
+  shareEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: COLORS.gold, marginBottom: 4 },
   shareNames: { fontFamily: FONTS.semibold, fontSize: 17, color: COLORS.headline, textAlign: "center" },
   shareHeadline: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 36, color: COLORS.headline, textAlign: "center", marginTop: 18 },
   shareScoreLine: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.subheadline, textAlign: "center", marginTop: 10, marginBottom: 8 },
@@ -568,7 +585,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 14,
   },
-  shareDetailLabel: { fontFamily: FONTS.bold, fontSize: 10.5, letterSpacing: 1.5, textTransform: "uppercase" },
+  shareDetailLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2 },
   shareDetailText: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.headline, marginTop: 6 },
   shareBondNote: { fontFamily: FONTS.medium, fontSize: 12.5, lineHeight: 19, color: COLORS.gold, textAlign: "center", marginTop: 16 },
   shareFooter: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, textAlign: "center", marginTop: 30 },

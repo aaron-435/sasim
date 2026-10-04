@@ -60,7 +60,7 @@ type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 // prop below. Steps missing here are roots, where back falls through to exiting the app.
 const BACK_TARGET: Partial<Record<StepId, StepId>> = {
   verifyCode: "intro",
-  nickname: "verifyCode",
+  nickname: "intro",
   gender: "nickname",
   dob: "gender",
   tob: "dob",
@@ -269,7 +269,7 @@ function AppContent() {
       <StatusBar style="light" />
       {step === "language" && <LanguageScreen onNext={() => setStep("intro")} />}
 
-      {step === "intro" && <IntroScreen onNext={() => setStep("verifyCode")} />}
+      {step === "intro" && <IntroScreen onNext={() => setStep("nickname")} onVerifyCode={() => setStep("verifyCode")} />}
 
       {step === "verifyCode" && (
         <VerifyCodeScreen
@@ -291,7 +291,7 @@ function AppContent() {
           value={nickname}
           onChange={setNickname}
           onNext={() => setStep("gender")}
-          onBack={() => setStep("verifyCode")}
+          onBack={() => setStep("intro")}
         />
       )}
 
