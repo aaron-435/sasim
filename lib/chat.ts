@@ -31,7 +31,7 @@ import {
   type ChatSessionContext,
 } from "./chatPrompts";
 import { getModuleChatSets, getModulePlaybook, PERSPECTIVE_SHIFT_LEAD } from "./modulePlaybooks";
-import { buildSetPackets, selectSetQuizAnswer, type SetPacket } from "./chatSets";
+import { buildSetPackets, type SetPacket } from "./chatSets";
 import type { Locale } from "./i18n/types";
 import { logLlmUsage } from "./llmUsage";
 import { stripHanja } from "./reportQuality";
@@ -247,6 +247,8 @@ export function prependPerspectiveLead(lines: string[], locale: string = "ko"): 
 // 순서인데, 모델이 인용 지시에 밀려 재확인 줄을 자주 빠뜨렸다(q5-v2 채점 s_recap 0). 질문 줄을 뺀 나머지에 정정 허락 표현이
 // 없으면 코드가 언어별 한 줄을 인용 줄 앞(못 찾으면 질문 줄 앞)에 끼운다. 턴마다 문장이 달라 같은 틀이 되풀이되지 않는다.
 // 10턴 중간 점검도 같은 이유로 정리 뒤 재확인이 빠졌다(q5-v2-recap 채점 t6 1) — 인용이 없으니 계속 여부 질문 앞에 끼운다.
+// 2026-10-04 실기기 테스트: 세트를 여는 턴의 "정리 → 정정 허락 → 인용 → 질문" 네 조각이 서로 이어지지 않는 양식처럼 읽혔다.
+// 세트 시작은 "받기·전환 → 인용과 그 이유 → 인용에서 나온 질문"으로 바꾸고, 정정 허락 줄은 10턴 점검에만 남긴다.
 const RECAP_RECHECK_PATTERN: Record<string, RegExp> = {
   ko: /고쳐|바로잡|다르면|다르게 기억|틀렸|잘못 (들|짚|이해)|어긋났|멈춰/,
   en: /correct me|got (it|that|this) wrong|misheard|not quite (right|how)|set me straight|tell me|stand corrected/i,
@@ -257,21 +259,6 @@ const RECAP_RECHECK_FALLBACK: Record<number, Record<string, string>> = {
     ko: "제가 들은 모습과 다른 데가 있다면, 이어서 이야기하면서 고쳐 주셔도 돼요.",
     en: "If any of that isn't how it was for you, you can correct me as we keep going.",
     es: "Si algo de esto no fue así para ti, puedes corregirme mientras seguimos hablando.",
-  },
-  6: {
-    ko: "제가 들은 순서가 다르면 바로 고쳐 주셔도 돼요.",
-    en: "If I've got the order wrong, feel free to correct me.",
-    es: "Si el orden no fue así, corrígeme sin problema.",
-  },
-  16: {
-    ko: "제가 짚은 게 어긋났다면 그 자리에서 바로잡아 주세요.",
-    en: "If that's not quite how it is for you, set me straight.",
-    es: "Si no es exactamente así para ti, dímelo.",
-  },
-  21: {
-    ko: "제가 너무 멀리 짚었다면 거기서 멈춰 주셔도 괜찮아요.",
-    en: "If I've read too much into it, just tell me.",
-    es: "Si fui demasiado lejos, dímelo con confianza.",
   },
 };
 const normForMatch = (t: string) => t.toLowerCase().replace(/[\s"'“”‘’「」.,!?¿¡…·:;()—-]+/g, "");
@@ -352,20 +339,12 @@ export async function getChatReply(params: {
   const flow = chatFlowVersion(params.context);
   const locale = params.context.locale ?? "ko";
   const role = flow === 2 ? effectiveSetTurnRole(params.turnNumber, elapsedMinutes) : null;
-  const chatSets = role ? getModuleChatSets(params.context.moduleId) : undefined;
   const lines = isFinalTurn(params.turnNumber, elapsedMinutes, flow)
     ? ensureClosingLineLast(oneQuestion, locale)
     : role?.kind === "perspective"
       ? prependPerspectiveLead(oneQuestion, locale)
       : role?.kind === "checkpoint"
         ? ensureRecapRecheck(oneQuestion, role.turn, null, locale)
-        : role?.kind === "set" && role.position === 1 && role.recapSets.length && role.set && chatSets
-        ? ensureRecapRecheck(
-            oneQuestion,
-            role.turn,
-            selectSetQuizAnswer(chatSets, role.set, params.context.quizAnswers ?? [])?.label ?? null,
-            locale
-          )
         : oneQuestion;
   const formulation = sanitizeFormulation(parsed.formulation);
   return {
