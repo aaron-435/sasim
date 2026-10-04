@@ -31,7 +31,7 @@ import {
   type ChatSessionContext,
 } from "./chatPrompts";
 import { getModuleChatSets, getModulePlaybook, PERSPECTIVE_SHIFT_LEAD } from "./modulePlaybooks";
-import { buildSetPackets, type SetPacket } from "./chatSets";
+import { buildSetPackets, selectSetQuizAnswer, type SetPacket } from "./chatSets";
 import type { Locale } from "./i18n/types";
 import { logLlmUsage } from "./llmUsage";
 import { stripHanja } from "./reportQuality";
@@ -178,8 +178,23 @@ export function collapseInlineQuestions(line: string): string {
   return unmask(out.join("").replace(/\s{2,}/g, " ").trim());
 }
 
+// 2026-10-04 (시뮬레이션 채점 v_double_question): 한국어 물음 꼴인데 마침표로 끝난 줄("…닳게 한 걸까요.")은
+// 물음표만 세는 아래 검사를 빠져나가, 진짜 질문과 함께 "질문 두 개"가 됐다. 물음표 질문이 따로 있을 때만
+// 그런 줄을 평서문으로 바꾸거나("걸까요"→"것 같기도 해요", "일까요"→"일지도 몰라요") 뺀다.
+const IMPLICIT_KO_QUESTION = /(까요|나요|가요|습니까|는지요)[.。…]*\s*$/;
+export function softenImplicitQuestions(lines: string[]): string[] {
+  if (!lines.some((line) => /[?？]\s*$/.test(line.trim()))) return lines;
+  return lines.flatMap((line) => {
+    const t = line.trim();
+    if (/[?？]\s*$/.test(t) || !IMPLICIT_KO_QUESTION.test(t)) return [line];
+    if (/걸까요[.。…]*\s*$/.test(t)) return [t.replace(/걸까요[.。…]*\s*$/, "것 같기도 해요.")];
+    if (/일까요[.。…]*\s*$/.test(t)) return [t.replace(/일까요[.。…]*\s*$/, "일지도 몰라요.")];
+    return [];
+  });
+}
+
 function enforceOneQuestionPerReply(lines: string[]): string[] {
-  lines = lines.map(collapseInlineQuestions);
+  lines = softenImplicitQuestions(lines.map(collapseInlineQuestions));
   const questionIndices = lines.reduce<number[]>((acc, line, i) => {
     if (isQuestionLine(line)) acc.push(i);
     return acc;
@@ -292,13 +307,23 @@ export async function getChatReply(params: {
   // 2026-10-02 (TODO 11): 영어 v2 대화 15턴에 "“…”이라는 말에, …"처럼 한국어가 섞여 나왔다. 한국어가 아닌 대화에서
   // 한글이 섞인 응답은 한 번 다시 요청하고, 두 번째도 섞이면 한글이 든 줄을 뺀다(다 빠지면 그대로 둔다).
   const replyLocale = params.context.locale ?? "ko";
+  // 2026-10-04 (시뮬레이션 q-1005-fix): 세트 ① 턴에서 자책 받기 등에 밀려 테스트 답 인용이 통째로 빠진 응답이 나왔다
+  // (es 16턴). 인용할 답이 정해진 턴인데 응답에 그 답이 없으면 한 번만 다시 요청하고, 두 번째는 그대로 받는다.
+  const quoteRole = chatFlowVersion(params.context) === 2 ? effectiveSetTurnRole(params.turnNumber, elapsedMinutes) : null;
+  const quoteSets = quoteRole?.kind === "set" && quoteRole.position === 1 && quoteRole.set ? getModuleChatSets(params.context.moduleId) : undefined;
+  const expectedQuote =
+    quoteRole?.set && quoteSets ? selectSetQuizAnswer(quoteSets, quoteRole.set, params.context.quizAnswers ?? [])?.label ?? null : null;
+  let quoteRetryNote = "";
   let parsed: { lines?: unknown; formulation?: unknown } = {};
   let rawLines: string[] = [];
   for (let attempt = 0; ; attempt++) {
     const completion = await client.chat.completions.create({
       model: CHAT_MODEL,
       ...chatSamplingParams(CHAT_MODEL, 0.8),
-      messages: [{ role: "system", content: systemPrompt }, ...params.history],
+      messages: [
+        { role: "system", content: systemPrompt + quoteRetryNote },
+        ...params.history,
+      ],
       response_format: { type: "json_object" },
     });
 
@@ -330,6 +355,11 @@ export async function getChatReply(params: {
         break;
       }
       problem = `${replyLocale} 응답에 한글이 섞였습니다.`;
+    }
+    if (!problem && expectedQuote && attempt === 0 && !rawLines.some((l) => normForMatch(l).includes(normForMatch(expectedQuote)))) {
+      quoteRetryNote = `\n\n[다시 쓰기] 방금 응답에 이번 턴의 테스트 답 인용("${expectedQuote}")이 빠졌다. 이번 턴은 인용 턴이다 — 그 답을 사용자가 알아볼 수 있게 인용하고, 왜 지금 꺼내는지 한 구절, 그 답에서 나온 질문 하나로 다시 쓴다. 직전 발화에 자책이 있으면 그걸 다르게 보는 한 줄을 인용 앞에 둔다.`;
+      console.warn(`[chat] turn ${params.turnNumber}: 테스트 답 인용이 빠져 한 번 다시 요청합니다.`);
+      continue;
     }
     if (!problem) break;
     if (attempt >= 1) throw new Error(problem);
