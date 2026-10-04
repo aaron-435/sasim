@@ -22,6 +22,7 @@ import type { SajuType } from "../lib/sajuType";
 import { getTypePieces } from "../lib/sajuTypeContent";
 import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
 
 // Domain share cards — "how I find money", "what sets my heart racing", "my bright spot
@@ -268,7 +269,7 @@ export default function ShareCardsScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
+  content: { ...readableColumn, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
   backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", minHeight: 44, marginLeft: -8, paddingHorizontal: 8 },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginTop: 4 },

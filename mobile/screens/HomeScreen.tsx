@@ -27,6 +27,7 @@ import { comingSajuYear } from "../lib/sajuYear";
 import { fetchTodayFortune, type TodayFortune } from "../lib/todayFortune";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
 
 // 2026-09-19 redesign (Impeccable critique of this screen, 25/40): Home used to be a
@@ -442,6 +443,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   scrollContent: {
+    ...readableColumn,
     paddingHorizontal: 22,
     paddingTop: 12,
     paddingBottom: 40,

@@ -532,7 +532,7 @@ export const es: typeof ko = {
     sectionBehaviorGuides: "Cómo llevarlo a la práctica",
     sectionMindset: "Una forma de pensar que puede ayudarte",
     disclaimer1:
-      "Este informe lo interpreta una IA a partir de cálculos de saju precisos, hechos con nuestro propio motor basado en el calendario perpetuo coreano (manseryeok). No sustituye la orientación psicológica profesional ni un diagnóstico médico.",
+      "Este informe lo interpreta una IA a partir de cálculos de saju precisos, hechos con nuestro propio motor del calendario coreano. No sustituye la orientación psicológica profesional ni un diagnóstico médico.",
     disclaimer2: "Tómalo como una referencia para conocerte mejor y disfrutar del camino.",
     paywallTitle: "Aquí continúa el informe profundo",
     paywallBody: "El resto del informe cruza lo que le contaste a la IA con tu mapa.",

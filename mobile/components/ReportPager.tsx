@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "./AppText";
 import { hasSeenReaderHint, markReaderHintSeen, type ReaderHintId } from "../lib/readerHint";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
 
 // The page-turning reader shared by the in-depth report (ReportScreen) and the year-ahead
@@ -116,7 +117,8 @@ export default function ReportPager({
         <ScrollView ref={scrollRef} horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={handleMomentumEnd}>
           {pages.map((p) => (
             <View key={p.key} style={{ width: screenWidth, height: pageHeight }}>
-              {p.node}
+              {/* Full-width page for paging math; the page itself reads as a centered column on iPad. */}
+              <View style={styles.pageColumn}>{p.node}</View>
             </View>
           ))}
         </ScrollView>
@@ -150,12 +152,13 @@ export const readerChromeButtonStyle = { width: 44, height: 44, alignItems: "cen
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  chrome: { flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 18, paddingTop: 10, paddingBottom: 8 },
+  chrome: { ...readableColumn, flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 18, paddingTop: 10, paddingBottom: 8 },
   chromeBack: { padding: 10, minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", marginLeft: -10 },
   progressTrack: { flex: 1, height: 3, borderRadius: 2, backgroundColor: "rgba(217,201,163,0.16)", overflow: "hidden" },
   progressFill: { height: "100%", borderRadius: 2, backgroundColor: COLORS.headline },
   progressCount: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline, letterSpacing: 0.5, minWidth: 44, textAlign: "right" },
   pagerWrap: { flex: 1, position: "relative" },
+  pageColumn: { ...readableColumn, flex: 1 },
   hintWrap: { position: "absolute", left: 0, right: 0, bottom: 64, alignItems: "center", paddingHorizontal: 24 },
   hint: {
     flexDirection: "row",

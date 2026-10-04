@@ -45,7 +45,7 @@ below, a `LOCALE_STYLE` entry, and run a native-reader pass with the persona tes
 | Year-ahead report | 신년 리포트 | Year-Ahead Report | Informe del año |
 | AI counseling chat | AI 상담 | AI counseling | conversación con IA |
 | Chart (the whole saju reading) | 사주 | chart | mapa (de saju) — not "carta" |
-| Manseryeok | 만세력 | Korean perpetual calendar (manseryeok) | calendario perpetuo coreano (manseryeok) |
+| Manseryeok | 만세력 | Korean calendar engine — never "manseryeok" in UI copy | motor del calendario coreano — nunca "manseryeok" en la interfaz |
 
 Type names (the 50 saju types) are labels shown next to the reader's own name: choose wording that can't
 be mistaken for a first name (es: use a noun phrase, not a bare "Rocío").

@@ -16,6 +16,7 @@ import { qaYearReport } from "../dev/qaMode";
 import { getSavedYearReport, saveYearReport, type YearReportContent } from "../lib/yearReportStorage";
 import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
 
 // The paid year-ahead report: five life areas, a 12-month timeline and a four-step action
@@ -530,7 +531,7 @@ function PlanPage({ heading, steps }: { heading: string; steps: YearReportConten
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 48 },
+  content: { ...readableColumn, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 48 },
   backRow: { paddingHorizontal: 22, paddingTop: 8 },
   backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", minHeight: 44, marginLeft: -8, paddingHorizontal: 8 },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },

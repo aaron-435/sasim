@@ -23,6 +23,7 @@ import { useMonthlyPrice } from "../lib/useMonthlyPrice";
 import { comingSajuYear } from "../lib/sajuYear";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 // Daily content blocks that fade/slide in, one after another, once the seal card below
@@ -605,10 +606,13 @@ export default function FortuneScreen({
                     <Text style={styles.luckyItemLabel}>{strings.fortune.luckyNumberLabel}</Text>
                     <Text style={styles.luckyItemValue}>{luckyNumber}</Text>
                   </View>
-                  <View style={styles.luckyItem}>
-                    <Text style={styles.luckyItemLabel}>{strings.fortune.luckyDirectionLabel}</Text>
-                    <Text style={styles.luckyItemValue}>{luckyPoint.direction}</Text>
-                  </View>
+                  {/* Cardinal directions only carry meaning in Korean fortune culture; en/es show color + number. */}
+                  {locale === "ko" && (
+                    <View style={styles.luckyItem}>
+                      <Text style={styles.luckyItemLabel}>{strings.fortune.luckyDirectionLabel}</Text>
+                      <Text style={styles.luckyItemValue}>{luckyPoint.direction}</Text>
+                    </View>
+                  )}
                 </View>
               </Animated.View>
             )}
@@ -831,7 +835,7 @@ export default function FortuneScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
+  content: { ...readableColumn, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
   centerSpinner: { flex: 1, justifyContent: "center" },
   sectionSpinner: { marginTop: 32 },
   backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },

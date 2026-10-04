@@ -133,18 +133,25 @@
   - 적용(2026-10-04): 오늘 탭 8장 → 4덩어리. ① 주인공 카드(오늘의 리듬 이름 + 총론 제목·본문 + 공유, 연속 배지) ② "영역별로 보면" 한 카드 안에 재물·애정·건강 줄 ③ 행운 포인트(항목 라벨을 "색/숫자/방향"으로 줄여 es 두 줄 접힘 해소) ④ "오늘 더 알아보기" — 12운성·12신살을 접힌 줄로, 탭하면 펼침(애니메이션 없음, `aria-expanded`). 연간 탭도 같은 구조(주인공 + 재물·애정·직장·학업·건강 묶음 + 12운성·신살 접기, 합/충 메모는 주인공 카드 안 인용 줄). 소제목 대문자·자간 제거(문장형 13pt). 상단 제목 `fortune.headerLabel` → `fortune.tabHeadings[tab]`(오늘의 운세/이번 주 운세/이달의 운세/신년 운세, Today's Fortune/Your Week/Your Month/The Year Ahead, Tu lectura de hoy/Tu semana/Tu mes/El año que viene). 탭은 테두리 상자 4개 → 세그먼트 컨트롤 하나(`tablist`), 라벨을 짧게(Week/Month/Year, Semana/Mes/Año, 이번 주) + `numberOfLines={1}`. 월별 흐름 칩에 역할·선택 상태. 등장 애니메이션은 4덩어리로 줄였고 기존 동작 줄이기 분기 그대로. 무료 화면·페이월 코드는 그대로.
   - QA: mobile tsc(큰 스택) → exit 0. `grep -c 'textTransform: "uppercase"' mobile/screens/FortuneScreen.tsx` → 0. mobile-web 미리보기(다른 세션이 띄운 8082 서버를 브라우저 창에서 직접 열기, mobile 프리셋 375×812): `?qa=all&persona=lucia`(es) 오늘 — 제목 "Tu lectura de hoy", 주인공 "Tu ritmo de hoy / Un ritmo receptivo / Un rayo de sol", "Por áreas" 안 Dinero·Amor·Salud, 행운 "Color/Número/Dirección" 한 줄, "Más sobre hoy" 2줄 접힘 → "Plenitud" 탭하면 본문 펼침(aria-expanded true). 탭 4개 모두 글자 넘침 없음(scrollWidth ≤ clientWidth), aria-selected 정상. 연간 — 제목 "El año que viene", 신년 리포트 카드 → 주인공 "Tu ritmo en 2027 / Un ritmo de iniciativa" → Por áreas 5줄 → Más sobre este año → Flujo mensual. `?qa=free&persona=mia`(en) 무료 총론 카드 + "What Pro opens" 혜택 5개·구독 버튼·약관 문구가 수정 전과 같음. `?qa=all&persona=jisoo`(ko) 오늘 "오늘의 운세 / 오늘의 리듬 · 고르는 리듬 / 영역별로 보면". `?qa=all&persona=jordan`(en) Week 탭 제목 "Your Week", 탭 넘침 없음, 최고의 날·조절할 날·날짜 목록 정상. 콘솔 오류 없음.
 
-- [ ] 16. 행운의 방향 숨김 + 엔진 용어 정리
+- [x] 16. 행운의 방향 숨김 + 엔진 용어 정리
   - 변경: `screens/FortuneScreen.tsx`(en/es에서 방향 숨김), `lib/dailyFortuneContent.ts` 필요 시, 리포트 면책의 "manseryeok engine" 등 내부 용어를 각 언어 표현으로(`lib/i18n/*`).
   - QA: mobile tsc exit 0. `grep -rni "manseryeok" mobile/lib/i18n/en.ts mobile/lib/i18n/es.ts` → 사용자 노출 문구 없음. en·es 운세 행운 카드에 방향 없음(스크린샷).
+  - 적용(2026-10-04): 오늘 탭 행운 카드의 방향 칸을 `locale === "ko"`일 때만 렌더(en/es는 색·숫자 2칸, `dailyFortuneContent.ts`는 그대로 — 방향 데이터는 ko만 씀). 심층 리포트 면책 1 en "our own manseryeok engine" → "our own Korean calendar engine", es "calendario perpetuo coreano (manseryeok)" → "nuestro propio motor del calendario coreano". 다른 운세 본문에 방위 표현 없음(grep). `lib/i18n/STYLE_GUIDE.md` 용어표의 Manseryeok 줄을 "UI 문구에 manseryeok 쓰지 않음"으로.
+  - QA: mobile tsc(큰 스택) → exit 0. `grep -rni "manseryeok" mobile/lib/i18n/en.ts mobile/lib/i18n/es.ts` → 결과 없음(exit 1). mobile-web 미리보기(기존 8082 서버를 브라우저 창에서 열기, mobile 프리셋) 오늘 탭 행운 카드: `?qa=all&persona=lucia`(es) "Color Blanco / Número 4, 9" 2칸·"Dirección" 없음(스크린샷), `jordan`(en) "Color White / Number 4, 9"·"Direction" 없음, `jisoo`(ko) "색 흰색 / 숫자 4, 9 / 방향 서쪽" 그대로. 콘솔 오류 없음.
 
-- [ ] 17. 유명인 예시 현지화
+- [x] 17. 유명인 예시 현지화
   - 변경: `mobile/lib/sajuTypeCelebrities.ts`에 언어권 태그와 스페인어권·한국 인물 추가, `screens/TypeScreen.tsx`에서 사용자 언어권 우선 정렬. 새 인물은 공개 생년월일을 `lib/manseryeok.ts`+`lib/sajuType.ts`로 계산해 맞는 유형에만 넣고 출처를 주석에. 웹 사본 `lib/sajuTypeCelebrities.ts`도 같은 내용으로.
   - QA: mobile tsc exit 0. 루트 `npx tsc --noEmit` exit 0. 계산 검증 스크립트(스크래치) 출력에서 추가 인물 전원 배정 유형 일치. `?qa=all&persona=lucia` 타입 화면에 스페인어권 인물이 먼저(스크린샷).
+  - 적용(2026-10-04): `CelebrityEntry`에 `region`(anglo/hispanic/korea/other)과 한국 인물용 `nameKo` 추가, 기존 99명에 지역 태그(영미권 65·스페인어권 4·기타). 스페인어권 33명·한국 37명 추가 → 50개 유형 중 스페인어권 인물 있는 유형 37개, 한국 인물 37개. 후보 약 200명의 생년월일을 Wikidata(P569, 날짜 정밀도 값이 하나뿐인 항목만 — 값이 엇갈린 Bardem·Santana·송강호 등 7명 제외)에서 받아 `calculateManseryeok`(시간·도시 없음, 기존 데이터와 같은 방식) + `classifySajuType`으로 계산, 맞은 유형에만 넣고 항목마다 `// 생년월일 YYYY-MM-DD — Wikidata Q…` 주석. 방법 검증으로 기존 4명(Musk·Merkel·Messi·Napoleon)을 다시 계산해 기존 배정과 일치 확인. 논란이 큰 인물·생일이 음력/불명확한 역사 인물·해외 동포는 후보에서 뺌. `getCelebritiesForType(code, locale)`이 사용자 언어권(ko→korea, en→anglo, es→hispanic) 인물을 먼저, 최대 3명. 타입 화면 공유 카드는 원래 높이를 지키려고 앞 2명만. ko 화면은 한국 인물을 한글로(`celebrityDisplayName`). 웹 사본 `lib/sajuTypeCelebrities.ts`도 같은 내용(머리말만 다름).
+  - QA: 스크래치 검증 스크립트(`npx tsx --env-file=.env.local …/verify.mts` — 파일의 날짜 주석을 다시 읽어 엔진으로 재계산) → "checked 70: 70 match, 0 mismatch". mobile tsc(큰 스택) → exit 0. 루트 `npx tsc --noEmit` → exit 0. mobile-web 미리보기(mobile 프리셋): `?qa=all&persona=lucia`(es, El rocío · Orden) 타입 화면 "Personas que comparten este tipo" 첫 카드 Gabriela Mistral, 이어서 Meryl Streep·Jay-Z(스크린샷). `jisoo`(ko, 거목 · 성취) 첫 카드 "송혜교 / 배우 · 1981년생", 이어서 Napoleon Bonaparte·Bruce Lee.
 
-- [ ] 18. iPad 레이아웃
+- [x] 18. iPad 레이아웃
   - 선행: 1, 5, 8, 10, 15 (바뀐 화면 위에서 작업)
   - 변경: 공용 레이아웃 훅/컨테이너(`useWindowDimensions`, 768pt 이상), 홈·운세·리포트·검사 목록 최대 폭 또는 2열, 리포트 페이지·공유 카드 미리보기 비율.
   - QA: mobile tsc exit 0. 웹 미리보기 1024×1366에서 4개 화면 스크린샷, 본문이 화면 가득 늘어나지 않음. (사용자 확인) iPad 시뮬레이터 또는 실기기 확인.
+  - 적용(2026-10-04): 2열 대신 가운데 한 줄 기둥으로 통일. `mobile/theme/layout.ts`에 `readableColumn`(width 100%·maxWidth 640·alignSelf center) — 휴대폰은 640보다 좁아 변화 없음, 넓은 창에서만 본문 폭이 멈추고 양옆은 배경 무늬. 적용: `HomeScreen`·`FortuneScreen`·`ModuleSelectScreen`·`TypeScreen`·`CompatibilityScreen`·`ShareCardsScreen`·`YearReportScreen`(구매 전 미리보기)의 스크롤 내용, `ReportPager`는 페이지 넘김 계산용 바깥 칸은 화면 폭 그대로 두고 안쪽에 640 기둥(두 리포트의 모든 페이지·마무리 장 포함) + 상단 진행 막대도 같은 폭. 공유 카드 미리보기는 기둥 안에서 폭 기준으로 그려져 비율 유지. 훅 대신 정적 maxWidth라 회전·Split View에도 그대로 동작. 가로 회전 설정은 건드리지 않음.
+  - QA: mobile tsc(큰 스택) → exit 0. mobile-web 미리보기(기존 8082 서버, 브라우저 창 1024×1366) `?qa=all&persona=jordan`: 홈 히어로 left 214·width 596(양옆 214 대칭), 운세 오늘 탭 텍스트 범위 233~791, 검사 목록 214~810, 심층 리포트 표지·3쪽·마지막 장(41/41, 요약·공유·PDF·다음 검사·새 면책 문구) 모두 가운데 기둥이고 넘김 위치 정상(03/41), 신년 리포트 표지 218~806(1/13), 타입 화면 218~803·공유 카드 미리보기 기둥 안에서 비율 정상(스크린샷). 휴대폰 회귀: 375×812 홈 텍스트 22~353, 가로 넘침 없음(수정 전과 같은 22pt 여백).
+  - [ ] (사용자 확인) iPad 시뮬레이터(dev-client) 또는 실기기에서 홈·운세·검사 목록·두 리포트를 세로/가로로 열어 본문이 가운데 기둥으로 보이는지, 리포트를 넘길 때 페이지가 반쯤 걸치지 않는지, 공유 카드 저장 이미지가 휴대폰과 같은 비율인지.
 
 ## 마무리
 
@@ -180,3 +187,8 @@
 - (14번 중) 운세 화면 탭 라벨이 en에서도 칸을 꽉 채운다("This Month", "Year Ahead" — Plus Jakarta Sans가 Manrope보다 약간 넓음). 15번(es 탭 넘침)에서 같이 처리.
 - (15번 중) 무료 페이월 혜택 "Today's full reading"은 재물·애정·건강·행운만 나열하고, 구독자에게 열리는 12운성·12신살("오늘 더 알아보기")은 말하지 않는다(수정 전에도 같음). 빠뜨린 것이라 잘못된 약속은 아니지만, 혜택 문구에 넣을지 검토.
 - (15번 중) 16번에서 en/es 행운의 방향을 숨기면 행운 카드가 2칸이 된다. 이번에 라벨을 "색/숫자/방향"으로 줄였으니 16번에서 2칸 배치만 확인하면 된다.
+- (16번 중) 운세 행운 카드 외에 서버 리포트·PDF(`lib/reportPrompts.ts`, `lib/pdf/reportPdf.tsx`)에 "manseryeok"·방위 표현이 나오는지는 확인하지 않았다(앱 i18n 범위만 정리). 재진단 때 PDF 면책 문구도 같이 볼 것.
+- (17번 중) 기존 99명 중 생년월일을 다시 계산해 본 것은 4명뿐이다(방법 일치 확인용). 기존 인물 전원을 Wikidata 날짜로 재검증하는 스크립트를 돌려 볼지 검토.
+- (17번 중) VIN-V·SUN-O·FLM-O·FLM-W·MTN-H·FLD-H 6개 유형은 후보 약 200명 중 스페인어권·한국 인물이 하나도 맞지 않았다(목 일간 + 수 편중 등 조합이 드묾). 후보를 더 넣어 볼 수 있음.
+- (18번 중) iPad 세로(1024×1366)에서 두 리포트 표지는 내용이 위에 몰리고 아래가 크게 빈다(휴대폰 비율로 짠 표지). 표지만 세로 가운데 정렬할지 재진단 때 판단.
+- (18번 중) `ReportPager`의 `footer`(마지막 장 "홈으로" 버튼 줄)는 화면 전체 폭 막대로 남겨 두었다(위 테두리 선이 전체 폭). 기둥 폭으로 맞출지 재진단 때 판단.

@@ -11,6 +11,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { MODULES, moduleDisplayTitle, type ModuleDefinition } from "../lib/quiz/modules";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 // Ported from components/ModuleSelect.jsx — picks which of the 11 30-question modules
@@ -134,6 +135,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   content: {
+    ...readableColumn,
     paddingHorizontal: 22,
     paddingTop: 8,
     paddingBottom: 40,

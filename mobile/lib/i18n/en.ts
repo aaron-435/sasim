@@ -532,7 +532,7 @@ export const en: typeof ko = {
     sectionBehaviorGuides: "How To Act On This",
     sectionMindset: "A Mindset That Might Help",
     disclaimer1:
-      "This report is AI-interpreted content based on precise saju calculations from our own manseryeok engine, and does not replace professional psychological counseling or medical diagnosis.",
+      "This report is an AI-written interpretation of precise saju calculations from our own Korean calendar engine. It does not replace professional psychological counseling or medical diagnosis.",
     disclaimer2: "Please treat it as a reference for fun and self-understanding.",
     paywallTitle: "The in-depth report continues here",
     paywallBody: "The rest of the report reads what you told the AI against your chart.",

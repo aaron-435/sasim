@@ -15,10 +15,11 @@ import FourPillarsChart, { parseFourPillars } from "../components/FourPillarsCha
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
-import { getCelebritiesForType } from "../lib/sajuTypeCelebrities";
+import { celebrityDisplayName, getCelebritiesForType } from "../lib/sajuTypeCelebrities";
 import { formatSajuTypeName, getTypePieces } from "../lib/sajuTypeContent";
 import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
 
 const ELEMENT_ICON = { wood: TreePine, fire: Flame, earth: Mountain, metal: Gem, water: Droplets } as const;
@@ -44,7 +45,7 @@ export default function TypeScreen({
 
   const { archetype, mode } = getTypePieces(locale, sajuType);
   const typeName = formatSajuTypeName(locale, sajuType);
-  const celebrities = getCelebritiesForType(sajuType.code);
+  const celebrities = getCelebritiesForType(sajuType.code, locale);
   const ArchetypeIcon = ELEMENT_ICON[sajuType.dayMasterElement];
   const ModeIcon = ELEMENT_ICON[sajuType.dominantElement];
   const tint = ELEMENT_COLORS[sajuType.dayMasterElement] ?? COLORS.gold;
@@ -129,7 +130,7 @@ export default function TypeScreen({
             <View style={styles.celebrityList}>
               {celebrities.map((c) => (
                 <View key={c.name} style={[styles.celebrityCard, { borderColor: `${tint}33` }]}>
-                  <Text style={styles.celebrityName}>{c.name}</Text>
+                  <Text style={styles.celebrityName}>{celebrityDisplayName(c, locale)}</Text>
                   <Text style={styles.celebrityMeta}>
                     {c.field[locale]} · {strings.sajuType.celebrityBirthYear(c.birthYear)}
                   </Text>
@@ -181,9 +182,10 @@ export default function TypeScreen({
                 <View style={styles.shareDivider} />
                 <View style={styles.shareCardMid}>
                   <Text style={styles.shareEyebrow}>{strings.sajuType.celebritiesLabel}</Text>
-                  {celebrities.map((c) => (
+                  {/* Share card keeps its original two-person height; the screen above shows up to three. */}
+                  {celebrities.slice(0, 2).map((c) => (
                     <View key={c.name} style={styles.shareCelebRow}>
-                      <Text style={styles.shareCelebName}>{c.name}</Text>
+                      <Text style={styles.shareCelebName}>{celebrityDisplayName(c, locale)}</Text>
                       <Text style={styles.shareCelebMeta}>
                         {c.field[locale]} · {strings.sajuType.celebrityBirthYear(c.birthYear)}
                       </Text>
@@ -220,6 +222,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   content: {
+    ...readableColumn,
     paddingHorizontal: 22,
     paddingTop: 8,
     paddingBottom: 40,
