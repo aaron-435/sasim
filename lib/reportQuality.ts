@@ -155,8 +155,44 @@ function normalizeForQuote(text: string): string {
   return text.normalize("NFC").toLowerCase().replace(/[\s.,!?;:…"'“”‘’«»()[\]{}<>\-–—~·、。，！？¿¡*_/]+/g, "");
 }
 
+/** Edits a quote part may differ from the reader's text by: the report fixes obvious typos the reader
+ * made while typing ("됬어요" → "됐어요"), so a part may be off by about one character in seven (at least
+ * one). Rewording changes far more than that and still fails. */
+function allowedQuoteEdits(partLength: number): number {
+  return Math.max(1, Math.floor(partLength / 7));
+}
+
+/** End index (exclusive) of the best approximate occurrence of `part` in `src` at or after `from`, when it
+ * is within `maxEdits` character edits (substitution, insertion, deletion); -1 otherwise. Approximate
+ * substring matching (Sellers): the match may start anywhere, so the first DP row is all zeros. */
+function approximateFind(src: string, part: string, from: number, maxEdits: number): number {
+  const text = Array.from(src.slice(from));
+  const pat = Array.from(part);
+  let prev = new Array<number>(text.length + 1).fill(0);
+  for (let i = 1; i <= pat.length; i++) {
+    const cur = new Array<number>(text.length + 1);
+    cur[0] = i;
+    for (let j = 1; j <= text.length; j++) {
+      const cost = pat[i - 1] === text[j - 1] ? 0 : 1;
+      cur[j] = Math.min(prev[j - 1] + cost, prev[j] + 1, cur[j - 1] + 1);
+    }
+    prev = cur;
+  }
+  let best = -1;
+  let bestCost = maxEdits + 1;
+  for (let j = 0; j <= text.length; j++) {
+    if (prev[j] < bestCost) {
+      bestCost = prev[j];
+      best = j;
+    }
+  }
+  if (best < 0) return -1;
+  // Map the code-point index back to a UTF-16 offset in `src`.
+  return from + text.slice(0, best).join("").length;
+}
+
 /** True when every part of the quote (split at an ellipsis the model used to skip words) appears, in
- * order, inside one of the reader's answers. */
+ * order, inside one of the reader's answers — exactly, or within a typo's distance (allowedQuoteEdits). */
 export function quoteMatchesSource(quote: string, sources: readonly string[]): boolean {
   const parts = quote.split(/…|\.{3}/).map(normalizeForQuote).filter(Boolean);
   if (parts.length === 0) return false;
@@ -165,8 +201,15 @@ export function quoteMatchesSource(quote: string, sources: readonly string[]): b
     let from = 0;
     for (const part of parts) {
       const at = src.indexOf(part, from);
-      if (at < 0) return false;
-      from = at + part.length;
+      if (at >= 0) {
+        from = at + part.length;
+        continue;
+      }
+      // Very short parts must match exactly: one edit in three characters is a different word.
+      if (Array.from(part).length < 5) return false;
+      const end = approximateFind(src, part, from, allowedQuoteEdits(Array.from(part).length));
+      if (end < 0) return false;
+      from = end;
     }
     return true;
   });
@@ -204,10 +247,10 @@ function checkSetCards(c: ReportContent, ctx: ReportContext): string[] {
     if (!packet?.has_chat || sources.length === 0) {
       if (quote) out.push(`${path}.quote: 세트 ${set}에는 대화가 없어서 인용이 비어 있어야 함`);
     } else if (!quote) {
-      out.push(`${path}.quote: 세트 ${set} 사용자 원문에서 고른 인용이 비어 있음 — 아래 원문에서 한 구절을 글자 그대로 옮길 것: ${sources.map((s) => `"${s}"`).join(" / ")}`);
+      out.push(`${path}.quote: 세트 ${set} 사용자 원문에서 고른 인용이 비어 있음 — 아래 원문에서 한 구절을 옮길 것(명백한 오타·띄어쓰기만 바로잡기): ${sources.map((s) => `"${s}"`).join(" / ")}`);
     } else if (!quoteMatchesSource(quote, sources)) {
       out.push(
-        `${path}.quote: 세트 ${set} 사용자 원문에 없는 문장 — 바꿔 말하거나 요약하지 말고, 아래 원문 중 한 구절(한두 문장 이내)을 글자 그대로 옮길 것: ${sources.map((s) => `"${s}"`).join(" / ")}`
+        `${path}.quote: 세트 ${set} 사용자 원문에 없는 문장 — 바꿔 말하거나 요약하지 말고, 아래 원문 중 한 구절(한두 문장 이내)을 옮길 것 — 명백한 오타·띄어쓰기만 바로잡고 단어는 그대로: ${sources.map((s) => `"${s}"`).join(" / ")}`
       );
     }
     const n = card.note.trim() ? countSentences(card.note) : 0;
@@ -361,7 +404,7 @@ export function describeReportData(ctx: ReportContext): string {
     : "";
   const playbook = getModulePlaybook(ctx.moduleId);
   const sets = ctx.reportSets
-    ? `- 상담의 세트 재료 묶음(사용자가 실제로 한 말과 고른 퀴즈 답 — set_card_*의 quote는 여기서 글자 그대로 옮긴 사용자 원문이다):\n${describeSetPackets(ctx.reportSets, ctx.moduleId)}\n`
+    ? `- 상담의 세트 재료 묶음(사용자가 실제로 한 말과 고른 퀴즈 답 — set_card_*의 quote는 여기서 옮긴 사용자 원문이다(명백한 오타·띄어쓰기만 바로잡음)):\n${describeSetPackets(ctx.reportSets, ctx.moduleId)}\n`
     : "";
   return `- 닉네임: ${ctx.nickname}
 - 오행 분포: ${elementsLine}

@@ -89,16 +89,19 @@ export default function IntroScreen({ onNext, onVerifyCode }: { onNext: () => vo
         <Text style={styles.footer} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>
           {strings.intro.freeNote}
           {"\n"}
-          {strings.intro.ageNoticePrefix}{" "}
-          <Text style={styles.footerLink} accessibilityRole="link" onPress={() => Linking.openURL(termsUrl)}>
-            {strings.intro.termsLinkLabel}
-          </Text>{" "}
-          {strings.intro.ageNoticeAnd}{" "}
-          <Text style={styles.footerLink} accessibilityRole="link" onPress={() => Linking.openURL(privacyUrl)}>
-            {strings.intro.privacyLinkLabel}
-          </Text>
-          {strings.intro.ageNoticeSuffix}
+          {strings.intro.ageNoticeShort}
         </Text>
+        {/* Real buttons with a 44pt target. Inline links inside the sentence were a few pixels
+            tall and hard to hit on a phone (2026-10-04 device test). */}
+        <View style={styles.legalRow}>
+          <Pressable onPress={() => Linking.openURL(termsUrl)} style={styles.legalLink} accessibilityRole="link" hitSlop={6}>
+            <Text style={styles.footerLink} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.intro.termsLinkLabel}</Text>
+          </Pressable>
+          <Text style={styles.legalDot} importantForAccessibility="no" accessibilityElementsHidden>·</Text>
+          <Pressable onPress={() => Linking.openURL(privacyUrl)} style={styles.legalLink} accessibilityRole="link" hitSlop={6}>
+            <Text style={styles.footerLink} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.intro.privacyLinkLabel}</Text>
+          </Pressable>
+        </View>
       </SafeAreaView>
     </PatternBackground>
   );
@@ -180,9 +183,29 @@ const styles = StyleSheet.create({
     color: COLORS.footer,
     textAlign: "center",
     paddingHorizontal: 24,
-    paddingBottom: 24,
+    paddingBottom: 4,
+  },
+  legalRow: {
+    zIndex: 2,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 4,
+    paddingBottom: 16,
+  },
+  legalLink: {
+    minHeight: 44,
+    justifyContent: "center",
+    paddingHorizontal: 12,
+  },
+  legalDot: {
+    fontFamily: FONTS.regular,
+    fontSize: 13,
+    color: COLORS.footer,
   },
   footerLink: {
+    fontFamily: FONTS.medium,
+    fontSize: 13,
     textDecorationLine: "underline",
     color: COLORS.footer,
   },

@@ -1491,6 +1491,8 @@ function PaywallPage({
           <Lock size={20} strokeWidth={1.75} color={COLORS.gold} />
           <Text style={pageStyles.paywallTitle} accessibilityRole="header">{strings.report.paywallTitle}</Text>
           <Text style={pageStyles.paywallBody}>{strings.report.paywallBody}</Text>
+          {/* The closing page (takeaway, next test, PDF) sits past the lock, so name it here. */}
+          <Text style={pageStyles.paywallExtras}>{strings.report.paywallExtras}</Text>
           <Text style={pageStyles.paywallLockedNote}>{strings.report.paywallLockedNote(lockedCount, totalCount)}</Text>
           {lockedChapters.length > 0 && (
             <View style={pageStyles.paywallChapterList}>
@@ -1701,6 +1703,7 @@ const pageStyles = StyleSheet.create({
   paywallChapterLabel: { flex: 1, fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline },
   paywallTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 19, color: COLORS.headline, textAlign: "center", marginTop: 4 },
   paywallBody: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 21, color: COLORS.headline, textAlign: "center" },
+  paywallExtras: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: 4 },
   paywallButtonDisabled: { opacity: 0.6 },
   paywallBuyButton: { width: "100%", backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 14, alignItems: "center", marginTop: 8 },
   paywallBuyButtonLabel: { fontFamily: FONTS.bold, fontSize: 14, color: COLORS.background },

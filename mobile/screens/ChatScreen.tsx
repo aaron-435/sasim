@@ -233,11 +233,19 @@ export default function ChatScreen({
   // The mid-conversation checkpoint (see lib/chatPrompts.ts's CHECKPOINT_TURN doc comment)
   // — right after that turn's reply, offer an explicit choice instead of the normal text
   // input. "마무리" reuses the exact same requestNextTurn(TOTAL_TURNS, ...) path as the
-  // pre-existing "다 얘기했어요" button, jumping straight to the closing turn. "계속" just
-  // dismisses the choice so the normal input reappears — checkpointDismissed only ever
-  // needs to flip true once, since CHECKPOINT_TURN is a single fixed turn number.
+  // pre-existing "다 얘기했어요" button, jumping straight to the closing turn. "계속" sends the
+  // button's words as the user's reply and asks for the next turn right away: the server's
+  // turn-11 instruction takes a short "let's continue" and opens the next set with a quiz-answer
+  // question. (It used to only hide the buttons, leaving the user to answer "keep going or
+  // stop?" by typing, with nothing new to talk about — 2026-10-04 device test.)
   function handleContinueAtCheckpoint() {
+    if (isTyping || doneRef.current) return;
     setCheckpointDismissed(true);
+    const text = strings.chat.checkpointContinueButton;
+    setMessages((m) => [...m, { role: "user", text }]);
+    const nextHistory: HistoryEntry[] = [...turnHistoryRef.current, { role: "user", content: text }];
+    turnHistoryRef.current = nextHistory;
+    requestNextTurn(turn + 1, nextHistory);
   }
 
   function handleWrapUpAtCheckpoint() {
