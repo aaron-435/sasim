@@ -182,6 +182,22 @@ export function collapseInlineQuestions(line: string): string {
 // 물음표만 세는 아래 검사를 빠져나가, 진짜 질문과 함께 "질문 두 개"가 됐다. 물음표 질문이 따로 있을 때만
 // 그런 줄을 평서문으로 바꾸거나("걸까요"→"것 같기도 해요", "일까요"→"일지도 몰라요") 뺀다.
 const IMPLICIT_KO_QUESTION = /(까요|나요|가요|습니까|는지요)[.。…]*\s*$/;
+// 자책 표현(언어별). 넓게 잡아도 되는 이유: 잘못 잡으면 "다르게 보는 한 줄"이 하나 더 붙을 뿐이다.
+const SELF_BLAME_PATTERN: Record<string, RegExp> = {
+  ko: /(한심|못났|못난|바보|멍청|제 탓|내 탓|제 잘못|내 잘못|게을러|게으른|자격이 없|민폐|예민한 (걸까|거|편)|너무 예민|이상한 (거|걸까|사람)|제가 문제|내가 문제|별것도 아닌데|유난|집착하는|철이 없|쓸모없|망친 것 같|망쳐|구질구질|찌질|원래 .{0,12}못 ?하)/,
+  en: /(\b(i'?m|i am|im)\s+(being\s+)?(so\s+|too\s+|just\s+|really\s+)?(dramatic|stupid|pathetic|lazy|needy|crazy|clingy|gross|weak|useless|selfish|overreacting|too much|the problem|a mess)\b|\bbeing\s+(so\s+|too\s+)?(much|too much|dramatic|needy|clingy|gross)\b|my fault|i overreact|i ruin|i ruined|i always mess)/i,
+  es: /(\b(soy|estoy siendo)\s+(un\s+|una\s+|muy\s+|tan\s+|bien\s+)?(bruto|bruta|tonto|tonta|exagerad[oa]|dramátic[oa]|débil|inútil|egoísta|pesad[oa]|un desastre|lo peor)|es mi culpa|culpa mía|la riego|la riega|la cago|la cagué|la regué|exagero)/i,
+};
+export function findSelfBlame(text: string, locale: string = "ko"): string | null {
+  const m = text.match(SELF_BLAME_PATTERN[locale] ?? SELF_BLAME_PATTERN.ko);
+  if (!m || m.index === undefined) return null;
+  // The sentence around the match, so the model sees the user's own wording.
+  const start = Math.max(text.lastIndexOf(".", m.index) + 1, text.lastIndexOf("\n", m.index) + 1, 0);
+  const endDot = text.slice(m.index).search(/[.!?\n]/);
+  const end = endDot < 0 ? text.length : m.index + endDot + 1;
+  return text.slice(start, end).trim().slice(0, 120);
+}
+
 export function softenImplicitQuestions(lines: string[]): string[] {
   if (!lines.some((line) => /[?？]\s*$/.test(line.trim()))) return lines;
   return lines.flatMap((line) => {
@@ -265,9 +281,9 @@ export function prependPerspectiveLead(lines: string[], locale: string = "ko"): 
 // 2026-10-04 실기기 테스트: 세트를 여는 턴의 "정리 → 정정 허락 → 인용 → 질문" 네 조각이 서로 이어지지 않는 양식처럼 읽혔다.
 // 세트 시작은 "받기·전환 → 인용과 그 이유 → 인용에서 나온 질문"으로 바꾸고, 정정 허락 줄은 10턴 점검에만 남긴다.
 const RECAP_RECHECK_PATTERN: Record<string, RegExp> = {
-  ko: /고쳐|바로잡|다르면|다르게 기억|틀렸|잘못 (들|짚|이해)|어긋났|멈춰/,
-  en: /correct me|got (it|that|this) wrong|misheard|not quite (right|how)|set me straight|tell me|stand corrected/i,
-  es: /corr[ií]ge|correg|equivoc|si no es así|no es exactamente|d[ií]melo|dime si/i,
+  ko: /고쳐|바로잡|다르면|다르게 기억|다르게 남|틀렸|잘못 (들|짚|이해)|어긋났|멈춰|놓친|빠진 (게|부분)|맞지 않/,
+  en: /correct me|got (it|that|this|anything) wrong|misheard|missed (something|anything)|not quite (right|how)|isn'?t (quite )?how|wasn'?t (quite )?how|set me straight|tell me|stand corrected/i,
+  es: /corr[ií]ge|correg|equivoc|me falt[óo]|si no es así|si no fue así|no es exactamente|d[ií]melo|dime si/i,
 };
 const RECAP_RECHECK_FALLBACK: Record<number, Record<string, string>> = {
   10: {
@@ -314,6 +330,13 @@ export async function getChatReply(params: {
   const expectedQuote =
     quoteRole?.set && quoteSets ? selectSetQuizAnswer(quoteSets, quoteRole.set, params.context.quizAnswers ?? [])?.label ?? null : null;
   let quoteRetryNote = "";
+  // 2026-10-05 (시뮬레이션 채점 t7): 기법 ⑦은 모델이 직전 발화를 보고 자책인지 스스로 판단했는데, 자책 직후에도
+  // 세트 질문으로 넘어가는 일이 잦았다. 사용자 직전 말에서 자책 표현을 코드로 찾아 그 턴 지시에 명시한다.
+  const lastUser = [...params.history].reverse().find((m) => m.role === "user")?.content ?? "";
+  const selfBlame = typeof lastUser === "string" ? findSelfBlame(lastUser, replyLocale) : null;
+  const selfBlameNote = selfBlame
+    ? `\n\n[이번 턴 확인] 사용자의 직전 말에 자책이 있다: "${selfBlame}". 기법 ⑦을 이번 응답에서 반드시 한다 — 그 자책을 그대로 받아 적거나 "그렇지 않아요"로 덮지 말고, 그 행동이나 반응을 다르게 볼 수 있는 한 줄을 응답 앞쪽에 둔다. 위 "먼저 확인" 지시대로, 질문을 반박형으로 쓸지 그 한 줄만 둘지는 이번 턴 종류(인용 턴·점검·마지막)와 직전 응답을 보고 정한다.`
+    : "";
   let parsed: { lines?: unknown; formulation?: unknown } = {};
   let rawLines: string[] = [];
   for (let attempt = 0; ; attempt++) {
@@ -321,7 +344,7 @@ export async function getChatReply(params: {
       model: CHAT_MODEL,
       ...chatSamplingParams(CHAT_MODEL, 0.8),
       messages: [
-        { role: "system", content: systemPrompt + quoteRetryNote },
+        { role: "system", content: systemPrompt + selfBlameNote + quoteRetryNote },
         ...params.history,
       ],
       response_format: { type: "json_object" },
