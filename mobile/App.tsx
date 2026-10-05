@@ -29,6 +29,7 @@ import ReportScreen from "./screens/ReportScreen";
 import TobScreen from "./screens/TobScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import TypeScreen from "./screens/TypeScreen";
+import TypeRevealScreen from "./screens/TypeRevealScreen";
 import VerifyCodeScreen, { type VerifiedData } from "./screens/VerifyCodeScreen";
 import * as Notifications from "expo-notifications";
 import { scheduleDecadeTransitionNotification } from "./lib/decadeNotification";
@@ -54,7 +55,7 @@ import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } f
 // pipeline — chained, not independently reachable from Home, since chat needs a quiz
 // diagnosis and report needs both quiz+chat context — same dependency web's
 // components/AppFlow.jsx has).
-type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings" | "myReports" | "shareCards" | "yearReport" | "qaReport";
+type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "typeReveal" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings" | "myReports" | "shareCards" | "yearReport" | "qaReport";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
@@ -80,6 +81,7 @@ const BACK_TARGET: Partial<Record<StepId, StepId>> = {
   tob: "dob",
   city: "tob",
   concern: "city",
+  typeReveal: "home",
   quiz: "moduleSelect",
   qa: "home",
   moduleSelect: "home",
@@ -418,9 +420,20 @@ function AppContent() {
           onNext={() => {
             if (concern) saveUserConcern(concern);
             track("onboarding_complete", { via: "app", ...(concern ? { topic: concern } : {}) });
-            setStep("home");
+            // New users see their type once before Home; a reading without a type goes straight Home.
+            setStep(homeData?.sajuResult.sajuType ? "typeReveal" : "home");
           }}
           onBack={() => setStep("city")}
+        />
+      )}
+
+      {step === "typeReveal" && homeData?.sajuResult.sajuType && (
+        <TypeRevealScreen
+          nickname={homeData.nickname}
+          sajuType={homeData.sajuResult.sajuType}
+          fourPillars={homeData.sajuResult.fourPillars}
+          elements={homeData.sajuResult.elements ?? null}
+          onDone={() => setStep("home")}
         />
       )}
 

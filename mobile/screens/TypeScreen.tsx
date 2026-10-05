@@ -31,13 +31,18 @@ export default function TypeScreen({
   fourPillars,
   elements,
   onBack,
+  variant = "full",
 }: {
   nickname: string;
   sajuType: SajuType;
   /** The stored reading's `fourPillars` / `elements`, drawn by FourPillarsChart (hidden for odd shapes). */
   fourPillars: unknown;
   elements: Record<string, number> | null;
+  /** "full" = the Home → type screen; "reveal" = the one-time post-onboarding reveal
+   *  (TypeRevealScreen): no back link, chart and mode sections left for the full screen,
+   *  and `onBack` becomes the pinned "Go to home" button. */
   onBack: () => void;
+  variant?: "full" | "reveal";
 }) {
   const strings = useStrings();
   const { locale } = useLocale();
@@ -51,6 +56,7 @@ export default function TypeScreen({
   const ModeIcon = ELEMENT_ICON[sajuType.dominantElement];
   const tint = ELEMENT_COLORS[sajuType.dayMasterElement] ?? COLORS.gold;
   const showChart = !!elements && parseFourPillars(fourPillars) !== null;
+  const reveal = variant === "reveal";
 
   async function handleShare() {
     if (sharing) return;
@@ -74,12 +80,18 @@ export default function TypeScreen({
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root} edges={reveal ? ["top", "left", "right"] : undefined}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
-          <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
-          <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-        </Pressable>
+        {reveal ? (
+          <Text style={styles.revealEyebrow} accessibilityRole="header">
+            {strings.sajuType.revealEyebrow}
+          </Text>
+        ) : (
+          <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+            <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
+            <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
+          </Pressable>
+        )}
 
         <View style={[styles.card, { borderColor: `${tint}55` }]}>
           <Text style={styles.brandLabel}>FATESAID</Text>
@@ -96,7 +108,7 @@ export default function TypeScreen({
           </View>
         </View>
 
-        {showChart && elements && (
+        {!reveal && showChart && elements && (
           <View style={styles.section}>
             <Text style={[styles.sectionLabel, styles.chartLabel]} accessibilityRole="header">
               {strings.home.myChartTitle}
@@ -117,6 +129,7 @@ export default function TypeScreen({
           <Text style={styles.pieceBody}>{archetype.body}</Text>
         </View>
 
+        {!reveal && (
         <View style={styles.section}>
           <View style={styles.sectionHeaderRow}>
             <ModeIcon size={16} strokeWidth={2} color={ELEMENT_COLORS[sajuType.dominantElement]} />
@@ -126,6 +139,7 @@ export default function TypeScreen({
           <Text style={styles.pieceTagline}>{mode.tagline}</Text>
           <Text style={styles.pieceBody}>{mode.body}</Text>
         </View>
+        )}
 
         {celebrities.length > 0 && (
           <View style={styles.section}>
@@ -210,7 +224,7 @@ export default function TypeScreen({
         </View>
 
         <Pressable
-          style={styles.shareButton}
+          style={[styles.shareButton, reveal && styles.shareButtonSecondary]}
           onPress={handleShare}
           disabled={sharing}
           accessibilityRole="button"
@@ -218,15 +232,27 @@ export default function TypeScreen({
           accessibilityState={{ disabled: sharing, busy: sharing }}
         >
           {sharing ? (
-            <ActivityIndicator color={COLORS.ctaText} />
+            <ActivityIndicator color={reveal ? COLORS.gold : COLORS.ctaText} />
           ) : (
             <>
-              <Share2 size={16} strokeWidth={2} color={COLORS.ctaText} />
-              <Text style={styles.shareButtonLabel}>{strings.sajuType.shareButton}</Text>
+              <Share2 size={16} strokeWidth={2} color={reveal ? COLORS.gold : COLORS.ctaText} />
+              <Text style={[styles.shareButtonLabel, reveal && styles.shareButtonLabelSecondary]}>{strings.sajuType.shareButton}</Text>
             </>
           )}
         </Pressable>
       </ScrollView>
+      {reveal && (
+        <SafeAreaView edges={["bottom"]} style={styles.homeBar}>
+          <Pressable
+            style={({ pressed }) => [styles.homeButton, pressed && styles.pressed]}
+            onPress={onBack}
+            accessibilityRole="button"
+            accessibilityLabel={strings.sajuType.revealGoHome}
+          >
+            <Text style={styles.homeButtonLabel}>{strings.sajuType.revealGoHome}</Text>
+          </Pressable>
+        </SafeAreaView>
+      )}
     </SafeAreaView>
   );
 }
@@ -427,5 +453,47 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.semibold,
     fontSize: 14.5,
     color: COLORS.ctaText,
+  },
+  // Reveal variant: sharing steps back to an outline button so "Go to home" stays the one primary action.
+  shareButtonSecondary: {
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: COLORS.gold,
+  },
+  shareButtonLabelSecondary: {
+    color: COLORS.gold,
+  },
+  revealEyebrow: {
+    fontFamily: FONTS.semibold,
+    fontSize: 13,
+    letterSpacing: 0.3,
+    color: COLORS.gold,
+    textAlign: "center",
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  homeBar: {
+    ...readableColumn,
+    paddingHorizontal: 22,
+    paddingTop: 12,
+    paddingBottom: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: COLORS.border,
+    backgroundColor: COLORS.background,
+  },
+  homeButton: {
+    minHeight: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: COLORS.gold,
+    borderRadius: 12,
+  },
+  homeButtonLabel: {
+    fontFamily: FONTS.semibold,
+    fontSize: 15,
+    color: COLORS.ctaText,
+  },
+  pressed: {
+    opacity: 0.85,
   },
 });

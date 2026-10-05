@@ -15,8 +15,8 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 
 | 위치 | 역할 |
 |---|---|
-| `app/` | Next.js App Router. `app/page.tsx`는 `components/AppFlow.jsx`를 렌더. `app/api/*`가 API. `privacy`, `terms`, `data-deletion` 법적 페이지 |
-| `components/` | 웹 UI(JSX). Landing, OnboardingWizard, QAChat 등. AppFlow에 모듈 선택·퀴즈·챗·리포트 화면 코드도 남아 있다(웹에서 실제로 노출되는 범위는 `(미확인)`, 메모리상 웹은 Q&A 전용 광고 표면) |
+| `app/` | Next.js App Router. `app/page.tsx`는 `components/AppFlow.jsx`를 렌더. `app/api/*`가 API. `privacy`, `terms`, `data-deletion` 법적 페이지. `saju-calculator`는 무료 사주 계산기(네 기둥·일간·오행 분포, `components/SajuCalculator.jsx`). 언어는 `?lang=`(기본 en), 언어별 canonical·hreflang |
+| `components/` | 웹 UI(JSX). Landing(2026-10-05부터 히어로 아래 `LandingTypeCard`: 생년월일만으로 `/api/saju`의 `sajuType` 카드, 유명인 데이터는 카드가 뜰 때만 불러옴), OnboardingWizard, QAChat 등. `QuickBirthForm`은 랜딩 카드와 계산기가 함께 쓰는 짧은 생년월일 폼(`sessionId` 없이 호출하므로 DB에 저장 안 됨). AppFlow에 모듈 선택·퀴즈·챗·리포트 화면 코드도 남아 있다(웹에서 실제로 노출되는 범위는 `(미확인)`, 메모리상 웹은 Q&A 전용 광고 표면) |
 | `lib/` | 서버/공용 로직. 사주 엔진, 프롬프트, LLM 호출, 결제 검증, i18n, 콘텐츠 |
 | `middleware.ts` | `/api/*`에 CORS 허용 헤더. 인증 없는 공개 API + `lib/rateLimit.ts` |
 | `mobile/` | Expo SDK 57 / React Native 0.86 앱. 별도 `package.json`. `screens/`, `lib/`, `components/`, `theme/`. `theme/colors.ts`(팔레트)와 `theme/fonts.ts`(글꼴 토큰 `FONTS.display/displayItalic/regular/medium/semibold/bold` — 2026-10-04부터 표시용 Newsreader, UI용 Plus Jakarta Sans, 한글은 시스템 글꼴. PDF `lib/pdf/reportPdf.tsx`도 같은 글꼴, 파일은 `next.config.mjs`로 함수에 포함) — 화면은 글꼴 이름을 직접 쓰지 않고 토큰만 참조, 실제 로딩은 `App.tsx`의 `useFonts`. 같은 파일의 `MAX_FONT_SCALE`(display/control/body)이 시스템 글자 크기 상한(`maxFontSizeMultiplier`)이며 온보딩·퀴즈·Q&A 화면에 적용. `theme/layout.ts`의 `readableColumn`(최대 폭 640pt, 가운데)이 넓은 화면(iPad 등)용 본문 폭 — 홈·운세·검사 목록·타입·궁합·공유 카드·신년 미리보기의 스크롤 내용과 `components/ReportPager.tsx`의 각 페이지·상단 막대에 적용, 휴대폰에서는 변화 없음 |
@@ -26,7 +26,7 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 ## 3. 핵심 흐름
 
 ### 온보딩 → 사주 계산
-앱 온보딩 화면들(언어(en·es·ko 순) → 인트로 → 닉네임 → 성별 → 생년월일 → 시간 → 도시 → 고민)이 정보를 모아 `POST /api/saju`를 호출한다. 화면 전환은 `mobile/App.tsx`의 `step` 상태로 관리한다(react-navigation/expo-router 없음). 웹에서 시작한 사용자는 `/api/verification-code`로 받은 코드를 `VerifyCodeScreen`에서 입력해 웹에서 모은 생년월일을 복원한다. 이 화면은 순서에 끼어 있지 않고 인트로 아래 작은 링크("웹에서 시작했나요? 코드 입력하기")로만 들어간다(2026-10-04).
+앱 온보딩 화면들(언어(en·es·ko 순) → 인트로 → 닉네임 → 성별 → 생년월일 → 시간 → 도시 → 고민)이 정보를 모아 `POST /api/saju`를 호출한다. 고민 다음에는 새로 온보딩한 사용자에게만 사주 유형 공개 화면(`TypeRevealScreen` → `TypeScreen`의 `reveal` 모드: 뒤로 링크·원국 그림·"지금 나를 이끄는 기운" 칸 없이, 공유는 보조 버튼, 하단 고정 "홈으로")을 한 번 보여 준 뒤 홈으로 간다(2026-10-05). 저장된 결과로 복원되는 사용자와 웹 코드 입력 사용자는 거치지 않고, 유형이 없는 결과면 바로 홈. 화면 전환은 `mobile/App.tsx`의 `step` 상태로 관리한다(react-navigation/expo-router 없음). 웹에서 시작한 사용자는 `/api/verification-code`로 받은 코드를 `VerifyCodeScreen`에서 입력해 웹에서 모은 생년월일을 복원한다. 이 화면은 순서에 끼어 있지 않고 인트로 아래 작은 링크("웹에서 시작했나요? 코드 입력하기")로만 들어간다(2026-10-04).
 
 ### 사주 엔진 (자체 구현)
 `lib/sazu.ts`의 `calculateSaju()` → 자체 엔진 `lib/manseryeok.ts` 우선, 어떤 오류든 나면 외부 SAZU API로 폴백.
@@ -71,7 +71,7 @@ PDF(`/api/report-pdf` → `lib/pdf/reportPdf.tsx`)도 같은 규칙이다: 라�
 - 서버: 생성 비용이 드는 유료 콘텐츠는 서버에서 `lib/revenuecat.ts`로 entitlement를 확인한다(`REVENUECAT_SECRET_KEY` 필요, 없으면 fail closed). 앱 쪽 게이트만 믿지 않는다.
 
 ### 측정 (제품 이벤트)
-외부 분석 SDK 없이 자체 기록한다(2026-10-05). 앱은 `mobile/lib/analytics.ts`의 `track()`/`trackOnce()`로 이벤트를 모아 몇 초마다(또는 백그라운드로 갈 때) `/api/events`로 묶어 보내고, 웹 사이트는 `lib/analytics.ts`의 `logEvent()`로 한 건씩 보낸다(웹은 기존 Vercel Analytics 호출도 유지). 라우트가 `lib/eventSchema.ts`의 허용 목록(이벤트 이름, 속성 키, 짧은 id 모양 값, 0~999 정수)에 맞지 않는 배치를 통째로 400으로 거절하므로 생년월일·이름·자유 입력 글은 들어갈 수 없다. 행은 Supabase `events`에 쌓이고, 식별자는 설치(앱)·브라우저(웹)마다 만든 무작위 `anon_id`뿐이며 `sessions`와 연결하지 않는다. `platform`(ios·android·app-web·site)과 `dev` 플래그로 개발 트래픽을 걸러 본다. 결제 이벤트는 `mobile/lib/purchases.ts`의 공용 구매 함수 한 곳에서, 온보딩·알림 탭은 `App.tsx`에서, 페이월 노출은 각 페이월 화면에서 남긴다. "이게 나 같나요?" 👍/👎는 공용 `mobile/components/FeedbackRow.tsx`(Q&A 답 아래, 운세 총론 카드 안)이고 같은 경로로 `feedback` 이벤트가 된다. 앱과 서버의 이벤트 이름 목록은 따로 있으니 함께 고친다.
+외부 분석 SDK 없이 자체 기록한다(2026-10-05). 앱은 `mobile/lib/analytics.ts`의 `track()`/`trackOnce()`로 이벤트를 모아 몇 초마다(또는 백그라운드로 갈 때) `/api/events`로 묶어 보내고, 웹 사이트는 `lib/analytics.ts`의 `logEvent()`로 한 건씩 보낸다(웹은 기존 Vercel Analytics 호출도 유지). 라우트가 `lib/eventSchema.ts`의 허용 목록(이벤트 이름, 속성 키, 짧은 id 모양 값, 0~999 정수)에 맞지 않는 배치를 통째로 400으로 거절하므로 생년월일·이름·자유 입력 글은 들어갈 수 없다. 행은 Supabase `events`에 쌓이고, 식별자는 설치(앱)·브라우저(웹)마다 만든 무작위 `anon_id`뿐이며 `sessions`와 연결하지 않는다. `platform`(ios·android·app-web·site)과 `dev` 플래그로 개발 트래픽을 걸러 본다. 결제 이벤트는 `mobile/lib/purchases.ts`의 공용 구매 함수 한 곳에서, 온보딩·알림 탭은 `App.tsx`에서, 페이월 노출은 각 페이월 화면에서 남긴다. "이게 나 같나요?" 👍/👎는 공용 `mobile/components/FeedbackRow.tsx`(Q&A 답 아래, 운세 총론 카드 안)이고 같은 경로로 `feedback` 이벤트가 된다. 유형 공개는 `type_reveal_view`(앱 `TypeRevealScreen`은 `kind`=유형 코드, 웹은 `surface`=landing·calculator)로 남긴다. 앱과 서버의 이벤트 이름 목록은 따로 있으니 함께 고친다.
 
 ### 다국어
 ko/en/es. 웹 `lib/i18n/`, 앱 `mobile/lib/i18n/`(스페인어 규칙은 `STYLE_GUIDE.md`). LLM 출력 언어는 `lib/promptLocale.ts`로 지정.

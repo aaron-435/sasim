@@ -253,6 +253,8 @@ export const es: typeof ko = {
     sharePreviewLabel: "Vista previa de la imagen para compartir",
     celebritiesLabel: "Personas que comparten este tipo",
     celebrityBirthYear: (year: number) => `n. ${year}`,
+    revealEyebrow: "Este es tu tipo de saju",
+    revealGoHome: "Ir al inicio",
   },
 
   sajuLearn: {

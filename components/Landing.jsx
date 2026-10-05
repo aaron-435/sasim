@@ -4,6 +4,7 @@ import React from "react";
 import { ArrowRight, Lock, Sparkles } from "lucide-react";
 import { useStrings, useLocale, LOCALES } from "@/lib/i18n";
 import { trackLandingCtaClick, trackLandingView } from "@/lib/analytics";
+import LandingTypeCard from "@/components/LandingTypeCard";
 
 /**
  * Landing — the first thing an ad visitor sees (added 2026-09-19). Web's job is lead-gen:
@@ -129,6 +130,8 @@ export default function Landing({ onStart }) {
           <p className="lp-note">{l.ctaNote}</p>
           <p className="lp-trust">{l.trust}</p>
         </section>
+
+        <LandingTypeCard t={t} locale={locale} onContinue={() => start("type_card")} />
 
         <section className="lp-section" aria-labelledby="lp-features">
           <h2 id="lp-features" className="lp-serif lp-h2">{l.featuresTitle}</h2>

@@ -276,6 +276,8 @@ export const ko = {
     sharePreviewLabel: "공유 이미지 미리보기",
     celebritiesLabel: "이 유형을 가진 유명인",
     celebrityBirthYear: (year: number) => `${year}년생`,
+    revealEyebrow: "나의 사주 유형이 나왔어요",
+    revealGoHome: "홈으로",
   },
 
   sajuLearn: {

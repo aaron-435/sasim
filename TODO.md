@@ -30,9 +30,14 @@
 
 ## 첫 감탄
 
-- [ ] 2. 앱 유형 공개 화면 + 웹 유형 카드·계산기 페이지
+- [x] 2. 앱 유형 공개 화면 + 웹 유형 카드·계산기 페이지
   - 변경: `mobile/App.tsx`(고민 선택 다음 새 `typeReveal` 단계 → 홈. 기존 저장 데이터가 있는 사용자는 건너뜀), 새 `mobile/screens/TypeRevealScreen.tsx`(TypeScreen 부품 재사용: 유형 이름·한 줄·유명인·공유·홈으로). 웹: `components/Landing.jsx`에 생년월일만으로 유형 카드(기존 `/api/saju` 응답의 `sajuType` 사용) + 설치 안내, 새 `app/saju-calculator/page.tsx`(일간·네 기둥·오행 분포, 메타데이터·OG 포함). Q&A 맛보기는 그대로.
   - QA: 루트 검사 + mobile tsc. mobile-web에서 저장 데이터를 지운 뒤 온보딩 끝까지 → 유형 공개 화면 → 홈(스크린샷). `?persona=jordan`(기존 사용자)에서는 공개 화면 없이 홈. 웹 `npm run dev`에서 랜딩 생년월일 입력 → 카드, `/saju-calculator` 렌더(ko/en/es). 회귀 확인.
+  - QA: 루트 `npx tsc --noEmit` → exit 0, `npm run lint` → "No ESLint warnings or errors", `npm run build` → 성공(`ƒ /saju-calculator` 7.39 kB 포함, 새 경고 없음 — edge runtime 안내는 기존 `opengraph-image`). mobile tsc → exit 0.
+  - QA(mobile-web, 375×812): localStorage 비우고 English → 닉네임 → 성별 → 1992-03-15 → 시간 모름 → New York → 고민 → **유형 공개 화면**("Here's your saju type", Steel · Harvest, 타고난 나, 유명인 3명, 공유 카드 미리보기 + 테두리 "Share result", 하단 고정 "Go to home") → 탭 → 홈. 고민 다음 `/api/events` 배치 전송 확인(프로덕션 미배포라 404, 같은 모양 `type_reveal_view` 본문 3종을 로컬 API에 보내면 200). `?qa=free&persona=jordan`은 공개 화면 없이 바로 홈.
+  - QA(웹 work-dev, 375×812): 랜딩 생년월일만 입력 → 유형 카드(이름·한 줄·타고난 나·지금의 기운·유명인 2명·시간 없이 계산 안내·"전체 원국은 앱에서"·곧 출시 안내), `/api/saju` 429ms, `type_reveal_view`(surface=landing) 200. "시간과 도시까지 넣고 자세히 보기" → 기존 온보딩 1/5. `/saju-calculator?lang=ko` 1992-03-15 09시 → 壬申·癸卯·庚寅·庚辰, 일간 庚 "금 기운 · 양"(앱 Steel=庚과 일치), 오행 막대, 가로 스크롤 없음. `?lang=es` 2월 30일 → "Revisa tu fecha de nacimiento.", 1992-02-15 시간 모름 → 시주 "Hora desconocida". en·es `<title>`·description·canonical·hreflang 4개·og:image 확인(curl). 콘솔 오류 0.
+  - QA 회귀(mobile-web `?qa=free&persona=jordan`): 홈 → 운세 총론 → Q&A 답 1개(0 of 1 left) → 검사 목록 → Burnout 1/30 → 궁합 결과(Jordan · Sam) 정상. 콘솔 오류는 `/api/events` 404(프로덕션 미배포)뿐.
+  - [ ] (사용자 확인) iOS dev-client에서 새로 온보딩(설정 → 로그아웃 → 다시 입력) → 고민 다음 유형 공개 화면 → "공유하기"로 이미지 공유 시트가 뜨는지, "홈으로" 후 앱을 다시 열면 공개 화면 없이 홈인지. Android에서는 공개 화면에서 하드웨어 뒤로 → 홈.
 
 ## 구독 강화
 
@@ -117,3 +122,5 @@
 
 - (1번 중) 웹 Next 개발 모드(React Strict Mode)에서는 랜딩 `landing_view`가 두 번 기록된다. 프로덕션 빌드에서는 한 번이라 그대로 둠. 분석할 때 `dev=true` 행은 빼고 본다.
 - (1번 중) mobile-web(`?qa=` 개발 모드) 이벤트도 프로덕션 API로 가므로 웹 배포 뒤에는 `platform=app-web`, `dev=true`로 쌓인다. 분석에서 제외 필터 필요.
+- (2번 중) mobile-web에서 사주 유형 공유 카드 미리보기 아래쪽에 내용 없이 배경 무늬만 수백 px 이어진다. 기존 `TypeScreen`(홈 → 유형)에서도 같아서 이번 변경과 무관. 배경 `Image`(absoluteFill)가 웹에서 카드 높이를 키우는 것으로 보임. 네이티브 캡처 이미지에도 생기는지 시뮬레이터에서 확인 필요.
+- (2번 중) 계산기 페이지 `/saju-calculator`로 들어오는 내부 링크와 `sitemap`이 없다. 다음 SPEC(SEO 글)에서 사이트맵·랜딩 링크와 함께 정리.
