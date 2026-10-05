@@ -137,3 +137,17 @@ export function qaDeepReport(
   const data = loadData();
   return pickFixture((v2 ? data?.QA_DEEP_REPORT_V2 : data?.QA_DEEP_REPORT) ?? {}, locale, nickname);
 }
+
+/** `?offer=annual|trial|both` — DEV web only. Shows what the subscription paywall looks like
+ * once the dashboard has an annual package and/or a free trial, with made-up store prices.
+ * Display only: buying still goes through lib/purchases.ts, which has no store on web. */
+export type QaOfferMock = "annual" | "trial" | "both";
+export function qaOfferMock(): QaOfferMock | null {
+  if (!getQaMode()) return null;
+  try {
+    const offer = new URLSearchParams(window.location.search).get("offer");
+    return offer === "annual" || offer === "trial" || offer === "both" ? offer : null;
+  } catch {
+    return null;
+  }
+}

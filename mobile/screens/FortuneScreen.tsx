@@ -11,7 +11,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
-import type { Locale } from "../lib/i18n/types";
 import { DAILY_FORTUNE_CONTENT, LUCKY_NUMBERS, LUCKY_POINTS, getOverview } from "../lib/dailyFortuneContent";
 import { TWELVE_STAGES_CONTENT } from "../lib/twelveStagesContent";
 import { reconciledBody } from "../lib/reconciledCards";
@@ -19,8 +18,11 @@ import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
 import { hasQaProEntitlement, isUnavailableMessage, purchaseIssueDetail, purchaseQaPro, restoreQaPro } from "../lib/purchases";
-import { useMonthlyPrice } from "../lib/useMonthlyPrice";
+import { useSubscriptionOffer } from "../lib/useSubscriptionOffer";
+import PlanPicker from "../components/PlanPicker";
+import GoodDaysScreen from "./GoodDaysScreen";
 import { comingSajuYear } from "../lib/sajuYear";
+import { formatShortDate } from "../lib/shortDate";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
@@ -80,20 +82,6 @@ type MonthFortune = {
 };
 
 type YearDomain = "overview" | "wealth" | "love" | "career" | "study" | "health";
-
-const WEEKDAY_SHORT: Record<Locale, string[]> = {
-  ko: ["일", "월", "화", "수", "목", "금", "토"],
-  en: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-  es: ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"],
-};
-
-function formatShortDate(iso: string, locale: Locale): string {
-  const [y, m, d] = iso.split("-").map(Number);
-  const weekday = WEEKDAY_SHORT[locale][new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
-  if (locale === "ko") return `${m}월 ${d}일 (${weekday})`;
-  if (locale === "es") return `${d}/${m} (${weekday})`;
-  return `${m}/${d} (${weekday})`;
-}
 
 function pickExtreme(list: DayFortune[], mode: "max" | "min"): DayFortune {
   return list.reduce((acc, item) => {
@@ -265,10 +253,10 @@ export default function FortuneScreen({
   const { data: yearly, loading: yearlyLoading, error: yearlyError, load: fetchYearly, retry: retryYearly } = useLazyFetch<YearFortune>(strings.fortune.loadErrorText);
   const { data: monthly, loading: monthlyLoading, error: monthlyError, load: fetchMonthly, retry: retryMonthly } = useLazyFetch<MonthFortune[]>(strings.fortune.loadErrorText);
   const [monthlyDomain, setMonthlyDomain] = useState<YearDomain>("overview");
+  const [showGoodDays, setShowGoodDays] = useState(false);
 
   const [purchasing, setPurchasing] = useState(false);
-  const monthlyPrice = useMonthlyPrice();
-  const priceLabel = monthlyPrice ? strings.qa.subscriptionPriceFor(monthlyPrice) : strings.qa.subscriptionPriceLabel;
+  const offer = useSubscriptionOffer();
   const [restoring, setRestoring] = useState(false);
   const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
 
@@ -399,7 +387,7 @@ export default function FortuneScreen({
     if (purchasing || restoring) return;
     setPurchasing(true);
     setPurchaseNotice(null);
-    const outcome = await purchaseQaPro();
+    const outcome = await purchaseQaPro(offer.selectedId);
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
@@ -485,6 +473,7 @@ export default function FortuneScreen({
                 </View>
               ))}
             </View>
+            <PlanPicker offer={offer} disabled={purchasing || restoring} />
             <Pressable
               style={[styles.subscribeButton, purchasing && styles.buttonDisabled]}
               disabled={purchasing || restoring}
@@ -493,13 +482,13 @@ export default function FortuneScreen({
               accessibilityState={{ disabled: purchasing || restoring, busy: purchasing }}
             >
               <Text style={styles.subscribeButtonText}>
-                {purchasing ? strings.qa.subscribing : `${strings.qa.subscribeButton} · ${priceLabel}`}
+                {purchasing ? strings.qa.subscribing : offer.buttonLabel}
               </Text>
             </Pressable>
             <Pressable style={styles.restoreLink} disabled={purchasing || restoring} onPress={handleRestore} accessibilityRole="button" accessibilityState={{ disabled: purchasing || restoring, busy: restoring }}>
               <Text style={styles.restoreLinkText}>{restoring ? strings.qa.restoring : strings.qa.restoreButton}</Text>
             </Pressable>
-            <Text style={styles.renewNote}>{strings.fortune.autoRenewNote}</Text>
+            <Text style={styles.renewNote}>{offer.renewNote}</Text>
             <View style={styles.legalRow}>
               <Pressable onPress={() => Linking.openURL(`${API_BASE_URL}/terms`)} accessibilityRole="link" style={styles.legalLink}>
                 <Text style={styles.legalLinkText}>{strings.fortune.termsLink}</Text>
@@ -514,6 +503,20 @@ export default function FortuneScreen({
       </SafeAreaView>
     );
   }
+
+  if (showGoodDays && selfDayMasterChar) {
+    return <GoodDaysScreen selfDayMasterChar={selfDayMasterChar} selfDayBranch={selfDayBranch} todayIso={daily?.date ?? null} onBack={() => setShowGoodDays(false)} />;
+  }
+
+  // Subscriber entry to "좋은 날 찾기" — at the end of today's reading and at the top of the month calendar.
+  const goodDaysEntry = selfDayMasterChar ? (
+    <Pressable style={styles.yearReportCard} onPress={() => setShowGoodDays(true)} accessibilityRole="button" accessibilityLabel={strings.goodDays.entryTitle}>
+      <View style={styles.yearReportText}>
+        <Text style={styles.yearReportTitle}>{strings.goodDays.entryTitle}</Text>
+        <Text style={styles.yearReportBody}>{strings.goodDays.entryBody}</Text>
+      </View>
+    </Pressable>
+  ) : null;
 
   const weeklyWithScore = (weekly ?? []).filter((d) => d.compatibility);
   const weeklyBest = weeklyWithScore.length ? pickExtreme(weeklyWithScore, "max") : null;
@@ -678,6 +681,8 @@ export default function FortuneScreen({
           </>
         )}
 
+        {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && revealed && goodDaysEntry}
+
         {tab === "weekly" && weeklyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
         {tab === "weekly" && !weeklyLoading && weeklyError && <ErrorNotice text={weeklyError} retryLabel={strings.common.retryLabel} onRetry={retryWeekly} />}
         {tab === "weekly" && !weeklyLoading && !weeklyError && weekly && !weeklyBest && (
@@ -708,6 +713,7 @@ export default function FortuneScreen({
           </>
         )}
 
+        {tab === "month" && goodDaysEntry}
         {tab === "month" && monthDaysLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
         {tab === "month" && !monthDaysLoading && monthDaysError && <ErrorNotice text={monthDaysError} retryLabel={strings.common.retryLabel} onRetry={retryMonthDays} />}
         {tab === "month" && !monthDaysLoading && !monthDaysError && monthDays && !monthBest && (

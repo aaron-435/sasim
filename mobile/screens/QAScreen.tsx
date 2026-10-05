@@ -12,7 +12,8 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import { getDailyLimit, getUsageToday, incrementUsageToday, PAID_DAILY_LIMIT } from "../lib/qaQuota";
 import { isUnavailableMessage, purchaseIssueDetail, purchaseQaPro, restoreQaPro } from "../lib/purchases";
-import { useMonthlyPrice } from "../lib/useMonthlyPrice";
+import { useSubscriptionOffer } from "../lib/useSubscriptionOffer";
+import PlanPicker from "../components/PlanPicker";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { saveLastQuestion } from "../lib/qaHistory";
 import { onlySubcategory, QA_TOPIC_GROUPS, type QaQuestion, type QaSubcategory, type QaTopicGroup } from "../lib/qaTopicGroups";
@@ -65,8 +66,8 @@ export default function QAScreen({
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
-  const monthlyPrice = useMonthlyPrice();
-  const priceLabel = monthlyPrice ? strings.qa.subscriptionPriceFor(monthlyPrice) : strings.qa.subscriptionPriceLabel;
+  const offer = useSubscriptionOffer();
+  const priceLabel = offer.priceLabel;
   const scrollRef = useRef<ScrollView>(null);
   const mountedRef = useRef(true);
   const greetedRef = useRef(false);
@@ -227,7 +228,7 @@ export default function QAScreen({
     if (purchasing || restoring) return;
     setPurchasing(true);
     setPurchaseNotice(null);
-    const outcome = await purchaseQaPro();
+    const outcome = await purchaseQaPro(offer.selectedId);
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
@@ -314,16 +315,17 @@ export default function QAScreen({
             return (
               <View key={i} style={styles.pickerRow}>
                 <View style={styles.subscribeCard}>
+                  <PlanPicker offer={offer} disabled={purchasing || restoring} />
                   <Pressable
                     style={[styles.subscribeButton, purchasing && styles.subscribeButtonDisabled]}
                     disabled={purchasing || restoring}
                     onPress={handleSubscribe}
                     accessibilityRole="button"
-                    accessibilityLabel={purchasing ? strings.qa.subscribing : `${strings.qa.subscribeButton} · ${priceLabel}`}
+                    accessibilityLabel={purchasing ? strings.qa.subscribing : offer.buttonLabel}
                     accessibilityState={{ disabled: purchasing || restoring, busy: purchasing }}
                   >
                     <Text style={styles.subscribeButtonText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
-                      {purchasing ? strings.qa.subscribing : `${strings.qa.subscribeButton} · ${priceLabel}`}
+                      {purchasing ? strings.qa.subscribing : offer.buttonLabel}
                     </Text>
                   </Pressable>
                   <Pressable
@@ -335,6 +337,7 @@ export default function QAScreen({
                   >
                     <Text style={styles.restoreLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{restoring ? strings.qa.restoring : strings.qa.restoreButton}</Text>
                   </Pressable>
+                  {!!offer.trialLine && <Text style={styles.renewNoteText} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{offer.renewNote}</Text>}
                   {purchaseNotice && <Text style={styles.subscribeNoticeText} accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{purchaseNotice}</Text>}
                 </View>
               </View>
@@ -476,6 +479,13 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.medium,
     fontSize: 12.5,
     color: COLORS.subheadline,
+  },
+  renewNoteText: {
+    fontFamily: FONTS.regular,
+    fontSize: 11.5,
+    lineHeight: 17,
+    color: COLORS.subheadline,
+    textAlign: "center",
   },
   subscribeNoticeText: {
     fontFamily: FONTS.regular,

@@ -16,6 +16,7 @@ cd mobile && npx expo start --web --port 8082
 | `qa` | `free` / `pro` / `all` / `off` | 무료 / 구독자 / 구독자 + 모든 리포트 구매. `off`로 끄기. 한 번 켜면 localStorage에 기억 |
 | `persona` | 아래 표의 키 | 사주 결과·닉네임·언어·관심사가 미리 채워진 사용자 |
 | `lang` | `ko` / `en` / `es` | 언어만 덮어쓰기 (선택) |
+| `offer` | `annual` / `trial` / `both` | 구독 페이월에 연간 요금제·7일 무료 체험이 있을 때의 모습(가짜 스토어 가격, 표시만. 구매는 웹에서 여전히 불가) |
 
 예: `http://localhost:8082/?qa=all&persona=mia`
 

@@ -101,6 +101,59 @@ export async function getMonthlyPackage(): Promise<PurchasesPackage | null> {
   }
 }
 
+export type SubscriptionPlanId = "monthly" | "annual";
+
+/** A subscription package as the paywall shows it. Prices and trial come from the store,
+ * never from copy (STYLE_GUIDE: money comes from `priceString`). */
+export interface SubscriptionPlan {
+  id: SubscriptionPlanId;
+  priceString: string;
+  price: number;
+  /** Annual only: the store's own per-month figure ("$4.16"). */
+  pricePerMonthString: string | null;
+  /** A free intro period this user can actually get, or null. */
+  trial: { count: number; unit: "DAY" | "WEEK" | "MONTH" | "YEAR" } | null;
+}
+
+function freeTrialOf(pkg: PurchasesPackage, eligibility: Record<string, { status: number }>): SubscriptionPlan["trial"] {
+  const intro = pkg.product.introPrice;
+  if (!intro || intro.price !== 0) return null;
+  // iOS reports intro eligibility per user (UNKNOWN means "show the regular price"); Android
+  // only lists an intro phase the user is eligible for, and always answers UNKNOWN here.
+  if (Platform.OS === "ios" && eligibility[pkg.product.identifier]?.status !== Purchases.INTRO_ELIGIBILITY_STATUS.INTRO_ELIGIBILITY_STATUS_ELIGIBLE) return null;
+  const unit = intro.periodUnit as "DAY" | "WEEK" | "MONTH" | "YEAR";
+  if (!["DAY", "WEEK", "MONTH", "YEAR"].includes(unit)) return null;
+  return { count: intro.periodNumberOfUnits * Math.max(1, intro.cycles), unit };
+}
+
+/** The "default" offering's monthly and (once it exists in the dashboard) annual packages.
+ * Empty when the store can't answer — the paywall then looks the same as before. */
+export async function getSubscriptionPlans(): Promise<SubscriptionPlan[]> {
+  if (!isSupportedPlatform()) return [];
+  try {
+    const offerings = await Purchases.getOfferings();
+    const current = offerings.current;
+    const packages = [current?.annual, current?.monthly].filter((p): p is PurchasesPackage => !!p);
+    if (!packages.length) return [];
+    let eligibility: Record<string, { status: number }> = {};
+    try {
+      eligibility = await Purchases.checkTrialOrIntroductoryPriceEligibility(packages.map((p) => p.product.identifier));
+    } catch {
+      // Unknown eligibility: show regular prices only.
+    }
+    return packages.map((pkg) => ({
+      id: pkg === current?.annual ? "annual" : "monthly",
+      priceString: pkg.product.priceString,
+      price: pkg.product.price,
+      pricePerMonthString: pkg === current?.annual ? pkg.product.pricePerMonthString : null,
+      trial: freeTrialOf(pkg, eligibility),
+    }));
+  } catch (err) {
+    console.error("[purchases] failed to fetch subscription plans", err);
+    return [];
+  }
+}
+
 export type PurchaseOutcome = { status: "success" } | { status: "cancelled" } | { status: "error"; message: string };
 
 // Every purchase in the app goes through here, so the attempt/success/cancel/error
@@ -125,7 +178,19 @@ async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseOutcome> 
   }
 }
 
-export async function purchaseQaPro(): Promise<PurchaseOutcome> {
+/** Buys the subscription. With no plan (or "monthly") this is the original monthly purchase. */
+export async function purchaseQaPro(plan: SubscriptionPlanId = "monthly"): Promise<PurchaseOutcome> {
+  if (plan === "annual") {
+    if (!isSupportedPlatform()) return unavailable();
+    try {
+      const annual = (await Purchases.getOfferings()).current?.annual ?? null;
+      if (!annual) return unavailable("no annual package in the current offering");
+      return purchasePackage(annual);
+    } catch (err) {
+      console.error("[purchases] failed to fetch offerings", err);
+      return unavailable();
+    }
+  }
   const pkg = await getMonthlyPackage();
   if (!pkg) return unavailable();
   return purchasePackage(pkg);

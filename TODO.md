@@ -41,9 +41,16 @@
 
 ## 구독 강화
 
-- [ ] 3. 구독 페이월 체험·연간 표시 + 좋은 날 찾기
+- [x] 3. 구독 페이월 체험·연간 표시 + 좋은 날 찾기
   - 변경: `mobile/lib/purchases.ts`(현재 오퍼링의 월간·연간 패키지와 intro price 읽기, `getMonthlyPackage` 동작은 유지), 운세·Q&A 구독 페이월 부품(패키지가 둘이면 고르기, 체험 문구는 패키지 정보로, 하드코딩 가격 없음). 좋은 날 찾기: 새 API `/api/goodDays`(목적 5종, 앞으로 30일, 기존 일진 엔진 재사용, 구독 확인), `FortuneScreen` 새 진입(탭 또는 하위 화면), 목적·이유 문구 ko/en/es. "피할 날" 표현 없음.
   - QA: 루트 검사 + mobile tsc. `curl` 로 `/api/goodDays` 구독 없음 → 401/403, 서버 계산 함수를 스크래치 스크립트로 persona 4명 × 목적 5종 호출해 날짜 3~5개·이유 한 줄·금지어("unlucky", "avoid", "흉", "피해야") 0건. mobile-web에서 연간 패키지 없는 상태가 지금과 같은 화면. (사용자 확인) 시뮬레이터 dev-client + 샌드박스에서 연간·체험 등록 후 페이월에 "7일 무료" 표시와 구매. 회귀 확인.
+  - QA: 루트 `npx tsc --noEmit` → exit 0, `npm run lint` → "No ESLint warnings or errors", `npm run build` → 성공(`ƒ /api/goodDays` 포함, 새 경고 없음 — 다른 세션 dev 서버의 `.next`를 건드리지 않으려고 스크래치 복사본에서 빌드). mobile tsc → exit 0.
+  - QA: 빌드본 `next start`(3100) + 로컬 RevenueCat 대역(`REVENUECAT_API_BASE`)에 `curl -X POST /api/goodDays` → appUserId 없음 401 `no_user`, 모르는 목적·일간 400, 구독 없음·만료 403 `not_subscribed`, RevenueCat 오류 503 `unavailable`, 구독 중 200(날짜 5개). 실제 RevenueCat에는 요청하지 않음.
+  - QA: 스크래치 `getGoodDays`를 일간 10종 × 목적 5종 호출 → 50건 모두 3~5일, 속도를 늦출 리듬(otherChallengesSelf) 0건, 리듬당 최대 2일. 문구 금지어(unlucky·avoid·흉·피해야·피할·evita·mala suerte·나쁜) 검사 → 0건(코드 주석 1줄 제외), 한자 0자.
+  - QA(mobile-web, 375×812, Playwright): `?qa=free&persona=jordan` 운세 페이월 = 이전과 같은 "Subscribe · $7.99/month"·월간 갱신 문구(혜택 목록에 "Find a good day" 한 줄 추가). `&offer=both` → 연간(Save 47%, About $4.16/month, $49.99/year, 기본 선택)·월간 행, "7 days free, then $49.99/year", "Start free trial", 체험 갱신 문구 → 월간 선택 시 "…then $7.99/month"·월간 갱신 문구로 바뀜. Q&A `&offer=trial` 한도 소진 → 같은 체험 줄·버튼·갱신 문구, 탭하면 웹엔 스토어가 없어 구매 오류 안내(예상대로).
+  - QA(mobile-web `?qa=pro`): 오늘 운세 끝·이달 탭 위 "좋은 날 찾기" 카드 → 목적 5개 → 면접(en)·이사(ko)·계약(es) 결과 3~5장(날짜·오늘 배지·리듬 이름·이유 한 줄·참고 문구). 프로덕션엔 아직 라우트가 없어 Playwright로 요청을 로컬 API(대역 구독 확인)에 넘겨 확인. 웹은 appUserId가 없어 그대로 넘기면 401 → "구독을 확인하지 못했어요" + 다시 시도. es 제목 "Buenos días para"(=좋은 아침)는 "Días favorables ·"로 고침.
+  - QA 회귀(mobile-web `?qa=free&persona=jordan`): 홈 → 운세 총론 → Q&A 답 1개 → 한도 → 검사 목록 → Burnout 1/30 → 궁합 결과(Jordan · Sam) 정상. 콘솔 오류는 `/api/events` 404(프로덕션 미배포)뿐.
+  - [ ] (사용자 확인) 사용자 실행 C로 연간 패키지·7일 무료 체험을 등록한 뒤 iOS dev-client(샌드박스 계정)에서: 운세 → 페이월에 연간·월간 두 행과 "7일 무료, 이후 …" 줄이 스토어 가격으로 보이는지, 연간 선택 → "무료 체험 시작하기" → 결제 시트가 연간 상품인지, 구매 후 운세가 열리는지. 체험을 이미 쓴 샌드박스 계정에서는 체험 줄 없이 "구독하기 · …"로 보이는지. 웹 배포 후 구독 중인 기기에서 운세 → 좋은 날 찾기 → 목적 하나 → 날짜 목록이 뜨는지.
 
 - [ ] 4. "그 사람에 대해 묻기" Q&A
   - 변경: `mobile/data/questionBank.json`·`lib/questionBank.json`에 새 분류(질문 20개 안팎, ko/en/es, 마음 단정·관계 결말 예언 없는 질문만), `mobile/lib/qaTopicGroups.ts`, Q&A 화면에 상대 생년월일 입력(궁합 폼 부품·날짜 검증 재사용), `/api/qa-answer`에 선택 필드 `other`(없으면 지금과 같음), `lib/qaChat.ts`·`lib/qaPrompts.ts`에 두 원국 구조화 데이터와 금지 규칙. 일일 한도는 기존 것 공유.
@@ -124,3 +131,5 @@
 - (1번 중) mobile-web(`?qa=` 개발 모드) 이벤트도 프로덕션 API로 가므로 웹 배포 뒤에는 `platform=app-web`, `dev=true`로 쌓인다. 분석에서 제외 필터 필요.
 - (2번 중) mobile-web에서 사주 유형 공유 카드 미리보기 아래쪽에 내용 없이 배경 무늬만 수백 px 이어진다. 기존 `TypeScreen`(홈 → 유형)에서도 같아서 이번 변경과 무관. 배경 `Image`(absoluteFill)가 웹에서 카드 높이를 키우는 것으로 보임. 네이티브 캡처 이미지에도 생기는지 시뮬레이터에서 확인 필요.
 - (2번 중) 계산기 페이지 `/saju-calculator`로 들어오는 내부 링크와 `sitemap`이 없다. 다음 SPEC(SEO 글)에서 사이트맵·랜딩 링크와 함께 정리.
+- (3번 중) 기존 `strings.qa.subscriptionPriceLabel`(스토어 응답 전 대체 문구)에 "$7.99"가 하드코딩돼 있다. 스토어가 응답하지 않는 웹·오프라인에서만 보이지만 STYLE_GUIDE의 "가격은 priceString만" 규칙과 어긋난다.
+- (3번 중) Q&A 한도 소진 말풍선(`limitReached2`)은 스토어 가격이 오기 전에 찍히면 대체 가격으로 남고, 연간이 기본 선택이면 "$49.99/year"로 찍힌다(카드의 선택과 함께 바뀌지 않음).
