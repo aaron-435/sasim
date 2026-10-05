@@ -30,6 +30,12 @@ export const en: typeof ko = {
     },
   },
 
+  feedback: {
+    prompt: "Does this sound like you?",
+    upLabel: "Sounds like me",
+    downLabel: "Not really me",
+    thanks: "Thanks for letting us know.",
+  },
   language: {
     heading: "Choose your language",
     subtext: "You can change this later in settings.",

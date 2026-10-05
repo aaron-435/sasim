@@ -167,7 +167,7 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
       }
 
       setMessages((m) => m.slice(0, -1));
-      trackQaQuestionAsked();
+      trackQaQuestionAsked(locale);
       for (const line of json.lines) {
         await wait(500);
         if (!mountedRef.current) return;
@@ -185,7 +185,7 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
         setBusy(false);
       } else {
         pushBot(t.qa.installPitch);
-        trackQaInstallPitchShown();
+        trackQaInstallPitchShown(locale);
         await generateAndShowCode();
       }
     } catch {

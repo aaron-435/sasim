@@ -2,7 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { useFonts, Newsreader_500Medium, Newsreader_500Medium_Italic } from "@expo-google-fonts/newsreader";
 import { PlusJakartaSans_400Regular, PlusJakartaSans_500Medium, PlusJakartaSans_600SemiBold, PlusJakartaSans_700Bold } from "@expo-google-fonts/plus-jakarta-sans";
 import { useEffect, useRef, useState } from "react";
-import { BackHandler } from "react-native";
+import { BackHandler, Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import ChatScreen, { type ChatExtract } from "./screens/ChatScreen";
 import CityScreen, { type SajuResult } from "./screens/CityScreen";
@@ -30,7 +30,9 @@ import TobScreen from "./screens/TobScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import TypeScreen from "./screens/TypeScreen";
 import VerifyCodeScreen, { type VerifiedData } from "./screens/VerifyCodeScreen";
+import * as Notifications from "expo-notifications";
 import { scheduleDecadeTransitionNotification } from "./lib/decadeNotification";
+import { setAnalyticsLocale, track } from "./lib/analytics";
 import { DEFAULT_NOTIFICATION_PREFERENCE, getStoredNotificationPreference, setNotificationPreference } from "./lib/notificationPreference";
 import { applyNotificationPreference } from "./lib/routineNotification";
 import { dominantElementFrom } from "./lib/elements";
@@ -55,6 +57,18 @@ import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } f
 type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings" | "myReports" | "shareCards" | "yearReport" | "qaReport";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
+
+// Onboarding screens whose entry is recorded as an `onboarding_step` event.
+const ONBOARDING_STEPS: ReadonlySet<StepId> = new Set(["language", "intro", "verifyCode", "nickname", "gender", "dob", "tob", "city", "concern"]);
+
+// Local notification ids (decadeNotification.ts, routineNotification.ts) → the `kind`
+// recorded when one is tapped.
+function notificationKind(identifier: string): string {
+  if (identifier.includes("decade")) return "decade";
+  if (identifier.includes("weekly")) return "weekly";
+  if (identifier.includes("daily")) return "daily";
+  return "other";
+}
 
 // Where Android's hardware back goes from each step — mirrors each screen's own onBack
 // prop below. Steps missing here are roots, where back falls through to exiting the app.
@@ -155,6 +169,32 @@ function AppContent() {
   const [chatExtract, setChatExtract] = useState<ChatExtract | null>(null);
   // Set when a report is reopened from "My reports" (skips generation); null for a fresh one.
   const [savedReport, setSavedReport] = useState<SavedReport | null>(null);
+
+  useEffect(() => {
+    setAnalyticsLocale(locale);
+  }, [locale]);
+
+  useEffect(() => {
+    if (step && ONBOARDING_STEPS.has(step)) track("onboarding_step", { step });
+  }, [step]);
+
+  // A tap on one of our local notifications (fortune routine, decade shift). Covers both
+  // a tap while running and the tap that cold-started the app.
+  useEffect(() => {
+    if (Platform.OS === "web") return;
+    const seen = new Set<string>();
+    const record = (response: Notifications.NotificationResponse | null) => {
+      if (!response) return;
+      const id = response.notification.request.identifier;
+      const key = `${id}:${response.notification.date}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      track("notification_tap", { kind: notificationKind(id) });
+    };
+    Notifications.getLastNotificationResponseAsync().then(record).catch(() => {});
+    const sub = Notifications.addNotificationResponseReceivedListener(record);
+    return () => sub.remove();
+  }, []);
 
   // Restores a previously-onboarded user straight to Home instead of making them
   // re-enter their birth info on every cold start (2026-09-15, caught in live device
@@ -279,6 +319,7 @@ function AppContent() {
             const newHomeData: HomeData = { nickname: data.nickname, sajuResult: normalizeVerifyCodeSajuResult(row, dominant) };
             setHomeData(newHomeData);
             saveHomeData(newHomeData);
+            track("onboarding_complete", { via: "verify_code" });
             setStep("home");
           }}
           onSkip={() => setStep("nickname")}
@@ -376,6 +417,7 @@ function AppContent() {
           onChange={setConcern}
           onNext={() => {
             if (concern) saveUserConcern(concern);
+            track("onboarding_complete", { via: "app", ...(concern ? { topic: concern } : {}) });
             setStep("home");
           }}
           onBack={() => setStep("city")}

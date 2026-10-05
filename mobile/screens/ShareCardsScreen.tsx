@@ -13,6 +13,7 @@ import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
+import { track } from "../lib/analytics";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
@@ -150,6 +151,7 @@ export default function ShareCardsScreen({
       // regardless of the device's screen size or pixel ratio.
       const uri = await captureRef(cardRef, { format: "png", quality: 1, width: 1080 });
       if (await Sharing.isAvailableAsync()) {
+        track("share", { kind: "share_card" });
         await Sharing.shareAsync(uri, { mimeType: "image/png" });
       }
     } catch {

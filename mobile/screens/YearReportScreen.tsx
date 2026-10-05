@@ -10,6 +10,7 @@ import ReportClosingPage from "../components/ReportClosingPage";
 import ReportPager, { readerChromeButtonStyle, type ReaderPage } from "../components/ReportPager";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
+import { track } from "../lib/analytics";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
 import { exportReportPdf, pdfErrorMessage } from "../lib/reportPdf";
@@ -169,6 +170,7 @@ export default function YearReportScreen({
         generate(forYear);
       } else {
         setPhase("preview");
+        track("paywall_view", { surface: "year_report" });
         getYearReportPackage(forYear).then((pkg) => {
           if (mountedRef.current) setPrice(pkg?.product.priceString ?? null);
         });
@@ -223,6 +225,7 @@ export default function YearReportScreen({
   // Plain-text share of the report's one-line summary (its subtitle) plus the app's address.
   async function handleShare() {
     if (!report) return;
+    track("share", { kind: "year_report_summary" });
     try {
       await Share.share({ message: `"${report.subtitle}"\n\n${strings.reader.shareCredit} · ${strings.yearReport.heading(report.year)}\n${API_BASE_URL}` });
     } catch {

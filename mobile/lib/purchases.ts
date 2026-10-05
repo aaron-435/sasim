@@ -8,6 +8,7 @@ import Purchases, {
 } from "react-native-purchases";
 import { REVENUECAT_API_KEY_ANDROID, REVENUECAT_API_KEY_IOS } from "../config";
 import { qaHasAllPurchases, qaHasSubscription } from "../dev/qaMode";
+import { flush, track } from "./analytics";
 
 /**
  * lib/purchases.ts
@@ -102,16 +103,24 @@ export async function getMonthlyPackage(): Promise<PurchasesPackage | null> {
 
 export type PurchaseOutcome = { status: "success" } | { status: "cancelled" } | { status: "error"; message: string };
 
+// Every purchase in the app goes through here, so the attempt/success/cancel/error
+// events are recorded once, keyed by the store product id.
 async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseOutcome> {
+  const product = pkg.product.identifier;
+  track("purchase_start", { product });
   try {
     await Purchases.purchasePackage(pkg);
+    track("purchase_success", { product });
+    flush();
     return { status: "success" };
   } catch (err) {
     const purchasesError = err as PurchasesError;
     if (purchasesError?.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) {
+      track("purchase_cancel", { product });
       return { status: "cancelled" };
     }
     console.error("[purchases] purchase failed", err);
+    track("purchase_error", { product });
     return { status: "error", message: purchasesError?.message ?? "purchase failed" };
   }
 }

@@ -19,6 +19,7 @@ import { celebrityDisplayName, getCelebritiesForType } from "../lib/sajuTypeCele
 import { formatSajuTypeName, getTypePieces } from "../lib/sajuTypeContent";
 import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
+import { track } from "../lib/analytics";
 import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
 
@@ -62,6 +63,7 @@ export default function TypeScreen({
       // ratio risks clipping it).
       const uri = await captureRef(cardRef, { format: "png", quality: 1, width: 1080 });
       if (await Sharing.isAvailableAsync()) {
+        track("share", { kind: "type_card" });
         await Sharing.shareAsync(uri, { mimeType: "image/png" });
       }
     } catch {

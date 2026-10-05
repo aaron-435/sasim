@@ -21,8 +21,10 @@ import { COLORS } from "../theme/colors";
 import QAQuestionScreen from "./QAQuestionScreen";
 import QASubcategoryScreen from "./QASubcategoryScreen";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import FeedbackRow from "../components/FeedbackRow";
+import { track } from "../lib/analytics";
 
-type Message = { role: "bot" | "user"; text: string } | { role: "picker" } | { role: "subscribe" };
+type Message = { role: "bot" | "user"; text: string } | { role: "picker" } | { role: "subscribe" } | { role: "feedback"; topic?: string };
 
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -80,6 +82,7 @@ export default function QAScreen({
   const pushUser = useCallback((text: string) => setMessages((m) => [...m, { role: "user", text }]), []);
   const pushCategoryPicker = useCallback(() => setMessages((m) => [...m, { role: "picker" }]), []);
   const pushLimitReachedMessage = useCallback(() => {
+    track("paywall_view", { surface: "qa" });
     pushBot(strings.qa.limitReached1);
     pushBot(strings.qa.limitReached2(priceLabel, PAID_DAILY_LIMIT));
     setMessages((m) => [...m, { role: "subscribe" }]);
@@ -131,7 +134,7 @@ export default function QAScreen({
     return () => sub.remove();
   }, [view, questionBackView]);
 
-  async function requestAnswer(questionText: string) {
+  async function requestAnswer(questionText: string, topic?: string) {
     setBusy(true);
     setErrorText(null);
     try {
@@ -156,6 +159,7 @@ export default function QAScreen({
         pushBot(line);
       }
       saveLastQuestion(questionText, json.lines as string[]);
+      setMessages((m) => [...m, { role: "feedback", topic }]);
 
       const [usageAfter, dailyLimit] = await Promise.all([incrementUsageToday(), getDailyLimit()]);
       if (!mountedRef.current) return;
@@ -164,6 +168,7 @@ export default function QAScreen({
       if (!mountedRef.current) return;
 
       if (usageAfter >= dailyLimit) {
+        track("qa_limit_reached");
         pushLimitReachedMessage();
       } else {
         pushBot(strings.qa.askOneMore);
@@ -198,12 +203,13 @@ export default function QAScreen({
     const questionText = localizedText(q.text_ko, q.text_en, q.text_es, locale);
     setView("chat");
     pushUser(questionText);
-    requestAnswer(questionText);
+    track("qa_ask", activeGroup ? { topic: activeGroup.id } : undefined);
+    requestAnswer(questionText, activeGroup?.id);
   }
 
   function handleRetry() {
     setErrorText(null);
-    if (retryQuestion) requestAnswer(retryQuestion);
+    if (retryQuestion) requestAnswer(retryQuestion, activeGroup?.id);
   }
 
   async function unlockAfterEntitlementChange() {
@@ -294,6 +300,13 @@ export default function QAScreen({
                     </Pressable>
                   ))}
                 </View>
+              </View>
+            );
+          }
+          if (m.role === "feedback") {
+            return (
+              <View key={i} style={styles.feedbackRow}>
+                <FeedbackRow surface="qa" topic={m.topic} />
               </View>
             );
           }
@@ -397,6 +410,11 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 18,
     paddingBottom: 24,
+  },
+  feedbackRow: {
+    width: "88%",
+    marginTop: -2,
+    marginBottom: 10,
   },
   pickerRow: {
     marginBottom: 10,

@@ -1,5 +1,6 @@
 import * as Sharing from "expo-sharing";
 import { API_BASE_URL } from "../config";
+import { track } from "./analytics";
 import { getRevenueCatUserId } from "./purchases";
 
 // Downloads a report as a PDF from the server (app/api/report-pdf — it verifies the purchase
@@ -48,6 +49,7 @@ export async function exportReportPdf(payload: Record<string, unknown>, dialogTi
     file.create();
     file.write(bytes);
     if (await Sharing.isAvailableAsync()) {
+      track("share", { kind: "report_pdf" });
       await Sharing.shareAsync(file.uri, { mimeType: "application/pdf", UTI: "com.adobe.pdf", dialogTitle });
     }
     return { ok: true };

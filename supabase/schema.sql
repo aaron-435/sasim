@@ -98,6 +98,26 @@ create table if not exists llm_usage_log (
   created_at timestamptz not null default now()
 );
 
+-- 2026-10-05: 제품 이벤트(온보딩·운세·Q&A·결제·공유·초대·알림·👍/👎) 자체 기록.
+-- 외부 분석 SDK 대신 /api/events가 여기에 쓴다. anon_id는 기기(앱)·브라우저(웹)마다
+-- 만든 무작위 값이고 sessions 테이블과 연결하지 않는다. 생년월일·이름·자유 입력 글은
+-- 넣지 않는다(라우트가 이벤트 이름과 속성 키를 허용 목록으로만 받는다).
+-- 배포된 DB에는 이 테이블이 없으므로 아래 create table을 SQL Editor에서 한 번 실행한다.
+create table if not exists events (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  client_ts timestamptz,
+  anon_id text not null,
+  locale text,
+  platform text not null,
+  dev boolean not null default false,
+  name text not null,
+  props jsonb
+);
+
+create index if not exists idx_events_created_at on events(created_at);
+create index if not exists idx_events_name_created_at on events(name, created_at);
+
 create index if not exists idx_saju_results_session on saju_results(session_id);
 create index if not exists idx_quiz_results_session on quiz_results(session_id);
 create index if not exists idx_chat_sessions_session on chat_sessions(session_id);
@@ -113,6 +133,7 @@ alter table quiz_results enable row level security;
 alter table chat_sessions enable row level security;
 alter table report_results enable row level security;
 alter table llm_usage_log enable row level security;
+alter table events enable row level security;
 
 -- service_role은 RLS를 우회하지만, 테이블 자체에 대한 GRANT는 별개다.
 -- "Automatically expose new tables"를 꺼둔 상태에서 SQL Editor로 테이블을

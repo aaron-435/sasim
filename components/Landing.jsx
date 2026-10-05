@@ -3,7 +3,7 @@
 import React from "react";
 import { ArrowRight, Lock, Sparkles } from "lucide-react";
 import { useStrings, useLocale, LOCALES } from "@/lib/i18n";
-import { trackLandingCtaClick } from "@/lib/analytics";
+import { trackLandingCtaClick, trackLandingView } from "@/lib/analytics";
 
 /**
  * Landing — the first thing an ad visitor sees (added 2026-09-19). Web's job is lead-gen:
@@ -26,8 +26,12 @@ export default function Landing({ onStart }) {
   const { locale, setLocale } = useLocale();
   const l = t.landing;
 
+  React.useEffect(() => {
+    trackLandingView();
+  }, []);
+
   const start = (position) => {
-    trackLandingCtaClick(position);
+    trackLandingCtaClick(position, locale);
     onStart();
   };
 

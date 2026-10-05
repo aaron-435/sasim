@@ -54,6 +54,12 @@ export const ko = {
     },
   },
 
+  feedback: {
+    prompt: "이게 나 같나요?",
+    upLabel: "나 같아요",
+    downLabel: "나와는 달라요",
+    thanks: "알려 줘서 고마워요.",
+  },
   language: {
     heading: "언어를 선택하세요",
     subtext: "나중에 설정에서 바꿀 수 있어요.",

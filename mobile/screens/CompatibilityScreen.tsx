@@ -7,6 +7,7 @@ import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
+import { track } from "../lib/analytics";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
 import { dobFieldOrder, dobSeparator } from "../lib/dobOrder";
@@ -164,6 +165,7 @@ export default function CompatibilityScreen({
       // the shareCard style comment for why that's not a hardcoded 1080x1920.
       const uri = await captureRef(shareCardRef, { format: "png", quality: 1, width: 1080 });
       if (await Sharing.isAvailableAsync()) {
+        track("share", { kind: "compatibility_card" });
         await Sharing.shareAsync(uri, { mimeType: "image/png" });
       }
     } catch {

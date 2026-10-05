@@ -20,7 +20,7 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 | `lib/` | 서버/공용 로직. 사주 엔진, 프롬프트, LLM 호출, 결제 검증, i18n, 콘텐츠 |
 | `middleware.ts` | `/api/*`에 CORS 허용 헤더. 인증 없는 공개 API + `lib/rateLimit.ts` |
 | `mobile/` | Expo SDK 57 / React Native 0.86 앱. 별도 `package.json`. `screens/`, `lib/`, `components/`, `theme/`. `theme/colors.ts`(팔레트)와 `theme/fonts.ts`(글꼴 토큰 `FONTS.display/displayItalic/regular/medium/semibold/bold` — 2026-10-04부터 표시용 Newsreader, UI용 Plus Jakarta Sans, 한글은 시스템 글꼴. PDF `lib/pdf/reportPdf.tsx`도 같은 글꼴, 파일은 `next.config.mjs`로 함수에 포함) — 화면은 글꼴 이름을 직접 쓰지 않고 토큰만 참조, 실제 로딩은 `App.tsx`의 `useFonts`. 같은 파일의 `MAX_FONT_SCALE`(display/control/body)이 시스템 글자 크기 상한(`maxFontSizeMultiplier`)이며 온보딩·퀴즈·Q&A 화면에 적용. `theme/layout.ts`의 `readableColumn`(최대 폭 640pt, 가운데)이 넓은 화면(iPad 등)용 본문 폭 — 홈·운세·검사 목록·타입·궁합·공유 카드·신년 미리보기의 스크롤 내용과 `components/ReportPager.tsx`의 각 페이지·상단 막대에 적용, 휴대폰에서는 변화 없음 |
-| `supabase/schema.sql` | 테이블: `sessions`, `saju_results`, `quiz_results`, `chat_sessions`, `report_results`, `llm_usage_log`. 일부는 배포 DB에 SQL Editor로 직접 실행해야 했다(파일 주석 참고) |
+| `supabase/schema.sql` | 테이블: `sessions`, `saju_results`, `quiz_results`, `chat_sessions`, `report_results`, `llm_usage_log`, `events`(2026-10-05, 제품 이벤트). 일부는 배포 DB에 SQL Editor로 직접 실행해야 했다(파일 주석 참고) |
 | `scripts/` | 개발용 스크립트: `validate-manseryeok`, `sim-chat`, `judge-chat`, `dump-chat-prompt`, `check-chat-sets`, `check-playbook-sets`, `usage-report`, `gen-qa-fixtures`, `gen-reconciled` (용도는 5장) |
 
 ## 3. 핵심 흐름
@@ -69,6 +69,9 @@ PDF(`/api/report-pdf` → `lib/pdf/reportPdf.tsx`)도 같은 규칙이다: 라�
 ### 결제
 - 앱: RevenueCat SDK(`mobile/lib/purchases.ts`). 키는 플랫폼별로 `mobile/config.ts`에 있다(공개 SDK 키). 구독 + 모듈별 리포트 + 번들 + 신년 리포트(상품 목록은 `IAP_PRODUCTS.md`).
 - 서버: 생성 비용이 드는 유료 콘텐츠는 서버에서 `lib/revenuecat.ts`로 entitlement를 확인한다(`REVENUECAT_SECRET_KEY` 필요, 없으면 fail closed). 앱 쪽 게이트만 믿지 않는다.
+
+### 측정 (제품 이벤트)
+외부 분석 SDK 없이 자체 기록한다(2026-10-05). 앱은 `mobile/lib/analytics.ts`의 `track()`/`trackOnce()`로 이벤트를 모아 몇 초마다(또는 백그라운드로 갈 때) `/api/events`로 묶어 보내고, 웹 사이트는 `lib/analytics.ts`의 `logEvent()`로 한 건씩 보낸다(웹은 기존 Vercel Analytics 호출도 유지). 라우트가 `lib/eventSchema.ts`의 허용 목록(이벤트 이름, 속성 키, 짧은 id 모양 값, 0~999 정수)에 맞지 않는 배치를 통째로 400으로 거절하므로 생년월일·이름·자유 입력 글은 들어갈 수 없다. 행은 Supabase `events`에 쌓이고, 식별자는 설치(앱)·브라우저(웹)마다 만든 무작위 `anon_id`뿐이며 `sessions`와 연결하지 않는다. `platform`(ios·android·app-web·site)과 `dev` 플래그로 개발 트래픽을 걸러 본다. 결제 이벤트는 `mobile/lib/purchases.ts`의 공용 구매 함수 한 곳에서, 온보딩·알림 탭은 `App.tsx`에서, 페이월 노출은 각 페이월 화면에서 남긴다. "이게 나 같나요?" 👍/👎는 공용 `mobile/components/FeedbackRow.tsx`(Q&A 답 아래, 운세 총론 카드 안)이고 같은 경로로 `feedback` 이벤트가 된다. 앱과 서버의 이벤트 이름 목록은 따로 있으니 함께 고친다.
 
 ### 다국어
 ko/en/es. 웹 `lib/i18n/`, 앱 `mobile/lib/i18n/`(스페인어 규칙은 `STYLE_GUIDE.md`). LLM 출력 언어는 `lib/promptLocale.ts`로 지정.

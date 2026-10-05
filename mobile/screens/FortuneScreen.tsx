@@ -25,6 +25,8 @@ import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import FeedbackRow from "../components/FeedbackRow";
+import { track, trackOnce } from "../lib/analytics";
 
 // Daily content blocks that fade/slide in, one after another, once the seal card below
 // is opened — the rhythm + overview hero, the by-area list, lucky points, the details.
@@ -227,6 +229,7 @@ function toParagraphs(text: string | undefined, perParagraph = 3): string {
 async function shareOverview(title: string, rhythm: string, headline: string, body: string) {
   const sentences = body.split(/(?<=[.!?…。])\s+/).filter(Boolean);
   const excerpt = sentences.slice(0, 2).join(" ");
+  track("share", { kind: "fortune_overview" });
   try {
     await Share.share({ title, message: `${rhythm} · ${headline}\n\n${excerpt}\n\n${API_BASE_URL}` });
   } catch {
@@ -313,6 +316,18 @@ export default function FortuneScreen({
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entitled, selfDayMasterChar, selfDayBranch]);
+
+  useEffect(() => {
+    if (entitled === false) track("paywall_view", { surface: "fortune" });
+  }, [entitled]);
+
+  // First time today's reading is actually on screen on this device: free users see the
+  // overview as soon as it loads, subscribers after they open the seal.
+  useEffect(() => {
+    if (!daily?.compatibility || entitled === null) return;
+    if (entitled && !revealed) return;
+    trackOnce("fortune_first_view", { kind: entitled ? "pro" : "free" });
+  }, [daily, entitled, revealed]);
 
   function handleSelectTab(next: FortuneTab) {
     setTab(next);
@@ -452,6 +467,7 @@ export default function FortuneScreen({
                 <Share2 size={16} strokeWidth={1.75} color={COLORS.gold} />
                 <Text style={styles.shareLabel}>{strings.fortune.shareOverviewButton}</Text>
               </Pressable>
+              <FeedbackRow surface="fortune" topic="free" />
             </View>
           )}
 
@@ -599,6 +615,7 @@ export default function FortuneScreen({
                   <Text style={styles.shareLabel}>{strings.fortune.shareOverviewButton}</Text>
                 </Pressable>
               )}
+              {!!dailyOverview && <FeedbackRow surface="fortune" topic="pro" />}
             </Animated.View>
 
             <Animated.View style={sectionStyle(1)}>

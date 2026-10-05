@@ -10,6 +10,7 @@ import ReportClosingPage, { type ClosingNext } from "../components/ReportClosing
 import ReportPager, { readerChromeButtonStyle } from "../components/ReportPager";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
+import { track } from "../lib/analytics";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
 import { getRevenueCatUserId, isUnavailableMessage, purchaseIssueDetail, purchaseReportBundle, purchaseReportModule, restoreReports } from "../lib/purchases";
 import { findNextDecadeAge } from "../lib/decadeTransition";
@@ -885,6 +886,7 @@ export default function ReportScreen({
   // Plain-text share of the report's one-line takeaway plus the app's address.
   async function handleShare(summary: string) {
     if (!summary) return;
+    track("share", { kind: "report_summary" });
     try {
       await Share.share({ message: `"${summary}"\n\n${strings.reader.shareCredit}\n${API_BASE_URL}` });
     } catch {
@@ -928,6 +930,15 @@ export default function ReportScreen({
   function goTo(index: number) {
     setPageIndex(Math.max(0, Math.min(pages.length - 1, index)));
   }
+
+  // The paywall page coming into view (not just existing in the pager), once per open report.
+  const paywallSeenRef = useRef(false);
+  const paywallShowing = !lockedOpen && !unlocked && !!pages[pageIndex]?.locked;
+  useEffect(() => {
+    if (!paywallShowing || paywallSeenRef.current) return;
+    paywallSeenRef.current = true;
+    track("paywall_view", { surface: "report", module: quizDiagnosis.moduleId });
+  }, [paywallShowing, quizDiagnosis.moduleId]);
 
   if (errorText) {
     return (
