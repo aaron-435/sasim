@@ -14,11 +14,12 @@ import { createWidget, type WidgetEnvironment } from "expo-widgets";
 
 export type TodayWidgetProps = {
   eyebrow: string;
-  /** null = no reading for this day yet (first install, or the day rolled over). */
-  rhythm: string | null;
+  /** Absent = no reading for this day yet (first install, or the day rolled over). Never
+   *  null: the timeline goes through UserDefaults, which can't store null. */
+  rhythm?: string;
   colorLabel: string;
-  colorName: string | null;
-  swatch: string | null;
+  colorName?: string;
+  swatch?: string;
   fallbackLine: string;
 };
 

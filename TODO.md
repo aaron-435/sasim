@@ -158,11 +158,11 @@
     - QA(mobile-web, 다른 세션이 띄운 8082 서버 — 같은 폴더 코드): `?qa=free&persona=jordan` 홈 → 검사 목록 "3개 + 8개 더"(11개, module12 안 보임) → 번아웃 퀴즈 1/30 표시, 콘솔 오류 없음. 운세·Q&A·궁합은 이번 변경과 코드 접점이 없어 이번엔 확인하지 않음.
     - 비용: 시뮬레이션 약 $0.21 + 채점 약 $0.45.
 
-- [ ] 12. 새 출발 모듈 앱 연결 + 홈 위젯 + 리뷰 요청 (스토어 빌드)
+- [x] 12. 새 출발 모듈 앱 연결 + 홈 위젯 + 리뷰 요청 (스토어 빌드)
   - 선행: 11
   - 변경: `mobile/lib/quiz/modules.ts`에 module12, 검사 목록·퀴즈·대화·리포트·PDF 연결, 상품 `report_module12`(`IAP_PRODUCTS.md`), 번들 안내 문구 "12개"(가격은 패키지 정보). 위젯: 라이브러리 후보(iOS·Android)를 조사해 **사용자가 고른 뒤** 설치, 오늘의 리듬 이름 + 원소 컬러, 탭하면 오늘 운세, 무료 범위만. 리뷰 요청: `expo-store-review`, 리포트 마지막 장 도달 또는 구매 성공 직후 한 번, 오류·취소 직후 금지. `app.json`·EAS 설정.
   - QA: mobile tsc. mobile-web에서 검사 목록에 새 모듈 → 퀴즈 30문항 → 대화 시작(프로덕션 API 배포 후). iOS 시뮬레이터 dev-client 빌드 성공, 홈 화면 위젯 추가 스크린샷(시뮬레이터 출처 명시). `grep`으로 리뷰 요청 호출 위치 2곳뿐. (사용자 확인) 샌드박스에서 `report_module12` 구매, Android 위젯, 번들 구매자에게 module12 열림.
-  - 진행(2026-10-06, 코드 완료 · 시뮬레이터 확인 남음):
+  - 진행(2026-10-06 코드 완료, 2026-10-07 시뮬레이터 확인 완료):
     - 라이브러리(사용자 선택 2026-10-06): iOS `expo-widgets` + `@expo/ui`(SDK 57), Android `react-native-android-widget` 0.22, 리뷰 `expo-store-review`. 모두 `npx expo install`.
     - module12: `MODULES`로 옮김(`UNRELEASED_MODULES`는 빈 배열로 남겨 다음 모듈 대기용), 검사 목록 설명 ko/en/es, `TOTAL_MODULES = MODULES.length`. 리포트 페이월 가격은 "reports" 오퍼링 패키지(`priceString`, 따로 산 합계·할인율은 두 패키지 숫자 가격과 통화)로, 패키지가 없으면(웹·오프라인) 예전 USD 상수. 번들 문구는 개수 인자(`paywallBundleBuyLabel(count, price)`). `IAP_PRODUCTS.md`에 module12 상품·번들 이름 "12"·번들 entitlement 추가 안내.
     - 위젯: `mobile/widgets/TodayWidget.tsx`(iOS, small·medium), `widgets/TodayWidgetAndroid.tsx` + `widgets/androidTaskHandler.tsx`(Android, `index.ts`에서 Android만 등록, 30분 주기 다시 그림). 내용은 홈 무료 범위(오늘 리듬 이름 + 원소 컬러)뿐, 데이터는 HomeScreen이 `lib/todayWidgetData.ts`로 만들어 `lib/todayWidget.{ios,android}.ts`로 보냄(웹은 `todayWidget.ts` 빈 함수). iOS는 지금 + 기기 자정 두 항목 타임라인, Android는 저장값의 날짜가 지나면 "새 하루예요" 줄. 언어 바꾸면 다시 씀, 데이터 초기화 때 빈 상태로. 탭 = `fatesaid://fortune`(app.json `scheme` 추가) → App.tsx가 오늘 운세로(퀴즈·대화·리포트 중이면 그대로 둠), `widget_tap` 이벤트.
@@ -173,8 +173,15 @@
     - QA: `grep -rn "maybeRequestReview(" mobile/lib mobile/screens mobile/components mobile/App.tsx` → 정의 외 호출 2곳(`lib/purchases.ts:171` 구매 성공, `components/ReportPager.tsx:91` 마지막 장).
     - QA(mobile-web 375×812, `?qa=free&persona=jordan`): 검사 목록 "All tests · 9 more"(12개) → "Fresh Start · How you move from something that ended toward what comes next." → 퀴즈 1/30 ~ 30/30(슬라이더 3·선택 27) → 결과 "Flexible Transitioner" → AI 상담 "Part 1 of 5" 첫 메시지 표시. 샘플 심층 리포트 페이월: "Unlock this report · $14.99", "Unlock all 12 reports · $119.99", "$179.88 if bought separately (33% off)"(웹은 스토어가 없어 대체 가격).
     - QA 회귀(mobile-web 같은 설정): 홈 → 운세 총론("Your own rhythm") → Q&A 질문 1개(기기 한도 기록만 지우고 1→0, 답 정상) → 검사 목록 → 퀴즈 → 궁합 결과(Jordan · Sam, "Cut from the same cloth") 정상. 콘솔 오류는 프로덕션 응답 500 1건(어느 요청인지 확인 전에 미리보기를 멈춤 — 다음 세션에서 확인).
-    - **막힘**: iOS 시뮬레이터 dev-client 빌드(`expo prebuild -p ios --clean` → `LANG=en_US.UTF-8 pod install` 성공, `ExpoWidgetsTarget` 생성됨) → xcodebuild가 **디스크 공간 부족**("No space left on device", 기존 `PurchasesHybridCommon` 컴파일 중)으로 실패. 이 빌드가 만든 DerivedData(981M)는 지웠고 남은 여유 공간 1.1GB. 마지막 통과 상태 = 위 tsc·lint·build·mobile-web QA. 사용자가 10GB 이상 비운 뒤 새 세션에서 시뮬레이터 빌드 → 앱 실행 → 홈 화면 위젯 추가 스크린샷 → 위젯 탭으로 오늘 운세 열림 확인 → 체크. 위젯 흐름은 검수 전이라 WIKI에 아직 쓰지 않았다(통과 후 "콘텐츠 기능" 표에 추가). module12 연결·페이월 가격·리뷰 요청·runtime 1.1.0은 WIKI 반영함.
-  - [ ] (사용자 확인) 샌드박스에서 `report_module12` 구매(사용자 실행 C 후), 번들 구매 계정에서 module12 리포트가 바로 열리는지, Android 기기·에뮬레이터에서 위젯 추가·탭, 리포트 마지막 장/구매 직후 리뷰 시트(개발 빌드에서는 iOS가 매번 띄움, TestFlight에서는 안 뜸 — 정상).
+    - (해결됨, 2026-10-06 기록) 막힘: iOS 시뮬레이터 dev-client 빌드(`expo prebuild -p ios --clean` → `LANG=en_US.UTF-8 pod install` 성공, `ExpoWidgetsTarget` 생성됨) → xcodebuild가 **디스크 공간 부족**("No space left on device", 기존 `PurchasesHybridCommon` 컴파일 중)으로 실패. 이 빌드가 만든 DerivedData(981M)는 지웠고 남은 여유 공간 1.1GB. 마지막 통과 상태 = 위 tsc·lint·build·mobile-web QA. 사용자가 10GB 이상 비운 뒤 새 세션에서 시뮬레이터 빌드 → 앱 실행 → 홈 화면 위젯 추가 스크린샷 → 위젯 탭으로 오늘 운세 열림 확인 → 체크. 위젯 흐름은 검수 전이라 WIKI에 아직 쓰지 않았다(통과 후 "콘텐츠 기능" 표에 추가). module12 연결·페이월 가격·리뷰 요청·runtime 1.1.0은 WIKI 반영함.
+    - 2026-10-07 시뮬레이터 확인(여유 공간 17GB): 위젯이 처음엔 배경만 그려짐 → 원인: `TodayWidget.updateTimeline`의 자정 항목 props에 `rhythm`·`colorName`·`swatch` = null이 있어 App Group UserDefaults가 타임라인 쓰기 전체를 거부(앱 로그 "Attempt to set a non-property-list object … for key __expo_widgets_TodayWidget_timeline", 확장 로그 "Returned view collection was either nil or empty"). 수정: `mobile/lib/todayWidget.ios.ts`의 `toProps`가 빈 값은 키를 빼고 보냄, `TodayWidgetProps`의 세 필드를 optional로(null 금지 주석). 초기화(`resetTodayWidget`)도 같은 경로라 함께 고쳐짐. Android는 AsyncStorage JSON이라 해당 없음.
+    - QA: mobile tsc(`ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit`) → exit 0.
+    - QA(iOS 시뮬레이터 iPhone 17 Pro, iOS 26.5, dev-client Debug 빌드 + Metro 8081): 빌드 "BUILD SUCCEEDED"(248초, `FateSaid.app/PlugIns/ExpoWidgetsTarget.appex` 포함), 앱 실행 "Runtime version: 1.1.0" → 온보딩(es) → 유형 공개 → 홈("Un ritmo de iniciativa", 색 "Ocre") → 홈 화면 편집 → 위젯 갤러리에 "Fate Said / Today's rhythm"(small·medium 2종) → small 추가. 수정 후 App Group plist에 `__expo_widgets_TodayWidget_timeline` 2항목(지금: 리듬·색 / 자정: 키 3개 빠지고 "Es un nuevo día…") 저장 확인(`plutil -p`), 위젯 화면: "Tu ritmo de hoy / Un ritmo de iniciativa / ● Tu color de hoy Ocre"(시뮬레이터 스크린샷). 위젯 탭 → 앱이 오늘 운세 "Resumen de hoy · gratis — Un ritmo de iniciativa"로 열림. 시뮬레이터 토스트의 RevenueCat 오퍼링 오류는 StoreKit 설정 없는 시뮬레이터의 기존 동작.
+    - 위젯 흐름 WIKI "콘텐츠 기능" 표에 추가함.
+    - 보충 QA(2026-10-07, iOS 시뮬레이터 dev-client, 같은 세션): ① medium 크기 — 리듬 한 줄·색 아래, 잘림 없음(es·ko 스크린샷). ② 언어 변경 es→ko — App Group 타임라인이 "오늘의 리듬 / 이끄는 리듬 / 오늘 나를 채우는 색 · 황토색"으로 다시 써지고 위젯도 바뀜. ③ 설정 → 내 정보 초기화 — 타임라인 1항목(키 3개 빠짐, null 거부 없음), 위젯 "앱을 한 번 열면 오늘의 리듬이 여기 보여요.". ④ 퀴즈(연애 & 애착 1/30) 중 위젯 탭 — 앱만 앞으로, 퀴즈 그대로. 프로필 없는 상태에서 탭 — 시작 화면, 오류 없음, 온보딩 뒤 유형 공개 화면에서 운세로 튀지 않음. ⑤ `widget_tap` — 프로덕션 `events`에 platform=ios·dev=true 행 2개(locale es·ko, 2026-10-06T15:46·16:09 UTC) 확인(service_role PostgREST 조회). 덤: 네이티브 검사 목록 "모든 검사 보기 · 9개 더" → 맨 끝 "새 출발 · 끝난 것과 새로 시작할 것 사이를 어떻게 지나가는지 봐요."
+    - 냉시작(앱 종료 뒤 위젯 탭): dev-client는 개발 런처 화면이 먼저 떠서 딥링크가 앱에 닿지 않음(dev-client 특성, 스토어 빌드와 다름). Release 시뮬레이터 빌드로 확인 — 아래 줄.
+    - QA(iOS 시뮬레이터 **Release** 빌드, JS 내장 = 스토어 빌드와 같은 방식): "BUILD SUCCEEDED"(749초). 설치 후 프로필 유지된 채 홈 바로 표시(개발 토스트 없음). `simctl terminate`로 앱 종료 → 위젯 탭 → 앱이 냉시작해 바로 오늘 운세 "오늘의 총론 · 무료 — 이끄는 리듬"으로 열림. 이 탭의 `widget_tap`이 프로덕션 `events`에 platform=ios·dev=false로 저장됨(냉시작 경로의 이벤트도 동작 확인).
+  - [ ] (사용자 확인) 샌드박스에서 `report_module12` 구매(사용자 실행 C 후), 번들 구매 계정에서 module12 리포트가 바로 열리는지, Android 기기·에뮬레이터에서 위젯 추가·탭(위젯을 길게 눌러 추가 → 리듬·색이 보이는지 → 탭하면 오늘 운세), iOS 실기기에서 다음 날 0시 뒤 위젯이 "새 하루" 줄로 바뀌는지, 리포트 마지막 장/구매 직후 리뷰 시트(개발 빌드에서는 iOS가 매번 띄움, TestFlight에서는 안 뜸 — 정상).
 
 ## 사용자 실행 (마지막)
 
@@ -238,4 +245,7 @@
 - (12번 중) 위젯 갤러리 이름·설명(app.json)은 영어 한 가지다. iOS 위젯 이름 현지화는 확장 InfoPlist.strings가 필요해 config plugin으로는 안 된다.
 - (12번 중) 위젯의 "오늘"은 기기 자정 기준, 리듬 값은 운세 API의 KST 날짜 기준이다(8번 발견 사항과 같은 문제). 미주 사용자는 저녁부터 다음 날(KST) 리듬이 위젯에 보일 수 있다.
 - (12번 중) mobile-web 회귀 중 프로덕션 응답 500이 1건 콘솔에 찍혔다(요청 미확인). 이번 변경은 서버 호출을 더하지 않았고 운세·Q&A·궁합 응답은 모두 정상이었다.
+- (12번 보충 QA 중) Release 시뮬레이터 테스트가 프로덕션 `events`에 dev=false 행 2개(anon_id `1db7aea7861040b2be2805b70786c4c7`, widget_tap·paywall_view, 2026-10-06T16:31 UTC)를 남겼다. 실사용자 데이터처럼 보이므로 분석에서 이 anon_id를 빼거나 지워야 한다(삭제는 사용자 결정).
+- (12번 보충 QA 중) iOS 위젯 갤러리 미리보기는 앱이 데이터를 쓰기 전에는 배경만 보인다(expo-widgets 스냅샷이 props 없이 그려짐). 처음 위젯을 고르는 사람에게 무엇인지 안 보인다. 갤러리용 기본 props(예: "오늘의 리듬" + 예시 리듬)를 둘 수 있는지 확인 필요.
+- (12번 보충 QA 중) dev-client에서는 앱이 꺼진 상태로 위젯을 누르면 개발 런처가 먼저 떠서 딥링크가 사라진다. 스토어 빌드에는 해당 없음(Release로 확인). 개발 중 냉시작 확인은 Release 시뮬레이터 빌드로 한다.
 - (D 중) `/privacy`·`/terms` 페이지의 `<title>`은 `?lang=`과 상관없이 한국어("이용약관 | Fatesaid")다(`app/privacy/page.tsx`의 `metadata`가 기본 언어 사전만 씀). 본문은 언어별로 맞게 나옴.

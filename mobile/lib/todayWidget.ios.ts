@@ -4,9 +4,18 @@ import { nextLocalMidnight, saveTodayWidgetData, widgetDataForNow, type TodayWid
 // iOS: a two-entry timeline — today's rhythm now, then the "new day, open the app" line at
 // local midnight, so the widget never shows yesterday's rhythm as today's.
 
+// expo-widgets stores the timeline in UserDefaults, which rejects the whole write if any
+// value is null (NSNull isn't a property-list type) — so missing fields are left out.
 function toProps(data: TodayWidgetData): TodayWidgetProps {
   const { eyebrow, rhythm, colorLabel, colorName, swatch, fallbackLine } = data;
-  return { eyebrow, rhythm, colorLabel, colorName, swatch, fallbackLine };
+  return {
+    eyebrow,
+    colorLabel,
+    fallbackLine,
+    ...(rhythm ? { rhythm } : {}),
+    ...(colorName ? { colorName } : {}),
+    ...(swatch ? { swatch } : {}),
+  };
 }
 
 export function updateTodayWidget(data: TodayWidgetData): void {
