@@ -19,6 +19,7 @@ import LanguageScreen from "./screens/LanguageScreen";
 import ModuleSelectScreen from "./screens/ModuleSelectScreen";
 import ShareCardsScreen from "./screens/ShareCardsScreen";
 import YearReportScreen from "./screens/YearReportScreen";
+import WrappedScreen from "./screens/WrappedScreen";
 import { getQaMode, qaDeepReport } from "./dev/qaMode";
 import type { ReportContent } from "./screens/ReportScreen";
 import { formatSajuTypeName } from "./lib/sajuTypeContent";
@@ -39,6 +40,7 @@ import { DEFAULT_NOTIFICATION_PREFERENCE, getStoredNotificationPreference, setNo
 import { applyNotificationPreference } from "./lib/routineNotification";
 import { clearSolarTermPreference, refreshSolarTermNotifications } from "./lib/solarTermNotification";
 import { clearLessonProgress } from "./lib/lessonProgress";
+import { clearQaTopicCounts } from "./lib/qaHistory";
 import { dominantElementFrom } from "./lib/elements";
 import { LocaleProvider, useLocale, useStrings } from "./lib/i18n";
 import { configurePurchases, hasQaProEntitlement } from "./lib/purchases";
@@ -62,7 +64,7 @@ import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } f
 // pipeline — chained, not independently reachable from Home, since chat needs a quiz
 // diagnosis and report needs both quiz+chat context — same dependency web's
 // components/AppFlow.jsx has).
-type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "typeReveal" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings" | "myReports" | "shareCards" | "yearReport" | "qaReport" | "compatReport";
+type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "typeReveal" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings" | "myReports" | "shareCards" | "yearReport" | "qaReport" | "compatReport" | "wrapped";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
@@ -105,6 +107,7 @@ const BACK_TARGET: Partial<Record<StepId, StepId>> = {
   yearReport: "home",
   qaReport: "home",
   compatReport: "myReports",
+  wrapped: "home",
 };
 
 // The day master (일간) char and day branch (일지) the fortune/compatibility APIs key on —
@@ -161,6 +164,8 @@ function AppContent() {
   // straight to "intro" for a returning session — instead of flashing the picker for
   // one frame before flipping away from it.
   const [step, setStep] = useState<StepId | null>(null);
+  // The year Year Wrapped looks back on, fixed when Home opens it.
+  const [wrappedYear, setWrappedYear] = useState<number | null>(null);
   // Persona test mode only: which sample deep report "qaReport" opens (5-set flow or the older one).
   const [qaReportV2, setQaReportV2] = useState(false);
   const [sessionId] = useState(makeSessionId);
@@ -285,6 +290,7 @@ function AppContent() {
     clearPair();
     clearJournal();
     clearLessonProgress();
+    clearQaTopicCounts();
     clearSolarTermPreference();
     refreshSolarTermNotifications(locale, null);
     setSavedReport(null);
@@ -482,6 +488,10 @@ function AppContent() {
           onOpenMyReports={() => setStep("myReports")}
           onOpenShareCards={() => setStep("shareCards")}
           onOpenYearReport={() => setStep("yearReport")}
+          onOpenWrapped={(year) => {
+            setWrappedYear(year);
+            setStep("wrapped");
+          }}
           qa={(() => {
             const mode = getQaMode();
             if (!mode) return null;
@@ -527,6 +537,18 @@ function AppContent() {
           sajuTypeName={homeData.sajuResult.sajuType ? formatSajuTypeName(locale, homeData.sajuResult.sajuType) : null}
           decadeFortune={homeData.sajuResult.decadeFortune}
           currentAge={homeData.sajuResult.currentAge}
+          onBack={() => setStep("home")}
+        />
+      )}
+
+      {step === "wrapped" && homeData && wrappedYear !== null && (
+        <WrappedScreen
+          year={wrappedYear}
+          nickname={homeData.nickname}
+          sajuTypeName={homeData.sajuResult.sajuType ? formatSajuTypeName(locale, homeData.sajuResult.sajuType) : null}
+          selfDayMasterChar={dayMasterCharOf(homeData)}
+          selfDayBranch={dayBranchOf(homeData)}
+          onOpenYearReport={() => setStep("yearReport")}
           onBack={() => setStep("home")}
         />
       )}

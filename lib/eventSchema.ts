@@ -41,6 +41,7 @@ export const EVENT_NAMES = [
   "journal_report",
   "lesson_read",
   "solar_term_toggle",
+  "wrapped_view",
   // web site
   "landing_view",
   "landing_cta_click",

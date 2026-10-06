@@ -151,3 +151,18 @@ export function qaOfferMock(): QaOfferMock | null {
     return null;
   }
 }
+
+/** `?date=YYYY-MM-DD` — DEV web only. Pretends the device date is that day (noon, local) for
+ * features gated on the calendar, today only Year Wrapped's December–January window
+ * (lib/wrapped.ts). Null in every real build and without the QA mode. */
+export function qaDateOverride(): Date | null {
+  if (!getQaMode()) return null;
+  try {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(new URLSearchParams(window.location.search).get("date") ?? "");
+    if (!m) return null;
+    const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 12);
+    return Number.isNaN(d.getTime()) ? null : d;
+  } catch {
+    return null;
+  }
+}

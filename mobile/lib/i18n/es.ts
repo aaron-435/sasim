@@ -812,4 +812,30 @@ export const es: typeof ko = {
     nextTomorrow: "La siguiente lección se abre mañana.",
     allDone: "Leíste las 10. Puedes volver a abrir cualquiera cuando quieras.",
   },
+  wrapped: {
+    homeEyebrow: "Tu año",
+    homeTitle: (year: number) => `Repasa tu ${year}, tarjeta a tarjeta`,
+    homeBody: "La energía que te guio, tu mejor mes y un primer vistazo al año que viene, en unas pocas tarjetas.",
+    homeCta: "Abrir",
+    cardEyebrow: (year: number) => `${year} · Tu año`,
+    loading: "Preparando tu año…",
+    yearLabel: "La energía que guio tu año",
+    monthLabel: "Tu mes de mejor ritmo",
+    monthLongName: (m: number) => {
+      const name = new Date(2027, m - 1, 1).toLocaleDateString("es", { month: "long" });
+      return name.charAt(0).toUpperCase() + name.slice(1);
+    },
+    monthNote: "Elegido entre el ritmo de cada mes, de principios de febrero a diciembre.",
+    monthStripLabel: (best: string) => `De febrero a diciembre, el mejor: ${best}`,
+    topicLabel: "Lo que más preguntaste",
+    topicCount: (count: number, total: number) => (total === 1 ? "Tu única pregunta de este año" : `${count} de tus ${total} preguntas`),
+    topicNote: "Contamos solo las preguntas hechas en este dispositivo.",
+    mottoLabel: "Tu año en una frase",
+    mottoBy: (name: string, year: number) => `${name}, ${year}`,
+    nextLabel: (year: number) => `Lo que viene: ${year}`,
+    nextNote: "En el saju, el año nuevo empieza con el inicio de la primavera, hacia el 4 de febrero.",
+    yearReportCta: (year: number) => `Ver el Informe del año ${year}`,
+    homeButton: "Volver al inicio",
+    shareButton: "Compartir esta tarjeta",
+  },
 };

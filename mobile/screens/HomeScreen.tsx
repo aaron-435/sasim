@@ -30,6 +30,7 @@ import type { SajuType } from "../lib/sajuType";
 import { formatSajuTypeName } from "../lib/sajuTypeContent";
 import { comingSajuYear } from "../lib/sajuYear";
 import { fetchTodayFortune, type TodayFortune } from "../lib/todayFortune";
+import { currentWrappedYear } from "../lib/wrapped";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
@@ -110,6 +111,7 @@ export default function HomeScreen({
   onOpenMyReports,
   onOpenShareCards,
   onOpenYearReport,
+  onOpenWrapped,
   qa,
   onOpenSajuLearn,
   onOpenSettings,
@@ -130,6 +132,8 @@ export default function HomeScreen({
   onOpenMyReports: () => void;
   onOpenShareCards: () => void;
   onOpenYearReport: () => void;
+  /** Year Wrapped, offered December 1 – January 31 by the device date (lib/wrapped.ts). */
+  onOpenWrapped: (year: number) => void;
   /** Persona test mode (dev web only) — see dev/README.md. Null in every real build. */
   qa?: { level: string; persona: string | null; onOpenSampleReport: () => void; onOpenSampleReportV2?: () => void } | null;
   onOpenSajuLearn: () => void;
@@ -152,6 +156,8 @@ export default function HomeScreen({
   const [couple, setCouple] = useState<CoupleDaily | null>(null);
   // "오늘 나를 채우는 색" — free for everyone, from the same daily request as the hero.
   const [elementColor, setElementColor] = useState<ElementColor | null>(null);
+  // Read once per Home visit; the window is a whole month wide, so no live re-check.
+  const [wrappedYear] = useState(currentWrappedYear);
 
   useEffect(() => {
     getLastQuestion().then(setLastQuestion);
@@ -399,6 +405,26 @@ export default function HomeScreen({
           )}
 
           {elementColor && <ElementColorCard color={elementColor} compact onPress={onOpenFortune} />}
+
+          {wrappedYear !== null && selfDayMasterChar && (
+            <Pressable
+              onPress={() => onOpenWrapped(wrappedYear)}
+              style={({ pressed }) => [styles.pathCard, pressed && styles.listRowPressed]}
+              accessibilityRole="button"
+              accessibilityLabel={`${strings.wrapped.homeTitle(wrappedYear)}. ${strings.wrapped.homeBody}`}
+            >
+              <View style={styles.pathEyebrowRow}>
+                <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
+                <Text style={styles.pathEyebrow}>{strings.wrapped.homeEyebrow}</Text>
+              </View>
+              <Text style={styles.pathTitle}>{strings.wrapped.homeTitle(wrappedYear)}</Text>
+              <Text style={styles.pathBody}>{strings.wrapped.homeBody}</Text>
+              <View style={styles.pathCtaRow}>
+                <Text style={styles.pathCta}>{strings.wrapped.homeCta}</Text>
+                <ArrowRight size={15} strokeWidth={2} color={COLORS.gold} />
+              </View>
+            </Pressable>
+          )}
 
           {couple && couple.kind !== "gone" && (
             <Pressable

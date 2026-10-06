@@ -15,7 +15,7 @@ import { getRevenueCatUserId, isUnavailableMessage, purchaseIssueDetail, purchas
 import { useSubscriptionOffer } from "../lib/useSubscriptionOffer";
 import PlanPicker from "../components/PlanPicker";
 import { refreshRoutineNotification } from "../lib/routineNotification";
-import { saveLastQuestion } from "../lib/qaHistory";
+import { recordQaTopic, saveLastQuestion } from "../lib/qaHistory";
 import { onlySubcategory, PERSON_SUBCATEGORY, QA_TOPIC_GROUPS, type QaQuestion, type QaSubcategory, type QaTopicGroup } from "../lib/qaTopicGroups";
 import type { NormalizedSajuResult } from "../lib/saju";
 import { COLORS } from "../theme/colors";
@@ -171,6 +171,7 @@ export default function QAScreen({
         pushBot(line);
       }
       saveLastQuestion(questionText, json.lines as string[]);
+      if (topic) recordQaTopic(topic);
       setMessages((m) => [...m, { role: "feedback", topic }]);
 
       const [usageAfter, dailyLimit] = await Promise.all([incrementUsageToday(), getDailyLimit()]);

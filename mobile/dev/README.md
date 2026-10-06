@@ -17,6 +17,7 @@ cd mobile && npx expo start --web --port 8082
 | `persona` | 아래 표의 키 | 사주 결과·닉네임·언어·관심사가 미리 채워진 사용자 |
 | `lang` | `ko` / `en` / `es` | 언어만 덮어쓰기 (선택) |
 | `offer` | `annual` / `trial` / `both` | 구독 페이월에 연간 요금제·7일 무료 체험이 있을 때의 모습(가짜 스토어 가격, 표시만. 구매는 웹에서 여전히 불가) |
+| `date` | `YYYY-MM-DD` | 기기 날짜를 그날 정오로 가정(달력에 묶인 기능만, 지금은 Year Wrapped의 12/1~1/31 창). 예: `?qa=free&persona=jordan&date=2026-12-05` |
 
 예: `http://localhost:8082/?qa=all&persona=mia`
 
