@@ -20,7 +20,7 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 | `lib/` | 서버/공용 로직. 사주 엔진, 프롬프트, LLM 호출, 결제 검증, i18n, 콘텐츠 |
 | `middleware.ts` | `/api/*`에 CORS 허용 헤더. 인증 없는 공개 API + `lib/rateLimit.ts` |
 | `mobile/` | Expo SDK 57 / React Native 0.86 앱. 별도 `package.json`. `screens/`, `lib/`, `components/`, `theme/`. `theme/colors.ts`(팔레트)와 `theme/fonts.ts`(글꼴 토큰 `FONTS.display/displayItalic/regular/medium/semibold/bold` — 2026-10-04부터 표시용 Newsreader, UI용 Plus Jakarta Sans, 한글은 시스템 글꼴. PDF `lib/pdf/reportPdf.tsx`도 같은 글꼴, 파일은 `next.config.mjs`로 함수에 포함) — 화면은 글꼴 이름을 직접 쓰지 않고 토큰만 참조, 실제 로딩은 `App.tsx`의 `useFonts`. 같은 파일의 `MAX_FONT_SCALE`(display/control/body)이 시스템 글자 크기 상한(`maxFontSizeMultiplier`)이며 온보딩·퀴즈·Q&A 화면에 적용. `theme/layout.ts`의 `readableColumn`(최대 폭 640pt, 가운데)이 넓은 화면(iPad 등)용 본문 폭 — 홈·운세·검사 목록·타입·궁합·공유 카드·신년 미리보기의 스크롤 내용과 `components/ReportPager.tsx`의 각 페이지·상단 막대에 적용, 휴대폰에서는 변화 없음 |
-| `supabase/schema.sql` | 테이블: `sessions`, `saju_results`, `quiz_results`, `chat_sessions`, `report_results`, `llm_usage_log`, `events`(2026-10-05, 제품 이벤트). 일부는 배포 DB에 SQL Editor로 직접 실행해야 했다(파일 주석 참고) |
+| `supabase/schema.sql` | 테이블: `sessions`, `saju_results`, `quiz_results`, `chat_sessions`, `report_results`, `llm_usage_log`, `events`(2026-10-05, 제품 이벤트), `compat_report_purchases`(2026-10-06, 궁합 리포트 거래 ↔ 상대 조합 HMAC). 일부는 배포 DB에 SQL Editor로 직접 실행해야 했다(파일 주석 참고) |
 | `scripts/` | 개발용 스크립트: `validate-manseryeok`, `sim-chat`, `judge-chat`, `dump-chat-prompt`, `check-chat-sets`, `check-playbook-sets`, `usage-report`, `gen-qa-fixtures`, `gen-reconciled` (용도는 5장) |
 
 ## 3. 핵심 흐름
@@ -44,7 +44,8 @@ _최초 작성: 2026-09-21 (코드 구조 조사 기반)_
 | 심층 리포트 | `/api/report`, `/api/report/paid`, `/api/report/unlock`, `/api/report-pdf` | `ReportScreen`, `MyReportsScreen` |
 | 오늘/올해 운세 | `/api/dailyFortune`, `/api/yearFortune` | `FortuneScreen` (탭 4개: 오늘·이번 주·이달·신년, 상단 제목은 탭마다 다름. 오늘·신년 탭은 같은 구조: 리듬 이름 + 총론 주인공 카드 → 영역별 묶음 카드 한 장 → (오늘만) 행운 포인트(색·숫자, 방향은 ko만) → 12운성·12신살은 접힌 "더 알아보기". 무료는 총론 카드 + 잠긴 혜택 목록. 속도를 늦추는 리듬(`otherChallengesSelf`)의 날에는 무료 총론 대신 판단 없는 페이싱 문구(`fortune.paceFree*`)를 보여 줘 경고 톤이 구독 카드 바로 위에 오지 않게 한다. 구독자는 오늘 탭 끝과 이달 탭 위의 카드로 하위 화면 `GoodDaysScreen`(좋은 날 찾기)에 들어간다), `HomeScreen` |
 | 좋은 날 찾기(구독) | `/api/goodDays`(POST, 서버가 `qa_premium` 구독 확인, fail closed) | `GoodDaysScreen`: 목적 5개(면접·첫 만남·이사·계약·새 시작) → 앞으로 30일 중 3~5일. `lib/goodDays.ts`가 운세 탭과 같은 하루치 계산(일간 관계·12운성·12신살·천간합)에 목적별 가중치를 매겨 고르고, 속도를 늦출 리듬은 고르지 않으며 고르지 않은 날은 보여 주지 않는다(리듬당 최대 2일). 이유 문구는 앱 `mobile/lib/goodDaysContent.ts`가 (목적, 리듬)으로 고른다 |
-| 궁합 | `/api/compatibility` (계산만, DB 기록·LLM 없음) | `CompatibilityScreen` (결과: 두 이름 → 관계 이름 크게 → 점수는 작은 한 줄 → 본문 한 번. 아래 점선 틀 "공유 이미지 미리보기" 안의 공유 카드는 같은 위계에 본문 대신 좋은 점·주의할 점, 틀은 캡처 밖) |
+| 궁합 | `/api/compatibility` (계산만, DB 기록·LLM 없음) | `CompatibilityScreen` (결과: 두 이름 → 관계 이름 크게 → 점수는 작은 한 줄 → 본문 한 번. 아래 점선 틀 "공유 이미지 미리보기" 안의 공유 카드는 같은 위계에 본문 대신 좋은 점·주의할 점, 틀은 캡처 밖. 공유 버튼 아래 "궁합 상세 리포트" 행) |
+| 궁합 상세 리포트(소모성 `compat_report`, 상대마다 1회 구매, 2026-10-06) | `/api/compatReport`(무료 앞부분), `/api/compatReport/paid`(구매 확인 후 나머지). `lib/compatReport.ts`(요청 검증·상대 원국 계산·생성·검사), `lib/compatReportPrompts.ts`(근거 데이터: 두 중심 기운의 관계·끌어당기는 결합·두 일지 합/충·오행 분포 대비, 금지: 나쁜 궁합 판정·결말 예언·마음 단정·관계 짐작·전문용어), `lib/compatReportRoute.ts`(오류 응답). 상대 생년월일은 요청 안에서만 쓰고, 이름은 서버로 가지 않는다(모델이 `{other}` 토큰으로 쓰고 앱이 이름으로 바꿈). 유료 요청은 `lib/revenuecat.ts`의 `checkConsumablePurchase`로 그 거래가 사용자의 궁합 상품 구매인지 확인한 뒤(RevenueCat 구매 id로 정규화), Supabase `compat_report_purchases`에 상대 조합 HMAC(`REVENUECAT_SECRET_KEY`를 키로 씀)과 묶는다 — 같은 조합만 5번까지 다시 생성, 다른 조합 409, RevenueCat·DB 실패는 503(fail closed) | `CompatReportScreen`(궁합 결과 위에 열리고 뒤로 가면 결과로 돌아감, `ReportPager`·`ReportClosingPage` 재사용: 표지 → 기운이 만나는 방식 → 서로에게 주는 것 → 페이월 쪽 / 구매 후 부딪히는 지점 3장 → 함께하기 좋은 리듬 → 맺음). 기기 저장 `mobile/lib/compatReportStorage.ts`(상대 생년월일 기준 한 항목: 무료 부분, 구매 직후 거래 id, 유료 부분 — 거래 id를 생성 전에 저장해 생성 실패 시 재구매 없이 이어 만듦). 구매한 것은 `MyReportsScreen`에 함께 나오고, 홈의 내 리포트 진입도 이것만으로 열린다. App 단계 `compatReport`(내 리포트에서 다시 열기) |
 | 신년 리포트 | `/api/yearReport` (`lib/yearReport*.ts`) | `YearReportScreen` (구매 전 미리보기는 세로 스크롤, 구매 후 읽기는 심층 리포트와 같은 페이지 넘김: 표지 → 한눈에 보기 → 5개 영역 → 12개월 3개월씩 4쪽 → 실행 계획 → 마무리) |
 | 사주 유형·공유 카드 | 유형 분류는 서버(`lib/sajuType.ts`)에서 하고 `/api/saju`, `/api/verification-code` 응답에 실린다. 앱의 `mobile/lib/sajuType.ts`는 타입 정의뿐이라 서버와 키를 맞춰야 한다 | `TypeScreen`(공유 카드는 궁합처럼 점선 틀 "공유 이미지 미리보기" 안, 같은 유형 유명인: `mobile/lib/sajuTypeCelebrities.ts`, 사용자 언어권 인물 먼저 최대 3명, 인물마다 지역 태그·한국 인물 한글 이름, 생년월일 출처는 항목 주석. 웹 사본 `lib/sajuTypeCelebrities.ts`는 import하는 곳 없음), `ShareCardsScreen` |
 
@@ -69,6 +70,7 @@ PDF(`/api/report-pdf` → `lib/pdf/reportPdf.tsx`)도 같은 규칙이다: 라�
 
 ### 결제
 - 앱: RevenueCat SDK(`mobile/lib/purchases.ts`). 키는 플랫폼별로 `mobile/config.ts`에 있다(공개 SDK 키). 구독 + 모듈별 리포트 + 번들 + 신년 리포트(상품 목록은 `IAP_PRODUCTS.md`). 구독 페이월(운세·Q&A)은 `useSubscriptionOffer`가 "default" 오퍼링의 월간·연간 패키지와 무료 체험(iOS는 사용자별 자격 확인)을 읽고, 공용 `mobile/components/PlanPicker.tsx`가 두 요금제 행과 "7일 무료, 이후 …" 줄을 버튼 위에 그린다. 가격·체험 길이는 모두 패키지 값이고, 연간·체험이 없으면 예전 화면 그대로다. mobile-web은 `?offer=` dev 파라미터로 모습만 볼 수 있다.
+- 궁합 상세 리포트는 소모성이라 entitlement가 없다: 앱은 구매 결과의 거래 id(`PurchaseOutcome.transactionId`)를 보내고, 서버가 RevenueCat 구매 기록에서 그 거래를 찾는다(위 궁합 상세 리포트 줄). 스토어 "구매 복원"은 없다.
 - 서버: 생성 비용이 드는 유료 콘텐츠는 서버에서 `lib/revenuecat.ts`로 entitlement를 확인한다(`REVENUECAT_SECRET_KEY` 필요, 없으면 fail closed). 앱 쪽 게이트만 믿지 않는다.
 
 ### 측정 (제품 이벤트)

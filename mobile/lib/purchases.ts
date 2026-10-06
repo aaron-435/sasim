@@ -154,7 +154,9 @@ export async function getSubscriptionPlans(): Promise<SubscriptionPlan[]> {
   }
 }
 
-export type PurchaseOutcome = { status: "success" } | { status: "cancelled" } | { status: "error"; message: string };
+/** `transactionId` is the store transaction the purchase created — only the consumable compat
+ * report needs it (the server binds that one transaction to one pair of people). */
+export type PurchaseOutcome = { status: "success"; transactionId?: string } | { status: "cancelled" } | { status: "error"; message: string };
 
 // Every purchase in the app goes through here, so the attempt/success/cancel/error
 // events are recorded once, keyed by the store product id.
@@ -162,10 +164,10 @@ async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseOutcome> 
   const product = pkg.product.identifier;
   track("purchase_start", { product });
   try {
-    await Purchases.purchasePackage(pkg);
+    const { transaction } = await Purchases.purchasePackage(pkg);
     track("purchase_success", { product });
     flush();
-    return { status: "success" };
+    return { status: "success", transactionId: transaction?.transactionIdentifier };
   } catch (err) {
     const purchasesError = err as PurchasesError;
     if (purchasesError?.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) {
@@ -283,6 +285,25 @@ export async function purchaseYearReport(year: number): Promise<PurchaseOutcome>
   const packages = await getReportPackages();
   const pkg = packages?.[yearReportId(year)];
   if (!pkg) return unavailable(packages ? `package "${yearReportId(year)}" not in offering (has: ${Object.keys(packages).join(", ")})` : undefined);
+  return purchasePackage(pkg);
+}
+
+// ---- Compatibility report (consumable: one purchase per other person) ---------------
+// A package in the "reports" offering with this id; the store products are
+// com.fatesaid.app.report.compat (App Store) and compat_report (Play) — IAP_PRODUCTS.md.
+// No entitlement: the purchase's transaction id is sent to /api/compatReport/paid, which
+// checks it with RevenueCat and binds it to this pair.
+export const COMPAT_REPORT_PACKAGE_ID = "compat_report";
+
+export async function getCompatReportPackage(): Promise<PurchasesPackage | null> {
+  const packages = await getReportPackages();
+  return packages?.[COMPAT_REPORT_PACKAGE_ID] ?? null;
+}
+
+export async function purchaseCompatReport(): Promise<PurchaseOutcome> {
+  const packages = await getReportPackages();
+  const pkg = packages?.[COMPAT_REPORT_PACKAGE_ID];
+  if (!pkg) return unavailable(packages ? `package "${COMPAT_REPORT_PACKAGE_ID}" not in offering (has: ${Object.keys(packages).join(", ")})` : undefined);
   return purchasePackage(pkg);
 }
 

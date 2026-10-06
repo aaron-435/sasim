@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import ChevronRight from "lucide-react-native/icons/chevron-right";
 import Share2 from "lucide-react-native/icons/share-2";
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import * as Sharing from "expo-sharing";
@@ -17,7 +18,8 @@ import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
-import { OtherBirthFields, useOtherBirthForm } from "../components/OtherBirthForm";
+import { OtherBirthFields, useOtherBirthForm, type OtherBirthPayload } from "../components/OtherBirthForm";
+import CompatReportScreen from "./CompatReportScreen";
 
 type ApiResult = {
   other: { sajuType: SajuType | null; dominantElement: string | null; elements: Record<string, number> };
@@ -27,10 +29,17 @@ type ApiResult = {
 export default function CompatibilityScreen({
   selfNickname,
   selfDayMasterChar,
+  selfDayBranch,
+  selfElements,
+  sessionId,
   onBack,
 }: {
   selfNickname: string;
   selfDayMasterChar: string | null;
+  /** For the detailed report (optional so older callers keep working). */
+  selfDayBranch?: string | null;
+  selfElements?: Record<string, number> | null;
+  sessionId?: string;
   onBack: () => void;
 }) {
   const strings = useStrings();
@@ -43,6 +52,8 @@ export default function CompatibilityScreen({
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ApiResult | null>(null);
   const [sharing, setSharing] = useState(false);
+  // The detailed report opens over the result and returns to it (the result stays as it was).
+  const [reportFor, setReportFor] = useState<OtherBirthPayload | null>(null);
   const shareCardRef = useRef<View>(null);
 
   const canSubmit = !!selfDayMasterChar && form.isComplete;
@@ -99,6 +110,21 @@ export default function CompatibilityScreen({
     } finally {
       setSharing(false);
     }
+  }
+
+  if (reportFor && selfDayMasterChar) {
+    return (
+      <CompatReportScreen
+        nickname={selfNickname}
+        otherName={otherName}
+        other={reportFor}
+        selfDayMasterChar={selfDayMasterChar}
+        selfDayBranch={selfDayBranch ?? null}
+        selfElements={selfElements ?? null}
+        sessionId={sessionId}
+        onBack={() => setReportFor(null)}
+      />
+    );
   }
 
   if (result?.compatibility) {
@@ -193,6 +219,21 @@ export default function CompatibilityScreen({
                 <Text style={styles.shareButtonLabel}>{strings.compatibility.shareButton}</Text>
               </>
             )}
+          </Pressable>
+
+          <Pressable
+            onPress={() => setReportFor(form.toPayload())}
+            android_ripple={{ color: "rgba(111,169,139,0.12)" }}
+            style={({ pressed }) => [styles.reportEntry, pressed && styles.reportEntryPressed]}
+            accessibilityRole="button"
+            accessibilityLabel={`${strings.compatReport.entryEyebrow}. ${strings.compatReport.entryTitle}`}
+          >
+            <View style={styles.reportEntryText}>
+              <Text style={styles.reportEntryEyebrow}>{strings.compatReport.entryEyebrow}</Text>
+              <Text style={styles.reportEntryTitle}>{strings.compatReport.entryTitle}</Text>
+              <Text style={styles.reportEntryBody}>{strings.compatReport.entryBody}</Text>
+            </View>
+            <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
           </Pressable>
 
           <Pressable style={styles.tryAgainButton} onPress={handleTryAgain} accessibilityRole="button">
@@ -325,6 +366,23 @@ const styles = StyleSheet.create({
     marginTop: 28,
   },
   shareButtonLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.ctaText },
+  reportEntry: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: COLORS.inputBg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    marginTop: 18,
+  },
+  reportEntryPressed: { backgroundColor: "rgba(111,169,139,0.08)" },
+  reportEntryText: { flex: 1, gap: 3 },
+  reportEntryEyebrow: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.gold },
+  reportEntryTitle: { fontFamily: FONTS.semibold, fontSize: 15, lineHeight: 21, color: COLORS.headline },
+  reportEntryBody: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 19, color: COLORS.subheadline, marginTop: 2 },
   tryAgainButton: { alignItems: "center", paddingVertical: 14, marginTop: 10 },
   tryAgainLabel: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.subheadline },
 });

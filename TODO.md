@@ -65,9 +65,16 @@
 
 ## 첫 결제
 
-- [ ] 5. 궁합 상세 리포트 (`compat_report`)
+- [x] 5. 궁합 상세 리포트 (`compat_report`)
   - 변경: 새 `lib/compatReport*.ts`(프롬프트·파싱·품질 검사, "나쁜 궁합 없음"·압박 규칙), `/api/compatReport`(무료 미리보기)와 `/api/compatReport/paid`(RevenueCat 거래 확인 후 생성, 거래 id + 상대 조합 기록 — 소모성), `supabase/schema.sql`(구매 기록 테이블), `mobile/lib/purchases.ts`(상품 `compat_report`, 오퍼링 위치는 `IAP_PRODUCTS.md`에 추가), 새 `mobile/screens/CompatReportScreen.tsx`(`ReportPager`·`ReportClosingPage` 재사용, 페이월, 내 리포트 저장), `CompatibilityScreen`에 진입 행. `IAP_PRODUCTS.md`에 상품 스펙 추가.
   - QA: 루트 검사 + mobile tsc. `curl`로 paid 엔드포인트 구매 증빙 없음 → 403. 스크래치로 무료 부분 생성 persona 2쌍 × 3개 언어(약 $0.1) → 금지어 0건, 원국 사실만. mobile-web에서 궁합 결과 → 미리보기 → 페이월(스크린샷). (사용자 확인) 상품 등록 후 샌드박스 구매 → 전체 읽기 → 내 리포트, 같은 상대 재열람 시 재구매 요구 없음. 회귀 확인.
+  - 계획과 달라진 점: 소모성이라 entitlement가 없어서 서버는 거래로 확인한다 — `lib/revenuecat.ts`의 `checkConsumablePurchase`가 사용자의 `non_subscriptions`에서 그 거래(RevenueCat id 또는 스토어 거래 id)를 찾고, 라우트는 RevenueCat 구매 id로 정규화해 `compat_report_purchases`에 상대 조합(HMAC, 생년월일 원문 없음)과 묶는다. 같은 조합은 5번까지 다시 생성(설치 기기 사본 분실·생성 실패 대비), 다른 조합 409, DB 실패 503(fail closed). 상대 이름은 서버로 보내지 않고 모델이 `{other}` 토큰으로 쓰면 앱이 이름(없으면 "그 사람")으로 바꾼다. 구매 증빙 없음은 신년 리포트와 같은 402(`not_purchased`)로 맞췄다. "내 리포트" 홈 진입은 구매한 궁합 리포트만 있어도 열리게 했다.
+  - QA: 루트 `npx tsc --noEmit` → exit 0, `npm run lint` → "No ESLint warnings or errors", `npm run build`(스크래치 복사본) → 성공, `ƒ /api/compatReport`·`ƒ /api/compatReport/paid` 포함, 새 경고 없음(edge runtime 경고는 기존). mobile tsc → exit 0.
+  - QA: 빌드본 `next start`(3100) + 로컬 RevenueCat·Supabase 대역(실제 RevenueCat·프로덕션 DB에는 요청 안 함)에 `curl`: 무료 — other 없음·13월·모르는 일간·잘못된 JSON 400. 유료 — 거래 id 없음 400, appUserId 없음 401 `no_user`, 구매 없는 사용자·다른 상품의 거래 402 `not_purchased`, RevenueCat 오류 503, 첫 사용 200(생성), 같은 거래·다른 상대 409 `used_for_other`, 같은 거래·같은 상대 재생성 200(generations 2), 재생성 5회 도달 429 `regen_limit`, 스토어 id로 산 거래를 RevenueCat id로 다른 상대에 쓰기 409(정규화 확인), DB 실패 503, IP 한도(시간당 5) 초과 429. 저장 행에는 거래 id·사용자 id·pair_key(HMAC)·generations만.
+  - QA: 실제 생성(gpt-5.4-mini, 약 $0.1) 무료 2쌍 × ko·en·es + 유료 ko·es·en → 판정·결말 예언·마음 단정·전문용어 0건(코드 검사 남은 지적 0), `{other}` 토큰 유지, 인용 퍼센트 전부 엔진 값과 일치(예: 37.5 → 38%). 생성 뒤 코드 검사에 "데이터에 없는 퍼센트" 항목을 더했다. ko 1건에 "상대의 도움"이 일반 명사로 한 번 나옴(허용).
+  - QA(mobile-web, 375×812, `?qa=free&persona=jordan`, `/api/compatReport*`만 페이지에서 로컬 3100으로 돌림): 궁합 결과(Jordan · Sam) 공유 버튼 아래 "Compatibility report" 행 → 생성 중 문구 → 표지(이름·제목·부제·계산 근거) → 무료 2장 → 페이월 쪽(잠긴 3개 장, "Open the report", 가격은 결제 화면 안내, 한 사람당 1회 구매·구독 아님, 판정하지 않음 문구). 웹엔 스토어가 없어 구매 → "can't be bought right now"(예상대로). 요청 본문에 이름 없음(`other`는 생년월일·성별만). 뒤로 → 결과 그대로, 다시 열기 → 저장본(요청 수 그대로 1). 구매 후 화면: 이 상대의 기기 저장 항목에 대역 구매로 서버가 만든 유료 부분을 넣고 → 홈 "My reports" → "Compatibility with Sam" → 8쪽(표지·무료 2·부딪히는 지점 1/3~3/3·리듬·맺음) → 마지막 장 Back → 내 리포트.
+  - QA 회귀(mobile-web `?qa=free&persona=jordan`, 저장 항목 지운 뒤): 홈 → 운세 총론 → Q&A 답 1개(1→0) → 검사 목록 → Burnout 1/30 → 궁합 결과(Jordan · Sam, 프로덕션 `/api/compatibility` 200) 정상. 콘솔 오류는 `/api/events` 404 5건(프로덕션 미배포, 직접 호출해 404 확인)뿐.
+  - [ ] (사용자 확인) 사용자 실행 B(SQL `compat_report_purchases`)·C(상품 등록: App Store 소모품 `com.fatesaid.app.report.compat`, Play `compat_report`, RevenueCat "reports" 오퍼링에 패키지 `compat_report`, entitlement 없음) 후 웹 배포 → OTA → iOS dev-client 샌드박스 계정에서: 궁합 결과 → "궁합 상세 리포트" → 미리보기 2장 → 페이월에 스토어 가격 → 구매 → 생성 → 8쪽 읽기 → 홈 "내 리포트"에 "○○님과의 궁합". 앱을 껐다 켜서 다시 열면 재구매 없이 바로 열리는지. 다른 상대로 다시 사면 새 결제가 뜨는지. Android에서는 같은 흐름에서 구매 직후 생성이 되는지(SDK가 주는 거래 id가 RevenueCat 기록과 맞는지 — 402면 알려 주세요).
 
 ## 바이럴
 
@@ -111,7 +118,7 @@
   - 순서·확인 항목은 `TODO_2026-10-04.md` A·B 그대로. 이번 작업을 배포하기 전에 먼저 끝내는 것을 권장.
 
 - [ ] B. (사용자 실행) Supabase SQL 실행
-  - 1·5·6·7번이 `supabase/schema.sql`에 추가한 `events`, 궁합 리포트 구매 기록, `invites`, `pairs`를 SQL Editor에서 실행. 각 항목 배포 전에.
+  - 1·5·6·7번이 `supabase/schema.sql`에 추가한 `events`, `compat_report_purchases`(궁합 리포트 구매 기록), `invites`, `pairs`를 SQL Editor에서 실행. 각 항목 배포 전에.
 
 - [ ] C. (사용자 실행) 스토어·RevenueCat 설정
   - 구독: 7일 무료 체험(intro offer), 연간 요금제(가격 결정) — App Store Connect·Play Console 등록 후 RevenueCat 오퍼링에 연간 패키지 추가.
@@ -142,3 +149,6 @@
 - (3번 중) Q&A 한도 소진 말풍선(`limitReached2`)은 스토어 가격이 오기 전에 찍히면 대체 가격으로 남고, 연간이 기본 선택이면 "$49.99/year"로 찍힌다(카드의 선택과 함께 바뀌지 않음).
 - (4번 중) 서버 `lib/qaQuota.ts`는 앱(mobile) 기존 Q&A를 구독 여부와 관계없이 하루 1개로 센다(`isQaQuotaExceeded`에 구독 정보가 없음). 앱은 구독자에게 10개를 보여 주므로, 프로덕션 Supabase가 정상이면 구독자의 일반 질문 2번째부터 서버가 403을 줄 수 있다. 4번의 "그 사람" 경로만 RevenueCat 확인 뒤 10개 상한을 쓴다. 일반 경로도 appUserId를 받아 같은 확인을 붙일지 결정 필요.
 - (4번 중) 기존 Q&A 답(en)에도 "Your Day Master, the core of your natural style…"처럼 용어가 그대로 나온다. 기존 프롬프트가 `요약`(dayMaster 키)을 그대로 넘기기 때문. 4번 프롬프트처럼 중심 기운 단어만 넘기면 줄어든다.
+- (5번 중) 궁합 리포트는 소모성이라 스토어 "구매 복원"이 없다. 앱을 지웠다 다시 깔면 기기 사본과 거래 id가 사라져 다시 열 방법이 없다(서버는 같은 거래·같은 상대 재생성을 허용하지만 앱이 거래 id를 모름). RevenueCat `customerInfo.nonSubscriptionTransactions`에서 궁합 상품 거래를 골라 상대를 다시 입력하면 이어 주는 복원 흐름이 필요한지 결정 필요.
+- (5번 중) 홈 "내 리포트" 설명 문구(`home.featureReportsDescription`, "Reopen the in-depth reports you've made")가 궁합 리포트도 담게 된 지금은 조금 좁다. 문구만 고치면 됨(ko/en/es).
+- (5번 중) 고쳐 쓰기 호출(`makeRewriter`)은 `{other}` 토큰을 모른다. 지적 문구에 "토큰 유지"를 넣었지만, 고쳐 쓴 문장에서 토큰이 빠지면 그 문장만 "그 사람" 대신 일반 표현이 된다. 이번 생성에서는 고쳐 쓰기가 일어나지 않아 확인 못 함.

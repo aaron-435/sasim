@@ -118,6 +118,22 @@ create table if not exists events (
 create index if not exists idx_events_created_at on events(created_at);
 create index if not exists idx_events_name_created_at on events(name, created_at);
 
+-- 2026-10-06: 궁합 상세 리포트(소모성 상품 compat_report) 구매 기록. 한 번 산 거래는
+-- 한 상대 조합에만 쓴다 — /api/compatReport/paid가 RevenueCat에서 거래를 확인한 뒤
+-- 처음 쓰는 거래면 상대 조합을 묶어 넣고, 다른 조합으로 다시 오면 거절한다.
+-- pair_key는 상대 생년월일 등을 서버 비밀값으로 HMAC한 값이라 생년월일 원문은 남지 않는다.
+-- transaction_id는 RevenueCat의 구매 id(스토어 거래 id로 와도 같은 구매면 같은 값으로 바꿔 넣는다).
+-- generations는 같은 거래로 다시 만든 횟수(재설치·생성 실패 뒤 재시도 허용, 상한 있음).
+-- 배포된 DB에는 이 테이블이 없으므로 아래 create table을 SQL Editor에서 한 번 실행한다.
+create table if not exists compat_report_purchases (
+  transaction_id text primary key,
+  app_user_id text not null,
+  pair_key text not null,
+  generations int not null default 1,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create index if not exists idx_saju_results_session on saju_results(session_id);
 create index if not exists idx_quiz_results_session on quiz_results(session_id);
 create index if not exists idx_chat_sessions_session on chat_sessions(session_id);
@@ -134,6 +150,7 @@ alter table chat_sessions enable row level security;
 alter table report_results enable row level security;
 alter table llm_usage_log enable row level security;
 alter table events enable row level security;
+alter table compat_report_purchases enable row level security;
 
 -- service_role은 RLS를 우회하지만, 테이블 자체에 대한 GRANT는 별개다.
 -- "Automatically expose new tables"를 꺼둔 상태에서 SQL Editor로 테이블을

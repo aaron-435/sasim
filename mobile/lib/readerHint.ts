@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // Whether the reader has already turned a page in each report reader (ReportPager's
 // first-page "swipe to turn" hint). Kept per report kind, so the in-depth report and the
 // year-ahead report each show it once.
-export type ReaderHintId = "deep" | "year";
+export type ReaderHintId = "deep" | "year" | "compat";
 
 const keyFor = (id: ReaderHintId) => `fatesaid_reader_hint_seen_${id}`;
 

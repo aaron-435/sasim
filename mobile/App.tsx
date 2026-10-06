@@ -7,6 +7,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import ChatScreen, { type ChatExtract } from "./screens/ChatScreen";
 import CityScreen, { type SajuResult } from "./screens/CityScreen";
 import CompatibilityScreen from "./screens/CompatibilityScreen";
+import CompatReportScreen from "./screens/CompatReportScreen";
 import ConcernScreen from "./screens/ConcernScreen";
 import DobScreen from "./screens/DobScreen";
 import FortuneScreen from "./screens/FortuneScreen";
@@ -43,6 +44,7 @@ import { clearHomeData, getStoredHomeData, saveHomeData } from "./lib/homeDataSt
 import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/saju";
 import { clearSavedReports, type SavedReport } from "./lib/reportStorage";
 import { clearSavedYearReports } from "./lib/yearReportStorage";
+import { clearSavedCompatReports, type SavedCompatReport } from "./lib/compatReportStorage";
 import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } from "./lib/userConcern";
 
 // Onboarding flow shell — mirrors components/AppFlow.jsx's step-switcher role on web,
@@ -55,7 +57,7 @@ import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } f
 // pipeline — chained, not independently reachable from Home, since chat needs a quiz
 // diagnosis and report needs both quiz+chat context — same dependency web's
 // components/AppFlow.jsx has).
-type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "typeReveal" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings" | "myReports" | "shareCards" | "yearReport" | "qaReport";
+type StepId = "language" | "intro" | "verifyCode" | "nickname" | "gender" | "dob" | "tob" | "city" | "concern" | "typeReveal" | "home" | "qa" | "moduleSelect" | "quiz" | "chat" | "report" | "type" | "compatibility" | "fortune" | "sajuLearn" | "settings" | "myReports" | "shareCards" | "yearReport" | "qaReport" | "compatReport";
 
 type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
@@ -96,6 +98,7 @@ const BACK_TARGET: Partial<Record<StepId, StepId>> = {
   shareCards: "home",
   yearReport: "home",
   qaReport: "home",
+  compatReport: "myReports",
 };
 
 // The day master (일간) char and day branch (일지) the fortune/compatibility APIs key on —
@@ -171,6 +174,8 @@ function AppContent() {
   const [chatExtract, setChatExtract] = useState<ChatExtract | null>(null);
   // Set when a report is reopened from "My reports" (skips generation); null for a fresh one.
   const [savedReport, setSavedReport] = useState<SavedReport | null>(null);
+  // A compatibility report reopened from "My reports".
+  const [savedCompatReport, setSavedCompatReport] = useState<SavedCompatReport | null>(null);
 
   useEffect(() => {
     setAnalyticsLocale(locale);
@@ -259,6 +264,7 @@ function AppContent() {
     clearUserConcern();
     clearSavedReports();
     clearSavedYearReports();
+    clearSavedCompatReports();
     setSavedReport(null);
     setHomeData(null);
     setNickname("");
@@ -522,7 +528,24 @@ function AppContent() {
             setSavedReport(report);
             setStep("report");
           }}
+          onOpenCompat={(report) => {
+            setSavedCompatReport(report);
+            setStep("compatReport");
+          }}
           onBack={() => setStep("home")}
+        />
+      )}
+
+      {step === "compatReport" && savedCompatReport && homeData && dayMasterCharOf(homeData) && (
+        <CompatReportScreen
+          nickname={homeData.nickname}
+          otherName={savedCompatReport.otherName}
+          other={savedCompatReport.other}
+          selfDayMasterChar={dayMasterCharOf(homeData)!}
+          selfDayBranch={dayBranchOf(homeData)}
+          selfElements={homeData.sajuResult.elements ?? null}
+          sessionId={sessionId}
+          onBack={() => setStep("myReports")}
         />
       )}
 
@@ -544,6 +567,9 @@ function AppContent() {
         <CompatibilityScreen
           selfNickname={homeData.nickname}
           selfDayMasterChar={dayMasterCharOf(homeData)}
+          selfDayBranch={dayBranchOf(homeData)}
+          selfElements={homeData.sajuResult.elements ?? null}
+          sessionId={sessionId}
           onBack={() => setStep("home")}
         />
       )}

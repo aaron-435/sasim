@@ -20,6 +20,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { hasQaProEntitlement } from "../lib/purchases";
 import { getLastQuestion, type LastQuestion } from "../lib/qaHistory";
 import { listSavedReports } from "../lib/reportStorage";
+import { listPurchasedCompatReports } from "../lib/compatReportStorage";
 import type { CompatibilityResult } from "../lib/compatibility";
 import type { SajuType } from "../lib/sajuType";
 import { formatSajuTypeName } from "../lib/sajuTypeContent";
@@ -128,10 +129,13 @@ export default function HomeScreen({
   const loadedDay = useRef(localDateKey());
 
   const [hasSavedReports, setHasSavedReports] = useState(false);
+  // "My reports" also lists purchased compatibility reports, so it opens for those alone too.
+  const [hasCompatReports, setHasCompatReports] = useState(false);
 
   useEffect(() => {
     getLastQuestion().then(setLastQuestion);
     listSavedReports().then((reports) => setHasSavedReports(reports.length > 0));
+    listPurchasedCompatReports().then((reports) => setHasCompatReports(reports.length > 0));
   }, []);
 
   useEffect(() => {
@@ -267,7 +271,7 @@ export default function HomeScreen({
       onPress: onOpenYearReport,
       available: !!selfDayMasterChar,
     },
-    reports: { label: strings.home.featureReportsLabel, description: strings.home.featureReportsDescription, onPress: onOpenMyReports, available: hasSavedReports },
+    reports: { label: strings.home.featureReportsLabel, description: strings.home.featureReportsDescription, onPress: onOpenMyReports, available: hasSavedReports || hasCompatReports },
   };
   const features = FEATURE_ORDER[preferredTrack ?? "default"].filter((key) => featureMeta[key].available);
 

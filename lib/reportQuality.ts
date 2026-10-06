@@ -453,7 +453,16 @@ export function checkYearReportDeterministic(c: YearReportContent, locale: Local
   c.months.forEach((m, i) => {
     if (countSentences(m.body) < 2) problems.push(`months[${i}].body: 2문장 이상이어야 하는데 ${countSentences(m.body)}문장`);
   });
-  for (const [path, text] of flattenStrings(c)) {
+  problems.push(...checkLanguageSlips(c, locale));
+  return Array.from(new Set(problems));
+}
+
+/** The language rules every generated report shares (no leftover Korean in another language, no
+ * leaked instructions, Spanish style slips), over every string in the value. Used by the year-ahead
+ * and compatibility reports. */
+export function checkLanguageSlips(value: unknown, locale: Locale): string[] {
+  const problems: string[] = [];
+  for (const [path, text] of flattenStrings(value)) {
     if (locale !== "ko" && HANGUL_OR_HANJA.test(text)) problems.push(`${path}: 한국어/한자가 섞여 있음`);
     if (META_LEAK.test(text)) problems.push(`${path}: 지시문/데이터 누락을 언급하는 메타 발언`);
     if (locale === "es") {
@@ -464,7 +473,7 @@ export function checkYearReportDeterministic(c: YearReportContent, locale: Local
       if (cap) problems.push(`${path}: "${cap[0]}"를 대문자로 씀 — 본문에서는 소문자 "cinco elementos"로 쓸 것`);
     }
   }
-  return Array.from(new Set(problems));
+  return problems;
 }
 
 /** Path helpers for "strengths[1].body"-style locations. */

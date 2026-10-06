@@ -1,25 +1,40 @@
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import ChevronRight from "lucide-react-native/icons/chevron-right";
 import FileText from "lucide-react-native/icons/file-text";
+import Users from "lucide-react-native/icons/users";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { listSavedReports, type SavedReport } from "../lib/reportStorage";
+import { listPurchasedCompatReports, type SavedCompatReport } from "../lib/compatReportStorage";
 import { COLORS } from "../theme/colors";
 import { moduleDisplayTitle } from "../lib/quiz/modules";
 import { FONTS } from "../theme/fonts";
 
 // Reopen a report generated earlier — see lib/reportStorage.ts for why this exists.
-export default function MyReportsScreen({ onOpen, onBack }: { onOpen: (report: SavedReport) => void; onBack: () => void }) {
+export default function MyReportsScreen({
+  onOpen,
+  onOpenCompat,
+  onBack,
+}: {
+  onOpen: (report: SavedReport) => void;
+  /** Purchased compatibility reports (lib/compatReportStorage.ts), listed after the deep reports. */
+  onOpenCompat?: (report: SavedCompatReport) => void;
+  onBack: () => void;
+}) {
   const strings = useStrings();
   const { locale } = useLocale();
   const [reports, setReports] = useState<SavedReport[] | null>(null);
+  const [compatReports, setCompatReports] = useState<SavedCompatReport[] | null>(null);
 
   useEffect(() => {
     listSavedReports().then(setReports);
+    listPurchasedCompatReports().then(setCompatReports);
   }, []);
+  const compatTitle = (r: SavedCompatReport) =>
+    strings.compatReport.myReportsTitle(r.otherName.trim() ? strings.compatReport.otherWithName(r.otherName.trim()) : strings.compatReport.otherFallback);
 
   return (
     <SafeAreaView style={styles.root}>
@@ -33,7 +48,7 @@ export default function MyReportsScreen({ onOpen, onBack }: { onOpen: (report: S
           {strings.myReports.heading}
         </Text>
 
-        {reports?.length === 0 && <Text style={styles.empty}>{strings.myReports.empty}</Text>}
+        {reports?.length === 0 && compatReports?.length === 0 && <Text style={styles.empty}>{strings.myReports.empty}</Text>}
 
         <View style={styles.list}>
           {(reports ?? []).map((r, index) => (
@@ -52,6 +67,23 @@ export default function MyReportsScreen({ onOpen, onBack }: { onOpen: (report: S
               <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
             </Pressable>
           ))}
+          {onOpenCompat &&
+            (compatReports ?? []).map((r, index) => (
+              <Pressable
+                key={r.pairKey}
+                onPress={() => onOpenCompat(r)}
+                android_ripple={{ color: "rgba(111,169,139,0.12)" }}
+                style={({ pressed }) => [styles.row, (index > 0 || !!reports?.length) && styles.rowDivider, pressed && styles.rowPressed]}
+                accessibilityRole="button"
+              >
+                <Users size={20} strokeWidth={1.75} color={COLORS.gold} />
+                <View style={styles.rowText}>
+                  <Text style={styles.rowTitle}>{compatTitle(r)}</Text>
+                  <Text style={styles.rowDate}>{strings.myReports.savedOn(new Date(r.savedAt).toLocaleDateString(locale))}</Text>
+                </View>
+                <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
+              </Pressable>
+            ))}
         </View>
       </ScrollView>
     </SafeAreaView>

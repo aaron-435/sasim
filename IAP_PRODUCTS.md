@@ -90,3 +90,17 @@ com.fatesaid.app.report.year_2027
 2027 Year-Ahead Report
 2027 saju report: 5 areas, 12 months, action plan
 ```
+
+## 소모품 (Consumable)
+
+궁합 상세 리포트 — 상대 한 사람마다 한 번 구매(2026-10-06). 가격은 $6.99 가정, 사용자가 정한다.
+- App Store Connect: 유형 **소모품**, 아래 4줄.
+- Play Console: 일회성 제품, 제품 ID `compat_report`(소모성으로 처리됨 — 앱이 RevenueCat으로 구매하면 자동 소비).
+- RevenueCat: 두 스토어 상품을 "reports" 오퍼링에 패키지 id `compat_report`로 추가. **entitlement는 붙이지 않는다**(서버가 거래 id로 확인: `lib/revenuecat.ts`의 `checkConsumablePurchase`, 상품 id 목록은 `app/api/compatReport/paid/route.ts`의 `COMPAT_PRODUCT_IDS`).
+
+```
+Compatibility Report
+com.fatesaid.app.report.compat
+Compatibility Report
+Saju compatibility report for you and one other person
+```
