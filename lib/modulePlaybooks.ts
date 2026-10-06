@@ -1,7 +1,7 @@
 /**
  * lib/modulePlaybooks.ts
  * ------------------------------------------------------------------
- * MODULE_PLAYBOOK.md(v2, 2026-09-27 확정)를 코드로 옮긴 데이터. 11개 모듈이
+ * MODULE_PLAYBOOK.md(v2, 2026-09-27 확정)를 코드로 옮긴 데이터. 12개 모듈이
  * 각자 어떤 전문 관점으로 20턴 대화를 이끌고, 대화에서 무엇을 뽑아 리포트의
  * 모듈 전용 페이지 2장(module_map 무료, module_deep 유료)에 무엇을 쓰는지를
  * 정한다.
@@ -22,6 +22,7 @@
  * 2026-09-27: 모듈 1~4 추가(TODO F0-a).
  * 2026-09-27: 모듈 5~11 추가, 7번째 턴 지침(patternTurnInstruction)을
  *   lib/chatPrompts.ts에서 옮겨 옴(TODO F0-b). 문구는 그대로다.
+ * 2026-10-06: 모듈 12(새 출발) 추가(TODO 11). 앱 목록에는 TODO 12에서 나온다.
  * 2026-09-27: 챗봇 2~19턴이 stages/signatureQuestion/perspectiveShift로
  *   모듈별 지침을 만들게 되어 patternTurnInstruction을 지웠다(TODO Q1-a).
  * ------------------------------------------------------------------
@@ -43,7 +44,8 @@ export type PlaybookModuleId =
   | "module8"
   | "module9"
   | "module10"
-  | "module11";
+  | "module11"
+  | "module12";
 
 /**
  * 20턴 중 고정 역할 턴(1·6·10·13·17·20)을 뺀 14턴을 채우는 7단계.
@@ -990,6 +992,86 @@ const MODULE11: ModulePlaybook = {
   strengthDirections: ["신중함", "배려", "잠재된 생동감"],
 };
 
+const MODULE12: ModulePlaybook = {
+  id: "module12",
+  lens: "브리지스의 전환 모델(바뀐 사건과, 마음이 그 사건을 따라가는 전환은 다르다: 끝맺음 → 중간 지대 → 새 시작), 상실 뒤 적응의 이중 과정(잃은 것을 돌아보는 쪽과 새 생활을 꾸리는 쪽을 오가는 것이 자연스럽다), 슐로스버그의 전환 자원(상황·나·곁의 사람·쓰는 방법).",
+  boundary: "애착(모듈 1)은 지금 관계의 거리 조절, 실행력(모듈 5)은 일 하나를 시작하기 직전의 브레이크, 원가족(모듈 9)은 가족 체계 속 내 자리를 본다. 새 출발은 이별·이직·이사·졸업처럼 삶의 한 장이 바뀐 시기에 끝난 것을 보내고, 아직 정해지지 않은 시간을 지나, 새 자리에 마음을 두는 과정을 본다. 이별을 다뤄도 상대의 마음이나 다시 만날 가능성이 아니라 내 일상과 정체성이 어떻게 옮겨 가는지를 본다.",
+  signatureQuestion: {
+    ko: "그 변화가 있기 전의 나와 지금의 나 사이에, 아직 옮겨 오지 못한 게 하나 있다면 뭐예요?",
+    en: "Between who you were before that change and who you are now, is there one thing you haven't quite carried over yet?",
+    es: "Entre quien eras antes de ese cambio y quien eres ahora, ¿hay algo que todavía no has terminado de traer contigo?",
+  },
+  signatureStage: "A",
+  stages: {
+    A: "최근 바뀐 일 하나(이별, 이직, 이사, 졸업 등)와 그 변화가 실감 난 장면을 묻고, 시그니처 질문으로 아직 옮겨 오지 못한 것 하나를 묻는다.",
+    B: "변화 뒤의 감정을 좁힌다. 홀가분함인지, 허전함인지, 막막함인지, 설렘인지.",
+    C: "예전 것이 떠오르고 새 자리와 비교하게 되는 순간이 언제 되풀이되는지, 빈 시간이 생기면 무엇으로 채우는지 묻는다.",
+    D: "'이쯤이면 자리를 잡았어야 한다', '끝난 걸 붙잡는 건 약한 거다' 같은 믿음을 찾는다. 예전의 다른 변화를 어떻게 지나왔는지는 한 장면만 짧게 닿는다.",
+    E: "정해지지 않은 시간을 어떻게 지나는지(서둘러 정하기, 예전으로 돌아가기, 멈춰 있기)와 그 대가를 묻는다.",
+    F: "이 시기를 같이 지나가는 사람, 예전 자리에 남은 사람, 새 자리에서 만난 사람 중 누가 지금 힘이 되는지 묻는다.",
+    G: "새 자리가 '여기가 내 자리다' 싶어지려면 어떤 작은 장면이 필요할지 묻는다.",
+  },
+  perspectiveShift: {
+    speaker: "지금의 나",
+    listener: "예전 자리를 떠나던 마지막 날의 나",
+    why: "끝맺음은 대개 서둘러 지나간다. 떠나던 날의 나에게 지금 건네고 싶은 말을 물으면, 못 한 작별과 이미 지나온 거리가 함께 보인다.",
+  },
+  forcedChoiceAxes: [
+    {
+      name: "뒤돌아봄",
+      options: [
+        { ko: "자꾸 예전 생각이 나요", en: "My mind keeps going back", es: "Mi mente vuelve atrás una y otra vez" },
+        { ko: "생각보다 금방 정리됐어요", en: "It settled faster than I expected", es: "Se ordenó antes de lo que esperaba" },
+      ],
+    },
+    {
+      name: "사이의 불안",
+      options: [
+        { ko: "빨리 정하고 싶어요", en: "I want it decided soon", es: "Quiero tenerlo decidido pronto" },
+        { ko: "좀 더 지켜보고 싶어요", en: "I'd rather wait and see a bit longer", es: "Prefiero esperar y ver un poco más" },
+      ],
+    },
+    {
+      name: "출발 망설임",
+      options: [
+        { ko: "새 자리에 마음이 가기 시작했어요", en: "I'm starting to feel at home there", es: "Empiezo a sentirme en casa" },
+        { ko: "아직 손님 같아요", en: "I still feel like a visitor", es: "Todavía me siento de visita" },
+      ],
+    },
+  ],
+  emotionPalette: [
+    { ko: "허전함", en: "emptiness", es: "vacío" },
+    { ko: "홀가분함", en: "lightness", es: "ligereza" },
+    { ko: "막막함", en: "feeling adrift", es: "desorientación" },
+    { ko: "그리움", en: "longing", es: "añoranza" },
+    { ko: "설렘", en: "a flutter of anticipation", es: "ilusión" },
+  ],
+  contradictions: [
+    "끝났다고 말하면서 예전 리듬대로 산다.",
+    "빨리 자리를 잡고 싶다면서 새 자리에는 마음을 반만 둔다.",
+  ],
+  reframe: {
+    selfBlame: "나만 아직 제자리야",
+    direction: "끝난 것을 가볍게 넘기지 못할 만큼 그 시간을 진심으로 살았고, 마음은 원래 몸보다 늦게 새 자리에 도착한다는 것",
+  },
+  extractFields: [
+    { key: "unfinished_goodbye", description: "아직 보내지 못한 것, 예전 자리에서 옮겨 오지 못한 것(사용자 표현 그대로)" },
+    { key: "anchor_in_new", description: "새 자리에 마음을 붙이게 해 준 것이나 붙이고 싶은 것(사람, 장소, 습관)" },
+  ],
+  reportPages: {
+    module_map: {
+      title: { ko: "끝과 시작 사이, 지금 내 자리", en: "Where you are between an ending and a beginning", es: "Dónde estás entre un final y un comienzo" },
+      instruction: "이 사람이 지나는 변화를 끝맺음 → 중간 지대 → 새 시작 세 구간으로 그리고, 대화 재료로 지금 마음이 어느 구간에 더 머무는지 짚는다. 세 구간을 순서대로 통과해야 하는 단계처럼 쓰지 않고, 오가는 것이 자연스럽다고 쓴다. 뒤처졌다는 평가로 들리지 않게 쓴다.",
+    },
+    module_deep: {
+      title: { ko: "새 자리에 마음을 두는 연습", en: "Practices for settling into a new chapter", es: "Prácticas para echar raíces en una nueva etapa" },
+      instruction: "이 사람에게 맞춘 세 가지를 순서대로 제시한다: 끝난 것에 건네는 작은 작별 의식 하나, 정해지지 않은 시간을 버티게 해 줄 임시 구조 하나(작은 일과나 스스로 정한 기한), 새 자리에 닻을 내릴 작은 장면 하나(단골, 사람, 습관). 모두 대화 재료에 근거하고, 큰 결정을 재촉하지 않는다.",
+    },
+  },
+  strengthDirections: ["적응력", "끝난 것을 소중히 여기는 깊이", "새 장면을 알아보는 감각"],
+  caution: "사별, 건강 문제, 사고 같은 상실은 이 모듈이 먼저 장면으로 열지 않는다. 사용자가 꺼내면 안전 규칙을 따르고 상실의 크기를 평가하지 않는다. 이별을 다뤄도 상대의 마음이나 재회 가능성을 짐작하지 않는다.",
+};
+
 export const MODULE_PLAYBOOKS: Record<PlaybookModuleId, ModulePlaybook> = {
   module1: MODULE1,
   module2: MODULE2,
@@ -1002,6 +1084,7 @@ export const MODULE_PLAYBOOKS: Record<PlaybookModuleId, ModulePlaybook> = {
   module9: MODULE9,
   module10: MODULE10,
   module11: MODULE11,
+  module12: MODULE12,
 };
 
 /** moduleId가 없거나 알 수 없으면 undefined(웹, 구버전 앱). */
@@ -1018,7 +1101,7 @@ export function getModulePlaybook(moduleId?: string | null): ModulePlaybook | un
 // 2026-10-02: 타입, 24턴 고정 문구, 모듈 1~4 추가(TODO 1). 모듈 5~11 추가(TODO 2).
 // ------------------------------------------------------------------
 
-/** 세트 번호. 1 장면, 2 반복, 3 속마음, 4 대처, 5 힘(11개 모듈 공통). */
+/** 세트 번호. 1 장면, 2 반복, 3 속마음, 4 대처, 5 힘(모든 모듈 공통). */
 export type ChatSetNumber = 1 | 2 | 3 | 4 | 5;
 
 export type ChatSetTheme = "scene" | "repeat" | "inner" | "coping" | "strength";
@@ -2757,7 +2840,159 @@ const MODULE11_SETS: ModuleChatSets = {
   ],
 };
 
-/** 모듈별 5세트 데이터(11개 모듈). */
+const MODULE12_SETS: ModuleChatSets = {
+  strengthScoreDirection: "low",
+  sets: [
+    {
+      set: 1,
+      focus: "변화가 실감 난 순간",
+      candidates: ["L2", "U3", "L8", "R6"],
+      fallbackQuestion: {
+        ko: "최근에 이별, 이직, 이사처럼 삶의 한 장이 바뀐 일이 있었다면, 그 변화가 가장 실감 났던 순간은 언제였어요?",
+        en: "If a chapter of your life changed recently, like a breakup, a new job, or a move, when did that change feel most real?",
+        es: "Si hace poco cambió una etapa de tu vida, como una ruptura, un trabajo nuevo o una mudanza, ¿en qué momento se te hizo más real ese cambio?",
+      },
+      questions: [
+        { text: MODULE12.signatureQuestion, free: true, signature: true },
+        {
+          text: {
+            ko: "그 변화는 내가 고른 쪽이었어요, 어쩌다 맞게 된 쪽이었어요?",
+            en: "Was that change something you chose, or something that happened to you?",
+            es: "¿Ese cambio lo elegiste tú o te llegó sin buscarlo?",
+          },
+        },
+        {
+          text: {
+            ko: "변화 뒤에 먼저 찾아온 건 홀가분함이었어요, 허전함이었어요?",
+            en: "After the change, what showed up first: a sense of lightness, or a sense of emptiness?",
+            es: "Después del cambio, ¿qué llegó primero: una sensación de ligereza o de vacío?",
+          },
+        },
+      ],
+    },
+    {
+      set: 2,
+      focus: "예전과 지금을 오가는 순서",
+      candidates: ["L4", "U6", "L3", "U9"],
+      fallbackQuestion: {
+        ko: "변화 뒤로 예전 일이 떠오르고 지금과 비교하게 되는 순간이 되풀이된다면, 보통 어떻게 흘러가요?",
+        en: "If moments keep coming back when the old life comes to mind and you compare it with now, how do they usually go?",
+        es: "Si se repiten esos momentos en que lo de antes vuelve a tu mente y lo comparas con lo de ahora, ¿cómo suelen ir?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "예전 생각은 혼자 있을 때 찾아와요, 새 자리에서 뭔가 어긋날 때 찾아와요?",
+            en: "Does the old life come back to you when you're alone, or when something goes wrong in the new one?",
+            es: "¿Lo de antes vuelve cuando estás a solas o cuando algo no sale bien en lo nuevo?",
+          },
+        },
+        {
+          text: {
+            ko: "그렇게 떠오르면 한동안 머물러요, 금방 털고 돌아와요?",
+            en: "When it comes back, do you stay there a while, or shake it off and return quickly?",
+            es: "Cuando vuelve, ¿te quedas ahí un rato o te lo sacudes y regresas pronto?",
+          },
+        },
+      ],
+      alternate: {
+        text: {
+          ko: "빈 시간이 생기면 뭔가로 채워요, 그냥 비워 둬요?",
+          en: "When empty time opens up, do you fill it with something, or leave it empty?",
+          es: "Cuando aparece un rato libre, ¿lo llenas con algo o lo dejas vacío?",
+        },
+      },
+    },
+    {
+      set: 3,
+      focus: "끝과 시작 사이의 믿음",
+      candidates: ["L6", "U5", "R4", "L7", "R10"],
+      fallbackQuestion: {
+        ko: "새 자리를 잡는 속도를 두고, 마음속에 어떤 기준이나 생각이 있는 것 같아요?",
+        en: "When it comes to how fast you should be settling in, what standard or belief seems to sit in your mind?",
+        es: "Sobre lo rápido que deberías encontrar tu lugar, ¿qué idea o qué medida parece haber en tu cabeza?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "'이쯤이면 자리를 잡았어야지' 하는 기준은 내 기준이에요, 남들 기준이에요?",
+            en: "That sense of \"I should be settled by now\": is it your own yardstick, or other people's?",
+            es: "Esa idea de \"a estas alturas ya debería tenerlo todo en orden\", ¿es tu medida o la de los demás?",
+          },
+        },
+        {
+          text: {
+            ko: "예전에 다른 변화를 지날 때는 천천히 적응했어요, 금방 적응했어요?",
+            en: "When you went through other changes before, did you adjust slowly or quickly?",
+            es: "Cuando pasaste por otros cambios antes, ¿te adaptaste despacio o rápido?",
+          },
+        },
+        {
+          text: {
+            ko: "끝난 걸 오래 붙잡는 건 약한 거라고 느껴요, 그만큼 소중했던 거라고 느껴요?",
+            en: "Holding on to something that's ended: does it feel like weakness to you, or like a sign of how much it mattered?",
+            es: "Aferrarte a algo que ya terminó, ¿lo sientes como debilidad o como señal de lo mucho que te importaba?",
+          },
+        },
+      ],
+    },
+    {
+      set: 4,
+      focus: "정해지지 않은 시간을 지나는 법",
+      candidates: ["U2", "U4", "R7", "L5", "U7"],
+      fallbackQuestion: {
+        ko: "아직 다음이 정해지지 않은 시간이 오면, 주로 어떻게 지내요?",
+        en: "When a stretch comes where the next step isn't decided yet, how do you usually get through it?",
+        es: "Cuando llega una etapa en la que todavía no está claro el siguiente paso, ¿cómo sueles pasarla?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "정해지지 않은 시간에는 서둘러 정하는 편이에요, 일단 멈춰 있는 편이에요?",
+            en: "When things are still undecided, do you tend to rush to decide, or pause and wait?",
+            es: "Cuando todo está por decidir, ¿tiendes a decidir rápido o a quedarte en pausa?",
+          },
+        },
+        {
+          text: {
+            ko: "이 시기를 같이 지나가는 사람이 있어요, 거의 혼자 지나가요?",
+            en: "Is someone going through this stretch with you, or are you mostly doing it on your own?",
+            es: "¿Hay alguien pasando esta etapa contigo o la vas pasando casi por tu cuenta?",
+          },
+        },
+        {
+          text: {
+            ko: "새 자리에서 단골집이나 익숙한 자리가 하나라도 생겼어요, 아직이에요?",
+            en: "In the new place, have you found even one regular spot or familiar corner, or not yet?",
+            es: "En el lugar nuevo, ¿ya tienes algún sitio de siempre o algún rincón conocido, o todavía no?",
+          },
+        },
+      ],
+    },
+    {
+      set: 5,
+      focus: "새 자리에 닻 내리기",
+      candidates: ["U8", "R8", "L10", "R2"],
+      fallbackQuestion: {
+        ko: "변화를 지나오면서 '이건 내가 꽤 잘 해냈다' 싶은 게 있다면, 뭐예요?",
+        en: "Looking at how you've moved through this change, what's one thing you think you handled pretty well?",
+        es: "Mirando cómo has atravesado este cambio, ¿qué es algo que sientes que manejaste bastante bien?",
+      },
+      questions: [
+        {
+          text: {
+            ko: "새 자리가 '여기가 내 자리다' 싶어지려면, 어떤 작은 장면 하나가 있으면 될 것 같아요?",
+            en: "What one small moment would make the new place start to feel like yours?",
+            es: "¿Qué pequeño momento haría que el lugar nuevo empezara a sentirse tuyo?",
+          },
+          free: true,
+        },
+      ],
+    },
+  ],
+};
+
+/** 모듈별 5세트 데이터(12개 모듈). */
 export const MODULE_CHAT_SETS: Partial<Record<PlaybookModuleId, ModuleChatSets>> = {
   module1: MODULE1_SETS,
   module2: MODULE2_SETS,
@@ -2770,6 +3005,7 @@ export const MODULE_CHAT_SETS: Partial<Record<PlaybookModuleId, ModuleChatSets>>
   module9: MODULE9_SETS,
   module10: MODULE10_SETS,
   module11: MODULE11_SETS,
+  module12: MODULE12_SETS,
 };
 
 /** 세트 데이터가 없는 모듈이나 알 수 없는 id면 undefined. */

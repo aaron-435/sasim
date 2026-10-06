@@ -75,7 +75,7 @@ export interface ChatSessionContext {
   psychTestSummary: string;
   /** The single highest-scoring quiz answer, so turn 1 can quote it directly. */
   quizAnswer?: QuizAnswerQuote | null;
-  /** Which of the 11 quiz modules ran (e.g. "module1" ~ "module11"), matching
+  /** Which of the quiz modules ran (e.g. "module1" ~ "module12"), matching
    * mobile/lib/quiz/modules.ts's ModuleDefinition.id. Absent for web (no
    * module picker there) or older app builds — turn 7's instruction falls
    * back to a generic phrasing when this is missing or unrecognized. */

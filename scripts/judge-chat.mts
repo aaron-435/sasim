@@ -139,6 +139,8 @@ const OVERLAP: [string, string, string][] = [
   ["module5", "module10", "실행력(5) vs 몰입(10): 시작 직전의 브레이크 vs 시작 후 주의의 흩어짐과 과몰입"],
   ["module4", "module7", "가면(4) vs 예민함(7): 연기하는 비용 vs 자극을 깊이 받아들이는 신경계"],
   ["module2", "module4", "돈(2) vs 가면(4): 돈에 붙은 믿음과 감정 vs 사회적 이미지 전반"],
+  ["module1", "module12", "애착(1) vs 새 출발(12): 지금 관계에서 거리 조절 vs 끝난 관계 뒤 내 일상과 정체성이 옮겨 가는 과정"],
+  ["module5", "module12", "실행력(5) vs 새 출발(12): 일 하나를 시작하기 직전의 브레이크 vs 삶의 한 장이 바뀐 뒤 새 자리에 마음을 두는 속도"],
 ];
 
 interface SimQuizAnswer { qId: string; dimension: string; prompt: string; label: string; score: number }

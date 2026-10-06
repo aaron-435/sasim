@@ -2,7 +2,7 @@
  * scripts/check-playbook-sets.mts
  * ------------------------------------------------------------------
  * lib/modulePlaybooks.ts의 5세트 데이터(MODULE_CHAT_SETS)를 퀴즈 문항
- * (mobile/lib/quiz/modules.ts)과 맞춰 본다. OpenAI 호출 없음.
+ * (mobile/lib/quiz/modules.ts의 ALL_MODULES — 앱에 아직 안 나온 모듈 포함)과 맞춰 본다. OpenAI 호출 없음.
  *
  *   npx tsx scripts/check-playbook-sets.mts
  *
@@ -28,7 +28,7 @@ import {
   type LocalizedText,
   type PlaybookModuleId,
 } from "../lib/modulePlaybooks.ts";
-import { MODULES } from "../mobile/lib/quiz/modules.ts";
+import { ALL_MODULES } from "../mobile/lib/quiz/modules.ts";
 
 const LOCALES = ["ko", "en", "es"] as const;
 
@@ -78,7 +78,7 @@ for (const moduleId of Object.keys(MODULE_PLAYBOOKS) as PlaybookModuleId[]) {
     continue;
   }
   const errors: string[] = [];
-  const quiz = MODULES.find((m) => m.id === moduleId);
+  const quiz = ALL_MODULES.find((m) => m.id === moduleId);
   if (!quiz) {
     console.log(`${moduleId}: 퀴즈 정의를 찾지 못함`);
     totalErrors += 1;

@@ -54,6 +54,10 @@ import {
   MODULE11_QUESTIONS, MODULE11_QUESTIONS_EN, MODULE11_QUESTIONS_ES,
   MODULE11_DIMENSION_ITEM_COUNTS, MODULE11_DIMENSION_LABELS, MODULE11_TYPE_NAMES,
 } from "./module11Instinct";
+import {
+  MODULE12_QUESTIONS, MODULE12_QUESTIONS_EN, MODULE12_QUESTIONS_ES,
+  MODULE12_DIMENSION_ITEM_COUNTS, MODULE12_DIMENSION_LABELS, MODULE12_TYPE_NAMES,
+} from "./module12Transition";
 import type { Locale } from "../i18n/types";
 import { localizeQuestions, type ModuleQuestion, type QuestionTextOverride } from "./quizProfile";
 
@@ -259,12 +263,40 @@ export const MODULES: ModuleDefinition[] = [
   },
 ];
 
+/**
+ * Modules whose content and server side exist but that the app doesn't list yet (TODO 11: module12's
+ * quiz, playbook and chat sets ship first; TODO 12 moves it into MODULES with the store build).
+ * getModuleById and the dev scripts (scripts/sim-chat, check-*) see them; ModuleSelectScreen,
+ * the report "next test" pick and the bundle entitlement list read MODULES only.
+ */
+export const UNRELEASED_MODULES: ModuleDefinition[] = [
+  {
+    id: "module12",
+    track: "career",
+    title: { ko: "모듈 12 · 새 출발", en: "Module 12 · Fresh Start", es: "Módulo 12 · Nuevo comienzo" },
+    subtitle: { ko: "뒤돌아봄 / 사이의 불안 / 출발 망설임", en: "Looking Back / Unsettled In-Between / Slow to Restart", es: "Mirar atrás / Inquietud en la transición / Arranque lento" },
+    questions: MODULE12_QUESTIONS,
+    questionText: { en: MODULE12_QUESTIONS_EN, es: MODULE12_QUESTIONS_ES },
+    dimensionItemCounts: MODULE12_DIMENSION_ITEM_COUNTS,
+    dimensionLabels: MODULE12_DIMENSION_LABELS,
+    typeNames: MODULE12_TYPE_NAMES,
+    dimensionShortNames: {
+      ko: { lookingBack: "뒤돌아봄", inBetween: "사이의 불안", restartHesitation: "출발 망설임" },
+      en: { lookingBack: "Looking Back", inBetween: "Unsettled In-Between", restartHesitation: "Slow to Restart" },
+      es: { lookingBack: "Mirar atrás", inBetween: "Inquietud en la transición", restartHesitation: "Arranque lento" },
+    },
+  },
+];
+
+/** MODULES plus UNRELEASED_MODULES — for lookups by id and the dev scripts, never for a list the user sees. */
+export const ALL_MODULES: ModuleDefinition[] = [...MODULES, ...UNRELEASED_MODULES];
+
 /** "Module 3 · Burnout" → "Burnout". The number stays in `title` because the server prompts
  * and stored results use it; screens show this instead (the numbering means nothing to a reader). */
 export const moduleDisplayTitle = (title: string) => title.replace(/^(모듈|Module|Módulo)\s*\d+\s*·\s*/, "");
 
 export function getModuleById(id: string): ModuleDefinition | undefined {
-  return MODULES.find((m) => m.id === id);
+  return ALL_MODULES.find((m) => m.id === id);
 }
 
 /** Resolves a module's locale-keyed result strings (title, dimension labels,

@@ -2,7 +2,7 @@
 // whole conversations instead of single replies.
 //   npx tsx --env-file=.env.local scripts/sim-chat.mts [turns] [persona,persona,...] [moduleId] [quizPoolSize]
 //
-// persona: one of PERSONAS below (11 module personas + attach_en / anger_es), or a legacy style
+// persona: one of PERSONAS below (11 module personas + attach_en / anger_es, and module12's transition / transition_en / transition_es), or a legacy style
 // (terse, talkative, lost, questioning). A module persona brings its own moduleId, quiz result,
 // quiz-answer pool, locale and situation, so each module gets a coherent conversation — see
 // scripts/judge-chat.mts, which scores the saved files. Legacy styles keep the old burnout fixture
@@ -382,6 +382,64 @@ const PERSONAS: Record<string, Persona> = {
       locale: "es",
     },
   },
+  // module12 (새 출발, TODO 11): one persona per locale, each strong on a different pair of dimensions.
+  transition: {
+    selfBlame: true,
+    situation: "너는 31살이다. 5년 다닌 회사를 석 달 전에 그만뒀고, 다음 회사는 아직 정하지 못했다. 아침이면 예전 출근 시간에 눈이 떠지고, 예전 팀 단톡방을 몰래 읽는다. 친구들이 승진하거나 이사했다는 소식을 들으면 하루 종일 가라앉는다. '나만 아직 제자리예요'라고 자주 말한다. 차분하지만 말끝을 흐리며, 두세 문장으로 답한다.",
+    context: ko("module12", {
+      track: "career",
+      sajuElements: { wood: 17, fire: 17, earth: 33, metal: 0, water: 33 },
+      dominantSajuElement: "earth",
+      psychTestType: "안개 속 회상형",
+      psychTestSummary: "예전은 아직 놓이지 않았고 다음은 아직 보이지 않아, 그 사이에서 마음이 오래 머무는 편이에요.",
+      quizAnswer: q("'요즘 뭐 해?'라는 질문을 받으면?", "대답하기가 곤란하다"),
+      quizAnswerPool: [
+        q("예전 사진이나 메시지를 다시 보게 되면?", "한동안 그 시절에 머문다"),
+        q("주변 사람들이 하나둘 자리를 잡는 소식을 들으면?", "나와 비교하게 된다"),
+        q("변화의 한가운데에 있을 때, 나에 대해 드는 생각은?", "내가 누군지 흐릿하다"),
+        q("계획 없이 비어 있는 주말이 생기면?", "불안해서 뭔가로 채운다"),
+      ],
+    }),
+  },
+  transition_en: {
+    situation: "You are 29 and live in Seattle. Eight months ago a four-year relationship ended and you moved out of the apartment you shared, into a studio across town. You still take the old bus route on weekends, and you haven't unpacked two boxes. Coworkers invite you out and you usually say you're tired. You're thoughtful and a little wry, and answer in two or three sentences.",
+    context: {
+      track: "career",
+      sajuElements: { wood: 33, fire: 0, earth: 17, metal: 17, water: 33 },
+      dominantSajuElement: "wood",
+      psychTestType: "Living in Two Places",
+      psychTestSummary: "You're physically in the new place, but part of your heart is still back in the old one.",
+      quizAnswer: q("When you come across old photos or messages?", "I stay in that time for a while"),
+      quizAnswerPool: [
+        q("Clearing out things from that chapter?", "I can't quite bring myself to"),
+        q("Finding a regular café or a familiar spot in a new neighborhood?", "I don't really make one"),
+        q("When someone invites you to a new group or opportunity?", "I make an excuse and put it off"),
+        q("Feeling like you're one of the locals in a new place?", "It barely comes, even after a long time"),
+      ],
+      moduleId: "module12",
+      locale: "en",
+    },
+  },
+  transition_es: {
+    selfBlame: true,
+    situation: "Tienes 35 años. Hace cinco meses te mudaste de Bogotá a Madrid por un trabajo nuevo. Firmaste el contrato en una semana porque no soportabas seguir sin saber qué venía, y ahora sientes que vas con prisa por todo pero sin terminar de llegar. En la oficina casi no hablas con nadie y cada error te hace pensar en volver. Dices cosas como 'soy un desastre para empezar de cero'. Respondes en frases cortas, en un español neutro y cálido.",
+    context: {
+      track: "career",
+      sajuElements: { wood: 17, fire: 33, earth: 17, metal: 33, water: 0 },
+      dominantSajuElement: "fire",
+      psychTestType: "Prisa y pausa",
+      psychTestSummary: "Quieres encontrar tu lugar rápido, pero cuando llega lo nuevo, te cuesta poner el corazón en ello.",
+      quizAnswer: q("A la hora de elegir tu próximo camino…", "Necesito decidir rápido para quedarme en paz"),
+      quizAnswerPool: [
+        q("Cuando te equivocas en un lugar nuevo…", "Me pregunto si este es mi lugar"),
+        q("Acercarte primero a gente que acabas de conocer…", "Espero a que alguien venga a mí"),
+        q("Cuando tienes que esperar una respuesta clara…", "Reviso y averiguo una y otra vez"),
+        q("Armar una nueva rutina diaria…", "Se me desarma una y otra vez"),
+      ],
+      moduleId: "module12",
+      locale: "es",
+    },
+  },
 };
 
 // The user simulator's frame, in the persona's language so an EN/ES persona doesn't drift into Korean.
@@ -409,6 +467,9 @@ const V2_HIGH_DIMS: Record<string, string[]> = {
   family: ["enmeshment", "parentification"],
   focus: ["distractibility", "hyperfocus"],
   instinct: ["expressionSuppression", "confidenceLack"],
+  transition: ["lookingBack", "inBetween"],
+  transition_en: ["lookingBack", "restartHesitation"],
+  transition_es: ["inBetween", "restartHesitation"],
 };
 
 /** The persona's answers to all 30 questions of the module quiz, in the persona's language — the shape ChatScreen sends as context.quizAnswers. */

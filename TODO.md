@@ -141,9 +141,22 @@
 
 ## 새 출발 모듈과 네이티브
 
-- [ ] 11. 새 출발 심리검사 모듈 `module12` — 콘텐츠·서버
+- [x] 11. 새 출발 심리검사 모듈 `module12` — 콘텐츠·서버
   - 변경: `MODULE_PLAYBOOK.md`에 module12, `lib/modulePlaybooks.ts`(플레이북 + `MODULE_CHAT_SETS.module12`), 퀴즈 30문항·차원·채점(`mobile/lib/quiz/module12Transition.ts`, 루트 `lib/` 웹용 사본이 필요한지 확인), 리포트 모듈 페이지 설정, ko/en/es. 서버 허용 moduleId 목록. 앱 화면 연결은 12번.
   - QA: 루트 검사. `npx tsx scripts/check-playbook-sets.mts`, `npx tsx scripts/check-chat-sets.mts` 통과. `npx tsx --env-file=.env.local scripts/sim-chat.mts 25 <module12 페르소나 ko,en,es> --flow v2`(페르소나 추가 필요, 약 $0.3) → `scripts/judge-chat.mts`로 채점, 공통 평균 1.8 근처·위반 0건(기준선 `q11-final*`). 기존 모듈 1개 sim 짧게(8턴)로 회귀 없음.
+  - 결과(2026-10-06):
+    - 퀴즈: `mobile/lib/quiz/module12Transition.ts` 30문항(뒤돌아봄 L1–L10 · 사이의 불안 U1–U10 · 출발 망설임 R1–R10, 차원마다 슬라이더 1개), 차원 라벨·유형 8개, ko/en/es. 브리지스 전환 모델(끝맺음 → 중간 지대 → 새 시작) 기반, 사별·건강·사고 문항 없음. 전문가 검토 전 초안.
+    - 앱 노출 분리: `mobile/lib/quiz/modules.ts`에 `UNRELEASED_MODULES`(module12)·`ALL_MODULES`. 검사 목록·추천·번들 목록은 `MODULES`(11개) 그대로, `getModuleById`와 스크립트만 `ALL_MODULES`. 12번에서 `MODULES`로 옮긴다.
+    - 루트 `lib/` 웹용 사본: 만들지 않음(`lib/modules.ts`는 웹 `components/`의 모듈 선택만 쓰고 웹은 그 화면을 노출하지 않음).
+    - 플레이북: `lib/modulePlaybooks.ts` `MODULE12`(관점·경계·시그니처·7단계·이지선다·감정·모순·리프레이밍·추출 필드 `unfinished_goodbye`/`anchor_in_new`·리포트 페이지 `module_map` "끝과 시작 사이, 지금 내 자리"/`module_deep` "새 자리에 마음을 두는 연습"·강점·주의) + `MODULE12_SETS`. `MODULE_PLAYBOOK.md`에 모듈 12 절, 관점 전환 표, 겹침 점검표 2줄(1↔12, 5↔12), `judge-chat` 겹침 목록 같은 2줄.
+    - 서버 허용: 리포트 라우트는 이미 `/^module\d{1,2}$/`라 그대로, 챗·리포트 프롬프트는 `getModulePlaybook`이 module12를 찾는다(`dump-chat-prompt module12`로 관점·경계 들어간 것 확인).
+    - QA: `npx tsx scripts/check-playbook-sets.mts` → module1~12 오류 0, 전체 오류 0. `npx tsx scripts/check-chat-sets.mts` → 통과 95 · 실패 0(module12 3건 포함).
+    - QA: `npx tsx --env-file=.env.local scripts/sim-chat.mts 25 transition,transition_en,transition_es - --flow v2` → 3건 25턴 완주, 세트 ① 인용 15/15 기대값 일치, 24턴 고정 문구 3/3, `set_packets` 5개씩 모두 `has_chat: true`. 파일 `scripts/out/sim_20261006T072952_*_module12_v2.json`.
+    - QA: `judge-chat.mts --label m12-v2` → 공통 평균 **1.90**(ko 1.88 · en 1.94 · es 1.88, 기준선 `q11-final` 1.81), 세트 준수 2.00, 위반 5종 모두 2(위반 0건). 약점: ⑦ 폭로 후 리프레이밍 0.67(기준선 1.67), ① 이지선다 es 1(출구 문구 빠짐). ⑦은 아래 발견 사항(서버 자책 감지 패턴). 파일 `scripts/out/m12-v2_20261006T073326.md`.
+    - QA(회귀): `sim-chat.mts 8 instinct - --flow v2` → 8턴, 세트 ①(1·6턴) 인용 기대값 일치(`sim_20261006T073400_instinct_module11_v2.json`).
+    - QA: 루트 `npx tsc --noEmit` exit 0, `npm run lint` 경고·오류 없음, `npm run build` exit 0, mobile tsc exit 0.
+    - QA(mobile-web, 다른 세션이 띄운 8082 서버 — 같은 폴더 코드): `?qa=free&persona=jordan` 홈 → 검사 목록 "3개 + 8개 더"(11개, module12 안 보임) → 번아웃 퀴즈 1/30 표시, 콘솔 오류 없음. 운세·Q&A·궁합은 이번 변경과 코드 접점이 없어 이번엔 확인하지 않음.
+    - 비용: 시뮬레이션 약 $0.21 + 채점 약 $0.45.
 
 - [ ] 12. 새 출발 모듈 앱 연결 + 홈 위젯 + 리뷰 요청 (스토어 빌드)
   - 선행: 11
@@ -203,3 +216,6 @@
 - (9번 중) 레슨 9장(계절)은 북반구 절기 달력 기준이라 남반구 사용자에게는 "리듬으로 읽어 달라"는 한 문장만 있다. 남반구 비중이 커지면 계절 문구를 따로 둘지 검토.
 - (10번 중) 설정 → 내 데이터 초기화가 Q&A "최근 질문"(`fatesaid_qa_last_question`, 홈 Q&A 행의 "Last asked")은 지우지 않는다. 이번에 더한 주제 횟수는 지우게 했지만, 최근 질문은 기존 동작이라 그대로 뒀다. 초기화 뒤에도 이전 질문 글이 홈에 남는다.
 - (10번 중) Wrapped 5장의 "신년 리포트 보기"에서 신년 리포트로 가면 뒤로가기가 Wrapped가 아니라 홈으로 간다(신년 리포트의 `onBack`이 항상 홈). 운세 화면에서 들어갈 때도 같다.
+- (11번 중) 서버 자책 감지 `SELF_BLAME_PATTERN`(`lib/chat.ts`)에 비교형 자책("저만 제자리", "sign of failure", "como si hubiera fallado", "no sirvo para esto")이 없다. module12 대화에서 이런 말 뒤에 기법 ⑦ 지시가 붙지 않아 채점 ⑦이 0.67로 낮았다. 패턴을 늘리면 모든 모듈 대화에 영향이 가므로 채팅 변경으로 따로 결정 필요.
+- (11번 중) `classifyProfile`(`mobile/lib/quiz/quizProfile.ts`)은 2개 이상 차원 조합 키를 점수 순으로 잇는다. 유형 이름 표는 한 순서("a+b")만 적혀 있어, 점수가 반대 순서면 설계한 조합 이름 대신 대체 이름이 나온다(module12만이 아니라 모든 모듈 공통). 키를 정해진 차원 순서로 만들지 결정 필요.
+

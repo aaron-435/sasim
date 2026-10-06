@@ -27,7 +27,7 @@ import {
   type SetQuizAnswer,
 } from "../lib/chatSets.ts";
 import { getModuleChatSets, type ModuleChatSets } from "../lib/modulePlaybooks.ts";
-import { MODULES } from "../mobile/lib/quiz/modules.ts";
+import { ALL_MODULES } from "../mobile/lib/quiz/modules.ts";
 
 let pass = 0;
 let fail = 0;
@@ -54,7 +54,7 @@ function sets(moduleId: string): ModuleChatSets {
 
 /** 실제 퀴즈 정의에서 30문항 답을 만든다. scores에 없는 문항은 defaultScore. */
 function answersFor(moduleId: string, scores: Record<string, number>, defaultScore = 1): SetQuizAnswer[] {
-  const quiz = MODULES.find((m) => m.id === moduleId);
+  const quiz = ALL_MODULES.find((m) => m.id === moduleId);
   if (!quiz) throw new Error(`${moduleId} 퀴즈 없음`);
   return quiz.questions.map((q) => ({
     qId: q.id,
@@ -159,9 +159,9 @@ check("모듈 10 세트 5 방향 high", m10.strengthScoreDirection === "high");
   check(`모듈 10 세트 5 high: 최고점(${cand[1]})`, selectSetQuizAnswer(m10, 5, a)?.qId === cand[1]);
 }
 
-// 11개 모듈 전체: 모든 문항 3점이면 세트 1~4는 첫 후보, 세트 5는 방향에 따라 첫 후보/null.
+// 모듈 전체(앱에 아직 안 나온 모듈 포함): 모든 문항 3점이면 세트 1~4는 첫 후보, 세트 5는 방향에 따라 첫 후보/null.
 // 모든 문항 0점이면 세트 1~4는 null, 세트 5 low는 첫 후보.
-for (const mod of MODULES) {
+for (const mod of ALL_MODULES) {
   const s = getModuleChatSets(mod.id);
   if (!s) {
     check(`${mod.id} 세트 데이터`, false, "없음");
