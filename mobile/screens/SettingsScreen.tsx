@@ -9,6 +9,9 @@ import { LOCALE_LABELS, useLocale, useStrings, type Locale } from "../lib/i18n";
 import { getNotificationPreference, setNotificationPreference, type NotificationPreference } from "../lib/notificationPreference";
 import { applyNotificationPreference } from "../lib/routineNotification";
 import { hasQaProEntitlement, restoreReports } from "../lib/purchases";
+import { getSavedPair, unlinkPair, type SavedPair } from "../lib/pairs";
+import { track } from "../lib/analytics";
+import { confirmUnlink } from "../components/CoupleModeSection";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
 
@@ -26,7 +29,24 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
 
   useEffect(() => {
     getNotificationPreference().then(setNotificationPrefState);
+    getSavedPair().then(setPair);
   }, []);
+
+  // Couple mode: unlinking lives here too (either side can unlink from either place).
+  const [pair, setPair] = useState<SavedPair | null>(null);
+  const [unlinking, setUnlinking] = useState(false);
+  async function handleUnlink() {
+    if (unlinking || !(await confirmUnlink(strings))) return;
+    setUnlinking(true);
+    const ok = await unlinkPair();
+    setUnlinking(false);
+    if (!ok) {
+      Alert.alert(strings.couple.unlinkError);
+      return;
+    }
+    track("pair_unlink", { surface: "settings" });
+    setPair(null);
+  }
 
   const notificationLabels: Record<NotificationPreference, { label: string; description: string }> = {
     off: { label: strings.settings.notificationOff, description: strings.settings.notificationOffDescription },
@@ -148,6 +168,22 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
         </View>
         {permissionDenied && <Text style={styles.warning}>{strings.settings.notificationPermissionDenied}</Text>}
 
+        {pair?.status === "linked" && (
+          <>
+            <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.couple.sectionTitle}</Text>
+            <View style={styles.optionList}>
+              <View style={styles.option}>
+                <Text style={[styles.optionLabel, styles.coupleLabel]} numberOfLines={1}>
+                  {strings.couple.linkedTitle(pair.partnerName || strings.couple.partnerFallback)}
+                </Text>
+                <Pressable onPress={handleUnlink} disabled={unlinking} hitSlop={8} style={styles.unlinkButton} accessibilityRole="button">
+                  {unlinking ? <ActivityIndicator size="small" color={COLORS.danger} /> : <Text style={styles.unlinkLabel}>{strings.couple.unlinkButton}</Text>}
+                </Pressable>
+              </View>
+            </View>
+          </>
+        )}
+
         <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.legalSectionLabel}</Text>
         <View style={styles.optionList}>
           <Pressable
@@ -229,6 +265,9 @@ const styles = StyleSheet.create({
     color: COLORS.danger,
     marginTop: 14,
   },
+  coupleLabel: { flex: 1, marginRight: 12 },
+  unlinkButton: { minHeight: 32, justifyContent: "center" },
+  unlinkLabel: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.danger },
   resetRow: {
     paddingVertical: 15,
     paddingHorizontal: 16,

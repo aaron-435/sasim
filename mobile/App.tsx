@@ -46,6 +46,7 @@ import { clearSavedReports, type SavedReport } from "./lib/reportStorage";
 import { clearSavedYearReports } from "./lib/yearReportStorage";
 import { clearSavedCompatReports, type SavedCompatReport } from "./lib/compatReportStorage";
 import { clearSavedInvites } from "./lib/invites";
+import { clearPair } from "./lib/pairs";
 import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } from "./lib/userConcern";
 
 // Onboarding flow shell — mirrors components/AppFlow.jsx's step-switcher role on web,
@@ -267,6 +268,7 @@ function AppContent() {
     clearSavedYearReports();
     clearSavedCompatReports();
     clearSavedInvites();
+    clearPair();
     setSavedReport(null);
     setHomeData(null);
     setNickname("");
@@ -571,6 +573,7 @@ function AppContent() {
           selfDayMasterChar={dayMasterCharOf(homeData)}
           selfDayBranch={dayBranchOf(homeData)}
           selfElements={homeData.sajuResult.elements ?? null}
+          selfSajuType={homeData.sajuResult.sajuType ?? null}
           sessionId={sessionId}
           onBack={() => setStep("home")}
         />

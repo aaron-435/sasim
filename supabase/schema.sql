@@ -156,6 +156,31 @@ create table if not exists invites (
 
 create index if not exists idx_invites_expires_at on invites(expires_at);
 
+-- 2026-10-06: 커플 모드 연결(SPEC §7). 한 행 = 두 사람의 연결 하나.
+-- 코드는 만든 사람(a)이 상대에게 보내고, 상대(b)가 자기 앱에서 입력하면 연결된다.
+-- 저장: 양쪽 토큰의 SHA-256(기기만 원문을 앎), 표시 이름, 일간·일지 한 글자씩(오늘 흐름 계산용),
+-- RevenueCat 앱 사용자 id(둘 중 한 명이라도 구독 중인지 서버가 확인). 생년월일은 없다.
+-- 연결 전 코드는 7일 뒤 만료되고 다음 생성 때 지운다. 해제하면 행을 지운다(어느 쪽이든).
+-- 배포된 DB에는 이 테이블이 없으므로 아래 create table을 SQL Editor에서 한 번 실행한다.
+create table if not exists pairs (
+  code text primary key,
+  a_token_hash text not null,
+  a_name text not null default '',
+  a_day_master text not null,
+  a_day_branch text,
+  a_app_user_id text,
+  b_token_hash text,
+  b_name text,
+  b_day_master text,
+  b_day_branch text,
+  b_app_user_id text,
+  created_at timestamptz not null default now(),
+  code_expires_at timestamptz not null,
+  joined_at timestamptz
+);
+
+create index if not exists idx_pairs_code_expires_at on pairs(code_expires_at);
+
 create index if not exists idx_saju_results_session on saju_results(session_id);
 create index if not exists idx_quiz_results_session on quiz_results(session_id);
 create index if not exists idx_chat_sessions_session on chat_sessions(session_id);
@@ -174,6 +199,7 @@ alter table llm_usage_log enable row level security;
 alter table events enable row level security;
 alter table compat_report_purchases enable row level security;
 alter table invites enable row level security;
+alter table pairs enable row level security;
 
 -- service_role은 RLS를 우회하지만, 테이블 자체에 대한 GRANT는 별개다.
 -- "Automatically expose new tables"를 꺼둔 상태에서 SQL Editor로 테이블을

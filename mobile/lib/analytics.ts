@@ -25,6 +25,10 @@ export type EventName =
   | "share"
   | "invite_create"
   | "invite_accept"
+  | "group_chemistry_view"
+  | "pair_create"
+  | "pair_join"
+  | "pair_unlink"
   | "notification_tap"
   | "feedback";
 

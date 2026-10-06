@@ -22,6 +22,8 @@ import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
 import { OtherBirthFields, useOtherBirthForm, type OtherBirthPayload } from "../components/OtherBirthForm";
 import CompatReportScreen from "./CompatReportScreen";
+import GroupChemistryScreen from "./GroupChemistryScreen";
+import CoupleModeSection from "../components/CoupleModeSection";
 
 type ApiResult = {
   other: { sajuType: SajuType | null; dominantElement: string | null; elements: Record<string, number> };
@@ -33,6 +35,7 @@ export default function CompatibilityScreen({
   selfDayMasterChar,
   selfDayBranch,
   selfElements,
+  selfSajuType,
   sessionId,
   onBack,
 }: {
@@ -41,6 +44,8 @@ export default function CompatibilityScreen({
   /** For the detailed report (optional so older callers keep working). */
   selfDayBranch?: string | null;
   selfElements?: Record<string, number> | null;
+  /** The group chemistry map starts from the user's own two element signals (hidden without it). */
+  selfSajuType?: SajuType | null;
   sessionId?: string;
   onBack: () => void;
 }) {
@@ -63,6 +68,7 @@ export default function CompatibilityScreen({
   const [inviteNote, setInviteNote] = useState<{ text: string; error: boolean } | null>(null);
   // Set while a received answer is open in the result view (it has no birth data, so no report entry).
   const [received, setReceived] = useState<SavedInvite | null>(null);
+  const [groupOpen, setGroupOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -173,6 +179,17 @@ export default function CompatibilityScreen({
     } finally {
       setSharing(false);
     }
+  }
+
+  if (groupOpen && selfSajuType) {
+    return (
+      <GroupChemistryScreen
+        selfNickname={selfNickname}
+        selfSajuType={selfSajuType}
+        receivedInvites={invites}
+        onBack={() => setGroupOpen(false)}
+      />
+    );
   }
 
   if (reportFor && selfDayMasterChar) {
@@ -405,7 +422,26 @@ export default function CompatibilityScreen({
             </View>
           )}
           <Text style={styles.invitePrivacy}>{strings.invite.privacyNote}</Text>
+
+          {selfSajuType && (
+            <Pressable
+              onPress={() => setGroupOpen(true)}
+              android_ripple={{ color: "rgba(111,169,139,0.12)" }}
+              style={({ pressed }) => [styles.reportEntry, styles.groupEntry, pressed && styles.reportEntryPressed]}
+              accessibilityRole="button"
+              accessibilityLabel={`${strings.groupChemistry.entryEyebrow}. ${strings.groupChemistry.entryTitle}`}
+            >
+              <View style={styles.reportEntryText}>
+                <Text style={styles.reportEntryEyebrow}>{strings.groupChemistry.entryEyebrow}</Text>
+                <Text style={styles.reportEntryTitle}>{strings.groupChemistry.entryTitle}</Text>
+                <Text style={styles.reportEntryBody}>{strings.groupChemistry.entryBody}</Text>
+              </View>
+              <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
+            </Pressable>
+          )}
         </View>
+
+        <CoupleModeSection selfNickname={selfNickname} selfDayMasterChar={selfDayMasterChar} selfDayBranch={selfDayBranch ?? null} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -514,6 +550,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     marginTop: 18,
   },
+  groupEntry: { marginTop: 26 },
   reportEntryPressed: { backgroundColor: "rgba(111,169,139,0.08)" },
   reportEntryText: { flex: 1, gap: 3 },
   reportEntryEyebrow: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.gold },

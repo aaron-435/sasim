@@ -3,6 +3,7 @@ import Brain from "lucide-react-native/icons/brain";
 import CalendarDays from "lucide-react-native/icons/calendar-days";
 import ChevronRight from "lucide-react-native/icons/chevron-right";
 import FileText from "lucide-react-native/icons/file-text";
+import Heart from "lucide-react-native/icons/heart";
 import HelpCircle from "lucide-react-native/icons/circle-question-mark";
 import Settings from "lucide-react-native/icons/settings";
 import Share2 from "lucide-react-native/icons/share-2";
@@ -21,6 +22,7 @@ import { hasQaProEntitlement } from "../lib/purchases";
 import { getLastQuestion, type LastQuestion } from "../lib/qaHistory";
 import { listSavedReports } from "../lib/reportStorage";
 import { listPurchasedCompatReports } from "../lib/compatReportStorage";
+import { fetchCoupleDaily, type CoupleDaily } from "../lib/pairs";
 import type { CompatibilityResult } from "../lib/compatibility";
 import type { SajuType } from "../lib/sajuType";
 import { formatSajuTypeName } from "../lib/sajuTypeContent";
@@ -64,6 +66,19 @@ const FEATURE_ORDER: Record<Track | "default", FeatureKey[]> = {
 };
 
 const FEATURE_ICONS = { qa: HelpCircle, quiz: Brain, compat: Users, cards: Share2, yearReport: CalendarDays, reports: FileText } as const;
+
+/** One line for the couple card, from the two people's rhythms today (relations are "today vs me"). */
+function coupleTip(strings: ReturnType<typeof useStrings>, today: Extract<CoupleDaily, { kind: "today" }>): string {
+  const mine = today.self.relation;
+  const theirs = today.partner.relation;
+  const name = today.partnerName || strings.couple.partnerFallback;
+  if (mine === theirs) return strings.couple.tipSame;
+  if (mine === "otherChallengesSelf") return strings.couple.tipSelfPace(name);
+  if (theirs === "otherChallengesSelf") return strings.couple.tipPartnerPace(name);
+  if (mine === "otherNurturesSelf") return strings.couple.tipSelfReceive(name);
+  if (theirs === "otherNurturesSelf") return strings.couple.tipPartnerReceive(name);
+  return strings.couple.tipDifferent;
+}
 
 function localDateKey(): string {
   const d = new Date();
@@ -131,6 +146,8 @@ export default function HomeScreen({
   const [hasSavedReports, setHasSavedReports] = useState(false);
   // "My reports" also lists purchased compatibility reports, so it opens for those alone too.
   const [hasCompatReports, setHasCompatReports] = useState(false);
+  // Couple mode: only when this device is linked (or waiting for the partner to link).
+  const [couple, setCouple] = useState<CoupleDaily | null>(null);
 
   useEffect(() => {
     getLastQuestion().then(setLastQuestion);
@@ -144,6 +161,14 @@ export default function HomeScreen({
     });
     return () => sub.remove();
   }, []);
+
+  useEffect(() => {
+    let alive = true;
+    fetchCoupleDaily().then((c) => alive && setCouple(c));
+    return () => {
+      alive = false;
+    };
+  }, [reloadKey]);
 
   useEffect(() => {
     if (!selfDayMasterChar) return;
@@ -366,6 +391,54 @@ export default function HomeScreen({
               )}
             </Animated.View>
           </Pressable>
+          )}
+
+          {couple && couple.kind !== "gone" && (
+            <Pressable
+              onPress={
+                couple.kind === "locked"
+                  ? onOpenFortune
+                  : couple.kind === "pending"
+                    ? onOpenCompatibility
+                    : couple.kind === "error"
+                      ? () => setReloadKey((k) => k + 1)
+                      : undefined
+              }
+              disabled={couple.kind === "today"}
+              style={({ pressed }) => [styles.coupleCard, pressed && styles.listRowPressed]}
+              accessibilityRole={couple.kind === "today" ? "summary" : "button"}
+            >
+              <View style={styles.pathEyebrowRow}>
+                <Heart size={14} strokeWidth={1.75} color={COLORS.gold} />
+                <Text style={styles.pathEyebrow}>{strings.couple.homeTitle}</Text>
+              </View>
+              {couple.kind === "today" && (
+                <>
+                  <View style={styles.coupleRows}>
+                    <View style={styles.coupleRow}>
+                      <Text style={styles.coupleName}>{strings.couple.youLabel}</Text>
+                      <Text style={styles.coupleRhythm}>{strings.fortune.rhythmNames[couple.self.relation]}</Text>
+                    </View>
+                    <View style={styles.coupleRow}>
+                      <Text style={styles.coupleName} numberOfLines={1}>{couple.partnerName || strings.couple.partnerFallback}</Text>
+                      <Text style={styles.coupleRhythm}>{strings.fortune.rhythmNames[couple.partner.relation]}</Text>
+                    </View>
+                  </View>
+                  <Text style={styles.pathBody}>{coupleTip(strings, couple)}</Text>
+                </>
+              )}
+              {couple.kind === "locked" && (
+                <>
+                  <Text style={styles.pathBody}>{strings.couple.lockedBody}</Text>
+                  <View style={styles.pathCtaRow}>
+                    <Text style={styles.pathCta}>{strings.couple.lockedCta}</Text>
+                    <ArrowRight size={15} strokeWidth={2} color={COLORS.gold} />
+                  </View>
+                </>
+              )}
+              {couple.kind === "pending" && <Text style={styles.pathBody}>{strings.couple.pendingHome}</Text>}
+              {couple.kind === "error" && <Text style={styles.pathBody}>{strings.fortune.loadErrorText}</Text>}
+            </Pressable>
           )}
 
           <Pressable
@@ -609,6 +682,18 @@ const styles = StyleSheet.create({
     borderColor: "rgba(111,169,139,0.35)",
     backgroundColor: "rgba(111,169,139,0.06)",
   },
+  coupleCard: {
+    marginTop: 16,
+    padding: 18,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.inputBg,
+  },
+  coupleRows: { gap: 6, marginBottom: 4 },
+  coupleRow: { flexDirection: "row", alignItems: "baseline", gap: 10 },
+  coupleName: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.subheadline, minWidth: 56, maxWidth: "45%" },
+  coupleRhythm: { flex: 1, fontFamily: FONTS.semibold, fontSize: 15.5, lineHeight: 22, color: COLORS.headline },
   pathEyebrowRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 8 },
   pathEyebrow: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold },
   pathTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 21, lineHeight: 27, color: COLORS.headline },
