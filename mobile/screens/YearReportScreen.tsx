@@ -301,6 +301,7 @@ export default function YearReportScreen({
         onBack={onBack}
         labels={{ back: strings.common.backLabel, previous: strings.report.previousPageLabel, next: strings.report.nextPageLabel }}
         swipeHint={{ id: "year", label: strings.reader.swipeHint }}
+        reviewAtEnd
         trailing={
           <Pressable
             onPress={handleExportPdf}

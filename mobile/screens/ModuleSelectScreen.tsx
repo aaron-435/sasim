@@ -14,7 +14,7 @@ import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
-// Ported from components/ModuleSelect.jsx — picks which of the 11 30-question modules
+// Ported from components/ModuleSelect.jsx — picks which of the 30-question modules (12 since 2026-10-06)
 // to run. Same list web uses (lib/modules.ts, copied verbatim into mobile/lib/quiz/).
 //
 // 2026-10-04 (SPEC item 5): eleven same-looking cards with clinical subtitles was too much to

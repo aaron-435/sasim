@@ -2,7 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { useFonts, Newsreader_500Medium, Newsreader_500Medium_Italic } from "@expo-google-fonts/newsreader";
 import { PlusJakartaSans_400Regular, PlusJakartaSans_500Medium, PlusJakartaSans_600SemiBold, PlusJakartaSans_700Bold } from "@expo-google-fonts/plus-jakarta-sans";
 import { useEffect, useRef, useState } from "react";
-import { BackHandler, Platform } from "react-native";
+import { BackHandler, Linking, Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import ChatScreen, { type ChatExtract } from "./screens/ChatScreen";
 import CityScreen, { type SajuResult } from "./screens/CityScreen";
@@ -41,6 +41,8 @@ import { applyNotificationPreference } from "./lib/routineNotification";
 import { clearSolarTermPreference, refreshSolarTermNotifications } from "./lib/solarTermNotification";
 import { clearLessonProgress } from "./lib/lessonProgress";
 import { clearQaTopicCounts } from "./lib/qaHistory";
+import { resetTodayWidget } from "./lib/todayWidget";
+import { buildTodayWidgetData } from "./lib/todayWidgetData";
 import { dominantElementFrom } from "./lib/elements";
 import { LocaleProvider, useLocale, useStrings } from "./lib/i18n";
 import { configurePurchases, hasQaProEntitlement } from "./lib/purchases";
@@ -70,6 +72,8 @@ type HomeData = { nickname: string; sajuResult: NormalizedSajuResult };
 
 // Onboarding screens whose entry is recorded as an `onboarding_step` event.
 const ONBOARDING_STEPS: ReadonlySet<StepId> = new Set(["language", "intro", "verifyCode", "nickname", "gender", "dob", "tob", "city", "concern"]);
+// Screens a widget tap doesn't pull the user out of (unsaved progress or a reader mid-page).
+const DEEP_LINK_KEEP_STEPS: ReadonlySet<StepId> = new Set(["typeReveal", "quiz", "chat", "report", "yearReport", "compatReport", "qaReport"]);
 
 // Local notification ids (decadeNotification.ts, routineNotification.ts) → the `kind`
 // recorded when one is tapped.
@@ -214,6 +218,29 @@ function AppContent() {
     return () => sub.remove();
   }, []);
 
+  // A tap on the home screen widget opens fatesaid://fortune (TODO 12). Cold start: wait until
+  // the saved reading is restored, then go to today's fortune. A tap while a quiz, chat or
+  // report is open leaves that screen alone (the app just comes to the front).
+  const pendingFortuneRef = useRef(false);
+  const [deepLinkTick, setDeepLinkTick] = useState(0);
+  useEffect(() => {
+    if (Platform.OS === "web") return;
+    const handle = (url: string | null) => {
+      if (!url || !/^fatesaid:\/\/fortune\b/.test(url)) return;
+      track("widget_tap");
+      pendingFortuneRef.current = true;
+      setDeepLinkTick((t) => t + 1);
+    };
+    Linking.getInitialURL().then(handle).catch(() => {});
+    const sub = Linking.addEventListener("url", (e) => handle(e.url));
+    return () => sub.remove();
+  }, []);
+  useEffect(() => {
+    if (!pendingFortuneRef.current || !step || !homeData || ONBOARDING_STEPS.has(step)) return;
+    pendingFortuneRef.current = false;
+    if (!DEEP_LINK_KEEP_STEPS.has(step)) setStep("fortune");
+  }, [deepLinkTick, step, homeData]);
+
   // Restores a previously-onboarded user straight to Home instead of making them
   // re-enter their birth info on every cold start (2026-09-15, caught in live device
   // testing — homeData used to be plain in-memory state with nothing backing it).
@@ -291,6 +318,7 @@ function AppContent() {
     clearJournal();
     clearLessonProgress();
     clearQaTopicCounts();
+    resetTodayWidget(buildTodayWidgetData(strings, locale, null, null));
     clearSolarTermPreference();
     refreshSolarTermNotifications(locale, null);
     setSavedReport(null);

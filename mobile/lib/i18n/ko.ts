@@ -576,6 +576,7 @@ export const ko = {
       module9: "자라온 집이 지금의 관계에 남긴 흔적을 봐요.",
       module10: "주의가 쉽게 흩어지는지, 한번 빠지면 못 나오는지 봐요.",
       module11: "하고 싶은 말과 행동을 얼마나 눌러 두는지 봐요.",
+      module12: "끝난 것과 새로 시작할 것 사이를 어떻게 지나가는지 봐요.",
     } as Record<string, string>,
   },
 
@@ -718,7 +719,7 @@ export const ko = {
     paywallBody: "AI 상담에서 나눈 이야기를 내 사주와 함께 읽는 나머지 장들이에요.",
     paywallExtras: "끝까지 열면 한 줄 요약과 다음 검사 추천, PDF 저장까지 함께 받아요.",
     paywallBuyLabel: (price: string) => `이 리포트 잠금해제 · ${price}`,
-    paywallBundleBuyLabel: (price: string) => `전체 11개 리포트 한번에 · ${price}`,
+    paywallBundleBuyLabel: (count: number, price: string) => `전체 ${count}개 리포트 한번에 · ${price}`,
     paywallBundleSub: (fullPrice: string, discountPercent: number) => `따로 사면 총 ${fullPrice} (${discountPercent}% 할인)`,
     paywallRestoreLabel: "구매 복원",
     paywallRestoring: "복원하는 중...",
@@ -807,6 +808,12 @@ export const ko = {
     safetyBody: "지금 마음이 많이 무겁다면, 바로 이야기할 수 있는 곳이 있어요.",
     safetyLines: ["자살예방상담전화 1393 (24시간, 국번 없이)", "정신건강위기상담전화 1577-0199 (24시간)"],
     safetyReportNote: "이 달에는 패턴 리포트 대신 도움받을 수 있는 곳을 먼저 알려 드려요.",
+  },
+
+  widget: {
+    eyebrow: "오늘의 리듬",
+    emptyLine: "앱을 한 번 열면 오늘의 리듬이 여기 보여요.",
+    staleLine: "새 하루예요. 눌러서 오늘의 리듬을 확인해 보세요.",
   },
 
   elementColor: {

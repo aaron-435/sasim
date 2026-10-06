@@ -313,6 +313,7 @@ export default function CompatReportScreen({
       // The paywall page has its own buttons near the edges.
       edgeTaps={!!paid || !lastPage}
       swipeHint={{ id: "compat", label: strings.reader.swipeHint }}
+      reviewAtEnd={!!paid}
       footer={
         paid && lastPage ? (
           <Pressable onPress={onBack} style={styles.homeButton} accessibilityRole="button">

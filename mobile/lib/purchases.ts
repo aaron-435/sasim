@@ -9,6 +9,7 @@ import Purchases, {
 import { REVENUECAT_API_KEY_ANDROID, REVENUECAT_API_KEY_IOS } from "../config";
 import { qaHasAllPurchases, qaHasSubscription } from "../dev/qaMode";
 import { flush, track } from "./analytics";
+import { markNegativeMoment, maybeRequestReview } from "./reviewPrompt";
 
 /**
  * lib/purchases.ts
@@ -22,7 +23,7 @@ import { flush, track } from "./analytics";
  * match the dashboard rather than the other way around, since
  * entitlement identifiers aren't renameable after creation).
  *
- * Report unlocks (11 separate one-time-purchase products, one per
+ * Report unlocks (one-time-purchase products, one per
  * module) are NOT covered here — those products don't exist in
  * RevenueCat yet, so mobile/lib/reportEntitlement.ts stays a
  * placeholder (isReportUnlocked() always false) until they're added.
@@ -36,12 +37,12 @@ import { flush, track } from "./analytics";
  * 2026-09-16: report-unlock purchases added (purchaseReportModule,
  * purchaseReportBundle) — these are non-subscription ("lifetime")
  * products, not the "default" offering, so they live behind a separate
- * "reports" offering: 11 packages identified by quiz module id
- * ("module1".."module11", one per lib/quiz/modules.ts entry) plus
- * REPORT_BUNDLE_PACKAGE_ID for the all-11 bundle. Each per-module
+ * "reports" offering: one package per quiz module id
+ * ("module1".."module12" since 2026-10-06, one per lib/quiz/modules.ts entry) plus
+ * REPORT_BUNDLE_PACKAGE_ID for the all-reports bundle. Each per-module
  * product is attached (in the RevenueCat dashboard) to its own
  * "report_<moduleId>" entitlement; the bundle product is attached to
- * all 11 of those entitlements at once, so buying it unlocks everything
+ * all of those entitlements at once (module12 must be added to it by hand), so buying it unlocks everything
  * in a single purchase. See lib/reportEntitlement.ts for the read side.
  * ------------------------------------------------------------------
  */
@@ -167,15 +168,18 @@ async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseOutcome> 
     const { transaction } = await Purchases.purchasePackage(pkg);
     track("purchase_success", { product });
     flush();
+    maybeRequestReview("purchase");
     return { status: "success", transactionId: transaction?.transactionIdentifier };
   } catch (err) {
     const purchasesError = err as PurchasesError;
     if (purchasesError?.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) {
       track("purchase_cancel", { product });
+      markNegativeMoment();
       return { status: "cancelled" };
     }
     console.error("[purchases] purchase failed", err);
     track("purchase_error", { product });
+    markNegativeMoment();
     return { status: "error", message: purchasesError?.message ?? "purchase failed" };
   }
 }
@@ -211,7 +215,7 @@ export async function restoreQaPro(): Promise<boolean> {
 
 export type ReportPackageMap = Record<string, PurchasesPackage>;
 
-/** Purchasing this package's product unlocks all 11 report entitlements at once —
+/** Purchasing this package's product unlocks every report entitlement at once —
  * see the header comment above for how that's wired in the RevenueCat dashboard. */
 export const REPORT_BUNDLE_PACKAGE_ID = "report_bundle_all";
 

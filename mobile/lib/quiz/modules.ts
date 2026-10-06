@@ -261,15 +261,6 @@ export const MODULES: ModuleDefinition[] = [
       es: { expressionSuppression: "Expresión contenida", spontaneitySuppression: "Espontaneidad frenada", confidenceLack: "Poca seguridad" },
     },
   },
-];
-
-/**
- * Modules whose content and server side exist but that the app doesn't list yet (TODO 11: module12's
- * quiz, playbook and chat sets ship first; TODO 12 moves it into MODULES with the store build).
- * getModuleById and the dev scripts (scripts/sim-chat, check-*) see them; ModuleSelectScreen,
- * the report "next test" pick and the bundle entitlement list read MODULES only.
- */
-export const UNRELEASED_MODULES: ModuleDefinition[] = [
   {
     id: "module12",
     track: "career",
@@ -287,6 +278,14 @@ export const UNRELEASED_MODULES: ModuleDefinition[] = [
     },
   },
 ];
+
+/**
+ * Modules whose content and server side exist but that the app doesn't list yet — getModuleById
+ * and the dev scripts (scripts/sim-chat, check-*) see them; ModuleSelectScreen, the report
+ * "next test" pick and the bundle entitlement list read MODULES only. Empty since TODO 12
+ * (2026-10-06) moved module12 into MODULES with the store build; stage the next module here.
+ */
+export const UNRELEASED_MODULES: ModuleDefinition[] = [];
 
 /** MODULES plus UNRELEASED_MODULES — for lookups by id and the dev scripts, never for a list the user sees. */
 export const ALL_MODULES: ModuleDefinition[] = [...MODULES, ...UNRELEASED_MODULES];

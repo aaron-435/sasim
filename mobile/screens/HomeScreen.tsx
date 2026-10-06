@@ -25,11 +25,13 @@ import { getLastQuestion, type LastQuestion } from "../lib/qaHistory";
 import { listSavedReports } from "../lib/reportStorage";
 import { listPurchasedCompatReports } from "../lib/compatReportStorage";
 import { fetchCoupleDaily, type CoupleDaily } from "../lib/pairs";
-import type { CompatibilityResult } from "../lib/compatibility";
+import type { CompatibilityResult, CompatRelation } from "../lib/compatibility";
 import type { SajuType } from "../lib/sajuType";
 import { formatSajuTypeName } from "../lib/sajuTypeContent";
 import { comingSajuYear } from "../lib/sajuYear";
 import { fetchTodayFortune, type TodayFortune } from "../lib/todayFortune";
+import { updateTodayWidget } from "../lib/todayWidget";
+import { buildTodayWidgetData } from "../lib/todayWidgetData";
 import { currentWrappedYear } from "../lib/wrapped";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
@@ -156,6 +158,7 @@ export default function HomeScreen({
   const [couple, setCouple] = useState<CoupleDaily | null>(null);
   // "오늘 나를 채우는 색" — free for everyone, from the same daily request as the hero.
   const [elementColor, setElementColor] = useState<ElementColor | null>(null);
+  const [widgetSource, setWidgetSource] = useState<{ relation: CompatRelation; color: ElementColor | null } | null>(null);
   // Read once per Home visit; the window is a whole month wide, so no live re-check.
   const [wrappedYear] = useState(currentWrappedYear);
 
@@ -189,6 +192,8 @@ export default function HomeScreen({
       const [isEntitled, fortune] = await Promise.all([hasQaProEntitlement(), fetchTodayFortune(selfDayMasterChar, selfDayBranch, elements)]);
       if (!alive) return;
       setElementColor(fortune?.elementColor ?? null);
+      // Home screen widget: the same free rhythm line + color, for everyone (TODO 12).
+      if (fortune?.compatibility) setWidgetSource({ relation: fortune.compatibility.relation, color: fortune.elementColor ?? null });
       if (!isEntitled) {
         // The free teaser works without the reading (a failed request just drops the
         // rhythm line). It names today's rhythm and keeps the why / what-to-do behind Pro.
@@ -207,6 +212,11 @@ export default function HomeScreen({
       alive = false;
     };
   }, [selfDayMasterChar, selfDayBranch, elements, reloadKey]);
+
+  // Re-run on a language change too, so the widget follows the app language.
+  useEffect(() => {
+    if (widgetSource) updateTodayWidget(buildTodayWidgetData(strings, locale, widgetSource.relation, widgetSource.color));
+  }, [widgetSource, strings, locale]);
 
   // One authored moment: the hero settles into place. Everything
   // starts visible, so nothing is lost if an animation never runs, and Reduce Motion

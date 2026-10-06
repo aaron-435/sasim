@@ -549,6 +549,7 @@ export const en: typeof ko = {
       module9: "What the family you grew up in still shapes in how you relate.",
       module10: "Whether your focus scatters easily or locks in and won't let go.",
       module11: "How much you hold back what you want to say and do.",
+      module12: "How you move from something that ended toward what comes next.",
     } as Record<string, string>,
   },
 
@@ -691,7 +692,7 @@ export const en: typeof ko = {
     paywallBody: "The rest of the report reads what you told the AI against your chart.",
     paywallExtras: "Unlocked, it ends with a one-line takeaway, a suggested next test, and a PDF you can keep.",
     paywallBuyLabel: (price: string) => `Unlock this report · ${price}`,
-    paywallBundleBuyLabel: (price: string) => `Unlock all 11 reports · ${price}`,
+    paywallBundleBuyLabel: (count: number, price: string) => `Unlock all ${count} reports · ${price}`,
     paywallBundleSub: (fullPrice: string, discountPercent: number) => `${fullPrice} if bought separately (${discountPercent}% off)`,
     paywallRestoreLabel: "Restore purchases",
     paywallRestoring: "Restoring...",
@@ -780,6 +781,12 @@ export const en: typeof ko = {
     safetyBody: "If things feel very heavy right now, there are people you can talk to right away.",
     safetyLines: ["In the US, call or text 988 (Suicide & Crisis Lifeline, 24/7).", "Outside the US, you can find a local crisis line at findahelpline.com."],
     safetyReportNote: "This month, instead of a pattern report, here's where you can find support first.",
+  },
+
+  widget: {
+    eyebrow: "Today's rhythm",
+    emptyLine: "Open the app once and today's rhythm shows up here.",
+    staleLine: "A new day. Tap to see today's rhythm.",
   },
 
   elementColor: {

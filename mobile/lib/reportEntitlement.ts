@@ -1,7 +1,7 @@
 // Report purchase state — real RevenueCat-backed check, added 2026-09-16 once the
 // "reports" offering existed (see lib/purchases.ts's header comment for the product/
 // entitlement layout: one "report_<moduleId>" entitlement per quiz module, granted by
-// either that module's own product or the all-11 bundle product).
+// either that module's own product or the all-reports bundle product; 12 modules since 2026-10-06).
 import { qaHasAllPurchases } from "../dev/qaMode";
 import { getCustomerInfo } from "./purchases";
 import { MODULES } from "./quiz/modules";

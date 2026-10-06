@@ -78,10 +78,19 @@ Saju × psychology deep report: self-expression
 ```
 
 ```
-Deep Reports - All 11 Bundle
+Deep Report - Module 12 Fresh Start
+com.fatesaid.app.report.module12
+Fresh Start Deep Report
+Saju × psychology deep report: fresh starts & transitions
+```
+
+module12 추가(2026-10-06, TODO 12): Play 제품 ID `report_module12`, RevenueCat entitlement `report_module12`, "reports" 오퍼링 패키지 id `module12`(앱이 `purchaseReportModule("module12")`로 찾음). **번들 상품에도 `report_module12` entitlement를 붙여야** 기존 번들 구매자에게 열린다. 번들 표시 이름·설명은 아래처럼 "12"로 바꾼다(제품 ID는 그대로, 가격은 사용자가 정함 — 앱은 스토어 가격을 그대로 보여 준다).
+
+```
+Deep Reports - All 12 Bundle
 com.fatesaid.app.report.bundle_all
-All 11 Deep Reports
-All 11 saju × psychology deep reports
+All 12 Deep Reports
+All 12 saju × psychology deep reports
 ```
 
 ```

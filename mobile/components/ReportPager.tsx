@@ -5,6 +5,7 @@ import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSh
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "./AppText";
 import { hasSeenReaderHint, markReaderHintSeen, type ReaderHintId } from "../lib/readerHint";
+import { maybeRequestReview } from "../lib/reviewPrompt";
 import { COLORS } from "../theme/colors";
 import { READABLE_MAX_WIDTH, readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
@@ -38,6 +39,7 @@ export default function ReportPager({
   trailing,
   footer,
   swipeHint,
+  reviewAtEnd = false,
 }: {
   pages: ReaderPage[];
   pageIndex: number;
@@ -52,6 +54,9 @@ export default function ReportPager({
   footer?: ReactNode;
   /** One-time first-page note; `id` keys the "already seen" flag. */
   swipeHint?: { id: ReaderHintId; label: string };
+  /** True only while the last page is the report's real closing page (not a paywall): reaching
+   * it may ask for a store review (lib/reviewPrompt.ts). */
+  reviewAtEnd?: boolean;
 }) {
   // Read live (not once at module load) so rotation, iPad Split View and window resizes
   // keep the page width and offsets correct.
@@ -80,6 +85,11 @@ export default function ReportPager({
     setHintVisible(false);
     markReaderHintSeen(hintId);
   }, [hintVisible, pageIndex, hintId]);
+
+  const atEnd = pages.length > 1 && pageIndex === pages.length - 1;
+  useEffect(() => {
+    if (reviewAtEnd && atEnd) maybeRequestReview("report_end");
+  }, [reviewAtEnd, atEnd]);
 
   // Also re-applied once the pager is measured, so a page chosen before layout still lands.
   useEffect(() => {

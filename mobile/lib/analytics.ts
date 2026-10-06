@@ -35,7 +35,9 @@ export type EventName =
   | "journal_report"
   | "lesson_read"
   | "solar_term_toggle"
-  | "wrapped_view";
+  | "wrapped_view"
+  | "review_prompt"
+  | "widget_tap";
 
 type PropKey = "step" | "surface" | "product" | "kind" | "value" | "topic" | "position" | "module" | "via";
 export type EventProps = Partial<Record<PropKey, string | number | boolean>>;

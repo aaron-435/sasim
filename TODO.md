@@ -162,6 +162,19 @@
   - 선행: 11
   - 변경: `mobile/lib/quiz/modules.ts`에 module12, 검사 목록·퀴즈·대화·리포트·PDF 연결, 상품 `report_module12`(`IAP_PRODUCTS.md`), 번들 안내 문구 "12개"(가격은 패키지 정보). 위젯: 라이브러리 후보(iOS·Android)를 조사해 **사용자가 고른 뒤** 설치, 오늘의 리듬 이름 + 원소 컬러, 탭하면 오늘 운세, 무료 범위만. 리뷰 요청: `expo-store-review`, 리포트 마지막 장 도달 또는 구매 성공 직후 한 번, 오류·취소 직후 금지. `app.json`·EAS 설정.
   - QA: mobile tsc. mobile-web에서 검사 목록에 새 모듈 → 퀴즈 30문항 → 대화 시작(프로덕션 API 배포 후). iOS 시뮬레이터 dev-client 빌드 성공, 홈 화면 위젯 추가 스크린샷(시뮬레이터 출처 명시). `grep`으로 리뷰 요청 호출 위치 2곳뿐. (사용자 확인) 샌드박스에서 `report_module12` 구매, Android 위젯, 번들 구매자에게 module12 열림.
+  - 진행(2026-10-06, 코드 완료 · 시뮬레이터 확인 남음):
+    - 라이브러리(사용자 선택 2026-10-06): iOS `expo-widgets` + `@expo/ui`(SDK 57), Android `react-native-android-widget` 0.22, 리뷰 `expo-store-review`. 모두 `npx expo install`.
+    - module12: `MODULES`로 옮김(`UNRELEASED_MODULES`는 빈 배열로 남겨 다음 모듈 대기용), 검사 목록 설명 ko/en/es, `TOTAL_MODULES = MODULES.length`. 리포트 페이월 가격은 "reports" 오퍼링 패키지(`priceString`, 따로 산 합계·할인율은 두 패키지 숫자 가격과 통화)로, 패키지가 없으면(웹·오프라인) 예전 USD 상수. 번들 문구는 개수 인자(`paywallBundleBuyLabel(count, price)`). `IAP_PRODUCTS.md`에 module12 상품·번들 이름 "12"·번들 entitlement 추가 안내.
+    - 위젯: `mobile/widgets/TodayWidget.tsx`(iOS, small·medium), `widgets/TodayWidgetAndroid.tsx` + `widgets/androidTaskHandler.tsx`(Android, `index.ts`에서 Android만 등록, 30분 주기 다시 그림). 내용은 홈 무료 범위(오늘 리듬 이름 + 원소 컬러)뿐, 데이터는 HomeScreen이 `lib/todayWidgetData.ts`로 만들어 `lib/todayWidget.{ios,android}.ts`로 보냄(웹은 `todayWidget.ts` 빈 함수). iOS는 지금 + 기기 자정 두 항목 타임라인, Android는 저장값의 날짜가 지나면 "새 하루예요" 줄. 언어 바꾸면 다시 씀, 데이터 초기화 때 빈 상태로. 탭 = `fatesaid://fortune`(app.json `scheme` 추가) → App.tsx가 오늘 운세로(퀴즈·대화·리포트 중이면 그대로 둠), `widget_tap` 이벤트.
+    - 리뷰 요청: `mobile/lib/reviewPrompt.ts` — 구매 성공 직후(`purchases.ts` 공용 구매 함수)와 리포트 마지막 장(`ReportPager`의 `reviewAtEnd`: 심층=잠금 해제 후, 궁합=유료 부분 있을 때, 신년=읽기 화면)만. 60일에 한 번, 구매 취소·오류 10분 안에는 안 띄움, 웹 제외, `review_prompt` 이벤트(kind=report_end·purchase).
+    - 이벤트 이름 `review_prompt`·`widget_tap`을 `lib/eventSchema.ts`와 `mobile/lib/analytics.ts`에 함께 추가(웹 배포가 스토어 빌드보다 먼저여야 함).
+    - `app.json` version 1.0.0 → **1.1.0**: runtimeVersion이 appVersion 정책이라, 새 네이티브 모듈을 부르는 JS가 1.0.0 빌드로 OTA되어 앱이 죽는 것을 막는다. 1~11번 OTA는 이 변경을 커밋하기 **전** 커밋에서 내보내야 1.0.0 사용자에게 간다.
+    - QA: mobile tsc(`ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit`) → exit 0. 루트 `npx tsc --noEmit` → exit 0, `npm run lint` → "No ESLint warnings or errors", `npm run build` → exit 0.
+    - QA: `grep -rn "maybeRequestReview(" mobile/lib mobile/screens mobile/components mobile/App.tsx` → 정의 외 호출 2곳(`lib/purchases.ts:171` 구매 성공, `components/ReportPager.tsx:91` 마지막 장).
+    - QA(mobile-web 375×812, `?qa=free&persona=jordan`): 검사 목록 "All tests · 9 more"(12개) → "Fresh Start · How you move from something that ended toward what comes next." → 퀴즈 1/30 ~ 30/30(슬라이더 3·선택 27) → 결과 "Flexible Transitioner" → AI 상담 "Part 1 of 5" 첫 메시지 표시. 샘플 심층 리포트 페이월: "Unlock this report · $14.99", "Unlock all 12 reports · $119.99", "$179.88 if bought separately (33% off)"(웹은 스토어가 없어 대체 가격).
+    - QA 회귀(mobile-web 같은 설정): 홈 → 운세 총론("Your own rhythm") → Q&A 질문 1개(기기 한도 기록만 지우고 1→0, 답 정상) → 검사 목록 → 퀴즈 → 궁합 결과(Jordan · Sam, "Cut from the same cloth") 정상. 콘솔 오류는 프로덕션 응답 500 1건(어느 요청인지 확인 전에 미리보기를 멈춤 — 다음 세션에서 확인).
+    - **막힘**: iOS 시뮬레이터 dev-client 빌드(`expo prebuild -p ios --clean` → `LANG=en_US.UTF-8 pod install` 성공, `ExpoWidgetsTarget` 생성됨) → xcodebuild가 **디스크 공간 부족**("No space left on device", 기존 `PurchasesHybridCommon` 컴파일 중)으로 실패. 이 빌드가 만든 DerivedData(981M)는 지웠고 남은 여유 공간 1.1GB. 마지막 통과 상태 = 위 tsc·lint·build·mobile-web QA. 사용자가 10GB 이상 비운 뒤 새 세션에서 시뮬레이터 빌드 → 앱 실행 → 홈 화면 위젯 추가 스크린샷 → 위젯 탭으로 오늘 운세 열림 확인 → 체크. 위젯 흐름은 검수 전이라 WIKI에 아직 쓰지 않았다(통과 후 "콘텐츠 기능" 표에 추가). module12 연결·페이월 가격·리뷰 요청·runtime 1.1.0은 WIKI 반영함.
+  - [ ] (사용자 확인) 샌드박스에서 `report_module12` 구매(사용자 실행 C 후), 번들 구매 계정에서 module12 리포트가 바로 열리는지, Android 기기·에뮬레이터에서 위젯 추가·탭, 리포트 마지막 장/구매 직후 리뷰 시트(개발 빌드에서는 iOS가 매번 띄움, TestFlight에서는 안 뜸 — 정상).
 
 ## 사용자 실행 (마지막)
 
@@ -218,4 +231,8 @@
 - (10번 중) Wrapped 5장의 "신년 리포트 보기"에서 신년 리포트로 가면 뒤로가기가 Wrapped가 아니라 홈으로 간다(신년 리포트의 `onBack`이 항상 홈). 운세 화면에서 들어갈 때도 같다.
 - (11번 중) 서버 자책 감지 `SELF_BLAME_PATTERN`(`lib/chat.ts`)에 비교형 자책("저만 제자리", "sign of failure", "como si hubiera fallado", "no sirvo para esto")이 없다. module12 대화에서 이런 말 뒤에 기법 ⑦ 지시가 붙지 않아 채점 ⑦이 0.67로 낮았다. 패턴을 늘리면 모든 모듈 대화에 영향이 가므로 채팅 변경으로 따로 결정 필요.
 - (11번 중) `classifyProfile`(`mobile/lib/quiz/quizProfile.ts`)은 2개 이상 차원 조합 키를 점수 순으로 잇는다. 유형 이름 표는 한 순서("a+b")만 적혀 있어, 점수가 반대 순서면 설계한 조합 이름 대신 대체 이름이 나온다(module12만이 아니라 모든 모듈 공통). 키를 정해진 차원 순서로 만들지 결정 필요.
-
+- (12번 중) 위젯 글꼴은 시스템 글꼴(iOS serif/sans, Android serif)이다. `FONTS`(Newsreader·Plus Jakarta Sans)는 앱 번들에만 있어 위젯 확장에서 쓸 수 없다. 맞추려면 iOS 확장에 폰트 파일 포함, Android 플러그인 `fonts` 옵션이 필요(네이티브 빌드 변경).
+- (12번 중) Android 위젯 선택 화면 미리보기 이미지(`previewImage`)를 넣지 않았다(앱 아이콘으로 보임). 실제 위젯 스크린샷이 생기면 `mobile/assets/widget-preview/`에 넣고 app.json에 연결.
+- (12번 중) 위젯 갤러리 이름·설명(app.json)은 영어 한 가지다. iOS 위젯 이름 현지화는 확장 InfoPlist.strings가 필요해 config plugin으로는 안 된다.
+- (12번 중) 위젯의 "오늘"은 기기 자정 기준, 리듬 값은 운세 API의 KST 날짜 기준이다(8번 발견 사항과 같은 문제). 미주 사용자는 저녁부터 다음 날(KST) 리듬이 위젯에 보일 수 있다.
+- (12번 중) mobile-web 회귀 중 프로덕션 응답 500이 1건 콘솔에 찍혔다(요청 미확인). 이번 변경은 서버 호출을 더하지 않았고 운세·Q&A·궁합 응답은 모두 정상이었다.

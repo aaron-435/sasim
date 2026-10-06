@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
-import { getRevenueCatUserId, isUnavailableMessage, purchaseIssueDetail, purchaseReportBundle, purchaseReportModule, restoreReports } from "../lib/purchases";
+import { getReportPackages, getRevenueCatUserId, isUnavailableMessage, purchaseIssueDetail, purchaseReportBundle, purchaseReportModule, restoreReports, type ReportPackageMap } from "../lib/purchases";
 import { findNextDecadeAge } from "../lib/decadeTransition";
 import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
 import { isReportUnlocked, ownedReportCount } from "../lib/reportEntitlement";
@@ -20,7 +20,7 @@ import { elementWithEmoji } from "../lib/elements";
 import { listSavedReports, saveReport } from "../lib/reportStorage";
 import { getModuleById, moduleDisplayTitle, MODULES, type ModuleDefinition } from "../lib/quiz/modules";
 import { exportReportPdf, pdfErrorMessage } from "../lib/reportPdf";
-import { BUNDLE_PRICE, bundleDiscountPercent, formatUsd, fullIndividualTotal, REPORT_PRICE, TOTAL_MODULES } from "../lib/reportPricing";
+import { reportPriceLabels, TOTAL_MODULES, type ReportPriceLabels } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
 import type { ChatExtract } from "./ChatScreen";
 import type { QuizDiagnosis } from "./QuizScreen";
@@ -212,6 +212,7 @@ export default function ReportScreen({
   const [unlocked, setUnlocked] = useState(false);
   const [unlockState, setUnlockState] = useState<"idle" | "working" | "failed">("idle");
   const [ownedCount, setOwnedCount] = useState(0);
+  const [reportPackages, setReportPackages] = useState<ReportPackageMap | null>(null);
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
@@ -452,6 +453,14 @@ export default function ReportScreen({
   useEffect(() => {
     refreshEntitlement();
   }, [refreshEntitlement]);
+
+  // Store prices for the paywall (null on mobile-web / offline → USD fallback in reportPriceLabels).
+  useEffect(() => {
+    getReportPackages().then((pkgs) => {
+      if (mountedRef.current) setReportPackages(pkgs);
+    });
+  }, []);
+  const prices = useMemo(() => reportPriceLabels(reportPackages, quizDiagnosis.moduleId, locale), [reportPackages, quizDiagnosis.moduleId, locale]);
 
   async function handleBuyModule() {
     if (purchasing || restoring) return;
@@ -840,6 +849,7 @@ export default function ReportScreen({
           ) : (
             <PaywallPage
               ownedCount={ownedCount}
+              prices={prices}
               lockedCount={lockedChapterCount}
               totalCount={tocEntries.length}
               lockedChapters={tocEntries.filter((e) => e.locked).map((e) => e.label)}
@@ -881,7 +891,7 @@ export default function ReportScreen({
       ...gated,
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, resolvedElements, chatExtract, unlocked, lockedOpen, unlockState, ownedCount, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, topAnswers, decadePreviewLine, nextModule, onOpenModule, exporting]);
+  }, [content, resolvedElements, chatExtract, unlocked, lockedOpen, unlockState, ownedCount, prices, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, topAnswers, decadePreviewLine, nextModule, onOpenModule, exporting]);
 
   // Plain-text share of the report's one-line takeaway plus the app's address.
   async function handleShare(summary: string) {
@@ -975,6 +985,7 @@ export default function ReportScreen({
       onBack={onBack}
       labels={{ back: strings.common.backLabel, previous: strings.report.previousPageLabel, next: strings.report.nextPageLabel }}
       swipeHint={{ id: "deep", label: strings.reader.swipeHint }}
+      reviewAtEnd={lockedOpen}
       // None on a paywall page: the zones sat on top of — and swallowed the taps meant for —
       // the paywall's buy, bundle and restore buttons. Swiping still turns pages everywhere.
       edgeTaps={!onPaywall}
@@ -1436,7 +1447,7 @@ function MindsetPage({ label, body }: { label: string; body: string }) {
 
 // Gates everything past the free preview (opening scene, case study, quiz analysis, saju
 // analysis) — the actionable half of the report. Real IAP added 2026-09-16: the bundle
-// (all 11 at a fixed price) is only offered while the user owns none of them yet, since
+// (every module at a fixed price) is only offered while the user owns none of them yet, since
 // neither store supports charging a price that depends on what's already owned — see
 // lib/reportPricing.ts's header comment.
 function UnlockingPage({ strings, failed, onRetry }: { strings: Dictionary; failed: boolean; onRetry: () => void }) {
@@ -1465,6 +1476,7 @@ function UnlockingPage({ strings, failed, onRetry }: { strings: Dictionary; fail
 
 function PaywallPage({
   ownedCount,
+  prices,
   lockedCount,
   totalCount,
   lockedChapters,
@@ -1478,6 +1490,7 @@ function PaywallPage({
   onRestore,
 }: {
   ownedCount: number;
+  prices: ReportPriceLabels;
   lockedCount: number;
   totalCount: number;
   /** TOC labels of the sealed chapters, in reading order — the paywall names exactly what it unlocks. */
@@ -1524,10 +1537,10 @@ function PaywallPage({
             onPress={onBuyModule}
             disabled={busy}
             accessibilityRole="button"
-            accessibilityLabel={strings.report.paywallBuyLabel(formatUsd(REPORT_PRICE))}
+            accessibilityLabel={strings.report.paywallBuyLabel(prices.module)}
             accessibilityState={{ disabled: busy, busy: purchasing }}
           >
-            {purchasing ? <ActivityIndicator color={COLORS.background} /> : <Text style={pageStyles.paywallBuyButtonLabel}>{strings.report.paywallBuyLabel(formatUsd(REPORT_PRICE))}</Text>}
+            {purchasing ? <ActivityIndicator color={COLORS.background} /> : <Text style={pageStyles.paywallBuyButtonLabel}>{strings.report.paywallBuyLabel(prices.module)}</Text>}
           </Pressable>
 
           <Text style={pageStyles.paywallOneTime}>{strings.report.paywallOneTimeNote}</Text>
@@ -1540,11 +1553,11 @@ function PaywallPage({
               accessibilityRole="button"
               accessibilityState={{ disabled: busy }}
             >
-              <Text style={pageStyles.paywallBundleButtonLabel}>{strings.report.paywallBundleBuyLabel(formatUsd(BUNDLE_PRICE))}</Text>
+              <Text style={pageStyles.paywallBundleButtonLabel}>{strings.report.paywallBundleBuyLabel(TOTAL_MODULES, prices.bundle)}</Text>
               <Text style={pageStyles.paywallBundleSub}>
                 {ownedCount === 0
-                  ? strings.report.paywallBundleSub(formatUsd(fullIndividualTotal()), bundleDiscountPercent())
-                  : strings.report.paywallBundleSubOwned(ownedCount, formatUsd(fullIndividualTotal()))}
+                  ? strings.report.paywallBundleSub(prices.fullTotal, prices.discountPercent)
+                  : strings.report.paywallBundleSubOwned(ownedCount, prices.fullTotal)}
               </Text>
             </Pressable>
           )}

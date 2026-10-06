@@ -549,6 +549,7 @@ export const es: typeof ko = {
       module9: "La huella que tu familia de origen sigue dejando en tus relaciones.",
       module10: "Si tu atención se dispersa con facilidad o se engancha y no se suelta.",
       module11: "Cuánto te guardas lo que quieres decir y hacer.",
+      module12: "Cómo pasas de algo que terminó a lo que viene después.",
     } as Record<string, string>,
   },
 
@@ -691,7 +692,7 @@ export const es: typeof ko = {
     paywallBody: "El resto del informe cruza lo que le contaste a la IA con tu mapa.",
     paywallExtras: "Al desbloquearlo, termina con una frase para recordar, el siguiente test recomendado y un PDF para guardar.",
     paywallBuyLabel: (price: string) => `Desbloquear este informe · ${price}`,
-    paywallBundleBuyLabel: (price: string) => `Desbloquear los 11 informes · ${price}`,
+    paywallBundleBuyLabel: (count: number, price: string) => `Desbloquear los ${count} informes · ${price}`,
     paywallBundleSub: (fullPrice: string, discountPercent: number) => `${fullPrice} si los compras por separado (${discountPercent}% de descuento)`,
     paywallRestoreLabel: "Restaurar compras",
     paywallRestoring: "Restaurando...",
@@ -780,6 +781,12 @@ export const es: typeof ko = {
     safetyBody: "Si ahora todo pesa mucho, hay personas con quienes puedes hablar de inmediato.",
     safetyLines: ["En Estados Unidos, llama o envía un mensaje de texto al 988 (Línea de Prevención del Suicidio y Crisis, con atención en español, 24/7).", "Fuera de Estados Unidos, puedes encontrar una línea de crisis local en findahelpline.com."],
     safetyReportNote: "Este mes, en lugar de un informe de patrones, te mostramos primero dónde encontrar apoyo.",
+  },
+
+  widget: {
+    eyebrow: "Tu ritmo de hoy",
+    emptyLine: "Abre la app una vez y tu ritmo de hoy aparecerá aquí.",
+    staleLine: "Es un nuevo día. Toca para ver tu ritmo de hoy.",
   },
 
   elementColor: {
