@@ -52,9 +52,16 @@
   - QA 회귀(mobile-web `?qa=free&persona=jordan`): 홈 → 운세 총론 → Q&A 답 1개 → 한도 → 검사 목록 → Burnout 1/30 → 궁합 결과(Jordan · Sam) 정상. 콘솔 오류는 `/api/events` 404(프로덕션 미배포)뿐.
   - [ ] (사용자 확인) 사용자 실행 C로 연간 패키지·7일 무료 체험을 등록한 뒤 iOS dev-client(샌드박스 계정)에서: 운세 → 페이월에 연간·월간 두 행과 "7일 무료, 이후 …" 줄이 스토어 가격으로 보이는지, 연간 선택 → "무료 체험 시작하기" → 결제 시트가 연간 상품인지, 구매 후 운세가 열리는지. 체험을 이미 쓴 샌드박스 계정에서는 체험 줄 없이 "구독하기 · …"로 보이는지. 웹 배포 후 구독 중인 기기에서 운세 → 좋은 날 찾기 → 목적 하나 → 날짜 목록이 뜨는지.
 
-- [ ] 4. "그 사람에 대해 묻기" Q&A
+- [x] 4. "그 사람에 대해 묻기" Q&A
   - 변경: `mobile/data/questionBank.json`·`lib/questionBank.json`에 새 분류(질문 20개 안팎, ko/en/es, 마음 단정·관계 결말 예언 없는 질문만), `mobile/lib/qaTopicGroups.ts`, Q&A 화면에 상대 생년월일 입력(궁합 폼 부품·날짜 검증 재사용), `/api/qa-answer`에 선택 필드 `other`(없으면 지금과 같음), `lib/qaChat.ts`·`lib/qaPrompts.ts`에 두 원국 구조화 데이터와 금지 규칙. 일일 한도는 기존 것 공유.
   - QA: 루트 검사 + mobile tsc. 스크래치 스크립트로 `getQAAnswer`를 `other` 있음·없음 각 3개 언어 호출(약 $0.05 이내) → `other` 없을 때 기존과 같은 형식, 있을 때 두 사람 원국 사실 인용, "그 사람은 당신을 ~한다" 단정·이별 예언 없음. mobile-web에서 입력 → 질문 → 답, 한도 차감. 회귀 확인.
+  - 계획과 달라진 점: 질문 20개는 공용 질문 은행이 아니라 새 파일 `lib/personQuestions.json`·`mobile/data/personQuestions.json`(같은 내용)에 뒀다. 웹 Q&A는 은행의 모든 분류를 그대로 보여 주므로 은행에 넣으면 웹에 입력 폼·구독 확인 없는 분류가 생긴다. 서버는 질문을 id로만 받는다(자유 글 불가). 궁합 입력 폼은 `mobile/components/OtherBirthForm.tsx`로 꺼내 궁합 화면과 함께 쓴다. 상대 이름은 서버로 보내지 않는다.
+  - QA: 루트 `npx tsc --noEmit` → exit 0, `npm run lint` → "No ESLint warnings or errors", `npm run build` → 성공(`ƒ /api/qa-answer`, 새 경고 없음). mobile tsc → exit 0.
+  - QA: 빌드본 `next start`(3100) + 로컬 RevenueCat 대역에 `curl -X POST /api/qa-answer` → `other` 없는 기존 요청 sessionId 없음 400(기존 문구 그대로), `other` 있음: 은행 질문 id·13월·성별 없음 400 `bad_request`, appUserId 없음 401 `no_user`, 구독 없음·만료 403 `not_subscribed`, RevenueCat 오류 503 `unavailable`, 구독 중 200(4문단). 로컬 Supabase 한도 조회는 실패해 열림 처리(`[qaQuota] failing open`)라 서버 쪽 한도 공유는 여기서 증명하지 못함 — 설계상 같은 `llm_usage_log` "qa" 행을 세고, 구독 확인된 경로만 하루 10개 상한.
+  - QA: 스크래치 `getQAAnswer`/`getPersonQAAnswer` 실제 호출(ko·en·es, 질문 4종, 프롬프트 3회 보정) → `other` 없을 때 기존과 같은 3~4줄 형식, 있을 때 두 사람 오행·중심 기운을 짝지어 인용, 금지어 검사(좋아한다·후회·헤어지·돌아올·상극·궁합이 나쁘·will leave·break up·te ama·volverá 등, 한자) 0건. 보정: 질문 속 "esta persona"를 사용자로 읽은 경우 → 상대방 지칭 명시, es "Maestro del Día" 노출 → 요약 대신 중심 기운 단어만 전달. 남은 것: en 답 1건에 "Day Master" 1회(용어집 허용어, 기존 Q&A 프롬프트도 같은 경향).
+  - QA(mobile-web, 375×812): `?qa=free&persona=jordan` 주제 목록에 "About someone · Pro"(사랑 다음) → 탭 → 안내 한 줄 + 구독 카드, `paywall_view`(surface=qa_person). `?qa=pro` → 배지 없음 → 입력 화면(성별·생년월일·시간·도시, 저장 안 함·단정 안 함 안내, 미완성 시 버튼 흐림+이유) → 질문 20개 목록 → 질문 → 웹은 RevenueCat id가 없어 401 → "구독을 확인하지 못했어요" + 다시 시도(남은 수 그대로) → 요청을 로컬 API + 대역 구독 id로 넘겨 다시 시도 → 4문단 답 + 👍/👎, 남은 수 9→8. 요청 본문에 `questionId`·`other`(이름 없음) 확인. 다시 열면 입력값 유지.
+  - QA 회귀(mobile-web `?qa=free&persona=jordan`): 홈 → 운세 총론 → Q&A 답 1개(Today 질문, 1→0) → 한도·구독 카드 → 검사 목록 → Burnout 1/30 → 궁합(공용 폼으로 바꾼 화면) Jordan · Sam 결과·공유 미리보기 정상. 콘솔 오류는 404(이전 항목과 같은 `/api/events` 미배포)와 의도한 401뿐.
+  - [ ] (사용자 확인) 웹 배포 + OTA 후 iOS dev-client(구독 중 샌드박스 계정)에서 Q&A → "특정한 사람에 대해" → 상대 생년월일 입력 → 질문 → 답이 오는지, 남은 수가 줄어드는지. 구독하지 않은 계정에서는 "구독" 배지와 구독 카드만 보이는지.
 
 ## 첫 결제
 
@@ -133,3 +140,5 @@
 - (2번 중) 계산기 페이지 `/saju-calculator`로 들어오는 내부 링크와 `sitemap`이 없다. 다음 SPEC(SEO 글)에서 사이트맵·랜딩 링크와 함께 정리.
 - (3번 중) 기존 `strings.qa.subscriptionPriceLabel`(스토어 응답 전 대체 문구)에 "$7.99"가 하드코딩돼 있다. 스토어가 응답하지 않는 웹·오프라인에서만 보이지만 STYLE_GUIDE의 "가격은 priceString만" 규칙과 어긋난다.
 - (3번 중) Q&A 한도 소진 말풍선(`limitReached2`)은 스토어 가격이 오기 전에 찍히면 대체 가격으로 남고, 연간이 기본 선택이면 "$49.99/year"로 찍힌다(카드의 선택과 함께 바뀌지 않음).
+- (4번 중) 서버 `lib/qaQuota.ts`는 앱(mobile) 기존 Q&A를 구독 여부와 관계없이 하루 1개로 센다(`isQaQuotaExceeded`에 구독 정보가 없음). 앱은 구독자에게 10개를 보여 주므로, 프로덕션 Supabase가 정상이면 구독자의 일반 질문 2번째부터 서버가 403을 줄 수 있다. 4번의 "그 사람" 경로만 RevenueCat 확인 뒤 10개 상한을 쓴다. 일반 경로도 appUserId를 받아 같은 확인을 붙일지 결정 필요.
+- (4번 중) 기존 Q&A 답(en)에도 "Your Day Master, the core of your natural style…"처럼 용어가 그대로 나온다. 기존 프롬프트가 `요약`(dayMaster 키)을 그대로 넘기기 때문. 4번 프롬프트처럼 중심 기운 단어만 넘기면 줄어든다.

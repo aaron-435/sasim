@@ -10,20 +10,25 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
-import { getDailyLimit, getUsageToday, incrementUsageToday, PAID_DAILY_LIMIT } from "../lib/qaQuota";
-import { isUnavailableMessage, purchaseIssueDetail, purchaseQaPro, restoreQaPro } from "../lib/purchases";
+import { getDailyLimit, getUsageToday, incrementUsageToday, isSubscribed, PAID_DAILY_LIMIT } from "../lib/qaQuota";
+import { getRevenueCatUserId, isUnavailableMessage, purchaseIssueDetail, purchaseQaPro, restoreQaPro } from "../lib/purchases";
 import { useSubscriptionOffer } from "../lib/useSubscriptionOffer";
 import PlanPicker from "../components/PlanPicker";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { saveLastQuestion } from "../lib/qaHistory";
-import { onlySubcategory, QA_TOPIC_GROUPS, type QaQuestion, type QaSubcategory, type QaTopicGroup } from "../lib/qaTopicGroups";
+import { onlySubcategory, PERSON_SUBCATEGORY, QA_TOPIC_GROUPS, type QaQuestion, type QaSubcategory, type QaTopicGroup } from "../lib/qaTopicGroups";
 import type { NormalizedSajuResult } from "../lib/saju";
 import { COLORS } from "../theme/colors";
 import QAQuestionScreen from "./QAQuestionScreen";
 import QASubcategoryScreen from "./QASubcategoryScreen";
+import QAPersonFormScreen from "./QAPersonFormScreen";
+import { useOtherBirthForm, type OtherBirthPayload } from "../components/OtherBirthForm";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 import FeedbackRow from "../components/FeedbackRow";
 import { track } from "../lib/analytics";
+
+// "그 사람에 대해 묻기": which fixed question, and the other person's birth data for this answer.
+type PersonAsk = { questionId: string; other: OtherBirthPayload };
 
 type Message = { role: "bot" | "user"; text: string } | { role: "picker" } | { role: "subscribe" } | { role: "feedback"; topic?: string };
 
@@ -55,18 +60,21 @@ export default function QAScreen({
   const strings = useStrings();
   const { locale } = useLocale();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [view, setView] = useState<"chat" | "subcategory" | "question">("chat");
+  const [view, setView] = useState<"chat" | "subcategory" | "question" | "person">("chat");
   const [activeGroup, setActiveGroup] = useState<QaTopicGroup | null>(null);
   const [activeSubcategory, setActiveSubcategory] = useState<QaSubcategory | null>(null);
   // Today's count for the header ("N of M left today"); null until storage has answered.
   const [quota, setQuota] = useState<{ used: number; limit: number } | null>(null);
   const [busy, setBusy] = useState(false);
   const [errorText, setErrorText] = useState<string | null>(null);
-  const [retryQuestion, setRetryQuestion] = useState<string | null>(null);
+  const [retryQuestion, setRetryQuestion] = useState<{ text: string; person?: PersonAsk } | null>(null);
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
   const offer = useSubscriptionOffer();
+  // The other person's birth data — kept here (not in the form screen) so it survives
+  // going to the question list and back, and a second question about the same person.
+  const personForm = useOtherBirthForm();
   const priceLabel = offer.priceLabel;
   const scrollRef = useRef<ScrollView>(null);
   const mountedRef = useRef(true);
@@ -120,8 +128,8 @@ export default function QAScreen({
   const onBubbleLayout = useReplyScroll(scrollRef, messages.map((m) => m.role));
 
   // A group with a single subcategory (today) skips the subcategory screen, so its
-  // question list steps back straight to the chat.
-  const questionBackView = activeGroup && onlySubcategory(activeGroup) ? "chat" : "subcategory";
+  // question list steps back straight to the chat. The person topic steps back to its form.
+  const questionBackView = activeGroup?.id === "person" ? "person" : activeGroup && onlySubcategory(activeGroup) ? "chat" : "subcategory";
 
   // Android hardware back inside the category/question pickers steps back one level,
   // same as their on-screen back buttons, instead of App.tsx's handler dropping the
@@ -135,21 +143,24 @@ export default function QAScreen({
     return () => sub.remove();
   }, [view, questionBackView]);
 
-  async function requestAnswer(questionText: string, topic?: string) {
+  async function requestAnswer(questionText: string, topic?: string, person?: PersonAsk) {
     setBusy(true);
     setErrorText(null);
     try {
+      // The person path is subscriber-only and the server checks that itself (RevenueCat).
+      const personFields = person ? { ...person, appUserId: await getRevenueCatUserId() } : {};
       const res = await fetch(`${API_BASE_URL}/api/qa-answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nickname, question: questionText, sajuResult, sessionId, locale, platform: "mobile" }),
+        body: JSON.stringify({ nickname, question: questionText, sajuResult, sessionId, locale, platform: "mobile", ...personFields }),
       });
       const json = await res.json();
       if (!mountedRef.current) return;
 
       if (!res.ok) {
-        setErrorText(json.error || strings.qa.errorDefault);
-        setRetryQuestion(questionText);
+        const verifyFailed = person && (json.code === "no_user" || json.code === "not_subscribed" || json.code === "unavailable");
+        setErrorText(verifyFailed ? strings.qa.personVerifyError : json.error || strings.qa.errorDefault);
+        setRetryQuestion({ text: questionText, person });
         setBusy(false);
         return;
       }
@@ -179,12 +190,33 @@ export default function QAScreen({
     } catch {
       if (!mountedRef.current) return;
       setErrorText(strings.qa.errorNetwork);
-      setRetryQuestion(questionText);
+      setRetryQuestion({ text: questionText, person });
       setBusy(false);
     }
   }
 
+  async function handlePickPerson(group: QaTopicGroup) {
+    if (await isSubscribed()) {
+      if (!mountedRef.current) return;
+      setActiveGroup(group);
+      setActiveSubcategory(PERSON_SUBCATEGORY);
+      setView("person");
+      return;
+    }
+    if (!mountedRef.current) return;
+    // Not subscribed: say what it is and show the same subscribe card, once in a row.
+    setMessages((m) => {
+      if (m[m.length - 1]?.role === "subscribe") return m;
+      return [...m, { role: "bot", text: strings.qa.personLocked }, { role: "subscribe" }];
+    });
+    track("paywall_view", { surface: "qa_person" });
+  }
+
   function handlePickGroup(group: QaTopicGroup) {
+    if (group.id === "person") {
+      handlePickPerson(group);
+      return;
+    }
     setActiveGroup(group);
     const only = onlySubcategory(group);
     if (only) {
@@ -205,12 +237,13 @@ export default function QAScreen({
     setView("chat");
     pushUser(questionText);
     track("qa_ask", activeGroup ? { topic: activeGroup.id } : undefined);
-    requestAnswer(questionText, activeGroup?.id);
+    const person = activeGroup?.id === "person" ? { questionId: q.id, other: personForm.toPayload() } : undefined;
+    requestAnswer(questionText, activeGroup?.id, person);
   }
 
   function handleRetry() {
     setErrorText(null);
-    if (retryQuestion) requestAnswer(retryQuestion, activeGroup?.id);
+    if (retryQuestion) requestAnswer(retryQuestion.text, activeGroup?.id, retryQuestion.person);
   }
 
   async function unlockAfterEntitlementChange() {
@@ -255,6 +288,9 @@ export default function QAScreen({
     }
   }
 
+  if (view === "person") {
+    return <QAPersonFormScreen form={personForm} onBack={() => setView("chat")} onNext={() => setView("question")} />;
+  }
   if (view === "subcategory" && activeGroup) {
     return <QASubcategoryScreen group={activeGroup} onBack={() => setView("chat")} onSelect={handlePickSubcategory} />;
   }
@@ -262,6 +298,8 @@ export default function QAScreen({
     return <QAQuestionScreen subcategory={activeSubcategory} onBack={() => setView(questionBackView)} onSelect={handleSelectQuestion} />;
   }
 
+  // The paid cap doubles as "is subscribed" here, so the person topic's badge needs no extra lookup.
+  const isSubscriber = quota?.limit === PAID_DAILY_LIMIT;
   const remainingLabel = quota ? strings.qa.remainingToday(Math.max(0, quota.limit - quota.used), quota.limit) : null;
 
   return (
@@ -295,9 +333,14 @@ export default function QAScreen({
                       style={styles.optionButton}
                       onPress={() => handlePickGroup(group)}
                       accessibilityRole="button"
-                      accessibilityLabel={strings.qa.topicGroups[group.id]}
+                      accessibilityLabel={group.id === "person" && !isSubscriber ? `${strings.qa.topicGroups[group.id]}, ${strings.qa.personBadge}` : strings.qa.topicGroups[group.id]}
                     >
-                      <Text style={styles.optionLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.topicGroups[group.id]}</Text>
+                      <View style={styles.optionRow}>
+                        <Text style={styles.optionLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.topicGroups[group.id]}</Text>
+                        {group.id === "person" && !isSubscriber && (
+                          <Text style={styles.optionBadge} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.personBadge}</Text>
+                        )}
+                      </View>
                     </Pressable>
                   ))}
                 </View>
@@ -442,10 +485,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     marginBottom: 8,
   },
+  optionRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+  },
   optionLabel: {
+    flexShrink: 1,
     fontFamily: FONTS.regular,
     fontSize: 14,
     color: COLORS.headline,
+  },
+  optionBadge: {
+    fontFamily: FONTS.semibold,
+    fontSize: 11,
+    letterSpacing: 0.2,
+    color: COLORS.gold,
   },
   subscribeCard: {
     width: "88%",

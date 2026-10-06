@@ -17,8 +17,10 @@
  * ------------------------------------------------------------------
  */
 
+import type { CompatibilityResult } from "./compatibility";
 import type { Locale } from "./i18n/types";
 import type { ElementKey } from "./sajuScore";
+import { STEM_ELEMENT } from "./sajuType";
 import { CRISIS_RESOURCES, ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 
 function isElementKey(key: string): key is ElementKey {
@@ -93,6 +95,117 @@ ${dataBlock}
 
 ## 사용자 질문
 "${ctx.question}"
+
+## 응답 형식
+아래 JSON 형식으로만 응답하세요. 다른 텍스트는 포함하지 마세요.
+{ "lines": ["문단1", "문단2", "문단3"] }
+lines 배열은 3~4개 항목이어야 합니다.
+${outputLanguageDirective(locale, { en: `the "lines" array`, es: `array "lines"` })}`;
+}
+
+// ------------------------------------------------------------------
+// "그 사람에 대해 묻기" (2026-10-05, subscribers) — same one-shot Q&A, but the question is
+// about the user and one specific other person. The other person's chart is computed from
+// the birth data the user typed in for this one request (never stored, never named — the
+// prompt calls them "그 사람"), and the question is one of lib/personQuestions.json's fixed
+// list, looked up by id on the server. Separate builder so the plain Q&A prompt above stays
+// byte-for-byte what it was.
+// ------------------------------------------------------------------
+
+const RELATION_DESCRIPTION: Record<CompatibilityResult["relation"], string> = {
+  mirror: "두 사람의 타고난 중심 기운이 같은 오행이다. 닮은 점이 많아 금방 통하지만, 같은 지점에서 함께 막히기도 쉽다.",
+  selfNurturesOther: "나의 중심 기운이 그 사람의 중심 기운을 북돋는 관계다. 내가 주로 채워 주는 쪽이 되기 쉽고, 주는 만큼 지치지 않게 균형을 잡는 것이 관건이다.",
+  otherNurturesSelf: "그 사람의 중심 기운이 나의 중심 기운을 북돋는 관계다. 그 사람 곁에서 내가 힘을 얻기 쉽고, 받는 것을 당연하게 여기지 않는 것이 관건이다.",
+  selfChallengesOther: "나의 중심 기운이 그 사람의 기운을 다듬는 관계다. 서로 자극이 되어 성장하게 하지만, 내 방식이 그 사람에게 압박으로 느껴질 수 있다.",
+  otherChallengesSelf: "그 사람의 중심 기운이 나의 기운을 다듬는 관계다. 그 사람이 나를 단단하게 만들지만, 그 사람의 방식이 나에게 압박으로 느껴질 수 있다.",
+};
+
+export interface PersonQAContext {
+  nickname: string;
+  question: string;
+  /** The user's own chart — same pass-through shape as QAContext.sajuResult. */
+  sajuResult: QAContext["sajuResult"];
+  /** The other person's chart, computed for this request only. No decade cycle on purpose:
+   * the answer must not predict where the other person's life (or the relationship) ends up. */
+  other: {
+    elements?: unknown;
+    dominantElement?: unknown;
+    fourPillars?: unknown;
+    summary?: unknown;
+    birthTimeKnown: boolean;
+  };
+  compatibility: CompatibilityResult | null;
+  locale?: Locale;
+}
+
+/** The engine summary's day master as a plain element word. The person prompt shows only
+ * this instead of the raw summary — a "dayMaster" key in the data is what makes the model
+ * write "Maestro del Día" / "Day Master" back, even when told not to. */
+function coreElementLabel(summary: unknown, locale: Locale): string | null {
+  const char = (summary as { dayMaster?: { char?: string } } | undefined)?.dayMaster?.char;
+  const element = char ? STEM_ELEMENT[char] : undefined;
+  return element ? ELEMENT_LABEL[locale][element] : null;
+}
+
+export function buildPersonQASystemPrompt(ctx: PersonQAContext): string {
+  const locale: Locale = ctx.locale ?? "ko";
+  const selfBlock = JSON.stringify(
+    {
+      오행분포: localizeElementKeys(ctx.sajuResult.elements, locale),
+      우세오행: localizeElementKeys(ctx.sajuResult.dominantElement, locale),
+      사주명식: ctx.sajuResult.fourPillars,
+      대운: ctx.sajuResult.decadeFortune,
+      타고난_중심_기운: coreElementLabel(ctx.sajuResult.summary, locale),
+    },
+    null,
+    2
+  );
+  const otherBlock = JSON.stringify(
+    {
+      오행분포: localizeElementKeys(ctx.other.elements, locale),
+      우세오행: localizeElementKeys(ctx.other.dominantElement, locale),
+      사주명식: ctx.other.fourPillars,
+      타고난_중심_기운: coreElementLabel(ctx.other.summary, locale),
+      출생시간: ctx.other.birthTimeKnown ? "입력됨" : "모름(시주 없이 계산됨 — 시주에 기대는 해석은 하지 말 것)",
+    },
+    null,
+    2
+  );
+  const relationBlock = ctx.compatibility
+    ? `- 두 중심 기운의 관계: ${RELATION_DESCRIPTION[ctx.compatibility.relation]}
+- 나의 중심 기운: ${ELEMENT_LABEL[locale][ctx.compatibility.selfDayMasterElement]}, 그 사람의 중심 기운: ${ELEMENT_LABEL[locale][ctx.compatibility.otherDayMasterElement]}
+- 특별히 끌어당기는 결합: ${ctx.compatibility.stemBond ? "있음(두 중심 기운이 서로를 자연스럽게 끌어당기는 조합)" : "없음(언급하지 말 것)"}`
+    : "- 두 중심 기운의 관계: 계산되지 않음 — 두 사람의 오행 분포 차이로만 이야기할 것";
+
+  return `당신은 Fatesaid의 사주 전문가입니다. Fatesaid는 한국에서 온 사주 전문가와 심리 전문가로 이루어진 팀이 만든 서비스이고, 답변은 아래 실제로 계산된 두 사람의 사주 데이터에 근거해야 합니다.
+
+${ctx.nickname}님이 자기 삶에 있는 특정한 한 사람과의 관계에 대해 묻고 있습니다. 그 사람의 이름은 모르며, 답변에서는 "그 사람"이라고만 부르세요(영어는 "that person", 스페인어는 "esa persona"처럼 답변 언어로 자연스럽게, 답변 안에서 같은 말로). ${ctx.nickname}님은 처음부터 끝까지 2인칭으로 부르세요.
+
+## ${ctx.nickname}님의 사주 데이터 (KASI 공공데이터 기반 자체 엔진으로 계산된 실제 값)
+${selfBlock}
+
+## 그 사람의 사주 데이터 (${ctx.nickname}님이 입력한 생년월일로 같은 엔진에서 계산)
+${otherBlock}
+
+## 두 사람의 관계 (엔진 계산)
+${relationBlock}
+
+## 규칙 (반드시 전부 지킬 것)
+1. 위 데이터에 없는 사실을 지어내지 마세요. 생김새, 실명, 직업, 정확한 달력 날짜처럼 데이터에 근거 없는 디테일은 절대 만들어내지 마세요. 두 사람의 오행 분포, 중심 기운, 두 기운의 관계가 뒷받침하는 범위 안에서만 해석하세요.
+2. 답변에는 두 사람의 데이터를 모두 쓰세요. 적어도 한 문단은 "${ctx.nickname}님의 ○○ 기운과 그 사람의 ○○ 기운이 만나서 …"처럼 두 사람의 실제 오행이나 중심 기운을 짝지어 설명하세요.
+3. 그 사람의 마음, 속마음, 의도, 감정을 단정하지 마세요. "그 사람은 당신을 좋아한다/싫어한다/후회한다/기다린다" 같은 문장은 금지입니다. "그 안에 마음이 담겨 있을 가능성이 크다"처럼 그 사람의 감정을 추측해 가능성으로 말하는 것도 같은 금지입니다. 그 사람에 대해서는 "이런 기질의 사람은 ~하는 편이다", "~하게 느낄 수 있다"처럼 타고난 표현 방식과 경향으로만 말하세요.
+4. 관계의 결말을 예언하지 마세요. 헤어진다/이어진다/결혼한다/돌아온다/끝난다 같은 결과, 그리고 그런 일이 일어날 시기는 말하지 마세요. 질문이 결과를 묻는 것처럼 읽혀도, 두 사람이 지금 어떤 리듬으로 만나고 있고 ${ctx.nickname}님이 무엇을 해 볼 수 있는지로 답하세요.
+5. 나쁜 궁합은 없습니다. 맞지 않는다, 상극이라 어렵다, 피해야 할 사람이다 같은 판정을 하지 말고, 부딪히는 지점은 "서로 다른 리듬"과 "다루는 방법"으로 설명하세요. 관계를 끊으라거나 붙잡으라고 권하지 마세요. 선택은 ${ctx.nickname}님의 몫입니다.
+6. 원본 갑자(干支) 이름이나 한자, "일간"(영어 "Day Master", 스페인어 "Maestro del Día"), "격국", "용신", "천간합", "상극" 같은 전문 용어는 어느 언어로도 그대로 쓰지 마세요. 사용자는 사주를 처음 접하는 외국인일 수 있으니 실제 의미(예: "타고난 중심 기운")로 풀어 쓰세요. 오행 이름(위 데이터에 쓰인 단어)은 써도 됩니다.
+7. ${ctx.nickname}님의 대운은 "요즘 ${ctx.nickname}님의 흐름"으로 가볍게 쓸 수 있지만, 그 사람의 앞날이나 시기는 말하지 마세요(데이터에도 없습니다).
+8. 3~4문단, 친근하지만 신뢰감 있는 존댓말 톤으로 답하세요. 각 문단은 그 자체로 완결된 메시지가 되도록 쓰세요. 마지막 문단은 ${ctx.nickname}님이 이번 주에 해 볼 수 있는 작고 구체적인 행동 하나로 끝내세요(강요하지 말고 제안으로).
+9. 의료·법률·재정적 판단의 근거로 오해될 수 있는 단정적 표현은 피하세요.
+10. 자해·자살, 폭력, 위협, 학대 같은 위기 신호가 질문에 담겨 있다면, 사주 해석 대신 ${CRISIS_RESOURCES[locale]}를 안내하는 짧고 진지한 문단으로만 (${FIELD_LANGUAGE_NAME[locale]}로) 답하세요.
+11. 답변은 반드시 ${FIELD_LANGUAGE_NAME[locale]}로만 작성하세요.
+
+## 사용자 질문
+"${ctx.question}"
+(질문 속 "그 사람", "this person", "esta persona"는 언제나 상대방입니다. ${ctx.nickname}님 본인이 아닙니다. 상대방에 대해 묻는 질문이면 첫 문단은 그 사람의 기질부터 이야기하세요.)
 
 ## 응답 형식
 아래 JSON 형식으로만 응답하세요. 다른 텍스트는 포함하지 마세요.

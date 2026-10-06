@@ -489,7 +489,7 @@ export const es: typeof ko = {
     subcategoryHeading: "Elige la pregunta que te interese",
     moreQuestions: (n: number) => `Ver ${n} preguntas más`,
     categoryHeading: "Elige con más detalle",
-    topicGroups: { love: "Amor y vínculos", work: "Trabajo y dinero", self: "Tú y tu bienestar", timing: "Momento y cambio", today: "Hoy y esta semana" },
+    topicGroups: { love: "Amor y vínculos", person: "Sobre una persona", work: "Trabajo y dinero", self: "Tú y tu bienestar", timing: "Momento y cambio", today: "Hoy y esta semana" },
     remainingToday: (left: number, limit: number) => `Te quedan ${left} de ${limit} hoy`,
     subscribeButton: "Suscribirme",
     subscribing: "Procesando...",
@@ -499,6 +499,13 @@ export const es: typeof ko = {
     restoreSuccess: (limit: number) => `¡Hemos restaurado tu suscripción! Ya puedes hacer hasta ${limit} preguntas al día.`,
     restoreNotFound: "No encontramos ninguna suscripción para restaurar.",
     purchaseErrorDefault: "Hubo un problema con la compra. Inténtalo de nuevo en un momento.",
+    personBadge: "Pro",
+    personLocked: "Preguntar sobre una persona se abre con la suscripción. Con su fecha de nacimiento leemos cómo se encuentran tu mapa y el suyo.",
+    personFormHeading: "Pregunta sobre una persona",
+    personFormIntro: "Con su fecha de nacimiento leemos cómo se encuentran tu mapa y el suyo. Lo que escribas se usa solo para esta respuesta y no se guarda.",
+    personFormNote: "No afirmamos saber lo que siente esa persona ni predecimos cómo termina la relación. Verás cómo se encuentran tu ritmo y el suyo, y qué puedes probar.",
+    personFormNext: "Elegir una pregunta",
+    personVerifyError: "No pudimos confirmar tu suscripción. Inténtalo de nuevo en un momento.",
   },
 
   report: {

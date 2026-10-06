@@ -44,8 +44,12 @@ export type QaPlatform = "web" | "mobile";
 
 const WEB_LIFETIME_LIMIT = 2; // keep in sync with components/QAChat.jsx's FREE_QUESTIONS
 const MOBILE_DAILY_LIMIT = 1; // keep in sync with mobile/lib/qaQuota.ts's FREE_DAILY_LIMIT
+const MOBILE_PAID_DAILY_LIMIT = 10; // keep in sync with mobile/lib/qaQuota.ts's PAID_DAILY_LIMIT
 
-export async function isQaQuotaExceeded(sessionId: string, platform: QaPlatform): Promise<boolean> {
+/** `subscribed` is only passed by a caller that has already verified the subscription with
+ * RevenueCat (the "그 사람에 대해 묻기" path in app/api/qa-answer) — it raises the mobile cap to
+ * the paid one. Every other call keeps the free policy above. */
+export async function isQaQuotaExceeded(sessionId: string, platform: QaPlatform, subscribed = false): Promise<boolean> {
   try {
     const supabase = getSupabaseAdmin();
     let query = supabase
@@ -63,7 +67,7 @@ export async function isQaQuotaExceeded(sessionId: string, platform: QaPlatform)
     const { count, error } = await query;
     if (error) throw error;
 
-    const limit = platform === "mobile" ? MOBILE_DAILY_LIMIT : WEB_LIFETIME_LIMIT;
+    const limit = platform === "mobile" ? (subscribed ? MOBILE_PAID_DAILY_LIMIT : MOBILE_DAILY_LIMIT) : WEB_LIFETIME_LIMIT;
     return (count ?? 0) >= limit;
   } catch (err) {
     console.error("[qaQuota] failed to check usage (failing open)", err);

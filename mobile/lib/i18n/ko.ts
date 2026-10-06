@@ -516,7 +516,7 @@ export const ko = {
     subcategoryHeading: "궁금한 질문을 골라주세요",
     moreQuestions: (n: number) => `질문 ${n}개 더 보기`,
     categoryHeading: "더 자세히 골라주세요",
-    topicGroups: { love: "사랑과 사람", work: "일과 돈", self: "나 자신과 마음", timing: "시기와 변화", today: "오늘과 이번 주" },
+    topicGroups: { love: "사랑과 사람", person: "특정한 사람에 대해", work: "일과 돈", self: "나 자신과 마음", timing: "시기와 변화", today: "오늘과 이번 주" },
     remainingToday: (left: number, limit: number) => `오늘 ${limit}개 중 ${left}개 남음`,
     subscribeButton: "구독하기",
     subscribing: "처리 중...",
@@ -526,6 +526,13 @@ export const ko = {
     restoreSuccess: (limit: number) => `구독을 복원했어요! 이제 하루 ${limit}개까지 질문할 수 있어요.`,
     restoreNotFound: "복원할 구독을 찾지 못했어요.",
     purchaseErrorDefault: "결제 중 문제가 생겼어요. 잠시 후 다시 시도해주세요.",
+    personBadge: "구독",
+    personLocked: "특정한 사람에 대해 묻기는 구독에서 열려요. 그 사람의 생년월일로 두 사람의 기운이 어떻게 만나는지 읽어 드려요.",
+    personFormHeading: "그 사람에 대해 묻기",
+    personFormIntro: "그 사람의 생년월일로 두 사람의 기운이 어떻게 만나는지 읽어요. 입력한 정보는 이 답변에만 쓰고 저장하지 않아요.",
+    personFormNote: "그 사람의 마음을 단정하거나 관계의 끝을 예언하지 않아요. 두 사람의 리듬과 내가 해 볼 수 있는 것을 알려 드려요.",
+    personFormNext: "질문 고르기",
+    personVerifyError: "구독을 확인하지 못했어요. 잠시 후 다시 시도해 주세요.",
   },
 
   report: {

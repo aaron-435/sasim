@@ -10,7 +10,7 @@
  */
 
 import OpenAI from "openai";
-import { buildQASystemPrompt, type QAContext } from "./qaPrompts";
+import { buildPersonQASystemPrompt, buildQASystemPrompt, type PersonQAContext, type QAContext } from "./qaPrompts";
 import { logLlmUsage } from "./llmUsage";
 
 const client = new OpenAI({
@@ -24,8 +24,16 @@ const client = new OpenAI({
 const QA_MODEL = "gpt-5.4-mini";
 
 export async function getQAAnswer(ctx: QAContext, sessionId?: string): Promise<{ lines: string[] }> {
-  const systemPrompt = buildQASystemPrompt(ctx);
+  return runQA(buildQASystemPrompt(ctx), sessionId);
+}
 
+/** "그 사람에 대해 묻기" — same call and same "qa" usage-log endpoint, so it shares the daily
+ * Q&A quota (lib/qaQuota.ts counts those rows). */
+export async function getPersonQAAnswer(ctx: PersonQAContext, sessionId?: string): Promise<{ lines: string[] }> {
+  return runQA(buildPersonQASystemPrompt(ctx), sessionId);
+}
+
+async function runQA(systemPrompt: string, sessionId?: string): Promise<{ lines: string[] }> {
   const completion = await client.chat.completions.create({
     model: QA_MODEL,
     temperature: 0.8,

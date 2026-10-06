@@ -489,7 +489,7 @@ export const en: typeof ko = {
     subcategoryHeading: "Pick the question you're curious about",
     moreQuestions: (n: number) => `Show ${n} more questions`,
     categoryHeading: "Narrow it down a bit more",
-    topicGroups: { love: "Love & People", work: "Work & Money", self: "You & Your Wellbeing", timing: "Timing & Change", today: "Today & This Week" },
+    topicGroups: { love: "Love & People", person: "About someone", work: "Work & Money", self: "You & Your Wellbeing", timing: "Timing & Change", today: "Today & This Week" },
     remainingToday: (left: number, limit: number) => `${left} of ${limit} left today`,
     subscribeButton: "Subscribe",
     subscribing: "Processing...",
@@ -499,6 +499,13 @@ export const en: typeof ko = {
     restoreSuccess: (limit: number) => `Your subscription is restored! You can now ask up to ${limit} questions a day.`,
     restoreNotFound: "We couldn't find a subscription to restore.",
     purchaseErrorDefault: "There was a problem with the purchase. Please try again shortly.",
+    personBadge: "Pro",
+    personLocked: "Asking about someone opens with a subscription. From their birth date, we read how your two charts meet.",
+    personFormHeading: "Ask about someone",
+    personFormIntro: "From their birth date, we read how your two charts meet. What you enter is used for this answer only and is never saved.",
+    personFormNote: "We won't claim to know what they feel or predict how things end. You'll see how your rhythms meet and what you can try.",
+    personFormNext: "Choose a question",
+    personVerifyError: "We couldn't confirm your subscription. Please try again in a moment.",
   },
 
   report: {

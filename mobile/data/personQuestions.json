@@ -1,0 +1,141 @@
+{
+  "meta": {
+    "note": "그 사람에 대해 묻기(구독) 질문 목록. lib/personQuestions.json과 mobile/data/personQuestions.json은 같은 파일이어야 한다. 서버는 id로만 질문을 받는다. 상대의 마음을 단정하거나 관계의 결말을 묻는 질문은 넣지 않는다."
+  },
+  "category": {
+    "id": "person",
+    "name_ko": "특정한 사람에 대해",
+    "name_en": "About someone",
+    "name_es": "Sobre una persona",
+    "subcategories": [
+      {
+        "id": "person_pair",
+        "name_ko": "그 사람과 나",
+        "name_en": "This person and me",
+        "name_es": "Esa persona y yo",
+        "questions": [
+          {
+            "id": "person_01",
+            "text_ko": "그 사람과 나는 어떤 기운으로 만나고 있을까?",
+            "text_en": "What kind of energy are this person and I meeting with?",
+            "text_es": "¿Con qué energía nos estamos encontrando esta persona y yo?"
+          },
+          {
+            "id": "person_02",
+            "text_ko": "그 사람은 타고나길 어떤 성향일까?",
+            "text_en": "What is this person's natural temperament?",
+            "text_es": "¿Cómo es el temperamento natural de esta persona?"
+          },
+          {
+            "id": "person_03",
+            "text_ko": "그 사람과 대화가 잘 통하려면 어떻게 말하면 좋을까?",
+            "text_en": "How can I talk so this person and I understand each other better?",
+            "text_es": "¿Cómo puedo hablarle para que nos entendamos mejor?"
+          },
+          {
+            "id": "person_04",
+            "text_ko": "우리 둘이 자주 엇갈리는 지점은 어디일까?",
+            "text_en": "Where do the two of us tend to miss each other?",
+            "text_es": "¿En qué solemos desencontrarnos?"
+          },
+          {
+            "id": "person_05",
+            "text_ko": "그 사람과 부딪혔을 때 어떻게 풀면 좋을까?",
+            "text_en": "When we clash, how can we work it through?",
+            "text_es": "Cuando chocamos, ¿cómo podemos resolverlo?"
+          },
+          {
+            "id": "person_06",
+            "text_ko": "내가 그 사람에게 줄 수 있는 건 뭘까?",
+            "text_en": "What can I bring to this person?",
+            "text_es": "¿Qué puedo aportarle a esta persona?"
+          },
+          {
+            "id": "person_07",
+            "text_ko": "그 사람에게서 내가 배울 수 있는 건 뭘까?",
+            "text_en": "What can I learn from this person?",
+            "text_es": "¿Qué puedo aprender de esta persona?"
+          },
+          {
+            "id": "person_08",
+            "text_ko": "그 사람은 어떤 방식으로 마음을 표현하는 편일까?",
+            "text_en": "How does this person tend to show what they feel?",
+            "text_es": "¿Cómo suele expresar esta persona lo que siente?"
+          },
+          {
+            "id": "person_09",
+            "text_ko": "그 사람이 편안하게 느끼는 관계의 거리는 어느 정도일까?",
+            "text_en": "How much closeness does this person tend to feel comfortable with?",
+            "text_es": "¿Cuánta cercanía suele resultarle cómoda a esta persona?"
+          },
+          {
+            "id": "person_10",
+            "text_ko": "그 사람에게 부담을 주지 않고 다가가려면 어떻게 하면 좋을까?",
+            "text_en": "How can I get closer without putting pressure on this person?",
+            "text_es": "¿Cómo puedo acercarme sin presionar a esta persona?"
+          },
+          {
+            "id": "person_11",
+            "text_ko": "이 관계에서 내가 조심하면 좋을 습관은 뭘까?",
+            "text_en": "Which habit of mine is worth watching in this relationship?",
+            "text_es": "¿Qué hábito mío conviene cuidar en esta relación?"
+          },
+          {
+            "id": "person_12",
+            "text_ko": "그 사람과 함께 일한다면 어떤 역할 분담이 잘 맞을까?",
+            "text_en": "If we work together, how should we split the roles?",
+            "text_es": "Si trabajamos en equipo, ¿cómo conviene repartir los roles?"
+          },
+          {
+            "id": "person_13",
+            "text_ko": "그 사람과 돈이나 계획을 함께 정할 때 무엇을 먼저 맞추면 좋을까?",
+            "text_en": "When we decide money or plans together, what should we align on first?",
+            "text_es": "Cuando decidimos dinero o planes en común, ¿en qué conviene ponernos de acuerdo primero?"
+          },
+          {
+            "id": "person_14",
+            "text_ko": "그 사람이 힘들 때 어떻게 곁에 있어 주면 좋을까?",
+            "text_en": "When this person is going through a hard time, how can I be there?",
+            "text_es": "Cuando esta persona pasa por un mal momento, ¿cómo puedo acompañarla?"
+          },
+          {
+            "id": "person_15",
+            "text_ko": "그 사람의 기질이 반가워할 만한 배려는 어떤 걸까?",
+            "text_en": "What kind of care does this person's nature tend to welcome?",
+            "text_es": "¿Qué tipo de atención suele agradecer alguien con la naturaleza de esta persona?"
+          },
+          {
+            "id": "person_16",
+            "text_ko": "우리 둘이 함께할 때 잘 맞는 리듬은 어떤 걸까?",
+            "text_en": "What pace suits the two of us when we spend time together?",
+            "text_es": "¿Qué ritmo nos sienta bien cuando compartimos tiempo?"
+          },
+          {
+            "id": "person_17",
+            "text_ko": "서운한 마음을 그 사람에게 어떻게 전하면 좋을까?",
+            "text_en": "How can I tell this person that something hurt me?",
+            "text_es": "¿Cómo puedo decirle a esta persona que algo me dolió?"
+          },
+          {
+            "id": "person_18",
+            "text_ko": "이 관계에서 내가 지치지 않으려면 어떻게 하면 좋을까?",
+            "text_en": "How can I keep from wearing myself out in this relationship?",
+            "text_es": "¿Cómo evito desgastarme en esta relación?"
+          },
+          {
+            "id": "person_19",
+            "text_ko": "요즘 내 흐름은 그 사람과의 관계에 어떤 영향을 줄까?",
+            "text_en": "How is my current phase shaping this relationship?",
+            "text_es": "¿Cómo influye mi etapa actual en esta relación?"
+          },
+          {
+            "id": "person_20",
+            "text_ko": "우리가 서로 더 잘 맞춰 가려면 무엇부터 해 보면 좋을까?",
+            "text_en": "Where could we start to get more in sync?",
+            "text_es": "¿Por dónde podemos empezar para entendernos mejor?"
+          }
+        ]
+      }
+    ]
+  }
+}
