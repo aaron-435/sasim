@@ -121,3 +121,67 @@ export function findCurrentMonthTerm(birthUtc: Date): { termIndex: number; cross
   }
   return { termIndex: current.termIndex, crossingUtc: current.crossingUtc, nextCrossingUtc: next.crossingUtc };
 }
+
+// ------------------------------------------------------------------
+// 24절기 달력 (2026-10-06, 앱의 절기 알림용). 위 계산을 그대로 쓰고 범위만 넓힌다:
+// 황경 0°부터 15°마다 24개 절기를, 주어진 시각부터 앞으로 `days`일 안에 드는 것만
+// 시각 순으로 돌려준다. 키는 표시용이 아닌 내부 키(병음)이고, 이름·문구는 앱이 입힌다.
+// 계절 오행은 그 절기가 속한 절월의 월지 오행이다(입춘·우수 = 인월 = 목 …).
+// ------------------------------------------------------------------
+
+export const SOLAR_TERM_KEYS: Record<number, string> = {
+  0: "chunfen", 15: "qingming", 30: "guyu", 45: "lixia", 60: "xiaoman", 75: "mangzhong",
+  90: "xiazhi", 105: "xiaoshu", 120: "dashu", 135: "liqiu", 150: "chushu", 165: "bailu",
+  180: "qiufen", 195: "hanlu", 210: "shuangjiang", 225: "lidong", 240: "xiaoxue", 255: "daxue",
+  270: "dongzhi", 285: "xiaohan", 300: "dahan", 315: "lichun", 330: "yushui", 345: "jingzhe",
+};
+
+const BRANCH_SEASON_ELEMENT: Record<string, "wood" | "fire" | "earth" | "metal" | "water"> = {
+  인: "wood", 묘: "wood", 진: "earth", 사: "fire", 오: "fire", 미: "earth",
+  신: "metal", 유: "metal", 술: "earth", 해: "water", 자: "water", 축: "earth",
+};
+
+export interface SolarTermEvent {
+  key: string;
+  longitude: number;
+  /** Exact crossing time, ISO UTC. */
+  at: string;
+  /** True for the 12 terms that open a saju month (입춘, 경칩 …). */
+  opensMonth: boolean;
+  /** Element of the saju month this term belongs to. */
+  seasonElement: "wood" | "fire" | "earth" | "metal" | "water";
+}
+
+export function upcomingSolarTerms(fromUtc: Date, days = 366): SolarTermEvent[] {
+  const end = fromUtc.getTime() + days * 86400000;
+  const year = fromUtc.getUTCFullYear();
+  const events: SolarTermEvent[] = [];
+  for (const y of [year - 1, year, year + 1, year + 2]) {
+    for (let longitude = 0; longitude < 360; longitude += 15) {
+      // 춘분(3/20 무렵)에서 하루 ~0.9856°씩 — 뉴턴 반복의 출발점일 뿐이다.
+      const guess = new Date(Date.UTC(y, 2, 20) + (longitude / 0.9856002) * 86400000);
+      const crossing = findSolarLongitudeCrossing(longitude, guess);
+      const t = crossing.getTime();
+      if (t < fromUtc.getTime() || t >= end) continue;
+      const monthStart = (315 + 30 * Math.floor((((longitude - 315) % 360) + 360) % 360 / 30)) % 360;
+      const monthTerm = MONTH_TERMS.find((m) => m.longitude === monthStart)!;
+      events.push({
+        key: SOLAR_TERM_KEYS[longitude],
+        longitude,
+        at: crossing.toISOString(),
+        opensMonth: monthStart === longitude,
+        seasonElement: BRANCH_SEASON_ELEMENT[monthTerm.branch],
+      });
+    }
+  }
+  // 같은 절기가 두 출발 연도에서 같은 시각으로 잡힐 수 있어 시각으로 한 번 거른다.
+  const seen = new Set<string>();
+  return events
+    .sort((a, b) => a.at.localeCompare(b.at))
+    .filter((e) => {
+      const k = `${e.key}|${e.at.slice(0, 16)}`;
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+}

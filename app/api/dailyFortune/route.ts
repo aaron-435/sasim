@@ -19,12 +19,17 @@
  * 본인의 일지(그룹)를 기준으로 삼기 때문(lib/twelveStages.ts 참고). 필수로
  * 만들지 않은 이유는 lib/dailyFortune.ts의 헤더 주석 참고 — OTA 배포 전
  * 구버전 앱이 이 값을 안 보내도 나머지 응답은 그대로 받아야 한다.
+ *
+ * 2026-10-06: 선택 파라미터 elements(원국 오행 비율 5개, 목·화·토·금·수 순, 쉼표)를
+ * 받으면 daily 응답에 elementColor(보완 오행 키 + 오늘 천간 오행)를 더한다
+ * (lib/elementColor.ts). 없거나 모양이 틀리면 필드만 빠지고 나머지는 그대로다.
  * ------------------------------------------------------------------
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
 import { getDailyFortune, getWeeklyFortune, getMonthFortune } from "@/lib/dailyFortune";
+import { computeElementColor, parseElementsParam } from "@/lib/elementColor";
 
 export async function GET(req: NextRequest) {
   const limited = rateLimitOrResponse(req, "daily-fortune-get", 30, 10 * 60 * 1000, "요청이 많아 잠시 후 다시 시도해주세요.");
@@ -49,7 +54,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ month });
     }
     const daily = await getDailyFortune(selfDayMasterChar, selfDayBranch);
-    return NextResponse.json({ daily });
+    const elements = parseElementsParam(req.nextUrl.searchParams.get("elements"));
+    const elementColor = elements ? computeElementColor(elements, daily.dayMaster.char, daily.dayMaster.branch) : null;
+    return NextResponse.json({ daily: elementColor ? { ...daily, elementColor } : daily });
   } catch (err) {
     console.error("[api/dailyFortune] failed", err);
     return NextResponse.json({ error: "운세 계산 중 오류가 발생했습니다." }, { status: 500 });

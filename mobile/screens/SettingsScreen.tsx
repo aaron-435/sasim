@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LOCALE_LABELS, useLocale, useStrings, type Locale } from "../lib/i18n";
 import { getNotificationPreference, setNotificationPreference, type NotificationPreference } from "../lib/notificationPreference";
 import { applyNotificationPreference } from "../lib/routineNotification";
+import { getSolarTermPreference, refreshSolarTermNotifications, setSolarTermPreference } from "../lib/solarTermNotification";
 import { hasQaProEntitlement, restoreReports } from "../lib/purchases";
 import { getSavedPair, unlinkPair, type SavedPair } from "../lib/pairs";
 import { track } from "../lib/analytics";
@@ -20,15 +21,49 @@ const NOTIFICATION_OPTIONS: NotificationPreference[] = ["off", "daily", "weekly"
 
 // Same order as the first-run language picker: target markets (EN, ES) first.
 const LANGUAGE_ORDER: Locale[] = ["en", "es", "ko"];
-export default function SettingsScreen({ onBack, onLogout }: { onBack: () => void; onLogout: () => void }) {
+export default function SettingsScreen({
+  onBack,
+  onLogout,
+  selfDayMasterChar = null,
+}: {
+  onBack: () => void;
+  onLogout: () => void;
+  /** For re-planning the solar-term notifications (their text depends on the Day Master). */
+  selfDayMasterChar?: string | null;
+}) {
   const strings = useStrings();
   const { locale, setLocale } = useLocale();
   const [notificationPref, setNotificationPrefState] = useState<NotificationPreference | null>(null);
   const [applying, setApplying] = useState(false);
   const [permissionDenied, setPermissionDenied] = useState(false);
+  // Solar-term notifications: their own switch, silenced too while reminders are "off".
+  const [solarTermsOn, setSolarTermsOn] = useState<boolean | null>(null);
+  const [solarApplying, setSolarApplying] = useState(false);
+
+  async function toggleSolarTerms() {
+    if (solarApplying || solarTermsOn === null || notificationPref === "off") return;
+    const next = !solarTermsOn;
+    setSolarApplying(true);
+    setPermissionDenied(false);
+    setSolarTermsOn(next);
+    try {
+      await setSolarTermPreference(next);
+      const ok = await refreshSolarTermNotifications(locale, selfDayMasterChar, { askPermission: next });
+      if (!ok) {
+        setPermissionDenied(true);
+        setSolarTermsOn(false);
+        await setSolarTermPreference(false);
+      } else {
+        track("solar_term_toggle", { value: next ? 1 : 0 });
+      }
+    } finally {
+      setSolarApplying(false);
+    }
+  }
 
   useEffect(() => {
     getNotificationPreference().then(setNotificationPrefState);
+    getSolarTermPreference().then(setSolarTermsOn);
     getSavedPair().then(setPair);
   }, []);
 
@@ -67,6 +102,8 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
         setNotificationPrefState(previous);
       } else {
         await setNotificationPreference(pref);
+        // "off" silences the solar terms too; turning reminders back on brings them back.
+        await refreshSolarTermNotifications(locale, selfDayMasterChar);
       }
     } finally {
       setApplying(false);
@@ -166,6 +203,33 @@ export default function SettingsScreen({ onBack, onLogout }: { onBack: () => voi
             </Pressable>
           ))}
         </View>
+        {solarTermsOn !== null && (
+          <View style={[styles.optionList, styles.solarRow]}>
+            <Pressable
+              style={[styles.optionRich, notificationPref === "off" && styles.optionDisabled]}
+              onPress={toggleSolarTerms}
+              disabled={solarApplying || notificationPref === "off"}
+              accessibilityRole="switch"
+              accessibilityState={{ checked: solarTermsOn && notificationPref !== "off", disabled: solarApplying || notificationPref === "off" }}
+              aria-checked={solarTermsOn && notificationPref !== "off"}
+              accessibilityLabel={`${strings.solarTerms.settingLabel}. ${notificationPref === "off" ? strings.solarTerms.settingDisabledDescription : strings.solarTerms.settingDescription}`}
+            >
+              <View style={styles.optionTextWrap}>
+                <Text style={styles.optionLabel}>{strings.solarTerms.settingLabel}</Text>
+                <Text style={styles.optionDescription}>
+                  {notificationPref === "off" ? strings.solarTerms.settingDisabledDescription : strings.solarTerms.settingDescription}
+                </Text>
+              </View>
+              {solarApplying ? (
+                <ActivityIndicator size="small" color={COLORS.gold} />
+              ) : (
+                <View style={[styles.toggleTrack, solarTermsOn && notificationPref !== "off" && styles.toggleTrackOn]}>
+                  <View style={[styles.toggleThumb, solarTermsOn && notificationPref !== "off" && styles.toggleThumbOn]} />
+                </View>
+              )}
+            </Pressable>
+          </View>
+        )}
         {permissionDenied && <Text style={styles.warning}>{strings.settings.notificationPermissionDenied}</Text>}
 
         {pair?.status === "linked" && (
@@ -255,6 +319,12 @@ const styles = StyleSheet.create({
     borderColor: "rgba(111,169,139,0.4)",
   },
   optionTextWrap: { flex: 1, gap: 3 },
+  solarRow: { marginTop: 10 },
+  optionDisabled: { opacity: 0.55 },
+  toggleTrack: { width: 40, height: 24, borderRadius: 12, backgroundColor: COLORS.disabledBg, borderWidth: 1, borderColor: COLORS.border, padding: 2, justifyContent: "center" },
+  toggleTrackOn: { backgroundColor: COLORS.gold, borderColor: COLORS.gold },
+  toggleThumb: { width: 18, height: 18, borderRadius: 9, backgroundColor: COLORS.subheadline },
+  toggleThumbOn: { backgroundColor: COLORS.ctaText, alignSelf: "flex-end" },
   optionLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.headline },
   optionLabelActive: { color: COLORS.gold },
   optionDescription: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.footer },

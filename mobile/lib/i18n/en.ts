@@ -781,4 +781,35 @@ export const en: typeof ko = {
     safetyLines: ["In the US, call or text 988 (Suicide & Crisis Lifeline, 24/7).", "Outside the US, you can find a local crisis line at findahelpline.com."],
     safetyReportNote: "This month, instead of a pattern report, here's where you can find support first.",
   },
+
+  elementColor: {
+    title: "Your color today",
+    note: "A mood pick from your chart and today's energy.",
+    shareButton: "Share this color",
+    shareEyebrow: "Today's element color",
+  },
+
+  solarTerms: {
+    settingLabel: "Season changes",
+    settingDescription: "A note on the morning of each of the 24 solar terms, when the season's energy shifts",
+    settingDisabledDescription: "Turn on reminders above to get these",
+  },
+
+  lessons: {
+    entryEyebrow: "10-day lessons",
+    entryTitle: "Your Day Master in 10 days",
+    entryBody: (name: string) => `One short lesson a day to get to know your ${name} Day Master.`,
+    pageTitle: "Your Day Master in 10 days",
+    progress: (read: number, total: number) => `${read} of ${total} read`,
+    dayLabel: (n: number) => `Day ${n}`,
+    todayBadge: "Today's lesson",
+    readBadge: "Read",
+    lockedTomorrow: "Opens tomorrow",
+    lockedLater: "Opens in order",
+    tryTodayLabel: "Try today",
+    markRead: "I've read it",
+    backToList: "All lessons",
+    nextTomorrow: "The next lesson opens tomorrow.",
+    allDone: "You've read all 10. Open any of them again whenever you like.",
+  },
 };

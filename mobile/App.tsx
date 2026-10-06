@@ -37,6 +37,8 @@ import { scheduleDecadeTransitionNotification } from "./lib/decadeNotification";
 import { setAnalyticsLocale, track } from "./lib/analytics";
 import { DEFAULT_NOTIFICATION_PREFERENCE, getStoredNotificationPreference, setNotificationPreference } from "./lib/notificationPreference";
 import { applyNotificationPreference } from "./lib/routineNotification";
+import { clearSolarTermPreference, refreshSolarTermNotifications } from "./lib/solarTermNotification";
+import { clearLessonProgress } from "./lib/lessonProgress";
 import { dominantElementFrom } from "./lib/elements";
 import { LocaleProvider, useLocale, useStrings } from "./lib/i18n";
 import { configurePurchases, hasQaProEntitlement } from "./lib/purchases";
@@ -71,6 +73,7 @@ const ONBOARDING_STEPS: ReadonlySet<StepId> = new Set(["language", "intro", "ver
 // recorded when one is tapped.
 function notificationKind(identifier: string): string {
   if (identifier.includes("decade")) return "decade";
+  if (identifier.includes("solar-term")) return "solar_term";
   if (identifier.includes("weekly")) return "weekly";
   if (identifier.includes("daily")) return "daily";
   return "other";
@@ -239,6 +242,14 @@ function AppContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeData]);
 
+  // The 24 solar-term notifications (solarTermNotification.ts): re-planned whenever a reading
+  // is available or the language changes, so their fixed text stays in the current language.
+  // Runs after the default routine preference below has had a chance to ask for permission.
+  useEffect(() => {
+    if (!homeData) return;
+    refreshSolarTermNotifications(locale, dayMasterCharOf(homeData));
+  }, [homeData, locale]);
+
   // First time a user reaches Home, no explicit Settings choice exists yet — apply and
   // persist the default (see notificationPreference.ts) so it's actually scheduled, not
   // just what Settings would show if opened. A later explicit choice is never overwritten.
@@ -249,6 +260,8 @@ function AppContent() {
       if (stored !== null) return;
       await setNotificationPreference(DEFAULT_NOTIFICATION_PREFERENCE);
       await applyNotificationPreference(DEFAULT_NOTIFICATION_PREFERENCE, strings, await hasQaProEntitlement());
+      // Permission may have just been granted — plan the solar terms now instead of next launch.
+      await refreshSolarTermNotifications(locale, dayMasterCharOf(homeData));
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeData]);
@@ -271,6 +284,9 @@ function AppContent() {
     clearSavedInvites();
     clearPair();
     clearJournal();
+    clearLessonProgress();
+    clearSolarTermPreference();
+    refreshSolarTermNotifications(locale, null);
     setSavedReport(null);
     setHomeData(null);
     setNickname("");
@@ -555,9 +571,11 @@ function AppContent() {
         />
       )}
 
-      {step === "sajuLearn" && <SajuLearnScreen onBack={() => setStep("home")} />}
+      {step === "sajuLearn" && <SajuLearnScreen sajuType={homeData?.sajuResult.sajuType ?? null} onBack={() => setStep("home")} />}
 
-      {step === "settings" && <SettingsScreen onBack={() => setStep("home")} onLogout={handleLogout} />}
+      {step === "settings" && (
+        <SettingsScreen onBack={() => setStep("home")} onLogout={handleLogout} selfDayMasterChar={homeData ? dayMasterCharOf(homeData) : null} />
+      )}
 
       {step === "type" && homeData?.sajuResult.sajuType && (
         <TypeScreen
@@ -585,6 +603,7 @@ function AppContent() {
         <FortuneScreen
           selfDayMasterChar={dayMasterCharOf(homeData)}
           selfDayBranch={dayBranchOf(homeData)}
+          elements={homeData.sajuResult.elements ?? null}
           onOpenYearReport={() => setStep("yearReport")}
           onBack={() => setStep("home")}
         />

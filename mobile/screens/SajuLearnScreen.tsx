@@ -1,8 +1,13 @@
+import { useState } from "react";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import ArrowRight from "lucide-react-native/icons/arrow-right";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useStrings } from "../lib/i18n";
+import { useLocale, useStrings } from "../lib/i18n";
+import { SAJU_TYPE_CONTENT } from "../lib/sajuTypeContent";
+import type { SajuType } from "../lib/sajuType";
+import DayMasterLessonsScreen from "./DayMasterLessonsScreen";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
 
@@ -11,9 +16,16 @@ import { FONTS } from "../theme/fonts";
 // this screen holds the longer "how to use Fatesaid" walkthrough plus a proper Saju
 // primer (Four Pillars, Day Master, Five Elements, decade cycles) for anyone who taps
 // through wanting more. See lib/i18n/*.ts's sajuLearn section for the copy.
-export default function SajuLearnScreen({ onBack }: { onBack: () => void }) {
+// 2026-10-06: the "Your Day Master in 10 days" lessons open from a card at the top (a
+// sub-view of this screen, like GoodDays inside Fortune), when the reading has a saju type.
+export default function SajuLearnScreen({ sajuType, onBack }: { sajuType?: SajuType | null; onBack: () => void }) {
   const strings = useStrings();
+  const { locale } = useLocale();
   const s = strings.sajuLearn;
+  const [showLessons, setShowLessons] = useState(false);
+
+  if (showLessons && sajuType) return <DayMasterLessonsScreen sajuType={sajuType} onBack={() => setShowLessons(false)} />;
+  const archetypeName = sajuType ? (SAJU_TYPE_CONTENT[locale] ?? SAJU_TYPE_CONTENT.en).archetypes[sajuType.archetype]?.name ?? "" : "";
 
   return (
     <SafeAreaView style={styles.root}>
@@ -24,6 +36,22 @@ export default function SajuLearnScreen({ onBack }: { onBack: () => void }) {
         </Pressable>
 
         <Text style={styles.pageTitle}>{s.pageTitle}</Text>
+
+        {sajuType && (
+          <Pressable
+            style={styles.lessonCard}
+            onPress={() => setShowLessons(true)}
+            accessibilityRole="button"
+            accessibilityLabel={`${strings.lessons.entryTitle}. ${strings.lessons.entryBody(archetypeName)}`}
+          >
+            <Text style={styles.lessonEyebrow}>{strings.lessons.entryEyebrow}</Text>
+            <Text style={styles.lessonTitle}>{strings.lessons.entryTitle}</Text>
+            <Text style={styles.lessonBody}>{strings.lessons.entryBody(archetypeName)}</Text>
+            <View style={styles.lessonCtaRow}>
+              <ArrowRight size={16} strokeWidth={2} color={COLORS.gold} />
+            </View>
+          </Pressable>
+        )}
 
         <View style={styles.section}>
           <Text style={styles.sectionHeading}>{s.usageHeading}</Text>
@@ -76,6 +104,18 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
     marginBottom: 24,
   },
+  lessonCard: {
+    borderWidth: 1,
+    borderColor: "rgba(111,169,139,0.4)",
+    backgroundColor: "rgba(111,169,139,0.08)",
+    borderRadius: 14,
+    padding: 18,
+    marginBottom: 8,
+  },
+  lessonEyebrow: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 0.2, color: COLORS.gold },
+  lessonTitle: { fontFamily: FONTS.display, fontSize: 20, lineHeight: 27, color: COLORS.headline, marginTop: 6 },
+  lessonBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, marginTop: 6 },
+  lessonCtaRow: { alignItems: "flex-end", marginTop: 8 },
   divider: { height: 1, backgroundColor: COLORS.border, marginVertical: 8 },
   section: { marginTop: 24 },
   sectionHeading: {

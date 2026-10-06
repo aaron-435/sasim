@@ -77,7 +77,7 @@ export type Stem = (typeof STEMS)[number];
 export type Branch = (typeof BRANCHES)[number];
 type ElementKey = "wood" | "fire" | "earth" | "metal" | "water";
 
-const STEM_ELEMENT: Record<Stem, ElementKey> = {
+export const STEM_ELEMENT: Record<Stem, ElementKey> = {
   갑: "wood", 을: "wood",
   병: "fire", 정: "fire",
   무: "earth", 기: "earth",
@@ -85,7 +85,7 @@ const STEM_ELEMENT: Record<Stem, ElementKey> = {
   임: "water", 계: "water",
 };
 
-const BRANCH_ELEMENT: Record<Branch, ElementKey> = {
+export const BRANCH_ELEMENT: Record<Branch, ElementKey> = {
   인: "wood", 묘: "wood",
   사: "fire", 오: "fire",
   진: "earth", 술: "earth", 축: "earth", 미: "earth",

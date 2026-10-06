@@ -808,4 +808,35 @@ export const ko = {
     safetyLines: ["자살예방상담전화 1393 (24시간, 국번 없이)", "정신건강위기상담전화 1577-0199 (24시간)"],
     safetyReportNote: "이 달에는 패턴 리포트 대신 도움받을 수 있는 곳을 먼저 알려 드려요.",
   },
+
+  elementColor: {
+    title: "오늘 나를 채우는 색",
+    note: "내 사주와 오늘 기운을 함께 보고 고른 무드 색이에요.",
+    shareButton: "이 색 공유하기",
+    shareEyebrow: "오늘의 원소 컬러",
+  },
+
+  solarTerms: {
+    settingLabel: "절기 알림",
+    settingDescription: "24절기마다 계절의 기운이 바뀌는 날 아침에 알려 드려요",
+    settingDisabledDescription: "위에서 알림을 켜면 받을 수 있어요",
+  },
+
+  lessons: {
+    entryEyebrow: "10일 레슨",
+    entryTitle: "10일 동안 내 일간 알아보기",
+    entryBody: (name: string) => `하루 한 장, ${name} 일간을 이해하는 짧은 레슨이에요.`,
+    pageTitle: "10일 동안 내 일간 알아보기",
+    progress: (read: number, total: number) => `${total}장 중 ${read}장 읽음`,
+    dayLabel: (n: number) => `${n}일째`,
+    todayBadge: "오늘의 레슨",
+    readBadge: "읽음",
+    lockedTomorrow: "내일 열려요",
+    lockedLater: "차례대로 열려요",
+    tryTodayLabel: "오늘 해 볼 것",
+    markRead: "다 읽었어요",
+    backToList: "레슨 목록",
+    nextTomorrow: "다음 레슨은 내일 열려요.",
+    allDone: "10장을 모두 읽었어요. 언제든 다시 펼쳐 볼 수 있어요.",
+  },
 };

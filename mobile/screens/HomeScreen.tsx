@@ -15,6 +15,8 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FourPillarsChart, { parseFourPillars } from "../components/FourPillarsChart";
 import PatternBackground from "../components/PatternBackground";
+import ElementColorCard from "../components/ElementColorCard";
+import type { ElementColor } from "../lib/elementColorContent";
 import { DAILY_FORTUNE_CONTENT, getOverview } from "../lib/dailyFortuneContent";
 import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
 import { useLocale, useStrings } from "../lib/i18n";
@@ -148,6 +150,8 @@ export default function HomeScreen({
   const [hasCompatReports, setHasCompatReports] = useState(false);
   // Couple mode: only when this device is linked (or waiting for the partner to link).
   const [couple, setCouple] = useState<CoupleDaily | null>(null);
+  // "오늘 나를 채우는 색" — free for everyone, from the same daily request as the hero.
+  const [elementColor, setElementColor] = useState<ElementColor | null>(null);
 
   useEffect(() => {
     getLastQuestion().then(setLastQuestion);
@@ -176,8 +180,9 @@ export default function HomeScreen({
     loadedDay.current = localDateKey();
     setToday({ kind: "loading" });
     (async () => {
-      const [isEntitled, fortune] = await Promise.all([hasQaProEntitlement(), fetchTodayFortune(selfDayMasterChar, selfDayBranch)]);
+      const [isEntitled, fortune] = await Promise.all([hasQaProEntitlement(), fetchTodayFortune(selfDayMasterChar, selfDayBranch, elements)]);
       if (!alive) return;
+      setElementColor(fortune?.elementColor ?? null);
       if (!isEntitled) {
         // The free teaser works without the reading (a failed request just drops the
         // rhythm line). It names today's rhythm and keeps the why / what-to-do behind Pro.
@@ -195,7 +200,7 @@ export default function HomeScreen({
     return () => {
       alive = false;
     };
-  }, [selfDayMasterChar, selfDayBranch, reloadKey]);
+  }, [selfDayMasterChar, selfDayBranch, elements, reloadKey]);
 
   // One authored moment: the hero settles into place. Everything
   // starts visible, so nothing is lost if an animation never runs, and Reduce Motion
@@ -392,6 +397,8 @@ export default function HomeScreen({
             </Animated.View>
           </Pressable>
           )}
+
+          {elementColor && <ElementColorCard color={elementColor} compact onPress={onOpenFortune} />}
 
           {couple && couple.kind !== "gone" && (
             <Pressable

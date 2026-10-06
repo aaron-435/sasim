@@ -30,6 +30,8 @@ import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 import FeedbackRow from "../components/FeedbackRow";
+import ElementColorCard from "../components/ElementColorCard";
+import { elementsParam, type ElementColor } from "../lib/elementColorContent";
 import { track, trackOnce } from "../lib/analytics";
 
 // Daily content blocks that fade/slide in, one after another, once the seal card below
@@ -55,6 +57,8 @@ type DayFortune = {
   compatibility: CompatibilityResult | null;
   lifeStageIndex: number;
   sinsalIndex: number | null;
+  /** Only on the daily payload, when the chart's element shares were sent (2026-10-06). */
+  elementColor?: ElementColor;
 };
 
 // 2026-09-16: "신년운세" Phase 1 — a third tab reusing the exact same subscription
@@ -230,11 +234,14 @@ async function shareOverview(title: string, rhythm: string, headline: string, bo
 export default function FortuneScreen({
   selfDayMasterChar,
   selfDayBranch,
+  elements,
   onOpenYearReport,
   onBack,
 }: {
   selfDayMasterChar: string | null;
   selfDayBranch: string | null;
+  /** The chart's element shares, for today's element color. */
+  elements?: Record<string, number> | null;
   onOpenYearReport: () => void;
   onBack: () => void;
 }) {
@@ -291,6 +298,8 @@ export default function FortuneScreen({
     const params = new URLSearchParams({ selfDayMasterChar: selfDayMasterChar ?? "" });
     if (mode) params.set("mode", mode);
     if (selfDayBranch) params.set("selfDayBranch", selfDayBranch);
+    const elementsValue = path === "dailyFortune" && mode === "daily" ? elementsParam(elements) : null;
+    if (elementsValue) params.set("elements", elementsValue);
     return `${API_BASE_URL}/api/${path}?${params.toString()}`;
   }
 
@@ -474,6 +483,7 @@ export default function FortuneScreen({
               <FeedbackRow surface="fortune" topic="free" />
             </View>
           )}
+          {freeOverview && daily?.elementColor && <ElementColorCard color={daily.elementColor} dateIso={daily.date} />}
           {freeOverview && daily && <JournalEntryCard dateIso={daily.date} onOpenJournal={() => setShowJournal(true)} />}
 
           <View style={styles.lockedCard}>
@@ -698,6 +708,9 @@ export default function FortuneScreen({
           </>
         )}
 
+        {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && revealed && daily.elementColor && (
+          <ElementColorCard color={daily.elementColor} dateIso={daily.date} />
+        )}
         {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && revealed && (
           <JournalEntryCard dateIso={daily.date} onOpenJournal={() => setShowJournal(true)} />
         )}
