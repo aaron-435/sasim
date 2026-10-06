@@ -181,8 +181,9 @@
 - [ ] A. (사용자 실행) 이전 배치 배포와 실기기 확인 — `TODO_2026-10-04.md`의 A·B에서 옮김
   - 순서·확인 항목은 `TODO_2026-10-04.md` A·B 그대로. 이번 작업을 배포하기 전에 먼저 끝내는 것을 권장.
 
-- [ ] B. (사용자 실행) Supabase SQL 실행
+- [x] B. (사용자 실행) Supabase SQL 실행
   - 1·5·6·7번이 `supabase/schema.sql`에 추가한 `events`, `compat_report_purchases`(궁합 리포트 구매 기록), `invites`, `pairs`를 SQL Editor에서 실행. 각 항목 배포 전에.
+  - QA(2026-10-07): 사용자가 프로덕션 SQL Editor에서 실행. service_role로 PostgREST `GET /rest/v1/<table>?limit=0` → 네 테이블 모두 200(실행 전 404). 프로덕션 `POST /api/events`(widget_tap, dev=true, anon_id `qa-check-0001`) → `{"ok":true,"stored":1}`, `events`에 행 1개 확인. anon 키로 events·invites·pairs 읽기 → 42501 permission denied(클라이언트 직접 접근 막힘).
 
 - [ ] C. (사용자 실행) 스토어·RevenueCat 설정
   - 구독: 7일 무료 체험(intro offer), 연간 요금제(가격 결정) — App Store Connect·Play Console 등록 후 RevenueCat 오퍼링에 연간 패키지 추가.
@@ -191,6 +192,7 @@
 
 - [ ] D. (사용자 실행) 개인정보 문서 갱신
   - 1번에서 만든 초안으로 개인정보처리방침(`app/privacy`)과 App Store 개인정보 라벨·Play 데이터 보안 양식에 "사용 데이터(이벤트)", 초대·커플 연결 데이터를 반영.
+  - 진행(2026-10-07): 방침·약관 본문(`lib/legalContent.ts` ko/en/es 6개)을 지금 코드 동작 기준으로 다시 씀 — 사용 기록, 다른 사람 정보(궁합·특정한 사람 질문·그룹 케미), 초대·커플 모드 저장 항목과 보관 기간, 저널(기기 저장, 월말 리포트 때만 전송), RevenueCat·Vercel 위탁, SAZU 삭제(자체 엔진), 구독 자동 갱신·무료 체험·환불(스토어 절차)·궁합 리포트 기기 저장 고지, 자살예방상담전화 109, 해외 위기 상담(en 988, es 988·024). QA: 루트 `npx tsc --noEmit` exit 0, `npm run lint` 경고·오류 없음, work-dev에서 `/privacy`·`/terms` ×(ko·en·es) 6개 페이지 200·새 날짜·새 문구 확인. 남은 것: 운영자(사업자) 정보 추가(사용자가 값 제공), App Store 개인정보 라벨·Play 데이터 보안 양식(`USER_ACTIONS_C_D.md` D-2·D-3).
 
 - [ ] E. (사용자 실행) 배포
   - 항목마다: 커밋 → `git push origin main` → Vercel Ready 확인 → OTA(`cd mobile && npx --yes eas-cli update --branch production --environment production --message "<항목>" --non-interactive`). 10번은 12월 1일 전.
@@ -236,3 +238,4 @@
 - (12번 중) 위젯 갤러리 이름·설명(app.json)은 영어 한 가지다. iOS 위젯 이름 현지화는 확장 InfoPlist.strings가 필요해 config plugin으로는 안 된다.
 - (12번 중) 위젯의 "오늘"은 기기 자정 기준, 리듬 값은 운세 API의 KST 날짜 기준이다(8번 발견 사항과 같은 문제). 미주 사용자는 저녁부터 다음 날(KST) 리듬이 위젯에 보일 수 있다.
 - (12번 중) mobile-web 회귀 중 프로덕션 응답 500이 1건 콘솔에 찍혔다(요청 미확인). 이번 변경은 서버 호출을 더하지 않았고 운세·Q&A·궁합 응답은 모두 정상이었다.
+- (D 중) `/privacy`·`/terms` 페이지의 `<title>`은 `?lang=`과 상관없이 한국어("이용약관 | Fatesaid")다(`app/privacy/page.tsx`의 `metadata`가 기본 언어 사전만 씀). 본문은 언어별로 맞게 나옴.

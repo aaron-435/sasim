@@ -5,8 +5,8 @@
  * app/privacy/page.tsx and app/terms/page.tsx (2026-09-02) so the body
  * text is translatable data instead of hardcoded JSX — same "fill in a
  * translated copy of this file later" pattern as lib/i18n/ (see
- * lib/i18n/README.md). Only `ko` is populated; `getLegalContent()`
- * falls back to it for any locale without its own file yet.
+ * lib/i18n/README.md). ko, en and es are all populated; `getLegalContent()`
+ * falls back to ko for any other locale.
  *
  * Inline `**bold**` markup is supported in `p`/`list` text (rendered by
  * components/LegalContentRenderer.jsx) — kept deliberately minimal
@@ -32,127 +32,174 @@ export interface LegalDocument {
   sections: LegalSection[];
 }
 
+// 2026-10-07: rewritten against what the app and server actually do now (native app, paid
+// subscription and one-time reports, self-hosted saju engine instead of SAZU, event log,
+// invites, couple mode, journal, other people's birth dates). Earlier drafts described a free
+// web-only beta. privacyEn/privacyEs and termsEn/termsEs are section-for-section translations
+// of these two — keep all three in step. Still a draft pending legal review.
 const privacyKo: LegalDocument = {
   title: "개인정보처리방침",
-  updatedAt: "2026년 8월 31일",
+  updatedAt: "2026년 10월 7일",
   sections: [
     {
       body: [
         {
           type: "p",
-          text: "“Fatesaid”(이하 “서비스”)는 이용자의 개인정보를 소중히 다루며, 「개인정보 보호법」 등 관련 법령을 준수합니다. 본 방침은 서비스가 어떤 개인정보를 수집하고, 어떻게 이용·보관·파기하는지 안내합니다.",
+          text: "“Fatesaid”(이하 “서비스”)는 웹사이트(fatesaidapp.com)와 모바일 앱으로 제공되며, 이용자의 개인정보를 「개인정보 보호법」 등 관련 법령에 따라 처리합니다. 본 방침은 서비스가 어떤 정보를 수집하고, 어디에 쓰고, 얼마나 보관하고, 어떻게 파기하는지 안내합니다.",
         },
         {
           type: "p",
           style: "highlight",
-          text: "서비스는 현재 베타 운영 단계이며, 아직 별도 사업자 등록 전입니다. 사업자 정보가 확정되는 대로 본 방침의 운영주체 정보를 갱신합니다.",
+          text: "서비스는 회원가입 없이 이용합니다. 이름, 이메일, 비밀번호, 전화번호는 수집하지 않으며, 결제 수단 정보(카드 번호 등)는 Apple·Google이 처리하고 서비스는 받지 않습니다.",
         },
       ],
     },
     {
-      heading: "1. 수집하는 개인정보 항목",
+      heading: "1. 수집하는 정보",
       body: [
-        { type: "p", text: "서비스는 사주 계산, 심리테스트 채점, AI 상담 응답 생성을 위해 아래 정보를 수집합니다." },
+        { type: "p", text: "**이용자가 직접 입력하는 정보**" },
         {
           type: "list",
           items: [
-            "**필수 입력 정보**: 생년월일, 성별, 출생 도시, 관심 분야(연애&애착 / 커리어&번아웃)",
-            "**선택 입력 정보**: 태어난 시간(모름으로 표시 가능)",
-            "**심리테스트 응답**: 30문항에 대한 선택·슬라이더 응답",
-            "**AI 상담 대화 내용**: 이용자가 챗봇과의 대화에서 직접 작성한 텍스트",
-            "**익명 세션 식별자**: 로그인 없이도 위 정보들을 하나의 이용 흐름으로 묶어 저장하기 위해 이용자 기기에서 임의로 생성되는 값(개인을 특정할 수 없음)",
-            "**자동 수집 정보**: 접속 로그, 접속 IP, 기기·브라우저 정보 (부정이용 방지 및 오류 대응 목적)",
+            "표시 이름(닉네임), 생년월일, 성별, 태어난 시간(선택, 모름 가능), 출생 도시(선택), 지금 궁금한 주제",
+            "심리테스트 응답(30문항 선택·슬라이더 응답)",
+            "AI 상담 대화에서 이용자가 작성한 글",
+            "사주 Q&A에서 고른 질문",
           ],
         },
-        { type: "p", text: "회원가입 절차 없이 이용 가능한 서비스이므로, 이름·이메일·비밀번호 등은 수집하지 않습니다." },
-      ],
-    },
-    {
-      heading: "2. 개인정보의 수집 및 이용 목적",
-      body: [
+        { type: "p", text: "**다른 사람에 관한 정보**" },
         {
           type: "list",
           items: [
-            "사주 원국 계산 및 오행 분포 분석 제공",
-            "심리테스트 채점 및 성향 유형 분석",
-            "AI 챗봇 상담 응답 생성",
-            "사주·심리테스트·상담 내용을 종합한 리포트 생성",
-            "서비스 부정이용 방지, 오류 확인 및 개선",
+            "궁합, ‘특정한 사람에 대해’ 질문, 그룹 케미 맵을 이용할 때 이용자가 입력한 다른 사람의 생년월일·성별·태어난 시간·표시 이름. 결과를 계산하는 요청 안에서만 쓰고 서버에 저장하지 않습니다(아래 궁합 리포트 구매 기록은 예외).",
+            "궁합 상세 리포트 구매 기록: 같은 구매를 같은 두 사람에게만 쓰도록, 두 사람의 정보를 되돌릴 수 없는 값(암호화 해시)으로 바꿔 구매 거래 번호와 함께 보관합니다. 생년월일 원문은 남지 않습니다.",
+            "친구 궁합 초대 링크: 보낸 사람의 표시 이름과 일간(사주의 중심 글자 하나), 언어, 링크를 받은 친구가 적은 표시 이름(선택)과 계산 결과(일간·사주 유형·가장 많은 오행). 친구의 생년월일은 결과를 계산하는 요청 안에서만 쓰고 저장하지 않습니다.",
+            "커플 모드 연결: 두 사람의 표시 이름, 일간·일지(사주 글자 한 개씩), 구독 확인을 위한 결제 서비스(RevenueCat) 사용자 식별자. 생년월일은 저장하지 않습니다.",
           ],
         },
-      ],
-    },
-    {
-      heading: "3. 개인정보의 보유 및 이용 기간",
-      body: [
-        {
-          type: "p",
-          text: "서비스는 위 1항의 정보를 **익명 세션 식별자**와 함께 데이터베이스에 저장합니다. 이 식별자는 이름·이메일 등 개인을 직접 특정할 수 있는 정보와 연결되어 있지 않습니다. 현재 화면에서는 저장된 과거 결과를 다시 불러와 보여주는 기능은 제공하지 않으며, 서비스 품질 개선과 향후 기능(계정 연동 등) 준비 목적으로 보관됩니다.",
-        },
-        {
-          type: "p",
-          text: "저장된 정보는 **수집일로부터 최대 1년간** 보관되며, 보유기간이 지나면 지체 없이 파기합니다. 이용자가 삭제를 원하시는 경우 9항의 연락처로 요청하시면 즉시 삭제해 드립니다. 향후 로그인 기능이 추가되면, 기존 세션 데이터를 계정에 연결할지 여부를 별도로 안내하고 동의를 받습니다.",
-        },
-      ],
-    },
-    {
-      heading: "4. 개인정보 처리의 위탁 및 국외 이전",
-      body: [
-        { type: "p", text: "서비스는 아래와 같이 외부 업체에 개인정보 처리를 위탁하고 있습니다." },
+        { type: "p", text: "**서비스 이용 중 생성되는 정보**" },
         {
           type: "list",
           items: [
-            "**OpenAI, L.L.C. (미국)** — AI 상담 응답 생성을 위해, 이용자가 챗봇에 입력한 대화 내용과 상담에 필요한 최소한의 맥락(심리테스트 결과 요약, 사주 오행 분포)이 상담 진행 시점에 네트워크를 통해 실시간으로 미국 소재 서버로 전송·처리됩니다. 보유기간은 OpenAI의 API 데이터 처리 정책을 따르며, 자세한 내용은 OpenAI의 개인정보처리방침을 참고하실 수 있습니다.",
-            "**SAZU API 제공업체** — 사주 원국 및 오행 분포 계산을 위해, 입력하신 생년월일·시간·성별·출생도시가 계산 요청 시점에 전송·처리됩니다.",
-            "**Supabase, Inc. (미국)** — 이용자가 재방문 시 결과를 다시 확인할 수 있도록, 1항의 정보(익명 세션 식별자 포함)를 미국 소재 데이터베이스 서버에 저장합니다. 보유기간은 3항과 같습니다.",
+            "익명 세션 식별자: 로그인 없이 입력 정보와 결과를 하나의 이용 흐름으로 묶기 위해 무작위로 만든 값",
+            "이용 기록: 어떤 화면을 열었는지, 어떤 버튼을 눌렀는지, 구매 시도와 결과, 답변에 대한 👍/👎. 기기(앱)나 브라우저(웹)마다 무작위로 만든 식별자에 묶이며, 생년월일·이름·직접 입력한 글은 포함하지 않습니다.",
+            "구매 정보: 결제 서비스(RevenueCat)가 앱 설치마다 만드는 익명 사용자 식별자와 구매·구독 내역",
+            "AI 사용량 기록: 요청 종류와 사용한 토큰 수(대화·질문 원문은 포함하지 않음)",
+            "접속 정보: IP 주소와 기기·브라우저 정보. 과도한 요청을 막는 데 쓰며 서비스 데이터베이스에 저장하지 않습니다(호스팅 업체의 접속 기록에는 남을 수 있습니다).",
           ],
         },
-        { type: "p", text: "위 위탁·이전 업체 외에는 이용자의 개인정보를 제3자에게 제공하지 않습니다." },
-      ],
-    },
-    {
-      heading: "5. 만 14세 미만 아동의 개인정보",
-      body: [
-        {
-          type: "p",
-          text: "본 서비스는 **만 14세 이상**만 이용할 수 있습니다. 서비스는 만 14세 미만 아동으로부터 개인정보를 의도적으로 수집하지 않으며, 만 14세 미만으로 확인되는 경우 관련 정보의 이용을 중단합니다.",
-        },
-      ],
-    },
-    {
-      heading: "6. 정보주체의 권리와 행사 방법",
-      body: [
-        {
-          type: "p",
-          text: "이용자는 자신의 세션에 저장된 정보에 대해 열람, 정정, 삭제를 요청할 수 있습니다. 다만 로그인 기능이 없는 구조상, 요청하신 분이 실제로 그 세션의 이용자인지 확인하기 위해 세션 생성 시점이나 입력하신 정보 일부를 여쭤볼 수 있습니다. 요청은 9항의 연락처로 해 주시기 바랍니다.",
-        },
-      ],
-    },
-    {
-      heading: "7. 개인정보의 안전성 확보조치",
-      body: [
+        { type: "p", text: "**기기에만 저장되고 서비스 서버로 보내지 않는 정보**" },
         {
           type: "list",
           items: [
-            "이용자와 서버 간 통신 구간 암호화(HTTPS) 적용",
-            "OPENAI_API_KEY, SAZU_API_KEY 등 인증키는 서버 환경변수로만 관리하며 클라이언트에 노출하지 않음",
-            "서비스 인프라(Vercel) 자체의 접근 통제 및 보안 정책 적용",
+            "한 줄 저널(기분과 한 줄 기록). 단, 이용자가 월말 패턴 리포트를 만들 때 그 달의 기록이 리포트 생성 요청에 담겨 전송되며, 서버는 생성에만 쓰고 저장하지 않습니다.",
+            "구매한 리포트 사본, 알림 설정, 일간 레슨 진행, 사주 Q&A 주제별 횟수, 홈 화면 위젯에 표시할 내용",
           ],
         },
       ],
     },
     {
-      heading: "8. 쿠키(Cookie) 등 자동 수집 장치",
+      heading: "2. 이용 목적",
       body: [
-        { type: "p", text: "현재 서비스는 별도의 분석·광고 쿠키를 사용하지 않습니다. 추후 분석 도구 등을 도입할 경우, 본 방침을 통해 미리 안내하겠습니다." },
+        {
+          type: "list",
+          items: [
+            "사주 원국·오행 분포 계산, 운세·궁합·리포트 제공",
+            "심리테스트 채점, AI 상담·사주 Q&A 답변·리포트 생성",
+            "유료 서비스의 구매 확인과 이용 권한 관리",
+            "친구 궁합 초대와 커플 모드 연결 제공",
+            "서비스 이용 분석과 개선(이용 기록), 오류 확인, 부정 이용 방지",
+          ],
+        },
+        { type: "p", text: "서비스는 수집한 정보를 광고에 쓰지 않고, 다른 회사의 앱·웹사이트를 넘나드는 추적에 쓰지 않습니다." },
+      ],
+    },
+    {
+      heading: "3. 보유 및 파기",
+      body: [
+        {
+          type: "list",
+          items: [
+            "입력 정보·심리테스트 응답·상담 대화·리포트 결과(익명 세션 식별자와 함께 저장): 수집일로부터 **최대 1년**",
+            "이용 기록, AI 사용량 기록: 수집일로부터 **최대 1년**",
+            "친구 궁합 초대 링크: 만든 날로부터 **30일** 뒤 만료되며, 만료된 링크는 정리할 때 삭제",
+            "커플 모드 연결: 어느 한쪽이 연결을 해제하면 **즉시 삭제**, 상대가 입력하지 않은 연결 코드는 **7일** 뒤 만료되어 삭제",
+            "궁합 상세 리포트 구매 기록: 해당 구매로 리포트를 다시 열 수 있는 동안",
+            "기기에 저장된 정보: 앱을 삭제하거나 설정의 ‘내 정보 초기화’를 하면 삭제(초기화하면 커플 모드 연결도 서버에서 해제)",
+          ],
+        },
+        { type: "p", text: "보유 기간이 지나거나 이용자가 삭제를 요청하면 지체 없이 파기합니다. 전자적 파일은 복구할 수 없는 방법으로 삭제합니다." },
+      ],
+    },
+    {
+      heading: "4. 처리 위탁 및 국외 이전",
+      body: [
+        { type: "p", text: "서비스는 아래 업체에 정보 처리를 맡기며, 이 업체들의 서버는 미국에 있습니다. 정보는 서비스 이용 시점에 암호화된 네트워크(HTTPS)로 전송됩니다." },
+        {
+          type: "list",
+          items: [
+            "**OpenAI, L.L.C. (미국)** — AI 상담, 사주 Q&A 답변, 리포트, 월말 패턴 리포트 생성. 상담 대화·고른 질문·심리테스트 결과 요약·사주 계산 결과(그 사람 질문·궁합 리포트는 상대의 사주 계산 결과 포함)·월말 리포트용 저널 기록이 생성 요청에 담겨 전송됩니다. 보유 기간은 OpenAI의 API 데이터 정책을 따릅니다.",
+            "**Supabase, Inc. (미국)** — 데이터베이스. 1항에서 서버에 저장한다고 적은 정보를 보관합니다. 보유 기간은 3항과 같습니다.",
+            "**Vercel Inc. (미국)** — 웹사이트·API 서버 운영과 웹사이트 방문 통계.",
+            "**RevenueCat, Inc. (미국)** — 앱 내 구매·구독 관리. 익명 사용자 식별자와 구매 내역을 처리합니다.",
+            "**Apple Inc., Google LLC** — 앱 내 결제 처리와 앱 업데이트·알림 전달. 결제 정보는 각 회사의 개인정보처리방침을 따릅니다.",
+          ],
+        },
+        { type: "p", text: "사주 계산은 서비스가 직접 만든 계산 엔진으로 서비스 서버 안에서 하며, 생년월일을 외부 계산 업체로 보내지 않습니다. 위 업체 외에는 이용자의 정보를 제3자에게 제공하지 않습니다." },
+      ],
+    },
+    {
+      heading: "5. 만 14세 미만 아동",
+      body: [
+        {
+          type: "p",
+          text: "본 서비스는 **만 14세 이상**만 이용할 수 있습니다. 만 14세 미만 아동의 정보를 의도적으로 수집하지 않으며, 만 14세 미만으로 확인되면 관련 정보를 삭제합니다.",
+        },
+      ],
+    },
+    {
+      heading: "6. 이용자의 권리",
+      body: [
+        {
+          type: "p",
+          text: "이용자는 자신의 정보에 대해 열람, 정정, 삭제, 처리 정지를 요청할 수 있습니다. 기기에 저장된 정보는 앱 설정의 ‘내 정보 초기화’로 바로 지울 수 있고, 서버에 저장된 정보는 9항의 연락처나 데이터 삭제 요청 페이지(fatesaidapp.com/data-deletion)로 요청하실 수 있습니다. 로그인이 없는 구조상, 요청하신 분이 해당 정보의 이용자인지 확인하기 위해 입력하신 정보 일부를 여쭤볼 수 있습니다.",
+        },
+        {
+          type: "p",
+          text: "다른 사람의 정보를 입력하실 때는 그 사람이 동의하는지 먼저 확인해 주세요. 친구 궁합 초대 링크로 결과를 받는 친구에게는 입력 화면에서 동의를 받습니다.",
+        },
+      ],
+    },
+    {
+      heading: "7. 안전성 확보 조치",
+      body: [
+        {
+          type: "list",
+          items: [
+            "모든 통신 구간 암호화(HTTPS)",
+            "인증 키는 서버 환경 변수로만 관리하고 앱·브라우저에 노출하지 않음",
+            "데이터베이스는 서버만 접근할 수 있게 하고(행 수준 보안), 앱·브라우저에서 직접 읽을 수 없음",
+            "초대 링크·커플 연결의 접근 토큰은 원문 대신 해시 값만 저장",
+            "요청 횟수 제한으로 자동화된 남용 방지",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "8. 자동 수집 장치",
+      body: [
+        {
+          type: "p",
+          text: "서비스는 광고 쿠키와 광고 식별자(IDFA·광고 ID)를 쓰지 않습니다. 웹사이트는 방문 통계를 위해 Vercel Web Analytics를 쓰고, 앱과 웹사이트는 1항의 이용 기록을 남기기 위해 기기·브라우저 저장소에 무작위 식별자를 저장합니다. 이 식별자는 앱 삭제, 브라우저 저장소 삭제로 지울 수 있습니다.",
+        },
       ],
     },
     {
       heading: "9. 개인정보 보호책임자",
       body: [
-        { type: "p", text: "개인정보 관련 문의는 아래로 연락해 주시기 바랍니다." },
+        { type: "p", text: "개인정보 관련 문의와 요청은 아래로 연락해 주시기 바랍니다." },
         { type: "contact", label: "이메일", email: "435deed@gmail.com" },
-        { type: "p", style: "muted", text: "위 연락처는 임시 운영 연락처입니다. 사업자 등록 및 정식 개인정보 보호책임자 지정 후 갱신 예정입니다." },
+        { type: "list", items: ["상호: 스튜디오 아론 (Studio Aaron)", "대표자: 권현조", "사업자등록번호: 230-38-01618", "통신판매업 신고번호: 제2026-경기시흥-2276호", "주소: 경기도 시흥시 새재로 19, 6층 6110호", "전화: 010-8757-2948", "개인정보 보호책임자: 권현조"] },
       ],
     },
     {
@@ -173,12 +220,12 @@ const privacyKo: LegalDocument = {
     {
       heading: "11. 고지의 의무",
       body: [
-        { type: "p", text: "본 방침이 변경되는 경우 서비스 화면을 통해 사전에 공지합니다. 이 방침은 2026년 8월 31일부터 적용됩니다." },
+        { type: "p", text: "본 방침이 변경되면 서비스 화면을 통해 알립니다. 이 방침은 2026년 10월 7일부터 적용됩니다." },
       ],
     },
     {
       body: [
-        { type: "p", style: "muted", text: "본 방침은 서비스 베타 운영을 위한 초안이며, 정식 서비스 전환 시 법률 전문가의 검토를 거칠 예정입니다." },
+        { type: "p", style: "muted", text: "본 방침은 법률 전문가 검토 전 초안입니다." },
       ],
     },
   ],
@@ -186,12 +233,12 @@ const privacyKo: LegalDocument = {
 
 const termsKo: LegalDocument = {
   title: "이용약관",
-  updatedAt: "2026년 8월 30일",
+  updatedAt: "2026년 10월 7일",
   sections: [
     {
       heading: "제1조 (목적)",
       body: [
-        { type: "p", text: "이 약관은 “Fatesaid”(이하 “서비스”)가 제공하는 사주 분석, 심리테스트, AI 상담, 리포트 서비스의 이용과 관련하여 서비스 운영자와 이용자 간의 권리, 의무 및 책임사항을 정하는 것을 목적으로 합니다." },
+        { type: "p", text: "이 약관은 “Fatesaid”(이하 “서비스”)가 웹사이트와 모바일 앱으로 제공하는 사주 분석, 운세, 심리테스트, AI 상담, 리포트 등의 이용과 관련하여 서비스 운영자와 이용자 사이의 권리, 의무, 책임을 정합니다." },
       ],
     },
     {
@@ -200,8 +247,9 @@ const termsKo: LegalDocument = {
         {
           type: "list",
           items: [
-            "“서비스”란 사주 계산, 심리테스트, AI 챗봇 상담 및 통합 리포트를 제공하는 웹 서비스를 말합니다.",
-            "“이용자”란 이 약관에 따라 서비스를 이용하는 자를 말합니다.",
+            "“서비스”란 웹사이트(fatesaidapp.com)와 Fatesaid 모바일 앱으로 제공되는 모든 기능을 말합니다.",
+            "“이용자”란 이 약관에 따라 서비스를 이용하는 사람을 말합니다.",
+            "“유료 서비스”란 앱 안에서 Apple App Store 또는 Google Play 결제로 구매하는 구독과 단건 콘텐츠를 말합니다.",
           ],
         },
       ],
@@ -209,204 +257,251 @@ const termsKo: LegalDocument = {
     {
       heading: "제3조 (약관의 게시와 개정)",
       body: [
-        { type: "p", text: "서비스 운영자는 이 약관의 내용을 이용자가 쉽게 알 수 있도록 서비스 화면에 게시합니다. 약관은 관련 법령을 위배하지 않는 범위에서 개정될 수 있으며, 개정 시 서비스 화면을 통해 사전 공지합니다." },
+        { type: "p", text: "운영자는 이 약관을 서비스 화면에 게시합니다. 약관은 관련 법령을 위반하지 않는 범위에서 개정될 수 있으며, 개정하면 적용일과 개정 내용을 적용일 7일 전부터(이용자에게 불리한 변경은 30일 전부터) 서비스 화면에 알립니다." },
       ],
     },
     {
       heading: "제4조 (서비스의 내용)",
       body: [
-        { type: "p", text: "서비스는 현재 **무료 베타**로 제공되며, 아래 기능을 포함합니다." },
-        {
-          type: "list",
-          items: [
-            "생년월일 기반 사주 원국 및 오행 분포 계산",
-            "심리테스트(30문항) 채점 및 성향 유형 분석",
-            "AI 챗봇과의 대화형 상담",
-            "위 내용을 종합한 리포트 제공",
-          ],
-        },
+        { type: "p", text: "**무료로 제공하는 기능**: 사주 원국 계산, 사주 유형, 오늘 운세 총론, 심리테스트와 AI 상담, 리포트 미리보기, 궁합 결과, 친구 궁합 초대, 그룹 케미 맵, 사주 Q&A 하루 정해진 개수, 한 줄 저널 등" },
         {
           type: "p",
-          text: "서비스는 베타 운영 특성상 사전 예고 없이 기능이 변경, 추가, 중단될 수 있습니다. 별도의 회원가입 절차 없이 이용할 수 있으며, 입력하신 정보와 리포트 내용은 익명 세션 식별자와 함께 서버에 보관됩니다. 다만 현재 화면에서는 이전 리포트를 다시 불러와 보는 기능은 제공되지 않으며, 새로고침하면 처음부터 다시 진행하게 됩니다. 보관·삭제 정책은 개인정보처리방침을 참고하시기 바랍니다.",
+          text: "**유료 서비스**: (1) 구독 “Fatesaid Pro” — 운세 전체(오늘·주간·월간·연간), 사주 Q&A 하루 최대 10개, ‘특정한 사람에 대해’ 질문, 월말 패턴 리포트, 커플 모드 등. (2) 단건 구매 — 심리테스트별 심층 리포트와 전체 묶음, 신년 리포트, 궁합 상세 리포트(상대 한 사람당 1회).",
         },
+        { type: "p", text: "각 유료 서비스의 내용과 가격은 구매 화면에 표시된 내용을 따릅니다. 운영자는 서비스 개선을 위해 기능을 바꾸거나 추가할 수 있으며, 이미 구매한 유료 콘텐츠의 핵심 내용을 줄이는 변경은 하지 않습니다." },
       ],
     },
     {
-      heading: "제5조 (이용 제한)",
+      heading: "제5조 (유료 서비스의 결제와 구독)",
       body: [
-        {
-          type: "p",
-          text: "본 서비스는 **만 14세 이상**만 이용할 수 있습니다. 만 14세 미만인 경우 서비스를 이용하실 수 없으며, 서비스 운영자는 이용자가 만 14세 이상임을 별도로 확인하지 않으므로, 만 14세 미만이 서비스를 이용하지 않도록 보호자의 지도가 필요합니다.",
-        },
-      ],
-    },
-    {
-      heading: "제6조 (이용자의 의무)",
-      body: [
-        { type: "p", text: "이용자는 서비스 이용 시 다음 행위를 해서는 안 됩니다." },
         {
           type: "list",
           items: [
-            "타인의 정보를 도용하거나 허위 정보를 입력하는 행위",
-            "서비스의 정상적인 운영을 방해하는 행위(과도한 반복 요청, 자동화된 접근 등)",
-            "서비스를 이용해 얻은 정보를 서비스 운영자의 동의 없이 영리 목적으로 재배포하는 행위",
-            "AI 챗봇에 부적절한 요청(시스템 지시 무시 유도, 서비스 목적과 무관한 요청 등)을 반복하는 행위",
+            "결제는 Apple App Store 또는 Google Play를 통해 이루어지며, 결제·영수증·결제 수단은 각 스토어의 약관을 따릅니다.",
+            "구독은 선택한 기간(월간 또는 연간)마다 **자동으로 갱신**됩니다. 현재 기간이 끝나기 최소 24시간 전에 해지하지 않으면 다음 기간 요금이 청구됩니다. 해지는 기기의 App Store 또는 Google Play 구독 설정에서 할 수 있고, 해지해도 이미 결제한 기간이 끝날 때까지 이용할 수 있습니다.",
+            "무료 체험이 제공되는 경우, 체험 기간이 끝나면 자동으로 유료 구독으로 전환됩니다. 체험 기간이 끝나기 최소 24시간 전에 해지하면 요금이 청구되지 않습니다. 무료 체험은 스토어 규칙에 따라 처음 구독하는 이용자에게만 제공될 수 있습니다.",
+            "심층 리포트·묶음·신년 리포트는 한 번 구매하면 계속 이용할 수 있으며, 같은 스토어 계정에서 ‘구매 복원’으로 다시 열 수 있습니다.",
+            "궁합 상세 리포트는 구매한 두 사람의 조합에만 쓰입니다. 구매한 리포트는 기기에 저장되므로, 앱을 삭제하거나 기기를 바꾸면 다시 열지 못할 수 있습니다.",
           ],
         },
       ],
     },
     {
-      heading: "제7조 (서비스 내용에 대한 중요 안내 — 진단이 아닙니다)",
+      heading: "제6조 (청약철회와 환불)",
+      body: [
+        { type: "p", text: "유료 서비스의 환불은 결제한 스토어의 환불 절차를 따릅니다(Apple: reportaproblem.apple.com, Google Play: 주문 내역의 환불 요청). 관련 법령이 보장하는 청약철회 등 이용자의 권리는 이 약관으로 제한되지 않습니다. 결제나 이용 권한에 문제가 있으면 개인정보처리방침에 적힌 연락처로 알려 주시기 바랍니다." },
+      ],
+    },
+    {
+      heading: "제7조 (이용 제한)",
+      body: [
+        { type: "p", text: "본 서비스는 **만 14세 이상**만 이용할 수 있습니다. 운영자는 이용자의 나이를 별도로 확인하지 않으므로, 만 14세 미만이 이용하지 않도록 보호자의 지도가 필요합니다." },
+      ],
+    },
+    {
+      heading: "제8조 (이용자의 의무)",
+      body: [
+        { type: "p", text: "이용자는 서비스를 이용할 때 다음 행위를 해서는 안 됩니다." },
+        {
+          type: "list",
+          items: [
+            "다른 사람의 정보를 그 사람의 동의 없이 입력하거나, 그 결과로 다른 사람을 괴롭히거나 평가하는 행위",
+            "서비스의 정상적인 운영을 방해하는 행위(과도한 반복 요청, 자동화된 접근, 결제 우회 시도 등)",
+            "서비스에서 얻은 콘텐츠를 운영자의 동의 없이 영리 목적으로 재배포하는 행위",
+            "AI 상담에 서비스 목적과 무관하거나 부적절한 요청(시스템 지시 무시 유도 등)을 반복하는 행위",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "제9조 (서비스 내용에 대한 중요 안내 — 진단이 아닙니다)",
       headingColor: "#6FA98B",
       body: [
         {
           type: "p",
-          text: "서비스가 제공하는 사주 풀이, 심리테스트 결과, AI 상담 응답 및 리포트는 **자기 이해를 돕기 위한 참고 자료**이며, 의학적·심리학적 진단이 아니고 전문적인 심리상담이나 정신건강 치료를 대체하지 않습니다. AI가 생성하는 응답은 부정확하거나 이용자의 실제 상황과 다를 수 있습니다.",
+          text: "서비스가 제공하는 사주 풀이, 운세, 궁합, 심리테스트 결과, AI 상담 응답과 리포트는 **자기 이해를 돕기 위한 참고 자료**입니다. 의학적·심리학적 진단이 아니고, 전문적인 상담·치료나 법률·재무·의료 판단을 대신하지 않으며, 미래를 보장하지 않습니다. AI가 만든 내용은 부정확하거나 이용자의 실제 상황과 다를 수 있습니다. 중요한 결정은 서비스 결과만으로 내리지 마시기 바랍니다.",
         },
         {
           type: "p",
-          text: "정신건강과 관련하여 어려움을 겪고 계시다면 반드시 전문 의료기관이나 상담기관을 방문하시기 바랍니다. 위급한 경우 자살예방상담전화(1393) 또는 정신건강위기상담전화(1577-0199)로 24시간 상담받으실 수 있습니다.",
+          text: "정신건강과 관련해 어려움을 겪고 계시다면 전문 의료기관이나 상담기관을 찾아 주세요. 위급한 경우 자살예방상담전화(109) 또는 정신건강위기상담전화(1577-0199)로 24시간 상담받으실 수 있습니다.",
         },
       ],
     },
     {
-      heading: "제8조 (지식재산권)",
+      heading: "제10조 (지식재산권)",
       body: [
-        { type: "p", text: "서비스가 제공하는 텍스트, 디자인, 로직 등에 대한 저작권은 서비스 운영자에게 있으며, 이용자는 서비스 운영자의 사전 동의 없이 이를 복제, 배포, 상업적으로 이용할 수 없습니다." },
+        { type: "p", text: "서비스의 텍스트, 디자인, 계산 엔진, 소프트웨어에 대한 권리는 운영자에게 있습니다. 이용자는 서비스가 제공하는 공유 기능으로 자기 결과를 개인적으로 공유할 수 있으나, 운영자의 동의 없이 서비스 콘텐츠를 복제·배포하거나 상업적으로 이용할 수 없습니다." },
       ],
     },
     {
-      heading: "제9조 (면책조항)",
+      heading: "제11조 (면책)",
       body: [
         {
           type: "list",
           items: [
-            "서비스 운영자는 무료로 제공되는 서비스와 관련하여 관련 법령에 특별한 규정이 없는 한 이용자에게 발생한 손해에 대해 책임을 지지 않습니다.",
-            "서비스 운영자는 AI가 생성한 응답의 정확성, 완전성을 보증하지 않으며, 이를 신뢰하여 발생한 결과에 대해 책임을 지지 않습니다.",
-            "천재지변, 서비스 제공업체(SAZU API, OpenAI 등)의 장애 등 서비스 운영자가 통제할 수 없는 사유로 서비스가 중단되는 경우 책임이 면제됩니다.",
+            "운영자는 AI가 생성한 내용의 정확성과 완전성을 보증하지 않으며, 이를 근거로 한 이용자의 판단과 그 결과에 대해 관련 법령이 허용하는 범위에서 책임을 지지 않습니다.",
+            "천재지변, 이용 중인 외부 서비스(OpenAI, 호스팅, 결제 서비스 등)의 장애 등 운영자가 통제할 수 없는 사유로 서비스가 중단되면 운영자의 책임이 면제됩니다. 다만 유료 서비스 이용에 생긴 문제는 관련 법령에 따라 처리합니다.",
+            "운영자는 무료로 제공하는 기능과 관련하여 관련 법령에 특별한 규정이 없는 한 이용자에게 생긴 손해에 대해 책임을 지지 않습니다.",
           ],
         },
       ],
     },
     {
-      heading: "제10조 (준거법 및 관할)",
+      heading: "제12조 (준거법 및 관할)",
       body: [
-        { type: "p", text: "이 약관은 대한민국 법령에 따라 규율되며, 서비스와 관련하여 분쟁이 발생하는 경우 관련 법령이 정한 절차에 따릅니다." },
+        { type: "p", text: "이 약관은 대한민국 법령에 따라 해석되며, 서비스와 관련한 분쟁은 관련 법령이 정한 절차에 따릅니다. 다만 이용자가 거주하는 나라의 소비자 보호 법령이 이용자에게 더 유리한 권리를 보장하는 경우, 그 권리는 이 약관으로 제한되지 않습니다." },
+      ],
+    },
+    {
+      heading: "운영자 정보",
+      body: [
+        { type: "list", items: ["상호: 스튜디오 아론 (Studio Aaron)", "대표자: 권현조", "사업자등록번호: 230-38-01618", "통신판매업 신고번호: 제2026-경기시흥-2276호", "주소: 경기도 시흥시 새재로 19, 6층 6110호", "전화: 010-8757-2948"] },
       ],
     },
     {
       heading: "부칙",
       body: [
-        { type: "p", text: "이 약관은 2026년 8월 30일부터 시행합니다." },
+        { type: "p", text: "이 약관은 2026년 10월 7일부터 시행합니다." },
       ],
     },
     {
       body: [
-        { type: "p", style: "muted", text: "본 약관은 서비스 베타 운영을 위한 초안이며, 정식 서비스 전환 시 법률 전문가의 검토를 거칠 예정입니다." },
+        { type: "p", style: "muted", text: "본 약관은 법률 전문가 검토 전 초안입니다." },
       ],
     },
   ],
 };
 
-// 2026-09-10: English translation added — required for App Store/Google
-// Play submission regardless of when the broader UI i18n pass happens
-// (see lib/i18n/README.md's sequencing note). This is a plain translation
-// of privacyKo/termsKo section-for-section, not a rewrite — keep both in
-// sync if either changes. Like the Korean original, this is still a beta
-// draft pending legal review, not a lawyer-reviewed final text.
 const privacyEn: LegalDocument = {
   title: "Privacy Policy",
-  updatedAt: "August 31, 2026",
+  updatedAt: "October 7, 2026",
   sections: [
     {
       body: [
         {
           type: "p",
-          text: "“Fatesaid” (the “Service”) treats your personal information with care and complies with applicable data protection laws. This policy explains what personal information the Service collects and how it is used, stored, and deleted.",
+          text: "“Fatesaid” (the “Service”) is offered through our website (fatesaidapp.com) and mobile app, and handles personal information in line with the Personal Information Protection Act of the Republic of Korea and other applicable laws. This policy explains what we collect, what we use it for, how long we keep it and how we delete it.",
         },
         {
           type: "p",
           style: "highlight",
-          text: "The Service is currently in beta and has not yet completed formal business registration. The operator information in this policy will be updated once that registration is finalized.",
+          text: "The Service works without an account. We don't collect your name, email address, password or phone number, and payment details (such as card numbers) are handled by Apple and Google — we never receive them.",
         },
       ],
     },
     {
-      heading: "1. Information We Collect",
+      heading: "1. What We Collect",
       body: [
-        { type: "p", text: "To calculate your saju chart, score your personality assessment, and generate AI counseling responses, the Service collects the following information." },
+        { type: "p", text: "**Information you enter**" },
         {
           type: "list",
           items: [
-            "**Required input**: date of birth, gender, birth city, area of interest (romance & attachment / career & burnout)",
-            "**Optional input**: time of birth (can be marked as unknown)",
-            "**Assessment responses**: your choice/slider answers to a 30-question test",
-            "**AI counseling conversation content**: text you write yourself while chatting with the bot",
-            "**Anonymous session identifier**: a value randomly generated on your device to group the information above into one usage flow without requiring login (cannot identify you personally)",
-            "**Automatically collected information**: access logs, IP address, device/browser information (for fraud prevention and troubleshooting)",
+            "Display name (nickname), birth date, gender, birth time (optional, can be “unknown”), birth city (optional), and the topic on your mind",
+            "Your answers to the personality test (30 multiple-choice and slider questions)",
+            "What you write in the AI conversation",
+            "The questions you pick in Saju Q&A",
           ],
         },
-        { type: "p", text: "Because the Service requires no signup, we do not collect your name, email address, or password." },
+        { type: "p", text: "**Information about other people**" },
+        {
+          type: "list",
+          items: [
+            "When you use Compatibility, “About someone” questions or the Group chemistry map, the other person's birth date, gender, birth time and display name that you enter. We use them only within the request that calculates the result and don't store them on our servers (except the compatibility report purchase record below).",
+            "Compatibility report purchase record: so that one purchase is used for one pair of people only, we keep the two people's details as an irreversible value (a cryptographic hash) together with the purchase transaction number. The birth dates themselves are not kept.",
+            "Friend compatibility invite links: the sender's display name and Day Master (the one central character of their chart), language, and the friend's display name (optional) and result (Day Master, saju type, strongest element). The friend's birth date is used only within the request that calculates the result and is not stored.",
+            "Couple mode: both people's display names, Day Master and day branch (one chart character each), and the payment service (RevenueCat) user identifier used to check the subscription. Birth dates are not stored.",
+          ],
+        },
+        { type: "p", text: "**Information created while you use the Service**" },
+        {
+          type: "list",
+          items: [
+            "Anonymous session identifier: a random value that ties your entries and results together without an account",
+            "Usage records: which screens are opened, which buttons are tapped, purchase attempts and results, and 👍/👎 on answers. They're tied to a random identifier created on your device (app) or browser (website) and never include birth dates, names or anything you type.",
+            "Purchase information: the anonymous user identifier the payment service (RevenueCat) creates for each app install, and your purchase and subscription history",
+            "AI usage records: the type of request and the number of tokens used (never the text of conversations or questions)",
+            "Connection information: IP address and device/browser details. We use it to stop excessive requests and don't store it in our database (it may appear in our hosting provider's access logs).",
+          ],
+        },
+        { type: "p", text: "**Information kept only on your device and not sent to our servers**" },
+        {
+          type: "list",
+          items: [
+            "Your one-line journal (mood and a short note). When you create a monthly pattern report, that month's entries are sent with the request; the server uses them only to write the report and doesn't store them.",
+            "Copies of reports you bought, notification settings, Day Master lesson progress, Saju Q&A topic counts, and what the home screen widget shows",
+          ],
+        },
       ],
     },
     {
-      heading: "2. Purpose of Collection and Use",
+      heading: "2. How We Use It",
       body: [
         {
           type: "list",
           items: [
-            "Calculating your saju chart and analyzing your Five Elements distribution",
-            "Scoring your assessment and analyzing your personality type",
-            "Generating AI chatbot counseling responses",
-            "Producing a report that combines your saju, assessment, and counseling content",
-            "Preventing fraudulent use of the Service, and identifying and fixing errors",
+            "Calculating your saju chart and element balance, and providing fortunes, compatibility and reports",
+            "Scoring the personality test, and writing AI conversation replies, Saju Q&A answers and reports",
+            "Confirming purchases and managing access to paid features",
+            "Friend compatibility invites and couple mode",
+            "Analyzing and improving the Service (usage records), finding errors, and preventing abuse",
           ],
         },
+        { type: "p", text: "We don't use your information for advertising or for tracking you across other companies' apps and websites." },
       ],
     },
     {
-      heading: "3. Retention Period",
+      heading: "3. Retention and Deletion",
       body: [
-        {
-          type: "p",
-          text: "The Service stores the information in Section 1 together with your **anonymous session identifier** in its database. This identifier is not linked to information that could directly identify you, such as your name or email. The current screens do not offer a way to reload a past result — the data is retained for service quality improvement and to prepare future features (such as account linking).",
-        },
-        {
-          type: "p",
-          text: "Stored information is retained for **up to one year from the date of collection**, after which it is deleted without delay. If you would like your data deleted sooner, contact us using the details in Section 9 and we will delete it immediately. If a login feature is added in the future, we will separately notify you and obtain consent before linking any existing session data to an account.",
-        },
-      ],
-    },
-    {
-      heading: "4. Outsourced Processing and Overseas Transfer",
-      body: [
-        { type: "p", text: "The Service outsources personal information processing to the following external providers." },
         {
           type: "list",
           items: [
-            "**OpenAI, L.L.C. (United States)** — to generate AI counseling responses, the text you enter in the chatbot and the minimum context needed for counseling (a summary of your assessment result and Five Elements distribution) are transmitted in real time over the network to servers located in the United States at the time of each counseling exchange. Retention follows OpenAI's own API data handling policy; see OpenAI's privacy policy for details.",
-            "**SAZU API provider** — to calculate your saju chart and Five Elements distribution, your date of birth, time of birth, gender, and birth city are transmitted and processed at the time of the calculation request.",
-            "**Supabase, Inc. (United States)** — so that you can view your results again on a return visit, the information in Section 1 (including your anonymous session identifier) is stored on database servers located in the United States. Retention follows Section 3.",
+            "Your entries, test answers, AI conversation and report results (stored with the anonymous session identifier): **up to 1 year** from collection",
+            "Usage records and AI usage records: **up to 1 year** from collection",
+            "Friend compatibility invite links: expire **30 days** after creation and are deleted when expired links are cleared",
+            "Couple mode: **deleted immediately** when either person unlinks; a code the partner never entered expires and is deleted after **7 days**",
+            "Compatibility report purchase records: for as long as that purchase can reopen the report",
+            "Information on your device: deleted when you delete the app or use “Reset my info” in Settings (resetting also unlinks couple mode on our server)",
           ],
         },
-        { type: "p", text: "Other than the providers listed above, the Service does not share your personal information with any third party." },
+        { type: "p", text: "When a retention period ends or you ask us to delete your information, we delete it without delay, in a way that can't be recovered." },
       ],
     },
     {
-      heading: "5. Personal Information of Children Under 14",
+      heading: "4. Service Providers and International Transfers",
+      body: [
+        { type: "p", text: "We use the providers below, whose servers are in the United States. Information is sent over an encrypted connection (HTTPS) when you use the related feature." },
+        {
+          type: "list",
+          items: [
+            "**OpenAI, L.L.C. (USA)** — writes AI conversation replies, Saju Q&A answers, reports and monthly pattern reports. Requests contain your conversation, the question you picked, a summary of your test results and your saju calculation (for “About someone” questions and the compatibility report, also the other person's saju calculation), and for the monthly report, that month's journal entries. Retention follows OpenAI's API data policy.",
+            "**Supabase, Inc. (USA)** — database. Stores the information section 1 says is kept on our servers, for the periods in section 3.",
+            "**Vercel Inc. (USA)** — runs the website and API servers, and provides website visit statistics.",
+            "**RevenueCat, Inc. (USA)** — manages in-app purchases and subscriptions; processes the anonymous user identifier and purchase history.",
+            "**Apple Inc., Google LLC** — process in-app payments and deliver app updates and notifications. Payment information follows each company's privacy policy.",
+          ],
+        },
+        { type: "p", text: "Saju charts are calculated by our own engine on our own servers; birth dates are not sent to any outside calculation provider. We don't share your information with any third party other than the providers above." },
+      ],
+    },
+    {
+      heading: "5. Children Under 14",
       body: [
         {
           type: "p",
-          text: "This Service is available only to users **14 years of age or older**. The Service does not knowingly collect personal information from children under 14, and will stop using any information found to belong to a user under that age.",
+          text: "The Service is for people **aged 14 and over** only. We don't knowingly collect information from children under 14, and we delete it if we learn a user is under 14.",
         },
       ],
     },
     {
-      heading: "6. Your Rights and How to Exercise Them",
+      heading: "6. Your Rights",
       body: [
         {
           type: "p",
-          text: "You may request to view, correct, or delete the information stored under your session. Because the Service has no login system, we may ask when your session was created or for part of the information you entered, in order to confirm that you are the actual user of that session. Please direct such requests to the contact in Section 9.",
+          text: "You can ask to access, correct, delete or stop the processing of your information. Information on your device can be cleared right away with “Reset my info” in the app's Settings; for information on our servers, contact us at the address in section 9 or use the data deletion page (fatesaidapp.com/data-deletion). Because there are no accounts, we may ask about some of the details you entered to confirm the information is yours.",
+        },
+        {
+          type: "p",
+          text: "Before entering someone else's details, please make sure they agree. A friend who answers a compatibility invite link is asked for consent on the entry screen.",
         },
       ],
     },
@@ -416,51 +511,56 @@ const privacyEn: LegalDocument = {
         {
           type: "list",
           items: [
-            "Encryption (HTTPS) of the communication channel between you and our servers",
-            "Credentials such as OPENAI_API_KEY and SAZU_API_KEY are kept only as server-side environment variables and are never exposed to the client",
-            "Access controls and security policies of the underlying infrastructure provider (Vercel)",
+            "Encryption of all connections (HTTPS)",
+            "API keys kept only in server environment variables, never exposed to the app or browser",
+            "The database is reachable only by our server (row-level security); the app and browser can't read it directly",
+            "Access tokens for invite links and couple mode are stored only as hashes",
+            "Request rate limits against automated abuse",
           ],
         },
       ],
     },
     {
-      heading: "8. Cookies and Other Automatic Collection Tools",
+      heading: "8. Cookies and Similar Technologies",
       body: [
-        { type: "p", text: "The Service does not currently use separate analytics or advertising cookies. If analytics tools are introduced in the future, we will announce this in advance through this policy." },
+        {
+          type: "p",
+          text: "We don't use advertising cookies or advertising identifiers (IDFA / Advertising ID). The website uses Vercel Web Analytics for visit statistics, and the app and website store a random identifier in device or browser storage for the usage records in section 1. You can remove it by deleting the app or clearing your browser storage.",
+        },
       ],
     },
     {
-      heading: "9. Personal Information Protection Officer",
+      heading: "9. Privacy Contact",
       body: [
-        { type: "p", text: "For questions about personal information, please contact us at the address below." },
+        { type: "p", text: "For privacy questions and requests, please contact:" },
         { type: "contact", label: "Email", email: "435deed@gmail.com" },
-        { type: "p", style: "muted", text: "This is a temporary operational contact. It will be updated once business registration is complete and a formal Personal Information Protection Officer is designated." },
+        { type: "list", items: ["Business name: Studio Aaron (스튜디오 아론)", "Representative: Aaron Kwon (Hyunjo Kwon)", "Business registration number: 230-38-01618", "Mail-order business registration: 2026-Gyeonggi Siheung-2276", "Address: Room 6110, 6F, 19 Saejae-ro, Siheung-si, Gyeonggi-do, Republic of Korea", "Phone: +82 10-8757-2948", "Privacy officer: Aaron Kwon (Hyunjo Kwon)"] },
       ],
     },
     {
-      heading: "10. Remedies for Rights Infringement",
+      heading: "10. Remedies",
       body: [
-        { type: "p", text: "If you need to report or seek advice about a personal information infringement, you may contact the following (Korean government) bodies." },
+        { type: "p", text: "If you need to report or get advice about a privacy issue, you can contact the following Korean authorities, or the data protection authority where you live." },
         {
           type: "list",
           items: [
-            "Personal Information Protection Commission (privacy.go.kr / 182, toll-free within Korea)",
-            "Personal Information Infringement Report Center (privacy.kisa.or.kr / 118, toll-free within Korea)",
-            "Supreme Prosecutors' Office Cyber Crime Investigation Division (spo.go.kr / 1301, toll-free within Korea)",
-            "National Police Agency Cyber Investigation Bureau (ecrm.police.go.kr / 182, toll-free within Korea)",
+            "Personal Information Protection Commission (privacy.go.kr / dial 182 in Korea)",
+            "Personal Information Infringement Report Center (privacy.kisa.or.kr / dial 118 in Korea)",
+            "Supreme Prosecutors' Office Cybercrime Investigation (spo.go.kr / dial 1301 in Korea)",
+            "Korean National Police Agency Cyber Bureau (ecrm.police.go.kr / dial 182 in Korea)",
           ],
         },
       ],
     },
     {
-      heading: "11. Notification Obligation",
+      heading: "11. Changes to This Policy",
       body: [
-        { type: "p", text: "If this policy changes, we will announce it in advance through the Service. This policy is effective as of August 31, 2026." },
+        { type: "p", text: "If this policy changes, we'll let you know in the Service. This policy applies from October 7, 2026." },
       ],
     },
     {
       body: [
-        { type: "p", style: "muted", text: "This policy is a draft for the Service's beta operation and will be reviewed by legal counsel before the Service's formal launch." },
+        { type: "p", style: "muted", text: "This policy is a draft that has not yet been reviewed by a legal professional." },
       ],
     },
   ],
@@ -468,12 +568,12 @@ const privacyEn: LegalDocument = {
 
 const termsEn: LegalDocument = {
   title: "Terms of Service",
-  updatedAt: "August 30, 2026",
+  updatedAt: "October 7, 2026",
   sections: [
     {
       heading: "Article 1 (Purpose)",
       body: [
-        { type: "p", text: "These Terms govern the rights, obligations, and responsibilities between the operator and users of the saju analysis, personality assessment, AI counseling, and report services provided by “Fatesaid” (the “Service”)." },
+        { type: "p", text: "These Terms set out the rights, obligations and responsibilities between the operator of “Fatesaid” (the “Service”) and its users regarding the saju readings, fortunes, personality tests, AI conversations, reports and other features offered through the website and mobile app." },
       ],
     },
     {
@@ -482,283 +582,333 @@ const termsEn: LegalDocument = {
         {
           type: "list",
           items: [
-            "“Service” means the web service that provides saju calculation, personality assessments, AI chatbot counseling, and an integrated report.",
-            "“User” means a person who uses the Service under these Terms.",
+            "“Service” means all features offered through the website (fatesaidapp.com) and the Fatesaid mobile app.",
+            "“User” means anyone who uses the Service under these Terms.",
+            "“Paid Services” means subscriptions and one-time content bought in the app through the Apple App Store or Google Play.",
           ],
         },
       ],
     },
     {
-      heading: "Article 3 (Posting and Amendment of Terms)",
+      heading: "Article 3 (Posting and Changes)",
       body: [
-        { type: "p", text: "The operator posts these Terms on the Service so that users can easily view them. The Terms may be amended within the scope permitted by applicable law, and any amendment will be announced in advance through the Service." },
+        { type: "p", text: "The operator posts these Terms in the Service. They may be changed within the limits of applicable law; we'll announce the change and its effective date in the Service at least 7 days in advance (30 days for changes unfavorable to users)." },
       ],
     },
     {
-      heading: "Article 4 (Description of the Service)",
+      heading: "Article 4 (What the Service Includes)",
       body: [
-        { type: "p", text: "The Service is currently provided as a **free beta** and includes the following features." },
+        { type: "p", text: "**Free features**: your saju chart, saju type, today's fortune overview, personality tests and AI conversation, report previews, compatibility results, friend compatibility invites, the Group chemistry map, a daily number of Saju Q&A questions, the one-line journal, and more." },
+        {
+          type: "p",
+          text: "**Paid Services**: (1) the “Fatesaid Pro” subscription — full fortunes (today, week, month, year), up to 10 Saju Q&A questions a day, “About someone” questions, monthly pattern reports, couple mode and more; (2) one-time purchases — the in-depth report for each test and the all-reports bundle, the year-ahead report, and the compatibility report (once per other person).",
+        },
+        { type: "p", text: "What each Paid Service includes and its price are as shown on the purchase screen. The operator may change or add features to improve the Service, but won't remove the core content of paid content you already bought." },
+      ],
+    },
+    {
+      heading: "Article 5 (Payments and Subscriptions)",
+      body: [
         {
           type: "list",
           items: [
-            "Saju chart and Five Elements distribution calculation based on your date of birth",
-            "Scoring of a 30-question personality assessment and analysis of your type",
-            "Conversational counseling with an AI chatbot",
-            "A report that integrates the above",
+            "Payments are made through the Apple App Store or Google Play; payment, receipts and payment methods follow that store's terms.",
+            "Subscriptions **renew automatically** for the period you chose (monthly or yearly). You'll be charged for the next period unless you cancel at least 24 hours before the current period ends. You can cancel in your device's App Store or Google Play subscription settings, and keep access until the end of the period you've paid for.",
+            "If a free trial is offered, it turns into a paid subscription automatically when it ends. Cancel at least 24 hours before the trial ends and you won't be charged. Under store rules, free trials may be available only to first-time subscribers.",
+            "In-depth reports, the bundle and the year-ahead report stay available once bought and can be reopened with “Restore purchases” on the same store account.",
+            "A compatibility report applies only to the pair of people it was bought for. Bought reports are saved on your device, so you may not be able to reopen them after deleting the app or changing devices.",
           ],
         },
-        {
-          type: "p",
-          text: "As a beta service, features may change, be added, or be discontinued without prior notice. The Service requires no signup; the information and report content you enter are stored on our servers together with an anonymous session identifier. However, the current screens do not offer a way to reload a previous report — refreshing the page starts the flow over from the beginning. See the Privacy Policy for our retention and deletion practices.",
-        },
       ],
     },
     {
-      heading: "Article 5 (Usage Restriction)",
+      heading: "Article 6 (Cancellation and Refunds)",
       body: [
-        {
-          type: "p",
-          text: "This Service is available only to users **14 years of age or older**. Users under 14 may not use the Service. The operator does not separately verify that a user is 14 or older, so parental guidance is needed to keep users under 14 from using the Service.",
-        },
+        { type: "p", text: "Refunds for Paid Services follow the refund process of the store you paid through (Apple: reportaproblem.apple.com; Google Play: request a refund from your order history). These Terms don't limit any cancellation or refund rights you have under applicable law. If something is wrong with a payment or your access, please contact us at the address in the Privacy Policy." },
       ],
     },
     {
-      heading: "Article 6 (User Obligations)",
+      heading: "Article 7 (Age Requirement)",
       body: [
-        { type: "p", text: "Users must not engage in any of the following while using the Service." },
+        { type: "p", text: "The Service is for people **aged 14 and over** only. The operator doesn't verify users' ages, so parents or guardians should make sure children under 14 don't use it." },
+      ],
+    },
+    {
+      heading: "Article 8 (User Obligations)",
+      body: [
+        { type: "p", text: "When using the Service, you must not:" },
         {
           type: "list",
           items: [
-            "Impersonating another person or entering false information",
-            "Interfering with the normal operation of the Service (excessive repeated requests, automated access, etc.)",
-            "Redistributing information obtained through the Service for commercial purposes without the operator's consent",
-            "Repeatedly making inappropriate requests to the AI chatbot (attempting to override its system instructions, requests unrelated to the Service's purpose, etc.)",
+            "Enter someone else's details without their consent, or use the results to harass or judge another person",
+            "Interfere with the normal operation of the Service (excessive repeated requests, automated access, attempts to bypass payment, etc.)",
+            "Redistribute content from the Service for commercial purposes without the operator's consent",
+            "Repeatedly send the AI conversation requests unrelated to the Service's purpose or inappropriate requests (such as trying to make it ignore its instructions)",
           ],
         },
       ],
     },
     {
-      heading: "Article 7 (Important Notice About Service Content — This Is Not a Diagnosis)",
+      heading: "Article 9 (Important Notice — Not a Diagnosis)",
       headingColor: "#6FA98B",
       body: [
         {
           type: "p",
-          text: "The saju readings, assessment results, AI counseling responses, and reports provided by the Service are **reference material intended to support self-understanding**. They are not a medical or psychological diagnosis and do not substitute for professional mental health counseling or treatment. AI-generated responses may be inaccurate or may not reflect your actual circumstances.",
+          text: "The saju readings, fortunes, compatibility results, personality test results, AI replies and reports provided by the Service are **reference material to support self-understanding**. They are not a medical or psychological diagnosis, don't replace professional counseling or treatment or legal, financial or medical advice, and don't guarantee the future. AI-written content may be inaccurate or differ from your actual situation. Please don't make important decisions based on the Service's results alone.",
         },
         {
           type: "p",
-          text: "If you are struggling with a mental health concern, please seek help from a qualified medical or counseling professional. If you are in crisis, a directory of local, 24/7 crisis lines by country is available at findahelpline.com.",
+          text: "If you're struggling with your mental health, please reach out to a medical professional or counseling service. In an emergency, contact your local emergency services or a crisis line (in the US, call or text 988).",
         },
       ],
     },
     {
-      heading: "Article 8 (Intellectual Property)",
+      heading: "Article 10 (Intellectual Property)",
       body: [
-        { type: "p", text: "The copyright in the text, design, and logic provided by the Service belongs to the operator. Users may not reproduce, distribute, or commercially exploit this content without the operator's prior consent." },
+        { type: "p", text: "Rights to the Service's text, design, calculation engine and software belong to the operator. You may share your own results personally using the Service's sharing features, but may not copy, distribute or commercially use the Service's content without the operator's consent." },
       ],
     },
     {
-      heading: "Article 9 (Disclaimer)",
+      heading: "Article 11 (Disclaimer)",
       body: [
         {
           type: "list",
           items: [
-            "Except as otherwise required by applicable law, the operator is not liable for damages arising from use of the Service, which is provided free of charge.",
-            "The operator does not warrant the accuracy or completeness of AI-generated responses and is not liable for outcomes resulting from reliance on them.",
-            "The operator is not liable for service interruptions caused by events beyond its control, including natural disasters or outages at service providers (SAZU API, OpenAI, etc.).",
+            "The operator doesn't guarantee the accuracy or completeness of AI-written content and, to the extent permitted by law, isn't responsible for decisions you make based on it or their outcomes.",
+            "The operator isn't responsible for interruptions caused by events beyond its control, such as natural disasters or outages of outside services we rely on (OpenAI, hosting, payment services, etc.). Problems affecting Paid Services are handled as required by applicable law.",
+            "Unless applicable law provides otherwise, the operator isn't responsible for damages related to features provided free of charge.",
           ],
         },
       ],
     },
     {
-      heading: "Article 10 (Governing Law and Jurisdiction)",
+      heading: "Article 12 (Governing Law and Jurisdiction)",
       body: [
-        { type: "p", text: "These Terms are governed by the laws of the Republic of Korea. Any dispute arising in connection with the Service will be resolved according to the procedures set out by applicable law." },
+        { type: "p", text: "These Terms are governed by the laws of the Republic of Korea, and disputes related to the Service follow the procedures set by applicable law. If the consumer protection laws of the country where you live give you more favorable rights, these Terms don't limit those rights." },
+      ],
+    },
+    {
+      heading: "Operator",
+      body: [
+        { type: "list", items: ["Business name: Studio Aaron (스튜디오 아론)", "Representative: Aaron Kwon (Hyunjo Kwon)", "Business registration number: 230-38-01618", "Mail-order business registration: 2026-Gyeonggi Siheung-2276", "Address: Room 6110, 6F, 19 Saejae-ro, Siheung-si, Gyeonggi-do, Republic of Korea", "Phone: +82 10-8757-2948"] },
       ],
     },
     {
       heading: "Addendum",
       body: [
-        { type: "p", text: "These Terms take effect on August 30, 2026." },
+        { type: "p", text: "These Terms take effect on October 7, 2026." },
       ],
     },
     {
       body: [
-        { type: "p", style: "muted", text: "These Terms are a draft for the Service's beta operation and will be reviewed by legal counsel before the Service's formal launch." },
+        { type: "p", style: "muted", text: "These Terms are a draft that has not yet been reviewed by a legal professional." },
       ],
     },
   ],
 };
 
-// 2026-09-13: Spanish translation added — same rationale as the English
-// pass above (see its comment), and now overdue since Spanish has been a
-// fully-supported app locale (mobile UI, quiz, Q&A bank, GPT prompts)
-// since this same date. Plain translation of privacyKo/termsKo
-// section-for-section — keep all three in sync if any changes. The
-// crisis-resources line in Article 7 follows the English version's
-// precedent (findahelpline.com instead of a Korea-only hotline number),
-// since a Spanish-speaking user is no more likely to be in Korea than an
-// English-speaking one. Still a beta draft pending legal review.
 const privacyEs: LegalDocument = {
-  title: "Política de Privacidad",
-  updatedAt: "31 de agosto de 2026",
+  title: "Política de privacidad",
+  updatedAt: "7 de octubre de 2026",
   sections: [
     {
       body: [
         {
           type: "p",
-          text: "“Fatesaid” (el “Servicio”) trata tu información personal con cuidado y cumple con las leyes de protección de datos aplicables. Esta política explica qué información personal recopila el Servicio y cómo se usa, almacena y elimina.",
+          text: "“Fatesaid” (el “Servicio”) se ofrece en nuestro sitio web (fatesaidapp.com) y en la app móvil, y trata la información personal conforme a la Ley de Protección de Información Personal de la República de Corea y demás leyes aplicables. Esta política explica qué recopilamos, para qué lo usamos, cuánto tiempo lo guardamos y cómo lo eliminamos.",
         },
         {
           type: "p",
           style: "highlight",
-          text: "El Servicio se encuentra actualmente en fase beta y aún no ha completado su registro formal como empresa. La información sobre el operador en esta política se actualizará una vez finalizado ese registro.",
+          text: "El Servicio funciona sin cuenta. No recopilamos tu nombre, correo electrónico, contraseña ni número de teléfono, y los datos de pago (como el número de tarjeta) los gestionan Apple y Google: nunca nos llegan.",
         },
       ],
     },
     {
-      heading: "1. Información que Recopilamos",
+      heading: "1. Qué recopilamos",
       body: [
-        { type: "p", text: "Para calcular tu mapa de saju, evaluar tu test de personalidad y generar respuestas de consejería con IA, el Servicio recopila la siguiente información." },
+        { type: "p", text: "**Información que introduces**" },
         {
           type: "list",
           items: [
-            "**Información obligatoria**: fecha de nacimiento, género, ciudad de nacimiento, área de interés (amor y apego / carrera y agotamiento)",
-            "**Información opcional**: hora de nacimiento (puedes marcarla como desconocida)",
-            "**Respuestas del test**: tus respuestas de opción o deslizador a un test de 30 preguntas",
-            "**Contenido de la conversación de consejería con IA**: el texto que tú mismo escribes al conversar con el chatbot",
-            "**Identificador de sesión anónimo**: un valor generado aleatoriamente en tu dispositivo para agrupar la información anterior en un solo flujo de uso sin necesidad de iniciar sesión (no puede identificarte personalmente)",
-            "**Información recopilada automáticamente**: registros de acceso, dirección IP, información del dispositivo o navegador (para prevenir el uso fraudulento y solucionar errores)",
+            "Nombre visible (apodo), fecha de nacimiento, género, hora de nacimiento (opcional, puede quedar como “no la sé”), ciudad de nacimiento (opcional) y el tema que te interesa",
+            "Tus respuestas al test de personalidad (30 preguntas de opción múltiple y de deslizador)",
+            "Lo que escribes en la conversación con la IA",
+            "Las preguntas que eliges en Preguntas de saju",
           ],
         },
-        { type: "p", text: "Como el Servicio no requiere registro, no recopilamos tu nombre, correo electrónico ni contraseña." },
-      ],
-    },
-    {
-      heading: "2. Finalidad de la Recopilación y el Uso",
-      body: [
+        { type: "p", text: "**Información sobre otras personas**" },
         {
           type: "list",
           items: [
-            "Calcular tu mapa de saju y analizar la distribución de tus Cinco Elementos",
-            "Evaluar tu test y analizar tu tipo de personalidad",
-            "Generar respuestas de consejería del chatbot con IA",
-            "Elaborar un informe que combina tu saju, tu test y el contenido de la consejería",
-            "Prevenir el uso fraudulento del Servicio, e identificar y corregir errores",
+            "Cuando usas Compatibilidad, las preguntas “Sobre una persona” o el Mapa de química del grupo, la fecha de nacimiento, el género, la hora de nacimiento y el nombre visible de otra persona que introduces. Solo los usamos dentro de la solicitud que calcula el resultado y no los guardamos en nuestros servidores (salvo el registro de compra del informe de compatibilidad que se describe abajo).",
+            "Registro de compra del informe de compatibilidad: para que una compra sirva para una sola pareja de personas, guardamos los datos de ambas convertidos en un valor irreversible (un hash criptográfico) junto con el número de la transacción. Las fechas de nacimiento no se conservan.",
+            "Enlaces de invitación de compatibilidad: el nombre visible y el Maestro del Día (el carácter central de la carta) de quien envía, el idioma, y el nombre visible (opcional) y el resultado de la amistad que responde (Maestro del Día, tipo de saju, elemento más presente). Su fecha de nacimiento solo se usa dentro de la solicitud que calcula el resultado y no se guarda.",
+            "Modo pareja: los nombres visibles de ambas personas, su Maestro del Día y su rama del día (un carácter de la carta cada uno) y el identificador de usuario del servicio de pagos (RevenueCat) que usamos para comprobar la suscripción. No guardamos fechas de nacimiento.",
           ],
         },
-      ],
-    },
-    {
-      heading: "3. Período de Conservación",
-      body: [
-        {
-          type: "p",
-          text: "El Servicio almacena la información de la Sección 1 junto con tu **identificador de sesión anónimo** en su base de datos. Este identificador no está vinculado a información que pueda identificarte directamente, como tu nombre o correo electrónico. Las pantallas actuales no ofrecen una forma de volver a cargar un resultado pasado — los datos se conservan para mejorar la calidad del servicio y preparar futuras funciones (como la vinculación de cuentas).",
-        },
-        {
-          type: "p",
-          text: "La información almacenada se conserva por **hasta un año desde la fecha de recopilación**, tras lo cual se elimina sin demora. Si deseas que tus datos se eliminen antes, contáctanos con los datos de la Sección 9 y los eliminaremos de inmediato. Si en el futuro se agrega una función de inicio de sesión, te lo notificaremos por separado y solicitaremos tu consentimiento antes de vincular cualquier dato de sesión existente a una cuenta.",
-        },
-      ],
-    },
-    {
-      heading: "4. Procesamiento Externalizado y Transferencia Internacional",
-      body: [
-        { type: "p", text: "El Servicio externaliza el procesamiento de información personal a los siguientes proveedores externos." },
+        { type: "p", text: "**Información que se genera al usar el Servicio**" },
         {
           type: "list",
           items: [
-            "**OpenAI, L.L.C. (Estados Unidos)** — para generar respuestas de consejería con IA, el texto que ingresas en el chatbot y el contexto mínimo necesario para la consejería (un resumen del resultado de tu test y la distribución de tus Cinco Elementos) se transmiten en tiempo real a través de la red a servidores ubicados en Estados Unidos en el momento de cada intercambio de consejería. La conservación sigue la propia política de manejo de datos de la API de OpenAI; consulta la política de privacidad de OpenAI para más detalles.",
-            "**Proveedor de la API SAZU** — para calcular tu mapa de saju y la distribución de tus Cinco Elementos, tu fecha de nacimiento, hora de nacimiento, género y ciudad de nacimiento se transmiten y procesan en el momento de la solicitud de cálculo.",
-            "**Supabase, Inc. (Estados Unidos)** — para que puedas volver a ver tus resultados en una futura visita, la información de la Sección 1 (incluido tu identificador de sesión anónimo) se almacena en servidores de base de datos ubicados en Estados Unidos. La conservación sigue lo indicado en la Sección 3.",
+            "Identificador de sesión anónimo: un valor aleatorio que agrupa tus datos y resultados sin necesidad de cuenta",
+            "Registros de uso: qué pantallas se abren, qué botones se tocan, los intentos y resultados de compra, y el 👍/👎 sobre las respuestas. Se asocian a un identificador aleatorio creado en tu dispositivo (app) o navegador (sitio web) y nunca incluyen fechas de nacimiento, nombres ni lo que escribes.",
+            "Información de compra: el identificador de usuario anónimo que el servicio de pagos (RevenueCat) crea para cada instalación de la app, y tu historial de compras y suscripciones",
+            "Registros de uso de la IA: el tipo de solicitud y la cantidad de tokens usados (nunca el texto de las conversaciones ni de las preguntas)",
+            "Datos de conexión: dirección IP y datos del dispositivo o navegador. Los usamos para frenar solicitudes excesivas y no los guardamos en nuestra base de datos (pueden aparecer en los registros de acceso de nuestro proveedor de alojamiento).",
           ],
         },
-        { type: "p", text: "Fuera de los proveedores indicados arriba, el Servicio no comparte tu información personal con terceros." },
-      ],
-    },
-    {
-      heading: "5. Información Personal de Menores de 14 Años",
-      body: [
-        {
-          type: "p",
-          text: "Este Servicio está disponible únicamente para usuarios **de 14 años de edad o más**. El Servicio no recopila a sabiendas información personal de menores de 14 años, y dejará de usar cualquier información que se determine pertenece a un usuario menor de esa edad.",
-        },
-      ],
-    },
-    {
-      heading: "6. Tus Derechos y Cómo Ejercerlos",
-      body: [
-        {
-          type: "p",
-          text: "Puedes solicitar ver, corregir o eliminar la información almacenada en tu sesión. Como el Servicio no tiene sistema de inicio de sesión, podríamos preguntarte cuándo se creó tu sesión o parte de la información que ingresaste, para confirmar que eres el usuario real de esa sesión. Dirige estas solicitudes al contacto indicado en la Sección 9.",
-        },
-      ],
-    },
-    {
-      heading: "7. Medidas de Seguridad",
-      body: [
+        { type: "p", text: "**Información que se queda solo en tu dispositivo y no se envía a nuestros servidores**" },
         {
           type: "list",
           items: [
-            "Cifrado (HTTPS) del canal de comunicación entre tú y nuestros servidores",
-            "Credenciales como OPENAI_API_KEY y SAZU_API_KEY se mantienen únicamente como variables de entorno del servidor y nunca se exponen al cliente",
-            "Controles de acceso y políticas de seguridad del proveedor de infraestructura subyacente (Vercel)",
+            "Tu diario de una línea (estado de ánimo y una nota breve). Cuando creas el informe mensual de patrones, las entradas de ese mes se envían con la solicitud; el servidor solo las usa para escribir el informe y no las guarda.",
+            "Copias de los informes que compraste, ajustes de notificaciones, progreso de las lecciones del Maestro del Día, el recuento de temas de Preguntas de saju y lo que muestra el widget de la pantalla de inicio",
           ],
         },
       ],
     },
     {
-      heading: "8. Cookies y Otras Herramientas de Recopilación Automática",
+      heading: "2. Para qué la usamos",
       body: [
-        { type: "p", text: "El Servicio actualmente no utiliza cookies de análisis ni de publicidad independientes. Si en el futuro se introducen herramientas de análisis, lo anunciaremos con antelación a través de esta política." },
+        {
+          type: "list",
+          items: [
+            "Calcular tu carta de saju y el equilibrio de los cinco elementos, y ofrecer lecturas del día, compatibilidad e informes",
+            "Puntuar el test de personalidad y escribir las respuestas de la conversación con la IA, de Preguntas de saju y los informes",
+            "Confirmar compras y gestionar el acceso a las funciones de pago",
+            "Las invitaciones de compatibilidad y el modo pareja",
+            "Analizar y mejorar el Servicio (registros de uso), detectar errores y prevenir abusos",
+          ],
+        },
+        { type: "p", text: "No usamos tu información para publicidad ni para seguirte a través de apps y sitios web de otras empresas." },
       ],
     },
     {
-      heading: "9. Encargado de Protección de Datos Personales",
+      heading: "3. Conservación y eliminación",
       body: [
-        { type: "p", text: "Para preguntas sobre información personal, contáctanos en la siguiente dirección." },
+        {
+          type: "list",
+          items: [
+            "Tus datos, respuestas del test, conversación con la IA y resultados de informes (guardados con el identificador de sesión anónimo): **hasta 1 año** desde su recopilación",
+            "Registros de uso y de uso de la IA: **hasta 1 año** desde su recopilación",
+            "Enlaces de invitación de compatibilidad: caducan **30 días** después de crearse y se eliminan cuando se depuran los enlaces caducados",
+            "Modo pareja: **se elimina de inmediato** cuando cualquiera de las dos personas lo desvincula; un código que la otra persona nunca introdujo caduca y se elimina a los **7 días**",
+            "Registros de compra del informe de compatibilidad: mientras esa compra permita volver a abrir el informe",
+            "Información en tu dispositivo: se elimina al borrar la app o al usar “Restablecer mis datos” en Ajustes (restablecer también desvincula el modo pareja en nuestro servidor)",
+          ],
+        },
+        { type: "p", text: "Cuando termina el plazo de conservación o nos pides eliminar tu información, la borramos sin demora y de forma que no pueda recuperarse." },
+      ],
+    },
+    {
+      heading: "4. Proveedores y transferencias internacionales",
+      body: [
+        { type: "p", text: "Trabajamos con los proveedores siguientes, cuyos servidores están en Estados Unidos. La información se envía por una conexión cifrada (HTTPS) cuando usas la función correspondiente." },
+        {
+          type: "list",
+          items: [
+            "**OpenAI, L.L.C. (EE. UU.)**: escribe las respuestas de la conversación con la IA, de Preguntas de saju, los informes y los informes mensuales de patrones. Las solicitudes incluyen tu conversación, la pregunta que elegiste, un resumen de tus resultados del test y el cálculo de tu saju (en las preguntas “Sobre una persona” y en el informe de compatibilidad, también el cálculo de la otra persona) y, para el informe mensual, las entradas del diario de ese mes. La conservación sigue la política de datos de la API de OpenAI.",
+            "**Supabase, Inc. (EE. UU.)**: base de datos. Guarda la información que el apartado 1 indica que se conserva en nuestros servidores, durante los plazos del apartado 3.",
+            "**Vercel Inc. (EE. UU.)**: aloja el sitio web y los servidores de la API, y ofrece estadísticas de visitas del sitio web.",
+            "**RevenueCat, Inc. (EE. UU.)**: gestiona las compras y suscripciones dentro de la app; trata el identificador de usuario anónimo y el historial de compras.",
+            "**Apple Inc., Google LLC**: procesan los pagos dentro de la app y entregan las actualizaciones y notificaciones de la app. La información de pago sigue la política de privacidad de cada empresa.",
+          ],
+        },
+        { type: "p", text: "Las cartas de saju se calculan con nuestro propio motor en nuestros propios servidores; las fechas de nacimiento no se envían a ningún proveedor externo de cálculo. No compartimos tu información con terceros fuera de los proveedores anteriores." },
+      ],
+    },
+    {
+      heading: "5. Menores de 14 años",
+      body: [
+        {
+          type: "p",
+          text: "El Servicio es solo para personas **de 14 años o más**. No recopilamos a sabiendas información de menores de 14 años y, si sabemos que alguien es menor de 14, la eliminamos.",
+        },
+      ],
+    },
+    {
+      heading: "6. Tus derechos",
+      body: [
+        {
+          type: "p",
+          text: "Puedes pedir acceder a tu información, corregirla, eliminarla o detener su tratamiento. La información de tu dispositivo se borra al momento con “Restablecer mis datos” en los Ajustes de la app; para la información de nuestros servidores, escríbenos a la dirección del apartado 9 o usa la página de eliminación de datos (fatesaidapp.com/data-deletion). Como no hay cuentas, quizá te preguntemos por algunos de los datos que introdujiste para confirmar que la información es tuya.",
+        },
+        {
+          type: "p",
+          text: "Antes de introducir los datos de otra persona, asegúrate de que está de acuerdo. A quien responde un enlace de invitación de compatibilidad le pedimos su consentimiento en la pantalla de entrada.",
+        },
+      ],
+    },
+    {
+      heading: "7. Medidas de seguridad",
+      body: [
+        {
+          type: "list",
+          items: [
+            "Cifrado de todas las conexiones (HTTPS)",
+            "Claves de API guardadas solo en variables de entorno del servidor, nunca expuestas a la app ni al navegador",
+            "La base de datos solo es accesible desde nuestro servidor (seguridad a nivel de fila); la app y el navegador no pueden leerla directamente",
+            "Los tokens de acceso de los enlaces de invitación y del modo pareja se guardan solo como hash",
+            "Límites de solicitudes contra el abuso automatizado",
+          ],
+        },
+      ],
+    },
+    {
+      heading: "8. Cookies y tecnologías similares",
+      body: [
+        {
+          type: "p",
+          text: "No usamos cookies publicitarias ni identificadores de publicidad (IDFA / ID de publicidad). El sitio web usa Vercel Web Analytics para estadísticas de visitas, y la app y el sitio web guardan un identificador aleatorio en el almacenamiento del dispositivo o del navegador para los registros de uso del apartado 1. Puedes quitarlo borrando la app o el almacenamiento de tu navegador.",
+        },
+      ],
+    },
+    {
+      heading: "9. Contacto de privacidad",
+      body: [
+        { type: "p", text: "Para preguntas y solicitudes sobre privacidad, escríbenos a:" },
         { type: "contact", label: "Correo electrónico", email: "435deed@gmail.com" },
-        { type: "p", style: "muted", text: "Este es un contacto operativo temporal. Se actualizará una vez completado el registro de la empresa y designado formalmente un Encargado de Protección de Datos Personales." },
+        { type: "list", items: ["Nombre comercial: Studio Aaron (스튜디오 아론)", "Representante: Aaron Kwon (Hyunjo Kwon)", "Número de registro empresarial: 230-38-01618", "Registro de venta a distancia: 2026-Gyeonggi Siheung-2276", "Dirección: Oficina 6110, planta 6, 19 Saejae-ro, Siheung-si, Gyeonggi-do, República de Corea", "Teléfono: +82 10-8757-2948", "Responsable de privacidad: Aaron Kwon (Hyunjo Kwon)"] },
       ],
     },
     {
-      heading: "10. Vías de Reparación por Vulneración de Derechos",
+      heading: "10. Vías de reclamación",
       body: [
-        { type: "p", text: "Si necesitas reportar o buscar asesoría sobre una vulneración de tu información personal, puedes contactar a los siguientes organismos (del gobierno de Corea)." },
+        { type: "p", text: "Si necesitas denunciar o consultar un problema de privacidad, puedes acudir a las siguientes autoridades de Corea o a la autoridad de protección de datos de tu país." },
         {
           type: "list",
           items: [
-            "Comisión de Protección de Datos Personales (privacy.go.kr / 182, gratuito dentro de Corea)",
-            "Centro de Denuncias de Vulneración de Datos Personales (privacy.kisa.or.kr / 118, gratuito dentro de Corea)",
-            "División de Investigación de Delitos Cibernéticos de la Fiscalía Suprema (spo.go.kr / 1301, gratuito dentro de Corea)",
-            "Oficina de Investigación Cibernética de la Agencia Nacional de Policía (ecrm.police.go.kr / 182, gratuito dentro de Corea)",
+            "Comisión de Protección de Información Personal (privacy.go.kr / 182 desde Corea)",
+            "Centro de Denuncias de Vulneración de Información Personal (privacy.kisa.or.kr / 118 desde Corea)",
+            "Unidad de Investigación de Ciberdelitos de la Fiscalía Suprema (spo.go.kr / 1301 desde Corea)",
+            "Oficina de Ciberinvestigación de la Policía Nacional de Corea (ecrm.police.go.kr / 182 desde Corea)",
           ],
         },
       ],
     },
     {
-      heading: "11. Obligación de Notificación",
+      heading: "11. Cambios en esta política",
       body: [
-        { type: "p", text: "Si esta política cambia, lo anunciaremos con antelación a través del Servicio. Esta política entra en vigor a partir del 31 de agosto de 2026." },
+        { type: "p", text: "Si esta política cambia, te lo indicaremos en el Servicio. Esta política se aplica desde el 7 de octubre de 2026." },
       ],
     },
     {
       body: [
-        { type: "p", style: "muted", text: "Esta política es un borrador para la operación beta del Servicio y será revisada por un asesor legal antes del lanzamiento formal del Servicio." },
+        { type: "p", style: "muted", text: "Esta política es un borrador que todavía no ha revisado un profesional del derecho." },
       ],
     },
   ],
 };
 
 const termsEs: LegalDocument = {
-  title: "Términos de Servicio",
-  updatedAt: "30 de agosto de 2026",
+  title: "Términos del servicio",
+  updatedAt: "7 de octubre de 2026",
   sections: [
     {
-      heading: "Artículo 1 (Propósito)",
+      heading: "Artículo 1 (Objeto)",
       body: [
-        { type: "p", text: "Estos Términos rigen los derechos, obligaciones y responsabilidades entre el operador y los usuarios de los servicios de análisis saju, test de personalidad, consejería con IA e informes que ofrece “Fatesaid” (el “Servicio”)." },
+        { type: "p", text: "Estos Términos establecen los derechos, obligaciones y responsabilidades entre quien opera “Fatesaid” (el “Servicio”) y las personas que lo usan, en relación con las lecturas de saju, lecturas del día, tests de personalidad, conversaciones con IA, informes y demás funciones del sitio web y la app móvil." },
       ],
     },
     {
@@ -767,109 +917,126 @@ const termsEs: LegalDocument = {
         {
           type: "list",
           items: [
-            "“Servicio” se refiere al servicio web que ofrece cálculo saju, tests de personalidad, consejería mediante chatbot con IA y un informe integrado.",
-            "“Usuario” se refiere a la persona que utiliza el Servicio conforme a estos Términos.",
+            "“Servicio”: todas las funciones que se ofrecen en el sitio web (fatesaidapp.com) y en la app móvil Fatesaid.",
+            "“Usuario”: cualquier persona que usa el Servicio conforme a estos Términos.",
+            "“Servicios de pago”: las suscripciones y el contenido de compra única que se adquieren dentro de la app a través de Apple App Store o Google Play.",
           ],
         },
       ],
     },
     {
-      heading: "Artículo 3 (Publicación y Modificación de los Términos)",
+      heading: "Artículo 3 (Publicación y cambios)",
       body: [
-        { type: "p", text: "El operador publica estos Términos en el Servicio para que los usuarios puedan consultarlos fácilmente. Los Términos pueden modificarse dentro de lo permitido por la ley aplicable, y cualquier modificación se anunciará con antelación a través del Servicio." },
+        { type: "p", text: "Publicamos estos Términos en el Servicio. Pueden cambiar dentro de lo que permita la ley aplicable; anunciaremos el cambio y su fecha de entrada en vigor en el Servicio con al menos 7 días de antelación (30 días si el cambio es desfavorable para ti)." },
       ],
     },
     {
-      heading: "Artículo 4 (Descripción del Servicio)",
+      heading: "Artículo 4 (Qué incluye el Servicio)",
       body: [
-        { type: "p", text: "El Servicio se ofrece actualmente como **beta gratuita** e incluye las siguientes funciones." },
+        { type: "p", text: "**Funciones gratuitas**: tu carta de saju, tu tipo de saju, el resumen de la lectura de hoy, los tests de personalidad y la conversación con la IA, las vistas previas de los informes, los resultados de compatibilidad, las invitaciones de compatibilidad, el Mapa de química del grupo, un número diario de Preguntas de saju, el diario de una línea y más." },
+        {
+          type: "p",
+          text: "**Servicios de pago**: (1) la suscripción “Fatesaid Pro”: lecturas completas (hoy, semana, mes y año), hasta 10 Preguntas de saju al día, las preguntas “Sobre una persona”, informes mensuales de patrones, modo pareja y más; (2) compras únicas: el informe a fondo de cada test y el paquete de todos los informes, el informe del año y el informe de compatibilidad (una vez por cada otra persona).",
+        },
+        { type: "p", text: "Lo que incluye cada Servicio de pago y su precio son los que se muestran en la pantalla de compra. Podemos cambiar o añadir funciones para mejorar el Servicio, pero no quitaremos el contenido principal de lo que ya compraste." },
+      ],
+    },
+    {
+      heading: "Artículo 5 (Pagos y suscripciones)",
+      body: [
         {
           type: "list",
           items: [
-            "Cálculo de el mapa de saju y la distribución de los Cinco Elementos según tu fecha de nacimiento",
-            "Evaluación de un test de personalidad de 30 preguntas y análisis de tu tipo",
-            "Consejería conversacional con un chatbot de IA",
-            "Un informe que integra todo lo anterior",
+            "Los pagos se hacen a través de Apple App Store o Google Play; el pago, los recibos y los métodos de pago siguen los términos de esa tienda.",
+            "Las suscripciones **se renuevan automáticamente** por el periodo que elegiste (mensual o anual). Se cobrará el siguiente periodo salvo que canceles al menos 24 horas antes de que termine el actual. Puedes cancelar en los ajustes de suscripciones de App Store o Google Play de tu dispositivo y mantienes el acceso hasta el final del periodo pagado.",
+            "Si se ofrece una prueba gratuita, al terminar se convierte automáticamente en una suscripción de pago. Si cancelas al menos 24 horas antes de que termine la prueba, no se te cobrará. Según las normas de cada tienda, la prueba gratuita puede estar disponible solo para quien se suscribe por primera vez.",
+            "Los informes a fondo, el paquete y el informe del año siguen disponibles una vez comprados y pueden volver a abrirse con “Restaurar compras” en la misma cuenta de la tienda.",
+            "Un informe de compatibilidad sirve solo para la pareja de personas para la que se compró. Los informes comprados se guardan en tu dispositivo, así que es posible que no puedas volver a abrirlos si borras la app o cambias de dispositivo.",
           ],
         },
-        {
-          type: "p",
-          text: "Al tratarse de un servicio beta, las funciones pueden cambiar, agregarse o discontinuarse sin previo aviso. El Servicio no requiere registro; la información y el contenido del informe que ingresas se almacenan en nuestros servidores junto con un identificador de sesión anónimo. Sin embargo, las pantallas actuales no ofrecen una forma de volver a cargar un informe anterior — actualizar la página reinicia el proceso desde el principio. Consulta la Política de Privacidad para conocer nuestras prácticas de conservación y eliminación.",
-        },
       ],
     },
     {
-      heading: "Artículo 5 (Restricción de Uso)",
+      heading: "Artículo 6 (Desistimiento y reembolsos)",
       body: [
-        {
-          type: "p",
-          text: "Este Servicio está disponible únicamente para usuarios **de 14 años de edad o más**. Los menores de 14 años no pueden usar el Servicio. El operador no verifica por separado que un usuario tenga 14 años o más, por lo que se necesita la orientación de un adulto responsable para evitar que menores de 14 años usen el Servicio.",
-        },
+        { type: "p", text: "Los reembolsos de los Servicios de pago siguen el proceso de la tienda donde pagaste (Apple: reportaproblem.apple.com; Google Play: solicitar un reembolso desde tu historial de pedidos). Estos Términos no limitan los derechos de desistimiento o reembolso que te reconozca la ley aplicable. Si hay algún problema con un pago o con tu acceso, escríbenos a la dirección que aparece en la Política de privacidad." },
       ],
     },
     {
-      heading: "Artículo 6 (Obligaciones del Usuario)",
+      heading: "Artículo 7 (Edad mínima)",
       body: [
-        { type: "p", text: "Los usuarios no deben realizar ninguna de las siguientes acciones al utilizar el Servicio." },
+        { type: "p", text: "El Servicio es solo para personas **de 14 años o más**. No verificamos la edad, así que madres, padres o tutores deben asegurarse de que no lo usen menores de 14 años." },
+      ],
+    },
+    {
+      heading: "Artículo 8 (Obligaciones de quien usa el Servicio)",
+      body: [
+        { type: "p", text: "Al usar el Servicio, no debes:" },
         {
           type: "list",
           items: [
-            "Suplantar a otra persona o ingresar información falsa",
-            "Interferir con el funcionamiento normal del Servicio (solicitudes repetidas excesivas, acceso automatizado, etc.)",
-            "Redistribuir información obtenida a través del Servicio con fines comerciales sin el consentimiento del operador",
-            "Realizar solicitudes inapropiadas de forma repetida al chatbot de IA (intentar anular sus instrucciones de sistema, solicitudes ajenas al propósito del Servicio, etc.)",
+            "Introducir los datos de otra persona sin su consentimiento, ni usar los resultados para acosar o juzgar a alguien",
+            "Interferir con el funcionamiento normal del Servicio (solicitudes repetidas en exceso, acceso automatizado, intentos de eludir el pago, etc.)",
+            "Redistribuir contenido del Servicio con fines comerciales sin nuestro consentimiento",
+            "Enviar repetidamente a la conversación con la IA peticiones ajenas al propósito del Servicio o inapropiadas (como intentar que ignore sus instrucciones)",
           ],
         },
       ],
     },
     {
-      heading: "Artículo 7 (Aviso Importante sobre el Contenido del Servicio — Esto No Es un Diagnóstico)",
+      heading: "Artículo 9 (Aviso importante: no es un diagnóstico)",
       headingColor: "#6FA98B",
       body: [
         {
           type: "p",
-          text: "Las lecturas de saju, los resultados del test, las respuestas de consejería con IA y los informes que ofrece el Servicio son **material de referencia destinado a apoyar tu autoconocimiento**. No constituyen un diagnóstico médico ni psicológico, y no sustituyen la consejería profesional de salud mental ni el tratamiento. Las respuestas generadas por IA pueden ser inexactas o no reflejar tu situación real.",
+          text: "Las lecturas de saju, lecturas del día, resultados de compatibilidad, resultados de los tests, respuestas de la IA e informes del Servicio son **material de referencia para conocerte mejor**. No son un diagnóstico médico ni psicológico, no sustituyen la orientación o el tratamiento profesional ni el asesoramiento legal, financiero o médico, y no garantizan el futuro. El contenido escrito por la IA puede ser inexacto o no coincidir con tu situación real. No tomes decisiones importantes basándote solo en los resultados del Servicio.",
         },
         {
           type: "p",
-          text: "Si estás pasando por dificultades relacionadas con tu salud mental, busca ayuda de un profesional médico o de consejería calificado. Si te encuentras en una situación de crisis, puedes encontrar un directorio de líneas de crisis locales, disponibles las 24 horas, en findahelpline.com.",
+          text: "Si estás pasando por un momento difícil con tu salud mental, acude a un profesional de la salud o a un servicio de apoyo psicológico. En una emergencia, contacta con los servicios de emergencia o una línea de crisis de tu país (en EE. UU., llama o escribe al 988; en España, llama al 024).",
         },
       ],
     },
     {
-      heading: "Artículo 8 (Propiedad Intelectual)",
+      heading: "Artículo 10 (Propiedad intelectual)",
       body: [
-        { type: "p", text: "Los derechos de autor sobre el texto, diseño y lógica que ofrece el Servicio pertenecen al operador. Los usuarios no pueden reproducir, distribuir ni explotar comercialmente este contenido sin el consentimiento previo del operador." },
+        { type: "p", text: "Los derechos sobre los textos, el diseño, el motor de cálculo y el software del Servicio nos pertenecen. Puedes compartir tus propios resultados de forma personal con las funciones para compartir del Servicio, pero no puedes copiar, distribuir ni usar comercialmente su contenido sin nuestro consentimiento." },
       ],
     },
     {
-      heading: "Artículo 9 (Exención de Responsabilidad)",
+      heading: "Artículo 11 (Exención de responsabilidad)",
       body: [
         {
           type: "list",
           items: [
-            "Salvo que la ley aplicable exija lo contrario, el operador no es responsable de los daños derivados del uso del Servicio, que se ofrece de forma gratuita.",
-            "El operador no garantiza la exactitud ni la integridad de las respuestas generadas por IA y no es responsable de los resultados derivados de confiar en ellas.",
-            "El operador no es responsable de las interrupciones del Servicio causadas por eventos fuera de su control, incluidos desastres naturales o fallas en proveedores del servicio (API de SAZU, OpenAI, etc.).",
+            "No garantizamos la exactitud ni la integridad del contenido escrito por la IA y, en la medida en que lo permita la ley, no somos responsables de las decisiones que tomes basándote en él ni de sus consecuencias.",
+            "No somos responsables de interrupciones causadas por hechos fuera de nuestro control, como desastres naturales o fallos de servicios externos de los que dependemos (OpenAI, alojamiento, servicios de pago, etc.). Los problemas que afecten a los Servicios de pago se atienden según exija la ley aplicable.",
+            "Salvo que la ley aplicable disponga otra cosa, no somos responsables de los daños relacionados con las funciones gratuitas.",
           ],
         },
       ],
     },
     {
-      heading: "Artículo 10 (Ley Aplicable y Jurisdicción)",
+      heading: "Artículo 12 (Ley aplicable y jurisdicción)",
       body: [
-        { type: "p", text: "Estos Términos se rigen por las leyes de la República de Corea. Cualquier disputa relacionada con el Servicio se resolverá conforme a los procedimientos establecidos por la ley aplicable." },
+        { type: "p", text: "Estos Términos se rigen por las leyes de la República de Corea, y las disputas relacionadas con el Servicio siguen los procedimientos que establezca la ley aplicable. Si las leyes de protección al consumidor del país donde vives te reconocen derechos más favorables, estos Términos no los limitan." },
       ],
     },
     {
-      heading: "Disposición Adicional",
+      heading: "Datos del operador",
       body: [
-        { type: "p", text: "Estos Términos entran en vigor a partir del 30 de agosto de 2026." },
+        { type: "list", items: ["Nombre comercial: Studio Aaron (스튜디오 아론)", "Representante: Aaron Kwon (Hyunjo Kwon)", "Número de registro empresarial: 230-38-01618", "Registro de venta a distancia: 2026-Gyeonggi Siheung-2276", "Dirección: Oficina 6110, planta 6, 19 Saejae-ro, Siheung-si, Gyeonggi-do, República de Corea", "Teléfono: +82 10-8757-2948"] },
+      ],
+    },
+    {
+      heading: "Disposición adicional",
+      body: [
+        { type: "p", text: "Estos Términos entran en vigor el 7 de octubre de 2026." },
       ],
     },
     {
       body: [
-        { type: "p", style: "muted", text: "Estos Términos son un borrador para la operación beta del Servicio y serán revisados por un asesor legal antes del lanzamiento formal del Servicio." },
+        { type: "p", style: "muted", text: "Estos Términos son un borrador que todavía no ha revisado un profesional del derecho." },
       ],
     },
   ],
