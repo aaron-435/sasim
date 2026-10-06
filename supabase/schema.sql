@@ -134,6 +134,28 @@ create table if not exists compat_report_purchases (
   updated_at timestamptz not null default now()
 );
 
+-- 2026-10-06: 친구 궁합 초대 링크(fatesaidapp.com/c/<code>). 앱이 만들고, 친구가 웹에서 자기
+-- 생년월일을 넣으면 결과가 붙고, 보낸 사람 앱이 owner token으로 결과를 가져간다.
+-- 저장하는 것: 코드, owner token의 SHA-256(원문은 보낸 사람 기기에만), 보낸 사람 표시 이름,
+-- 보낸 사람 일간 한 글자(궁합은 두 일간만 비교), 언어, 친구가 적은 표시 이름(선택), 친구 결과
+-- (일간 한 글자·사주 유형·가장 많은 오행). 친구 생년월일은 요청 안에서만 쓰고 저장하지 않는다.
+-- 30일 뒤 만료되고, 만료된 행은 다음 초대를 만들 때 지운다.
+-- 배포된 DB에는 이 테이블이 없으므로 아래 create table을 SQL Editor에서 한 번 실행한다.
+create table if not exists invites (
+  code text primary key,
+  owner_token_hash text not null,
+  sender_name text not null default '',
+  sender_day_master text not null,
+  locale text not null,
+  created_at timestamptz not null default now(),
+  expires_at timestamptz not null,
+  accepted_at timestamptz,
+  friend_name text,
+  friend_result jsonb
+);
+
+create index if not exists idx_invites_expires_at on invites(expires_at);
+
 create index if not exists idx_saju_results_session on saju_results(session_id);
 create index if not exists idx_quiz_results_session on quiz_results(session_id);
 create index if not exists idx_chat_sessions_session on chat_sessions(session_id);
@@ -151,6 +173,7 @@ alter table report_results enable row level security;
 alter table llm_usage_log enable row level security;
 alter table events enable row level security;
 alter table compat_report_purchases enable row level security;
+alter table invites enable row level security;
 
 -- service_role은 RLS를 우회하지만, 테이블 자체에 대한 GRANT는 별개다.
 -- "Automatically expose new tables"를 꺼둔 상태에서 SQL Editor로 테이블을

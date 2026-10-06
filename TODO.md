@@ -78,9 +78,17 @@
 
 ## 바이럴
 
-- [ ] 6. 초대 링크와 친구 궁합
+- [x] 6. 초대 링크와 친구 궁합
   - 변경: `supabase/schema.sql`(`invites`: 코드, 보낸 사람 세션·표시 이름·궁합 계산용 최소 데이터, 친구 결과, 만료 30일), `/api/invites`(생성·조회·수락, rate limit), 웹 새 `app/c/[code]/page.tsx`(동의 문구, 친구 생년월일 입력, 관계 이름 + 한 줄, 설치 안내, 만료 화면, ko/en/es는 보낸 사람 언어 기본), 앱 `CompatibilityScreen`에 "친구와 궁합 보기"(공유 시트로 링크), 새 "받은 궁합" 목록(탭하면 기존 궁합 결과 화면).
   - QA: 루트 검사 + mobile tsc. 로컬 dev에서 `curl`로 초대 생성 → `/c/<code>` 열어 입력 → 조회 API에 결과, 만료 시각을 과거로 둔 코드 → 만료 화면. 저장 행에 생년월일 외 불필요한 값이 없는지 스키마 대조. mobile-web에서 링크 생성·공유 시트 호출(웹은 클립보드 대체 가능)과 받은 궁합 목록(프로덕션 API 배포 전엔 로컬 API 응답 모양으로 확인). 회귀 확인.
+  - 계획과 달라진 점: `/api/invites`를 셋으로 나눴다 — `POST /api/invites`(생성: 코드 10자와 owner token을 한 번만 돌려주고 DB엔 토큰의 SHA-256만), `POST /api/invites/status`(보낸 사람 앱이 코드+토큰으로 결과 조회, 토큰이 틀리면 `missing`), `POST /api/invites/[code]`(친구 수락: 동의 `consent: true` 필수, 한 링크에 한 번만, 만료 410·이미 답함 409·없음 404). 친구 생년월일은 수락 요청 안에서만 쓰고, 행에는 파생 결과(일간 한 글자·사주 유형·가장 많은 오행)와 친구가 적은 표시 이름(선택, 24자)만 남긴다. 보낸 사람 쪽 저장도 이름·일간 한 글자·언어뿐. 만료 행은 다음 초대를 만들 때 지운다. 친구 페이지는 친구 시점(친구 = "나")으로 관계 이름 + 본문 첫 문장을 보여 주고, 보낸 사람 앱은 같은 결과를 보낸 사람 시점으로 기존 궁합 결과 화면에 연다(받은 결과에는 상대 생년월일이 없으므로 "궁합 상세 리포트" 행은 숨김). "받은 궁합" 목록은 별도 화면 대신 `CompatibilityScreen` 입력 화면 아래 "친구와 궁합 보기" 칸 안에 두었다(답 대기 중 링크는 점선 행, 탭하면 링크 다시 보내기). 답이 온 결과는 기기(`mobile/lib/invites.ts`)에 복사해 링크 만료 뒤에도 남는다.
+  - QA: 루트 `npx tsc --noEmit` → exit 0, `npm run lint` → "No ESLint warnings or errors", `npm run build`(스크래치 복사본) → 성공·경고 없음, `ƒ /api/invites`·`ƒ /api/invites/[code]`·`ƒ /api/invites/status`·`ƒ /c/[code]` 포함. mobile tsc → exit 0.
+  - QA: 빌드본 `next start`(3100) + 로컬 Supabase 대역(PostgREST 흉내, 프로덕션 DB 요청 없음)에 `curl`: 생성 200(코드·토큰·URL·30일 뒤 만료), 모르는 일간·모르는 언어 400, 조회 open → 틀린 토큰 `missing`, 수락 — 동의 없음·미래 날짜 400, 없는 코드 404, 정상 200(친구 시점 관계), 두 번째 수락 409, 조회 answered(보낸 사람 시점 관계·친구 유형·이름 `Sam <b>` → `Sam b`), 만료로 돌린 코드 수락 410·페이지 만료 화면(ko·es), 없는 코드 페이지 "We couldn't find this link". 만료 행은 다음 생성 때 삭제됨. 생성 IP 한도(시간당 10) 초과 429. 저장 행 대조: 코드·토큰 해시·보낸 사람 이름·일간 한 글자·언어·만료·수락 시각·친구 이름·친구 결과(일간·유형·오행)뿐, 생년월일 없음.
+  - QA 중 고친 것: `/c/[code]`가 Next 데이터 캐시에 첫 조회를 붙잡아 답한 뒤에도 입력 폼을 보여 줬다 → 페이지에 `fetchCache = "force-no-store"`를 넣고 열림 → 답함 → 만료 화면 전환을 다시 확인.
+  - QA(웹 미리보기 375×812, 로컬 3100): `/c/<code>` 영어 폼(보낸 사람 이름 제목, 생년월일·이름(선택)·출생 시간·동의 체크·30일 안내) → 동의 없이 제출 "Please agree to share the result to see it." → 동의 후 제출 → "Sam · Jordan / You're the one who fuels them / Your energy pushes theirs forward. / This result has also been sent to Jordan's app." + 앱 안내, `/api/invites/<code>` 200, `invite_accept` 이벤트 요청 1건. 콘솔 오류는 로컬에 없는 Vercel insights 스크립트 404뿐.
+  - QA(mobile-web 375×812, `?qa=free&persona=jordan`, `/api/invites*`만 페이지에서 로컬 3100으로 돌림): 궁합 화면 아래 "Match with a friend" → "Send a link" → 서버 행(Jordan, 일간 계, en) 생성, 공유 문구 "Want to see how our saju charts match?…\nhttps://www.fatesaidapp.com/c/<code>"(navigator.share), 기기 목록에 open 항목. "Link you sent · Waiting for an answer · 30 days left" 탭 → navigator.share 없는 경우 클립보드 복사 + "Link copied. Paste it to your friend." curl로 친구(Alex) 수락 후 화면 다시 열기 → "Received: Alex · You're the one being pushed" → 탭 → 기존 결과 화면(Jordan · Alex, 공유 카드, 상세 리포트 행 없음), 기기 항목 answered로 저장. "Try someone else" → 입력 화면.
+  - QA 회귀(mobile-web `?qa=free&persona=jordan`): 직접 입력 궁합(Jordan · Sam, 프로덕션 `/api/compatibility`) 결과에 상세 리포트 행 그대로 → 홈 → 운세 총론 → Q&A 답 1개(이전 세션이 오늘 무료 1개를 써서 기기 한도 기록만 지우고 1→0) → 검사 목록 → Burnout 1/30. 콘솔 오류 없음.
+  - [ ] (사용자 확인) 사용자 실행 B(SQL `invites`) 후 웹 배포 → OTA → 실기기(iOS dev-client 또는 Android)에서: 궁합 → "친구와 궁합 보기" → "링크 보내기" → 공유 시트가 뜨고 메시지에 `https://www.fatesaidapp.com/c/…` 링크가 붙는지 → 다른 휴대폰(또는 시크릿 창)에서 링크 열기 → 생년월일·동의 → 결과 → 보낸 휴대폰에서 궁합 화면을 다시 열면 "받은 궁합"에 친구 이름과 관계 이름이 뜨고 탭하면 결과가 열리는지. 같은 링크를 다시 열면 "이미 답이 온 링크예요"가 보이는지. Supabase `invites` 행에 생년월일이 없는지 Table Editor에서 확인.
 
 - [ ] 7. 그룹 케미 맵 + 커플 모드
   - 선행: 6
@@ -152,3 +160,6 @@
 - (5번 중) 궁합 리포트는 소모성이라 스토어 "구매 복원"이 없다. 앱을 지웠다 다시 깔면 기기 사본과 거래 id가 사라져 다시 열 방법이 없다(서버는 같은 거래·같은 상대 재생성을 허용하지만 앱이 거래 id를 모름). RevenueCat `customerInfo.nonSubscriptionTransactions`에서 궁합 상품 거래를 골라 상대를 다시 입력하면 이어 주는 복원 흐름이 필요한지 결정 필요.
 - (5번 중) 홈 "내 리포트" 설명 문구(`home.featureReportsDescription`, "Reopen the in-depth reports you've made")가 궁합 리포트도 담게 된 지금은 조금 좁다. 문구만 고치면 됨(ko/en/es).
 - (5번 중) 고쳐 쓰기 호출(`makeRewriter`)은 `{other}` 토큰을 모른다. 지적 문구에 "토큰 유지"를 넣었지만, 고쳐 쓴 문장에서 토큰이 빠지면 그 문장만 "그 사람" 대신 일반 표현이 된다. 이번 생성에서는 고쳐 쓰기가 일어나지 않아 확인 못 함.
+- (6번 중) Next 14는 서버 컴포넌트(페이지)에서 supabase-js의 읽기(fetch)를 데이터 캐시에 넣는다. `/c/[code]`는 `fetchCache = "force-no-store"`로 막았지만, 앞으로 Supabase를 읽는 서버 페이지를 새로 만들면 같은 설정이 필요하다(POST 라우트는 영향 없음).
+- (6번 중) 친구가 답해도 보낸 사람에게 알림이 가지 않는다. 보낸 사람이 궁합 화면을 다시 열 때만 결과를 가져온다. 앱을 열 때(홈) 한 번 조회해 홈에 작은 표시를 띄울지, 푸시(서버 알림 필요)로 갈지 결정 필요.
+- (6번 중) 링크는 항상 웹으로 열린다(유니버설 링크·앱 링크 없음, SPEC대로). 친구가 앱을 이미 설치했어도 웹 맛보기를 거친다. 12번 스토어 빌드 때 associated domains를 붙일지 검토.

@@ -352,6 +352,20 @@ export const es: typeof ko = {
     sharePreviewLabel: "Vista previa de la imagen para compartir",
   },
 
+  invite: {
+    sectionTitle: "Compatibilidad con una amistad",
+    sectionBody: "Envía un enlace y esa persona escribe su propia fecha de nacimiento en la web. Cuando responda, el resultado llegará abajo, en \"Recibidas\".",
+    sendButton: "Enviar un enlace",
+    shareMessage: (url: string) => `¿Vemos qué tan compatibles son nuestros mapas de saju? Solo escribe tu fecha de nacimiento:\n${url}`,
+    copied: "Enlace copiado. Pégalo en tu mensaje.",
+    errorCreate: "No pudimos crear el enlace en este momento. Inténtalo de nuevo en un rato.",
+    receivedTitle: "Recibidas",
+    waitingLabel: (days: number) => `Esperando respuesta · ${days === 1 ? "queda 1 día" : `quedan ${days} días`}`,
+    waitingName: "Enlace enviado",
+    resendHint: "Vuelve a enviar el enlace",
+    privacyNote: "Los enlaces están abiertos durante 30 días. La fecha de nacimiento de la otra persona no se guarda; solo te llegan el nombre que escriba y el resultado.",
+  },
+
   compatReport: {
     entryEyebrow: "Informe de compatibilidad",
     entryTitle: "Lee a fondo cómo se encuentran",

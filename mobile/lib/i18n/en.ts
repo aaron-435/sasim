@@ -352,6 +352,20 @@ export const en: typeof ko = {
     sharePreviewLabel: "Share image preview",
   },
 
+  invite: {
+    sectionTitle: "Match with a friend",
+    sectionBody: "Send a link and your friend enters their own birth date on the web. When they answer, the result arrives under \"Received\" below.",
+    sendButton: "Send a link",
+    shareMessage: (url: string) => `Want to see how our saju charts match? Just enter your birth date:\n${url}`,
+    copied: "Link copied. Paste it to your friend.",
+    errorCreate: "We couldn't make a link right now. Please try again in a moment.",
+    receivedTitle: "Received",
+    waitingLabel: (days: number) => `Waiting for an answer · ${days} ${days === 1 ? "day" : "days"} left`,
+    waitingName: "Link you sent",
+    resendHint: "Sends the link again",
+    privacyNote: "Links stay open for 30 days. Your friend's birth date isn't stored; only the name they type and the result reach you.",
+  },
+
   compatReport: {
     entryEyebrow: "Compatibility report",
     entryTitle: "Read the two of you in depth",

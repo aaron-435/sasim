@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import ChevronRight from "lucide-react-native/icons/chevron-right";
+import Send from "lucide-react-native/icons/send";
 import Share2 from "lucide-react-native/icons/share-2";
-import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Image, Platform, Pressable, ScrollView, Share, StyleSheet, View } from "react-native";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
@@ -12,6 +13,7 @@ import { track } from "../lib/analytics";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
 import { COMPATIBILITY_CONTENT } from "../lib/compatibilityContent";
+import { createInvite, getSavedInvites, refreshInvites, type SavedInvite } from "../lib/invites";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { formatSajuTypeName } from "../lib/sajuTypeContent";
 import type { SajuType } from "../lib/sajuType";
@@ -55,6 +57,21 @@ export default function CompatibilityScreen({
   // The detailed report opens over the result and returns to it (the result stays as it was).
   const [reportFor, setReportFor] = useState<OtherBirthPayload | null>(null);
   const shareCardRef = useRef<View>(null);
+  // Friend invites (SPEC §6): links this device sent, and the answers that came back.
+  const [invites, setInvites] = useState<SavedInvite[]>([]);
+  const [inviting, setInviting] = useState(false);
+  const [inviteNote, setInviteNote] = useState<{ text: string; error: boolean } | null>(null);
+  // Set while a received answer is open in the result view (it has no birth data, so no report entry).
+  const [received, setReceived] = useState<SavedInvite | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    getSavedInvites().then((list) => alive && setInvites(list));
+    refreshInvites().then((list) => alive && setInvites(list));
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const canSubmit = !!selfDayMasterChar && form.isComplete;
 
@@ -89,7 +106,53 @@ export default function CompatibilityScreen({
 
   function handleTryAgain() {
     setResult(null);
+    setReceived(null);
     setError(null);
+  }
+
+  async function shareInviteLink(url: string) {
+    const message = strings.invite.shareMessage(url);
+    if (Platform.OS === "web") {
+      // react-native-web's Share needs navigator.share, which most desktop browsers lack: copy instead.
+      const nav = globalThis.navigator as Navigator | undefined;
+      if (nav?.share) {
+        try {
+          await nav.share({ text: message });
+          return;
+        } catch (e) {
+          if ((e as Error)?.name === "AbortError") return;
+        }
+      }
+      await nav?.clipboard?.writeText(url);
+      setInviteNote({ text: strings.invite.copied, error: false });
+      return;
+    }
+    await Share.share({ message });
+  }
+
+  async function handleInvite(existing?: SavedInvite) {
+    if (inviting || !selfDayMasterChar) return;
+    setInviting(true);
+    setInviteNote(null);
+    try {
+      let invite = existing;
+      if (!invite) {
+        invite = await createInvite({ senderName: selfNickname, senderDayMaster: selfDayMasterChar, locale });
+        track("invite_create", { surface: "compatibility" });
+        setInvites(await getSavedInvites());
+      }
+      await shareInviteLink(invite.url);
+    } catch {
+      if (!existing) setInviteNote({ text: strings.invite.errorCreate, error: true });
+    } finally {
+      setInviting(false);
+    }
+  }
+
+  function openReceived(item: SavedInvite) {
+    if (!item.result?.compatibility) return;
+    setReceived(item);
+    setResult(item.result);
   }
 
   async function handleShare() {
@@ -132,8 +195,9 @@ export default function CompatibilityScreen({
     const relationCopy = content.relations[result.compatibility.relation];
     const tint = ELEMENT_COLORS[result.compatibility.selfDayMasterElement] ?? COLORS.gold;
     // A blank name must not fall back to the input's example text ("e.g. Jamie").
-    const hasOtherName = otherName.trim().length > 0;
-    const otherDisplayName = hasOtherName ? otherName.trim() : strings.compatibility.unnamedOther;
+    const shownName = received ? received.friendName ?? "" : otherName;
+    const hasOtherName = shownName.trim().length > 0;
+    const otherDisplayName = hasOtherName ? shownName.trim() : strings.compatibility.unnamedOther;
 
     return (
       <SafeAreaView style={styles.root}>
@@ -221,6 +285,8 @@ export default function CompatibilityScreen({
             )}
           </Pressable>
 
+          {/* A friend's answer carries no birth data (it stays with them), so it has no report entry. */}
+          {!received && (
           <Pressable
             onPress={() => setReportFor(form.toPayload())}
             android_ripple={{ color: "rgba(111,169,139,0.12)" }}
@@ -235,6 +301,7 @@ export default function CompatibilityScreen({
             </View>
             <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
           </Pressable>
+          )}
 
           <Pressable style={styles.tryAgainButton} onPress={handleTryAgain} accessibilityRole="button">
             <Text style={styles.tryAgainLabel}>{strings.compatibility.tryAgainButton}</Text>
@@ -270,6 +337,75 @@ export default function CompatibilityScreen({
         >
           {submitting ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.submitButtonLabel}>{strings.compatibility.submitButton}</Text>}
         </Pressable>
+
+        <View style={styles.inviteSection}>
+          <Text style={styles.inviteTitle} accessibilityRole="header">{strings.invite.sectionTitle}</Text>
+          <Text style={styles.inviteBody}>{strings.invite.sectionBody}</Text>
+          <Pressable
+            style={({ pressed }) => [styles.inviteButton, pressed && styles.inviteButtonPressed, !selfDayMasterChar && styles.submitButtonDisabled]}
+            onPress={() => handleInvite()}
+            disabled={inviting || !selfDayMasterChar}
+            accessibilityRole="button"
+            accessibilityLabel={strings.invite.sendButton}
+          >
+            {inviting ? (
+              <ActivityIndicator color={COLORS.gold} />
+            ) : (
+              <>
+                <Send size={16} strokeWidth={2} color={COLORS.gold} />
+                <Text style={styles.inviteButtonLabel}>{strings.invite.sendButton}</Text>
+              </>
+            )}
+          </Pressable>
+          {inviteNote && <Text style={[styles.inviteNote, inviteNote.error && styles.inviteNoteError]}>{inviteNote.text}</Text>}
+
+          {invites.length > 0 && (
+            <View style={styles.receivedList}>
+              <Text style={styles.receivedTitle} accessibilityRole="header">{strings.invite.receivedTitle}</Text>
+              {invites.map((item) => {
+                if (item.status === "answered" && item.result?.compatibility) {
+                  const content = COMPATIBILITY_CONTENT[locale] ?? COMPATIBILITY_CONTENT.ko;
+                  const name = item.friendName?.trim() || strings.compatibility.unnamedOther;
+                  const headline = content.relations[item.result.compatibility.relation].headline;
+                  return (
+                    <Pressable
+                      key={item.code}
+                      onPress={() => openReceived(item)}
+                      android_ripple={{ color: "rgba(111,169,139,0.12)" }}
+                      style={({ pressed }) => [styles.receivedRow, pressed && styles.reportEntryPressed]}
+                      accessibilityRole="button"
+                      accessibilityLabel={`${name}. ${headline}`}
+                    >
+                      <View style={styles.receivedText}>
+                        <Text style={styles.receivedName}>{name}</Text>
+                        <Text style={styles.receivedHeadline}>{headline}</Text>
+                      </View>
+                      <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
+                    </Pressable>
+                  );
+                }
+                const daysLeft = Math.max(1, Math.ceil((Date.parse(item.expiresAt) - Date.now()) / 864e5));
+                return (
+                  <Pressable
+                    key={item.code}
+                    onPress={() => handleInvite(item)}
+                    style={({ pressed }) => [styles.receivedRow, styles.waitingRow, pressed && styles.reportEntryPressed]}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${strings.invite.waitingName}. ${strings.invite.waitingLabel(daysLeft)}`}
+                    accessibilityHint={strings.invite.resendHint}
+                  >
+                    <View style={styles.receivedText}>
+                      <Text style={styles.waitingName}>{strings.invite.waitingName}</Text>
+                      <Text style={styles.waitingLabel}>{strings.invite.waitingLabel(daysLeft)}</Text>
+                    </View>
+                    <Share2 size={16} strokeWidth={1.75} color={COLORS.subheadline} />
+                  </Pressable>
+                );
+              })}
+            </View>
+          )}
+          <Text style={styles.invitePrivacy}>{strings.invite.privacyNote}</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -383,6 +519,46 @@ const styles = StyleSheet.create({
   reportEntryEyebrow: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.gold },
   reportEntryTitle: { fontFamily: FONTS.semibold, fontSize: 15, lineHeight: 21, color: COLORS.headline },
   reportEntryBody: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 19, color: COLORS.subheadline, marginTop: 2 },
+  inviteSection: { marginTop: 40, paddingTop: 28, borderTopWidth: 1, borderTopColor: COLORS.border },
+  inviteTitle: { fontFamily: FONTS.display, fontSize: 22, color: COLORS.headline },
+  inviteBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 8 },
+  inviteButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderWidth: 1,
+    borderColor: COLORS.gold,
+    borderRadius: 12,
+    paddingVertical: 14,
+    marginTop: 18,
+    minHeight: 48,
+  },
+  inviteButtonPressed: { backgroundColor: "rgba(111,169,139,0.08)" },
+  inviteButtonLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.gold },
+  inviteNote: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, marginTop: 10 },
+  inviteNoteError: { color: COLORS.danger },
+  receivedList: { marginTop: 26, gap: 10 },
+  receivedTitle: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.subheadline, marginBottom: 2 },
+  receivedRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: COLORS.inputBg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    minHeight: 56,
+  },
+  waitingRow: { borderStyle: "dashed", backgroundColor: "transparent" },
+  receivedText: { flex: 1, gap: 3 },
+  receivedName: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline },
+  receivedHeadline: { fontFamily: FONTS.semibold, fontSize: 15, lineHeight: 21, color: COLORS.headline },
+  waitingName: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.headline },
+  waitingLabel: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.subheadline },
+  invitePrivacy: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 18, color: COLORS.footer, marginTop: 16 },
   tryAgainButton: { alignItems: "center", paddingVertical: 14, marginTop: 10 },
   tryAgainLabel: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.subheadline },
 });

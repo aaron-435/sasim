@@ -378,6 +378,20 @@ export const ko = {
     sharePreviewLabel: "공유 이미지 미리보기",
   },
 
+  invite: {
+    sectionTitle: "친구와 궁합 보기",
+    sectionBody: "링크를 보내면 친구가 웹에서 직접 생년월일을 넣어요. 친구가 답하면 아래 '받은 궁합'에 결과가 도착해요.",
+    sendButton: "링크 보내기",
+    shareMessage: (url: string) => `우리 사주 궁합 한번 볼래요? 생년월일만 넣으면 바로 나와요.\n${url}`,
+    copied: "링크를 복사했어요. 친구에게 붙여 넣어 보내 주세요.",
+    errorCreate: "지금은 링크를 만들 수 없어요. 잠시 후 다시 시도해 주세요.",
+    receivedTitle: "받은 궁합",
+    waitingLabel: (days: number) => `답을 기다리는 중 · ${days}일 남음`,
+    waitingName: "보낸 링크",
+    resendHint: "링크를 다시 보내요",
+    privacyNote: "링크는 30일 동안 열려요. 친구의 생년월일은 저장되지 않고, 친구가 적은 이름과 계산 결과만 전해져요.",
+  },
+
   compatReport: {
     entryEyebrow: "궁합 상세 리포트",
     entryTitle: "두 사람의 기운을 더 깊이 읽기",

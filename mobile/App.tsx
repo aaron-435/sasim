@@ -45,6 +45,7 @@ import { normalizeVerifyCodeSajuResult, type NormalizedSajuResult } from "./lib/
 import { clearSavedReports, type SavedReport } from "./lib/reportStorage";
 import { clearSavedYearReports } from "./lib/yearReportStorage";
 import { clearSavedCompatReports, type SavedCompatReport } from "./lib/compatReportStorage";
+import { clearSavedInvites } from "./lib/invites";
 import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } from "./lib/userConcern";
 
 // Onboarding flow shell — mirrors components/AppFlow.jsx's step-switcher role on web,
@@ -265,6 +266,7 @@ function AppContent() {
     clearSavedReports();
     clearSavedYearReports();
     clearSavedCompatReports();
+    clearSavedInvites();
     setSavedReport(null);
     setHomeData(null);
     setNickname("");
