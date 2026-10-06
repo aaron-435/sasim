@@ -47,6 +47,7 @@ import { clearSavedYearReports } from "./lib/yearReportStorage";
 import { clearSavedCompatReports, type SavedCompatReport } from "./lib/compatReportStorage";
 import { clearSavedInvites } from "./lib/invites";
 import { clearPair } from "./lib/pairs";
+import { clearJournal } from "./lib/journalStorage";
 import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } from "./lib/userConcern";
 
 // Onboarding flow shell — mirrors components/AppFlow.jsx's step-switcher role on web,
@@ -269,6 +270,7 @@ function AppContent() {
     clearSavedCompatReports();
     clearSavedInvites();
     clearPair();
+    clearJournal();
     setSavedReport(null);
     setHomeData(null);
     setNickname("");

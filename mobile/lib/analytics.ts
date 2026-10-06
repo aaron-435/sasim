@@ -30,7 +30,9 @@ export type EventName =
   | "pair_join"
   | "pair_unlink"
   | "notification_tap"
-  | "feedback";
+  | "feedback"
+  | "journal_save"
+  | "journal_report";
 
 type PropKey = "step" | "surface" | "product" | "kind" | "value" | "topic" | "position" | "module" | "via";
 export type EventProps = Partial<Record<PropKey, string | number | boolean>>;

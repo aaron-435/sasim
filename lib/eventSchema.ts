@@ -36,6 +36,9 @@ export const EVENT_NAMES = [
   "pair_unlink",
   "notification_tap",
   "feedback",
+  // return visits
+  "journal_save",
+  "journal_report",
   // web site
   "landing_view",
   "landing_cta_click",

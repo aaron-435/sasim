@@ -22,7 +22,7 @@ const PRICING: Record<string, { input: number; output: number }> = {
   "gpt-4o": { input: 2.5, output: 10.0 },
 };
 
-export type LlmEndpoint = "chat" | "chat_extract" | "qa" | "report" | "year_report" | "compat_report";
+export type LlmEndpoint = "chat" | "chat_extract" | "qa" | "report" | "year_report" | "compat_report" | "journal_report";
 
 export interface LlmUsageEvent {
   sessionId?: string;

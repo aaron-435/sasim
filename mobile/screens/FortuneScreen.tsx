@@ -21,6 +21,8 @@ import { hasQaProEntitlement, isUnavailableMessage, purchaseIssueDetail, purchas
 import { useSubscriptionOffer } from "../lib/useSubscriptionOffer";
 import PlanPicker from "../components/PlanPicker";
 import GoodDaysScreen from "./GoodDaysScreen";
+import JournalScreen from "./JournalScreen";
+import JournalEntryCard from "../components/JournalEntryCard";
 import { comingSajuYear } from "../lib/sajuYear";
 import { formatShortDate } from "../lib/shortDate";
 import { refreshRoutineNotification } from "../lib/routineNotification";
@@ -254,6 +256,7 @@ export default function FortuneScreen({
   const { data: monthly, loading: monthlyLoading, error: monthlyError, load: fetchMonthly, retry: retryMonthly } = useLazyFetch<MonthFortune[]>(strings.fortune.loadErrorText);
   const [monthlyDomain, setMonthlyDomain] = useState<YearDomain>("overview");
   const [showGoodDays, setShowGoodDays] = useState(false);
+  const [showJournal, setShowJournal] = useState(false);
 
   const [purchasing, setPurchasing] = useState(false);
   const offer = useSubscriptionOffer();
@@ -421,6 +424,19 @@ export default function FortuneScreen({
     );
   }
 
+  // "한 줄 저널" — free and subscribed users both keep the journal; the month report inside checks the subscription.
+  if (showJournal && selfDayMasterChar && daily) {
+    return (
+      <JournalScreen
+        selfDayMasterChar={selfDayMasterChar}
+        selfDayBranch={selfDayBranch}
+        todayIso={daily.date}
+        entitled={!!entitled}
+        onBack={() => setShowJournal(false)}
+      />
+    );
+  }
+
   if (!entitled) {
     // The free half of "today": the overview is open to everyone; wealth, love, health, lucky
     // points, the week, the month and the year stay with Pro.
@@ -458,6 +474,7 @@ export default function FortuneScreen({
               <FeedbackRow surface="fortune" topic="free" />
             </View>
           )}
+          {freeOverview && daily && <JournalEntryCard dateIso={daily.date} onOpenJournal={() => setShowJournal(true)} />}
 
           <View style={styles.lockedCard}>
             <Text style={styles.lockedHeading} accessibilityRole="header">{strings.fortune.lockedHeading}</Text>
@@ -681,6 +698,9 @@ export default function FortuneScreen({
           </>
         )}
 
+        {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && revealed && (
+          <JournalEntryCard dateIso={daily.date} onOpenJournal={() => setShowJournal(true)} />
+        )}
         {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && revealed && goodDaysEntry}
 
         {tab === "weekly" && weeklyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
