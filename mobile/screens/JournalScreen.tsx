@@ -5,6 +5,7 @@ import ChevronRight from "lucide-react-native/icons/chevron-right";
 import { ActivityIndicator, BackHandler, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import JournalSafetyNote from "../components/JournalSafetyNote";
+import MonthGrid from "../components/MonthGrid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
@@ -20,7 +21,7 @@ import {
   type SavedJournalReport,
 } from "../lib/journalStorage";
 import { getRevenueCatUserId } from "../lib/purchases";
-import { formatMonthLabel, formatShortDate, WEEKDAY_SHORT } from "../lib/shortDate";
+import { formatMonthLabel, formatShortDate } from "../lib/shortDate";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
@@ -148,16 +149,6 @@ export default function JournalScreen({
     }
   }
 
-  // Calendar cells: blanks before the 1st (weeks start on Sunday, like formatShortDate's weekdays).
-  const [y, m] = month.split("-").map(Number);
-  const firstWeekday = new Date(Date.UTC(y, m - 1, 1)).getUTCDay();
-  const daysInMonth = new Date(Date.UTC(y, m, 0)).getUTCDate();
-  const cells: (string | null)[] = [
-    ...Array.from({ length: firstWeekday }, () => null),
-    ...Array.from({ length: daysInMonth }, (_, i) => `${month}-${String(i + 1).padStart(2, "0")}`),
-  ];
-  while (cells.length % 7) cells.push(null);
-
   const canGoBack = monthsBetween(month, currentMonth) < MAX_MONTHS_BACK;
   const canGoForward = month < currentMonth;
   const selectedEntry = selected ? all[selected] : null;
@@ -200,34 +191,27 @@ export default function JournalScreen({
           </Pressable>
         </View>
 
-        <View style={styles.weekRow}>
-          {WEEKDAY_SHORT[locale].map((w) => (
-            <Text key={w} style={styles.weekday} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{w}</Text>
-          ))}
-        </View>
-        <View style={styles.grid}>
-          {cells.map((date, i) => {
-            if (!date) return <View key={`blank-${i}`} style={styles.cell} />;
+        <MonthGrid
+          month={month}
+          renderDay={(date) => {
             const entry = all[date];
             const isSelected = date === selected;
             const isToday = date === todayIso;
             const label = String(Number(date.slice(8)));
             return (
-              <View key={date} style={styles.cell}>
-                <Pressable
-                  onPress={() => entry && setSelected(date)}
-                  disabled={!entry}
-                  style={[styles.day, entry && styles.dayRecorded, isSelected && styles.daySelected, isToday && !entry && styles.dayToday]}
-                  accessibilityRole="button"
-                  accessibilityState={{ disabled: !entry, selected: isSelected }}
-                  accessibilityLabel={entry ? `${formatShortDate(date, locale)}, ${strings.journal.moods[entry.mood]}` : formatShortDate(date, locale)}
-                >
-                  <Text style={[styles.dayLabel, entry && styles.dayLabelRecorded]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{label}</Text>
-                </Pressable>
-              </View>
+              <Pressable
+                onPress={() => entry && setSelected(date)}
+                disabled={!entry}
+                style={[styles.day, entry && styles.dayRecorded, isSelected && styles.daySelected, isToday && !entry && styles.dayToday]}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: !entry, selected: isSelected }}
+                accessibilityLabel={entry ? `${formatShortDate(date, locale)}, ${strings.journal.moods[entry.mood]}` : formatShortDate(date, locale)}
+              >
+                <Text style={[styles.dayLabel, entry && styles.dayLabelRecorded]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{label}</Text>
+              </Pressable>
             );
-          })}
-        </View>
+          }}
+        />
 
         {count === 0 && <Text style={styles.empty}>{strings.journal.emptyMonth}</Text>}
 
@@ -310,10 +294,6 @@ const styles = StyleSheet.create({
   monthTitleBlock: { alignItems: "center", gap: 2 },
   monthTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 20, color: COLORS.headline },
   monthCount: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.footer },
-  weekRow: { flexDirection: "row", marginBottom: 4 },
-  weekday: { width: `${100 / 7}%`, textAlign: "center", fontFamily: FONTS.medium, fontSize: 12, color: COLORS.footer },
-  grid: { flexDirection: "row", flexWrap: "wrap" },
-  cell: { width: `${100 / 7}%`, aspectRatio: 1, padding: 3 },
   day: { flex: 1, alignItems: "center", justifyContent: "center", borderRadius: 999 },
   dayRecorded: { backgroundColor: "rgba(111,169,139,0.18)" },
   daySelected: { borderWidth: 1.5, borderColor: COLORS.gold },

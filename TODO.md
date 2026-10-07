@@ -11,9 +11,10 @@
   - QA: `npx tsc --noEmit` 통과. 범위 함수 스크래치 확인 `npx tsx scripts/check-goodDays-range.mts`(새로 만들되 네트워크 없이 날짜만 주입): 10/1(31일 달)=31일치, 10/25=7일치, 10/31=1일치, 2월 말, scope 없음=30일치. 로컬 서버에 `curl -s -X POST localhost:3000/api/goodDays -H 'Content-Type: application/json' -d '{"selfDayMasterChar":"갑","purpose":"move","scope":"x"}'` → 400, `scope` 없이 같은 요청은 400이 아니라 기존대로 401(`no_user`).
   - QA: `npx tsx scripts/check-goodDays-range.mts` → 9건 모두 ok(10/1=31, 10/25=7, 10/31=1, 평년 2/28=1, 윤년 2/1=29, scope 없음=30). `npx tsc --noEmit` → 오류 없음. 로컬 `next dev`(3100) curl: `scope:"x"` → 400 bad_request, scope 없음·`scope:"month"` → 401 no_user. (구독 통과 후 실제 응답은 RevenueCat이 필요해 서버에서만 확인 가능 — 이달 탭 연동은 4번 시뮬레이터 QA에서)
 
-- [ ] 2. 저널의 달력 칸 코드를 공용 부품으로 뽑기
+- [x] 2. 저널의 달력 칸 코드를 공용 부품으로 뽑기
   - 변경: `mobile/components/`에 월 격자 부품(칸 배열 만들기·요일줄·격자 스타일, 칸 안 내용은 바깥에서 받음). `mobile/screens/JournalScreen.tsx`가 그걸 쓰도록. 저널의 모습·동작은 바뀌면 안 된다.
   - QA: 앱 타입 통과. 시뮬레이터에서 저널을 열어 변경 전과 같은지(요일 위치·기록 있는 날 배경·선택 테두리·오늘 테두리·달 이동) 스크린샷 비교.
+  - QA: 앱 타입(`tsc --noEmit`) → 오류 없음. iOS 시뮬레이터 dev-client(한국어): 10월 1일=목, 9월 1일=화로 요일 위치 일치, 기록한 7일 칸에 배경+선택 테두리, 이전 달 이동 정상(기록 없음 문구). 새 부품 `mobile/components/MonthGrid.tsx`(`buildMonthCells` + 요일줄·격자·칸 껍데기, 칸 안은 `renderDay`). 스타일 값은 기존 저널 것을 그대로 옮김. 변경 전 스크린샷은 찍지 않아 나란히 비교는 못 했고, 위 항목들로 확인.
 
 - [ ] 3. 이달 탭을 달력으로 (칩 없이: 리듬 색 + 오늘 + 날짜 상세)
   - 선행: 2
