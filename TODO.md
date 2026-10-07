@@ -22,10 +22,11 @@
   - QA: 앱 타입 통과. 시뮬레이터(구독 상태)에서 이달 탭 스크린샷 3언어: 해당 달 1일 요일이 기기 달력과 일치, 오늘 표시, 고르는 리듬 칸에 붉은 계열 없음, 날짜 누르면 상세 카드가 바뀜. 글자 크기를 키워도 격자가 깨지지 않음.
   - QA: 앱 타입(`tsc --noEmit`) → 오류 없음. **mobile-web 미리보기 + `?qa=pro` 구독자 모드**(시뮬레이터 dev-client는 구독 상태를 만들 수 없어 쓰지 못함, 실제 `/api/dailyFortune` 응답): ko·en·es 모두 2026년 10월 1일=목, 오늘(8일) 테두리, 지난 날 옅게, 날짜 누르면 상세 카드(날짜·리듬 이름·한 줄)가 바뀜, 고르는 리듬 칸(en 10/9·10·19·20·29·30)은 회색 중립 톤(붉은 계열 없음, 접근성 라벨 "10/19 (Mon), A pacing rhythm"). 새 파일 `mobile/lib/rhythmColors.ts`, 문구 `fortune.monthCellLabel`(ko/en/es). 고르는 리듬 날의 상세는 `paceFreeHeadline`. 글자 크기 확대(`MAX_FONT_SCALE.control` 적용)는 웹에서 흉내 내기 어려워 못 봄 → 5번 마감 QA 또는 (사용자 확인) 실기기에서.
 
-- [ ] 4. 목적 칩 + 좋은 날 강조 + 이유 한 줄
+- [x] 4. 목적 칩 + 좋은 날 강조 + 이유 한 줄
   - 선행: 1, 3
   - 변경: `FortuneScreen.tsx` 이달 탭 위쪽에 칩 5개(`GOOD_DAYS_CONTENT[locale].purposes` 라벨 재사용, 처음엔 선택 없음, 같은 칩 다시 누르면 해제, 한 번에 하나). 칩을 누를 때만 `/api/goodDays`를 `scope: "month"`로 호출(칩별 결과는 화면이 떠 있는 동안 보관해 재호출 안 함, 일괄 호출 없음). 돌아온 날을 달력에서 강조, 선택한 강조일의 상세 카드에 `goodDayReason`(같은 리듬 두 번째 날은 두 번째 문구). 로딩은 칩 줄 안, 오류는 `goodDays.verifyError`/`fortune.loadErrorText` + 다시 시도(달력과 리듬 색은 유지). 0개일 때 차분한 한 줄. `track("calendar_purpose", {kind})`는 앱·서버 이벤트 이름 목록(`lib/eventSchema.ts`, `mobile/lib/analytics.ts`)을 함께 고친다. 문구 ko/en/es.
   - QA: 앱 타입 + 루트 `npx tsc --noEmit` 통과. 시뮬레이터: 칩 선택 시 네트워크 호출이 칩당 1회(Metro 로그 또는 서버 로그), 강조일이 모두 오늘 이후·이번 달 안, 칩 해제/전환/재선택 동작, 강조된 날 상세에 이유 한 줄. 서버를 끄고 칩을 누르면 오류 + 다시 시도, 달력은 그대로.
+  - QA: 앱 타입·루트 `tsc --noEmit` → 오류 없음, `npm run lint` → 경고·오류 없음. **mobile-web `?qa=pro` + 브라우저에서 `/api/goodDays` fetch를 가로채 가짜 응답·호출 기록**(운영 서버는 아직 `scope`를 모르고 구독 확인도 못 넘겨서, 시뮬레이터/실서버로는 성공 경로를 못 봄): 칩 탭마다 요청 body가 `purpose`+`scope:"month"` 1회, 같은 칩 해제→재선택은 재호출 없음(탭 4번에 호출 2번), 다른 칩 전환 시 강조 교체, 강조일(이번 달·오늘 이후)에 금색 테두리+점, 강조일을 누르면 상세 카드에 "Good day for Job interview" + 이유 한 줄. 서버 오류(500) 시 "Couldn't load your fortune." + "Try again", 달력·리듬 색 유지, 다시 시도하면 해제됨. ko·en·es 칩 줄 줄바꿈 정상. 이벤트 `calendar_purpose`(kind=목적)를 `lib/eventSchema.ts`·`mobile/lib/analytics.ts`에 추가. 남은 것: 실제 서버 응답(`scope:"month"` 배포 후)과 시뮬레이터 확인은 5번 마감 QA 또는 (사용자 확인) 웹 배포 뒤 실기기에서. 서버를 끄고 누르는 확인은 500 응답 모사로 대신함.
 
 - [ ] 5. 달력 마감 QA (월말·1일·3언어)
   - 선행: 4

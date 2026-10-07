@@ -777,6 +777,10 @@ export const ko = {
     disclaimer: "하루의 흐름을 읽은 참고용이에요. 큰 결정은 내 상황과 준비를 먼저 살펴 주세요.",
     changePurpose: "다른 목적 고르기",
     verifyError: "구독을 확인하지 못했어요. 잠시 후 다시 시도해 주세요.",
+    calendarChipsLabel: "이 달에 잘 맞는 날 찾기",
+    calendarChipsHint: "목적을 하나 고르면 이번 달 남은 날 중 잘 맞는 날이 달력에 표시돼요.",
+    calendarFewDays: "이번 달은 남은 날이 적어요. 다음 달에 다시 찾아봐요.",
+    calendarGoodDay: (label: string) => `${label}에 잘 맞는 날`,
   },
   journal: {
     cardLabel: "오늘 한 줄",

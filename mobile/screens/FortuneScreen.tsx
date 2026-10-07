@@ -17,10 +17,11 @@ import { reconciledBody } from "../lib/reconciledCards";
 import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
-import { hasQaProEntitlement, isUnavailableMessage, purchaseIssueDetail, purchaseQaPro, restoreQaPro } from "../lib/purchases";
+import { getRevenueCatUserId, hasQaProEntitlement, isUnavailableMessage, purchaseIssueDetail, purchaseQaPro, restoreQaPro } from "../lib/purchases";
 import { useSubscriptionOffer } from "../lib/useSubscriptionOffer";
 import PlanPicker from "../components/PlanPicker";
 import GoodDaysScreen from "./GoodDaysScreen";
+import { GOOD_DAY_PURPOSES, GOOD_DAYS_CONTENT, goodDayReason, type GoodDayPurpose, type GoodDayRelation } from "../lib/goodDaysContent";
 import JournalScreen from "./JournalScreen";
 import JournalEntryCard from "../components/JournalEntryCard";
 import { comingSajuYear } from "../lib/sajuYear";
@@ -267,6 +268,14 @@ export default function FortuneScreen({
   const [showGoodDays, setShowGoodDays] = useState(false);
   const [showJournal, setShowJournal] = useState(false);
   const [selectedMonthDate, setSelectedMonthDate] = useState<string | null>(null);
+  // 이달 달력의 목적 칩: 한 번에 하나, 칩을 누를 때만 /api/goodDays(scope "month")를 부르고
+  // 받은 결과는 화면이 떠 있는 동안 보관한다(같은 칩 재선택은 재호출 없음).
+  type CalendarGoodDay = { date: string; relation: GoodDayRelation };
+  const [calPurpose, setCalPurpose] = useState<GoodDayPurpose | null>(null);
+  const [calResults, setCalResults] = useState<Partial<Record<GoodDayPurpose, CalendarGoodDay[]>>>({});
+  const [calLoading, setCalLoading] = useState(false);
+  const [calError, setCalError] = useState<string | null>(null);
+  const calRequestRef = useRef(0);
 
   const [purchasing, setPurchasing] = useState(false);
   const offer = useSubscriptionOffer();
@@ -548,6 +557,44 @@ export default function FortuneScreen({
     </Pressable>
   ) : null;
 
+  async function loadCalendarPurpose(purpose: GoodDayPurpose) {
+    const request = ++calRequestRef.current;
+    setCalLoading(true);
+    setCalError(null);
+    try {
+      const appUserId = await getRevenueCatUserId();
+      const res = await fetch(`${API_BASE_URL}/api/goodDays`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ appUserId, selfDayMasterChar, selfDayBranch, purpose, scope: "month" }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (request !== calRequestRef.current || !mountedRef.current) return;
+      if (!res.ok) {
+        setCalError(res.status === 401 || res.status === 403 || res.status === 503 ? strings.goodDays.verifyError : strings.fortune.loadErrorText);
+        return;
+      }
+      setCalResults((prev) => ({ ...prev, [purpose]: json.goodDays?.days ?? [] }));
+    } catch {
+      if (request === calRequestRef.current && mountedRef.current) setCalError(strings.fortune.loadErrorText);
+    } finally {
+      if (request === calRequestRef.current && mountedRef.current) setCalLoading(false);
+    }
+  }
+
+  function handleCalendarChip(purpose: GoodDayPurpose) {
+    calRequestRef.current++;
+    setCalError(null);
+    setCalLoading(false);
+    if (calPurpose === purpose) {
+      setCalPurpose(null);
+      return;
+    }
+    setCalPurpose(purpose);
+    track("calendar_purpose", { kind: purpose });
+    if (!calResults[purpose]) loadCalendarPurpose(purpose);
+  }
+
   const weeklyWithScore = (weekly ?? []).filter((d) => d.compatibility);
   const weeklyBest = weeklyWithScore.length ? pickExtreme(weeklyWithScore, "max") : null;
   const weeklyCaution = weeklyWithScore.length ? pickExtreme(weeklyWithScore, "min") : null;
@@ -557,6 +604,19 @@ export default function FortuneScreen({
   const monthKey = monthDays?.[0]?.date.slice(0, 7) ?? null;
   const monthSelectedDate = selectedMonthDate ?? daily?.date ?? monthDays?.[0]?.date ?? null;
   const monthSelected = monthSelectedDate ? monthByDate.get(monthSelectedDate) ?? null : null;
+  // 강조일: 선택한 목적의 결과 중 이번 달 달력 안의 날. 같은 리듬 두 번째 날은 두 번째 이유 문구.
+  const calPurposeLabel = calPurpose ? (GOOD_DAYS_CONTENT[locale] ?? GOOD_DAYS_CONTENT.en).purposes[calPurpose].label : null;
+  const calHighlights = new Map<string, string>();
+  if (calPurpose && monthKey) {
+    const seen = new Map<GoodDayRelation, number>();
+    for (const day of calResults[calPurpose] ?? []) {
+      if (!day.date.startsWith(monthKey)) continue;
+      const occurrence = seen.get(day.relation) ?? 0;
+      seen.set(day.relation, occurrence + 1);
+      calHighlights.set(day.date, goodDayReason(locale, calPurpose, day.relation, occurrence));
+    }
+  }
+  const calLoaded = !!calPurpose && !!calResults[calPurpose];
 
   const dailyOverview = daily?.compatibility ? getOverview(content, daily.compatibility.relation, daily.dayMaster.pillarIndex) : null;
 
@@ -754,6 +814,30 @@ export default function FortuneScreen({
         )}
         {tab === "month" && !monthDaysLoading && !monthDaysError && monthKey && (
           <>
+            <Text style={styles.sectionLabel} accessibilityRole="header">{strings.goodDays.calendarChipsLabel}</Text>
+            <Text style={styles.calendarHint}>{strings.goodDays.calendarChipsHint}</Text>
+            <View style={styles.domainPickerRow} accessibilityRole="radiogroup">
+              {GOOD_DAY_PURPOSES.map((p) => {
+                const active = calPurpose === p;
+                const label = (GOOD_DAYS_CONTENT[locale] ?? GOOD_DAYS_CONTENT.en).purposes[p].label;
+                return (
+                  <Pressable
+                    key={p}
+                    style={[styles.domainChip, active && styles.domainChipActive]}
+                    onPress={() => handleCalendarChip(p)}
+                    accessibilityRole="button"
+                    accessibilityLabel={label}
+                    accessibilityState={{ selected: active }}
+                    aria-pressed={active}
+                  >
+                    <Text style={[styles.domainChipLabel, active && styles.domainChipLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{label}</Text>
+                  </Pressable>
+                );
+              })}
+              {calLoading && <ActivityIndicator color={COLORS.gold} style={styles.chipSpinner} />}
+            </View>
+            {calError && <ErrorNotice text={calError} retryLabel={strings.common.retryLabel} onRetry={() => calPurpose && loadCalendarPurpose(calPurpose)} />}
+            {calLoaded && !calLoading && !calError && calHighlights.size === 0 && <Text style={styles.calendarHint}>{strings.goodDays.calendarFewDays}</Text>}
             <Text style={styles.calendarTitle} accessibilityRole="header">{formatMonthLabel(monthKey, locale)}</Text>
             <MonthGrid
               month={monthKey}
@@ -764,16 +848,18 @@ export default function FortuneScreen({
                 const isToday = daily?.date === date;
                 const isPast = !!daily && date < daily.date;
                 const isSelected = monthSelectedDate === date;
+                const isGood = calHighlights.has(date);
                 const tone = RHYTHM_COLORS[relation];
                 return (
                   <Pressable
                     onPress={() => setSelectedMonthDate(date)}
-                    style={[styles.dayCell, { backgroundColor: tone.fill }, isPast && styles.dayCellPast, isToday && styles.dayCellToday, isSelected && styles.dayCellSelected]}
+                    style={[styles.dayCell, { backgroundColor: tone.fill }, isPast && styles.dayCellPast, isToday && styles.dayCellToday, isGood && styles.dayCellGood, isSelected && styles.dayCellSelected]}
                     accessibilityRole="button"
-                    accessibilityLabel={strings.fortune.monthCellLabel(formatShortDate(date, locale), strings.fortune.rhythmNames[relation], isToday)}
+                    accessibilityLabel={strings.fortune.monthCellLabel(formatShortDate(date, locale), strings.fortune.rhythmNames[relation], isToday) + (isGood && calPurposeLabel ? `, ${strings.goodDays.calendarGoodDay(calPurposeLabel)}` : "")}
                     accessibilityState={{ selected: isSelected }}
                   >
                     <Text style={[styles.dayNumber, { color: tone.text }]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{Number(date.slice(8))}</Text>
+                    {isGood && <View style={styles.dayGoodDot} />}
                   </Pressable>
                 );
               }}
@@ -790,6 +876,12 @@ export default function FortuneScreen({
                     ? strings.fortune.paceFreeHeadline
                     : getOverview(content, monthSelected.compatibility.relation, monthSelected.dayMaster.pillarIndex).headline}
                 </Text>
+                {calPurposeLabel && calHighlights.has(monthSelected.date) && (
+                  <>
+                    <Text style={styles.dayDetailGoodLabel}>{strings.goodDays.calendarGoodDay(calPurposeLabel)}</Text>
+                    <Text style={styles.highlightHeadline}>{calHighlights.get(monthSelected.date)}</Text>
+                  </>
+                )}
               </View>
             )}
           </>
@@ -1096,9 +1188,14 @@ const styles = StyleSheet.create({
   dayCell: { flex: 1, borderRadius: 10, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "transparent" },
   dayCellPast: { opacity: 0.55 },
   dayCellToday: { borderColor: COLORS.headline },
+  dayCellGood: { borderColor: COLORS.gold },
+  dayGoodDot: { position: "absolute", bottom: 3, width: 4, height: 4, borderRadius: 2, backgroundColor: COLORS.gold },
   dayCellSelected: { borderColor: COLORS.gold, borderWidth: 2 },
   dayNumber: { fontFamily: FONTS.semibold, fontSize: 13 },
   dayDetailCard: { marginTop: 14, backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, padding: 16 },
+  dayDetailGoodLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.gold, marginTop: 12 },
+  calendarHint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: 4 },
+  chipSpinner: { alignSelf: "center", marginLeft: 4 },
   dayDetailRhythm: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.gold, marginTop: 4 },
   monthlySection: { marginTop: 22 },
   domainPickerRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 10, marginBottom: 14 },

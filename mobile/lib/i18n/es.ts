@@ -750,6 +750,10 @@ export const es: typeof ko = {
     disclaimer: "Es una lectura del ritmo de cada día, no una regla. En las decisiones grandes, que manden tu situación y tu preparación.",
     changePurpose: "Elegir otro propósito",
     verifyError: "No pudimos confirmar tu suscripción. Inténtalo de nuevo en un momento.",
+    calendarChipsLabel: "Buenos días de este mes",
+    calendarChipsHint: "Elige un propósito y se marcan en el calendario los días que mejor le van en lo que queda del mes.",
+    calendarFewDays: "Quedan pocos días este mes. Vuelve a buscar el mes que viene.",
+    calendarGoodDay: (label: string) => `Buen día para ${label}`,
   },
   journal: {
     cardLabel: "Tu día en una línea",

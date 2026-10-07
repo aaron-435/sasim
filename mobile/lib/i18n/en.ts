@@ -750,6 +750,10 @@ export const en: typeof ko = {
     disclaimer: "A reading of each day's flow, not a rule. Let your own situation and preparation lead big decisions.",
     changePurpose: "Pick another purpose",
     verifyError: "We couldn't confirm your subscription. Please try again in a moment.",
+    calendarChipsLabel: "Find good days this month",
+    calendarChipsHint: "Pick one purpose and the best-matched days left this month are marked on the calendar.",
+    calendarFewDays: "Not many days are left this month. Try again next month.",
+    calendarGoodDay: (label: string) => `Good day for ${label}`,
   },
   journal: {
     cardLabel: "Today in one line",

@@ -44,6 +44,7 @@ export const EVENT_NAMES = [
   "wrapped_view",
   "review_prompt",
   "widget_tap",
+  "calendar_purpose",
   // web site
   "landing_view",
   "landing_cta_click",
