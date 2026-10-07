@@ -32,11 +32,11 @@ export const ko = {
     retryNetwork: "새로고침 해주세요",
     retryServer: "다시 시도",
     elementLabels: {
-      wood: "목(木)",
-      fire: "화(火)",
-      earth: "토(土)",
-      metal: "금(金)",
-      water: "수(水)",
+      wood: "나무",
+      fire: "불",
+      earth: "흙",
+      metal: "쇠",
+      water: "물",
     },
   },
 
