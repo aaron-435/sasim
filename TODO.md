@@ -212,7 +212,7 @@
 
 ## 발견 사항
 
-- (조사 중, 2026-10-07) 프로덕션 500 1건: mobile-web에서 운세·Q&A는 200. 후보는 `/api/quiz-result`(quiz_results.session_id가 sessions FK — 세션 행이 없으면 insert 실패→500). 미확인.
+- (수정 2026-10-07, 미커밋·미배포) 프로덕션 500 = `/api/quiz-result`. 재현: 프로덕션 `POST https://www.fatesaidapp.com/api/quiz-result`에 새 uuid `sessionId` → `{"ok":false}` HTTP 500. 원인: 앱 `sessionId`는 실행할 때마다 새로 만들고(`mobile/App.tsx` `useState(makeSessionId)`, 저장 안 함) `sessions` 행은 온보딩의 `/api/saju`만 upsert한다. 그래서 앱을 다시 연 뒤의 퀴즈 결과는 `quiz_results.session_id` FK 위반으로 저장 실패→500. 같은 이유로 `chat_sessions`·`report_results`·`llm_usage_log` 저장도 조용히 실패한다(500은 아님). 영향: GPT 비용 로그 대부분 누락, 서버 Q&A 한도(`lib/qaQuota.ts`가 `llm_usage_log`를 셈)가 사실상 동작 안 함. 사용자 화면에는 영향 없음(fire-and-forget). DB 직접 조회는 권한상 못 함 — 재현과 코드로 판단. 수정: `lib/supabase.ts` `ensureSession`(uuid 확인 뒤 id만 upsert, 기존 track·nickname 유지, 인스턴스 메모)을 `quiz-result`·`chat`·`report`·`yearReport` 저장 앞과 `lib/llmUsage.ts`에 붙임(비용 로그는 세션 실패 시 session_id null로 저장). QA: 루트 `npx tsc --noEmit` exit 0, `npm run lint` 경고·오류 없음, `npm run build` 성공. 남은 확인(웹 배포 후, 사용자 승인 필요 — 프로덕션에 행이 생김): 같은 curl → HTTP 200 `{"ok":true}`. 앱 sessionId를 기기에 저장할지(Q&A 서버 한도 기준이 바뀜)는 따로 결정. 함께 수정: 비용 로그가 저장되면 서버 Q&A 한도가 실제로 켜져 구독자의 일반 질문 2번째가 403이 되므로(4번 발견 사항), `app/api/qa-answer` 일반 경로의 mobile 한도를 유료 상한(10)으로 둠 — 무료 1개는 앱이 지킴. 서버에서 구독을 확인하려면 일반 경로에도 appUserId가 필요(OTA)해 따로 결정.
 
 (작업 중 발견한 범위 밖 이슈를 여기 적는다.)
 

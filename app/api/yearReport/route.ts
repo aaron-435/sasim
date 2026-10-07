@@ -16,7 +16,7 @@ import OpenAI from "openai";
 import type { Locale } from "@/lib/i18n/types";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
 import { checkEntitlement, yearReportEntitlementId } from "@/lib/revenuecat";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { ensureSession, getSupabaseAdmin } from "@/lib/supabase";
 import { STEM_ELEMENT } from "@/lib/sajuType";
 import { getYearReportContent } from "@/lib/yearReport";
 import type { ReportDecadeFortune } from "@/lib/reportPrompts";
@@ -108,6 +108,7 @@ export async function POST(req: NextRequest) {
     // Best-effort copy, same as /api/report. Never blocks the response.
     if (body.sessionId) {
       try {
+        if (!(await ensureSession(body.sessionId))) throw new Error("invalid sessionId");
         const { error } = await getSupabaseAdmin().from("report_results").insert({ session_id: body.sessionId, content });
         if (error) throw error;
       } catch (err) {

@@ -48,7 +48,8 @@ const MOBILE_PAID_DAILY_LIMIT = 10; // keep in sync with mobile/lib/qaQuota.ts's
 
 /** `subscribed` is only passed by a caller that has already verified the subscription with
  * RevenueCat (the "그 사람에 대해 묻기" path in app/api/qa-answer) — it raises the mobile cap to
- * the paid one. Every other call keeps the free policy above. */
+ * the paid one. The general mobile path also passes it (unverified, the app sends no appUserId
+ * there and enforces the free cap itself); web keeps the free policy above. */
 export async function isQaQuotaExceeded(sessionId: string, platform: QaPlatform, subscribed = false): Promise<boolean> {
   try {
     const supabase = getSupabaseAdmin();

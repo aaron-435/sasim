@@ -26,7 +26,7 @@ import type { ChatSessionContext } from "@/lib/chatPrompts";
 import { chatFlowVersion, sanitizeFormulation } from "@/lib/chatPrompts";
 import { isFinalTurn } from "@/lib/chatPrompts";
 import { sanitizeQuizAnswers } from "@/lib/chatSets";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { ensureSession, getSupabaseAdmin } from "@/lib/supabase";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
 
 interface ChatRequestBody {
@@ -41,6 +41,7 @@ interface ChatRequestBody {
 async function saveChatSession(sessionId: string | undefined, transcript: ChatMessage[], extract: unknown) {
   if (!sessionId) return;
   try {
+    if (!(await ensureSession(sessionId))) return;
     const { error } = await getSupabaseAdmin().from("chat_sessions").insert({ session_id: sessionId, transcript, extract });
     if (error) throw error;
   } catch (err) {

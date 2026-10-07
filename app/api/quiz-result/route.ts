@@ -14,7 +14,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { ensureSession, getSupabaseAdmin } from "@/lib/supabase";
 
 interface QuizResultBody {
   sessionId?: string;
@@ -39,6 +39,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    if (!(await ensureSession(body.sessionId))) {
+      return NextResponse.json({ ok: false }, { status: 400 });
+    }
     const { error } = await getSupabaseAdmin().from("quiz_results").insert({
       session_id: body.sessionId,
       module_id: body.moduleId ?? null,

@@ -11,7 +11,7 @@
  * ------------------------------------------------------------------
  */
 
-import { getSupabaseAdmin } from "./supabase";
+import { ensureSession, getSupabaseAdmin } from "./supabase";
 
 // USD per 1M tokens (input/output). Update if OpenAI repricing happens —
 // cost_usd is computed at log time, so past rows keep whatever rate was
@@ -39,8 +39,10 @@ export async function logLlmUsage(event: LlmUsageEvent): Promise<void> {
     : null;
 
   try {
+    // A usage row is still worth keeping without its session, so a bad id or failed upsert stores null.
+    const hasSession = await ensureSession(event.sessionId).catch(() => false);
     const { error } = await getSupabaseAdmin().from("llm_usage_log").insert({
-      session_id: event.sessionId ?? null,
+      session_id: hasSession ? event.sessionId : null,
       endpoint: event.endpoint,
       model: event.model,
       prompt_tokens: event.promptTokens,

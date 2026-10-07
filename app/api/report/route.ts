@@ -18,7 +18,7 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { getReportContent } from "@/lib/report";
 import type { ReportContext } from "@/lib/reportPrompts";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { ensureSession, getSupabaseAdmin } from "@/lib/supabase";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
 import { checkEntitlement } from "@/lib/revenuecat";
 import { resolveReportSets } from "@/lib/reportSets";
@@ -37,6 +37,7 @@ interface ReportRequestBody {
 async function saveReportResult(sessionId: string | undefined, content: unknown) {
   if (!sessionId) return;
   try {
+    if (!(await ensureSession(sessionId))) return;
     const { error } = await getSupabaseAdmin().from("report_results").insert({ session_id: sessionId, content });
     if (error) throw error;
   } catch (err) {

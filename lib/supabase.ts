@@ -31,3 +31,28 @@ export function getSupabaseAdmin(): SupabaseClient {
   cached = createClient(url, key, { auth: { persistSession: false } });
   return cached;
 }
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// Ids already known to have a sessions row in this server instance, so repeat writes from the
+// same session (llm usage logs, chat turns) skip the extra round trip. Cleared when it grows.
+const knownSessions = new Set<string>();
+
+/**
+ * Makes sure a `sessions` row exists before a write that references it. The app makes a new
+ * sessionId on every launch and only onboarding's /api/saju creates the row, so without this
+ * every quiz/chat/report/usage write after a relaunch failed the sessions FK (2026-10-07).
+ * Inserts only the id and never overwrites track/nickname on an existing row.
+ * Returns false for a missing or non-uuid id — callers then skip the write or store null.
+ * Throws on a database error, like the inserts it guards.
+ */
+export async function ensureSession(sessionId: string | undefined | null): Promise<boolean> {
+  if (!sessionId || !UUID_PATTERN.test(sessionId)) return false;
+  if (knownSessions.has(sessionId)) return true;
+  const { error } = await getSupabaseAdmin()
+    .from("sessions")
+    .upsert({ id: sessionId }, { onConflict: "id", ignoreDuplicates: true });
+  if (error) throw error;
+  if (knownSessions.size >= 5000) knownSessions.clear();
+  knownSessions.add(sessionId);
+  return true;
+}

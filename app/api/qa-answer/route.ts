@@ -218,7 +218,11 @@ export async function POST(req: NextRequest) {
   }
 
   const resolvedPlatform: QaPlatform = platform === "mobile" ? "mobile" : "web";
-  if (await isQaQuotaExceeded(sessionId, resolvedPlatform)) {
+  // The app's general path sends no appUserId, so the server can't tell a subscriber apart and
+  // the app enforces the free 1/day itself (mobile/lib/qaQuota.ts). The server holds mobile to the
+  // paid cap so a subscriber's 2nd question isn't refused now that usage rows actually save
+  // (ensureSession, 2026-10-07). Web keeps its lifetime free cap.
+  if (await isQaQuotaExceeded(sessionId, resolvedPlatform, resolvedPlatform === "mobile")) {
     return NextResponse.json({ error: "무료 질문 한도를 모두 사용했어요." }, { status: 403 });
   }
 
