@@ -27,6 +27,20 @@ export function isGoodDayPurpose(value: unknown): value is GoodDayPurpose {
 }
 
 export const GOOD_DAYS_RANGE = 30;
+
+/** "month" = today through the end of this KST month (the calendar tab); no scope = the next 30 days. */
+export type GoodDaysScope = "month";
+
+export function isGoodDaysScope(value: unknown): value is GoodDaysScope {
+  return value === "month";
+}
+
+/** How many days from today (offset 0) the search covers. Pure so a scratch script can check it with an injected date. */
+export function goodDaysRangeLength(scope: GoodDaysScope | undefined, today: { year: number; month: number; day: number }): number {
+  if (scope !== "month") return GOOD_DAYS_RANGE;
+  const daysInMonth = new Date(Date.UTC(today.year, today.month, 0)).getUTCDate(); // month is 1-indexed: "day 0 of next month" = last day of this one
+  return daysInMonth - today.day + 1;
+}
 const MAX_PICKS = 5;
 const MIN_PICKS = 3;
 const MAX_PER_RELATION = 2; // keeps the list from being one rhythm repeated (and the reason lines from repeating)
@@ -128,11 +142,23 @@ export function pickGoodDays(days: DayFortune[], purpose: GoodDayPurpose): GoodD
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
-/** Today through the next 29 days (KST, same calendar as the fortune tabs). A day whose
- * lookup fails is skipped rather than failing the whole list (see getWeeklyFortune). */
-export async function getGoodDays(selfDayMasterChar: string, selfDayBranch: string | null, purpose: GoodDayPurpose): Promise<GoodDay[]> {
+/** Today through the next 29 days, or through the end of this month with scope "month" (KST,
+ * same calendar as the fortune tabs). A day whose lookup fails is skipped rather than failing
+ * the whole list (see getWeeklyFortune). With few days left it returns as many as there are. */
+export async function getGoodDays(
+  selfDayMasterChar: string,
+  selfDayBranch: string | null,
+  purpose: GoodDayPurpose,
+  scope?: GoodDaysScope,
+): Promise<GoodDay[]> {
+  const kstNow = new Date(Date.now() + 9 * 3600 * 1000);
+  const length = goodDaysRangeLength(scope, {
+    year: kstNow.getUTCFullYear(),
+    month: kstNow.getUTCMonth() + 1,
+    day: kstNow.getUTCDate(),
+  });
   const settled = await Promise.allSettled(
-    Array.from({ length: GOOD_DAYS_RANGE }, (_, offset) => getDailyFortune(selfDayMasterChar, selfDayBranch, offset)),
+    Array.from({ length }, (_, offset) => getDailyFortune(selfDayMasterChar, selfDayBranch, offset)),
   );
   const days = settled.filter((r): r is PromiseFulfilledResult<DayFortune> => r.status === "fulfilled").map((r) => r.value);
   return pickGoodDays(days, purpose);
