@@ -137,7 +137,7 @@ export const ko = {
 
   concern: {
     heading: "지금 가장 궁금한 건",
-    subheading: "하나만 골라주시면, 앞으로 더 잘 맞는 이야기부터 보여드릴게요.",
+    subheading: "하나만 골라주시면, 앞으로 더 잘 맞는 이야기부터 보여 드릴게요.",
     romanceLabel: "사람과의 관계",
     romanceHint: "연애, 애착, 가족",
     careerLabel: "나 자신과 일상",
@@ -328,9 +328,9 @@ export const ko = {
     notificationOff: "알림 안 받기",
     notificationOffDescription: "운세 알림을 보내지 않아요",
     notificationDaily: "오늘의 운세 받아보기",
-    notificationDailyDescription: "매일 아침 오늘의 운세를 알려드려요",
+    notificationDailyDescription: "매일 아침 오늘의 운세를 알려 드려요",
     notificationWeekly: "주간 운세 받아보기",
-    notificationWeeklyDescription: "매주 월요일 아침 이번 주 운세를 알려드려요",
+    notificationWeeklyDescription: "매주 월요일 아침 이번 주 운세를 알려 드려요",
     notificationPermissionDenied: "알림 권한이 꺼져 있어요. 기기 설정에서 알림을 허용해주세요.",
     turnOffPromptTitle: "알림을 끌까요?",
     turnOffPromptBody: "매일 대신 일주일에 한 번만 받아보는 방법도 있어요.",
@@ -352,7 +352,7 @@ export const ko = {
 
   compatibility: {
     heading: "궁합",
-    subtitle: "상대방의 생년월일을 입력하면 두 사람의 사주 흐름을 비교해드려요.",
+    subtitle: "상대방의 생년월일을 입력하면 두 사람의 사주 흐름을 비교해 드려요.",
     nameLabel: "상대방 이름 (또는 애칭)",
     genderLabel: "상대방 성별",
     namePlaceholder: "예: 민준",
@@ -480,7 +480,7 @@ export const ko = {
     errorPaidButFailed: "결제는 확인됐어요. 리포트를 만드는 중 문제가 생겼어요. 다시 시도하면 추가 결제 없이 이어서 만들어요.",
     errorNotPurchased: "이 리포트의 구매를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.",
     errorUsedForOther: "이 구매는 다른 사람과의 리포트에 이미 쓰였어요.",
-    errorRegenLimit: "이 리포트를 다시 만들 수 있는 횟수를 모두 썼어요. 문의해 주시면 도와드릴게요.",
+    errorRegenLimit: "이 리포트를 다시 만들 수 있는 횟수를 모두 썼어요. 문의해 주시면 도와 드릴게요.",
     errorRateLimited: "요청이 많아 잠시 후 다시 시도해 주세요.",
     errorNetwork: "네트워크 오류로 리포트를 만들지 못했어요.",
     purchaseUnavailable: "지금은 이 리포트를 구매할 수 없어요. 조금만 기다려 주세요.",

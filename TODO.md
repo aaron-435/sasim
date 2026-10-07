@@ -208,6 +208,7 @@
 ## 다음 SPEC 후보
 
 - 웹 SEO 글 30개(일간 10 × ko/en/es) — 2026-10-05 사용자 결정으로 다음 SPEC 첫 항목.
+  - 그 SPEC의 0번(글보다 먼저): 웹 랜딩 언어를 서버에서 정한다(2026-10-07 en/es QA 발견 사항). 순서: `?lang=` → 저장된 선택(쿠키) → `Accept-Language` → en. `/saju-calculator`와 같은 방식으로 `generateMetadata`·`<html lang>`·hreflang(`/`, `/?lang=ko`, `/?lang=es`)을 언어별로, `LocaleProvider`는 서버가 고른 언어로 시작(첫 화면 한국어 깜빡임 제거). 언어 선택 버튼은 쿠키에도 저장. 같은 항목에서 `app/sitemap.ts`·`robots.ts`와 랜딩→계산기 링크(22번 줄 발견 사항). 이게 먼저여야 SEO 글에서 들어온 en/es 방문자가 영어 랜딩에 닿고, 글과 랜딩의 hreflang이 서로 맞는다. 기본값을 ko→en으로 바꾸는 것이라 한국 방문자 첫 화면이 바뀌지 않는지(Accept-Language ko) QA 필요.
 - K-컬처 기능(K-드라마 원형, 스타와 궁합) — 정리 후 다시 검토.
 
 ## 발견 사항
@@ -259,7 +260,7 @@
 - (같은 QA) 홈 "사주 Q&A · 최근 질문"이 앱 언어와 상관없이 질문을 저장한 언어 그대로 보인다(ko 화면에 "When will I finally meet real love?"). `mobile/lib/qaHistory.ts`가 질문 문자열만 저장. 언어를 바꾼 사용자만 해당, 우선순위 낮음.
 - (같은 QA) Q&A 첫 안내 "궁금한 거 편하게 물어보세요. 관심 있는 주제를 골라주세요." — 자유 입력이 없는데 "편하게 물어보세요"라고 함. 사소한 문구.
 - (2026-10-07 en/es QA) 웹 랜딩(`/`)은 서버 HTML이 언제나 한국어다. `lib/i18n/LocaleContext.tsx`가 `DEFAULT_LOCALE`(ko)로 그린 뒤 브라우저에서 localStorage·`navigator.language`로 바꾸고, `?lang=`은 랜딩에서 읽지 않는다(`/saju-calculator`·`/privacy`·`/terms`만 읽음). 그래서 en/es 방문자는 첫 화면에 한국어가 잠깐 보이고, 검색엔진·링크 미리보기는 한국어 description("사주와 심리테스트, AI 상담을 결합한 무료 성향 분석")을 본다(`app/layout.tsx` metadata도 기본 사전). `curl localhost:3000/?lang=en`, `Accept-Language: en-US` 모두 한국어로 확인. global-first 기준으로 SEO 스펙에서 다룰 것.
-- (같은 QA) 앱 홈 "Most present · Wood & Metal & Water, 33% each" — 셋 이상이면 "Wood, Metal & Water"가 자연스럽다(es·ko도 같은 템플릿인지 확인 필요).
-- (같은 QA) en/es에서도 사주 원국 칸 아래 한자(壬 癸 庚 申 卯 寅)가 보인다. 프롬프트는 외국인에게 한자를 쓰지 않는 방침이라, 화면에서도 en/es는 숨길지 결정 필요.
-- (같은 QA) ko 설정 화면 "알려드려요"와 "알려 드려요" 띄어쓰기가 섞임(절기 알림 설명).
+- (수정 2026-10-07, 미커밋) 셋 이상이면 "A, B & C"(es "A, B y C")로, 시뮬레이터 en 홈에서 "Wood, Metal & Water, 33% each" 확인. ko는 "나무·쇠·물"이라 해당 없음. 원래 기록: (같은 QA) 앱 홈 "Most present · Wood & Metal & Water, 33% each" — 셋 이상이면 "Wood, Metal & Water"가 자연스럽다(es·ko도 같은 템플릿인지 확인 필요).
+- (결정 2026-10-07: 지금처럼 작게 보이는 건 괜찮음, 그대로 둠) (같은 QA) en/es에서도 사주 원국 칸 아래 한자(壬 癸 庚 申 卯 寅)가 보인다. 프롬프트는 외국인에게 한자를 쓰지 않는 방침이라, 화면에서도 en/es는 숨길지 결정 필요.
+- (수정 2026-10-07, 미커밋) 앱·웹 ko 사전의 "~해드려요/알려드려요" 6곳을 띄어 쓰는 쪽("알려 드려요")으로 통일, 시뮬레이터 설정 화면 확인. 원래 기록: (같은 QA) ko 설정 화면 "알려드려요"와 "알려 드려요" 띄어쓰기가 섞임(절기 알림 설명).
 - (같은 QA, 이상 없음) en/es Q&A 답 각 1회 생성(DB 쓰기 없이): 한글·한자 0, 오행 단어는 화면과 같음(Wood…/madera…), 후속 제안·전문용어 0. en/es 사전과 콘텐츠 파일 36개 블록에 한글 0, 질문 은행 530개 en/es 번역 누락 0. 시뮬레이터 en 홈·Q&A, es 오늘 총론 표시 정상.

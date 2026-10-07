@@ -236,7 +236,7 @@ export const en: typeof ko = {
     you: "You",
     core: (element: string) => `Your Day Master (you) · ${element}`,
     most: (names: string[], percent: number) =>
-      names.length > 1 ? `Most present · ${names.join(" & ")}, ${percent}% each` : `Most present · ${names[0]} ${percent}%`,
+      names.length > 1 ? `Most present · ${names.length > 2 ? `${names.slice(0, -1).join(", ")} & ${names[names.length - 1]}` : names.join(" & ")}, ${percent}% each` : `Most present · ${names[0]} ${percent}%`,
     unknownHour: "Time unknown",
     unknownHourLines: ["Time", "unknown"],
     a11yPair: (top: string, bottom: string) => `${top} over ${bottom}`,
