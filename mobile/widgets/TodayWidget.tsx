@@ -23,6 +23,9 @@ export type TodayWidgetProps = {
   fallbackLine: string;
 };
 
+// The gallery preview and a widget placed before the app has written anything get empty
+// props ({}), so eyebrow and fallbackLine fall back to English (like the gallery name) and the
+// widget never draws blank. Comments stay outside the function: its source is stored as a string.
 const TodayWidget = (props: TodayWidgetProps, environment: WidgetEnvironment) => {
   "widget";
   const bg = "#122019";
@@ -30,6 +33,8 @@ const TodayWidget = (props: TodayWidgetProps, environment: WidgetEnvironment) =>
   const sub = "#9C9277";
   const accent = "#6FA98B";
   const small = environment.widgetFamily === "systemSmall";
+  const eyebrow = props.eyebrow || "Today's rhythm";
+  const fallbackLine = props.fallbackLine || "Open the app once and today's rhythm shows up here.";
   const root = [
     containerBackground(bg, "widget"),
     widgetURL("fatesaid://fortune"),
@@ -39,16 +44,16 @@ const TodayWidget = (props: TodayWidgetProps, environment: WidgetEnvironment) =>
   if (!props.rhythm) {
     return (
       <VStack alignment="leading" spacing={6} modifiers={root}>
-        <Text modifiers={[font({ size: 12, weight: "semibold" }), foregroundStyle(accent)]}>{props.eyebrow}</Text>
+        <Text modifiers={[font({ size: 12, weight: "semibold" }), foregroundStyle(accent)]}>{eyebrow}</Text>
         <Spacer />
-        <Text modifiers={[font({ size: 14, design: "serif" }), foregroundStyle(headline), lineLimit(4)]}>{props.fallbackLine}</Text>
+        <Text modifiers={[font({ size: 14, design: "serif" }), foregroundStyle(headline), lineLimit(4)]}>{fallbackLine}</Text>
       </VStack>
     );
   }
 
   return (
     <VStack alignment="leading" spacing={4} modifiers={root}>
-      <Text modifiers={[font({ size: 12, weight: "semibold" }), foregroundStyle(accent)]}>{props.eyebrow}</Text>
+      <Text modifiers={[font({ size: 12, weight: "semibold" }), foregroundStyle(accent)]}>{eyebrow}</Text>
       <Text modifiers={[font({ size: small ? 20 : 24, design: "serif" }), foregroundStyle(headline), lineLimit(2), minimumScaleFactor(0.8)]}>
         {props.rhythm}
       </Text>

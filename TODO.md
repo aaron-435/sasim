@@ -212,6 +212,8 @@
 
 ## 발견 사항
 
+- (조사 중, 2026-10-07) 프로덕션 500 1건: mobile-web에서 운세·Q&A는 200. 후보는 `/api/quiz-result`(quiz_results.session_id가 sessions FK — 세션 행이 없으면 insert 실패→500). 미확인.
+
 (작업 중 발견한 범위 밖 이슈를 여기 적는다.)
 
 - (1번 중) 웹 Next 개발 모드(React Strict Mode)에서는 랜딩 `landing_view`가 두 번 기록된다. 프로덕션 빌드에서는 한 번이라 그대로 둠. 분석할 때 `dev=true` 행은 빼고 본다.
@@ -246,6 +248,6 @@
 - (12번 중) 위젯의 "오늘"은 기기 자정 기준, 리듬 값은 운세 API의 KST 날짜 기준이다(8번 발견 사항과 같은 문제). 미주 사용자는 저녁부터 다음 날(KST) 리듬이 위젯에 보일 수 있다.
 - (12번 중) mobile-web 회귀 중 프로덕션 응답 500이 1건 콘솔에 찍혔다(요청 미확인). 이번 변경은 서버 호출을 더하지 않았고 운세·Q&A·궁합 응답은 모두 정상이었다.
 - (12번 보충 QA 중) Release 시뮬레이터 테스트가 프로덕션 `events`에 dev=false 행 2개(anon_id `1db7aea7861040b2be2805b70786c4c7`, widget_tap·paywall_view, 2026-10-06T16:31 UTC)를 남겼다. 실사용자 데이터처럼 보이므로 분석에서 이 anon_id를 빼거나 지워야 한다(삭제는 사용자 결정).
-- (12번 보충 QA 중) iOS 위젯 갤러리 미리보기는 앱이 데이터를 쓰기 전에는 배경만 보인다(expo-widgets 스냅샷이 props 없이 그려짐). 처음 위젯을 고르는 사람에게 무엇인지 안 보인다. 갤러리용 기본 props(예: "오늘의 리듬" + 예시 리듬)를 둘 수 있는지 확인 필요.
+- (해결 2026-10-07, 미커밋) 위젯 props가 비면 eyebrow·fallbackLine을 영어 기본값으로(`mobile/widgets/TodayWidget.tsx`), 시뮬레이터 갤러리에 "Today's rhythm / Open the app once…" 표시 확인, mobile tsc exit 0. 원래 기록: iOS 위젯 갤러리 미리보기는 앱이 데이터를 쓰기 전에는 배경만 보인다(expo-widgets 스냅샷이 props 없이 그려짐). 처음 위젯을 고르는 사람에게 무엇인지 안 보인다. 갤러리용 기본 props(예: "오늘의 리듬" + 예시 리듬)를 둘 수 있는지 확인 필요.
 - (12번 보충 QA 중) dev-client에서는 앱이 꺼진 상태로 위젯을 누르면 개발 런처가 먼저 떠서 딥링크가 사라진다. 스토어 빌드에는 해당 없음(Release로 확인). 개발 중 냉시작 확인은 Release 시뮬레이터 빌드로 한다.
 - (D 중) `/privacy`·`/terms` 페이지의 `<title>`은 `?lang=`과 상관없이 한국어("이용약관 | Fatesaid")다(`app/privacy/page.tsx`의 `metadata`가 기본 언어 사전만 씀). 본문은 언어별로 맞게 나옴.
