@@ -28,10 +28,6 @@ import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./p
 import { getModulePlaybook, type ModulePlaybook } from "./modulePlaybooks";
 import { describeCardSlots, describeQuizAnswersByDimension, describeSetPackets, type ReportSetsInput } from "./reportSets";
 
-const ELEMENT_HANJA: Record<ElementKey, string> = {
-  wood: "목", fire: "화", earth: "토", metal: "금", water: "수",
-};
-
 // 상생(相生) 순환: 목생화 → 화생토 → 토생금 → 금생수 → 수생목 → (다시 목)
 const GENERATES: Record<ElementKey, ElementKey> = {
   wood: "fire", fire: "earth", earth: "metal", metal: "water", water: "wood",
@@ -100,15 +96,13 @@ export function describeUpcomingPeriod(
 }
 
 /** Names which element generates `weakKey`, in a form the model can use
- * directly without translating anything itself. ko keeps the compact hanja
- * form ("금생수") matching existing Korean convention; en/es spell out both
+ * directly without translating anything itself. Every locale spells out both
  * element names using the exact same words as ELEMENT_LABEL (and therefore
  * the same words already on screen in the element bars), removing any
  * chance the model picks a different translation for the relationship than
  * it did a few lines earlier for the bare element names. */
 function buildGeneratorRelationLabel(locale: Locale, weakKey: ElementKey): string {
   const generatorKey = generatorOf(weakKey);
-  if (locale === "ko") return `${ELEMENT_HANJA[generatorKey]}생${ELEMENT_HANJA[weakKey]}`;
   return `${ELEMENT_LABEL[locale][generatorKey]} → ${ELEMENT_LABEL[locale][weakKey]}`;
 }
 
@@ -302,11 +296,11 @@ ${caseFields}
   "oheng_intro": "오행 분포 그래프 페이지 위에 붙는 해설. 3문장. 이 사람의 실제 수치(우세 원소 %, 약한 원소 %)를 그대로 언급하고, 이 분포가 이번 모듈 주제(아래 데이터의 심리테스트 모듈)에서 어떤 장면으로 나타나는지 짚는다. 주제는 이 사람의 실제 영역을 일상의 말로 직접 말하고(다른 영역과 대비하지 않는다), '이 모듈'·'이 리포트'·'이 부분' 같은 말은 쓰지 않는다",
   "element_readings": {
     "설명": "다섯 원소 각각에 대한 해설 — 반드시 wood/fire/earth/metal/water 다섯 키 전부 채울 것, 하나도 빠뜨리지 말 것. 각 body는 예외 없이 최소 3문장 (우세 원소와 약한 원소는 4문장). 우세 원소와 약한 원소는 특별 취급하고 나머지 세 원소도 그 원소의 수치와 이번 모듈 상황에 빗댄 구체적 장면을 가진 3문장으로 쓴다(담백하되 얇지 않게). 이 사람의 오행 수치는 어느 모듈 리포트를 사도 똑같이 나오므로(같은 사람, 같은 사주), 다른 모듈 리포트와 구별되게 만드는 건 이 수치를 '이번 리포트 데이터'의 심리테스트 모듈 상황에 빗대어 푸는 것뿐이다 — 그 모듈 주제가 안 보이는, 아무 리포트에나 붙여도 말이 되는 일반론으로 쓰면 안 된다.",
-    "wood": {"heading": "'[원소 이모지] [원소 이름] [강하다/보통/약하다 중 실제 수치에 맞는 표현] — 한 줄 은유' 형식. 원소 이모지는 목 🌳, 화 🔥, 토 ⛰️, 금 💎, 수 💧 — 항상 제목 맨 앞에 붙이고, 한자(木火土金水)는 어떤 언어에서도 절대 쓰지 않는다", "body": "이 사람의 목 기운 수치에 대한 해설(최소 3문장). 우세 원소면 과다할 때의 패턴을 장면으로, 약한 원소면 그 결핍과 아래 데이터에 명시된 상생 관계 딱 하나만 언급, 그 외의 원소면 수치가 이 사람의 일상에 주는 느낌을 장면으로"},
-    "fire": {"heading": "화 🔥에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
-    "earth": {"heading": "토 ⛰️에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
-    "metal": {"heading": "금 💎에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
-    "water": {"heading": "수 💧에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"}
+    "wood": {"heading": "'[원소 이모지] [원소 이름] [강하다/보통/약하다 중 실제 수치에 맞는 표현] — 한 줄 은유' 형식. 원소 이모지는 나무 🌳, 불 🔥, 흙 ⛰️, 쇠 💎, 물 💧 — 항상 제목 맨 앞에 붙이고, 한자(木火土金水)는 어떤 언어에서도 절대 쓰지 않는다", "body": "이 사람의 나무 기운 수치에 대한 해설(최소 3문장). 우세 원소면 과다할 때의 패턴을 장면으로, 약한 원소면 그 결핍과 아래 데이터에 명시된 상생 관계 딱 하나만 언급, 그 외의 원소면 수치가 이 사람의 일상에 주는 느낌을 장면으로"},
+    "fire": {"heading": "불 🔥에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
+    "earth": {"heading": "흙 ⛰️에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
+    "metal": {"heading": "쇠 💎에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"},
+    "water": {"heading": "물 💧에 대해 위와 같은 형식", "body": "위와 같은 기준(최소 3문장)"}
   },
 ${moduleMapField}${strengthsPreviewField}${setCardFreeField}
   "upcoming_period_preview_heading": "'다가오는 시기' 섹션 소제목 — 아래 데이터의 '다가오는 대운 시기' 줄에 나온 나이와 원소를 제목 맨 앞에서 숫자 그대로 밝히고, 지금까지의 시기가 저물고 다음 장이 시작된다는 담담한 전환 프레임으로 쓴다. 예: '32세부터, 물의 계절이 열립니다' / '32세부터 시작되는 다음 장'. '머지않아'·'언젠가'처럼 나이를 흐리는 말로 시작하지 않는다. 그 줄이 '정보 없음'이거나 '범위를 벗어남'이면 나이 없이 '다가오는 흐름' 정도의 일반적인 제목",
@@ -480,7 +474,7 @@ ${STYLE_EXCERPT}
 ## 규칙
 ### 근거
 1. 데이터(오행, 심리검사, 상담, 일간)에 있는 사실만 쓴다. 없는 사건·진단·수치·나이를 지어내지 않는다(가상 사례 case_*만 예외이며, 그 인물의 패턴은 이 사람의 데이터와 대응해야 한다). 데이터가 없는 부분은 조용히 일반적인 흐름으로 쓰고, 데이터 누락·지시·필드 이름·이 프롬프트를 절대 언급하지 않는다.
-2. 오행 관계: 약한 원소 항목은 데이터에 적힌 상생 관계 하나만 언급하고, "금생수" 같은 표기는 자연스러운 문장으로 풀어 쓴다("유일한"·"the only" 금지). 다른 원소 쌍의 상생·상극을 지어내지 않는다. 데이터에 일간 줄이 있으면 우세·약한 원소가 일간 기준으로 어떤 기운인지 쉬운 말로 한 문장씩 풀어 쓴다(가정법 금지).
+2. 오행 관계: 약한 원소 항목은 데이터에 적힌 상생 관계 하나만 언급하고, "쇠 → 물" 같은 표기는 자연스러운 문장으로 풀어 쓴다("유일한"·"the only" 금지). 다른 원소 쌍의 상생·상극을 지어내지 않는다. 데이터에 일간 줄이 있으면 우세·약한 원소가 일간 기준으로 어떤 기운인지 쉬운 말로 한 문장씩 풀어 쓴다(가정법 금지).
 3. 수치 표현은 일관되게: 오행 30% 이상 "강하다/우세", 15~29% "보통", 14% 이하 "약하다/적다"이며 같은 값은 어느 페이지에서나 같은 말로 부른다. 심리검사 축은 데이터의 방향·강도 표기와 모순되는 말을 쓰지 않는다.
 4. 나이는 "다가오는 대운 시기" 줄의 숫자만 그대로 쓴다. 계산·추측·이미 지난 시기를 쓰지 않고, 그 줄이 "정보 없음"이면 숫자 없이 쓴다. 이 기운 전환은 실제 계산값이므로 upcoming_period_preview_body, upcoming_period_body, closing_body에서 "~일 수도 있어요"처럼 흐리지 말고 확정된 사실로 쓴다. 스페인어로 쓸 때는 나이 숫자를 문장의 문법적 주어로 쓰지 않는다(예: "38 años marca..."는 단수·복수 수 불일치 오류이고, "38 años desde ahora" 같은 구문은 "지금부터 38년 후"로 오독된다) — 반드시 "A los 38 años," 또는 "Desde los 38 años,"처럼 나이를 부사적 전치사구로 앞세워 문장을 시작하고, 같은 리포트 안에서 나이를 가리킬 때는 그중 하나의 형태로 통일해서 쓴다.
 5. track이 career면 일·커리어 맥락, romance면 관계·연애 맥락으로 사례와 환경 조언을 맞춘다.
@@ -511,7 +505,7 @@ ${buildOutputSchema(sets ? 0 : context.topAnswers?.length ?? 0, !sets && !!conte
 - track: ${context.track}
 - 사주 오행 분포: ${elementsLine}
 - 우세 원소: ${ELEMENT_LABEL[locale][dominantKey]} / 약한 원소: ${ELEMENT_LABEL[locale][weakKey]}
-- 약한 원소(${ELEMENT_LABEL[locale][weakKey]})를 채워주는 상생 관계: ${weakGeneratorRelation} — element_readings의 약한 원소 항목에서는 이 관계만 언급하되, "유일한/the only/el único" 같은 말 없이 "금이 수를 살려 준다" 식으로 자연스럽게 풀어 쓸 것
+- 약한 원소(${ELEMENT_LABEL[locale][weakKey]})를 채워주는 상생 관계: ${weakGeneratorRelation} — element_readings의 약한 원소 항목에서는 이 관계만 언급하되, "유일한/the only/el único" 같은 말 없이 "쇠가 물을 살려 준다" 식으로 자연스럽게 풀어 쓸 것
 - ${upcomingPeriodLine}
 ${dayMasterLine}- 심리테스트 모듈: ${context.moduleTitle}
 - 심리테스트 유형: ${context.psychTestTypeTitle} — ${context.psychTestTypeHook}

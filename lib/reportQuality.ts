@@ -548,7 +548,7 @@ export async function repairStringFindings<T>(
 }
 
 const HANJA_ELEMENT_EMOJI: Record<string, string> = { 木: "🌳", 火: "🔥", 土: "⛰️", 金: "💎", 水: "💧" };
-const HANGUL_ELEMENT: Record<string, string> = { 木: "목", 火: "화", 土: "토", 金: "금", 水: "수" };
+const HANGUL_ELEMENT: Record<string, string> = { 木: "나무", 火: "불", 土: "흙", 金: "쇠", 水: "물" };
 
 /** Korean text must never show hanja (the app labels elements with an emoji instead). The prompts
  * already forbid them; this is the guarantee for when the model still writes "화(火)" or "(大運)":
@@ -557,7 +557,7 @@ const HANGUL_ELEMENT: Record<string, string> = { 木: "목", 火: "화", 土: "�
 export function stripHanja<T>(value: T): T {
   const clean = (t: string) =>
     t
-      .replace(/([목화토금수])\s?\(([木火土金水])\)/g, (_m, ko: string) => ko)
+      .replace(/([목화토금수]|나무|불|흙|쇠|물)\s?\(([木火土金水])\)/g, (_m, ko: string) => ko)
       .replace(/\s?\([\u4E00-\u9FFF]+\)/g, "")
       .replace(/[木火土金水]/g, (h) => `${HANJA_ELEMENT_EMOJI[h]}${HANGUL_ELEMENT[h]}`)
       .replace(/[\u4E00-\u9FFF]/g, "");

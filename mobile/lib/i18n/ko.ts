@@ -32,11 +32,11 @@ export const ko = {
     nextLabel: "다음",
     retryLabel: "다시 시도",
     elementLabels: {
-      wood: "목",
-      fire: "화",
-      earth: "토",
-      metal: "금",
-      water: "수",
+      wood: "나무",
+      fire: "불",
+      earth: "흙",
+      metal: "쇠",
+      water: "물",
     },
     zodiacLabels: {
       capricorn: "염소자리",

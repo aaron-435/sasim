@@ -19,32 +19,8 @@
 
 import type { CompatibilityResult } from "./compatibility";
 import type { Locale } from "./i18n/types";
-import type { ElementKey } from "./sajuScore";
 import { STEM_ELEMENT } from "./sajuType";
-import { CRISIS_RESOURCES, ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
-
-function isElementKey(key: string): key is ElementKey {
-  return key === "wood" || key === "fire" || key === "earth" || key === "metal" || key === "water";
-}
-
-/** /api/saju's `elements`/`dominantElement` are raw ElementKey strings
- * ("wood", "fire", ...) regardless of locale — translate them to the exact
- * words the rest of the app already uses (mobile's element bars, the report,
- * the chat) so the model isn't left to independently re-derive "Madera" or
- * "Wood" from scratch and risk picking a different word each time. */
-function localizeElementKeys<T>(value: T, locale: Locale): T {
-  if (Array.isArray(value)) return value.map((v) => localizeElementKeys(v, locale)) as unknown as T;
-  if (typeof value === "object" && value !== null) {
-    return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>).map(([k, v]) => [
-        isElementKey(k) ? ELEMENT_LABEL[locale][k] : k,
-        v,
-      ])
-    ) as T;
-  }
-  if (typeof value === "string" && isElementKey(value)) return ELEMENT_LABEL[locale][value] as unknown as T;
-  return value;
-}
+import { CRISIS_RESOURCES, ELEMENT_LABEL, FIELD_LANGUAGE_NAME, koToneRule, localizeElementNames, outputLanguageDirective } from "./promptLocale";
 
 export interface QAContext {
   nickname: string;
@@ -67,13 +43,13 @@ export interface QAContext {
 export function buildQASystemPrompt(ctx: QAContext): string {
   const locale: Locale = ctx.locale ?? "ko";
   const dataBlock = JSON.stringify(
-    {
-      오행분포: localizeElementKeys(ctx.sajuResult.elements, locale),
-      우세오행: localizeElementKeys(ctx.sajuResult.dominantElement, locale),
+    localizeElementNames({
+      오행분포: ctx.sajuResult.elements,
+      우세오행: ctx.sajuResult.dominantElement,
       사주명식: ctx.sajuResult.fourPillars,
       대운: ctx.sajuResult.decadeFortune,
       요약: ctx.sajuResult.summary,
-    },
+    }, locale),
     null,
     2
   );
@@ -85,12 +61,12 @@ ${dataBlock}
 
 ## 규칙 (반드시 전부 지킬 것)
 1. 위 데이터에 없는 사실을 지어내지 마세요. 특히 구체적인 생김새, 실명, 정확한 달력 날짜처럼 데이터에 근거 없는 디테일은 절대 만들어내지 마세요. 오행/사주명식/대운 데이터가 뒷받침하는 범위 안에서만 해석하세요.
-2. ${ctx.nickname}님의 질문에 대해 3~4문단, 친근하지만 신뢰감 있는 존댓말 톤으로 답하세요. 각 문단은 그 자체로 완결된 메시지가 되도록 쓰세요 — 메신저로 여러 번 나눠 보내는 것처럼요.
-3. 가능하면 대운(decadeFortune) 데이터를 활용해 구체적인 시기나 흐름을 언급하세요. 단, 위 데이터의 "정미"/"병오" 같은 원본 갑자(干支) 이름이나 한자는 절대 그대로 인용하지 마세요 — "24세 무렵부터 34세까지는 화 기운이 강해지는 시기" 처럼 나이대와 오행 변화로만 풀어서 설명하세요 (이 예시 문장은 스타일 참고용일 뿐이니 그대로 베끼지 말고, 실제 답변 언어로 새로 작성할 것). 갑자 이름은 일반 사용자에게 아무 의미가 없는 전문용어입니다.
+2. ${ctx.nickname}님의 질문에 대해 3~4문단, 친근하지만 신뢰감 있는 존댓말 톤으로 답하세요. ${koToneRule(locale)} 각 문단은 그 자체로 완결된 메시지가 되도록 쓰세요 — 메신저로 여러 번 나눠 보내는 것처럼요.
+3. 가능하면 대운(decadeFortune) 데이터를 활용해 구체적인 시기나 흐름을 언급하세요. 단, 위 데이터의 "정미"/"병오" 같은 원본 갑자(干支) 이름이나 한자는 절대 그대로 인용하지 마세요 — "24세 무렵부터 34세까지는 ${ELEMENT_LABEL.ko.fire} 기운이 강해지는 시기" 처럼 나이대와 오행 변화로만 풀어서 설명하세요 (이 예시 문장은 스타일 참고용일 뿐이니 그대로 베끼지 말고, 실제 답변 언어로 새로 작성할 것). 갑자 이름은 일반 사용자에게 아무 의미가 없는 전문용어입니다.
 3.5. 위 데이터의 "요약"(dayMaster, elementBalance 등) 필드도 마찬가지로 전문 용어다 — "일간(Day Master)", "격국", "용신" 같은 사주 전문 용어 이름을 답변에 그대로 노출하지 마세요. 사용자는 사주에 대한 배경지식이 전혀 없는 외국인일 수 있다는 걸 항상 염두에 두고, 그 용어가 가리키는 실제 의미(예: 일간은 "이 사람의 타고난 중심 기운/성향")만 쉬운 말로 자연스럽게 풀어서 설명하세요.
 4. 의료·법률·재정적 판단의 근거로 오해될 수 있는 단정적 표현("반드시 ~이다", "~하면 안 된다" 같은 절대적 명령)은 피하세요.
 5. 자해·자살 등 위기 신호가 질문에 담겨 있다면, 사주 해석 대신 ${CRISIS_RESOURCES[locale]}를 안내하는 짧고 진지한 문단으로만 (${FIELD_LANGUAGE_NAME[locale]}로) 답하세요.
-6. 마지막 문단 끝에는 자연스럽게 궁금증을 하나 더 남기거나, 더 깊이 알고 싶다면 관련 심리테스트를 찾아볼 수 있다는 걸 가볍게 한 줄로 덧붙이세요 — 강매하듯 말하지 마세요.
+6. 이 답변은 한 번으로 끝나는 답입니다. 이어서 대화할 수 없으니 "원하시면 제가 ~도 봐드리겠습니다", "더 물어보시면 ~" 같은 후속 상담 제안이나 약속은 하지 마세요. 마지막 문단은 ${ctx.nickname}님이 스스로 해 볼 수 있는 작고 구체적인 행동 하나로 끝내고, 더 깊이 알고 싶다면 관련 심리테스트가 있다는 걸 가볍게 한 줄로 덧붙여도 됩니다 — 강매하듯 말하지 마세요.
 7. 아래 "사용자 질문"이 한국어로 적혀 있더라도, 답변은 반드시 ${FIELD_LANGUAGE_NAME[locale]}로만 작성하세요 — 질문의 언어를 그대로 따라가지 마세요.
 
 ## 사용자 질문
@@ -150,24 +126,24 @@ function coreElementLabel(summary: unknown, locale: Locale): string | null {
 export function buildPersonQASystemPrompt(ctx: PersonQAContext): string {
   const locale: Locale = ctx.locale ?? "ko";
   const selfBlock = JSON.stringify(
-    {
-      오행분포: localizeElementKeys(ctx.sajuResult.elements, locale),
-      우세오행: localizeElementKeys(ctx.sajuResult.dominantElement, locale),
+    localizeElementNames({
+      오행분포: ctx.sajuResult.elements,
+      우세오행: ctx.sajuResult.dominantElement,
       사주명식: ctx.sajuResult.fourPillars,
       대운: ctx.sajuResult.decadeFortune,
       타고난_중심_기운: coreElementLabel(ctx.sajuResult.summary, locale),
-    },
+    }, locale),
     null,
     2
   );
   const otherBlock = JSON.stringify(
-    {
-      오행분포: localizeElementKeys(ctx.other.elements, locale),
-      우세오행: localizeElementKeys(ctx.other.dominantElement, locale),
+    localizeElementNames({
+      오행분포: ctx.other.elements,
+      우세오행: ctx.other.dominantElement,
       사주명식: ctx.other.fourPillars,
       타고난_중심_기운: coreElementLabel(ctx.other.summary, locale),
       출생시간: ctx.other.birthTimeKnown ? "입력됨" : "모름(시주 없이 계산됨 — 시주에 기대는 해석은 하지 말 것)",
-    },
+    }, locale),
     null,
     2
   );
@@ -198,7 +174,7 @@ ${relationBlock}
 5. 나쁜 궁합은 없습니다. 맞지 않는다, 상극이라 어렵다, 피해야 할 사람이다 같은 판정을 하지 말고, 부딪히는 지점은 "서로 다른 리듬"과 "다루는 방법"으로 설명하세요. 관계를 끊으라거나 붙잡으라고 권하지 마세요. 선택은 ${ctx.nickname}님의 몫입니다.
 6. 원본 갑자(干支) 이름이나 한자, "일간"(영어 "Day Master", 스페인어 "Maestro del Día"), "격국", "용신", "천간합", "상극" 같은 전문 용어는 어느 언어로도 그대로 쓰지 마세요. 사용자는 사주를 처음 접하는 외국인일 수 있으니 실제 의미(예: "타고난 중심 기운")로 풀어 쓰세요. 오행 이름(위 데이터에 쓰인 단어)은 써도 됩니다.
 7. ${ctx.nickname}님의 대운은 "요즘 ${ctx.nickname}님의 흐름"으로 가볍게 쓸 수 있지만, 그 사람의 앞날이나 시기는 말하지 마세요(데이터에도 없습니다).
-8. 3~4문단, 친근하지만 신뢰감 있는 존댓말 톤으로 답하세요. 각 문단은 그 자체로 완결된 메시지가 되도록 쓰세요. 마지막 문단은 ${ctx.nickname}님이 이번 주에 해 볼 수 있는 작고 구체적인 행동 하나로 끝내세요(강요하지 말고 제안으로).
+8. 3~4문단, 친근하지만 신뢰감 있는 존댓말 톤으로 답하세요. ${koToneRule(locale)} 각 문단은 그 자체로 완결된 메시지가 되도록 쓰세요. 마지막 문단은 ${ctx.nickname}님이 이번 주에 해 볼 수 있는 작고 구체적인 행동 하나로 끝내세요(강요하지 말고 제안으로). 이어서 대화할 수 없는 한 번의 답이니 "원하시면 제가 ~도 봐드리겠습니다" 같은 후속 상담 제안은 하지 마세요.
 9. 의료·법률·재정적 판단의 근거로 오해될 수 있는 단정적 표현은 피하세요.
 10. 자해·자살, 폭력, 위협, 학대 같은 위기 신호가 질문에 담겨 있다면, 사주 해석 대신 ${CRISIS_RESOURCES[locale]}를 안내하는 짧고 진지한 문단으로만 (${FIELD_LANGUAGE_NAME[locale]}로) 답하세요.
 11. 답변은 반드시 ${FIELD_LANGUAGE_NAME[locale]}로만 작성하세요.

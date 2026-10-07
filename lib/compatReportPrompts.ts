@@ -19,7 +19,7 @@
 
 import type { Locale } from "./i18n/types";
 import type { CompatibilityResult, CompatRelation } from "./compatibility";
-import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
+import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, koToneRule, outputLanguageDirective } from "./promptLocale";
 import type { ElementKey } from "./sajuType";
 
 export const OTHER_TOKEN = "{other}";
@@ -116,10 +116,10 @@ ${dataBlock(ctx)}
 
 ## 반드시 지킬 것
 1. 나쁜 궁합은 없습니다. "맞지 않는다", "상극이라 어렵다", "나쁜 궁합", "피해야 할 사람", 점수·등급 같은 판정을 쓰지 마세요. 부딪히는 지점은 "서로 다른 리듬"과 "다루는 방법"으로 씁니다.
-2. {other}의 마음, 속마음, 의도, 감정을 단정하거나 추측하지 마세요("{other}은 당신을 좋아한다/떠날 것이다/마음이 있을 가능성이 크다" 모두 금지). {other}에 대해서는 타고난 기질과 표현 방식의 경향으로만 말합니다("이런 기운의 사람은 ~하는 편이에요").
+2. {other}의 마음, 속마음, 의도, 감정을 단정하거나 추측하지 마세요("{other}은 당신을 좋아한다/떠날 것이다/마음이 있을 가능성이 크다" 모두 금지). {other}에 대해서는 타고난 기질과 표현 방식의 경향으로만 말합니다("이런 기운의 사람은 ~하는 편입니다").
 3. 관계의 결말이나 시기를 예언하지 마세요(헤어진다, 이어진다, 결혼한다, 돌아온다, 끝난다, 언제 무엇이 일어난다). 관계를 끊으라거나 붙잡으라고 권하지 마세요.
 4. 건강·사고·재난·금전 손실 예측, 의학·법률·투자 조언은 쓰지 마세요.
-5. 단정 대신 경향과 제안으로 씁니다("~하기 쉬워요", "~해 보면 한결 편해요"). 긴장은 허용되지만 겁주지 마세요.
+5. 단정 대신 경향과 제안으로 씁니다("~하기 쉽습니다", "~해 보면 한결 편합니다"). 긴장은 허용되지만 겁주지 마세요. ${koToneRule(ctx.locale)}
 6. ${ctx.nickname}님은 2인칭으로 부르고, 이름은 리포트 전체에서 두세 번만 자연스럽게 씁니다. 성별을 가정하지 마세요.
 7. ${NAME_RULES[ctx.locale]}
 8. 데이터 줄의 라벨이나 퍼센트를 나열하지 말고, 퍼센트는 꼭 필요할 때 한두 번만 데이터 그대로 쓰세요. 데이터가 "언급하지 말 것"이라고 한 항목은 쓰지 마세요.`;

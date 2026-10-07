@@ -42,16 +42,54 @@ export const FIELD_LANGUAGE_NAME: Record<Locale, string> = {
  * user with zero saju background has no way to tell "Metal" and "Gold"
  * apart as the same concept if the AI prose uses one and the bar chart
  * above it uses the other. This map is the EXACT wording from those UI
- * dictionaries, so prompt data and rendered UI always agree — ko keeps the
- * hanja notation since mobile's own ko.ts dictionary does too.
+ * dictionaries, so prompt data and rendered UI always agree. ko uses the
+ * native words (나무·불·흙·쇠·물) that mobile's home chart and element bars
+ * show (decided 2026-10-07); the engine's own 목/화/토/금/수 strings in
+ * fourPillars/decadeFortune/summary go through localizeElementNames before
+ * they reach a prompt.
  */
 export const ELEMENT_LABEL: Record<Locale, Record<ElementKey, string>> = {
   // Hangul only: hanja are not shown anywhere in the app (elements are labelled with an emoji), and a
   // data line like "화(火)" is exactly what makes the model write "화(火)" back.
-  ko: { wood: "목", fire: "화", earth: "토", metal: "금", water: "수" },
+  ko: { wood: "나무", fire: "불", earth: "흙", metal: "쇠", water: "물" },
   en: { wood: "Wood", fire: "Fire", earth: "Earth", metal: "Metal", water: "Water" },
   es: { wood: "Madera", fire: "Fuego", earth: "Tierra", metal: "Metal", water: "Agua" },
 };
+
+/** ko sentence ending for AI prose (decided 2026-10-07): 합니다체 throughout, so a reading doesn't
+ * swing between "~입니다" and "~해요" inside one paragraph. Empty for en/es. */
+export function koToneRule(locale: Locale): string {
+  return locale === "ko"
+    ? "한국어 문장은 모두 '~입니다/~습니다/~하세요'(합니다체)로 끝내세요. '~해요/~예요/~거든요' 같은 해요체를 한 문장도 섞지 마세요."
+    : "";
+}
+
+/** The engine (lib/manseryeok.ts) labels elements 목/화/토/금/수 in its output, and mobile parses those
+ * strings, so the engine keeps them — prompts translate them on the way in instead. */
+const ENGINE_ELEMENT_KEY: Record<string, ElementKey> = { 목: "wood", 화: "fire", 토: "earth", 금: "metal", 수: "water" };
+
+/** ElementKey or engine label (목/화/...) → ELEMENT_LABEL word; anything else unchanged. */
+export function elementLabelOf(value: string, locale: Locale): string {
+  const key = (ENGINE_ELEMENT_KEY[value] ?? (value in ELEMENT_LABEL.en ? value : null)) as ElementKey | null;
+  return key ? ELEMENT_LABEL[locale][key] : value;
+}
+
+/** Deep-maps element names in engine data to ELEMENT_LABEL, so a JSON data block handed to the model
+ * uses the same words as the UI: exact string values (ElementKey or 목/화/...), and ElementKey keys except
+ * ones holding a string — fourPillars' `earth: "인"` is the branch, not an element. */
+export function localizeElementNames<T>(value: T, locale: Locale): T {
+  if (Array.isArray(value)) return value.map((v) => localizeElementNames(v, locale)) as unknown as T;
+  if (typeof value === "object" && value !== null) {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([k, v]) => [
+        typeof v === "string" ? k : elementLabelOf(k, locale),
+        localizeElementNames(v, locale),
+      ])
+    ) as T;
+  }
+  if (typeof value === "string") return elementLabelOf(value, locale) as unknown as T;
+  return value;
+}
 
 /**
  * A locale-only signal is NOT a country signal (an "en" user could be
