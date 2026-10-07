@@ -53,10 +53,12 @@
   - QA(부분): 앱 타입(`tsc --noEmit`) → 오류 없음. mobile-web `?qa=all&persona=mia` 심층 리포트 마지막 장(en): 한 줄 요약 아래 "Share image preview" 틀 안에 FATESAID·"From my Fatesaid report"·한 줄·`fatesaidapp.com`, 이름·날짜 없음, Share 버튼 눌러도 콘솔 오류 없음(웹은 `Sharing` 없어 조용히 끝). `grep Share.share` → 남은 곳은 초대 링크 두 곳(`CompatibilityScreen`, `CoupleModeSection`)뿐. 못 본 것: 궁합·신년 리포트 화면(QA 픽스처 없음, 같은 부품이라 코드만 확인), 시뮬레이터/실기기 PNG 공유 시트, ko·es 긴 부제 잘림.
   - [ ] (사용자 확인) dev-client에서 ① 심층 리포트 ② 궁합 상세 리포트 ③ 신년 리포트 마지막 장의 "공유" → 공유 시트에 PNG가 올라가고 메시지에 붙이면 이미지로 보이는지, 카드에 FATESAID·주소 글자가 있고 이름·생년월일이 없으며 긴 부제가 안 잘리는지(ko·en·es).
 
-- [ ] 8. 공유 마감 QA
+- [x] 8. 공유 마감 QA
   - 선행: 7
-  - 변경: 문제가 나온 곳만.
+  - 변경: 문제가 나온 곳만. (코드 수정 없음)
   - QA: `grep -rn "Share.share" mobile/screens mobile/components`로 남은 텍스트 공유가 초대 링크 두 곳(`CompatibilityScreen`, `CoupleModeSection`)뿐인지 확인. 초대 링크 공유는 시뮬레이터에서 전과 같이 링크 텍스트. 이벤트 `share`의 kind 4개가 나가는지 Metro/서버 로그 확인. 앱 타입 통과.
+  - QA: `grep Share.share` → `CompatibilityScreen.tsx:136`, `CoupleModeSection.tsx:84` 두 곳뿐. 두 파일은 `git diff HEAD` 무변경 → 초대 링크 텍스트 공유 회귀 없음. `grep track("share"` → `fortune_overview`(FortuneScreen:243), `report_summary`(ReportScreen:898), `compat_report_summary`(CompatReportScreen:253), `year_report_summary`(YearReportScreen:227) 4개 kind 이름 그대로, 모두 공유 시트가 열렸을 때만(`shareCardImage` true → `onShared`) 기록. 앱 타입(`tsc --noEmit`) → exit 0, 오류 없음. 못 본 것: 시뮬레이터에서 실제로 이벤트가 나가는 로그와 초대 링크 공유 시트(구독/네이티브 확인이 필요해 코드·grep 근거만 씀) → 아래 (사용자 확인).
+  - [ ] (사용자 확인) dev-client에서 ① 궁합 입력 화면 "친구와 궁합 보기"의 링크 만들기 → 공유 시트에 이미지가 아니라 링크 글자가 올라가는지, ② 6·7번 사용자 확인 항목(총론·리포트 3곳 PNG 공유)을 한 번에 돌린 뒤 `events` 테이블(또는 Metro 로그)에 `share` 이벤트의 kind 4개가 보이는지.
 
 ## C. 웹 SEO (웹만, 앱 변경 없음)
 
