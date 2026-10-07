@@ -271,6 +271,8 @@ export default function SettingsScreen({
         <Pressable style={styles.resetRow} onPress={handleResetPress} accessibilityRole="button">
           <Text style={styles.resetLabel}>{strings.settings.resetButton}</Text>
         </Pressable>
+
+        <Text style={styles.copyright}>© 2026 Studio Aron</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -328,6 +330,7 @@ const styles = StyleSheet.create({
   optionLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.headline },
   optionLabelActive: { color: COLORS.gold },
   optionDescription: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.footer },
+  copyright: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.footer, textAlign: "center", marginTop: 32 },
   warning: {
     fontFamily: FONTS.regular,
     fontSize: 12.5,

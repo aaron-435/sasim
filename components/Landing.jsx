@@ -99,6 +99,7 @@ export default function Landing({ onStart }) {
         .lp-bottom { text-align: left; }
         .lp-legal { font-size: 12px; line-height: 1.8; color: #9C9277; margin: 20px 0 0; }
         .lp-legal a { color: #9C9277; text-decoration: underline; }
+        .lp-copy { font-size: 12px; color: #756B54; margin: 28px 0 0; }
         .lp-sticky { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 22px calc(12px + env(safe-area-inset-bottom)); background: rgba(18,32,25,0.94); border-top: 1px solid #26332B; display: none; z-index: 20; }
         .lp-sticky .lp-cta { width: 100%; margin: 0; }
         @media (max-width: 640px) { .lp-sticky { display: block; } .lp-hero { padding: 44px 0 40px; } }
@@ -202,6 +203,7 @@ export default function Landing({ onStart }) {
           <p className="lp-note">{l.ctaNote}</p>
           {legalNotice}
           <p className="lp-small">{l.appNote}</p>
+          <p className="lp-copy">© 2026 Studio Aron</p>
         </section>
       </div>
 

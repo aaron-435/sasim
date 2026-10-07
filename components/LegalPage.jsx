@@ -40,6 +40,7 @@ export default function LegalPage({ title, updatedAt, locale = "ko", children })
         <h1 className="lg-serif" style={{ fontSize: "28px", fontWeight: 600, color: "#D9C9A3", margin: "0 0 6px" }}>{title}</h1>
         <p style={{ fontSize: "12px", color: "#756B54", margin: "0 0 32px" }}>{t.legal.effectiveDatePrefix} {updatedAt}</p>
         {children}
+        <p style={{ fontSize: "12px", color: "#756B54", margin: "40px 0 0" }}>© 2026 Studio Aron</p>
       </div>
     </div>
   );
