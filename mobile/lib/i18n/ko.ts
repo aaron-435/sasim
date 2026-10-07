@@ -532,6 +532,7 @@ export const ko = {
     monthBestDayLabel: "이번 달 가장 좋은 날",
     monthCautionDayLabel: "이번 달 페이스 조절이 필요한 날",
     todayBadge: "오늘",
+    monthCellLabel: (date: string, rhythm: string, isToday: boolean) => `${date}${isToday ? ", 오늘" : ""}, ${rhythm}`,
     loadErrorText: "운세를 불러오지 못했어요.",
     autoRenewNote: "매월 자동 갱신돼요. 갱신 24시간 전까지 App Store·Google Play 구독 설정에서 언제든 해지할 수 있어요.",
     termsLink: "이용약관",

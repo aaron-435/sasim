@@ -505,6 +505,7 @@ export const en: typeof ko = {
     monthBestDayLabel: "This month's best day",
     monthCautionDayLabel: "A day to pace yourself this month",
     todayBadge: "Today",
+    monthCellLabel: (date: string, rhythm: string, isToday: boolean) => `${date}${isToday ? ", today" : ""}, ${rhythm}`,
     loadErrorText: "Couldn't load your fortune.",
     autoRenewNote: "Renews monthly. Cancel any time, at least 24 hours before renewal, in your App Store or Google Play subscription settings.",
     termsLink: "Terms of Service",

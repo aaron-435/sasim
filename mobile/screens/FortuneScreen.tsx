@@ -24,7 +24,9 @@ import GoodDaysScreen from "./GoodDaysScreen";
 import JournalScreen from "./JournalScreen";
 import JournalEntryCard from "../components/JournalEntryCard";
 import { comingSajuYear } from "../lib/sajuYear";
-import { formatShortDate } from "../lib/shortDate";
+import { formatMonthLabel, formatShortDate } from "../lib/shortDate";
+import MonthGrid from "../components/MonthGrid";
+import { RHYTHM_COLORS } from "../lib/rhythmColors";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
@@ -264,6 +266,7 @@ export default function FortuneScreen({
   const [monthlyDomain, setMonthlyDomain] = useState<YearDomain>("overview");
   const [showGoodDays, setShowGoodDays] = useState(false);
   const [showJournal, setShowJournal] = useState(false);
+  const [selectedMonthDate, setSelectedMonthDate] = useState<string | null>(null);
 
   const [purchasing, setPurchasing] = useState(false);
   const offer = useSubscriptionOffer();
@@ -549,14 +552,11 @@ export default function FortuneScreen({
   const weeklyBest = weeklyWithScore.length ? pickExtreme(weeklyWithScore, "max") : null;
   const weeklyCaution = weeklyWithScore.length ? pickExtreme(weeklyWithScore, "min") : null;
 
-  // 이미 지난 날짜는 목록엔 그대로 보여주되(이번 달 전체 흐름을 보여주는 게
-  // 목적), "가장 좋은 날/조절이 필요한 날" 하이라이트는 앞으로 남은 날짜
-  // 중에서만 고른다 — 지난 날짜를 추천해봐야 쓸모가 없다.
-  const monthWithScore = (monthDays ?? []).filter((d) => d.compatibility);
-  const monthUpcoming = daily ? monthWithScore.filter((d) => d.date >= daily.date) : monthWithScore;
-  const monthPool = monthUpcoming.length ? monthUpcoming : monthWithScore;
-  const monthBest = monthPool.length ? pickExtreme(monthPool, "max") : null;
-  const monthCaution = monthPool.length ? pickExtreme(monthPool, "min") : null;
+  // 이달 달력: 칸마다 그날의 리듬 색. 선택한 날(처음엔 오늘)의 리듬 이름 + 한 줄은 아래 카드에.
+  const monthByDate = new Map((monthDays ?? []).filter((d) => d.compatibility).map((d) => [d.date, d]));
+  const monthKey = monthDays?.[0]?.date.slice(0, 7) ?? null;
+  const monthSelectedDate = selectedMonthDate ?? daily?.date ?? monthDays?.[0]?.date ?? null;
+  const monthSelected = monthSelectedDate ? monthByDate.get(monthSelectedDate) ?? null : null;
 
   const dailyOverview = daily?.compatibility ? getOverview(content, daily.compatibility.relation, daily.dayMaster.pillarIndex) : null;
 
@@ -749,43 +749,49 @@ export default function FortuneScreen({
         {tab === "month" && goodDaysEntry}
         {tab === "month" && monthDaysLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
         {tab === "month" && !monthDaysLoading && monthDaysError && <ErrorNotice text={monthDaysError} retryLabel={strings.common.retryLabel} onRetry={retryMonthDays} />}
-        {tab === "month" && !monthDaysLoading && !monthDaysError && monthDays && !monthBest && (
+        {tab === "month" && !monthDaysLoading && !monthDaysError && monthDays && !monthKey && (
           <Text style={styles.errorText}>{strings.fortune.loadErrorText}</Text>
         )}
-        {tab === "month" && !monthDaysLoading && !monthDaysError && monthBest && monthCaution && (
+        {tab === "month" && !monthDaysLoading && !monthDaysError && monthKey && (
           <>
-            <View style={styles.highlightCard}>
-              <Text style={styles.highlightLabel}>{strings.fortune.monthBestDayLabel}</Text>
-              <Text style={styles.highlightDate}>{formatShortDate(monthBest.date, locale)}</Text>
-              <Text style={styles.highlightHeadline}>{getOverview(content, monthBest.compatibility!.relation, monthBest.dayMaster.pillarIndex).headline}</Text>
-            </View>
-            {/* Late in the month only a day or two are left, so best and pace-yourself can be the
-                same date — showing it twice under opposite labels is contradictory. */}
-            {monthCaution.date !== monthBest.date && (
-            <View style={styles.highlightCard}>
-              <Text style={styles.highlightLabel}>{strings.fortune.monthCautionDayLabel}</Text>
-              <Text style={styles.highlightDate}>{formatShortDate(monthCaution.date, locale)}</Text>
-              <Text style={styles.highlightHeadline}>{getOverview(content, monthCaution.compatibility!.relation, monthCaution.dayMaster.pillarIndex).headline}</Text>
-            </View>
-            )}
-            <View style={styles.weekList}>
-              {monthWithScore.map((d) => {
-                const isToday = daily?.date === d.date;
+            <Text style={styles.calendarTitle} accessibilityRole="header">{formatMonthLabel(monthKey, locale)}</Text>
+            <MonthGrid
+              month={monthKey}
+              renderDay={(date) => {
+                const d = monthByDate.get(date);
+                if (!d?.compatibility) return <View style={styles.dayCell} />;
+                const relation = d.compatibility.relation;
+                const isToday = daily?.date === date;
+                const isPast = !!daily && date < daily.date;
+                const isSelected = monthSelectedDate === date;
+                const tone = RHYTHM_COLORS[relation];
                 return (
-                  <View key={d.date} style={[styles.weekRow, isToday && styles.weekRowToday]}>
-                    <Text style={styles.weekRowDate}>{formatShortDate(d.date, locale)}</Text>
-                    <Text style={styles.weekRowHeadline} numberOfLines={1}>
-                      {getOverview(content, d.compatibility!.relation, d.dayMaster.pillarIndex).headline}
-                    </Text>
-                    {isToday && (
-                      <View style={styles.todayBadge}>
-                        <Text style={styles.todayBadgeText}>{strings.fortune.todayBadge}</Text>
-                      </View>
-                    )}
-                  </View>
+                  <Pressable
+                    onPress={() => setSelectedMonthDate(date)}
+                    style={[styles.dayCell, { backgroundColor: tone.fill }, isPast && styles.dayCellPast, isToday && styles.dayCellToday, isSelected && styles.dayCellSelected]}
+                    accessibilityRole="button"
+                    accessibilityLabel={strings.fortune.monthCellLabel(formatShortDate(date, locale), strings.fortune.rhythmNames[relation], isToday)}
+                    accessibilityState={{ selected: isSelected }}
+                  >
+                    <Text style={[styles.dayNumber, { color: tone.text }]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{Number(date.slice(8))}</Text>
+                  </Pressable>
                 );
-              })}
-            </View>
+              }}
+            />
+            {monthSelected?.compatibility && (
+              <View style={styles.dayDetailCard}>
+                <Text style={styles.highlightDate}>
+                  {formatShortDate(monthSelected.date, locale)}
+                  {daily?.date === monthSelected.date ? ` · ${strings.fortune.todayBadge}` : ""}
+                </Text>
+                <Text style={styles.dayDetailRhythm}>{strings.fortune.rhythmNames[monthSelected.compatibility.relation]}</Text>
+                <Text style={styles.highlightHeadline}>
+                  {monthSelected.compatibility.relation === "otherChallengesSelf"
+                    ? strings.fortune.paceFreeHeadline
+                    : getOverview(content, monthSelected.compatibility.relation, monthSelected.dayMaster.pillarIndex).headline}
+                </Text>
+              </View>
+            )}
           </>
         )}
 
@@ -1086,14 +1092,14 @@ const styles = StyleSheet.create({
   },
   weekRowDate: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.headline, width: 78 },
   weekRowHeadline: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.subheadline, flex: 1 },
-  weekRowToday: { borderColor: "rgba(111,169,139,0.45)", backgroundColor: "rgba(111,169,139,0.06)" },
-  todayBadge: {
-    backgroundColor: "rgba(111,169,139,0.14)",
-    borderRadius: 999,
-    paddingVertical: 2,
-    paddingHorizontal: 8,
-  },
-  todayBadgeText: { fontFamily: FONTS.bold, fontSize: 12, color: COLORS.headline },
+  calendarTitle: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline, marginTop: 14, marginBottom: 10, textAlign: "center" },
+  dayCell: { flex: 1, borderRadius: 10, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "transparent" },
+  dayCellPast: { opacity: 0.55 },
+  dayCellToday: { borderColor: COLORS.headline },
+  dayCellSelected: { borderColor: COLORS.gold, borderWidth: 2 },
+  dayNumber: { fontFamily: FONTS.semibold, fontSize: 13 },
+  dayDetailCard: { marginTop: 14, backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, padding: 16 },
+  dayDetailRhythm: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.gold, marginTop: 4 },
   monthlySection: { marginTop: 22 },
   domainPickerRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 10, marginBottom: 14 },
   domainChip: {

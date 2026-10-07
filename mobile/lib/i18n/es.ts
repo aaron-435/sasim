@@ -505,6 +505,7 @@ export const es: typeof ko = {
     monthBestDayLabel: "El mejor día del mes",
     monthCautionDayLabel: "Un día para ir con calma este mes",
     todayBadge: "Hoy",
+    monthCellLabel: (date: string, rhythm: string, isToday: boolean) => `${date}${isToday ? ", hoy" : ""}, ${rhythm}`,
     loadErrorText: "No pudimos cargar tu lectura.",
     autoRenewNote: "Se renueva cada mes. Cancela cuando quieras, al menos 24 horas antes de la renovación, en los ajustes de suscripciones de App Store o Google Play.",
     termsLink: "Términos de servicio",
