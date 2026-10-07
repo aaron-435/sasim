@@ -5,7 +5,7 @@ import ChevronDown from "lucide-react-native/icons/chevron-down";
 import ChevronUp from "lucide-react-native/icons/chevron-up";
 import Share2 from "lucide-react-native/icons/share-2";
 import Sparkles from "lucide-react-native/icons/sparkles";
-import { AccessibilityInfo, ActivityIndicator, Animated, Easing, Linking, Pressable, ScrollView, Share, StyleSheet, View } from "react-native";
+import { AccessibilityInfo, ActivityIndicator, Animated, Easing, Linking, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
@@ -32,6 +32,7 @@ import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import TextShareCard, { shareCardImage } from "../components/TextShareCard";
 import FeedbackRow from "../components/FeedbackRow";
 import ElementColorCard from "../components/ElementColorCard";
 import { elementsParam, type ElementColor } from "../lib/elementColorContent";
@@ -222,16 +223,43 @@ function toParagraphs(text: string | undefined, perParagraph = 3): string {
   return groups.join("\n\n");
 }
 
-/** Shares the day's overview as plain text — the first two sentences plus the app's address. */
-async function shareOverview(title: string, rhythm: string, headline: string, body: string) {
-  const sentences = body.split(/(?<=[.!?…。])\s+/).filter(Boolean);
-  const excerpt = sentences.slice(0, 2).join(" ");
-  track("share", { kind: "fortune_overview" });
-  try {
-    await Share.share({ title, message: `${rhythm} · ${headline}\n\n${excerpt}\n\n${API_BASE_URL}` });
-  } catch {
-    // Sharing is a bonus action — a dismissed or failed sheet needs no error screen.
+/**
+ * Image share for the day's overview: a labelled preview of the card plus the share button.
+ * The card carries the rhythm, the headline and the first two sentences — and on a pace-yourself
+ * day only the neutral pacing copy, since the image outlives the screen.
+ */
+function OverviewShare({ relation, headline, body }: { relation: string; headline: string; body: string }) {
+  const strings = useStrings();
+  const cardRef = useRef<View>(null);
+  const [sharing, setSharing] = useState(false);
+  const pace = relation === "otherChallengesSelf";
+  const cardHeadline = pace ? strings.fortune.paceFreeHeadline : headline;
+  const cardBody = (pace ? strings.fortune.paceFreeBody : body).split(/(?<=[.!?…。])\s+/).filter(Boolean).slice(0, 2).join(" ");
+  const rhythm = (strings.fortune.rhythmNames as Record<string, string>)[relation];
+
+  async function handleShare() {
+    if (sharing) return;
+    setSharing(true);
+    if (await shareCardImage(cardRef)) track("share", { kind: "fortune_overview" });
+    setSharing(false);
   }
+
+  return (
+    <>
+      <TextShareCard cardRef={cardRef} eyebrow={`${strings.fortune.shareCardEyebrow} · ${rhythm}`} headline={cardHeadline} body={cardBody} />
+      <Pressable
+        style={styles.shareRow}
+        onPress={handleShare}
+        disabled={sharing}
+        accessibilityRole="button"
+        accessibilityLabel={strings.fortune.shareOverviewButton}
+        accessibilityState={{ disabled: sharing }}
+      >
+        <Share2 size={16} strokeWidth={1.75} color={COLORS.gold} />
+        <Text style={styles.shareLabel}>{strings.fortune.shareOverviewButton}</Text>
+      </Pressable>
+    </>
+  );
 }
 
 export default function FortuneScreen({
@@ -483,15 +511,7 @@ export default function FortuneScreen({
               <Text style={styles.rhythmValue}>{strings.fortune.rhythmNames[daily.compatibility.relation]}</Text>
               <Text style={styles.sectionHeadline}>{freeOverview.headline}</Text>
               <Text style={styles.sectionBody}>{toParagraphs(freeOverview.body)}</Text>
-              <Pressable
-                style={styles.shareRow}
-                onPress={() => shareOverview(strings.fortune.shareOverviewTitle, strings.fortune.rhythmNames[daily.compatibility!.relation], freeOverview.headline, freeOverview.body)}
-                accessibilityRole="button"
-                accessibilityLabel={strings.fortune.shareOverviewButton}
-              >
-                <Share2 size={16} strokeWidth={1.75} color={COLORS.gold} />
-                <Text style={styles.shareLabel}>{strings.fortune.shareOverviewButton}</Text>
-              </Pressable>
+              <OverviewShare relation={daily.compatibility.relation} headline={freeOverview.headline} body={freeOverview.body} />
               <FeedbackRow surface="fortune" topic="free" />
             </View>
           )}
@@ -694,17 +714,7 @@ export default function FortuneScreen({
               <View style={styles.heroDivider} />
               <Text style={styles.heroHeadline}>{dailyOverview?.headline}</Text>
               <Text style={styles.sectionBody}>{toParagraphs(dailyOverview?.body)}</Text>
-              {!!dailyOverview && (
-                <Pressable
-                  style={styles.shareRow}
-                  onPress={() => shareOverview(strings.fortune.shareOverviewTitle, strings.fortune.rhythmNames[daily.compatibility!.relation], dailyOverview.headline, dailyOverview.body)}
-                  accessibilityRole="button"
-                  accessibilityLabel={strings.fortune.shareOverviewButton}
-                >
-                  <Share2 size={16} strokeWidth={1.75} color={COLORS.gold} />
-                  <Text style={styles.shareLabel}>{strings.fortune.shareOverviewButton}</Text>
-                </Pressable>
-              )}
+              {!!dailyOverview && <OverviewShare relation={daily.compatibility.relation} headline={dailyOverview.headline} body={dailyOverview.body} />}
               {!!dailyOverview && <FeedbackRow surface="fortune" topic="pro" />}
             </Animated.View>
 

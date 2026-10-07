@@ -41,6 +41,9 @@
 - [ ] 6. 공통 이미지 공유 카드 + 오늘 총론 공유
   - 변경: `mobile/components/TextShareCard.tsx`(새, `TypeScreen`의 `shareCard` + 미리보기 라벨 방식과 같은 골격: `FATESAID` 브랜드 줄, 눈썹, 큰 한 줄, 본문 2~3문장, 아래 `fatesaidapp.com` 글자). `captureRef(width: 1080)` + `Sharing.shareAsync` 헬퍼는 기존 화면 코드와 같은 방식으로. `FortuneScreen.tsx`의 `shareOverview`(228줄)를 이미지 공유로. 고르는 리듬(`otherChallengesSelf`)의 날은 `paceFree*` 톤 문장을 카드에 쓴다. `track("share", {kind: "fortune_overview"})` 유지. 문구 ko/en/es. 웹 미리보기는 `Sharing.isAvailableAsync()`가 거짓이면 조용히 끝.
   - QA: 앱 타입 통과. 시뮬레이터에서 총론 공유 → 공유 시트에 PNG가 올라가고 메시지/저장 시 글자가 아니라 이미지(스크린샷). 고르는 리듬 날(기기 날짜가 아니라 해당 리듬이 나오는 계정/날로 확인, 어려우면 카드에 넘기는 문장을 로그로 확인)과 일반 날 한 장씩. 긴 문장이 잘리지 않음.
+  - 구현 완료, 네이티브 확인만 남음: `mobile/components/TextShareCard.tsx`(카드 + `shareCardImage` 캡처·공유 헬퍼, 7번이 재사용), `FortuneScreen.tsx`의 `OverviewShare`(무료·구독 두 자리, 고르는 리듬 날은 `paceFree*` 문장을 카드에 씀), 문구 `common.shareCardPreviewLabel`·`fortune.shareCardEyebrow`(ko/en/es).
+  - QA(부분): 앱 타입(`tsc --noEmit`) → 오류 없음. mobile-web `?qa=pro`(es 픽스처): 총론 카드 아래 "Vista previa de la imagen para compartir" 틀 안에 FATESAID·"Resumen de hoy · Un ritmo generoso"·큰 한 줄·본문 2문장·`fatesaidapp.com`이 그려지고, Compartir 버튼을 눌러도 콘솔 오류 없음(웹은 `Sharing`이 없어 조용히 끝). 못 본 것: 시뮬레이터/실기기의 PNG 공유 시트, 고르는 리듬 날의 카드 문장(코드 분기만 확인), ko·en 긴 문장 잘림.
+  - [ ] (사용자 확인) dev-client(시뮬레이터 또는 실기기)에서 오늘 탭 "공유하기" → 공유 시트에 PNG가 올라가고 메시지에 붙이면 이미지로 보이는지, 카드에 앱 이름과 주소 글자가 있고 문장이 안 잘리는지(ko·en·es). 고르는 리듬 날(예: 이달 달력에서 "고르는 리듬"으로 칠해진 날짜가 오늘일 때)은 카드에 "자기 페이스를 지키는 날" 문장이 나오는지.
 
 - [ ] 7. 리포트 3곳 이미지 공유
   - 선행: 6

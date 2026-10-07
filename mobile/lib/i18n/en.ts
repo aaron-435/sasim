@@ -3,6 +3,7 @@ import type { ko } from "./ko";
 export const en: typeof ko = {
   common: {
     brand: "Fatesaid",
+    shareCardPreviewLabel: "Share image preview",
     backLabel: "Back",
     calcSourceBadge: "Calculated from Korea's national astronomy data (KASI)",
     nextLabel: "Next",
@@ -483,6 +484,7 @@ export const en: typeof ko = {
     paceFreeBody: "Today's rhythm favors checking each step over rushing ahead. Rather than starting something big, keep the direction you've already set and finish what's in your hands, one thing at a time. A little breathing room between plans makes the whole day feel lighter. In conversations, a short pause before you answer keeps things clear. The steady steps you take today become tomorrow's footing.",
     shareOverviewButton: "Share",
     shareOverviewTitle: "Fatesaid · Today's overview",
+    shareCardEyebrow: "Today's overview",
     lockedBenefits: [
       { title: "Today's full reading", body: "On top of the free overview: wealth, love, health and lucky points, every morning" },
       { title: "This week", body: "Seven days of flow, and the best day among them" },

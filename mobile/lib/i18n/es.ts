@@ -3,6 +3,7 @@ import type { ko } from "./ko";
 export const es: typeof ko = {
   common: {
     brand: "Fatesaid",
+    shareCardPreviewLabel: "Vista previa de la imagen para compartir",
     backLabel: "Atrás",
     calcSourceBadge: "Calculado con datos astronómicos oficiales de Corea (KASI)",
     nextLabel: "Siguiente",
@@ -483,6 +484,7 @@ export const es: typeof ko = {
     paceFreeBody: "El ritmo de hoy pide comprobar cada paso más que correr. En lugar de empezar algo grande, mantén el rumbo que ya elegiste y termina lo que tienes entre manos, una cosa a la vez. Dejar algo de aire entre un plan y otro hace que el día pese mucho menos. Al hablar con los demás, una pausa breve antes de responder evita malentendidos. Los pasos tranquilos de hoy son la base de mañana.",
     shareOverviewButton: "Compartir",
     shareOverviewTitle: "Fatesaid · Resumen de hoy",
+    shareCardEyebrow: "Resumen de hoy",
     lockedBenefits: [
       { title: "Lectura completa de hoy", body: "Además del resumen gratuito: dinero, amor, salud y puntos de suerte, cada mañana" },
       { title: "Esta semana", body: "Siete días de flujo y el mejor día entre ellos" },

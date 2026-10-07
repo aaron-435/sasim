@@ -27,6 +27,7 @@
 export const ko = {
   common: {
     brand: "Fatesaid",
+    shareCardPreviewLabel: "공유 이미지 미리보기",
     backLabel: "이전",
     calcSourceBadge: "한국천문연구원 천문 데이터로 계산",
     nextLabel: "다음",
@@ -510,6 +511,7 @@ export const ko = {
     paceFreeBody: "오늘은 서두르기보다 한 걸음씩 확인하며 가는 쪽이 잘 맞는 리듬이에요. 새로 크게 벌이기보다 이미 정한 방향을 그대로 두고, 손에 든 일을 하나씩 마무리해 보세요. 일정 사이에 숨 고를 틈을 넣으면 하루가 훨씬 가볍게 흘러가요. 사람들과 이야기할 때도 한 박자 쉬고 말하면 오해가 줄어듭니다. 천천히 간 날의 걸음이 내일의 바탕이 돼요.",
     shareOverviewButton: "공유하기",
     shareOverviewTitle: "Fatesaid · 오늘의 총론",
+    shareCardEyebrow: "오늘의 총론",
     lockedBenefits: [
       { title: "오늘의 운세 전체", body: "무료 총론에 더해 재물·애정·건강, 행운 포인트까지 매일 아침" },
       { title: "이번 주", body: "7일의 흐름과 그중 가장 좋은 날" },
