@@ -1,8 +1,10 @@
 import ArrowRight from "lucide-react-native/icons/arrow-right";
 import Download from "lucide-react-native/icons/download";
 import Share2 from "lucide-react-native/icons/share-2";
+import { useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "./AppText";
+import TextShareCard, { shareCardImage } from "./TextShareCard";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
 
@@ -44,11 +46,22 @@ export default function ReportClosingPage({
   body: string;
   summaryEyebrow: string;
   summary: string;
-  share: { label: string; onPress: () => void };
+  /** Shares the one-line summary as an image card; `onShared` fires only when the share sheet opened. */
+  share: { label: string; eyebrow: string; onShared: () => void };
   pdf?: { label: string; busyLabel: string; busy: boolean; onPress: () => void };
   next?: ClosingNext | null;
   disclaimers: string[];
 }) {
+  const cardRef = useRef<View>(null);
+  const [sharing, setSharing] = useState(false);
+
+  async function handleShare() {
+    if (sharing) return;
+    setSharing(true);
+    if (await shareCardImage(cardRef)) share.onShared();
+    setSharing(false);
+  }
+
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       {title ? (
@@ -67,7 +80,7 @@ export default function ReportClosingPage({
           <Text style={styles.eyebrow}>{summaryEyebrow}</Text>
           <Text style={styles.summary}>{summary}</Text>
           <View style={styles.actions}>
-            <Pressable onPress={share.onPress} style={styles.action} accessibilityRole="button" accessibilityLabel={share.label}>
+            <Pressable onPress={handleShare} disabled={sharing} style={[styles.action, sharing && styles.actionBusy]} accessibilityState={{ disabled: sharing }} accessibilityRole="button" accessibilityLabel={share.label}>
               <Share2 size={15} strokeWidth={1.75} color={COLORS.gold} />
               <Text style={styles.actionLabel}>{share.label}</Text>
             </Pressable>
@@ -85,6 +98,8 @@ export default function ReportClosingPage({
               </Pressable>
             ) : null}
           </View>
+          {/* Same one line the button shares, as the image that goes out (no name, no birth data). */}
+          <TextShareCard cardRef={cardRef} eyebrow={share.eyebrow} headline={summary} />
         </View>
       ) : null}
 

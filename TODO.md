@@ -49,6 +49,9 @@
   - 선행: 6
   - 변경: `ReportScreen.tsx`(901줄 `handleShare`), `CompatReportScreen.tsx`(255줄), `YearReportScreen.tsx`(230줄)를 6번 카드로 교체. 지금과 같은 분량(한 줄 요약/부제 + 출처)만, 닉네임·생년월일·상대 이름 넣지 않기. kind 3개(`report_summary`, `compat_report_summary`, `year_report_summary`) 그대로. 문구 ko/en/es.
   - QA: 앱 타입 통과. 시뮬레이터에서 세 곳 각각 공유 → PNG 확인(스크린샷). 이미지에 이름·날짜 같은 개인정보가 없음. 긴 부제 하나씩 ko/en/es로 잘림 확인.
+  - 구현 완료, 네이티브 확인만 남음: 세 화면이 공용 `ReportClosingPage`를 쓰므로 카드 미리보기(`TextShareCard`)·캡처·공유를 그 부품 안에 두고(`share={{label, eyebrow, onShared}}`), 세 화면은 눈썹 문구와 `track("share", kind)`(onShared, 공유 시트가 열렸을 때만)만 넘김. 카드는 한 줄 요약(+눈썹)만, 닉네임·생년월일·상대 이름 없음. 궁합 눈썹은 `compatReport.shareTitle`에서 "Fatesaid · " 접두를 뺌(카드에 FATESAID가 이미 있음, ko/en/es). 세 화면의 `Share`·텍스트 공유 코드 제거.
+  - QA(부분): 앱 타입(`tsc --noEmit`) → 오류 없음. mobile-web `?qa=all&persona=mia` 심층 리포트 마지막 장(en): 한 줄 요약 아래 "Share image preview" 틀 안에 FATESAID·"From my Fatesaid report"·한 줄·`fatesaidapp.com`, 이름·날짜 없음, Share 버튼 눌러도 콘솔 오류 없음(웹은 `Sharing` 없어 조용히 끝). `grep Share.share` → 남은 곳은 초대 링크 두 곳(`CompatibilityScreen`, `CoupleModeSection`)뿐. 못 본 것: 궁합·신년 리포트 화면(QA 픽스처 없음, 같은 부품이라 코드만 확인), 시뮬레이터/실기기 PNG 공유 시트, ko·es 긴 부제 잘림.
+  - [ ] (사용자 확인) dev-client에서 ① 심층 리포트 ② 궁합 상세 리포트 ③ 신년 리포트 마지막 장의 "공유" → 공유 시트에 PNG가 올라가고 메시지에 붙이면 이미지로 보이는지, 카드에 FATESAID·주소 글자가 있고 이름·생년월일이 없으며 긴 부제가 안 잘리는지(ko·en·es).
 
 - [ ] 8. 공유 마감 QA
   - 선행: 7

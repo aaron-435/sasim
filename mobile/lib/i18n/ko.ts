@@ -488,7 +488,7 @@ export const ko = {
     purchaseUnavailable: "지금은 이 리포트를 구매할 수 없어요. 조금만 기다려 주세요.",
     purchaseError: "구매에 실패했어요. 다시 시도해 주세요.",
     myReportsTitle: (other: string) => `${other}과의 궁합`,
-    shareTitle: "Fatesaid · 궁합 상세 리포트",
+    shareTitle: "궁합 상세 리포트",
   },
 
   fortune: {

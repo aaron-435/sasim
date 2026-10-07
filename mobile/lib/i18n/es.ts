@@ -462,7 +462,7 @@ export const es: typeof ko = {
     purchaseUnavailable: "Ahora mismo no se puede comprar este informe. Vuelve a intentarlo pronto.",
     purchaseError: "La compra no se completó. Inténtalo de nuevo.",
     myReportsTitle: (other: string) => `Compatibilidad con ${other}`,
-    shareTitle: "Fatesaid · Informe de compatibilidad",
+    shareTitle: "Informe de compatibilidad",
   },
 
   fortune: {

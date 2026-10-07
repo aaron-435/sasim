@@ -462,7 +462,7 @@ export const en: typeof ko = {
     purchaseUnavailable: "This report can't be bought right now. Please check back soon.",
     purchaseError: "The purchase didn't go through. Please try again.",
     myReportsTitle: (other: string) => `Compatibility with ${other}`,
-    shareTitle: "Fatesaid · Compatibility report",
+    shareTitle: "Compatibility report",
   },
 
   fortune: {

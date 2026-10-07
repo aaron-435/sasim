@@ -1,7 +1,7 @@
 import Lock from "lucide-react-native/icons/lock";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, BackHandler, Pressable, ScrollView, Share, StyleSheet, View } from "react-native";
+import { ActivityIndicator, BackHandler, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import Text from "../components/AppText";
@@ -248,14 +248,9 @@ export default function CompatReportScreen({
     loadPreview();
   }
 
-  async function handleShare() {
-    if (!free) return;
+  // The closing page shares the subtitle as an image card; this only records it.
+  function handleShared() {
     track("share", { kind: "compat_report_summary" });
-    try {
-      await Share.share({ message: `"${fill(free.subtitle)}"\n\n${s.shareTitle}\n${API_BASE_URL}` });
-    } catch {
-      // dismissed or unsupported
-    }
   }
 
   const backButton = (
@@ -300,7 +295,7 @@ export default function CompatReportScreen({
     free,
     paid,
     paywall: { price, purchasing, notice, onBuy: handleBuy },
-    onShare: handleShare,
+    onShared: handleShared,
   });
   const lastPage = pageIndex === pages.length - 1;
   return (
@@ -337,7 +332,7 @@ function compatReaderPages({
   free,
   paid,
   paywall,
-  onShare,
+  onShared,
 }: {
   strings: Dictionary;
   nickname: string;
@@ -346,7 +341,7 @@ function compatReaderPages({
   free: CompatFreePart;
   paid: CompatPaidPart | null;
   paywall: { price: string | null; purchasing: boolean; notice: string | null; onBuy: () => void };
-  onShare: () => void;
+  onShared: () => void;
 }): ReaderPage[] {
   const s = strings.compatReport;
   const pages: ReaderPage[] = [];
@@ -371,7 +366,7 @@ function compatReaderPages({
           body={fill(paid.closing)}
           summaryEyebrow={strings.reader.summaryEyebrow}
           summary={fill(free.subtitle)}
-          share={{ label: strings.reader.shareLabel, onPress: onShare }}
+          share={{ label: strings.reader.shareLabel, eyebrow: s.shareTitle, onShared }}
           disclaimers={[s.noVerdictNote, strings.report.disclaimer1]}
         />
       ),

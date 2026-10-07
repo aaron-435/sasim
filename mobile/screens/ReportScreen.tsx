@@ -3,7 +3,7 @@ import Download from "lucide-react-native/icons/download";
 import Lock from "lucide-react-native/icons/lock";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, ScrollView, Share, StyleSheet, View, type StyleProp, type TextStyle } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View, type StyleProp, type TextStyle } from "react-native";
 import Text from "../components/AppText";
 import CalcSourceBadge from "../components/CalcSourceBadge";
 import ReportClosingPage, { type ClosingNext } from "../components/ReportClosingPage";
@@ -815,7 +815,7 @@ export default function ReportScreen({
           body={sentenceLines(content.closing_body)}
           summaryEyebrow={strings.reader.summaryEyebrow}
           summary={summary}
-          share={{ label: strings.reader.shareLabel, onPress: () => handleShare(summary) }}
+          share={{ label: strings.reader.shareLabel, eyebrow: strings.reader.shareCredit, onShared: handleShared }}
           pdf={{ label: strings.pdf.button, busyLabel: strings.pdf.preparing, busy: exporting, onPress: handleExportPdf }}
           next={next}
           disclaimers={[strings.report.disclaimer1, strings.report.disclaimer2]}
@@ -893,15 +893,9 @@ export default function ReportScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, resolvedElements, chatExtract, unlocked, lockedOpen, unlockState, ownedCount, prices, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, topAnswers, decadePreviewLine, nextModule, onOpenModule, exporting]);
 
-  // Plain-text share of the report's one-line takeaway plus the app's address.
-  async function handleShare(summary: string) {
-    if (!summary) return;
+  // The closing page shares the one-line takeaway as an image card; this only records it.
+  function handleShared() {
     track("share", { kind: "report_summary" });
-    try {
-      await Share.share({ message: `"${summary}"\n\n${strings.reader.shareCredit}\n${API_BASE_URL}` });
-    } catch {
-      // dismissed or unsupported (web without navigator.share) — nothing to report
-    }
   }
 
   // PDF of the whole report — only offered once it's unlocked. The server re-verifies the

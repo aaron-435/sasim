@@ -3,7 +3,7 @@ import Download from "lucide-react-native/icons/download";
 import Lock from "lucide-react-native/icons/lock";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, ScrollView, Share, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import CalcSourceBadge from "../components/CalcSourceBadge";
 import ReportClosingPage from "../components/ReportClosingPage";
@@ -222,15 +222,9 @@ export default function YearReportScreen({
     }
   }
 
-  // Plain-text share of the report's one-line summary (its subtitle) plus the app's address.
-  async function handleShare() {
-    if (!report) return;
+  // The closing page shares the subtitle as an image card; this only records it.
+  function handleShared() {
     track("share", { kind: "year_report_summary" });
-    try {
-      await Share.share({ message: `"${report.subtitle}"\n\n${strings.reader.shareCredit} · ${strings.yearReport.heading(report.year)}\n${API_BASE_URL}` });
-    } catch {
-      // dismissed or unsupported (web without navigator.share) — nothing to report
-    }
   }
 
   async function handleExportPdf() {
@@ -289,7 +283,7 @@ export default function YearReportScreen({
 
   if (phase === "reader" && report) {
     const pages = yearReaderPages(report, strings, nickname, {
-      onShare: handleShare,
+      onShared: handleShared,
       pdf: { label: strings.pdf.button, busyLabel: strings.pdf.preparing, busy: exporting, onPress: handleExportPdf },
       onOpenPlan: setPageIndex,
     });
@@ -384,7 +378,7 @@ export default function YearReportScreen({
 const MONTHS_PER_PAGE = 3;
 
 type ClosingActions = {
-  onShare: () => void;
+  onShared: () => void;
   pdf: { label: string; busyLabel: string; busy: boolean; onPress: () => void };
   /** Jumps the reader to a page index (the closing's "next step" card returns to the plan). */
   onOpenPlan: (pageIndex: number) => void;
@@ -417,7 +411,7 @@ function yearReaderPages(report: YearReportContent, strings: Dictionary, nicknam
         body={report.closing}
         summaryEyebrow={strings.reader.summaryEyebrow}
         summary={report.subtitle}
-        share={{ label: strings.reader.shareLabel, onPress: actions.onShare }}
+        share={{ label: strings.reader.shareLabel, eyebrow: `${strings.reader.shareCredit} · ${y.heading(report.year)}`, onShared: actions.onShared }}
         pdf={actions.pdf}
         next={
           firstStep
