@@ -8,7 +8,8 @@ import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
-// "Does this sound like you?" 👍/👎 under a reading (Q&A answer, today's fortune).
+// "Was this helpful?" 👍/👎 under a reading (Q&A answer, today's fortune). Until 2026-10-07 it
+// asked "Does this sound like you?", so older `feedback` events measure fit, not usefulness.
 // One answer per row; it's recorded as a `feedback` event and the row turns into a
 // thank-you line. Nothing about the reading itself is sent, only where it was and the vote.
 export default function FeedbackRow({ surface, topic }: { surface: "qa" | "fortune"; topic?: string }) {
@@ -31,7 +32,7 @@ export default function FeedbackRow({ surface, topic }: { surface: "qa" | "fortu
 
   return (
     <View style={styles.row}>
-      <Text style={styles.prompt} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.feedback.prompt}</Text>
+      <Text style={styles.prompt} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{surface === "qa" ? strings.feedback.promptQa : strings.feedback.promptFortune}</Text>
       <View style={styles.buttons}>
         <Pressable
           onPress={() => handleVote("up")}

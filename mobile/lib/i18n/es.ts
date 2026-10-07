@@ -31,9 +31,10 @@ export const es: typeof ko = {
   },
 
   feedback: {
-    prompt: "¿Te suena a ti?",
-    upLabel: "Sí, soy yo",
-    downLabel: "No mucho",
+    promptQa: "¿Te resultó útil esta respuesta?",
+    promptFortune: "¿Te resultó útil la lectura de hoy?",
+    upLabel: "Útil",
+    downLabel: "No muy útil",
     thanks: "Gracias por contárnoslo.",
   },
   language: {
