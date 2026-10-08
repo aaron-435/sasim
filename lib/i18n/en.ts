@@ -173,6 +173,7 @@ export const en: typeof ko = {
       { title: "Your own in-depth report", body: "Psychology tests and an AI conversation combined into a personal report of 40+ pages." },
     ],
     featuresAppNote: "Some features are available in the app.",
+    calculatorLink: "Try the free saju calculator →",
     sampleTitle: "What a report looks like",
     sampleNote: "A sample from a fictional person, for illustration. Not a real user's result.",
     samplePage1Label: "A scene from one night",

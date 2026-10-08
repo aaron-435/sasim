@@ -74,6 +74,7 @@ export default function Landing({ onStart }) {
         .lp-card { background: rgba(255,255,255,0.03); border: 1px solid #26332B; border-radius: 16px; padding: 22px; }
         .lp-card h3 { margin: 0 0 8px; font-size: 17px; font-weight: 600; color: #D9C9A3; }
         .lp-card p { margin: 0; font-size: 14.5px; line-height: 1.65; color: #9C9277; }
+        .lp-link { color: #6FA98B; text-decoration: underline; }
         .lp-small { font-size: 13px; color: #9C9277; margin: 16px 0 0; }
         .lp-pages { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
         .lp-page { background: #16261d; border: 1px solid #26332B; border-radius: 14px; padding: 20px; min-height: 280px; position: relative; overflow: hidden; }
@@ -145,6 +146,7 @@ export default function Landing({ onStart }) {
             ))}
           </div>
           <p className="lp-small">{l.featuresAppNote}</p>
+          <p className="lp-small"><a className="lp-link" href={locale === "en" ? "/saju-calculator" : `/saju-calculator?lang=${locale}`}>{l.calculatorLink}</a></p>
         </section>
 
         <section className="lp-section" aria-labelledby="lp-sample">

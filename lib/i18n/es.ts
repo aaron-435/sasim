@@ -174,6 +174,7 @@ export const es: typeof ko = {
       { title: "Tu informe profundo", body: "Tests psicológicos y una conversación con IA reunidos en un informe personal de más de 40 páginas." },
     ],
     featuresAppNote: "Algunas funciones están disponibles en la app.",
+    calculatorLink: "Prueba la calculadora de saju gratis →",
     sampleTitle: "Así es un informe",
     sampleNote: "Una muestra de una persona ficticia, solo de ejemplo. No es el resultado de un usuario real.",
     samplePage1Label: "Una escena de una noche",

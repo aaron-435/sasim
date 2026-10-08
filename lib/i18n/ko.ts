@@ -198,6 +198,7 @@ export const ko = {
       { title: "나만의 심층 리포트", body: "심리테스트와 AI 상담을 합쳐, 40쪽이 넘는 나만의 리포트를 만들어요." },
     ],
     featuresAppNote: "일부 기능은 앱에서 이용할 수 있어요.",
+    calculatorLink: "무료 사주 계산기 써 보기 →",
     sampleTitle: "리포트는 이렇게 생겼어요",
     sampleNote: "예시를 위한 가상 인물의 샘플이에요. 실제 사용자의 결과가 아니에요.",
     samplePage1Label: "어느 밤의 장면",

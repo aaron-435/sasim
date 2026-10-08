@@ -69,10 +69,12 @@
   - 사양과 다르게 된 곳: ① canonical/hreflang은 `generateMetadata`가 아니라 `app/layout.tsx` `<head>`에서 낸다(Next가 루트 `/`의 `?lang=`을 메타데이터 해석 때 지움. `middleware.ts`가 `/`에서만 `x-fs-locale`을 넣고 레이아웃이 읽음). 제목은 3언어 모두 "Fatesaid"(사전 값 그대로). ② `Vary: Accept-Language`는 Next가 덮어써서 붙지 않는다. 대신 응답이 `Cache-Control: private, no-store`라 공유 캐시가 언어 섞임을 못 낸다.
   - 쿠키는 `fatesaid_locale`(1년). 언어 버튼이 쿠키를 쓰는 부분은 `LocaleContext.setLocale`에 이미 넣었다(10번에서는 sitemap·robots·계산기 링크가 남음). 이전에 `localStorage`로만 언어를 고른 방문자는 쿠키가 없어 `Accept-Language`로 시작한다.
 
-- [ ] 10. 랜딩 서버 언어 마무리 + sitemap/robots + 계산기 링크
+- [x] 10. 랜딩 서버 언어 마무리 + sitemap/robots + 계산기 링크
   - 선행: 9
   - 변경: 랜딩 언어 버튼의 쿠키 저장(9번에서 `LocaleContext`에 이미 구현됨 — 브라우저 확인만), `app/sitemap.ts`(랜딩·계산기 3개 언어 URL, 글 URL은 11번 이후 목록 상수를 읽어 자동 포함), `app/robots.ts`, 랜딩에서 `/saju-calculator`로 가는 링크(언어 유지).
   - QA: `npm run lint && npm run build` 통과. `npm run start` 후 `curl -s localhost:3000/sitemap.xml`·`/robots.txt` 열림, sitemap에 `xhtml:link` 대체 주소 포함. 브라우저 미리보기에서 언어 버튼 → 새로고침해도 유지(쿠키), 쿠키 지운 뒤 `Accept-Language: ko`에서 한국어 유지(한국 방문자 회귀 확인).
+  - QA: `npx tsc --noEmit`, `npm run lint`(경고·오류 없음), `npm run build` → 통과(`/robots.txt`, `/sitemap.xml` 정적 생성). `next start -p 3300` + curl: `/sitemap.xml`에 랜딩·`/saju-calculator` 각 3개 언어 URL, 모두 `xhtml:link`(ko/en/es/x-default) 포함. `/robots.txt` = Allow `/`, Disallow `/api/` `/c/`, Sitemap 주소. 랜딩 계산기 링크: `Accept-Language` ko→`/saju-calculator?lang=ko`, en→`/saju-calculator`, es→`?lang=es`. 한국 방문자 회귀: ko 헤더·쿠키 없음→`<html lang="ko">`, 쿠키 es+ko 헤더→es. 새 파일 `app/sitemap.ts`, `app/robots.ts`, 문구 `landing.calculatorLink`(ko/en/es), `Landing.jsx`의 "기능" 섹션 아래 링크. 글 URL은 11번에서 `sitemap.ts`에 추가(주석으로 자리 표시).
+  - 못 본 것: 브라우저에서 언어 버튼 → 새로고침 유지(쿠키 쓰기 코드는 9번의 `LocaleContext.setLocale`, 서버 읽기는 위 curl로 확인).
 
 - [ ] 11. 일간 글 골격 + 샘플 1편(oak 갑)
   - 선행: 9
