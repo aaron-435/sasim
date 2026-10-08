@@ -62,13 +62,16 @@
 
 ## C. 웹 SEO (웹만, 앱 변경 없음)
 
-- [ ] 9. 랜딩 서버 언어 (C0 앞부분: 결정·렌더·메타)
+- [x] 9. 랜딩 서버 언어 (C0 앞부분: 결정·렌더·메타)
   - 변경: 언어 결정 함수(`?lang=` → 쿠키 → `Accept-Language` → en, 한 곳)와 이를 쓰는 `app/page.tsx`(서버에서 언어 결정, `LocaleProvider`에 시작 언어를 넘김, 마운트 뒤 `localStorage`로 덮어쓰지 않음), `app/layout.tsx`(`<html lang>`·제목·설명을 요청 언어로), `generateMetadata`의 canonical·hreflang(`/`, `/?lang=ko`, `/?lang=es`, `x-default`=`/`), 응답에 `Vary: Accept-Language`. 필요하면 `middleware.ts`에서 요청 헤더로 언어를 넘기되 기존 `/api` CORS 동작은 그대로. `lib/i18n/LocaleContext.tsx` 주석의 "첫 화면 한국어" 한계 문구 갱신.
   - QA: 루트 `npx tsc --noEmit`, `npm run lint && npm run build`. `npm run start` 후 `curl -s -H "Accept-Language: ko-KR" localhost:3000/ | grep -o '<html[^>]*>'`가 `lang="ko"`, `en-US`·`es-MX`·헤더 없음은 en·es·en, `?lang=es`는 헤더가 ko여도 es. en 요청 HTML 본문에 한국어 히어로 문구가 없음(`curl … | grep` 로 확인). `curl -sI`에 `vary`.
+  - QA: `npx tsc --noEmit`, `npm run lint && npm run build` → 오류·경고 없음. `next start -p 3200` + curl: Accept-Language `ko-KR`→`<html lang="ko">`, `en-US`→en, `es-MX`→es, 헤더 없음→en, `fr-FR`→en, `ko;q=0.5, es;q=0.9`→es. `?lang=es`는 헤더 ko여도 es, 쿠키 es+헤더 ko→es, `?lang=ko`는 쿠키 es보다 우선 ko. en 요청 HTML의 한글은 언어 버튼 라벨 "한국어" 하나뿐(히어로 문구 없음), ko 요청은 한국어 본문. 설명 메타 3언어 각각 맞음. `/`·`/?lang=ko`·`/?lang=es`의 canonical·hreflang(ko/en/es/x-default) 서로 일치(en은 `https://www.fatesaidapp.com/`). `/api` CORS(OPTIONS 204, allow-origin `*`) 그대로. `/saju-calculator`·`/privacy` canonical 변화 없음.
+  - 사양과 다르게 된 곳: ① canonical/hreflang은 `generateMetadata`가 아니라 `app/layout.tsx` `<head>`에서 낸다(Next가 루트 `/`의 `?lang=`을 메타데이터 해석 때 지움. `middleware.ts`가 `/`에서만 `x-fs-locale`을 넣고 레이아웃이 읽음). 제목은 3언어 모두 "Fatesaid"(사전 값 그대로). ② `Vary: Accept-Language`는 Next가 덮어써서 붙지 않는다. 대신 응답이 `Cache-Control: private, no-store`라 공유 캐시가 언어 섞임을 못 낸다.
+  - 쿠키는 `fatesaid_locale`(1년). 언어 버튼이 쿠키를 쓰는 부분은 `LocaleContext.setLocale`에 이미 넣었다(10번에서는 sitemap·robots·계산기 링크가 남음). 이전에 `localStorage`로만 언어를 고른 방문자는 쿠키가 없어 `Accept-Language`로 시작한다.
 
 - [ ] 10. 랜딩 서버 언어 마무리 + sitemap/robots + 계산기 링크
   - 선행: 9
-  - 변경: 랜딩 언어 버튼이 쿠키에도 저장(`Landing.jsx`), `app/sitemap.ts`(랜딩·계산기 3개 언어 URL, 글 URL은 11번 이후 목록 상수를 읽어 자동 포함), `app/robots.ts`, 랜딩에서 `/saju-calculator`로 가는 링크(언어 유지).
+  - 변경: 랜딩 언어 버튼의 쿠키 저장(9번에서 `LocaleContext`에 이미 구현됨 — 브라우저 확인만), `app/sitemap.ts`(랜딩·계산기 3개 언어 URL, 글 URL은 11번 이후 목록 상수를 읽어 자동 포함), `app/robots.ts`, 랜딩에서 `/saju-calculator`로 가는 링크(언어 유지).
   - QA: `npm run lint && npm run build` 통과. `npm run start` 후 `curl -s localhost:3000/sitemap.xml`·`/robots.txt` 열림, sitemap에 `xhtml:link` 대체 주소 포함. 브라우저 미리보기에서 언어 버튼 → 새로고침해도 유지(쿠키), 쿠키 지운 뒤 `Accept-Language: ko`에서 한국어 유지(한국 방문자 회귀 확인).
 
 - [ ] 11. 일간 글 골격 + 샘플 1편(oak 갑)

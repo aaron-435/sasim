@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { LOCALE_COOKIE, LOCALE_HEADER, resolveLocale } from "@/lib/i18n/serverLocale";
 
 /**
  * Adds a permissive CORS header to every /api/* response and answers the
@@ -17,6 +18,22 @@ import { NextResponse, type NextRequest } from "next/server";
  * applied in the first place.
  */
 export function middleware(request: NextRequest) {
+  // Landing page ("/"): resolve the language once here so app/layout.tsx can set <html lang>
+  // (layout has no access to searchParams). The page resolves it again itself for the body.
+  if (request.nextUrl.pathname === "/") {
+    const locale = resolveLocale({
+      lang: request.nextUrl.searchParams.get("lang"),
+      cookie: request.cookies.get(LOCALE_COOKIE)?.value,
+      acceptLanguage: request.headers.get("accept-language"),
+    });
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set(LOCALE_HEADER, locale);
+    const response = NextResponse.next({ request: { headers: requestHeaders } });
+    // No Vary here: Next overwrites it, and the page is sent "private, no-store" (it reads
+    // headers/cookies), so shared caches never keep one language's HTML for another visitor.
+    return response;
+  }
+
   if (request.method === "OPTIONS") {
     return new NextResponse(null, {
       status: 204,
@@ -34,5 +51,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: "/api/:path*",
+  matcher: ["/", "/api/:path*"],
 };

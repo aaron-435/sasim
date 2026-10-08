@@ -16,18 +16,17 @@
  * no reason to see Korean, and English is the more useful universal
  * fallback for this app's actual target markets.
  *
- * Known limitation: AppFlow's tree is entirely client-rendered, so the
- * very first paint (before this effect runs) still shows DEFAULT_LOCALE
- * ("ko") momentarily. Fixing that needs server-side detection (a cookie
- * + middleware reading Accept-Language) which is a bigger, separate
- * piece of infra — not built here; the flash is a brief, one-time cost
- * on first visit, not on every navigation within the app.
+ * 2026-10-08: the server now decides the first language (?lang= -> cookie ->
+ * Accept-Language -> en, lib/i18n/serverLocale.ts) and passes it as
+ * `initialLocale`, so there is no Korean flash and nothing here overrides it
+ * after mount. The picker writes the `fatesaid_locale` cookie (the server's
+ * source of truth) as well as localStorage (kept for lib/analytics.ts).
  * ------------------------------------------------------------------
  */
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { getDictionary, type Dictionary } from "./dictionaries";
-import { DEFAULT_LOCALE, LOCALES, type Locale } from "./types";
+import { DEFAULT_LOCALE, type Locale } from "./types";
 
 const STORAGE_KEY = "fatesaid_locale";
 
@@ -38,32 +37,16 @@ type LocaleContextValue = {
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
-function isLocale(value: string | null): value is Locale {
-  return !!value && (LOCALES as string[]).includes(value);
-}
-
-function detectBrowserLocale(): Locale {
-  const lang = (typeof navigator !== "undefined" ? navigator.language : "")?.toLowerCase() ?? "";
-  if (lang.startsWith("ko")) return "ko";
-  if (lang.startsWith("es")) return "es";
-  return "en";
-}
-
-export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
-
-  useEffect(() => {
-    let stored: string | null = null;
-    try {
-      stored = localStorage.getItem(STORAGE_KEY);
-    } catch {
-      // private browsing / storage disabled — fall through to detection
-    }
-    setLocaleState(isLocale(stored) ? stored : detectBrowserLocale());
-  }, []);
+export function LocaleProvider({ children, initialLocale = DEFAULT_LOCALE }: { children: ReactNode; initialLocale?: Locale }) {
+  const [locale, setLocaleState] = useState<Locale>(initialLocale);
 
   const setLocale = useCallback((next: Locale) => {
     setLocaleState(next);
+    try {
+      document.cookie = `fatesaid_locale=${next}; path=/; max-age=31536000; samesite=lax`;
+    } catch {
+      // cookies disabled — the picker still works for this page view
+    }
     try {
       localStorage.setItem(STORAGE_KEY, next);
     } catch {

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
-import { getDictionary } from "@/lib/i18n";
+import { headers } from "next/headers";
+import { getDictionary, LOCALES, type Locale } from "@/lib/i18n";
+import { LOCALE_HEADER } from "@/lib/i18n/serverLocale";
 import "./globals.css";
 
 const t = getDictionary();
@@ -41,8 +43,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Only "/" gets the header from middleware; every other route keeps its old default (ko).
+  const requested = headers().get(LOCALE_HEADER);
+  const lang: Locale = (LOCALES as string[]).includes(requested ?? "") ? (requested as Locale) : "ko";
+  const origin = "https://www.fatesaidapp.com";
+  const landingUrl = (l: Locale) => (l === "en" ? `${origin}/` : `${origin}/?lang=${l}`);
   return (
-    <html lang="ko">
+    <html lang={lang}>
+      {requested && (
+        <head>
+          <link rel="canonical" href={landingUrl(lang)} />
+          {LOCALES.map((l) => (
+            <link key={l} rel="alternate" hrefLang={l} href={landingUrl(l)} />
+          ))}
+          <link rel="alternate" hrefLang="x-default" href={landingUrl("en")} />
+        </head>
+      )}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
