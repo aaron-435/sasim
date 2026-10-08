@@ -5,7 +5,7 @@ const RANGE = { en: [600, 900, "words"], es: [600, 950, "words"], ko: [1500, 220
 const FORBIDDEN = /반드시 망|불길|재앙|사고|죽|파산|will lose|disaster|doom|scientifically proven|과학적으로 증명|garantiz|desastre|ruina/i;
 
 let bad = 0;
-for (const file of readdirSync("lib/seoArticles").filter((f) => !["index.ts", "types.ts"].includes(f))) {
+for (const file of readdirSync("lib/seoArticles").filter((f) => !["index.ts", "types.ts", "ui.ts", "requestLocale.ts"].includes(f))) {
   const set = (await import(`../lib/seoArticles/${file}`)).default;
   for (const l of ["en", "ko", "es"] as const) {
     const a = set[l];

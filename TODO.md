@@ -84,8 +84,9 @@
   - 구조: `lib/seoArticles/`(`types.ts` 글 타입, `index.ts` 10개 목록·이름·경로·게시 여부, `oak.ts` ko/en/es, `ui.ts` 목록·링크 문구, `requestLocale.ts` 언어 결정), `components/DayMasterPage.tsx`(서버 렌더 글·목록), `app/day-master/page.tsx`, `app/day-master/[type]/page.tsx`. 글 파일이 없는 유형은 404·sitemap 제외이고, 12~15번은 `ARTICLES`(index.ts)에 파일만 추가하면 된다.
   - 사양과 다르게 된 곳: 글 페이지의 `<html lang>`이 맞도록 `middleware.ts` matcher에 `/day-master`를 넣고(`x-fs-locale`), 랜딩 전용 canonical·hreflang이 글에도 붙지 않게 `x-fs-landing` 헤더(랜딩만)로 구분했다(`lib/i18n/serverLocale.ts`, `app/layout.tsx`). 새 이벤트·`surface` 추가는 하지 않았다(필요 없음).
 
-- [ ] 12. 일간 글 — 갑·을·병 (oak 보강, vine, sun) × ko/en/es
+- [x] 12. 일간 글 — 갑·을·병 (oak 보강, vine, sun) × ko/en/es
   - 선행: 11
+  - QA: `npx tsx scripts/check-seo-articles.mts` → 9건 ok(vine en 816단어·ko 2,179자·es 875단어, sun en 736·ko 2,005·es 785, oak 변경 없음). 금지 표현 grep(oak·vine·sun) 무결과. `npx tsc --noEmit`, `npm run lint`, `npm run build` 통과. `next start -p 3500` + curl: 3편 × 기본/ko/es 9개 모두 200, vine `<title>`·canonical 맞음, 목록에서 oak·vine·sun 서로 링크, sitemap `day-master/` 45줄. 초안은 하위 에이전트 2개(vine, sun)가 쓰고 메인이 전문 읽어 검수. oak는 이미 범위·톤 통과라 수정 안 함. 검사 스크립트가 `ui.ts`·`requestLocale.ts`를 글로 읽어 죽던 버그 수정. `index.ts`의 `ARTICLES`에 vine·sun 등록. 못 본 것: 브라우저 시각 확인(11번과 같은 골격이라 생략), es 문체의 원어민 검수.
   - 변경: `lib/seoArticles/oak.ts`(샘플 다듬기), `vine.ts`, `sun.ts`. 하위 에이전트에게 나눠 초안을 맡기고 메인 세션이 검수. 앱 `mobile/lib/dayMasterLessons/<유형>.ts`를 기준 자료로만 쓰고 문장을 복사하지 않는다. 분량 en 600~900단어, ko 1,500~2,200자, es는 en과 같은 분량. es는 `lib/i18n/README.md` 스타일 가이드. 압박 규칙(SPEC C 제약) 준수.
   - QA: 루트 타입 통과. 분량 스크립트(언어별 단어/글자 수 범위), 금지 표현 grep(예: `grep -rniE "반드시 망|불길|재앙|사고|죽|파산|will lose|disaster|doom|scientifically proven|과학적으로 증명|garantiz" lib/seoArticles`) 무결과, 세 편 모두 ko/en/es 200.
 
