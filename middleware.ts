@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { LOCALE_COOKIE, LOCALE_HEADER, resolveLocale } from "@/lib/i18n/serverLocale";
+import { LANDING_HEADER, LOCALE_COOKIE, LOCALE_HEADER, resolveLocale } from "@/lib/i18n/serverLocale";
 
 /**
  * Adds a permissive CORS header to every /api/* response and answers the
@@ -20,7 +20,9 @@ import { LOCALE_COOKIE, LOCALE_HEADER, resolveLocale } from "@/lib/i18n/serverLo
 export function middleware(request: NextRequest) {
   // Landing page ("/"): resolve the language once here so app/layout.tsx can set <html lang>
   // (layout has no access to searchParams). The page resolves it again itself for the body.
-  if (request.nextUrl.pathname === "/") {
+  // The Day Master articles (/day-master…) resolve the same way so their <html lang> is right too.
+  const path = request.nextUrl.pathname;
+  if (path === "/" || path === "/day-master" || path.startsWith("/day-master/")) {
     const locale = resolveLocale({
       lang: request.nextUrl.searchParams.get("lang"),
       cookie: request.cookies.get(LOCALE_COOKIE)?.value,
@@ -28,6 +30,7 @@ export function middleware(request: NextRequest) {
     });
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set(LOCALE_HEADER, locale);
+    if (path === "/") requestHeaders.set(LANDING_HEADER, "1");
     const response = NextResponse.next({ request: { headers: requestHeaders } });
     // No Vary here: Next overwrites it, and the page is sent "private, no-store" (it reads
     // headers/cookies), so shared caches never keep one language's HTML for another visitor.
@@ -51,5 +54,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/api/:path*"],
+  matcher: ["/", "/day-master", "/day-master/:path*", "/api/:path*"],
 };

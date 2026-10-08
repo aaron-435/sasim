@@ -13,8 +13,10 @@
 import { LOCALES, type Locale } from "./types";
 
 export const LOCALE_COOKIE = "fatesaid_locale";
-/** Request header the middleware sets for "/" so layout.tsx can read the resolved language. */
+/** Request header the middleware sets for "/" and /day-master… so layout.tsx can read the resolved language. */
 export const LOCALE_HEADER = "x-fs-locale";
+/** Set only for "/" so layout.tsx adds the landing canonical/hreflang there and nowhere else. */
+export const LANDING_HEADER = "x-fs-landing";
 
 function asLocale(value: string | null | undefined): Locale | null {
   return value && (LOCALES as string[]).includes(value) ? (value as Locale) : null;

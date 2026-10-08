@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { LOCALES, type Locale } from "@/lib/i18n";
+import { publishedDayMasters } from "@/lib/seoArticles";
 
 const ORIGIN = "https://www.fatesaidapp.com";
 
@@ -11,7 +12,11 @@ function localized(path: string): MetadataRoute.Sitemap {
   return LOCALES.map((l) => ({ url: url(l), alternates: { languages } }));
 }
 
-// Article URLs (/day-master/<type>) join this list in TODO 11.
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [...localized("/"), ...localized("/saju-calculator")];
+  return [
+    ...localized("/"),
+    ...localized("/saju-calculator"),
+    ...localized("/day-master"),
+    ...publishedDayMasters().flatMap((d) => localized(`/day-master/${d.slug}`)),
+  ];
 }

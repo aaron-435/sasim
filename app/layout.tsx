@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { headers } from "next/headers";
 import { getDictionary, LOCALES, type Locale } from "@/lib/i18n";
-import { LOCALE_HEADER } from "@/lib/i18n/serverLocale";
+import { LANDING_HEADER, LOCALE_HEADER } from "@/lib/i18n/serverLocale";
 import "./globals.css";
 
 const t = getDictionary();
@@ -43,14 +43,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Only "/" gets the header from middleware; every other route keeps its old default (ko).
+  // Only "/" and /day-master… get the header from middleware; every other route keeps its old default (ko).
   const requested = headers().get(LOCALE_HEADER);
+  const isLanding = headers().get(LANDING_HEADER) === "1";
   const lang: Locale = (LOCALES as string[]).includes(requested ?? "") ? (requested as Locale) : "ko";
   const origin = "https://www.fatesaidapp.com";
   const landingUrl = (l: Locale) => (l === "en" ? `${origin}/` : `${origin}/?lang=${l}`);
   return (
     <html lang={lang}>
-      {requested && (
+      {isLanding && (
         <head>
           <link rel="canonical" href={landingUrl(lang)} />
           {LOCALES.map((l) => (

@@ -76,10 +76,13 @@
   - QA: `npx tsc --noEmit`, `npm run lint`(경고·오류 없음), `npm run build` → 통과(`/robots.txt`, `/sitemap.xml` 정적 생성). `next start -p 3300` + curl: `/sitemap.xml`에 랜딩·`/saju-calculator` 각 3개 언어 URL, 모두 `xhtml:link`(ko/en/es/x-default) 포함. `/robots.txt` = Allow `/`, Disallow `/api/` `/c/`, Sitemap 주소. 랜딩 계산기 링크: `Accept-Language` ko→`/saju-calculator?lang=ko`, en→`/saju-calculator`, es→`?lang=es`. 한국 방문자 회귀: ko 헤더·쿠키 없음→`<html lang="ko">`, 쿠키 es+ko 헤더→es. 새 파일 `app/sitemap.ts`, `app/robots.ts`, 문구 `landing.calculatorLink`(ko/en/es), `Landing.jsx`의 "기능" 섹션 아래 링크. 글 URL은 11번에서 `sitemap.ts`에 추가(주석으로 자리 표시).
   - 못 본 것: 브라우저에서 언어 버튼 → 새로고침 유지(쿠키 쓰기 코드는 9번의 `LocaleContext.setLocale`, 서버 읽기는 위 curl로 확인).
 
-- [ ] 11. 일간 글 골격 + 샘플 1편(oak 갑)
+- [x] 11. 일간 글 골격 + 샘플 1편(oak 갑)
   - 선행: 9
   - 변경: `lib/seoArticles/`(글 타입, 유형 10개 목록, 샘플 `oak.ts` ko/en/es), `app/day-master/page.tsx`(목록), `app/day-master/[type]/page.tsx`(서버 렌더, 모르는 슬러그는 404, `?lang=` 없으면 9번 결정 함수), `generateMetadata`(제목·설명·canonical·hreflang 같은 일간의 다른 언어 둘), JSON-LD `Article`, 내부 링크(같은 일간 다른 언어·목록·`/saju-calculator`·다른 일간 2~3개), 아래쪽 앱 안내(랜딩·계산기가 쓰는 설치 안내 상태 그대로). 이벤트가 필요하면 `lib/eventSchema.ts`와 `logEvent` 목록을 함께.
   - QA: 루트 타입, `npm run lint && npm run build` 통과. `npm run start` 후 `/day-master/oak`, `?lang=ko`, `?lang=es`, `/day-master`가 200, 모르는 슬러그 404. `curl`로 `<title>`·canonical·hreflang·`application/ld+json` 확인.
+  - QA: `npx tsc --noEmit`, `npm run lint`(경고·오류 없음), `npm run build` → 통과(`/day-master`, `/day-master/[type]` 동적). `npx tsx scripts/check-seo-articles.mts`(새) → oak en 675단어·ko 1,767자·es 715단어 ok, 금지 표현 무결과. `next start -p 3400` + curl: `/day-master/oak`·`?lang=ko`·`?lang=es`·`/day-master` 모두 200, 아직 글이 없는 `/day-master/vine`·모르는 `/day-master/zzz`는 404. `<title>`·canonical(en은 `/day-master/oak`, 나머지 `?lang=`)·hreflang(en/ko/es/x-default)·`application/ld+json`(Article, inLanguage) 확인. Accept-Language ko/en/es/없음 → 글·목록·랜딩 `<html lang>`이 ko/en/es/en, `?lang=es`는 헤더 ko보다 우선. 본문 내부 링크: 목록·계산기(`/saju-calculator`, 언어 유지)·다른 두 언어·랜딩. 다른 일간 링크는 아직 게시된 글이 oak뿐이라 비어 있음(12번부터 자동으로 채워짐). sitemap에 `/day-master`·`/day-master/oak` 각 3개 언어 URL. 브라우저(375px): 한국어 글 모양 확인, 가로 스크롤 없음.
+  - 구조: `lib/seoArticles/`(`types.ts` 글 타입, `index.ts` 10개 목록·이름·경로·게시 여부, `oak.ts` ko/en/es, `ui.ts` 목록·링크 문구, `requestLocale.ts` 언어 결정), `components/DayMasterPage.tsx`(서버 렌더 글·목록), `app/day-master/page.tsx`, `app/day-master/[type]/page.tsx`. 글 파일이 없는 유형은 404·sitemap 제외이고, 12~15번은 `ARTICLES`(index.ts)에 파일만 추가하면 된다.
+  - 사양과 다르게 된 곳: 글 페이지의 `<html lang>`이 맞도록 `middleware.ts` matcher에 `/day-master`를 넣고(`x-fs-locale`), 랜딩 전용 canonical·hreflang이 글에도 붙지 않게 `x-fs-landing` 헤더(랜딩만)로 구분했다(`lib/i18n/serverLocale.ts`, `app/layout.tsx`). 새 이벤트·`surface` 추가는 하지 않았다(필요 없음).
 
 - [ ] 12. 일간 글 — 갑·을·병 (oak 보강, vine, sun) × ko/en/es
   - 선행: 11
@@ -128,4 +131,6 @@
   - 직전 12번(새 출발 모듈·위젯·리뷰 요청)만 EAS 프로덕션 빌드 → TestFlight·Play 내부 테스트 → 스토어 제출. 나머지 배치는 항목마다 커밋 → push → Vercel Ready → OTA.
 
 ## 발견 사항
+
+- `/saju-calculator`도 `<html lang>`이 항상 ko(루트 레이아웃 기본값)다. 본문 `<main lang>`은 맞지만 SEO상 어긋남. 계산기는 `?lang=` 없으면 en(헤더·쿠키를 안 봄)이라 글과 규칙이 다르므로, 맞추려면 SPEC 결정이 필요(11번 범위 밖).
 
