@@ -105,9 +105,11 @@
   - 변경·QA: 12번과 같다(파일 `ocean.ts` `dew.ts`).
   - QA: `npx tsx scripts/check-seo-articles.mts` → 30건 모두 ok(ocean en 774단어·ko 2,088자·es 826, dew 829·2,056·881). 금지 표현 grep 2파일 무결과. `npx tsc --noEmit`, `npm run lint`(경고·오류 없음), `npm run build` 통과. `next start -p 3800` + curl: 2편 × 기본/ko/es 6개 모두 200, dew `<title>`·ocean es canonical 맞음, 목록에 10편 전부 링크, sitemap `day-master/` 150줄(게시 10편). 초안은 하위 에이전트 2개가 썼고 메인이 두 파일 전문을 읽어 검수: 단정·예언·과학 주장 없음, 어조 통일, 유형 이름이 `sajuTypeContent.ts`와 일치. 수정 1건: dew es의 성별이 갈리는 "ambas sienten"을 "las dos personas sienten"으로. `index.ts`의 `ARTICLES`에 등록(10편 전부 게시). 못 본 것: 브라우저 시각 확인, es 원어민 검수(ocean es "disperso o dispersa"가 약간 딱딱함).
 
-- [ ] 16. SEO 마감 QA (30편 전체)
+- [x] 16. SEO 마감 QA (30편 전체)
   - 선행: 10, 12, 13, 14, 15
-  - 변경: 문제가 나온 곳만.
+  - 변경: 문제가 나온 곳만. (코드 수정 없음, 크롤 스크립트 `scripts/check-seo-links.mts`만 추가)
+  - QA: `npx tsc --noEmit` 오류 없음, `npm run lint` 경고·오류 없음, `npm run build` 통과. `next start -p 3900` + `npx tsx scripts/check-seo-links.mts http://localhost:3900` → sitemap 39 URL(랜딩·계산기·목록·글 10편 × 3언어) 모두 200, 글 30편 전부 sitemap에 있음, 제목 30개 모두 서로 다름, canonical이 각자 자신, JSON-LD 있음, 글 안 내부 링크 37개 404 없음 → ALL OK. `check-seo-articles.mts` → 30건 ok·BAD 0, 금지 표현 grep `lib/seoArticles` 무결과. `/` `<html lang>`: Accept-Language ko-KR→ko, en-US→en, es-MX→es, 헤더 없음→en, `?lang=es`는 ko 헤더보다 우선→es.
+  - 못 본 것: 브라우저 시각 확인, es 원어민 검수(13~15번과 같음).
   - QA: 루트 `npx tsc --noEmit`, `npm run lint && npm run build` 통과. `npm run start` 후 링크 크롤 스크립트(새로 만들어도 됨, `scripts/check-seo-links.mts`)로 `/sitemap.xml`의 모든 URL이 200이고 글 30편(10 × 3언어)이 모두 sitemap에 있으며 글 안 내부 링크에 404가 없음. 30편의 `<title>`이 서로 다르고 canonical이 자기 자신. 금지 표현 grep 무결과. `Accept-Language: ko`·`en`·`es`·없음 4가지로 `/` 확인 재실행.
 
 ## 사용자 실행 (마지막)
