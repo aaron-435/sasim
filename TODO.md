@@ -114,11 +114,13 @@
 
 ## 사용자 실행 (마지막)
 
-- [ ] 가. (사용자 실행) 웹 배포 — 먼저
+- [x] 가. (사용자 실행) 웹 배포 — 먼저
+  - 완료 2026-10-10: push `691259f` → Vercel `success`. `/` ko 헤더 `<html lang="ko">`, `/sitemap.xml` 200(URL 39개), `/day-master/oak?lang=es` 200, `/api/goodDays` 잘못된 scope 400. Search Console sitemap 제출은 안 함(선택).
   - A(1번 서버)·C(9~16번)는 웹이다. 커밋 → `git push origin main` → Vercel Ready 확인 → 배포 주소에서 `curl -s -H "Accept-Language: ko-KR" https://www.fatesaidapp.com/ | grep -o '<html[^>]*>'`와 `…/sitemap.xml`, `…/day-master/oak?lang=es` 확인. 앱(OTA)보다 먼저여야 한다(앱의 `scope: "month"`를 서버가 모르면 이번 달 강조가 빈다).
   - 확인 후: Google Search Console에 sitemap 제출(원하면).
 
-- [ ] 나. (사용자 실행) OTA — 웹 배포 뒤
+- [x] 나. (사용자 실행) OTA — 웹 배포 뒤
+  - 완료 2026-10-10: `production` 브랜치, 런타임 1.1.0, iOS·Android 게시(update group `869c38d4-4772-4965-bfb5-207ddac1836b`, 커밋 `691259f`). 아래 실기기 확인은 남음.
   - A(2~5번)·B(6~8번)는 앱, 네이티브 변경 없음. `cd mobile && npx --yes eas-cli update --branch production --environment production --message "<이달 달력·공유 이미지>" --non-interactive`.
   - (사용자 확인) 실기기에서 이달 탭 칩/달력, 총론·리포트 공유가 이미지로 나가는지.
 
