@@ -40,3 +40,6 @@ next-env.d.ts
 
 # sim-chat / judge-chat output (conversations, scores)
 /scripts/out/
+
+# Playwright MCP debug captures (screenshots, console logs)
+.playwright-mcp/
