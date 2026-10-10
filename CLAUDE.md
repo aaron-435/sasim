@@ -66,3 +66,18 @@ Rules:
 | Saju engine (`lib/manseryeok.ts`, `solarTerms.ts`, `kasi.ts`) | `npm run validate:manseryeok` | root |
 | Chat prompts / logic | `npx tsx --env-file=.env.local scripts/sim-chat.mts [turns] [styles]` (calls OpenAI, costs money; keep turns low) | root |
 | Native UI | `mobile-web` preview, or iOS Simulator dev-client (see "Verifying UI") | |
+
+## 작업 분담 규칙 (Opus 기획 / Muse 코딩 / Haiku·Sonnet 검증)
+- 이 세션(Opus)은 기획, 설계, 최종 판단, 지시서 작성만 한다.
+- 3개 파일 이상 수정하거나 반복 구현이 필요한 코딩은 직접 하지 말고 muse에 위임한다. 한두 줄짜리 수정 등 작은 작업은 위임 비용이 더 크므로 직접 한다.
+- 위임 절차:
+  1. `.agents/tasks/_template.md`를 복사해 `.agents/tasks/NN-제목.md` 지시서를 쓴다.
+  2. `git switch -c task-NN` 으로 작업 브랜치를 만든다.
+  3. 실행: `muse exec --model muse-spark-1.3-contributor --disable-approval --trust-workspace --max-model-steps 60 --prompt-file .agents/tasks/NN-제목.md`
+  4. `git diff`로 결과를 확인한다.
+  5. verifier-lite(Haiku)로 테스트, 빌드, 린트를 1차 점검한다.
+  6. 통과하면, 변경이 크거나 핵심 로직(결제, API 연동, 채점 로직 등)일 때만 verifier(Sonnet)로 리뷰한다.
+  7. 문제가 있으면 지시서를 보강해 muse를 다시 실행한다. 같은 작업이 3회 실패하면 직접 수정하거나 사용자에게 보고한다.
+- muse exec의 종료 코드 0은 "작업을 끝냈다"는 뜻일 뿐 정답이라는 뜻이 아니다. 반드시 테스트 명령으로 확인한다.
+- 추론 강도는 기본값(high)을 쓰고 max는 쓰지 않는다.
+- 보안: `.env*`, 키 파일, 실제 사용자 데이터는 muse 작업에 쓰지 않는다. 기여자 모델(-contributor)은 입출력이 Meta 모델 학습에 쓰이므로, 사업 핵심 로직(채점 로직, 유료 콘텐츠 프롬프트 등)을 건드리는 작업은 `--model muse-spark-1.3`(표준)으로 실행한다.
