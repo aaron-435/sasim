@@ -100,9 +100,10 @@
   - 변경·QA: 12번과 같다(파일 `steel.ts` `gem.ts`).
   - QA: `npx tsx scripts/check-seo-articles.mts` → 24건 모두 ok(steel en 816단어·ko 2,193자·es 836, gem 760·2,062·793). 금지 표현 grep 2파일 무결과. `npx tsc --noEmit`, `npm run lint`(경고·오류 없음), `npm run build` 통과. `next start -p 3700` + curl: 2편 × 기본/ko/es 6개 모두 200, gem `<title>` 맞음, 목록에 steel·gem 링크, sitemap `day-master/` 120줄(게시 8편). 초안은 하위 에이전트 2개가 썼고 메인이 두 파일 전문을 읽어 검수: 단정·예언·과학 주장 없음, 유형 이름(원석·보석/Steel·Gem/el acero·la gema)이 `sajuTypeContent.ts`와 일치. `index.ts`의 `ARTICLES`에 등록. 참고: steel ko가 상한 2,200자에 7자 모자람(수정 시 주의). 못 본 것: 브라우저 시각 확인, es 원어민 검수.
 
-- [ ] 15. 일간 글 — 임·계 (ocean, dew) × ko/en/es
+- [x] 15. 일간 글 — 임·계 (ocean, dew) × ko/en/es
   - 선행: 11
   - 변경·QA: 12번과 같다(파일 `ocean.ts` `dew.ts`).
+  - QA: `npx tsx scripts/check-seo-articles.mts` → 30건 모두 ok(ocean en 774단어·ko 2,088자·es 826, dew 829·2,056·881). 금지 표현 grep 2파일 무결과. `npx tsc --noEmit`, `npm run lint`(경고·오류 없음), `npm run build` 통과. `next start -p 3800` + curl: 2편 × 기본/ko/es 6개 모두 200, dew `<title>`·ocean es canonical 맞음, 목록에 10편 전부 링크, sitemap `day-master/` 150줄(게시 10편). 초안은 하위 에이전트 2개가 썼고 메인이 두 파일 전문을 읽어 검수: 단정·예언·과학 주장 없음, 어조 통일, 유형 이름이 `sajuTypeContent.ts`와 일치. 수정 1건: dew es의 성별이 갈리는 "ambas sienten"을 "las dos personas sienten"으로. `index.ts`의 `ARTICLES`에 등록(10편 전부 게시). 못 본 것: 브라우저 시각 확인, es 원어민 검수(ocean es "disperso o dispersa"가 약간 딱딱함).
 
 - [ ] 16. SEO 마감 QA (30편 전체)
   - 선행: 10, 12, 13, 14, 15

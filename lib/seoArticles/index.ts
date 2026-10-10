@@ -11,6 +11,8 @@ import mountain from "./mountain";
 import field from "./field";
 import steel from "./steel";
 import gem from "./gem";
+import ocean from "./ocean";
+import dew from "./dew";
 
 export const SITE_ORIGIN = "https://www.fatesaidapp.com";
 
@@ -68,7 +70,7 @@ export function dayMasterLabel(d: DayMasterInfo, locale: Locale): string {
 
 // Articles land one file at a time (TODO 11 sample, 12–15 the rest). A type with no file yet is
 // simply not published: no page, no sitemap entry, no link.
-const ARTICLES: Partial<Record<ArchetypeKey, ArticleSet>> = { oak, vine, sun, flame, mountain, field, steel, gem };
+const ARTICLES: Partial<Record<ArchetypeKey, ArticleSet>> = { oak, vine, sun, flame, mountain, field, steel, gem, ocean, dew };
 
 export function getArticle(slug: string, locale: Locale): DayMasterArticle | undefined {
   return ARTICLES[slug as ArchetypeKey]?.[locale];
