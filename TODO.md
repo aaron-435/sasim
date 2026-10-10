@@ -90,13 +90,15 @@
   - 변경: `lib/seoArticles/oak.ts`(샘플 다듬기), `vine.ts`, `sun.ts`. 하위 에이전트에게 나눠 초안을 맡기고 메인 세션이 검수. 앱 `mobile/lib/dayMasterLessons/<유형>.ts`를 기준 자료로만 쓰고 문장을 복사하지 않는다. 분량 en 600~900단어, ko 1,500~2,200자, es는 en과 같은 분량. es는 `lib/i18n/README.md` 스타일 가이드. 압박 규칙(SPEC C 제약) 준수.
   - QA: 루트 타입 통과. 분량 스크립트(언어별 단어/글자 수 범위), 금지 표현 grep(예: `grep -rniE "반드시 망|불길|재앙|사고|죽|파산|will lose|disaster|doom|scientifically proven|과학적으로 증명|garantiz" lib/seoArticles`) 무결과, 세 편 모두 ko/en/es 200.
 
-- [ ] 13. 일간 글 — 정·무·기 (flame, mountain, field) × ko/en/es
+- [x] 13. 일간 글 — 정·무·기 (flame, mountain, field) × ko/en/es
   - 선행: 11
   - 변경·QA: 12번과 같다(파일 `flame.ts` `mountain.ts` `field.ts`).
+  - QA: `npx tsx scripts/check-seo-articles.mts` → 18건 모두 ok(flame en 738단어·ko 2,002자·es 795, mountain 777·2,055·792, field 784·2,186·830). 금지 표현 grep 3파일 무결과. `npx tsc --noEmit`, `npm run lint`(경고·오류 없음), `npm run build` 통과. `next start -p 3600` + curl: 3편 × 기본/ko/es 9개 모두 200, field `<title>` 맞음, 목록에 flame·mountain·field 링크, sitemap `day-master/` 90줄(게시 6편 × 3언어 × 목록 포함 + hreflang). 초안은 하위 에이전트 3개가 썼고(주간 한도 오류로 끝 보고 없이 종료됐으나 파일은 완성돼 있었음) 메인이 3파일 전문을 읽어 검수: 단정·예언·과학 주장 없음, 어조 통일. `index.ts`의 `ARTICLES`에 등록. 못 본 것: 브라우저 시각 확인, es 원어민 검수, 한국어 canonical 재확인(11번과 같은 코드).
 
-- [ ] 14. 일간 글 — 경·신 (steel, gem) × ko/en/es
+- [x] 14. 일간 글 — 경·신 (steel, gem) × ko/en/es
   - 선행: 11
   - 변경·QA: 12번과 같다(파일 `steel.ts` `gem.ts`).
+  - QA: `npx tsx scripts/check-seo-articles.mts` → 24건 모두 ok(steel en 816단어·ko 2,193자·es 836, gem 760·2,062·793). 금지 표현 grep 2파일 무결과. `npx tsc --noEmit`, `npm run lint`(경고·오류 없음), `npm run build` 통과. `next start -p 3700` + curl: 2편 × 기본/ko/es 6개 모두 200, gem `<title>` 맞음, 목록에 steel·gem 링크, sitemap `day-master/` 120줄(게시 8편). 초안은 하위 에이전트 2개가 썼고 메인이 두 파일 전문을 읽어 검수: 단정·예언·과학 주장 없음, 유형 이름(원석·보석/Steel·Gem/el acero·la gema)이 `sajuTypeContent.ts`와 일치. `index.ts`의 `ARTICLES`에 등록. 참고: steel ko가 상한 2,200자에 7자 모자람(수정 시 주의). 못 본 것: 브라우저 시각 확인, es 원어민 검수.
 
 - [ ] 15. 일간 글 — 임·계 (ocean, dew) × ko/en/es
   - 선행: 11
