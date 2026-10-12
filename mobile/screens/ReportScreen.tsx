@@ -928,7 +928,7 @@ export default function ReportScreen({
     );
     if (!mountedRef.current) return;
     setExporting(false);
-    if (!result.ok) Alert.alert(strings.pdf.button, pdfErrorMessage(result.reason, strings.pdf));
+    if (!result.ok) Alert.alert(strings.pdf.button, pdfErrorMessage(result.reason, strings.pdf, result.detail));
   }
 
   function goTo(index: number) {

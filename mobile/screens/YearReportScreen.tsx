@@ -233,7 +233,7 @@ export default function YearReportScreen({
     const result = await exportReportPdf({ kind: "year", locale, nickname, content: report }, strings.pdf.dialogTitle);
     if (!mountedRef.current) return;
     setExporting(false);
-    if (!result.ok) Alert.alert(strings.pdf.button, pdfErrorMessage(result.reason, strings.pdf));
+    if (!result.ok) Alert.alert(strings.pdf.button, pdfErrorMessage(result.reason, strings.pdf, result.detail));
   }
 
   const heading = year !== null ? strings.yearReport.heading(year) : strings.yearReport.heading(new Date().getFullYear() + 1);

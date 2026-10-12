@@ -13,7 +13,9 @@ import { getRevenueCatUserId } from "./purchases";
 // "unsupported" here and leaves the rest of the app alone.
 
 export type PdfFailure = "unsupported" | "not_purchased" | "unavailable" | "rate_limited" | "failed";
-export type PdfResult = { ok: true } | { ok: false; reason: PdfFailure };
+// `detail` is a short technical tail ("500 failed", "write: ...") that the alert appends so a device
+// report says which step broke (2026-10-12: Android showed only the generic "failed" message).
+export type PdfResult = { ok: true } | { ok: false; reason: PdfFailure; detail?: string };
 
 export async function exportReportPdf(payload: Record<string, unknown>, dialogTitle: string): Promise<PdfResult> {
   let FileSystem: typeof import("expo-file-system");
@@ -28,6 +30,7 @@ export async function exportReportPdf(payload: Record<string, unknown>, dialogTi
   const appUserId = await getRevenueCatUserId();
   if (!appUserId) return { ok: false, reason: "not_purchased" };
 
+  let stage = "request";
   try {
     const res = await expoFetch(`${API_BASE_URL}/api/report-pdf`, {
       method: "POST",
@@ -42,24 +45,33 @@ export async function exportReportPdf(payload: Record<string, unknown>, dialogTi
       if (code === "not_purchased") return { ok: false, reason: "not_purchased" };
       if (code === "unavailable") return { ok: false, reason: "unavailable" };
       if (res.status === 429) return { ok: false, reason: "rate_limited" };
-      return { ok: false, reason: "failed" };
+      return { ok: false, reason: "failed", detail: `${res.status}${code ? ` ${code}` : ""}` };
     }
+    stage = "bytes";
     const bytes = await res.bytes();
+    stage = "write";
     const file = new FileSystem.File(FileSystem.Paths.cache, `fatesaid-report-${Date.now()}.pdf`);
     file.create();
     file.write(bytes);
+    stage = "share";
     if (await Sharing.isAvailableAsync()) {
       track("share", { kind: "report_pdf" });
       await Sharing.shareAsync(file.uri, { mimeType: "application/pdf", UTI: "com.adobe.pdf", dialogTitle });
     }
     return { ok: true };
-  } catch {
-    return { ok: false, reason: "failed" };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return { ok: false, reason: "failed", detail: `${stage}: ${msg.slice(0, 100)}` };
   }
 }
 
 /** The localized message for a failed export, from the `pdf` string block. */
-export function pdfErrorMessage(reason: PdfFailure, pdf: { errorUnsupported: string; errorNotPurchased: string; errorUnavailable: string; errorRateLimited: string; errorFailed: string }): string {
+export function pdfErrorMessage(reason: PdfFailure, pdf: { errorUnsupported: string; errorNotPurchased: string; errorUnavailable: string; errorRateLimited: string; errorFailed: string }, detail?: string): string {
+  const tail = detail ? `\n(${detail})` : "";
+  return pdfErrorBase(reason, pdf) + tail;
+}
+
+function pdfErrorBase(reason: PdfFailure, pdf: { errorUnsupported: string; errorNotPurchased: string; errorUnavailable: string; errorRateLimited: string; errorFailed: string }): string {
   switch (reason) {
     case "unsupported":
       return pdf.errorUnsupported;

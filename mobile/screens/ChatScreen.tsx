@@ -221,6 +221,9 @@ export default function ChatScreen({
   function handleSend() {
     const text = input.trim();
     if (!text || isTyping || doneRef.current) return;
+    // 2026-10-12 device test: with the keyboard still open the bot's answer arrived behind it and
+    // the user had to close the keyboard by hand to read it. Sending now closes the keyboard.
+    Keyboard.dismiss();
     setInput("");
     setMessages((m) => [...m, { role: "user", text }]);
     const nextHistory: HistoryEntry[] = [...turnHistoryRef.current, { role: "user", content: text }];
