@@ -4,7 +4,8 @@ import Share2 from "lucide-react-native/icons/share-2";
 import { ActivityIndicator, Alert, Platform, Pressable, Share, StyleSheet, TextInput, View } from "react-native";
 import Text from "./AppText";
 import { track } from "../lib/analytics";
-import { useStrings } from "../lib/i18n";
+import { useLocale, useStrings } from "../lib/i18n";
+import { API_BASE_URL } from "../config";
 import { createPairCode, fetchCoupleDaily, formatPairCode, getSavedPair, joinPair, unlinkPair, type SavedPair } from "../lib/pairs";
 import { getRevenueCatUserId } from "../lib/purchases";
 import { COLORS } from "../theme/colors";
@@ -37,6 +38,7 @@ export default function CoupleModeSection({
   selfDayBranch: string | null;
 }) {
   const strings = useStrings();
+  const { locale } = useLocale();
   const [pair, setPair] = useState<SavedPair | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -66,7 +68,10 @@ export default function CoupleModeSection({
   }
 
   async function shareCode(code: string) {
-    const message = strings.couple.shareMessage(formatPairCode(code));
+    // A link, like the friend-compatibility invite: it opens /p/<code>, which shows the code and
+    // the steps. The code stays in the text too so it still works where links get stripped.
+    const url = `${API_BASE_URL}/p/${code}?lang=${locale}`;
+    const message = strings.couple.shareMessage(formatPairCode(code), url);
     if (Platform.OS === "web") {
       const nav = globalThis.navigator as Navigator | undefined;
       if (nav?.share) {

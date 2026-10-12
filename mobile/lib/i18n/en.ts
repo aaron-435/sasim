@@ -402,7 +402,7 @@ export const en: typeof ko = {
     pendingTitle: "You'll be linked once your partner enters this code",
     pendingBody: (days: number) => `In their app: Compatibility → Couple mode. The code works for ${days} more ${days === 1 ? "day" : "days"}.`,
     shareCode: "Send the code",
-    shareMessage: (code: string) => `Let's link up in Fatesaid couple mode. In the app, go to Compatibility → Couple mode and enter: ${code}`,
+    shareMessage: (code: string, url: string) => `Let's link up in Fatesaid couple mode. In the app, go to Compatibility → Couple mode and enter: ${code}\n${url}`,
     copied: "Code copied. Paste it to your partner.",
     cancelCode: "Cancel this code",
     linkedTitle: (name: string) => `Linked with ${name}`,

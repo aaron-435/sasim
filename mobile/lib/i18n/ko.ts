@@ -428,7 +428,7 @@ export const ko = {
     pendingTitle: "상대가 이 코드를 넣으면 연결돼요",
     pendingBody: (days: number) => `상대 앱의 궁합 → 커플 모드에 넣으면 돼요. ${days}일 동안 쓸 수 있어요.`,
     shareCode: "코드 보내기",
-    shareMessage: (code: string) => `Fatesaid 커플 모드로 연결해요. 앱의 궁합 → 커플 모드에서 이 코드를 넣어 주세요: ${code}`,
+    shareMessage: (code: string, url: string) => `Fatesaid 커플 모드로 연결해요. 앱의 궁합 → 커플 모드에서 이 코드를 넣어 주세요: ${code}\n${url}`,
     copied: "코드를 복사했어요. 상대에게 붙여 넣어 보내 주세요.",
     cancelCode: "코드 취소",
     linkedTitle: (name: string) => `${name}님과 연결됨`,

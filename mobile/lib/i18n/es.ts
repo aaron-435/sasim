@@ -402,7 +402,7 @@ export const es: typeof ko = {
     pendingTitle: "La conexión se activa cuando tu pareja escriba este código",
     pendingBody: (days: number) => `En su app: Compatibilidad → Modo pareja. ${days === 1 ? "El código sirve 1 día más." : `El código sirve ${days} días más.`}`,
     shareCode: "Enviar el código",
-    shareMessage: (code: string) => `Conectémonos en el modo pareja de Fatesaid. En la app, ve a Compatibilidad → Modo pareja y escribe: ${code}`,
+    shareMessage: (code: string, url: string) => `Conectémonos en el modo pareja de Fatesaid. En la app, ve a Compatibilidad → Modo pareja y escribe: ${code}\n${url}`,
     copied: "Código copiado. Pégalo en tu mensaje.",
     cancelCode: "Cancelar el código",
     linkedTitle: (name: string) => `Conexión activa con ${name}`,
