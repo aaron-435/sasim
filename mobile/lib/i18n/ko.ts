@@ -652,7 +652,7 @@ export const ko = {
   },
 
   report: {
-    unlocking: "리포트의 나머지를 쓰는 중이에요. 최대 1분쯤 걸려요...",
+    unlocking: "리포트를 불러오는 중이에요. 잠시만 기다려 주세요...",
     unlockFailed: "리포트를 열지 못했어요. 연결을 확인한 뒤 다시 시도해 주세요.",
     previousPageLabel: "이전 페이지",
     nextPageLabel: "다음 페이지",

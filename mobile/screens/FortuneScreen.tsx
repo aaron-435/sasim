@@ -27,7 +27,6 @@ import JournalEntryCard from "../components/JournalEntryCard";
 import { comingSajuYear } from "../lib/sajuYear";
 import { formatMonthLabel, formatShortDate } from "../lib/shortDate";
 import MonthGrid from "../components/MonthGrid";
-import { RHYTHM_COLORS } from "../lib/rhythmColors";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
@@ -859,16 +858,15 @@ export default function FortuneScreen({
                 const isPast = !!daily && date < daily.date;
                 const isSelected = monthSelectedDate === date;
                 const isGood = calHighlights.has(date);
-                const tone = RHYTHM_COLORS[relation];
                 return (
                   <Pressable
                     onPress={() => setSelectedMonthDate(date)}
-                    style={[styles.dayCell, { backgroundColor: tone.fill }, isPast && styles.dayCellPast, isToday && styles.dayCellToday, isGood && styles.dayCellGood, isSelected && styles.dayCellSelected]}
+                    style={[styles.dayCell, isPast && styles.dayCellPast, isToday && styles.dayCellToday, isSelected && styles.dayCellSelected, isGood && styles.dayCellGood]}
                     accessibilityRole="button"
                     accessibilityLabel={strings.fortune.monthCellLabel(formatShortDate(date, locale), strings.fortune.rhythmNames[relation], isToday) + (isGood && calPurposeLabel ? `, ${strings.goodDays.calendarGoodDay(calPurposeLabel)}` : "")}
                     accessibilityState={{ selected: isSelected }}
                   >
-                    <Text style={[styles.dayNumber, { color: tone.text }]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{Number(date.slice(8))}</Text>
+                    <Text style={[styles.dayNumber, isGood && styles.dayNumberGood]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{Number(date.slice(8))}</Text>
                     {isGood && <View style={styles.dayGoodDot} />}
                   </Pressable>
                 );
@@ -1195,13 +1193,18 @@ const styles = StyleSheet.create({
   weekRowDate: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.headline, width: 78 },
   weekRowHeadline: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.subheadline, flex: 1 },
   calendarTitle: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline, marginTop: 14, marginBottom: 10, textAlign: "center" },
-  dayCell: { flex: 1, borderRadius: 10, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "transparent" },
+  // 2026-10-12 device test: the five per-rhythm fills were unreadable on a phone and nobody could say
+  // what they meant, so cells are one neutral surface. The rhythm name is in the detail card on tap.
+  // Only state is drawn on the grid: today (outline), purpose-picked days (filled + thick outline),
+  // the selected day (lighter surface).
+  dayCell: { flex: 1, borderRadius: 10, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: "transparent", backgroundColor: COLORS.inputBg },
   dayCellPast: { opacity: 0.55 },
   dayCellToday: { borderColor: COLORS.headline },
-  dayCellGood: { borderColor: COLORS.gold },
-  dayGoodDot: { position: "absolute", bottom: 3, width: 4, height: 4, borderRadius: 2, backgroundColor: COLORS.gold },
-  dayCellSelected: { borderColor: COLORS.gold, borderWidth: 2 },
-  dayNumber: { fontFamily: FONTS.semibold, fontSize: 13 },
+  dayCellGood: { borderColor: COLORS.gold, borderWidth: 3, backgroundColor: "rgba(111,169,139,0.28)" },
+  dayGoodDot: { position: "absolute", bottom: 4, width: 5, height: 5, borderRadius: 2.5, backgroundColor: COLORS.gold },
+  dayCellSelected: { backgroundColor: COLORS.border },
+  dayNumber: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.headline },
+  dayNumberGood: { color: COLORS.headline, fontFamily: FONTS.bold },
   dayDetailCard: { marginTop: 14, backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, padding: 16 },
   dayDetailGoodLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.gold, marginTop: 12 },
   calendarHint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: 4 },

@@ -47,7 +47,7 @@ export default function ReportClosingPage({
   summaryEyebrow: string;
   summary: string;
   /** Shares the one-line summary as an image card; `onShared` fires only when the share sheet opened. */
-  share: { label: string; eyebrow: string; onShared: () => void };
+  share: { label: string; eyebrow: string; names?: string; onShared: () => void };
   pdf?: { label: string; busyLabel: string; busy: boolean; onPress: () => void };
   next?: ClosingNext | null;
   disclaimers: string[];
@@ -98,8 +98,9 @@ export default function ReportClosingPage({
               </Pressable>
             ) : null}
           </View>
-          {/* Same one line the button shares, as the image that goes out (no name, no birth data). */}
-          <TextShareCard cardRef={cardRef} eyebrow={share.eyebrow} headline={summary} />
+          {/* Same one line the button shares, as the image that goes out. `share.names` is only set by the
+              compatibility report ("A × B"); no birth data is ever on the card. */}
+          <TextShareCard cardRef={cardRef} eyebrow={share.eyebrow} headline={summary} names={share.names} />
         </View>
       ) : null}
 

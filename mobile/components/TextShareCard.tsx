@@ -36,11 +36,14 @@ export default function TextShareCard({
   eyebrow,
   headline,
   body,
+  names,
 }: {
   cardRef: RefObject<View | null>;
   eyebrow: string;
   headline: string;
   body?: string;
+  /** Optional "A × B" line under the eyebrow (the compatibility report names its pair). */
+  names?: string;
 }) {
   const strings = useStrings();
   return (
@@ -51,6 +54,7 @@ export default function TextShareCard({
         <View style={styles.inner}>
           <Text style={styles.brand}>FATESAID</Text>
           <Text style={styles.eyebrow}>{eyebrow}</Text>
+          {!!names && <Text style={styles.names}>{names}</Text>}
           <Text style={styles.headline}>{headline}</Text>
           {!!body && <Text style={styles.body}>{body}</Text>}
           <Text style={styles.address}>{ADDRESS_TEXT}</Text>
@@ -76,6 +80,7 @@ const styles = StyleSheet.create({
   inner: { paddingHorizontal: "9%", paddingVertical: "9%", alignItems: "center" },
   brand: { fontFamily: FONTS.bold, fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: 28 },
   eyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: COLORS.gold, marginBottom: 8, textAlign: "center" },
+  names: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.subheadline, textAlign: "center", marginBottom: 14 },
   headline: { fontFamily: FONTS.display, fontSize: 26, lineHeight: 34, color: COLORS.headline, textAlign: "center" },
   body: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 22, color: COLORS.subheadline, textAlign: "center", marginTop: 16 },
   address: { fontFamily: FONTS.medium, fontSize: 12.5, letterSpacing: 0.4, color: COLORS.subheadline, textAlign: "center", marginTop: 32 },

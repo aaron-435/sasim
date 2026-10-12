@@ -366,7 +366,7 @@ function compatReaderPages({
           body={fill(paid.closing)}
           summaryEyebrow={strings.reader.summaryEyebrow}
           summary={fill(free.subtitle)}
-          share={{ label: strings.reader.shareLabel, eyebrow: s.shareTitle, onShared }}
+          share={{ label: strings.reader.shareLabel, eyebrow: s.shareTitle, names: nickname.trim() ? `${nickname.trim()} × ${otherLabel}` : otherLabel, onShared }}
           disclaimers={[s.noVerdictNote, strings.report.disclaimer1]}
         />
       ),

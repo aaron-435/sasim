@@ -107,7 +107,7 @@ export default function QuizScreen({
   }
 
   function handleSliderChange(value: number) {
-    setSliderValue(value);
+    setSliderValue(Math.round(value));
     handleSliderTouch();
   }
 
@@ -273,8 +273,11 @@ export default function QuizScreen({
             <Slider
               minimumValue={1}
               maximumValue={10}
-              step={1}
-              value={sliderValue}
+              // Ten integer positions have no middle one: untouched, the thumb rests at 5.5 (true
+              // center, continuous) and only snaps to whole steps once the user grabs it.
+              // 2026-10-12: at 5 it sat visibly left of center on Android.
+              step={sliderTouched ? 1 : 0}
+              value={sliderTouched ? sliderValue : 5.5}
               onValueChange={handleSliderChange}
               onSlidingStart={handleSliderTouch}
               disabled={transitioning}

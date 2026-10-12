@@ -1,5 +1,5 @@
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "./PatternBackground";
 import { COLORS } from "../theme/colors";
@@ -21,7 +21,9 @@ export default function OnboardingShell({
   return (
     <PatternBackground>
       <SafeAreaView style={styles.root}>
-        <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        {/* Android is edge-to-edge here, so the window no longer resizes for the keyboard on its own:
+            without "padding" the primary button under a text field stayed hidden (2026-10-12 device test). */}
+        <KeyboardAvoidingView style={styles.flex} behavior="padding">
           <View style={styles.header}>
             <Pressable
               onPress={onBack}

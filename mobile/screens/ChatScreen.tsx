@@ -183,18 +183,25 @@ export default function ChatScreen({
         }
 
         const lines: string[] = Array.isArray(json.lines) ? json.lines : [];
+        // 2026-10-12 device test: after "여기서 마무리할게요" the closing lines were typed out one
+        // by one before the report, which read as a delay with nothing to do. The closing turn
+        // (the one that carries `extract`) now hands over immediately.
+        if (json.extract) {
+          setIsTyping(false);
+          turnHistoryRef.current = [...apiHistory, { role: "assistant", content: lines.join(" ") }];
+          formulationRef.current = json.formulation ?? undefined;
+          setTurn(nextTurn);
+          doneRef.current = true;
+          setDone(true);
+          onComplete(json.extract);
+          return;
+        }
         await revealLines(lines);
         if (!mountedRef.current) return;
 
         turnHistoryRef.current = [...apiHistory, { role: "assistant", content: lines.join(" ") }];
         formulationRef.current = json.formulation ?? undefined;
         setTurn(nextTurn);
-
-        if (json.extract) {
-          doneRef.current = true;
-          setDone(true);
-          setTimeout(() => onComplete(json.extract), 1200);
-        }
       } catch {
         if (!mountedRef.current) return;
         setIsTyping(false);
