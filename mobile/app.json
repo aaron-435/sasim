@@ -33,6 +33,7 @@
       "expo-dev-client",
       "expo-sharing",
       "expo-notifications",
+      "./plugins/withWorkRuntimeAlign",
       [
         "expo-widgets",
         {
