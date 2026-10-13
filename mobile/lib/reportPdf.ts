@@ -17,7 +17,23 @@ export type PdfFailure = "unsupported" | "not_purchased" | "unavailable" | "rate
 // report says which step broke (2026-10-12: Android showed only the generic "failed" message).
 export type PdfResult = { ok: true } | { ok: false; reason: PdfFailure; detail?: string };
 
-export async function exportReportPdf(payload: Record<string, unknown>, dialogTitle: string): Promise<PdfResult> {
+/** "Fatesaid_<part>_<part>_<YYYY-MM-DD>.pdf" (parts: the reader's name, the report's name): what
+ * the share sheet and the saved file are called. Characters the file systems reject are dropped,
+ * spaces become underscores, and each part is capped so a long name cannot push the whole file
+ * name past a limit. */
+export function pdfFileName(parts: string[], now: Date = new Date()): string {
+  const clean = (t: string) =>
+    t
+      .replace(/[\\/:*?"<>|\u0000-\u001f]/g, "")
+      .replace(/\s+/g, "_")
+      .replace(/^[._]+|[._]+$/g, "")
+      .slice(0, 24);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  return `${["Fatesaid", ...parts.map(clean).filter(Boolean), date].join("_")}.pdf`;
+}
+
+export async function exportReportPdf(payload: Record<string, unknown>, dialogTitle: string, nameParts: string[] = []): Promise<PdfResult> {
   let FileSystem: typeof import("expo-file-system");
   let expoFetch: typeof import("expo/fetch").fetch;
   try {
@@ -50,7 +66,9 @@ export async function exportReportPdf(payload: Record<string, unknown>, dialogTi
     stage = "bytes";
     const bytes = await res.bytes();
     stage = "write";
-    const file = new FileSystem.File(FileSystem.Paths.cache, `fatesaid-report-${Date.now()}.pdf`);
+    // A readable, stable name; a second export on the same day replaces the first file.
+    const file = new FileSystem.File(FileSystem.Paths.cache, pdfFileName(nameParts));
+    if (file.exists) file.delete();
     file.create();
     file.write(bytes);
     stage = "share";

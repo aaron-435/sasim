@@ -230,7 +230,7 @@ export default function YearReportScreen({
   async function handleExportPdf() {
     if (exporting || !report) return;
     setExporting(true);
-    const result = await exportReportPdf({ kind: "year", locale, nickname, content: report }, strings.pdf.dialogTitle);
+    const result = await exportReportPdf({ kind: "year", locale, nickname, content: report }, strings.pdf.dialogTitle, [nickname, heading]);
     if (!mountedRef.current) return;
     setExporting(false);
     if (!result.ok) Alert.alert(strings.pdf.button, pdfErrorMessage(result.reason, strings.pdf, result.detail));
