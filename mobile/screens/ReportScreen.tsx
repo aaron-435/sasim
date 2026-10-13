@@ -926,7 +926,7 @@ export default function ReportScreen({
         },
       },
       strings.pdf.dialogTitle,
-      [nickname, quizDiagnosis.moduleTitle],
+      [nickname, moduleDisplayTitle(quizDiagnosis.moduleTitle)],
     );
     if (!mountedRef.current) return;
     setExporting(false);
