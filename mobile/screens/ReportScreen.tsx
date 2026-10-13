@@ -584,7 +584,8 @@ export default function ReportScreen({
 
     sortedKeys.forEach((key) => {
       const reading = content.element_readings[key];
-      if (!reading) return;
+      // A reading the model left empty would be a page with only "38% 💎" (device test 2026-10-13).
+      if (!reading?.body?.trim()) return;
       body.push({
         key: `element-${key}`,
         node: <ElementReadingPage pct={resolvedElements[key] ?? 0} reading={reading} elementKey={key} />,

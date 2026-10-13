@@ -269,6 +269,16 @@ export function checkReportDeterministic(c: ReportContent, ctx: ReportContext): 
   // A module page the model left empty (TODO F1-b). The free half legitimately carries module_deep with
   // an empty body (it's written after purchase), so only pages whose part was written are checked.
   const part = ctx.part ?? "full";
+  // An element the model left empty rendered as "38% 💎" with no text (device test, 2026-10-13). The
+  // density check above skips empty strings, so nothing asked for a rewrite. The paid half only carries
+  // the headings back, so only the part that writes the readings is checked.
+  if (part !== "paid") {
+    for (const k of ELEMENT_KEYS) {
+      const r = c.element_readings[k];
+      if (!r?.heading?.trim()) problems.push(`element_readings.${k}.heading: 제목이 비어 있음 — 이 원소의 퍼센트와 이번 모듈 주제에 맞는 한 줄 제목을 쓸 것`);
+      if (!r?.body?.trim()) problems.push(`element_readings.${k}.body: 페이지 본문이 비어 있음 — 이 원소 항목을 3문장 이상으로 쓸 것`);
+    }
+  }
   if (c.module_map && part !== "paid" && !c.module_map.body.trim()) problems.push("module_map.body: 페이지 본문이 비어 있음 — 이 페이지 제목과 모듈 관점에 맞는 4문장 이상으로 쓸 것");
   if (c.module_deep && part !== "free" && !c.module_deep.body.trim()) problems.push("module_deep.body: 페이지 본문이 비어 있음 — 이 페이지 제목과 모듈 관점에 맞는 4문장 이상으로 쓸 것");
   if (c.module_map && part !== "paid" && c.module_map.body.trim() && titleRepeatsInOpening(c.module_map.title, c.module_map.body)) {
