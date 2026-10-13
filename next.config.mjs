@@ -1,7 +1,7 @@
 // The fonts react-pdf reads at runtime (lib/pdf/reportPdf.tsx) plus the files pdfkit loads through
 // its package "imports" (`#standard-fonts/*`, AFM data). Next's file tracing cannot see either, so
 // without them the function answered 500 on Vercel while the same request rendered locally
-// (/api/report-pdf/diag, 2026-10-13: "Cannot find module .../pdfkit/js/standard-fonts/Helvetica.cjs").
+// (2026-10-13: "Cannot find module .../pdfkit/js/standard-fonts/Helvetica.cjs").
 const PDF_FILES = [
   "./node_modules/@expo-google-fonts/noto-sans-kr/400Regular/NotoSansKR_400Regular.ttf",
   "./node_modules/@expo-google-fonts/noto-sans-kr/700Bold/NotoSansKR_700Bold.ttf",
@@ -21,8 +21,6 @@ const nextConfig = {
     // with that route's serverless function.
     serverComponentsExternalPackages: ["@react-pdf/renderer"],
     outputFileTracingIncludes: {
-      // "/api/report-pdf/diag" is the temporary 2026-10-13 diagnostic route (same renderer, same files).
-      "/api/report-pdf/diag": PDF_FILES,
       "/api/report-pdf": PDF_FILES,
     },
   },
