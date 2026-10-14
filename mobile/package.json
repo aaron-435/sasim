@@ -22,7 +22,6 @@
     "expo-store-review": "~57.0.3",
     "expo-updates": "~57.0.22",
     "expo-widgets": "~57.0.23",
-    "lottie-react-native": "~7.3.8",
     "lucide-react-native": "^1.44.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",

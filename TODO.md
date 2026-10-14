@@ -28,9 +28,10 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
 
 ## B. blur, Lottie
 
-- [ ] 4. Lottie 제거 + blur 두 곳
+- [x] 4. Lottie 제거 + blur 두 곳
   - 변경: `mobile/package.json`·`package-lock.json`에서 `lottie-react-native` 제거(`cd mobile && npm uninstall lottie-react-native`), `app.json` 플러그인에 있으면 제거. `PlanPicker.tsx` 패널 뒤 배경, `FortuneScreen.tsx` 위쪽 슬라이딩 탭 줄에 `BlurView`(iOS만, intensity 낮게, tint dark). Android·웹은 `SURFACE.floating` + 불투명도 0.92. 플랫폼 분기는 작은 부품 `mobile/components/FrostedSurface.tsx` 하나로.
   - QA: 공통 tsc. `grep -rn lottie mobile --include='*.ts*' --exclude-dir=node_modules` 무결과, `mobile/package.json`에 없음. 웹 미리보기 운세 탭 줄·페이월(`?qa=` 무료 상태)에 반투명 표면, 글자 대비 유지. iOS blur는 15번에서 확인.
+  - QA: 앱 tsc --noEmit → exit 0. `grep -rn lottie mobile --include=*.ts* --include=app.json` 무결과, `package.json`에 없음. mobile-web `?qa=all&persona=jisoo` 운세 화면 탭 줄이 반투명 표면(`FrostedSurface` 폴백)으로 정상, 글자 대비 유지. 못 한 것: 페이월(`PlanPicker`) 웹 스크린샷은 무료 상태 픽스처로 못 열어 코드만 확인, iOS blur는 나번(네이티브 확인). 탭 줄은 스크롤 안의 요소라 "위쪽에 붙는" 구조가 아니어서 blur 효과가 약함 — 빌드 전에 어색하면 SPEC 가정대로 `SURFACE.floating`으로 되돌리고 `expo-blur`를 뺀다.
 
 ## C. 나머지 화면 개편 + 간격 토큰
 

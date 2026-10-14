@@ -1,5 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import Text from "./AppText";
+import FrostedSurface from "./FrostedSurface";
 import PressableScale from "./motion/PressableScale";
 import { useStrings } from "../lib/i18n";
 import type { SubscriptionOffer } from "../lib/useSubscriptionOffer";
@@ -21,7 +22,7 @@ export default function PlanPicker({ offer, disabled }: { offer: SubscriptionOff
   return (
     <View style={styles.root}>
       {showPlans && (
-        <View style={styles.plans} accessibilityRole="radiogroup" accessibilityLabel={strings.subscription.planPickerLabel}>
+        <FrostedSurface style={styles.plans} accessibilityRole="radiogroup" accessibilityLabel={strings.subscription.planPickerLabel}>
           {offer.plans.map((plan) => {
             const selected = plan.id === offer.selectedId;
             const annual = plan.id === "annual";
@@ -56,7 +57,7 @@ export default function PlanPicker({ offer, disabled }: { offer: SubscriptionOff
               </PressableScale>
             );
           })}
-        </View>
+        </FrostedSurface>
       )}
       {!!offer.trialLine && (
         <Text style={styles.trialLine} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{offer.trialLine}</Text>
@@ -71,6 +72,8 @@ const styles = StyleSheet.create({
   },
   plans: {
     gap: 8,
+    padding: 8,
+    borderRadius: 16,
   },
   plan: {
     flexDirection: "row",

@@ -15,6 +15,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Reanimated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import Text from "../components/AppText";
 import ElementsLoader from "../components/motion/ElementsLoader";
+import FrostedSurface from "../components/FrostedSurface";
 import PressableScale from "../components/motion/PressableScale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
@@ -723,7 +724,7 @@ export default function FortuneScreen({
 
         <Text style={[styles.heading, locale === "ko" && styles.headingKo]} accessibilityRole="header">{strings.fortune.tabHeadings[tab]}</Text>
 
-        <View style={styles.tabRow} accessibilityRole="tablist" onLayout={(e) => setTabRowWidth(e.nativeEvent.layout.width)}>
+        <FrostedSurface style={styles.tabRow} accessibilityRole="tablist" onLayout={(e) => setTabRowWidth(e.nativeEvent.layout.width)}>
           {tabRowWidth > 0 && (
             <Reanimated.View style={[styles.tabIndicator, { width: (tabRowWidth - 8) / 4 }, tabIndicatorStyle]} />
           )}
@@ -742,7 +743,7 @@ export default function FortuneScreen({
               </Text>
             </PressableScale>
           ))}
-        </View>
+        </FrostedSurface>
 
         {!selfDayMasterChar && <Text style={styles.errorText}>{strings.fortune.loadErrorText}</Text>}
 
@@ -1158,7 +1159,6 @@ const styles = StyleSheet.create({
     padding: 4,
     marginBottom: 20,
     borderRadius: RADIUS.md,
-    backgroundColor: SURFACE.raised,
     ...SHADOW.raised,
   },
   tabButton: { flex: 1, alignItems: "center", justifyContent: "center", minHeight: 40, paddingHorizontal: 4, borderRadius: 9 },
