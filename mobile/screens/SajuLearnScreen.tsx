@@ -1,8 +1,9 @@
 import { useState } from "react";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import ArrowRight from "lucide-react-native/icons/arrow-right";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import PressableScale from "../components/motion/PressableScale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { SAJU_TYPE_CONTENT } from "../lib/sajuTypeContent";
@@ -10,6 +11,7 @@ import type { SajuType } from "../lib/sajuType";
 import DayMasterLessonsScreen from "./DayMasterLessonsScreen";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // Split out from HomeScreen's home.philosophy* block (2026-09-16) — the home screen
 // keeps just the quote + three principles as a short, emotionally-anchored teaser, and
@@ -30,19 +32,20 @@ export default function SajuLearnScreen({ sajuType, onBack }: { sajuType?: SajuT
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-        </Pressable>
+        </PressableScale>
 
         <Text style={styles.pageTitle}>{s.pageTitle}</Text>
 
         {sajuType && (
-          <Pressable
+          <PressableScale
             style={styles.lessonCard}
             onPress={() => setShowLessons(true)}
             accessibilityRole="button"
             accessibilityLabel={`${strings.lessons.entryTitle}. ${strings.lessons.entryBody(archetypeName)}`}
+            pressedScale={0.98}
           >
             <Text style={styles.lessonEyebrow}>{strings.lessons.entryEyebrow}</Text>
             <Text style={styles.lessonTitle}>{strings.lessons.entryTitle}</Text>
@@ -50,7 +53,7 @@ export default function SajuLearnScreen({ sajuType, onBack }: { sajuType?: SajuT
             <View style={styles.lessonCtaRow}>
               <ArrowRight size={16} strokeWidth={2} color={COLORS.gold} />
             </View>
-          </Pressable>
+          </PressableScale>
         )}
 
         <View style={styles.section}>
@@ -105,18 +108,17 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   lessonCard: {
-    borderWidth: 1,
-    borderColor: "rgba(111,169,139,0.4)",
     backgroundColor: "rgba(111,169,139,0.08)",
-    borderRadius: 14,
+    borderRadius: RADIUS.md,
     padding: 18,
     marginBottom: 8,
+    ...SHADOW.raised,
   },
   lessonEyebrow: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 0.2, color: COLORS.gold },
   lessonTitle: { fontFamily: FONTS.display, fontSize: 20, lineHeight: 27, color: COLORS.headline, marginTop: 6 },
   lessonBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, marginTop: 6 },
   lessonCtaRow: { alignItems: "flex-end", marginTop: 8 },
-  divider: { height: 1, backgroundColor: COLORS.border, marginVertical: 8 },
+  divider: { height: 1, backgroundColor: SURFACE.hairline, marginVertical: 8 },
   section: { marginTop: 24 },
   sectionHeading: {
     fontFamily: FONTS.display,
@@ -133,11 +135,10 @@ const styles = StyleSheet.create({
   },
   termList: { gap: 12 },
   termCard: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 12,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     padding: 16,
+    ...SHADOW.raised,
   },
   termLabel: { fontFamily: FONTS.bold, fontSize: 14, color: COLORS.gold },
   termBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, marginTop: 6 },

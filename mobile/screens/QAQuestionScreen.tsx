@@ -1,13 +1,15 @@
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import MessageCircleQuestion from "lucide-react-native/icons/message-circle-question-mark";
 import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import PressableScale from "../components/motion/PressableScale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 type Question = { id: string; text_ko: string; text_en?: string; text_es?: string };
 type Subcategory = { id: string; name_ko: string; name_en?: string; name_es?: string; questions: Question[] };
@@ -36,10 +38,10 @@ export default function QAQuestionScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
-        </Pressable>
+        </PressableScale>
 
         <View style={styles.header}>
           <Text style={styles.subcategoryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{localizedText(subcategory.name_ko, subcategory.name_en, subcategory.name_es, locale)}</Text>
@@ -47,21 +49,22 @@ export default function QAQuestionScreen({
         </View>
 
         {visible.map((q) => (
-          <Pressable
+          <PressableScale
             key={q.id}
             style={styles.card}
             onPress={() => onSelect(q)}
             accessibilityRole="button"
             accessibilityLabel={localizedText(q.text_ko, q.text_en, q.text_es, locale)}
+            pressedScale={0.98}
           >
             <MessageCircleQuestion size={15} strokeWidth={1.75} color={COLORS.subheadline} style={styles.cardIcon} />
             <Text style={styles.cardLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{localizedText(q.text_ko, q.text_en, q.text_es, locale)}</Text>
-          </Pressable>
+          </PressableScale>
         ))}
         {hiddenCount > 0 && (
-          <Pressable onPress={() => setExpanded(true)} style={styles.moreButton} accessibilityRole="button" accessibilityLabel={strings.qa.moreQuestions(hiddenCount)}>
+          <PressableScale onPress={() => setExpanded(true)} style={styles.moreButton} accessibilityRole="button" accessibilityLabel={strings.qa.moreQuestions(hiddenCount)} haptic="none">
             <Text style={styles.moreLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.moreQuestions(hiddenCount)}</Text>
-          </Pressable>
+          </PressableScale>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -113,13 +116,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 10,
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 12,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     paddingVertical: 14,
     paddingHorizontal: 16,
     marginBottom: 8,
+    ...SHADOW.raised,
   },
   cardIcon: {
     marginTop: 2,

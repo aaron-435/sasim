@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import ChevronRight from "lucide-react-native/icons/chevron-right";
 import Share2 from "lucide-react-native/icons/share-2";
-import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import PressableScale from "./motion/PressableScale";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 import Text from "./AppText";
@@ -12,6 +13,7 @@ import { formatShortDate } from "../lib/shortDate";
 import { track } from "../lib/analytics";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // "오늘 나를 채우는 색" (2026-10-06): the element today's pillar and the reader's chart leave
 // emptiest (server: lib/elementColor.ts), shown as a swatch, a color name and a mood line.
@@ -56,10 +58,11 @@ export default function ElementColorCard({
 
   if (compact) {
     return (
-      <Pressable
-        style={({ pressed }) => [styles.compact, pressed && styles.compactPressed]}
+      <PressableScale
+        style={styles.compact}
         onPress={onPress}
         disabled={!onPress}
+        pressedScale={0.98}
         accessibilityRole={onPress ? "button" : "summary"}
         accessibilityLabel={`${strings.elementColor.title}: ${name}. ${mood}`}
       >
@@ -70,7 +73,7 @@ export default function ElementColorCard({
           <Text style={styles.compactMood}>{mood}</Text>
         </View>
         {onPress && <ChevronRight size={16} strokeWidth={2} color={COLORS.subheadline} />}
-      </Pressable>
+      </PressableScale>
     );
   }
 
@@ -86,7 +89,7 @@ export default function ElementColorCard({
         <Text style={styles.note}>{strings.elementColor.note}</Text>
         <Text style={styles.brand}>FATESAID</Text>
       </View>
-      <Pressable
+      <PressableScale
         style={styles.shareRow}
         onPress={handleShare}
         disabled={sharing}
@@ -95,7 +98,7 @@ export default function ElementColorCard({
       >
         {sharing ? <ActivityIndicator size="small" color={COLORS.gold} /> : <Share2 size={16} strokeWidth={1.75} color={COLORS.gold} />}
         <Text style={styles.shareLabel}>{strings.elementColor.shareButton}</Text>
-      </Pressable>
+      </PressableScale>
     </View>
   );
 }
@@ -126,13 +129,11 @@ const styles = StyleSheet.create({
     gap: 14,
     paddingVertical: 14,
     paddingHorizontal: 16,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.inputBg,
+    borderRadius: RADIUS.md,
+    backgroundColor: SURFACE.raised,
     marginTop: 12,
+    ...SHADOW.raised,
   },
-  compactPressed: { opacity: 0.8 },
   compactSwatch: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: "rgba(255,255,255,0.12)" },
   compactText: { flex: 1, gap: 2 },
   compactName: { fontFamily: FONTS.display, fontSize: 18, lineHeight: 24, color: COLORS.headline },

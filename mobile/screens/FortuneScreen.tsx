@@ -1,16 +1,25 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import Activity from "lucide-react-native/icons/activity";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
+import BookOpen from "lucide-react-native/icons/book-open";
+import Briefcase from "lucide-react-native/icons/briefcase";
 import Check from "lucide-react-native/icons/check";
 import ChevronDown from "lucide-react-native/icons/chevron-down";
 import ChevronUp from "lucide-react-native/icons/chevron-up";
+import Coins from "lucide-react-native/icons/coins";
+import Heart from "lucide-react-native/icons/heart";
 import Share2 from "lucide-react-native/icons/share-2";
 import Sparkles from "lucide-react-native/icons/sparkles";
-import { AccessibilityInfo, ActivityIndicator, Animated, Easing, Linking, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { AccessibilityInfo, ActivityIndicator, Animated, Easing, Linking, ScrollView, StyleSheet, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import Reanimated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import Text from "../components/AppText";
+import ElementsLoader from "../components/motion/ElementsLoader";
+import PressableScale from "../components/motion/PressableScale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
-import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
+import { success } from "../lib/haptics";
 import { DAILY_FORTUNE_CONTENT, LUCKY_NUMBERS, LUCKY_POINTS, getOverview } from "../lib/dailyFortuneContent";
 import { TWELVE_STAGES_CONTENT } from "../lib/twelveStagesContent";
 import { reconciledBody } from "../lib/reconciledCards";
@@ -19,6 +28,7 @@ import type { CompatibilityResult } from "../lib/compatibility";
 import { getFortuneStreak, isFortuneOpened, markFortuneOpened } from "../lib/fortuneOpenState";
 import { getRevenueCatUserId, hasQaProEntitlement, isUnavailableMessage, purchaseIssueDetail, purchaseQaPro, restoreQaPro } from "../lib/purchases";
 import { useSubscriptionOffer } from "../lib/useSubscriptionOffer";
+import useReducedMotion from "../lib/useReducedMotion";
 import PlanPicker from "../components/PlanPicker";
 import GoodDaysScreen from "./GoodDaysScreen";
 import { GOOD_DAY_PURPOSES, GOOD_DAYS_CONTENT, goodDayReason, type GoodDayPurpose, type GoodDayRelation } from "../lib/goodDaysContent";
@@ -29,11 +39,14 @@ import { formatMonthLabel, formatShortDate } from "../lib/shortDate";
 import MonthGrid from "../components/MonthGrid";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { SPRING } from "../theme/motion";
 import TextShareCard, { shareCardImage } from "../components/TextShareCard";
 import FeedbackRow from "../components/FeedbackRow";
 import ElementColorCard from "../components/ElementColorCard";
+import RhythmWave, { type RhythmRelation } from "../components/art/RhythmWave";
 import { elementsParam, type ElementColor } from "../lib/elementColorContent";
 import { track, trackOnce } from "../lib/analytics";
 
@@ -42,6 +55,8 @@ import { track, trackOnce } from "../lib/analytics";
 const DAILY_SECTION_COUNT = 4;
 
 type FortuneTab = "daily" | "weekly" | "month" | "yearly";
+
+const TABS: FortuneTab[] = ["daily", "weekly", "month", "yearly"];
 
 // "오늘의 운세" / "이번주 운세" — 화면은 순전히 프레젠테이션이다. relation 분류·
 // 점수는 lib/compatibility.ts를 그대로 재사용해 만든 app/api/dailyFortune가
@@ -153,9 +168,9 @@ function ErrorNotice({ text, retryLabel, onRetry }: { text: string; retryLabel: 
   return (
     <View style={styles.errorBlock}>
       <Text style={styles.errorBlockText}>{text}</Text>
-      <Pressable onPress={onRetry} style={styles.retryButton} accessibilityRole="button">
+      <PressableScale onPress={onRetry} style={styles.retryButton} accessibilityRole="button" haptic="none">
         <Text style={styles.retryLabel}>{retryLabel}</Text>
-      </Pressable>
+      </PressableScale>
     </View>
   );
 }
@@ -163,16 +178,41 @@ function ErrorNotice({ text, retryLabel, onRetry }: { text: string; retryLabel: 
 // Wealth / love / health (and career / study for the year) used to be one identical card
 // each — eight same-shaped cards in a row. They are two-sentence notes, so one card with
 // a row per area is easier to skim and leaves the overview as the one big block.
+function areaIconFor(key: string) {
+  switch (key) {
+    case "wealth":
+      return Coins;
+    case "love":
+      return Heart;
+    case "health":
+      return Activity;
+    case "career":
+      return Briefcase;
+    case "study":
+      return BookOpen;
+    default:
+      return Sparkles;
+  }
+}
+
 function AreaList({ title, items }: { title: string; items: { key: string; label: string; body: string }[] }) {
   return (
     <View style={styles.sectionCard}>
       <Text style={styles.sectionLabel} accessibilityRole="header">{title}</Text>
-      {items.map((item, i) => (
-        <View key={item.key} style={[styles.areaRow, i > 0 && styles.rowDivider]}>
-          <Text style={styles.areaLabel}>{item.label}</Text>
-          <Text style={styles.areaBody}>{item.body}</Text>
-        </View>
-      ))}
+      {items.map((item) => {
+        const Icon = areaIconFor(item.key);
+        return (
+          <View key={item.key} style={styles.areaRow}>
+            <View style={styles.areaIcon}>
+              <Icon size={18} strokeWidth={2} color={COLORS.gold} />
+            </View>
+            <View style={styles.areaText}>
+              <Text style={styles.areaLabel}>{item.label}</Text>
+              <Text style={styles.areaBody}>{item.body}</Text>
+            </View>
+          </View>
+        );
+      })}
     </View>
   );
 }
@@ -183,9 +223,10 @@ function DetailRow({ label, name, body, first }: { label: string; name: string; 
   const [open, setOpen] = useState(false);
   return (
     <View style={!first && styles.rowDivider}>
-      <Pressable
+      <PressableScale
         onPress={() => setOpen((v) => !v)}
-        style={({ pressed }) => [styles.detailHeader, pressed && styles.pressed]}
+        style={styles.detailHeader}
+        haptic="select"
         accessibilityRole="button"
         accessibilityState={{ expanded: open }}
         aria-expanded={open}
@@ -196,7 +237,7 @@ function DetailRow({ label, name, body, first }: { label: string; name: string; 
           <Text style={styles.detailName}>{name}</Text>
         </View>
         {open ? <ChevronUp size={18} strokeWidth={2} color={COLORS.subheadline} /> : <ChevronDown size={18} strokeWidth={2} color={COLORS.subheadline} />}
-      </Pressable>
+      </PressableScale>
       {open && <Text style={styles.detailBody}>{body}</Text>}
     </View>
   );
@@ -220,6 +261,20 @@ function toParagraphs(text: string | undefined, perParagraph = 3): string {
   const groups: string[] = [];
   for (let i = 0; i < sentences.length; i += perParagraph) groups.push(sentences.slice(i, i + perParagraph).join(" "));
   return groups.join("\n\n");
+}
+
+/** Narrows a server-sent relation to what RhythmWave draws; unknown values fall back to a calm wave. */
+function toRhythmRelation(value: string): RhythmRelation {
+  switch (value) {
+    case "mirror":
+    case "selfNurturesOther":
+    case "otherNurturesSelf":
+    case "selfChallengesOther":
+    case "otherChallengesSelf":
+      return value;
+    default:
+      return "mirror";
+  }
 }
 
 /**
@@ -246,7 +301,7 @@ function OverviewShare({ relation, headline, body }: { relation: string; headlin
   return (
     <>
       <TextShareCard cardRef={cardRef} eyebrow={`${strings.fortune.shareCardEyebrow} · ${rhythm}`} headline={cardHeadline} body={cardBody} />
-      <Pressable
+      <PressableScale
         style={styles.shareRow}
         onPress={handleShare}
         disabled={sharing}
@@ -256,7 +311,7 @@ function OverviewShare({ relation, headline, body }: { relation: string; headlin
       >
         <Share2 size={16} strokeWidth={1.75} color={COLORS.gold} />
         <Text style={styles.shareLabel}>{strings.fortune.shareOverviewButton}</Text>
-      </Pressable>
+      </PressableScale>
     </>
   );
 }
@@ -283,6 +338,17 @@ export default function FortuneScreen({
 
   const [entitled, setEntitled] = useState<boolean | null>(null);
   const [tab, setTab] = useState<FortuneTab>("daily");
+  const reduceMotion = useReducedMotion();
+  const [tabRowWidth, setTabRowWidth] = useState(0);
+  const tabIndicatorX = useSharedValue(0);
+  const tabIndex = TABS.indexOf(tab);
+  const tabIndicatorStyle = useAnimatedStyle(() => ({ transform: [{ translateX: tabIndicatorX.value }] }));
+
+  // The tab indicator glides between tabs on a spring; with Reduce Motion it jumps instantly.
+  useEffect(() => {
+    const target = tabRowWidth > 0 ? tabIndex * ((tabRowWidth - 8) / 4) : 0;
+    tabIndicatorX.value = reduceMotion ? withTiming(target, { duration: 0 }) : withSpring(target, SPRING.gentle);
+  }, [tabIndex, tabRowWidth, reduceMotion, tabIndicatorX]);
 
   const { data: daily, loading: dailyLoading, error: dailyError, load: fetchDaily, retry: retryDaily } = useLazyFetch<DayFortune>(strings.fortune.loadErrorText);
   const { data: weekly, loading: weeklyLoading, error: weeklyError, load: fetchWeekly, retry: retryWeekly } = useLazyFetch<DayFortune[]>(strings.fortune.loadErrorText);
@@ -442,6 +508,7 @@ export default function FortuneScreen({
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
+      success();
       setEntitled(true);
       refreshRoutineNotification(strings).catch(() => {});
     } else if (outcome.status === "error") {
@@ -498,12 +565,12 @@ export default function FortuneScreen({
     return (
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.content}>
-          <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+          <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
             <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
             <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-          </Pressable>
+          </PressableScale>
 
-          {dailyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
+          {dailyLoading && <ElementsLoader size="medium" style={styles.sectionSpinner} />}
           {freeOverview && daily?.compatibility && (
             <View style={[styles.sectionCard, styles.freeReadingCard]}>
               <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.freeReadingLabel}</Text>
@@ -532,7 +599,7 @@ export default function FortuneScreen({
               ))}
             </View>
             <PlanPicker offer={offer} disabled={purchasing || restoring} />
-            <Pressable
+            <PressableScale
               style={[styles.subscribeButton, purchasing && styles.buttonDisabled]}
               disabled={purchasing || restoring}
               onPress={handleSubscribe}
@@ -542,18 +609,18 @@ export default function FortuneScreen({
               <Text style={styles.subscribeButtonText}>
                 {purchasing ? strings.qa.subscribing : offer.buttonLabel}
               </Text>
-            </Pressable>
-            <Pressable style={styles.restoreLink} disabled={purchasing || restoring} onPress={handleRestore} accessibilityRole="button" accessibilityState={{ disabled: purchasing || restoring, busy: restoring }}>
+            </PressableScale>
+            <PressableScale style={styles.restoreLink} disabled={purchasing || restoring} onPress={handleRestore} accessibilityRole="button" accessibilityState={{ disabled: purchasing || restoring, busy: restoring }} haptic="none">
               <Text style={styles.restoreLinkText}>{restoring ? strings.qa.restoring : strings.qa.restoreButton}</Text>
-            </Pressable>
+            </PressableScale>
             <Text style={styles.renewNote}>{offer.renewNote}</Text>
             <View style={styles.legalRow}>
-              <Pressable onPress={() => Linking.openURL(`${API_BASE_URL}/terms`)} accessibilityRole="link" style={styles.legalLink}>
+              <PressableScale onPress={() => Linking.openURL(`${API_BASE_URL}/terms`)} accessibilityRole="link" style={styles.legalLink} haptic="none">
                 <Text style={styles.legalLinkText}>{strings.fortune.termsLink}</Text>
-              </Pressable>
-              <Pressable onPress={() => Linking.openURL(`${API_BASE_URL}/privacy`)} accessibilityRole="link" style={styles.legalLink}>
+              </PressableScale>
+              <PressableScale onPress={() => Linking.openURL(`${API_BASE_URL}/privacy`)} accessibilityRole="link" style={styles.legalLink} haptic="none">
                 <Text style={styles.legalLinkText}>{strings.fortune.privacyLink}</Text>
-              </Pressable>
+              </PressableScale>
             </View>
             {purchaseNotice && <Text style={styles.noticeText}>{purchaseNotice}</Text>}
           </View>
@@ -568,12 +635,12 @@ export default function FortuneScreen({
 
   // Subscriber entry to "좋은 날 찾기" — at the end of today's reading and at the top of the month calendar.
   const goodDaysEntry = selfDayMasterChar ? (
-    <Pressable style={styles.yearReportCard} onPress={() => setShowGoodDays(true)} accessibilityRole="button" accessibilityLabel={strings.goodDays.entryTitle}>
+    <PressableScale style={styles.yearReportCard} onPress={() => setShowGoodDays(true)} accessibilityRole="button" accessibilityLabel={strings.goodDays.entryTitle} pressedScale={0.98}>
       <View style={styles.yearReportText}>
         <Text style={styles.yearReportTitle}>{strings.goodDays.entryTitle}</Text>
         <Text style={styles.yearReportBody}>{strings.goodDays.entryBody}</Text>
       </View>
-    </Pressable>
+    </PressableScale>
   ) : null;
 
   async function loadCalendarPurpose(purpose: GoodDayPurpose) {
@@ -647,19 +714,23 @@ export default function FortuneScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-        </Pressable>
+        </PressableScale>
 
-        <Text style={styles.heading} accessibilityRole="header">{strings.fortune.tabHeadings[tab]}</Text>
+        <Text style={[styles.heading, locale === "ko" && styles.headingKo]} accessibilityRole="header">{strings.fortune.tabHeadings[tab]}</Text>
 
-        <View style={styles.tabRow} accessibilityRole="tablist">
-          {(["daily", "weekly", "month", "yearly"] as FortuneTab[]).map((t) => (
-            <Pressable
+        <View style={styles.tabRow} accessibilityRole="tablist" onLayout={(e) => setTabRowWidth(e.nativeEvent.layout.width)}>
+          {tabRowWidth > 0 && (
+            <Reanimated.View style={[styles.tabIndicator, { width: (tabRowWidth - 8) / 4 }, tabIndicatorStyle]} />
+          )}
+          {TABS.map((t) => (
+            <PressableScale
               key={t}
-              style={[styles.tabButton, tab === t && styles.tabButtonActive]}
+              style={styles.tabButton}
               onPress={() => handleSelectTab(t)}
+              haptic="select"
               accessibilityRole="tab"
               accessibilityState={{ selected: tab === t }}
               aria-selected={tab === t}
@@ -667,20 +738,22 @@ export default function FortuneScreen({
               <Text style={[styles.tabLabel, tab === t && styles.tabLabelActive]} numberOfLines={1} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
                 {t === "daily" ? strings.fortune.dailyTab : t === "weekly" ? strings.fortune.weeklyTab : t === "month" ? strings.fortune.monthTab : strings.fortune.yearlyTab}
               </Text>
-            </Pressable>
+            </PressableScale>
           ))}
         </View>
 
         {!selfDayMasterChar && <Text style={styles.errorText}>{strings.fortune.loadErrorText}</Text>}
 
-        {tab === "daily" && dailyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
+        {tab === "daily" && dailyLoading && <ElementsLoader size="medium" style={styles.sectionSpinner} />}
         {tab === "daily" && !dailyLoading && dailyError && <ErrorNotice text={dailyError} retryLabel={strings.common.retryLabel} onRetry={retryDaily} />}
 
         {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && !revealed && (
-          <Pressable
+          // pressedScale=1: the custom seal spring (pressIn/pressOut) already handles the shrink.
+          <PressableScale
             onPress={handleOpenDaily}
             onPressIn={handleSealPressIn}
             onPressOut={handleSealPressOut}
+            pressedScale={1}
             accessibilityRole="button"
             accessibilityLabel={`${strings.fortune.sealHeading}. ${strings.fortune.sealButtonLabel}`}
           >
@@ -695,24 +768,26 @@ export default function FortuneScreen({
               </View>
               {streak > 0 && <Text style={styles.streakContinueText}>{strings.fortune.streakContinue(streak)}</Text>}
             </Animated.View>
-          </Pressable>
+          </PressableScale>
         )}
 
         {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && revealed && (
           <>
             {/* The overview is the day's one big block: rhythm name and overview share a card
                 instead of a score card followed by an overview card of the same weight. */}
-            <Animated.View style={[styles.heroCard, sectionStyle(0), { borderColor: `${ELEMENT_COLORS[daily.compatibility.otherDayMasterElement] ?? COLORS.gold}55` }]}>
-              <Text style={styles.heroKicker}>{strings.fortune.scoreLabel}</Text>
-              <Text style={styles.heroRhythm} accessibilityRole="header">{strings.fortune.rhythmNames[daily.compatibility.relation]}</Text>
+            <Animated.View style={[styles.heroCard, styles.heroCardToday, sectionStyle(0)]}>
+              <LinearGradient colors={["#1F3327", "#18291F"]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={StyleSheet.absoluteFill} />
+              <RhythmWave relation={toRhythmRelation(daily.compatibility.relation)} height={64} color={COLORS.gold} style={styles.heroWaveToday} />
+              <Text style={styles.heroKickerToday}>{strings.fortune.scoreLabel}</Text>
+              <Text style={[styles.heroRhythmToday, locale === "ko" && styles.heroRhythmTodayKo]} accessibilityRole="header">{strings.fortune.rhythmNames[daily.compatibility.relation]}</Text>
               {streak > 1 && (
                 <View style={styles.streakBadge}>
                   <Text style={styles.streakBadgeText}>{strings.fortune.streakBadge(streak)}</Text>
                 </View>
               )}
               <View style={styles.heroDivider} />
-              <Text style={styles.heroHeadline}>{dailyOverview?.headline}</Text>
-              <Text style={styles.sectionBody}>{toParagraphs(dailyOverview?.body)}</Text>
+              <Text style={[styles.heroHeadlineToday, locale === "ko" ? styles.heroHeadlineTodayKo : styles.heroHeadlineTodayItalic]}>{dailyOverview?.headline}</Text>
+              <Text style={styles.heroBodyToday}>{toParagraphs(dailyOverview?.body)}</Text>
               {!!dailyOverview && <OverviewShare relation={daily.compatibility.relation} headline={dailyOverview.headline} body={dailyOverview.body} />}
               {!!dailyOverview && <FeedbackRow surface="fortune" topic="pro" />}
             </Animated.View>
@@ -732,20 +807,27 @@ export default function FortuneScreen({
               <Animated.View style={[styles.sectionCard, sectionStyle(2)]}>
                 <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.luckyPointLabel}</Text>
                 <View style={styles.luckyRow}>
-                  <View style={styles.luckyItem}>
-                    <Text style={styles.luckyItemLabel}>{strings.fortune.luckyColorLabel}</Text>
-                    <Text style={styles.luckyItemValue}>{luckyPoint.color}</Text>
+                  <View style={styles.luckyBlock}>
+                    <Text style={styles.luckyBlockLabel}>{strings.fortune.luckyColorLabel}</Text>
+                    <View style={styles.luckyColorRow}>
+                      <View style={styles.luckyColorDot} />
+                      <Text style={styles.luckyColorValue}>{luckyPoint.color}</Text>
+                    </View>
                   </View>
-                  <View style={styles.luckyItem}>
-                    <Text style={styles.luckyItemLabel}>{strings.fortune.luckyNumberLabel}</Text>
-                    <Text style={styles.luckyItemValue}>{luckyNumber}</Text>
+                  <View style={styles.luckyDivider} />
+                  <View style={styles.luckyBlock}>
+                    <Text style={styles.luckyBlockLabel}>{strings.fortune.luckyNumberLabel}</Text>
+                    <Text style={styles.luckyNumberValue}>{luckyNumber}</Text>
                   </View>
                   {/* Cardinal directions only carry meaning in Korean fortune culture; en/es show color + number. */}
                   {locale === "ko" && (
-                    <View style={styles.luckyItem}>
-                      <Text style={styles.luckyItemLabel}>{strings.fortune.luckyDirectionLabel}</Text>
-                      <Text style={styles.luckyItemValue}>{luckyPoint.direction}</Text>
-                    </View>
+                    <>
+                      <View style={styles.luckyDivider} />
+                      <View style={styles.luckyBlock}>
+                        <Text style={styles.luckyBlockLabel}>{strings.fortune.luckyDirectionLabel}</Text>
+                        <Text style={styles.luckyDirectionValue}>{luckyPoint.direction}</Text>
+                      </View>
+                    </>
                   )}
                 </View>
               </Animated.View>
@@ -785,7 +867,7 @@ export default function FortuneScreen({
         )}
         {tab === "daily" && !dailyLoading && !dailyError && daily?.compatibility && revealed && goodDaysEntry}
 
-        {tab === "weekly" && weeklyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
+        {tab === "weekly" && weeklyLoading && <ElementsLoader size="medium" style={styles.sectionSpinner} />}
         {tab === "weekly" && !weeklyLoading && weeklyError && <ErrorNotice text={weeklyError} retryLabel={strings.common.retryLabel} onRetry={retryWeekly} />}
         {tab === "weekly" && !weeklyLoading && !weeklyError && weekly && !weeklyBest && (
           <Text style={styles.errorText}>{strings.fortune.loadErrorText}</Text>
@@ -816,7 +898,7 @@ export default function FortuneScreen({
         )}
 
         {tab === "month" && goodDaysEntry}
-        {tab === "month" && monthDaysLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
+        {tab === "month" && monthDaysLoading && <ElementsLoader size="medium" style={styles.sectionSpinner} />}
         {tab === "month" && !monthDaysLoading && monthDaysError && <ErrorNotice text={monthDaysError} retryLabel={strings.common.retryLabel} onRetry={retryMonthDays} />}
         {tab === "month" && !monthDaysLoading && !monthDaysError && monthDays && !monthKey && (
           <Text style={styles.errorText}>{strings.fortune.loadErrorText}</Text>
@@ -830,17 +912,18 @@ export default function FortuneScreen({
                 const active = calPurpose === p;
                 const label = (GOOD_DAYS_CONTENT[locale] ?? GOOD_DAYS_CONTENT.en).purposes[p].label;
                 return (
-                  <Pressable
+                  <PressableScale
                     key={p}
                     style={[styles.domainChip, active && styles.domainChipActive]}
                     onPress={() => handleCalendarChip(p)}
+                    haptic="select"
                     accessibilityRole="button"
                     accessibilityLabel={label}
                     accessibilityState={{ selected: active }}
                     aria-pressed={active}
                   >
                     <Text style={[styles.domainChipLabel, active && styles.domainChipLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{label}</Text>
-                  </Pressable>
+                  </PressableScale>
                 );
               })}
               {calLoading && <ActivityIndicator color={COLORS.gold} style={styles.chipSpinner} />}
@@ -859,16 +942,17 @@ export default function FortuneScreen({
                 const isSelected = monthSelectedDate === date;
                 const isGood = calHighlights.has(date);
                 return (
-                  <Pressable
+                  <PressableScale
                     onPress={() => setSelectedMonthDate(date)}
                     style={[styles.dayCell, isPast && styles.dayCellPast, isToday && styles.dayCellToday, isSelected && styles.dayCellSelected, isGood && styles.dayCellGood]}
+                    haptic="select"
                     accessibilityRole="button"
                     accessibilityLabel={strings.fortune.monthCellLabel(formatShortDate(date, locale), strings.fortune.rhythmNames[relation], isToday) + (isGood && calPurposeLabel ? `, ${strings.goodDays.calendarGoodDay(calPurposeLabel)}` : "")}
                     accessibilityState={{ selected: isSelected }}
                   >
                     <Text style={[styles.dayNumber, isGood && styles.dayNumberGood]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{Number(date.slice(8))}</Text>
                     {isGood && <View style={styles.dayGoodDot} />}
-                  </Pressable>
+                  </PressableScale>
                 );
               }}
             />
@@ -898,20 +982,20 @@ export default function FortuneScreen({
         {tab === "yearly" && (
           // The paid deep read of this same year (a separate one-time purchase, not part of
           // the subscription) — the natural next step from the year tab.
-          <Pressable style={styles.yearReportCard} onPress={onOpenYearReport} accessibilityRole="button">
+          <PressableScale style={styles.yearReportCard} onPress={onOpenYearReport} accessibilityRole="button" pressedScale={0.98}>
             <View style={styles.yearReportText}>
               <Text style={styles.yearReportTitle}>{strings.yearReport.tabCardTitle(yearly?.year ?? comingSajuYear())}</Text>
               <Text style={styles.yearReportBody}>{strings.yearReport.tabCardBody}</Text>
               <Text style={styles.yearReportCta}>{strings.yearReport.tabCardCta}</Text>
             </View>
-          </Pressable>
+          </PressableScale>
         )}
 
-        {tab === "yearly" && yearlyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
+        {tab === "yearly" && yearlyLoading && <ElementsLoader size="medium" style={styles.sectionSpinner} />}
         {tab === "yearly" && !yearlyLoading && yearlyError && <ErrorNotice text={yearlyError} retryLabel={strings.common.retryLabel} onRetry={retryYearly} />}
         {tab === "yearly" && !yearlyLoading && !yearlyError && yearly?.compatibility && (
           <>
-            <View style={[styles.heroCard, { borderColor: `${ELEMENT_COLORS[yearly.compatibility.otherDayMasterElement] ?? COLORS.gold}55` }]}>
+            <View style={styles.heroCard}>
               <Text style={styles.heroKicker}>{strings.fortune.yearHeading(yearly.year)}</Text>
               <Text style={styles.heroRhythm} accessibilityRole="header">{strings.fortune.rhythmNames[yearly.compatibility.relation]}</Text>
               <View style={styles.heroDivider} />
@@ -961,20 +1045,21 @@ export default function FortuneScreen({
 
             <View style={styles.domainPickerRow}>
               {(["overview", "wealth", "love", "career", "study", "health"] as YearDomain[]).map((d) => (
-                <Pressable
+                <PressableScale
                   key={d}
                   style={[styles.domainChip, monthlyDomain === d && styles.domainChipActive]}
                   onPress={() => setMonthlyDomain(d)}
+                  haptic="select"
                   accessibilityRole="button"
                   accessibilityState={{ selected: monthlyDomain === d }}
                   aria-pressed={monthlyDomain === d}
                 >
                   <Text style={[styles.domainChipLabel, monthlyDomain === d && styles.domainChipLabelActive]}>{domainLabel(d)}</Text>
-                </Pressable>
+                </PressableScale>
               ))}
             </View>
 
-            {monthlyLoading && <ActivityIndicator color={COLORS.gold} style={styles.sectionSpinner} />}
+            {monthlyLoading && <ElementsLoader size="medium" style={styles.sectionSpinner} />}
             {!monthlyLoading && monthlyError && <ErrorNotice text={monthlyError} retryLabel={strings.common.retryLabel} onRetry={retryMonthly} />}
             {/* The Bond/Shift badges below mean nothing without a key. */}
             {!monthlyLoading && !monthlyError && monthly?.some((m) => m.compatibility && m.branchRelation !== "none") && (
@@ -1028,21 +1113,21 @@ const styles = StyleSheet.create({
   sectionSpinner: { marginTop: 32 },
   backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
-  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginBottom: 16 },
+  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 32, lineHeight: 40, letterSpacing: -0.6, color: COLORS.headline, marginBottom: 16 },
+  headingKo: { fontWeight: "700", letterSpacing: -0.8 },
   shareRow: { flexDirection: "row", alignItems: "center", gap: 8, alignSelf: "flex-start", minHeight: 44, marginTop: 6 },
   shareLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.gold },
   freeReadingCard: { marginBottom: 18, gap: 8 },
   lockedCard: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 16,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     padding: 22,
     marginTop: 8,
     gap: 10,
+    ...SHADOW.raised,
   },
   lockedHeading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 22, color: COLORS.headline },
-  yearReportCard: { backgroundColor: "rgba(111,169,139,0.08)", borderWidth: 1, borderColor: "rgba(111,169,139,0.35)", borderRadius: 16, padding: 18, marginBottom: 14 },
+  yearReportCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 18, marginBottom: 14, ...SHADOW.raised },
   yearReportText: { gap: 6 },
   yearReportTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 20, color: COLORS.headline },
   yearReportBody: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.subheadline },
@@ -1068,15 +1153,13 @@ const styles = StyleSheet.create({
   tabRow: {
     flexDirection: "row",
     padding: 4,
-    gap: 4,
     marginBottom: 20,
-    borderRadius: 12,
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    backgroundColor: SURFACE.raised,
+    ...SHADOW.raised,
   },
   tabButton: { flex: 1, alignItems: "center", justifyContent: "center", minHeight: 40, paddingHorizontal: 4, borderRadius: 9 },
-  tabButtonActive: { backgroundColor: "rgba(111,169,139,0.14)" },
+  tabIndicator: { position: "absolute", top: 4, bottom: 4, left: 4, backgroundColor: "rgba(111,169,139,0.18)", borderRadius: 9 },
   tabLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.subheadline },
   tabLabelActive: { color: COLORS.gold },
   // COLORS.danger (was #CB6249, 4.3:1 — then a one-off #E0A296): the palette error color, passes 4.5:1.
@@ -1087,14 +1170,13 @@ const styles = StyleSheet.create({
   retryLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.gold },
   sealCard: {
     alignItems: "center",
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: "rgba(111,169,139,0.35)",
-    borderRadius: 20,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.lg,
     paddingVertical: 36,
     paddingHorizontal: 24,
     marginTop: 12,
     gap: 8,
+    ...SHADOW.raised,
   },
   sealIconRing: {
     width: 44,
@@ -1123,57 +1205,67 @@ const styles = StyleSheet.create({
   },
   streakBadgeText: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.gold },
   heroCard: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderRadius: 20,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.lg,
     paddingVertical: 24,
     paddingHorizontal: 20,
+    ...SHADOW.raised,
   },
   heroKicker: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.subheadline },
   heroRhythm: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 36, color: COLORS.headline, marginTop: 6 },
-  heroDivider: { height: StyleSheet.hairlineWidth, backgroundColor: COLORS.border, marginTop: 18, marginBottom: 14 },
+  heroDivider: { height: StyleSheet.hairlineWidth, backgroundColor: SURFACE.hairline, marginTop: 18, marginBottom: 14 },
   heroHeadline: { fontFamily: FONTS.semibold, fontSize: 17, lineHeight: 24, color: COLORS.headline },
   heroNote: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.subheadline, marginTop: 14, paddingLeft: 12, borderLeftWidth: 2, borderLeftColor: "rgba(111,169,139,0.4)" },
+  // Magazine-style "today" hero — the year tab keeps the original heroKicker/heroRhythm/heroHeadline above.
+  heroCardToday: { overflow: "hidden" },
+  // Cancels the hero card's own padding (20 horizontal, 24 top) so the wave touches its edges.
+  // width "auto" overrides RhythmWave's 100% so the negative margins widen it to the card edges
+  // (with 100% it kept the inner width and stopped 40px short on the right).
+  heroWaveToday: { width: "auto", alignSelf: "stretch", marginHorizontal: -20, marginTop: -24, marginBottom: SPACE.md },
+  heroKickerToday: { fontFamily: FONTS.medium, fontSize: 12, letterSpacing: 1.2, color: COLORS.subheadline },
+  heroRhythmToday: { fontFamily: FONTS.display, fontSize: 44, lineHeight: 50, letterSpacing: -1, color: COLORS.headline, marginTop: 6 },
+  heroRhythmTodayKo: { fontWeight: "700", letterSpacing: -1.2 },
+  heroHeadlineToday: { borderLeftWidth: 3, borderLeftColor: COLORS.gold, paddingLeft: 14, color: COLORS.headline },
+  heroHeadlineTodayItalic: { fontFamily: FONTS.displayItalic, fontSize: 20, lineHeight: 28 },
+  heroHeadlineTodayKo: { fontSize: 18, lineHeight: 28, fontWeight: "600" },
+  heroBodyToday: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 26, color: COLORS.subheadline, marginTop: 8 },
   rhythmValue: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 36, color: COLORS.headline, textAlign: "center", marginTop: 4 },
   sectionCard: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 16,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     padding: 18,
-    marginTop: 14,
+    marginTop: SPACE.lg,
+    ...SHADOW.raised,
   },
   sectionLabel: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold },
-  rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: COLORS.border },
-  areaRow: { paddingVertical: 12, gap: 4 },
-  areaLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.headline },
-  areaBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline },
+  rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },
+  areaRow: { flexDirection: "row", gap: SPACE.md, marginTop: SPACE.lg },
+  areaIcon: { width: 36, height: 36, borderRadius: 18, backgroundColor: "rgba(111,169,139,0.12)", alignItems: "center", justifyContent: "center" },
+  areaText: { flex: 1, gap: 2 },
+  areaLabel: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.headline },
+  areaBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 22, color: COLORS.subheadline },
   detailHeader: { flexDirection: "row", alignItems: "center", gap: 12, minHeight: 56, paddingVertical: 10 },
   detailHeaderText: { flex: 1, gap: 2 },
   detailLabel: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.subheadline },
   detailName: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline },
   detailBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, paddingBottom: 12 },
-  pressed: { opacity: 0.7 },
   sectionHeadline: { fontFamily: FONTS.semibold, fontSize: 16, color: COLORS.headline, marginTop: 8 },
   sectionBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginTop: 8 },
-  luckyRow: { flexDirection: "row", marginTop: 12, gap: 8 },
-  luckyItem: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.03)",
-    borderRadius: 10,
-    paddingVertical: 12,
-    gap: 4,
-  },
-  luckyItemLabel: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.subheadline },
-  luckyItemValue: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.headline },
+  luckyRow: { flexDirection: "row", marginTop: 12 },
+  luckyBlock: { flex: 1, alignItems: "center", gap: 6 },
+  luckyBlockLabel: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.subheadline },
+  luckyNumberValue: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 40, lineHeight: 44, color: COLORS.headline },
+  luckyColorRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  luckyColorDot: { width: 12, height: 12, borderRadius: 6, borderWidth: 1.5, borderColor: COLORS.gold, backgroundColor: "transparent" },
+  luckyColorValue: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.headline },
+  luckyDirectionValue: { fontFamily: FONTS.semibold, fontSize: 18, color: COLORS.headline },
+  luckyDivider: { width: 1, backgroundColor: SURFACE.hairline, marginHorizontal: 8 },
   highlightCard: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 14,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     padding: 16,
     marginBottom: 12,
+    ...SHADOW.raised,
   },
   highlightLabel: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold },
   highlightDate: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline, marginTop: 6 },
@@ -1183,9 +1275,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    backgroundColor: SURFACE.floating,
     borderRadius: 10,
     paddingVertical: 11,
     paddingHorizontal: 14,
@@ -1205,7 +1295,7 @@ const styles = StyleSheet.create({
   dayCellSelected: { backgroundColor: COLORS.border },
   dayNumber: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.headline },
   dayNumberGood: { color: COLORS.headline, fontFamily: FONTS.bold },
-  dayDetailCard: { marginTop: 14, backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, padding: 16 },
+  dayDetailCard: { marginTop: 14, backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 16, ...SHADOW.raised },
   dayDetailGoodLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.gold, marginTop: 12 },
   calendarHint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: 4 },
   chipSpinner: { alignSelf: "center", marginLeft: 4 },
@@ -1218,15 +1308,13 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
   },
   domainChipActive: { backgroundColor: "rgba(111,169,139,0.14)", borderColor: "rgba(111,169,139,0.4)" },
   domainChipLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline },
   domainChipLabelActive: { color: COLORS.gold },
   monthRow: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    backgroundColor: SURFACE.floating,
     borderRadius: 10,
     padding: 12,
     gap: 6,

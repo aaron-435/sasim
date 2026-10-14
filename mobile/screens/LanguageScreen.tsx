@@ -1,11 +1,13 @@
 import Sparkles from "lucide-react-native/icons/sparkles";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "../components/PatternBackground";
+import PressableScale from "../components/motion/PressableScale";
 import { LOCALE_LABELS, useLocale, type Locale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { SURFACE } from "../theme/tokens";
 
 // The very first screen, before IntroScreen — picked manually here rather than
 // auto-detected from the device locale (explicit user choice per product decision).
@@ -37,16 +39,18 @@ export default function LanguageScreen({ onNext }: { onNext: () => void }) {
 
           <View style={styles.optionList}>
             {LANGUAGE_ORDER.map((locale) => (
-              <Pressable
+              <PressableScale
                 key={locale}
                 style={styles.option}
                 onPress={() => handlePick(locale)}
                 accessibilityRole="button"
                 accessibilityLabel={LOCALE_LABELS[locale]}
                 accessibilityLanguage={locale}
+                haptic="select"
+                pressedScale={0.98}
               >
                 <Text style={styles.optionLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{LOCALE_LABELS[locale]}</Text>
-              </Pressable>
+              </PressableScale>
             ))}
           </View>
         </View>
@@ -98,7 +102,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
   },
   optionLabel: {
     fontFamily: FONTS.semibold,

@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
+import ElementsLoader from "../components/motion/ElementsLoader";
+import PressableScale from "../components/motion/PressableScale";
 import { API_BASE_URL } from "../config";
 import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { SURFACE } from "../theme/tokens";
 
 const CODE_LENGTH = 6;
 
@@ -80,19 +83,20 @@ export default function VerifyCodeScreen({
           to collide with Android's gesture nav bar (see AuraNextButton.tsx's note). */}
       <View style={styles.middle}>
         {loading ? (
-          <ActivityIndicator color={COLORS.gold} size="large" />
+          <ElementsLoader size="large" />
         ) : (
           <AuraNextButton disabled={!canSubmit} onPress={handleVerify} size={190} />
         )}
-        <Pressable
+        <PressableScale
           onPress={onSkip}
           hitSlop={12}
           style={styles.skipButton}
           accessibilityRole="button"
           accessibilityLabel={strings.verifyCode.skipLabel}
+          haptic="none"
         >
           <Text style={styles.skipLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.verifyCode.skipLabel}</Text>
-        </Pressable>
+        </PressableScale>
       </View>
     </OnboardingShell>
   );
@@ -124,7 +128,7 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     borderRadius: 10,
     paddingVertical: 14,
   },

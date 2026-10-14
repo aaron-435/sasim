@@ -1,14 +1,16 @@
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import ArrowRight from "lucide-react-native/icons/arrow-right";
 import Sparkles from "lucide-react-native/icons/sparkles";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import PressableScale from "../components/motion/PressableScale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import type { QaSubcategory, QaTopicGroup } from "../lib/qaTopicGroups";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // Ported from components/QASubcategoryPage.jsx — full-screen 중분류 picker. In the app it
 // shows one display group (lib/qaTopicGroups.ts), which can hold more than one bank
@@ -29,10 +31,10 @@ export default function QASubcategoryScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
-        </Pressable>
+        </PressableScale>
 
         <View style={styles.header}>
           <View style={styles.categoryRow}>
@@ -50,16 +52,17 @@ export default function QASubcategoryScreen({
               </Text>
             )}
             {category.subcategories.map((sub) => (
-              <Pressable
+              <PressableScale
                 key={sub.id}
                 style={styles.card}
                 onPress={() => onSelect(sub)}
                 accessibilityRole="button"
                 accessibilityLabel={localizedText(sub.name_ko, sub.name_en, sub.name_es, locale)}
+                pressedScale={0.98}
               >
                 <Text style={styles.cardLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{localizedText(sub.name_ko, sub.name_en, sub.name_es, locale)}</Text>
                 <ArrowRight size={16} strokeWidth={2.25} color={COLORS.gold} />
-              </Pressable>
+              </PressableScale>
             ))}
           </View>
         ))}
@@ -128,13 +131,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     gap: 12,
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 14,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     paddingVertical: 16,
     paddingHorizontal: 18,
     marginBottom: 10,
+    ...SHADOW.raised,
   },
   cardLabel: {
     fontFamily: FONTS.regular,

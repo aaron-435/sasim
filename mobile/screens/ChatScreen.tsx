@@ -8,7 +8,6 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -16,6 +15,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "../components/AppText";
+import PressableScale from "../components/motion/PressableScale";
 import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
@@ -23,6 +23,7 @@ import { findTopAnswers, findTopAnswersOverall } from "../lib/quiz/quizProfile";
 import type { QuizDiagnosis } from "./QuizScreen";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
+import { SURFACE } from "../theme/tokens";
 
 // TOTAL_TURNS/TIME_LIMIT_MINUTES/CHECKPOINT_TURN mirror lib/chatPrompts.ts's exports
 // (web's server-side prompt builder) — that file isn't ported here since prompt building
@@ -278,9 +279,9 @@ export default function ChatScreen({
     <SafeAreaView style={styles.root}>
       <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <View style={styles.header}>
-          <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+          <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
             <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
-          </Pressable>
+          </PressableScale>
           <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
           <Text style={styles.headerLabel} numberOfLines={1} ellipsizeMode="tail">
             {strings.chat.headerLabel}
@@ -295,7 +296,7 @@ export default function ChatScreen({
             </View>
           )}
           {canFinishEarly && (
-            <Pressable
+            <PressableScale
               onPress={handleFinishEarly}
               hitSlop={8}
               style={styles.headerFinishButton}
@@ -304,7 +305,7 @@ export default function ChatScreen({
             >
               <ShieldCheck size={12} strokeWidth={2} color={COLORS.gold} />
               <Text style={styles.headerFinishLabel}>{strings.chat.finishEarlyButton}</Text>
-            </Pressable>
+            </PressableScale>
           )}
         </View>
 
@@ -320,9 +321,9 @@ export default function ChatScreen({
           {errorText && !isTyping && (
             <View style={styles.errorCard}>
               <Text style={styles.errorText}>{errorText}</Text>
-              <Pressable onPress={handleRetry} style={styles.retryButton} accessibilityRole="button">
+              <PressableScale onPress={handleRetry} style={styles.retryButton} accessibilityRole="button" haptic="none">
                 <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
-              </Pressable>
+              </PressableScale>
             </View>
           )}
 
@@ -336,12 +337,12 @@ export default function ChatScreen({
 
         {showCheckpoint && (
           <View style={styles.checkpointRow}>
-            <Pressable style={styles.checkpointButtonSecondary} onPress={handleWrapUpAtCheckpoint} accessibilityRole="button">
+            <PressableScale style={styles.checkpointButtonSecondary} onPress={handleWrapUpAtCheckpoint} accessibilityRole="button">
               <Text style={styles.checkpointButtonSecondaryLabel}>{strings.chat.checkpointFinishButton}</Text>
-            </Pressable>
-            <Pressable style={styles.checkpointButtonPrimary} onPress={handleContinueAtCheckpoint} accessibilityRole="button">
+            </PressableScale>
+            <PressableScale style={styles.checkpointButtonPrimary} onPress={handleContinueAtCheckpoint} accessibilityRole="button">
               <Text style={styles.checkpointButtonPrimaryLabel}>{strings.chat.checkpointContinueButton}</Text>
-            </Pressable>
+            </PressableScale>
           </View>
         )}
 
@@ -357,9 +358,9 @@ export default function ChatScreen({
               onFocus={scrollToLatest}
               returnKeyType="send"
             />
-            <Pressable style={[styles.sendButton, isTyping && styles.sendButtonBusy]} onPress={handleSend} disabled={isTyping} accessibilityRole="button" accessibilityLabel={strings.chat.sendLabel} accessibilityState={{ disabled: isTyping }}>
+            <PressableScale style={[styles.sendButton, isTyping && styles.sendButtonBusy]} onPress={handleSend} disabled={isTyping} accessibilityRole="button" accessibilityLabel={strings.chat.sendLabel} accessibilityState={{ disabled: isTyping }}>
               <Send size={16} strokeWidth={2} color={COLORS.ctaText} />
-            </Pressable>
+            </PressableScale>
           </View>
         )}
       </KeyboardAvoidingView>
@@ -382,7 +383,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: SURFACE.hairline,
   },
   backButton: {
     minHeight: 44,
@@ -441,7 +442,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: "rgba(255,255,255,0.03)",
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     borderRadius: 999,
     paddingVertical: 6,
     paddingHorizontal: 12,
@@ -458,7 +459,7 @@ const styles = StyleSheet.create({
     gap: 4,
     backgroundColor: "rgba(255,255,255,0.03)",
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     borderRadius: 999,
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -475,7 +476,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 20,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: SURFACE.hairline,
   },
   checkpointButtonPrimary: {
     flex: 1,
@@ -496,7 +497,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "rgba(255,255,255,0.03)",
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     borderRadius: 999,
     paddingVertical: 13,
   },
@@ -512,7 +513,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 20,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: SURFACE.hairline,
   },
   input: {
     flex: 1,
@@ -521,7 +522,7 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     borderRadius: 999,
     paddingHorizontal: 16,
     paddingVertical: 12,

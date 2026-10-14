@@ -3,14 +3,16 @@ import ChevronRight from "lucide-react-native/icons/chevron-right";
 import FileText from "lucide-react-native/icons/file-text";
 import Users from "lucide-react-native/icons/users";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
+import PressableScale from "../components/motion/PressableScale";
 import { useLocale, useStrings } from "../lib/i18n";
 import { listSavedReports, type SavedReport } from "../lib/reportStorage";
 import { listPurchasedCompatReports, type SavedCompatReport } from "../lib/compatReportStorage";
 import { COLORS } from "../theme/colors";
 import { moduleDisplayTitle } from "../lib/quiz/modules";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 import { FONTS } from "../theme/fonts";
 
 // Reopen a report generated earlier — see lib/reportStorage.ts for why this exists.
@@ -39,10 +41,10 @@ export default function MyReportsScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button">
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-        </Pressable>
+        </PressableScale>
 
         <Text style={styles.heading} accessibilityRole="header">
           {strings.myReports.heading}
@@ -52,7 +54,7 @@ export default function MyReportsScreen({
 
         <View style={styles.list}>
           {(reports ?? []).map((r, index) => (
-            <Pressable
+            <PressableScale
               key={r.moduleId}
               onPress={() => onOpen(r)}
               android_ripple={{ color: "rgba(111,169,139,0.12)" }}
@@ -65,11 +67,11 @@ export default function MyReportsScreen({
                 <Text style={styles.rowDate}>{strings.myReports.savedOn(new Date(r.savedAt).toLocaleDateString(locale))}</Text>
               </View>
               <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
-            </Pressable>
+            </PressableScale>
           ))}
           {onOpenCompat &&
             (compatReports ?? []).map((r, index) => (
-              <Pressable
+              <PressableScale
                 key={r.pairKey}
                 onPress={() => onOpenCompat(r)}
                 android_ripple={{ color: "rgba(111,169,139,0.12)" }}
@@ -82,7 +84,7 @@ export default function MyReportsScreen({
                   <Text style={styles.rowDate}>{strings.myReports.savedOn(new Date(r.savedAt).toLocaleDateString(locale))}</Text>
                 </View>
                 <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
-              </Pressable>
+              </PressableScale>
             ))}
         </View>
       </ScrollView>
@@ -97,9 +99,9 @@ const styles = StyleSheet.create({
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginTop: 4, marginBottom: 16 },
   empty: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline },
-  list: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, overflow: "hidden" },
+  list: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
   row: { flexDirection: "row", alignItems: "center", gap: 14, minHeight: 60, paddingVertical: 12, paddingHorizontal: 16 },
-  rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: COLORS.border },
+  rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },
   rowPressed: { backgroundColor: "rgba(111,169,139,0.08)" },
   rowText: { flex: 1, gap: 2 },
   rowTitle: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline },

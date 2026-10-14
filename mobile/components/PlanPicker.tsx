@@ -1,9 +1,11 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Text from "./AppText";
+import PressableScale from "./motion/PressableScale";
 import { useStrings } from "../lib/i18n";
 import type { SubscriptionOffer } from "../lib/useSubscriptionOffer";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { SURFACE } from "../theme/tokens";
 
 /**
  * Plan choice + trial terms, placed right above a subscription button. Renders the two
@@ -27,15 +29,16 @@ export default function PlanPicker({ offer, disabled }: { offer: SubscriptionOff
             const sub = annual && plan.pricePerMonthString ? strings.subscription.perMonthNote(plan.pricePerMonthString) : null;
             const name = annual ? strings.subscription.planAnnual : strings.subscription.planMonthly;
             return (
-              <Pressable
+              <PressableScale
                 key={plan.id}
                 onPress={() => offer.select(plan.id)}
                 disabled={disabled}
-                style={({ pressed }) => [styles.plan, selected && styles.planSelected, pressed && styles.pressed]}
+                style={[styles.plan, selected && styles.planSelected]}
                 accessibilityRole="radio"
                 accessibilityState={{ checked: selected, disabled }}
                 aria-checked={selected}
                 accessibilityLabel={[name, price, sub, annual && offer.annualSavePercent ? strings.subscription.saveBadge(offer.annualSavePercent) : null].filter(Boolean).join(", ")}
+                haptic="select"
               >
                 <View style={[styles.radio, selected && styles.radioSelected]}>{selected && <View style={styles.radioDot} />}</View>
                 <View style={styles.planText}>
@@ -50,7 +53,7 @@ export default function PlanPicker({ offer, disabled }: { offer: SubscriptionOff
                   {!!sub && <Text style={styles.planSub} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{sub}</Text>}
                 </View>
                 <Text style={styles.planPrice} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{price}</Text>
-              </Pressable>
+              </PressableScale>
             );
           })}
         </View>
@@ -74,7 +77,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 14,
@@ -83,9 +86,6 @@ const styles = StyleSheet.create({
   planSelected: {
     borderColor: COLORS.gold,
     backgroundColor: "rgba(111,169,139,0.08)",
-  },
-  pressed: {
-    opacity: 0.85,
   },
   radio: {
     width: 18,

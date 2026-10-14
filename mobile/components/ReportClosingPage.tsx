@@ -2,11 +2,13 @@ import ArrowRight from "lucide-react-native/icons/arrow-right";
 import Download from "lucide-react-native/icons/download";
 import Share2 from "lucide-react-native/icons/share-2";
 import { useRef, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 import Text from "./AppText";
+import PressableScale from "./motion/PressableScale";
 import TextShareCard, { shareCardImage } from "./TextShareCard";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // The last page of both report readers (ReportScreen, YearReportScreen), so the two end
 // the same way: the report's own closing words, then one line to keep (with share and PDF
@@ -80,12 +82,12 @@ export default function ReportClosingPage({
           <Text style={styles.eyebrow}>{summaryEyebrow}</Text>
           <Text style={styles.summary}>{summary}</Text>
           <View style={styles.actions}>
-            <Pressable onPress={handleShare} disabled={sharing} style={[styles.action, sharing && styles.actionBusy]} accessibilityState={{ disabled: sharing }} accessibilityRole="button" accessibilityLabel={share.label}>
+            <PressableScale onPress={handleShare} disabled={sharing} style={[styles.action, sharing && styles.actionBusy]} accessibilityState={{ disabled: sharing }} accessibilityRole="button" accessibilityLabel={share.label}>
               <Share2 size={15} strokeWidth={1.75} color={COLORS.gold} />
               <Text style={styles.actionLabel}>{share.label}</Text>
-            </Pressable>
+            </PressableScale>
             {pdf ? (
-              <Pressable
+              <PressableScale
                 onPress={pdf.onPress}
                 disabled={pdf.busy}
                 style={[styles.action, pdf.busy && styles.actionBusy]}
@@ -95,7 +97,7 @@ export default function ReportClosingPage({
               >
                 {pdf.busy ? <ActivityIndicator size="small" color={COLORS.gold} /> : <Download size={15} strokeWidth={1.75} color={COLORS.gold} />}
                 <Text style={styles.actionLabel}>{pdf.busy ? pdf.busyLabel : pdf.label}</Text>
-              </Pressable>
+              </PressableScale>
             ) : null}
           </View>
           {/* Same one line the button shares, as the image that goes out. `share.names` is only set by the
@@ -105,9 +107,10 @@ export default function ReportClosingPage({
       ) : null}
 
       {next ? (
-        <Pressable
+        <PressableScale
           onPress={next.onPress}
-          style={({ pressed }) => [styles.nextCard, pressed && styles.nextCardPressed]}
+          style={styles.nextCard}
+          pressedScale={0.98}
           accessibilityRole="button"
           accessibilityLabel={`${next.eyebrow}. ${next.title}. ${next.body}${next.meta ? `. ${next.meta}` : ""}. ${next.ctaLabel}`}
         >
@@ -119,7 +122,7 @@ export default function ReportClosingPage({
             <Text style={styles.nextCtaLabel}>{next.ctaLabel}</Text>
             <ArrowRight size={15} strokeWidth={2} color={COLORS.gold} />
           </View>
-        </Pressable>
+        </PressableScale>
       ) : null}
 
       <View style={styles.disclaimers}>
@@ -140,7 +143,7 @@ const styles = StyleSheet.create({
   body: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 25, color: COLORS.headline },
   bodyNext: { marginTop: 14 },
 
-  summaryBlock: { marginTop: 32, paddingTop: 24, borderTopWidth: 1, borderTopColor: COLORS.border },
+  summaryBlock: { marginTop: 32, paddingTop: 24, borderTopWidth: 1, borderTopColor: SURFACE.hairline },
   eyebrow: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.gold, marginBottom: 10 },
   summary: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 22, lineHeight: 31, color: COLORS.headline },
   actions: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 18 },
@@ -152,13 +155,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
   },
   actionBusy: { opacity: 0.6 },
   actionLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
 
-  nextCard: { marginTop: 28, padding: 18, borderRadius: 16, borderWidth: 1, borderColor: COLORS.border, backgroundColor: COLORS.inputBg },
-  nextCardPressed: { opacity: 0.75 },
+  nextCard: { marginTop: 28, padding: 18, borderRadius: RADIUS.md, backgroundColor: SURFACE.raised, ...SHADOW.raised },
   nextTitle: { fontFamily: FONTS.semibold, fontSize: 16.5, lineHeight: 23, color: COLORS.headline },
   nextBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 6 },
   nextMeta: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.footer, marginTop: 8 },

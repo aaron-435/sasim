@@ -1,12 +1,14 @@
 import { Fragment, useEffect, useRef, useState } from "react";
-import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 import Text from "./AppText";
+import PressableScale from "./motion/PressableScale";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
 import { dobFieldOrder, dobSeparator } from "../lib/dobOrder";
 import { toISODateString } from "../lib/zodiac";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // The other person's birth-data form — name (optional), gender, birth date, birth time and
 // city. Lifted out of CompatibilityScreen (2026-10-05) so "그 사람에 대해 묻기" in Q&A asks for
@@ -154,26 +156,28 @@ export function OtherBirthFields({ form, showName = true }: { form: OtherBirthFo
 
       <Text style={styles.fieldLabel}>{strings.compatibility.genderLabel}</Text>
       <View style={styles.row} accessibilityRole="radiogroup" accessibilityLabel={strings.compatibility.genderLabel}>
-        <Pressable
+        <PressableScale
           style={[styles.option, isFemale === false && styles.optionActive]}
           onPress={() => form.setIsFemale(false)}
           accessibilityRole="radio"
           accessibilityState={{ checked: isFemale === false }}
           aria-checked={isFemale === false}
           accessibilityLabel={strings.gender.male}
+          haptic="select"
         >
           <Text style={[styles.optionLabel, isFemale === false && styles.optionLabelActive]}>{strings.gender.male}</Text>
-        </Pressable>
-        <Pressable
+        </PressableScale>
+        <PressableScale
           style={[styles.option, isFemale === true && styles.optionActive]}
           onPress={() => form.setIsFemale(true)}
           accessibilityRole="radio"
           accessibilityState={{ checked: isFemale === true }}
           aria-checked={isFemale === true}
           accessibilityLabel={strings.gender.female}
+          haptic="select"
         >
           <Text style={[styles.optionLabel, isFemale === true && styles.optionLabelActive]}>{strings.gender.female}</Text>
-        </Pressable>
+        </PressableScale>
       </View>
 
       <Text style={styles.fieldLabel}>{strings.compatibility.dobHeading}</Text>
@@ -210,16 +214,17 @@ export function OtherBirthFields({ form, showName = true }: { form: OtherBirthFo
 
       <Text style={styles.fieldLabel}>{strings.compatibility.timeHeading}</Text>
       <View style={styles.row}>
-        <Pressable
+        <PressableScale
           style={[styles.unknownToggle, timeUnknown && styles.optionActive]}
           onPress={() => form.setTimeUnknown((v) => !v)}
           accessibilityRole="checkbox"
           accessibilityState={{ checked: timeUnknown }}
           aria-checked={timeUnknown}
           accessibilityLabel={strings.tob.unknownTime}
+          haptic="select"
         >
           <Text style={[styles.optionLabel, timeUnknown && styles.optionLabelActive]}>{strings.tob.unknownTime}</Text>
-        </Pressable>
+        </PressableScale>
         {!timeUnknown && (
           <>
             <TextInput
@@ -247,14 +252,15 @@ export function OtherBirthFields({ form, showName = true }: { form: OtherBirthFo
               keyboardType="number-pad"
               maxLength={2}
             />
-            <Pressable
+            <PressableScale
               style={styles.periodToggle}
               onPress={() => form.setPeriod((p) => (p === "AM" ? "PM" : "AM"))}
               accessibilityRole="button"
               accessibilityLabel={period === "AM" ? strings.tob.periodAM : strings.tob.periodPM}
+              haptic="select"
             >
               <Text style={styles.optionLabel}>{period === "AM" ? strings.tob.periodAM : strings.tob.periodPM}</Text>
-            </Pressable>
+            </PressableScale>
           </>
         )}
       </View>
@@ -273,16 +279,17 @@ export function OtherBirthFields({ form, showName = true }: { form: OtherBirthFo
       {form.cityResults.length > 0 && (
         <View style={styles.resultsBox}>
           {form.cityResults.map((r) => (
-            <Pressable
+            <PressableScale
               key={r.id}
               style={styles.resultRow}
               accessibilityRole="button"
               accessibilityLabel={`${r.cityDisplay}, ${r.countryDisplay}`}
               onPress={() => form.pickCity(r)}
+              haptic="select"
             >
               <Text style={styles.resultCity}>{r.cityDisplay}</Text>
               <Text style={styles.resultCountry}>{r.countryDisplay}</Text>
-            </Pressable>
+            </PressableScale>
           ))}
         </View>
       )}
@@ -298,7 +305,7 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     borderRadius: 10,
     paddingHorizontal: 16,
     paddingVertical: 13,
@@ -318,7 +325,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
   },
   unknownToggle: {
     paddingVertical: 13,
@@ -327,7 +334,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
   },
   periodToggle: {
     paddingVertical: 13,
@@ -335,13 +342,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
   },
   optionActive: { backgroundColor: "rgba(111,169,139,0.12)", borderColor: "rgba(111,169,139,0.4)" },
   optionLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.subheadline },
   optionLabelActive: { color: COLORS.gold },
-  resultsBox: { marginTop: 6, backgroundColor: COLORS.background, borderWidth: 1, borderColor: COLORS.border, borderRadius: 10, overflow: "hidden" },
-  resultRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 13, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: COLORS.border },
+  resultsBox: { marginTop: 6, backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
+  resultRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 13, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: SURFACE.hairline },
   resultCity: { fontFamily: FONTS.medium, fontSize: 14.5, color: COLORS.headline },
   resultCountry: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   fieldError: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.danger, marginTop: 8 },

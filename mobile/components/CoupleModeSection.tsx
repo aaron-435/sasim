@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import Heart from "lucide-react-native/icons/heart";
 import Share2 from "lucide-react-native/icons/share-2";
-import { ActivityIndicator, Alert, Platform, Pressable, Share, StyleSheet, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, Share, StyleSheet, TextInput, View } from "react-native";
 import Text from "./AppText";
+import PressableScale from "./motion/PressableScale";
 import { track } from "../lib/analytics";
 import { useLocale, useStrings } from "../lib/i18n";
 import { API_BASE_URL } from "../config";
@@ -10,6 +11,7 @@ import { createPairCode, fetchCoupleDaily, formatPairCode, getSavedPair, joinPai
 import { getRevenueCatUserId } from "../lib/purchases";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // Couple mode setup, under the compatibility screen's invite section (SPEC 2026-10-05 §7):
 // make a code for the partner, or type in the one they sent. Once linked, Home shows
@@ -163,9 +165,9 @@ export default function CoupleModeSection({
       {pair?.status === "linked" && (
         <View style={styles.card}>
           <Text style={styles.cardTitle}>{strings.couple.linkedTitle(pair.partnerName || strings.couple.partnerFallback)}</Text>
-          <Pressable onPress={() => handleUnlink(true)} disabled={busy} style={styles.linkButton} accessibilityRole="button">
+          <PressableScale onPress={() => handleUnlink(true)} disabled={busy} style={styles.linkButton} accessibilityRole="button" haptic="none">
             {busy ? <ActivityIndicator color={COLORS.danger} /> : <Text style={styles.unlinkLabel}>{strings.couple.unlinkButton}</Text>}
-          </Pressable>
+          </PressableScale>
         </View>
       )}
 
@@ -174,30 +176,30 @@ export default function CoupleModeSection({
           <Text style={styles.cardTitle}>{strings.couple.pendingTitle}</Text>
           <Text style={styles.code} selectable accessibilityLabel={pair.code.split("").join(" ")}>{formatPairCode(pair.code)}</Text>
           <Text style={styles.cardBody}>{strings.couple.pendingBody(daysLeft)}</Text>
-          <Pressable
+          <PressableScale
             style={({ pressed }) => [styles.outlineButton, pressed && styles.pressed]}
             onPress={() => shareCode(pair.code)}
             accessibilityRole="button"
           >
             <Share2 size={16} strokeWidth={2} color={COLORS.gold} />
             <Text style={styles.outlineLabel}>{strings.couple.shareCode}</Text>
-          </Pressable>
-          <Pressable onPress={() => handleUnlink(false)} disabled={busy} style={styles.linkButton} accessibilityRole="button">
+          </PressableScale>
+          <PressableScale onPress={() => handleUnlink(false)} disabled={busy} style={styles.linkButton} accessibilityRole="button" haptic="none">
             <Text style={styles.cancelLabel}>{strings.couple.cancelCode}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
       )}
 
       {!pair && (
         <>
-          <Pressable
+          <PressableScale
             style={({ pressed }) => [styles.outlineButton, pressed && styles.pressed, !selfDayMasterChar && styles.disabled]}
             onPress={handleCreate}
             disabled={busy || !selfDayMasterChar}
             accessibilityRole="button"
           >
             {busy ? <ActivityIndicator color={COLORS.gold} /> : <Text style={styles.outlineLabel}>{strings.couple.makeCode}</Text>}
-          </Pressable>
+          </PressableScale>
           <Text style={styles.inputLabel}>{strings.couple.enterCodeLabel}</Text>
           <View style={styles.joinRow}>
             <TextInput
@@ -212,14 +214,14 @@ export default function CoupleModeSection({
               accessibilityLabel={strings.couple.enterCodeLabel}
               onSubmitEditing={handleJoin}
             />
-            <Pressable
+            <PressableScale
               style={[styles.joinButton, (!codeInput.trim() || !selfDayMasterChar) && styles.disabled]}
               onPress={handleJoin}
               disabled={busy || !codeInput.trim() || !selfDayMasterChar}
               accessibilityRole="button"
             >
               <Text style={styles.joinLabel}>{strings.couple.joinButton}</Text>
-            </Pressable>
+            </PressableScale>
           </View>
         </>
       )}
@@ -231,18 +233,17 @@ export default function CoupleModeSection({
 }
 
 const styles = StyleSheet.create({
-  section: { marginTop: 40, paddingTop: 28, borderTopWidth: 1, borderTopColor: COLORS.border },
+  section: { marginTop: 40, paddingTop: 28, borderTopWidth: 1, borderTopColor: SURFACE.hairline },
   titleRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   title: { fontFamily: FONTS.display, fontSize: 22, color: COLORS.headline },
   body: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 8 },
   card: {
     marginTop: 18,
     padding: 18,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.inputBg,
+    borderRadius: RADIUS.md,
+    backgroundColor: SURFACE.raised,
     alignItems: "center",
+    ...SHADOW.raised,
   },
   cardTitle: { fontFamily: FONTS.semibold, fontSize: 15, lineHeight: 21, color: COLORS.headline, textAlign: "center" },
   cardBody: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, textAlign: "center", marginTop: 8 },
@@ -273,7 +274,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     backgroundColor: COLORS.inputBg,
     fontFamily: FONTS.medium,
     fontSize: 16,

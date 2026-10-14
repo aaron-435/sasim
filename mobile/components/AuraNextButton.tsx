@@ -1,7 +1,8 @@
 import ArrowRight from "lucide-react-native/icons/arrow-right";
-import { Pressable, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { COLORS } from "../theme/colors";
 import GoldAura from "./GoldAura";
+import PressableScale from "./motion/PressableScale";
 import { useStrings } from "../lib/i18n";
 
 // The one "next" affordance for every onboarding step: a round arrow button centered
@@ -23,7 +24,7 @@ export default function AuraNextButton({
   const strings = useStrings();
   return (
     <GoldAura size={size}>
-      <Pressable
+      <PressableScale
         onPress={disabled ? undefined : onPress}
         // `disabled` (not just a missing onPress) is what announces "dimmed" on
         // native and sets aria-disabled on web; react-native-web overwrites a
@@ -31,10 +32,10 @@ export default function AuraNextButton({
         disabled={!!disabled}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel ?? strings.common.nextLabel}
-        style={({ pressed }) => [styles.circle, disabled && styles.circleDisabled, pressed && !disabled && styles.pressed]}
+        style={[styles.circle, disabled && styles.circleDisabled]}
       >
         <ArrowRight size={26} strokeWidth={2.25} color={disabled ? COLORS.disabledText : COLORS.ctaText} />
-      </Pressable>
+      </PressableScale>
     </GoldAura>
   );
 }
@@ -50,8 +51,5 @@ const styles = StyleSheet.create({
   },
   circleDisabled: {
     backgroundColor: COLORS.disabledBg,
-  },
-  pressed: {
-    opacity: 0.85,
   },
 });

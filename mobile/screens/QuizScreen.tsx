@@ -3,12 +3,16 @@ import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import ArrowRight from "lucide-react-native/icons/arrow-right";
 import RotateCcw from "lucide-react-native/icons/rotate-ccw";
 import Sparkles from "lucide-react-native/icons/sparkles";
-import { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Text from "../components/AppText";
+import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { elementWithEmoji } from "../lib/elements";
+import { success } from "../lib/haptics";
 import { useLocale, useStrings } from "../lib/i18n";
 import { getLocalizedQuestions, getModuleById, moduleDisplayTitle, resolveModuleLocale } from "../lib/quiz/modules";
 import {
@@ -21,8 +25,11 @@ import {
   type ProfileClassification,
   type QuizAnswerRecord,
 } from "../lib/quiz/quizProfile";
+import useReducedMotion from "../lib/useReducedMotion";
 import { COLORS } from "../theme/colors";
+import { EASING } from "../theme/motion";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 import { ELEMENT_COLORS } from "../lib/elements";
 
 
@@ -76,9 +83,51 @@ export default function QuizScreen({
   const [showSliderHint, setShowSliderHint] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const [done, setDone] = useState(false);
+  // Display-only highlight for the tapped choice; scoring never reads this.
+  const [picked, setPicked] = useState<string | null>(null);
+  const [trackWidth, setTrackWidth] = useState(0);
+  const reduceMotion = useReducedMotion();
+  const questionOpacity = useSharedValue(0);
+  const questionX = useSharedValue(0);
+  const fillX = useSharedValue(0);
 
   const current = questions[index];
   const progress = done ? 1 : index / questions.length;
+
+  // Question enter: the block remounts on key={index}, so reset then fade/slide in.
+  useEffect(() => {
+    questionOpacity.value = 0;
+    questionX.value = reduceMotion ? 0 : 20;
+    questionOpacity.value = withTiming(1, { duration: 260, easing: EASING.enter });
+    questionX.value = withTiming(0, { duration: 260, easing: EASING.enter });
+    setPicked(null);
+  }, [index, reduceMotion, questionOpacity, questionX]);
+
+  // Question exit: fade/slide out while the 280ms recordAnswer timer runs.
+  useEffect(() => {
+    if (!transitioning) return;
+    questionOpacity.value = withTiming(0, { duration: 200, easing: EASING.exit });
+    if (!reduceMotion) {
+      questionX.value = withTiming(-20, { duration: 200, easing: EASING.exit });
+    }
+  }, [transitioning, reduceMotion, questionOpacity, questionX]);
+
+  useEffect(() => {
+    fillX.value = withTiming(-(1 - progress) * trackWidth, { duration: 320, easing: EASING.standard });
+  }, [progress, trackWidth, fillX]);
+
+  useEffect(() => {
+    if (done) success();
+  }, [done]);
+
+  const questionStyle = useAnimatedStyle(() => ({
+    opacity: questionOpacity.value,
+    transform: [{ translateX: questionX.value }],
+  }));
+
+  const fillStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: fillX.value }],
+  }));
 
   function recordAnswer(label: string, score: number) {
     if (transitioning) return;
@@ -98,6 +147,7 @@ export default function QuizScreen({
   }
 
   function handleChoiceSelect(opt: { label: string; score: number }) {
+    setPicked(opt.label);
     recordAnswer(opt.label, opt.score);
   }
 
@@ -179,38 +229,48 @@ export default function QuizScreen({
     return (
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.doneContent}>
-          <View style={styles.doneBadgeRow}>
-            <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.doneBadgeLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.quiz.doneHeader}</Text>
-          </View>
-
-          <View style={styles.resultCard}>
-            {dominantElement && ELEMENT_COLORS[dominantElement] && (
-              <View style={styles.elementChip}>
-                <View style={[styles.elementDot, { backgroundColor: ELEMENT_COLORS[dominantElement] }]} />
-                <Text style={styles.elementChipLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
-                  {strings.quiz.elementBadgePrefix} {elementWithEmoji(dominantElement, strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement)}
-                </Text>
-              </View>
-            )}
-            <Text style={styles.resultTitle} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{diagnosis.typeInfo.title}</Text>
-            <Text style={styles.resultHook} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{diagnosis.typeInfo.hook}</Text>
-            <View style={styles.resultFooter}>
-              <Text style={styles.resultModuleTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{moduleDisplayTitle(moduleTitle)}</Text>
-              <Text style={styles.resultBrand} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.brand}</Text>
+          <Reveal index={0}>
+            <View style={styles.doneBadgeRow}>
+              <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
+              <Text style={styles.doneBadgeLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.quiz.doneHeader}</Text>
             </View>
-          </View>
+          </Reveal>
 
-          <Text style={styles.moreDetailNote} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.quiz.moreDetail}</Text>
+          <Reveal index={1} style={styles.revealFullWidth}>
+            <View style={styles.resultCard}>
+              {dominantElement && ELEMENT_COLORS[dominantElement] && (
+                <View style={styles.elementChip}>
+                  <View style={[styles.elementDot, { backgroundColor: ELEMENT_COLORS[dominantElement] }]} />
+                  <Text style={styles.elementChipLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
+                    {strings.quiz.elementBadgePrefix} {elementWithEmoji(dominantElement, strings.common.elementLabels[dominantElement as keyof typeof strings.common.elementLabels] ?? dominantElement)}
+                  </Text>
+                </View>
+              )}
+              <Text style={styles.resultTitle} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{diagnosis.typeInfo.title}</Text>
+              <Text style={styles.resultHook} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{diagnosis.typeInfo.hook}</Text>
+              <View style={styles.resultFooter}>
+                <Text style={styles.resultModuleTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{moduleDisplayTitle(moduleTitle)}</Text>
+                <Text style={styles.resultBrand} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.brand}</Text>
+              </View>
+            </View>
+          </Reveal>
 
-          <Pressable style={styles.continueButton} onPress={handleContinue} accessibilityRole="button" accessibilityLabel={strings.quiz.continueToChatButton}>
-            <Text style={styles.continueLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.quiz.continueToChatButton}</Text>
-            <ArrowRight size={17} strokeWidth={2.25} color={COLORS.ctaText} />
-          </Pressable>
-          <Pressable style={styles.restartButton} onPress={handleRestart} accessibilityRole="button" accessibilityLabel={strings.quiz.restartButton}>
-            <RotateCcw size={12} strokeWidth={1.75} color={COLORS.footer} />
-            <Text style={styles.restartLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.quiz.restartButton}</Text>
-          </Pressable>
+          <Reveal index={2}>
+            <Text style={styles.moreDetailNote} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.quiz.moreDetail}</Text>
+          </Reveal>
+
+          <Reveal index={3} style={styles.revealFullWidth}>
+            <PressableScale style={styles.continueButton} onPress={handleContinue} accessibilityRole="button" accessibilityLabel={strings.quiz.continueToChatButton}>
+              <Text style={styles.continueLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.quiz.continueToChatButton}</Text>
+              <ArrowRight size={17} strokeWidth={2.25} color={COLORS.ctaText} />
+            </PressableScale>
+          </Reveal>
+          <Reveal index={4}>
+            <PressableScale style={styles.restartButton} onPress={handleRestart} accessibilityRole="button" accessibilityLabel={strings.quiz.restartButton} haptic="none">
+              <RotateCcw size={12} strokeWidth={1.75} color={COLORS.footer} />
+              <Text style={styles.restartLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.quiz.restartButton}</Text>
+            </PressableScale>
+          </Reveal>
         </ScrollView>
       </SafeAreaView>
     );
@@ -225,11 +285,12 @@ export default function QuizScreen({
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.header}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
-        </Pressable>
+        </PressableScale>
         <View
           style={styles.progressTrack}
+          onLayout={(e) => setTrackWidth(e.nativeEvent.layout.width)}
           accessibilityRole="progressbar"
           accessibilityLabel={strings.quiz.progressA11yLabel(index + 1, questions.length)}
           accessibilityValue={{ min: 1, max: questions.length, now: index + 1 }}
@@ -237,7 +298,7 @@ export default function QuizScreen({
           aria-valuemax={questions.length}
           aria-valuenow={index + 1}
         >
-          <View style={[styles.progressFill, { width: `${Math.min(progress * 100, 100)}%` }]} />
+          <Animated.View style={[styles.progressFill, { width: trackWidth, opacity: trackWidth > 0 ? 1 : 0 }, fillStyle]} />
         </View>
         <Text style={styles.progressLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">{strings.quiz.progressLabel(index + 1, questions.length)}</Text>
       </View>
@@ -247,77 +308,81 @@ export default function QuizScreen({
           <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
           <Text style={styles.moduleLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{moduleDisplayTitle(moduleTitle)}</Text>
         </View>
-        <Text style={styles.prompt} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{current.prompt}</Text>
+        <Animated.View key={index} style={questionStyle}>
+          <Text style={styles.prompt} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{current.prompt}</Text>
 
-        {current.format === "choice" ? (
-          <View style={styles.optionList}>
-            {(current.options as { label: string; score: number }[]).map((opt) => (
-              <Pressable
-                key={opt.label}
-                style={styles.optionButton}
-                onPress={() => handleChoiceSelect(opt)}
+          {current.format === "choice" ? (
+            <View style={styles.optionList}>
+              {(current.options as { label: string; score: number }[]).map((opt) => (
+                <PressableScale
+                  key={opt.label}
+                  style={[styles.optionButton, picked === opt.label && styles.optionButtonPicked]}
+                  onPress={() => handleChoiceSelect(opt)}
+                  disabled={transitioning}
+                  accessibilityRole="button"
+                  accessibilityLabel={opt.label}
+                  haptic="select"
+                  pressedScale={0.98}
+                >
+                  <Text style={[styles.optionLabel, picked === opt.label && styles.optionLabelPicked]} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{opt.label}</Text>
+                </PressableScale>
+              ))}
+            </View>
+          ) : (
+            <View>
+              <View style={styles.sliderLabelRow} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+                <Text style={styles.sliderEdgeLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{sliderOptions.minLabel}</Text>
+                <Text style={styles.sliderEdgeLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{sliderOptions.maxLabel}</Text>
+              </View>
+              <Slider
+                minimumValue={1}
+                maximumValue={10}
+                // Ten integer positions have no middle one: untouched, the thumb rests at 5.5 (true
+                // center, continuous) and only snaps to whole steps once the user grabs it.
+                // 2026-10-12: at 5 it sat visibly left of center on Android.
+                step={sliderTouched ? 1 : 0}
+                value={sliderTouched ? sliderValue : 5.5}
+                onValueChange={handleSliderChange}
+                onSlidingStart={handleSliderTouch}
+                disabled={transitioning}
+                accessibilityLabel={current.prompt}
+                accessibilityValue={{ min: 1, max: 10, now: sliderValue, text: sliderValueText }}
+                aria-valuemin={1}
+                aria-valuemax={10}
+                aria-valuenow={sliderValue}
+                aria-valuetext={sliderValueText}
+                // Untouched: no filled track, muted thumb and a dash, so the default middle
+                // position doesn't read as an answer already given.
+                minimumTrackTintColor={sliderTouched ? COLORS.gold : COLORS.border}
+                maximumTrackTintColor={COLORS.border}
+                thumbTintColor={sliderTouched ? COLORS.gold : COLORS.footer}
+              />
+              <Text
+                style={[styles.sliderValue, !sliderTouched && styles.sliderValueUntouched]}
+                maxFontSizeMultiplier={MAX_FONT_SCALE.display}
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+              >
+                {sliderTouched ? sliderValue : "–"}
+              </Text>
+              {showSliderHint && (
+                <Text style={styles.sliderHint} maxFontSizeMultiplier={MAX_FONT_SCALE.body} accessibilityLiveRegion="polite" aria-live="polite">
+                  {strings.quiz.sliderHint}
+                </Text>
+              )}
+              <PressableScale
+                style={[styles.sliderButton, !sliderTouched && styles.sliderButtonUntouched]}
+                onPress={handleSliderSubmit}
                 disabled={transitioning}
                 accessibilityRole="button"
-                accessibilityLabel={opt.label}
+                accessibilityLabel={strings.quiz.nextButton}
+                accessibilityHint={sliderTouched ? undefined : strings.quiz.sliderHint}
               >
-                <Text style={styles.optionLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{opt.label}</Text>
-              </Pressable>
-            ))}
-          </View>
-        ) : (
-          <View>
-            <View style={styles.sliderLabelRow} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-              <Text style={styles.sliderEdgeLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{sliderOptions.minLabel}</Text>
-              <Text style={styles.sliderEdgeLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{sliderOptions.maxLabel}</Text>
+                <Text style={styles.sliderButtonLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.quiz.nextButton}</Text>
+              </PressableScale>
             </View>
-            <Slider
-              minimumValue={1}
-              maximumValue={10}
-              // Ten integer positions have no middle one: untouched, the thumb rests at 5.5 (true
-              // center, continuous) and only snaps to whole steps once the user grabs it.
-              // 2026-10-12: at 5 it sat visibly left of center on Android.
-              step={sliderTouched ? 1 : 0}
-              value={sliderTouched ? sliderValue : 5.5}
-              onValueChange={handleSliderChange}
-              onSlidingStart={handleSliderTouch}
-              disabled={transitioning}
-              accessibilityLabel={current.prompt}
-              accessibilityValue={{ min: 1, max: 10, now: sliderValue, text: sliderValueText }}
-              aria-valuemin={1}
-              aria-valuemax={10}
-              aria-valuenow={sliderValue}
-              aria-valuetext={sliderValueText}
-              // Untouched: no filled track, muted thumb and a dash, so the default middle
-              // position doesn't read as an answer already given.
-              minimumTrackTintColor={sliderTouched ? COLORS.gold : COLORS.border}
-              maximumTrackTintColor={COLORS.border}
-              thumbTintColor={sliderTouched ? COLORS.gold : COLORS.footer}
-            />
-            <Text
-              style={[styles.sliderValue, !sliderTouched && styles.sliderValueUntouched]}
-              maxFontSizeMultiplier={MAX_FONT_SCALE.display}
-              accessibilityElementsHidden
-              importantForAccessibility="no-hide-descendants"
-            >
-              {sliderTouched ? sliderValue : "–"}
-            </Text>
-            {showSliderHint && (
-              <Text style={styles.sliderHint} maxFontSizeMultiplier={MAX_FONT_SCALE.body} accessibilityLiveRegion="polite" aria-live="polite">
-                {strings.quiz.sliderHint}
-              </Text>
-            )}
-            <Pressable
-              style={[styles.sliderButton, !sliderTouched && styles.sliderButtonUntouched]}
-              onPress={handleSliderSubmit}
-              disabled={transitioning}
-              accessibilityRole="button"
-              accessibilityLabel={strings.quiz.nextButton}
-              accessibilityHint={sliderTouched ? undefined : strings.quiz.sliderHint}
-            >
-              <Text style={styles.sliderButtonLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.quiz.nextButton}</Text>
-            </Pressable>
-          </View>
-        )}
+          )}
+        </Animated.View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -386,17 +451,27 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   optionButton: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 12,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     paddingVertical: 16,
     paddingHorizontal: 18,
+    ...SHADOW.raised,
   },
   optionLabel: {
     fontFamily: FONTS.regular,
     fontSize: 14.5,
     color: COLORS.headline,
+  },
+  optionButtonPicked: {
+    backgroundColor: "rgba(111,169,139,0.18)",
+    borderWidth: 1,
+    borderColor: COLORS.gold,
+  },
+  optionLabelPicked: {
+    color: COLORS.headline,
+  },
+  revealFullWidth: {
+    width: "100%",
   },
   sliderLabelRow: {
     flexDirection: "row",
@@ -462,20 +537,17 @@ const styles = StyleSheet.create({
   },
   resultCard: {
     width: "100%",
-    borderRadius: 20,
+    borderRadius: RADIUS.lg,
     padding: 26,
     backgroundColor: "rgba(111,169,139,0.08)",
-    borderWidth: 1,
-    borderColor: "rgba(111,169,139,0.28)",
+    ...SHADOW.raised,
   },
   elementChip: {
     flexDirection: "row",
     alignItems: "center",
     gap: 7,
     alignSelf: "flex-start",
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    backgroundColor: SURFACE.floating,
     borderRadius: 999,
     paddingVertical: 6,
     paddingHorizontal: 13,

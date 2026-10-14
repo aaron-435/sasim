@@ -4,14 +4,18 @@ import ChevronDown from "lucide-react-native/icons/chevron-down";
 import ChevronUp from "lucide-react-native/icons/chevron-up";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import ModuleArt from "../components/ModuleArt";
 import { SafeAreaView } from "react-native-safe-area-context";
+import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { useLocale, useStrings } from "../lib/i18n";
 import { MODULES, moduleDisplayTitle, type ModuleDefinition } from "../lib/quiz/modules";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 
 // Ported from components/ModuleSelect.jsx — picks which of the 30-question modules (12 since 2026-10-06)
@@ -53,46 +57,80 @@ export default function ModuleSelectScreen({
     : t.recommendedReasonDefault;
 
   const titleOf = (m: ModuleDefinition) => moduleDisplayTitle(m.title[locale] ?? m.title.ko);
+  const [featured, ...halfRecommended] = recommended;
 
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
-        </Pressable>
+        </PressableScale>
 
-        <View style={styles.header}>
-          <View style={styles.badgeRow}>
-            <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.badgeLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{t.badge}</Text>
-          </View>
-          <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{t.heading}</Text>
-        </View>
-
-        <Text style={styles.sectionTitle} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.recommendedTitle}</Text>
-        <Text style={styles.reason} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{reason}</Text>
-
-        {recommended.map((m) => (
-          <Pressable
-            key={m.id}
-            style={({ pressed }) => [styles.card, pressed && styles.pressed]}
-            onPress={() => onSelect(m.id)}
-            accessibilityRole="button"
-            accessibilityLabel={`${titleOf(m)}. ${t.blurbs[m.id] ?? ""} ${t.meta}`}
-          >
-            <View style={styles.cardText}>
-              <Text style={styles.cardTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{titleOf(m)}</Text>
-              <Text style={styles.cardBlurb} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.blurbs[m.id]}</Text>
-              <Text style={styles.cardMeta} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.meta}</Text>
+        <Reveal index={0}>
+          <View style={styles.header}>
+            <View style={styles.badgeRow}>
+              <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
+              <Text style={styles.badgeLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{t.badge}</Text>
             </View>
-            <ArrowRight size={18} strokeWidth={2.25} color={COLORS.gold} />
-          </Pressable>
-        ))}
+            <Text style={[styles.heading, locale === "ko" && styles.headingKo]} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{t.heading}</Text>
+          </View>
+        </Reveal>
 
-        <Pressable
-          style={({ pressed }) => [styles.toggle, pressed && styles.pressed]}
+        <Reveal index={1}>
+          <Text style={styles.sectionTitle} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.recommendedTitle}</Text>
+          <Text style={styles.reason} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{reason}</Text>
+        </Reveal>
+
+        {featured && (
+          <Reveal index={2}>
+            <PressableScale
+              style={styles.featured}
+              onPress={() => onSelect(featured.id)}
+              pressedScale={0.97}
+              accessibilityRole="button"
+              accessibilityLabel={`${titleOf(featured)}. ${t.blurbs[featured.id] ?? ""} ${t.meta}`}
+            >
+              <ModuleArt moduleId={featured.id} size="large" style={styles.featuredArt} />
+              <View style={styles.featuredBody}>
+                <View style={styles.featuredText}>
+                  <Text style={styles.featuredTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{titleOf(featured)}</Text>
+                  <Text style={styles.featuredBlurb} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.blurbs[featured.id]}</Text>
+                  <Text style={styles.featuredMeta} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.meta}</Text>
+                </View>
+                <ArrowRight size={18} strokeWidth={2.25} color={COLORS.gold} />
+              </View>
+            </PressableScale>
+          </Reveal>
+        )}
+
+        {halfRecommended.length > 0 && (
+          <View style={styles.halfRow}>
+            {halfRecommended.map((m, i) => (
+              <Reveal key={m.id} index={3 + i} style={styles.halfReveal}>
+                <PressableScale
+                  style={styles.half}
+                  onPress={() => onSelect(m.id)}
+                  pressedScale={0.97}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${titleOf(m)}. ${t.blurbs[m.id] ?? ""} ${t.meta}`}
+                >
+                  <ModuleArt moduleId={m.id} size="small" style={styles.halfArt} />
+                  <View style={styles.halfBody}>
+                    <Text style={styles.halfTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{titleOf(m)}</Text>
+                    <Text style={styles.halfBlurb} numberOfLines={2} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.blurbs[m.id]}</Text>
+                    <Text style={styles.halfMeta} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.meta}</Text>
+                  </View>
+                </PressableScale>
+              </Reveal>
+            ))}
+          </View>
+        )}
+
+        <PressableScale
+          style={styles.toggle}
           onPress={() => setShowAll((v) => !v)}
+          haptic="select"
           accessibilityRole="button"
           accessibilityState={{ expanded: showAll }}
           aria-expanded={showAll}
@@ -106,24 +144,32 @@ export default function ModuleSelectScreen({
           ) : (
             <ChevronDown size={16} strokeWidth={2} color={COLORS.subheadline} />
           )}
-        </Pressable>
+        </PressableScale>
 
-        {showAll &&
-          rest.map((m) => (
-            <Pressable
-              key={m.id}
-              style={({ pressed }) => [styles.row, pressed && styles.pressed]}
-              onPress={() => onSelect(m.id)}
-              accessibilityRole="button"
-              accessibilityLabel={`${titleOf(m)}. ${t.blurbs[m.id] ?? ""}`}
-            >
-              <View style={styles.cardText}>
-                <Text style={styles.rowTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{titleOf(m)}</Text>
-                <Text style={styles.rowBlurb} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.blurbs[m.id]}</Text>
-              </View>
-              <ArrowRight size={16} strokeWidth={2} color={COLORS.subheadline} />
-            </Pressable>
-          ))}
+        {showAll && (
+          <View style={styles.grid}>
+            {rest.map((m, i) => {
+              const fullWidth = rest.length % 2 === 1 && i === rest.length - 1;
+              return (
+                <Reveal key={m.id} delay={i * 40} style={fullWidth ? styles.gridFullReveal : styles.gridReveal}>
+                  <PressableScale
+                    style={styles.gridTile}
+                    onPress={() => onSelect(m.id)}
+                    pressedScale={0.97}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${titleOf(m)}. ${t.blurbs[m.id] ?? ""}`}
+                  >
+                    <ModuleArt moduleId={m.id} size="small" style={styles.gridArt} />
+                    <View style={styles.gridBody}>
+                      <Text style={styles.gridTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{titleOf(m)}</Text>
+                      <Text style={styles.gridBlurb} numberOfLines={2} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.blurbs[m.id]}</Text>
+                    </View>
+                  </PressableScale>
+                </Reveal>
+              );
+            })}
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -156,8 +202,8 @@ const styles = StyleSheet.create({
     color: COLORS.subheadline,
   },
   header: {
-    alignItems: "center",
-    marginBottom: 32,
+    alignItems: "flex-start",
+    marginBottom: SPACE.xl,
   },
   badgeRow: {
     flexDirection: "row",
@@ -174,9 +220,14 @@ const styles = StyleSheet.create({
   heading: {
     fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
-    fontSize: 24,
+    fontSize: 32,
+    lineHeight: 40,
+    letterSpacing: -0.6,
     color: COLORS.headline,
-    textAlign: "center",
+  },
+  headingKo: {
+    fontWeight: "700",
+    letterSpacing: -0.8,
   },
   sectionTitle: {
     fontFamily: FONTS.semibold,
@@ -189,33 +240,34 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 19,
     color: COLORS.subheadline,
-    marginBottom: 14,
+    marginBottom: SPACE.md,
   },
-  card: {
+  featured: {
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.lg,
+    overflow: "hidden",
+    marginBottom: SPACE.md,
+    ...SHADOW.raised,
+  },
+  featuredArt: {
+    height: 168,
+  },
+  featuredBody: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 16,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    marginBottom: 12,
+    alignItems: "flex-end",
+    gap: SPACE.md,
+    padding: SPACE.lg,
   },
-  pressed: {
-    opacity: 0.7,
-  },
-  cardText: {
+  featuredText: {
     flex: 1,
   },
-  cardTitle: {
-    fontFamily: FONTS.bold,
-    fontSize: 17,
+  featuredTitle: {
+    fontFamily: FONTS.semibold,
+    fontSize: 20,
     color: COLORS.headline,
     marginBottom: 6,
   },
-  cardBlurb: {
+  featuredBlurb: {
     fontFamily: FONTS.regular,
     fontSize: 14,
     lineHeight: 20,
@@ -223,10 +275,51 @@ const styles = StyleSheet.create({
     opacity: 0.85,
     marginBottom: 10,
   },
-  cardMeta: {
+  featuredMeta: {
     fontFamily: FONTS.medium,
     fontSize: 12,
-    color: COLORS.footer,
+    color: COLORS.subheadline,
+  },
+  halfRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: SPACE.md,
+    marginBottom: SPACE.xl,
+  },
+  halfReveal: {
+    width: "48%",
+  },
+  half: {
+    flex: 1,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
+    overflow: "hidden",
+    ...SHADOW.raised,
+  },
+  halfArt: {
+    height: 96,
+  },
+  halfBody: {
+    padding: SPACE.md,
+  },
+  halfTitle: {
+    fontFamily: FONTS.semibold,
+    fontSize: 16,
+    color: COLORS.headline,
+    marginBottom: 4,
+  },
+  halfBlurb: {
+    fontFamily: FONTS.regular,
+    fontSize: 13,
+    lineHeight: 18,
+    color: COLORS.headline,
+    opacity: 0.85,
+    marginBottom: 8,
+  },
+  halfMeta: {
+    fontFamily: FONTS.medium,
+    fontSize: 12,
+    color: COLORS.subheadline,
   },
   toggle: {
     minHeight: 48,
@@ -234,29 +327,44 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
-    marginTop: 8,
-    marginBottom: 8,
+    marginBottom: SPACE.md,
   },
   toggleLabel: {
     fontFamily: FONTS.semibold,
     fontSize: 14,
     color: COLORS.subheadline,
   },
-  row: {
+  grid: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingVertical: 14,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: COLORS.border,
+    flexWrap: "wrap",
+    gap: SPACE.md,
   },
-  rowTitle: {
+  gridReveal: {
+    width: "48%",
+  },
+  gridFullReveal: {
+    width: "100%",
+  },
+  gridTile: {
+    flex: 1,
+    minHeight: 120,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
+    overflow: "hidden",
+  },
+  gridArt: {
+    height: 64,
+  },
+  gridBody: {
+    padding: SPACE.md,
+  },
+  gridTitle: {
     fontFamily: FONTS.semibold,
     fontSize: 15,
     color: COLORS.headline,
-    marginBottom: 3,
+    marginBottom: 4,
   },
-  rowBlurb: {
+  gridBlurb: {
     fontFamily: FONTS.regular,
     fontSize: 13,
     lineHeight: 18,

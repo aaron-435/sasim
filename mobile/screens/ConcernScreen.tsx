@@ -1,12 +1,14 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
+import PressableScale from "../components/motion/PressableScale";
 import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { SURFACE } from "../theme/tokens";
 
 // 2026-09-19: 온보딩 마지막 단계 — "지금 가장 궁금한 것"을 가볍게 물어, 이후
 // ModuleSelectScreen이 추천 모듈을 보여줄 수 있게 한다(mobile/lib/userConcern.ts
@@ -29,7 +31,7 @@ export default function ConcernScreen({
         <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.concern.heading}</Text>
         <Text style={styles.subheading} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.subheading}</Text>
         <View style={styles.column} accessibilityRole="radiogroup" accessibilityLabel={strings.concern.heading}>
-          <Pressable
+          <PressableScale
             style={[styles.option, value === "romance" && styles.optionActive]}
             onPress={() => onChange("romance")}
             accessibilityRole="radio"
@@ -37,11 +39,12 @@ export default function ConcernScreen({
             accessibilityState={{ selected: value === "romance", checked: value === "romance" }}
             aria-selected={value === "romance"}
             aria-checked={value === "romance"}
+            haptic="select"
           >
             <Text style={[styles.optionLabel, value === "romance" && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.romanceLabel}</Text>
             <Text style={styles.optionHint} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.romanceHint}</Text>
-          </Pressable>
-          <Pressable
+          </PressableScale>
+          <PressableScale
             style={[styles.option, value === "career" && styles.optionActive]}
             onPress={() => onChange("career")}
             accessibilityRole="radio"
@@ -49,10 +52,11 @@ export default function ConcernScreen({
             accessibilityState={{ selected: value === "career", checked: value === "career" }}
             aria-selected={value === "career"}
             aria-checked={value === "career"}
+            haptic="select"
           >
             <Text style={[styles.optionLabel, value === "career" && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.careerLabel}</Text>
             <Text style={styles.optionHint} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.careerHint}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
       </View>
 
@@ -90,7 +94,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     gap: 4,
   },
   optionActive: {

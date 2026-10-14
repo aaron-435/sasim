@@ -1,12 +1,14 @@
 import ThumbsDown from "lucide-react-native/icons/thumbs-down";
 import ThumbsUp from "lucide-react-native/icons/thumbs-up";
 import { useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Text from "./AppText";
+import PressableScale from "./motion/PressableScale";
 import { track } from "../lib/analytics";
 import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { SURFACE } from "../theme/tokens";
 
 // "Was this helpful?" 👍/👎 under a reading (Q&A answer, today's fortune). Until 2026-10-07 it
 // asked "Does this sound like you?", so older `feedback` events measure fit, not usefulness.
@@ -34,24 +36,26 @@ export default function FeedbackRow({ surface, topic }: { surface: "qa" | "fortu
     <View style={styles.row}>
       <Text style={styles.prompt} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{surface === "qa" ? strings.feedback.promptQa : strings.feedback.promptFortune}</Text>
       <View style={styles.buttons}>
-        <Pressable
+        <PressableScale
           onPress={() => handleVote("up")}
           style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
           accessibilityRole="button"
           accessibilityLabel={strings.feedback.upLabel}
           hitSlop={4}
+          haptic="select"
         >
           <ThumbsUp size={16} strokeWidth={1.75} color={COLORS.gold} />
-        </Pressable>
-        <Pressable
+        </PressableScale>
+        <PressableScale
           onPress={() => handleVote("down")}
           style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
           accessibilityRole="button"
           accessibilityLabel={strings.feedback.downLabel}
           hitSlop={4}
+          haptic="select"
         >
           <ThumbsDown size={16} strokeWidth={1.75} color={COLORS.subheadline} />
-        </Pressable>
+        </PressableScale>
       </View>
     </View>
   );
@@ -80,7 +84,7 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     alignItems: "center",
     justifyContent: "center",
   },

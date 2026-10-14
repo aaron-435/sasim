@@ -10,6 +10,7 @@ import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { getZodiac, toISODateString } from "../lib/zodiac";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { SURFACE } from "../theme/tokens";
 
 export default function DobScreen({
   year,
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     borderRadius: 10,
     paddingVertical: 14,
   },

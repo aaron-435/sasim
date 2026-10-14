@@ -3,16 +3,19 @@ import Download from "lucide-react-native/icons/download";
 import Lock from "lucide-react-native/icons/lock";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import CalcSourceBadge from "../components/CalcSourceBadge";
 import ReportClosingPage from "../components/ReportClosingPage";
 import ReportPager, { readerChromeButtonStyle, type ReaderPage } from "../components/ReportPager";
+import ElementsLoader from "../components/motion/ElementsLoader";
+import PressableScale from "../components/motion/PressableScale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
+import { success } from "../lib/haptics";
 import { exportReportPdf, pdfErrorMessage } from "../lib/reportPdf";
 import { getRevenueCatUserId, getYearReportPackage, hasYearReportEntitlement, isUnavailableMessage, purchaseIssueDetail, purchaseYearReport, restoreReports } from "../lib/purchases";
 import { qaYearReport } from "../dev/qaMode";
@@ -21,6 +24,7 @@ import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // The paid year-ahead report: five life areas, a 12-month timeline and a four-step action
 // plan (server: app/api/yearReport, which verifies the purchase itself before generating).
@@ -195,6 +199,7 @@ export default function YearReportScreen({
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
+      success();
       generate(year);
     } else if (outcome.status === "error") {
       setNotice(isUnavailableMessage(outcome.message) ? `${strings.yearReport.purchaseUnavailable}${purchaseIssueDetail(outcome.message) ? `\n(${purchaseIssueDetail(outcome.message)})` : ""}` : `${strings.yearReport.purchaseError}${outcome.message ? `\n(${outcome.message.slice(0, 160)})` : ""}`);
@@ -249,10 +254,10 @@ export default function YearReportScreen({
   ];
 
   const backButton = (
-    <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+    <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
       <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
       <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-    </Pressable>
+    </PressableScale>
   );
 
   if (phase === "loading" || phase === "generating") {
@@ -260,7 +265,7 @@ export default function YearReportScreen({
       <SafeAreaView style={styles.root}>
         <View style={styles.backRow}>{backButton}</View>
         <View style={styles.center}>
-          <ActivityIndicator color={COLORS.gold} size="large" />
+          <ElementsLoader size="large" />
           {phase === "generating" && <Text style={styles.centerText}>{strings.yearReport.generating[msgIndex]}</Text>}
         </View>
       </SafeAreaView>
@@ -273,9 +278,9 @@ export default function YearReportScreen({
         <View style={styles.backRow}>{backButton}</View>
         <View style={styles.center}>
           <Text style={styles.centerText}>{errorText ?? strings.yearReport.errorGeneric}</Text>
-          <Pressable style={styles.retryButton} onPress={init} accessibilityRole="button">
+          <PressableScale style={styles.retryButton} onPress={init} accessibilityRole="button">
             <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
       </SafeAreaView>
     );
@@ -297,7 +302,7 @@ export default function YearReportScreen({
         swipeHint={{ id: "year", label: strings.reader.swipeHint }}
         reviewAtEnd
         trailing={
-          <Pressable
+          <PressableScale
             onPress={handleExportPdf}
             disabled={exporting}
             hitSlop={8}
@@ -306,13 +311,13 @@ export default function YearReportScreen({
             accessibilityLabel={exporting ? strings.pdf.preparing : strings.pdf.button}
           >
             {exporting ? <ActivityIndicator size="small" color={COLORS.subheadline} /> : <Download size={18} strokeWidth={1.75} color={COLORS.subheadline} />}
-          </Pressable>
+          </PressableScale>
         }
         footer={
           pageIndex === pages.length - 1 ? (
-            <Pressable onPress={onBack} style={styles.homeButton} accessibilityRole="button">
+            <PressableScale onPress={onBack} style={styles.homeButton} accessibilityRole="button">
               <Text style={styles.homeButtonLabel}>{strings.report.homeButtonLabel}</Text>
-            </Pressable>
+            </PressableScale>
           ) : null
         }
       />
@@ -349,18 +354,18 @@ export default function YearReportScreen({
           ))}
         </View>
 
-        <Pressable
+        <PressableScale
           style={[styles.buyButton, (purchasing || restoring) && styles.buttonDisabled]}
           onPress={handleBuy}
           disabled={purchasing || restoring}
           accessibilityRole="button"
         >
           {purchasing ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.buyLabel}>{strings.yearReport.buyButton(price)}</Text>}
-        </Pressable>
+        </PressableScale>
         <Text style={styles.oneTime}>{price ? strings.yearReport.oneTimeNote : `${strings.yearReport.priceAtCheckout} ${strings.yearReport.oneTimeNote}`}</Text>
-        <Pressable style={styles.restoreButton} onPress={handleRestore} disabled={purchasing || restoring} accessibilityRole="button">
+        <PressableScale style={styles.restoreButton} onPress={handleRestore} disabled={purchasing || restoring} accessibilityRole="button" haptic="none">
           <Text style={styles.restoreLabel}>{restoring ? strings.yearReport.restoring : strings.yearReport.restore}</Text>
-        </Pressable>
+        </PressableScale>
         {notice && <Text style={styles.notice}>{notice}</Text>}
 
         <Text style={styles.disclaimer}>{strings.report.disclaimer1}</Text>
@@ -552,11 +557,11 @@ const styles = StyleSheet.create({
   heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 30, lineHeight: 36, color: COLORS.headline, marginTop: 4 },
   subtitle: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginTop: 8, marginBottom: 20 },
   body: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 23, color: COLORS.headline, marginBottom: 12 },
-  card: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 16, padding: 18, marginTop: 14 },
+  card: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 18, marginTop: 14, ...SHADOW.raised },
   cardHeading: { fontFamily: FONTS.semibold, fontSize: 16, lineHeight: 23, color: COLORS.gold, marginBottom: 10 },
   previewLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline, marginBottom: 6 },
-  list: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, overflow: "hidden" },
-  rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: COLORS.border },
+  list: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
+  rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },
   vsProNote: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.subheadline, marginTop: 4, marginBottom: 14 },
   disclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.subheadline, marginTop: 16 },
   lockedNote: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold, marginTop: 22, marginBottom: 10 },
@@ -569,7 +574,7 @@ const styles = StyleSheet.create({
   restoreButton: { minHeight: 44, alignItems: "center", justifyContent: "center", marginTop: 4 },
   restoreLabel: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, textDecorationLine: "underline" },
   notice: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.danger, textAlign: "center", marginTop: 4 },
-  homeButton: { marginHorizontal: 22, marginBottom: 16, marginTop: 6, borderWidth: 1, borderColor: COLORS.border, borderRadius: 12, paddingVertical: 14, alignItems: "center" },
+  homeButton: { marginHorizontal: 22, marginBottom: 16, marginTop: 6, borderWidth: 1, borderColor: SURFACE.hairline, borderRadius: 12, paddingVertical: 14, alignItems: "center" },
   homeButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
 });
 
@@ -593,7 +598,7 @@ const pageStyles = StyleSheet.create({
   coverFoot: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 1.5, color: COLORS.footer },
 
   monthBlock: { paddingVertical: 16, gap: 4 },
-  monthDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: COLORS.border },
+  monthDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },
   monthName: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold },
   monthHeadline: { fontFamily: FONTS.semibold, fontSize: 15.5, lineHeight: 22, color: COLORS.headline },
   monthBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 22, color: COLORS.subheadline },

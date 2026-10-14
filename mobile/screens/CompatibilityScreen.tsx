@@ -3,7 +3,7 @@ import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import ChevronRight from "lucide-react-native/icons/chevron-right";
 import Send from "lucide-react-native/icons/send";
 import Share2 from "lucide-react-native/icons/share-2";
-import { ActivityIndicator, Image, Platform, Pressable, ScrollView, Share, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Image, Platform, ScrollView, Share, StyleSheet, View } from "react-native";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
@@ -19,7 +19,9 @@ import { formatSajuTypeName } from "../lib/sajuTypeContent";
 import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 import { FONTS } from "../theme/fonts";
+import PressableScale from "../components/motion/PressableScale";
 import { OtherBirthFields, useOtherBirthForm, type OtherBirthPayload } from "../components/OtherBirthForm";
 import CompatReportScreen from "./CompatReportScreen";
 import GroupChemistryScreen from "./GroupChemistryScreen";
@@ -219,12 +221,12 @@ export default function CompatibilityScreen({
     return (
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.content}>
-          <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+          <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
             <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
             <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-          </Pressable>
+          </PressableScale>
 
-          <View style={[styles.resultHero, { borderColor: `${tint}55` }]}>
+          <View style={[styles.resultHero, { borderWidth: 1, borderColor: `${tint}55` }]}>
             <Text style={styles.resultNames}>
               {selfNickname} · {otherDisplayName}
             </Text>
@@ -285,7 +287,7 @@ export default function CompatibilityScreen({
             </View>
           </View>
 
-          <Pressable
+          <PressableScale
             style={styles.shareButton}
             onPress={handleShare}
             disabled={sharing}
@@ -300,14 +302,15 @@ export default function CompatibilityScreen({
                 <Text style={styles.shareButtonLabel}>{strings.compatibility.shareButton}</Text>
               </>
             )}
-          </Pressable>
+          </PressableScale>
 
           {/* A friend's answer carries no birth data (it stays with them), so it has no report entry. */}
           {!received && (
-          <Pressable
+          <PressableScale
             onPress={() => setReportFor(form.toPayload())}
             android_ripple={{ color: "rgba(111,169,139,0.12)" }}
             style={({ pressed }) => [styles.reportEntry, pressed && styles.reportEntryPressed]}
+            pressedScale={0.98}
             accessibilityRole="button"
             accessibilityLabel={`${strings.compatReport.entryEyebrow}. ${strings.compatReport.entryTitle}`}
           >
@@ -317,12 +320,12 @@ export default function CompatibilityScreen({
               <Text style={styles.reportEntryBody}>{strings.compatReport.entryBody}</Text>
             </View>
             <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
-          </Pressable>
+          </PressableScale>
           )}
 
-          <Pressable style={styles.tryAgainButton} onPress={handleTryAgain} accessibilityRole="button">
+          <PressableScale style={styles.tryAgainButton} onPress={handleTryAgain} accessibilityRole="button" haptic="none">
             <Text style={styles.tryAgainLabel}>{strings.compatibility.tryAgainButton}</Text>
-          </Pressable>
+          </PressableScale>
         </ScrollView>
       </SafeAreaView>
     );
@@ -331,10 +334,10 @@ export default function CompatibilityScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-        </Pressable>
+        </PressableScale>
 
         <Text style={styles.heading}>{strings.compatibility.heading}</Text>
         <Text style={styles.subtitle}>{strings.compatibility.subtitle}</Text>
@@ -345,7 +348,7 @@ export default function CompatibilityScreen({
         {/* Say why the button is dimmed instead of leaving a silent disabled state. */}
         {!error && !canSubmit && !form.dobInvalid && <Text style={styles.submitHint}>{strings.compatibility.errorMissing}</Text>}
 
-        <Pressable
+        <PressableScale
           style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]}
           onPress={handleSubmit}
           disabled={!canSubmit || submitting}
@@ -353,12 +356,12 @@ export default function CompatibilityScreen({
           accessibilityLabel={strings.compatibility.submitButton}
         >
           {submitting ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.submitButtonLabel}>{strings.compatibility.submitButton}</Text>}
-        </Pressable>
+        </PressableScale>
 
         <View style={styles.inviteSection}>
           <Text style={styles.inviteTitle} accessibilityRole="header">{strings.invite.sectionTitle}</Text>
           <Text style={styles.inviteBody}>{strings.invite.sectionBody}</Text>
-          <Pressable
+          <PressableScale
             style={({ pressed }) => [styles.inviteButton, pressed && styles.inviteButtonPressed, !selfDayMasterChar && styles.submitButtonDisabled]}
             onPress={() => handleInvite()}
             disabled={inviting || !selfDayMasterChar}
@@ -373,7 +376,7 @@ export default function CompatibilityScreen({
                 <Text style={styles.inviteButtonLabel}>{strings.invite.sendButton}</Text>
               </>
             )}
-          </Pressable>
+          </PressableScale>
           {inviteNote && <Text style={[styles.inviteNote, inviteNote.error && styles.inviteNoteError]}>{inviteNote.text}</Text>}
 
           {invites.length > 0 && (
@@ -385,11 +388,12 @@ export default function CompatibilityScreen({
                   const name = item.friendName?.trim() || strings.compatibility.unnamedOther;
                   const headline = content.relations[item.result.compatibility.relation].headline;
                   return (
-                    <Pressable
+                    <PressableScale
                       key={item.code}
                       onPress={() => openReceived(item)}
                       android_ripple={{ color: "rgba(111,169,139,0.12)" }}
                       style={({ pressed }) => [styles.receivedRow, pressed && styles.reportEntryPressed]}
+                      pressedScale={0.98}
                       accessibilityRole="button"
                       accessibilityLabel={`${name}. ${headline}`}
                     >
@@ -398,15 +402,16 @@ export default function CompatibilityScreen({
                         <Text style={styles.receivedHeadline}>{headline}</Text>
                       </View>
                       <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
-                    </Pressable>
+                    </PressableScale>
                   );
                 }
                 const daysLeft = Math.max(1, Math.ceil((Date.parse(item.expiresAt) - Date.now()) / 864e5));
                 return (
-                  <Pressable
+                  <PressableScale
                     key={item.code}
                     onPress={() => handleInvite(item)}
                     style={({ pressed }) => [styles.receivedRow, styles.waitingRow, pressed && styles.reportEntryPressed]}
+                    pressedScale={0.98}
                     accessibilityRole="button"
                     accessibilityLabel={`${strings.invite.waitingName}. ${strings.invite.waitingLabel(daysLeft)}`}
                     accessibilityHint={strings.invite.resendHint}
@@ -416,7 +421,7 @@ export default function CompatibilityScreen({
                       <Text style={styles.waitingLabel}>{strings.invite.waitingLabel(daysLeft)}</Text>
                     </View>
                     <Share2 size={16} strokeWidth={1.75} color={COLORS.subheadline} />
-                  </Pressable>
+                  </PressableScale>
                 );
               })}
             </View>
@@ -424,10 +429,11 @@ export default function CompatibilityScreen({
           <Text style={styles.invitePrivacy}>{strings.invite.privacyNote}</Text>
 
           {selfSajuType && (
-            <Pressable
+            <PressableScale
               onPress={() => setGroupOpen(true)}
               android_ripple={{ color: "rgba(111,169,139,0.12)" }}
               style={({ pressed }) => [styles.reportEntry, styles.groupEntry, pressed && styles.reportEntryPressed]}
+              pressedScale={0.98}
               accessibilityRole="button"
               accessibilityLabel={`${strings.groupChemistry.entryEyebrow}. ${strings.groupChemistry.entryTitle}`}
             >
@@ -437,7 +443,7 @@ export default function CompatibilityScreen({
                 <Text style={styles.reportEntryBody}>{strings.groupChemistry.entryBody}</Text>
               </View>
               <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
-            </Pressable>
+            </PressableScale>
           )}
         </View>
 
@@ -468,12 +474,12 @@ const styles = StyleSheet.create({
   submitButtonLabel: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.ctaText },
   resultHero: {
     alignItems: "center",
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderRadius: 20,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.lg,
     paddingVertical: 28,
     paddingHorizontal: 20,
     marginTop: 8,
+    ...SHADOW.raised,
   },
   resultNames: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.subheadline, textAlign: "center" },
   relationHeadline: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 36, color: COLORS.headline, textAlign: "center", marginTop: 10 },
@@ -542,13 +548,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 14,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     paddingVertical: 16,
     paddingHorizontal: 18,
     marginTop: 18,
+    ...SHADOW.raised,
   },
   groupEntry: { marginTop: 26 },
   reportEntryPressed: { backgroundColor: "rgba(111,169,139,0.08)" },
@@ -556,7 +561,7 @@ const styles = StyleSheet.create({
   reportEntryEyebrow: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.gold },
   reportEntryTitle: { fontFamily: FONTS.semibold, fontSize: 15, lineHeight: 21, color: COLORS.headline },
   reportEntryBody: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 19, color: COLORS.subheadline, marginTop: 2 },
-  inviteSection: { marginTop: 40, paddingTop: 28, borderTopWidth: 1, borderTopColor: COLORS.border },
+  inviteSection: { marginTop: 40, paddingTop: 28, borderTopWidth: 1, borderTopColor: SURFACE.hairline },
   inviteTitle: { fontFamily: FONTS.display, fontSize: 22, color: COLORS.headline },
   inviteBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 8 },
   inviteButton: {
@@ -581,15 +586,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 14,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     paddingVertical: 14,
     paddingHorizontal: 16,
     minHeight: 56,
+    ...SHADOW.raised,
   },
-  waitingRow: { borderStyle: "dashed", backgroundColor: "transparent" },
+  // Dashed placeholder keeps its own border (receivedRow no longer provides one).
+  waitingRow: { borderWidth: 1, borderColor: SURFACE.hairline, borderStyle: "dashed", backgroundColor: "transparent" },
   receivedText: { flex: 1, gap: 3 },
   receivedName: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline },
   receivedHeadline: { fontFamily: FONTS.semibold, fontSize: 15, lineHeight: 21, color: COLORS.headline },

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 import Text from "./AppText";
+import PressableScale from "./motion/PressableScale";
 import JournalSafetyNote from "./JournalSafetyNote";
 import { track } from "../lib/analytics";
 import { useStrings } from "../lib/i18n";
@@ -15,6 +16,7 @@ import {
 } from "../lib/journalStorage";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // "오늘 한 줄" under today's reading (FortuneScreen, once the day is opened). A mood is required,
 // the line is optional; both stay on the device (lib/journalStorage.ts). If the line reads like a
@@ -64,18 +66,19 @@ export default function JournalEntryCard({ dateIso, onOpenJournal }: { dateIso: 
             {JOURNAL_MOODS.map((m) => {
               const selected = mood === m;
               return (
-                <Pressable
+                <PressableScale
                   key={m}
                   onPress={() => setMood(m)}
-                  style={({ pressed }) => [styles.moodChip, selected && styles.moodChipSelected, pressed && styles.pressed]}
+                  style={[styles.moodChip, selected && styles.moodChipSelected]}
                   accessibilityRole="radio"
                   accessibilityState={{ selected }}
                   aria-checked={selected}
+                  haptic="select"
                 >
                   <Text style={[styles.moodLabel, selected && styles.moodLabelSelected]} numberOfLines={1} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
                     {strings.journal.moods[m]}
                   </Text>
-                </Pressable>
+                </PressableScale>
               );
             })}
           </View>
@@ -93,15 +96,15 @@ export default function JournalEntryCard({ dateIso, onOpenJournal }: { dateIso: 
           />
           <View style={styles.footerRow}>
             <Text style={styles.storageNote} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.journal.storageNote}</Text>
-            <Pressable
+            <PressableScale
               onPress={handleSave}
               disabled={!mood}
-              style={({ pressed }) => [styles.saveButton, !mood && styles.saveButtonDisabled, pressed && styles.pressed]}
+              style={[styles.saveButton, !mood && styles.saveButtonDisabled]}
               accessibilityRole="button"
               accessibilityState={{ disabled: !mood }}
             >
               <Text style={[styles.saveLabel, !mood && styles.saveLabelDisabled]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.journal.saveButton}</Text>
-            </Pressable>
+            </PressableScale>
           </View>
         </>
       ) : (
@@ -114,12 +117,12 @@ export default function JournalEntryCard({ dateIso, onOpenJournal }: { dateIso: 
               {!!saved.note && <Text style={styles.savedNote}>{saved.note}</Text>}
             </View>
             <View style={styles.linkRow}>
-              <Pressable onPress={() => setEditing(true)} style={styles.link} accessibilityRole="button">
+              <PressableScale onPress={() => setEditing(true)} style={styles.link} accessibilityRole="button" haptic="none">
                 <Text style={styles.linkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.journal.editLink}</Text>
-              </Pressable>
-              <Pressable onPress={onOpenJournal} style={styles.link} accessibilityRole="button">
+              </PressableScale>
+              <PressableScale onPress={onOpenJournal} style={styles.link} accessibilityRole="button" haptic="none">
                 <Text style={styles.linkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.journal.openJournalLink}</Text>
-              </Pressable>
+              </PressableScale>
             </View>
             {hasCrisisSignal(saved.note) && <JournalSafetyNote />}
           </>
@@ -130,7 +133,7 @@ export default function JournalEntryCard({ dateIso, onOpenJournal }: { dateIso: 
 }
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 16, padding: 18, gap: 12, marginTop: 16, marginBottom: 14 },
+  card: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 18, gap: 12, marginTop: 16, marginBottom: 14, ...SHADOW.raised },
   label: { fontFamily: FONTS.semibold, fontSize: 13, letterSpacing: 0.3, color: COLORS.gold },
   prompt: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline },
   moodGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
@@ -142,17 +145,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     paddingHorizontal: 10,
   },
   moodChipSelected: { borderColor: COLORS.gold, backgroundColor: "rgba(111,169,139,0.12)" },
   moodLabel: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.subheadline },
   moodLabelSelected: { color: COLORS.headline },
-  pressed: { opacity: 0.85 },
   input: {
     minHeight: 48,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     borderRadius: 12,
     paddingHorizontal: 14,
     fontFamily: FONTS.regular,

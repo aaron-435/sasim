@@ -7,6 +7,7 @@ import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { SURFACE } from "../theme/tokens";
 
 const MAX_LENGTH = 20;
 
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     borderRadius: 10,
     paddingHorizontal: 16,
     paddingVertical: 14,

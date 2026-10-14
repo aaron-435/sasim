@@ -1,10 +1,11 @@
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useEffect, useRef } from "react";
-import { AccessibilityInfo, Animated, Easing, Linking, Pressable, StyleSheet, View } from "react-native";
+import { AccessibilityInfo, Animated, Easing, Linking, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AuraNextButton from "../components/AuraNextButton";
 import PatternBackground from "../components/PatternBackground";
+import PressableScale from "../components/motion/PressableScale";
 import { API_BASE_URL } from "../config";
 import { useStrings, useLocale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
@@ -82,9 +83,9 @@ export default function IntroScreen({ onNext, onVerifyCode }: { onNext: () => vo
 
         {/* Web-to-app handoff is the minority path, so it waits behind a quiet link instead of
             being a screen every store install has to pass. */}
-        <Pressable onPress={onVerifyCode} style={styles.verifyLink} accessibilityRole="button" hitSlop={8}>
+        <PressableScale onPress={onVerifyCode} style={styles.verifyLink} accessibilityRole="button" hitSlop={8} haptic="none">
           <Text style={styles.verifyLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.intro.verifyCodeLink}</Text>
-        </Pressable>
+        </PressableScale>
 
         <Text style={styles.footer} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>
           {strings.intro.freeNote}
@@ -94,13 +95,13 @@ export default function IntroScreen({ onNext, onVerifyCode }: { onNext: () => vo
         {/* Real buttons with a 44pt target. Inline links inside the sentence were a few pixels
             tall and hard to hit on a phone (2026-10-04 device test). */}
         <View style={styles.legalRow}>
-          <Pressable onPress={() => Linking.openURL(termsUrl)} style={styles.legalLink} accessibilityRole="link" hitSlop={6}>
+          <PressableScale onPress={() => Linking.openURL(termsUrl)} style={styles.legalLink} accessibilityRole="link" hitSlop={6} haptic="none">
             <Text style={styles.footerLink} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.intro.termsLinkLabel}</Text>
-          </Pressable>
+          </PressableScale>
           <Text style={styles.legalDot} importantForAccessibility="no" accessibilityElementsHidden>·</Text>
-          <Pressable onPress={() => Linking.openURL(privacyUrl)} style={styles.legalLink} accessibilityRole="link" hitSlop={6}>
+          <PressableScale onPress={() => Linking.openURL(privacyUrl)} style={styles.legalLink} accessibilityRole="link" hitSlop={6} haptic="none">
             <Text style={styles.footerLink} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.intro.privacyLinkLabel}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
       </SafeAreaView>
     </PatternBackground>

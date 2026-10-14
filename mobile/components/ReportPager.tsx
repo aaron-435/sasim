@@ -1,14 +1,16 @@
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import ArrowRight from "lucide-react-native/icons/arrow-right";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "./AppText";
+import PressableScale from "./motion/PressableScale";
 import { hasSeenReaderHint, markReaderHintSeen, type ReaderHintId } from "../lib/readerHint";
 import { maybeRequestReview } from "../lib/reviewPrompt";
 import { COLORS } from "../theme/colors";
 import { READABLE_MAX_WIDTH, readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
+import { SHADOW, SURFACE } from "../theme/tokens";
 
 // The page-turning reader shared by the in-depth report (ReportScreen) and the year-ahead
 // report (YearReportScreen): a top bar (back, progress bar, "03/13" counter, an optional
@@ -110,9 +112,9 @@ export default function ReportPager({
   return (
     <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
       <View style={styles.chrome}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.chromeBack} accessibilityRole="button" accessibilityLabel={labels.back}>
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.chromeBack} accessibilityRole="button" accessibilityLabel={labels.back} haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
-        </Pressable>
+        </PressableScale>
         <View
           style={styles.progressTrack}
           accessibilityRole="progressbar"
@@ -153,8 +155,8 @@ export default function ReportPager({
             buttons on the pages themselves. */}
         {edgeTaps && (
           <>
-            <Pressable style={[styles.tapLeft, { width: edgeZoneWidth }]} onPress={() => goTo(pageIndex - 1)} accessibilityRole="button" accessibilityLabel={labels.previous} />
-            <Pressable style={[styles.tapRight, { width: edgeZoneWidth }]} onPress={() => goTo(pageIndex + 1)} accessibilityRole="button" accessibilityLabel={labels.next} />
+            <PressableScale style={[styles.tapLeft, { width: edgeZoneWidth }]} onPress={() => goTo(pageIndex - 1)} accessibilityRole="button" accessibilityLabel={labels.previous} />
+            <PressableScale style={[styles.tapRight, { width: edgeZoneWidth }]} onPress={() => goTo(pageIndex + 1)} accessibilityRole="button" accessibilityLabel={labels.next} />
           </>
         )}
       </View>
@@ -184,9 +186,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 999,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.background,
+    backgroundColor: SURFACE.raised,
+    ...SHADOW.raised,
   },
   hintLabel: { fontFamily: FONTS.medium, fontSize: 13, lineHeight: 18, color: COLORS.headline, flexShrink: 1 },
   tapLeft: { position: "absolute", top: 0, bottom: 0, left: 0 },

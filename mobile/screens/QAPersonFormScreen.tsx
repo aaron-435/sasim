@@ -1,8 +1,9 @@
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
-import { Pressable, ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { OtherBirthFields, type OtherBirthForm } from "../components/OtherBirthForm";
+import PressableScale from "../components/motion/PressableScale";
 import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
@@ -25,10 +26,10 @@ export default function QAPersonFormScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
-        </Pressable>
+        </PressableScale>
 
         <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.qa.personFormHeading}</Text>
         <Text style={styles.intro}>{strings.qa.personFormIntro}</Text>
@@ -39,7 +40,7 @@ export default function QAPersonFormScreen({
         {/* Say why the button is dimmed instead of leaving a silent disabled state. */}
         {!form.isComplete && !form.dobInvalid && <Text style={styles.hint}>{strings.compatibility.errorMissing}</Text>}
 
-        <Pressable
+        <PressableScale
           style={[styles.nextButton, !form.isComplete && styles.nextButtonDisabled]}
           onPress={onNext}
           disabled={!form.isComplete}
@@ -48,7 +49,7 @@ export default function QAPersonFormScreen({
           accessibilityLabel={strings.qa.personFormNext}
         >
           <Text style={styles.nextButtonLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.personFormNext}</Text>
-        </Pressable>
+        </PressableScale>
       </ScrollView>
     </SafeAreaView>
   );

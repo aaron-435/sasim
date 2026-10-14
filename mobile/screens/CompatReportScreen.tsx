@@ -1,13 +1,15 @@
 import Lock from "lucide-react-native/icons/lock";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, BackHandler, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import Text from "../components/AppText";
 import CalcSourceBadge from "../components/CalcSourceBadge";
 import ReportClosingPage from "../components/ReportClosingPage";
 import ReportPager, { type ReaderPage } from "../components/ReportPager";
+import ElementsLoader from "../components/motion/ElementsLoader";
+import PressableScale from "../components/motion/PressableScale";
 import type { OtherBirthPayload } from "../components/OtherBirthForm";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
@@ -19,10 +21,12 @@ import {
   type CompatPaidPart,
 } from "../lib/compatReportStorage";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
+import { success } from "../lib/haptics";
 import { getCompatReportPackage, getRevenueCatUserId, isUnavailableMessage, purchaseCompatReport, purchaseIssueDetail } from "../lib/purchases";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // The paid compatibility report (product compat_report, one purchase per other person).
 // Server: app/api/compatReport (free preview) and app/api/compatReport/paid (verifies the
@@ -224,6 +228,7 @@ export default function CompatReportScreen({
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
+      success();
       if (!outcome.transactionId) {
         setError({ kind: "paid", text: s.errorPaidButFailed });
         setPhase("error");
@@ -254,10 +259,10 @@ export default function CompatReportScreen({
   }
 
   const backButton = (
-    <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+    <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
       <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
       <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-    </Pressable>
+    </PressableScale>
   );
 
   if (phase === "loading" || phase === "generating") {
@@ -266,7 +271,7 @@ export default function CompatReportScreen({
       <SafeAreaView style={styles.root}>
         <View style={styles.backRow}>{backButton}</View>
         <View style={styles.center}>
-          <ActivityIndicator color={COLORS.gold} size="large" />
+          <ElementsLoader size="large" />
           <Text style={styles.centerText}>{messages[msgIndex]}</Text>
         </View>
       </SafeAreaView>
@@ -279,9 +284,9 @@ export default function CompatReportScreen({
         <View style={styles.backRow}>{backButton}</View>
         <View style={styles.center}>
           <Text style={styles.centerText}>{error?.text ?? s.errorGeneric}</Text>
-          <Pressable style={styles.retryButton} onPress={retry} accessibilityRole="button">
+          <PressableScale style={styles.retryButton} onPress={retry} accessibilityRole="button">
             <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
       </SafeAreaView>
     );
@@ -311,9 +316,9 @@ export default function CompatReportScreen({
       reviewAtEnd={!!paid}
       footer={
         paid && lastPage ? (
-          <Pressable onPress={onBack} style={styles.homeButton} accessibilityRole="button">
+          <PressableScale onPress={onBack} style={styles.homeButton} accessibilityRole="button">
             <Text style={styles.homeButtonLabel}>{strings.common.backLabel}</Text>
-          </Pressable>
+          </PressableScale>
         ) : null
       }
     />
@@ -459,9 +464,9 @@ function PaywallPage({
           </View>
         ))}
       </View>
-      <Pressable style={[pageStyles.buyButton, purchasing && pageStyles.buttonDisabled]} onPress={onBuy} disabled={purchasing} accessibilityRole="button">
+      <PressableScale style={[pageStyles.buyButton, purchasing && pageStyles.buttonDisabled]} onPress={onBuy} disabled={purchasing} accessibilityRole="button">
         {purchasing ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={pageStyles.buyLabel}>{s.buyButton(price)}</Text>}
-      </Pressable>
+      </PressableScale>
       <Text style={pageStyles.oneTime}>{price ? s.oneTimeNote(otherLabel) : `${strings.yearReport.priceAtCheckout} ${s.oneTimeNote(otherLabel)}`}</Text>
       {notice && <Text style={pageStyles.notice}>{notice}</Text>}
       <Text style={pageStyles.disclaimer}>{s.noVerdictNote}</Text>
@@ -478,7 +483,7 @@ const styles = StyleSheet.create({
   centerText: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, textAlign: "center" },
   retryButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 12 },
   retryLabel: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.gold },
-  homeButton: { marginHorizontal: 22, marginBottom: 16, marginTop: 6, borderWidth: 1, borderColor: COLORS.border, borderRadius: 12, paddingVertical: 14, alignItems: "center" },
+  homeButton: { marginHorizontal: 22, marginBottom: 16, marginTop: 6, borderWidth: 1, borderColor: SURFACE.hairline, borderRadius: 12, paddingVertical: 14, alignItems: "center" },
   homeButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
 });
 
@@ -500,8 +505,8 @@ const pageStyles = StyleSheet.create({
   brandLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 3, color: COLORS.gold, textTransform: "uppercase" },
 
   paywallBody: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 22, color: COLORS.subheadline, marginBottom: 18 },
-  list: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, overflow: "hidden" },
-  rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: COLORS.border },
+  list: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
+  rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },
   lockedRow: { flexDirection: "row", alignItems: "center", gap: 12, minHeight: 48, paddingHorizontal: 16, paddingVertical: 10 },
   lockedLabel: { flex: 1, fontFamily: FONTS.medium, fontSize: 14.5, lineHeight: 20, color: COLORS.headline },
   buyButton: { backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 15, alignItems: "center", marginTop: 22, minHeight: 50, justifyContent: "center" },

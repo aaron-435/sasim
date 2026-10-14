@@ -1,11 +1,13 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
+import PressableScale from "../components/motion/PressableScale";
 import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { SURFACE } from "../theme/tokens";
 
 export default function GenderScreen({
   isFemale,
@@ -25,7 +27,7 @@ export default function GenderScreen({
         <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.gender.heading}</Text>
         <Text style={styles.why} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.gender.why}</Text>
         <View style={styles.row} accessibilityRole="radiogroup" accessibilityLabel={strings.gender.heading}>
-          <Pressable
+          <PressableScale
             style={[styles.option, isFemale === false && styles.optionActive]}
             onPress={() => onChange(false)}
             accessibilityRole="radio"
@@ -33,10 +35,11 @@ export default function GenderScreen({
             accessibilityState={{ selected: isFemale === false, checked: isFemale === false }}
             aria-selected={isFemale === false}
             aria-checked={isFemale === false}
+            haptic="select"
           >
             <Text style={[styles.optionLabel, isFemale === false && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.gender.male}</Text>
-          </Pressable>
-          <Pressable
+          </PressableScale>
+          <PressableScale
             style={[styles.option, isFemale === true && styles.optionActive]}
             onPress={() => onChange(true)}
             accessibilityRole="radio"
@@ -44,9 +47,10 @@ export default function GenderScreen({
             accessibilityState={{ selected: isFemale === true, checked: isFemale === true }}
             aria-selected={isFemale === true}
             aria-checked={isFemale === true}
+            haptic="select"
           >
             <Text style={[styles.optionLabel, isFemale === true && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.gender.female}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
       </View>
 
@@ -86,7 +90,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
   },
   optionActive: {
     backgroundColor: "rgba(111,169,139,0.12)",

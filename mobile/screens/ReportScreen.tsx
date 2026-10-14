@@ -3,15 +3,25 @@ import Download from "lucide-react-native/icons/download";
 import Lock from "lucide-react-native/icons/lock";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View, type StyleProp, type TextStyle } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, View, useWindowDimensions, type StyleProp, type TextStyle } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import Reanimated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Svg, { Circle } from "react-native-svg";
 import Text from "../components/AppText";
 import CalcSourceBadge from "../components/CalcSourceBadge";
 import ReportClosingPage, { type ClosingNext } from "../components/ReportClosingPage";
 import ReportPager, { readerChromeButtonStyle } from "../components/ReportPager";
+import ElementsLoader from "../components/motion/ElementsLoader";
+import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
+import ElementMap from "../components/art/ElementMap";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useReducedMotion from "../lib/useReducedMotion";
+import { DURATION, EASING } from "../theme/motion";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
+import { success } from "../lib/haptics";
 import { getReportPackages, getRevenueCatUserId, isUnavailableMessage, purchaseIssueDetail, purchaseReportBundle, purchaseReportModule, restoreReports, type ReportPackageMap } from "../lib/purchases";
 import { findNextDecadeAge } from "../lib/decadeTransition";
 import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
@@ -22,6 +32,7 @@ import { getModuleById, moduleDisplayTitle, MODULES, type ModuleDefinition } fro
 import { exportReportPdf, pdfErrorMessage } from "../lib/reportPdf";
 import { reportPriceLabels, TOTAL_MODULES, type ReportPriceLabels } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 import type { ChatExtract } from "./ChatScreen";
 import type { QuizDiagnosis } from "./QuizScreen";
 import { FONTS } from "../theme/fonts";
@@ -470,6 +481,7 @@ export default function ReportScreen({
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
+      success();
       await refreshEntitlement();
     } else if (outcome.status === "error") {
       setPurchaseNotice(isUnavailableMessage(outcome.message) ? `${strings.report.purchaseUnavailable}${purchaseIssueDetail(outcome.message) ? `\n(${purchaseIssueDetail(outcome.message)})` : ""}` : `${strings.report.purchaseErrorDefault}${outcome.message ? `\n(${outcome.message.slice(0, 160)})` : ""}`);
@@ -484,6 +496,7 @@ export default function ReportScreen({
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
+      success();
       await refreshEntitlement();
     } else if (outcome.status === "error") {
       setPurchaseNotice(isUnavailableMessage(outcome.message) ? `${strings.report.purchaseUnavailable}${purchaseIssueDetail(outcome.message) ? `\n(${purchaseIssueDetail(outcome.message)})` : ""}` : `${strings.report.purchaseErrorDefault}${outcome.message ? `\n(${outcome.message.slice(0, 160)})` : ""}`);
@@ -881,6 +894,10 @@ export default function ReportScreen({
             title1={content.title_line1}
             title2={content.title_line2}
             nickname={`${nickname}${strings.report.nicknameSuffix}`}
+            element={dayMaster?.element ?? null}
+            elements={elements}
+            seed={dayMaster?.char ?? nickname}
+            locale={locale}
             previewLabel={lockedOpen ? "" : strings.report.previewLabel}
             // Preview counts are in chapters, the TOC's unit: a page count ("16 of 42") never matched
             // the reader's counter, which only spans the preview pages plus one paywall page.
@@ -892,7 +909,7 @@ export default function ReportScreen({
       ...gated,
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, resolvedElements, chatExtract, unlocked, lockedOpen, unlockState, ownedCount, prices, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, topAnswers, decadePreviewLine, nextModule, onOpenModule, exporting]);
+  }, [content, resolvedElements, chatExtract, unlocked, lockedOpen, unlockState, ownedCount, prices, purchasing, restoring, purchaseNotice, strings, locale, quizDiagnosis, nickname, dayMaster, topAnswers, decadePreviewLine, nextModule, onOpenModule, exporting]);
 
   // The closing page shares the one-line takeaway as an image card; this only records it.
   function handleShared() {
@@ -951,12 +968,12 @@ export default function ReportScreen({
       <SafeAreaView style={styles.centerRoot}>
         <View style={styles.errorCard}>
           <Text style={styles.errorText}>{errorText}</Text>
-          <Pressable onPress={fetchReport} style={styles.retryButton} accessibilityRole="button">
+          <PressableScale onPress={fetchReport} style={styles.retryButton} accessibilityRole="button" haptic="none">
             <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
-          </Pressable>
-          <Pressable onPress={onBack} style={styles.retryButton} accessibilityRole="button">
+          </PressableScale>
+          <PressableScale onPress={onBack} style={styles.retryButton} accessibilityRole="button" haptic="none">
             <Text style={styles.backLabel}>{strings.report.homeLinkLabel}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
       </SafeAreaView>
     );
@@ -965,7 +982,7 @@ export default function ReportScreen({
   if (!content || pages.length === 0) {
     return (
       <SafeAreaView style={styles.centerRoot}>
-        <ActivityIndicator color={COLORS.gold} size="large" />
+        <ElementsLoader size="large" />
         <Text style={styles.loadingText}>{LOADING_MESSAGES[loadingMsgIndex]}</Text>
       </SafeAreaView>
     );
@@ -987,7 +1004,7 @@ export default function ReportScreen({
       edgeTaps={!onPaywall}
       trailing={
         lockedOpen ? (
-          <Pressable
+          <PressableScale
             onPress={handleExportPdf}
             disabled={exporting}
             hitSlop={8}
@@ -996,14 +1013,14 @@ export default function ReportScreen({
             accessibilityLabel={exporting ? strings.pdf.preparing : strings.pdf.button}
           >
             {exporting ? <ActivityIndicator size="small" color={COLORS.subheadline} /> : <Download size={18} strokeWidth={1.75} color={COLORS.subheadline} />}
-          </Pressable>
+          </PressableScale>
         ) : null
       }
       footer={
         pageIndex === pages.length - 1 ? (
-          <Pressable onPress={onBack} style={styles.homeButton} accessibilityRole="button">
+          <PressableScale onPress={onBack} style={styles.homeButton} accessibilityRole="button">
             <Text style={styles.homeButtonLabel}>{strings.report.homeButtonLabel}</Text>
-          </Pressable>
+          </PressableScale>
         ) : null
       }
     />
@@ -1042,6 +1059,10 @@ function CoverPage({
   nickname,
   previewLabel,
   totalPagesLabel,
+  element,
+  elements,
+  seed,
+  locale,
 }: {
   kicker: string;
   title1: string;
@@ -1049,23 +1070,84 @@ function CoverPage({
   nickname: string;
   previewLabel: string;
   totalPagesLabel: string;
+  element?: string | null;
+  /** Null (old saves) keeps the plain ring decor below. */
+  elements: Record<string, number> | null;
+  seed: string;
+  locale: ReturnType<typeof useLocale>["locale"];
 }) {
+  const { width } = useWindowDimensions();
+  const tint = element ? ELEMENT_COLOR[element] ?? COLORS.gold : COLORS.gold;
+  const reduceMotion = useReducedMotion();
+  const decor = useSharedValue(reduceMotion ? 1 : 0);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      decor.value = 1;
+      return;
+    }
+    decor.value = withTiming(1, { duration: DURATION.slow * 2, easing: EASING.enter });
+  }, [reduceMotion, decor]);
+
+  const decorStyle = useAnimatedStyle(() => ({
+    opacity: decor.value,
+    transform: [{ scale: 0.92 + 0.08 * decor.value }],
+  }));
+
+  const ring = width * 1.1;
+
   return (
     <PageShell>
+      <View style={[StyleSheet.absoluteFill, pageStyles.coverDecorClip]} pointerEvents="none">
+        <LinearGradient
+          colors={[`${tint}33`, "transparent"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.6, y: 0.7 }}
+          style={StyleSheet.absoluteFill}
+        />
+        <Reanimated.View
+          style={[pageStyles.coverRings, { width: ring, height: ring, right: elements ? -width * 0.5 : -width * 0.35, top: elements ? -width * 0.42 : -width * 0.2 }, decorStyle]}
+          pointerEvents="none"
+          accessible={false}
+          importantForAccessibility="no-hide-descendants"
+        >
+          {elements ? (
+            // Own View for the opacity: ElementMap animates opacity on its root, which overrode a style prop.
+            <View style={pageStyles.coverMapDim}>
+              <ElementMap elements={elements} seed={seed} size={ring} animated />
+            </View>
+          ) : (
+            <Svg width={ring} height={ring}>
+              <Circle cx={ring / 2} cy={ring / 2} r={ring / 2} stroke={tint} strokeOpacity={0.35} strokeWidth={1} fill="none" />
+              <Circle cx={ring / 2} cy={ring / 2} r={(ring / 2) * 0.72} stroke={tint} strokeOpacity={0.2} strokeWidth={1} fill="none" />
+            </Svg>
+          )}
+        </Reanimated.View>
+      </View>
       <View style={pageStyles.brandRow}>
         <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
         <Text style={pageStyles.brandLabel}>FATESAID</Text>
       </View>
       <View style={pageStyles.coverMid}>
-        <Eyebrow>{kicker}</Eyebrow>
-        <Text style={pageStyles.coverTitle} accessibilityRole="header">{title1}</Text>
+        <Reveal index={0}>
+          <Eyebrow>{kicker}</Eyebrow>
+        </Reveal>
+        <Reveal index={1}>
+          <Text style={[pageStyles.coverTitle, locale === "ko" && pageStyles.coverTitleKo]} accessibilityRole="header">{title1}</Text>
+        </Reveal>
         {/* Its own line, smaller and quieter: in one Text the two lines read as one run-on title. */}
-        {!!title2 && <Text style={pageStyles.coverTitle2}>{title2}</Text>}
-        <View style={pageStyles.coverRule} />
-        <Text style={pageStyles.coverSub}>{nickname}</Text>
-        <View style={pageStyles.coverSource}>
+        {!!title2 && (
+          <Reveal index={2}>
+            <Text style={pageStyles.coverTitle2}>{title2}</Text>
+          </Reveal>
+        )}
+        <Reveal index={3}>
+          <View style={[pageStyles.coverRule, { backgroundColor: tint }]} />
+          <Text style={pageStyles.coverSub}>{nickname}</Text>
+        </Reveal>
+        <Reveal index={4} style={pageStyles.coverSource}>
           <CalcSourceBadge align="start" />
-        </View>
+        </Reveal>
       </View>
       <View style={pageStyles.pageFoot}>
         <Text style={pageStyles.pageFootText}>{previewLabel}</Text>
@@ -1095,7 +1177,7 @@ function TocPage({
       <Text style={pageStyles.tocTitle} accessibilityRole="header">{title}</Text>
       <View style={pageStyles.tocList}>
         {entries.map((e, i) => (
-          <Pressable
+          <PressableScale
             key={e.label}
             style={pageStyles.tocRow}
             hitSlop={6}
@@ -1109,7 +1191,7 @@ function TocPage({
             </Text>
             <View style={pageStyles.tocDots} />
             {e.locked ? <Lock size={12} strokeWidth={2} color="#5C5237" /> : <Text style={pageStyles.tocPage}>{String(e.pageNumber).padStart(2, "0")}</Text>}
-          </Pressable>
+          </PressableScale>
         ))}
       </View>
     </PageShell>
@@ -1454,9 +1536,9 @@ function UnlockingPage({ strings, failed, onRetry }: { strings: Dictionary; fail
           {failed ? (
             <>
               <Text style={pageStyles.paywallBody}>{strings.report.unlockFailed}</Text>
-              <Pressable onPress={onRetry} style={pageStyles.paywallRestoreButton} accessibilityRole="button">
+              <PressableScale onPress={onRetry} style={pageStyles.paywallRestoreButton} accessibilityRole="button" haptic="none">
                 <Text style={pageStyles.paywallRestoreLabel}>{strings.common.retryLabel}</Text>
-              </Pressable>
+              </PressableScale>
             </>
           ) : (
             <>
@@ -1528,7 +1610,7 @@ function PaywallPage({
           )}
           {!!decadePreviewLine && <Text style={pageStyles.paywallDecadePreview}>{decadePreviewLine}</Text>}
 
-          <Pressable
+          <PressableScale
             style={[pageStyles.paywallBuyButton, busy && pageStyles.paywallButtonDisabled]}
             onPress={onBuyModule}
             disabled={busy}
@@ -1537,12 +1619,12 @@ function PaywallPage({
             accessibilityState={{ disabled: busy, busy: purchasing }}
           >
             {purchasing ? <ActivityIndicator color={COLORS.background} /> : <Text style={pageStyles.paywallBuyButtonLabel}>{strings.report.paywallBuyLabel(prices.module)}</Text>}
-          </Pressable>
+          </PressableScale>
 
           <Text style={pageStyles.paywallOneTime}>{strings.report.paywallOneTimeNote}</Text>
 
           {ownedCount < TOTAL_MODULES && (
-            <Pressable
+            <PressableScale
               style={[pageStyles.paywallBundleButton, busy && pageStyles.paywallButtonDisabled]}
               onPress={onBuyBundle}
               disabled={busy}
@@ -1555,12 +1637,12 @@ function PaywallPage({
                   ? strings.report.paywallBundleSub(prices.fullTotal, prices.discountPercent)
                   : strings.report.paywallBundleSubOwned(ownedCount, prices.fullTotal)}
               </Text>
-            </Pressable>
+            </PressableScale>
           )}
 
-          <Pressable onPress={onRestore} disabled={busy} style={pageStyles.paywallRestoreButton} accessibilityRole="button">
+          <PressableScale onPress={onRestore} disabled={busy} style={pageStyles.paywallRestoreButton} accessibilityRole="button" haptic="none">
             <Text style={pageStyles.paywallRestoreLabel}>{restoring ? strings.report.paywallRestoring : strings.report.paywallRestoreLabel}</Text>
-          </Pressable>
+          </PressableScale>
 
           {!!purchaseNotice && <Text style={pageStyles.paywallNotice}>{purchaseNotice}</Text>}
         </View>
@@ -1580,7 +1662,7 @@ const styles = StyleSheet.create({
   retryLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.gold },
   backLabel: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.subheadline },
 
-  homeButton: { marginHorizontal: 22, marginBottom: 16, marginTop: 6, borderWidth: 1, borderColor: COLORS.border, borderRadius: 12, paddingVertical: 14, alignItems: "center" },
+  homeButton: { marginHorizontal: 22, marginBottom: 16, marginTop: 6, backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, paddingVertical: 14, alignItems: "center", ...SHADOW.raised },
   homeButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
 });
 
@@ -1600,11 +1682,16 @@ const pageStyles = StyleSheet.create({
   pageFootText: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 0.2, color: COLORS.footer },
 
   coverMid: { flex: 1, justifyContent: "flex-start", paddingTop: "18%" },
-  coverTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 27, lineHeight: 36, color: COLORS.headline, marginBottom: 4 },
-  coverTitle2: { fontFamily: FONTS.displayItalic, fontVariant: ["lining-nums"], fontSize: 20, lineHeight: 28, color: COLORS.footer, marginTop: 10 },
-  coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: 16 },
-  coverSub: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline },
+  coverTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 40, lineHeight: 48, letterSpacing: -0.8, color: COLORS.headline, marginBottom: 4 },
+  coverTitleKo: { fontWeight: "700", letterSpacing: -1 },
+  coverTitle2: { fontFamily: FONTS.displayItalic, fontVariant: ["lining-nums"], fontSize: 22, lineHeight: 30, color: COLORS.footer, marginTop: 10 },
+  coverRule: { width: 48, height: 1, backgroundColor: COLORS.gold, marginVertical: 16 },
+  coverSub: { fontFamily: FONTS.semibold, fontSize: 15, letterSpacing: 0.3, color: COLORS.headline },
   coverSource: { marginTop: 22, marginBottom: 28 },
+  coverDecorClip: { overflow: "hidden" },
+  // Low enough that petals crossing the title never compete with it.
+  coverMapDim: { opacity: 0.2 },
+  coverRings: { position: "absolute" },
 
   tocEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: "#5C5237", marginTop: 24, marginBottom: 12 },
   tocTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 24, lineHeight: 31, color: "#22301F", marginBottom: 26 },
@@ -1701,7 +1788,7 @@ const pageStyles = StyleSheet.create({
   },
   breatherLabelText: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: COLORS.gold },
   breatherTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 19, lineHeight: 25, color: COLORS.headline },
-  takeawayBox: { marginTop: 18, backgroundColor: "rgba(255,255,255,0.03)", borderWidth: 1, borderColor: COLORS.border, borderRadius: 8, padding: 14 },
+  takeawayBox: { marginTop: 18, backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 14, ...SHADOW.raised },
   takeawayText: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 20, color: COLORS.headline },
   takeawayBold: { fontFamily: FONTS.bold, color: COLORS.gold },
 

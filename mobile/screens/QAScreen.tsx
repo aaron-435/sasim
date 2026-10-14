@@ -3,12 +3,13 @@ import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import RefreshCw from "lucide-react-native/icons/refresh-cw";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BackHandler, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
+import { success } from "../lib/haptics";
 import { localizedText } from "../lib/qaBankLocale";
 import { getDailyLimit, getUsageToday, incrementUsageToday, isSubscribed, PAID_DAILY_LIMIT } from "../lib/qaQuota";
 import { getRevenueCatUserId, isUnavailableMessage, purchaseIssueDetail, purchaseQaPro, restoreQaPro } from "../lib/purchases";
@@ -24,7 +25,9 @@ import QASubcategoryScreen from "./QASubcategoryScreen";
 import QAPersonFormScreen from "./QAPersonFormScreen";
 import { useOtherBirthForm, type OtherBirthPayload } from "../components/OtherBirthForm";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 import FeedbackRow from "../components/FeedbackRow";
+import PressableScale from "../components/motion/PressableScale";
 import { track } from "../lib/analytics";
 
 // "그 사람에 대해 묻기": which fixed question, and the other person's birth data for this answer.
@@ -266,6 +269,7 @@ export default function QAScreen({
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
+      success();
       pushBot(strings.qa.subscribeSuccess(PAID_DAILY_LIMIT));
       await unlockAfterEntitlementChange();
     } else if (outcome.status === "error") {
@@ -306,9 +310,9 @@ export default function QAScreen({
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.header}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
           <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
-        </Pressable>
+        </PressableScale>
         <View style={styles.headerText}>
           <View style={styles.headerTitleRow}>
             <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
@@ -329,12 +333,14 @@ export default function QAScreen({
               <View key={i} style={styles.pickerRow}>
                 <View style={styles.pickerBubble}>
                   {QA_TOPIC_GROUPS.map((group) => (
-                    <Pressable
+                    <PressableScale
                       key={group.id}
                       style={styles.optionButton}
                       onPress={() => handlePickGroup(group)}
                       accessibilityRole="button"
                       accessibilityLabel={group.id === "person" && !isSubscriber ? `${strings.qa.topicGroups[group.id]}, ${strings.qa.personBadge}` : strings.qa.topicGroups[group.id]}
+                      haptic="select"
+                      pressedScale={0.98}
                     >
                       <View style={styles.optionRow}>
                         <Text style={styles.optionLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.topicGroups[group.id]}</Text>
@@ -342,7 +348,7 @@ export default function QAScreen({
                           <Text style={styles.optionBadge} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.personBadge}</Text>
                         )}
                       </View>
-                    </Pressable>
+                    </PressableScale>
                   ))}
                 </View>
               </View>
@@ -360,7 +366,7 @@ export default function QAScreen({
               <View key={i} style={styles.pickerRow}>
                 <View style={styles.subscribeCard}>
                   <PlanPicker offer={offer} disabled={purchasing || restoring} />
-                  <Pressable
+                  <PressableScale
                     style={[styles.subscribeButton, purchasing && styles.subscribeButtonDisabled]}
                     disabled={purchasing || restoring}
                     onPress={handleSubscribe}
@@ -371,16 +377,17 @@ export default function QAScreen({
                     <Text style={styles.subscribeButtonText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
                       {purchasing ? strings.qa.subscribing : offer.buttonLabel}
                     </Text>
-                  </Pressable>
-                  <Pressable
+                  </PressableScale>
+                  <PressableScale
                     style={styles.restoreLink}
                     disabled={purchasing || restoring}
                     onPress={handleRestore}
                     accessibilityRole="button"
                     accessibilityLabel={restoring ? strings.qa.restoring : strings.qa.restoreButton}
+                    haptic="none"
                   >
                     <Text style={styles.restoreLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{restoring ? strings.qa.restoring : strings.qa.restoreButton}</Text>
-                  </Pressable>
+                  </PressableScale>
                   {!!offer.trialLine && <Text style={styles.renewNoteText} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{offer.renewNote}</Text>}
                   {purchaseNotice && <Text style={styles.subscribeNoticeText} accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{purchaseNotice}</Text>}
                 </View>
@@ -399,10 +406,10 @@ export default function QAScreen({
         {errorText && (
           <View style={styles.errorCard}>
             <Text style={styles.errorText} accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{errorText}</Text>
-            <Pressable onPress={handleRetry} style={styles.retryButton} accessibilityRole="button" accessibilityLabel={strings.common.retryLabel}>
+            <PressableScale onPress={handleRetry} style={styles.retryButton} accessibilityRole="button" accessibilityLabel={strings.common.retryLabel} haptic="none">
               <RefreshCw size={13} strokeWidth={2} color={COLORS.gold} />
               <Text style={styles.retryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.retryLabel}</Text>
-            </Pressable>
+            </PressableScale>
           </View>
         )}
       </ScrollView>
@@ -422,7 +429,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: SURFACE.hairline,
   },
   backButton: {
     minHeight: 44,
@@ -470,18 +477,15 @@ const styles = StyleSheet.create({
   },
   pickerBubble: {
     width: "88%",
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 16,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     borderBottomLeftRadius: 4,
     padding: 12,
+    ...SHADOW.raised,
   },
   optionButton: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 10,
+    backgroundColor: SURFACE.floating,
+    borderRadius: RADIUS.sm,
     paddingVertical: 12,
     paddingHorizontal: 14,
     marginBottom: 8,
@@ -506,13 +510,12 @@ const styles = StyleSheet.create({
   },
   subscribeCard: {
     width: "88%",
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 16,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     borderBottomLeftRadius: 4,
     padding: 14,
     gap: 10,
+    ...SHADOW.raised,
   },
   subscribeButton: {
     backgroundColor: COLORS.gold,

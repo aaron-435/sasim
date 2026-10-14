@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import ArrowRight from "lucide-react-native/icons/arrow-right";
-import { ActivityIndicator, BackHandler, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import PressableScale from "../components/motion/PressableScale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
@@ -12,6 +13,7 @@ import { formatShortDate } from "../lib/shortDate";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // "좋은 날 찾기" — a subscriber sub-screen of FortuneScreen. Pick a purpose, and the server
 // (app/api/goodDays, lib/goodDays.ts) returns the 3-5 best-matched days in the next 30
@@ -101,16 +103,17 @@ export default function GoodDaysScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable
+        <PressableScale
           onPress={purpose ? handleChangePurpose : onBack}
           hitSlop={12}
           style={styles.backButton}
           accessibilityRole="button"
           accessibilityLabel={strings.common.backLabel}
+          haptic="none"
         >
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
-        </Pressable>
+        </PressableScale>
 
         {!purpose && (
           <>
@@ -118,19 +121,21 @@ export default function GoodDaysScreen({
             <Text style={styles.intro}>{strings.goodDays.intro}</Text>
             <View style={styles.purposeList}>
               {GOOD_DAY_PURPOSES.map((p) => (
-                <Pressable
+                <PressableScale
                   key={p}
                   onPress={() => handlePick(p)}
-                  style={({ pressed }) => [styles.purposeCard, pressed && styles.pressed]}
+                  style={styles.purposeCard}
                   accessibilityRole="button"
                   accessibilityLabel={`${content.purposes[p].label}. ${content.purposes[p].hint}`}
+                  haptic="select"
+                  pressedScale={0.98}
                 >
                   <View style={styles.purposeText}>
                     <Text style={styles.purposeLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{content.purposes[p].label}</Text>
                     <Text style={styles.purposeHint} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{content.purposes[p].hint}</Text>
                   </View>
                   <ArrowRight size={16} strokeWidth={2.25} color={COLORS.gold} />
-                </Pressable>
+                </PressableScale>
               ))}
             </View>
           </>
@@ -145,9 +150,9 @@ export default function GoodDaysScreen({
             {!loading && error && (
               <View style={styles.errorBlock}>
                 <Text style={styles.errorText} accessibilityLiveRegion="polite">{error}</Text>
-                <Pressable onPress={() => load(purpose)} style={styles.retryButton} accessibilityRole="button">
+                <PressableScale onPress={() => load(purpose)} style={styles.retryButton} accessibilityRole="button">
                   <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
-                </Pressable>
+                </PressableScale>
               </View>
             )}
             {!loading && !error && days && (
@@ -175,9 +180,9 @@ export default function GoodDaysScreen({
                 <Text style={styles.disclaimer}>{strings.goodDays.disclaimer}</Text>
               </>
             )}
-            <Pressable onPress={handleChangePurpose} style={styles.changeLink} accessibilityRole="button">
+            <PressableScale onPress={handleChangePurpose} style={styles.changeLink} accessibilityRole="button" haptic="none">
               <Text style={styles.changeLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.goodDays.changePurpose}</Text>
-            </Pressable>
+            </PressableScale>
           </>
         )}
       </ScrollView>
@@ -197,21 +202,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 14,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     paddingVertical: 14,
     paddingHorizontal: 16,
     minHeight: 60,
+    ...SHADOW.raised,
   },
-  pressed: { opacity: 0.85 },
   purposeText: { flex: 1, gap: 3 },
   purposeLabel: { fontFamily: FONTS.semibold, fontSize: 15.5, color: COLORS.headline },
   purposeHint: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.footer },
   spinner: { marginTop: 32 },
   dayList: { gap: 12 },
-  dayCard: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, padding: 16, gap: 6 },
+  dayCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 16, gap: 6, ...SHADOW.raised },
   dayHeader: { flexDirection: "row", alignItems: "center", gap: 8 },
   dayDate: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 19, color: COLORS.headline },
   dayRhythm: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold },
@@ -221,7 +224,7 @@ const styles = StyleSheet.create({
   disclaimer: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: 18 },
   errorBlock: { gap: 10, marginTop: 12, alignItems: "flex-start" },
   errorText: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.danger },
-  retryButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 16, borderRadius: 10, borderWidth: 1, borderColor: COLORS.border },
+  retryButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 16, borderRadius: 10, borderWidth: 1, borderColor: SURFACE.hairline },
   retryLabel: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.headline },
   changeLink: { minHeight: 44, justifyContent: "center", alignSelf: "flex-start", marginTop: 12 },
   changeLinkText: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.gold, textDecorationLine: "underline" },

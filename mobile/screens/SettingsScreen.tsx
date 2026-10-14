@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import Check from "lucide-react-native/icons/check";
-import { ActivityIndicator, Alert, Linking, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Alert, Linking, Platform, ScrollView, StyleSheet, View } from "react-native";
 import { API_BASE_URL } from "../config";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
+import PressableScale from "../components/motion/PressableScale";
 import { LOCALE_LABELS, useLocale, useStrings, type Locale } from "../lib/i18n";
 import { getNotificationPreference, setNotificationPreference, type NotificationPreference } from "../lib/notificationPreference";
 import { applyNotificationPreference } from "../lib/routineNotification";
@@ -14,6 +15,7 @@ import { getSavedPair, unlinkPair, type SavedPair } from "../lib/pairs";
 import { track } from "../lib/analytics";
 import { confirmUnlink } from "../components/CoupleModeSection";
 import { COLORS } from "../theme/colors";
+import { SURFACE } from "../theme/tokens";
 import { FONTS } from "../theme/fonts";
 
 const NOTIFICATION_OPTIONS: NotificationPreference[] = ["off", "daily", "weekly"];
@@ -153,20 +155,21 @@ export default function SettingsScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-        </Pressable>
+        </PressableScale>
 
         <Text style={styles.heading} accessibilityRole="header">{strings.settings.heading}</Text>
 
         <Text style={styles.sectionLabel} accessibilityRole="header">{strings.settings.languageSectionLabel}</Text>
         <View style={styles.optionList}>
           {LANGUAGE_ORDER.map((l: Locale) => (
-            <Pressable
+            <PressableScale
               key={l}
               style={[styles.option, l === locale && styles.optionActive]}
               onPress={() => setLocale(l)}
+              haptic="select"
               accessibilityRole="radio"
               accessibilityState={{ checked: l === locale }}
               aria-checked={l === locale}
@@ -174,17 +177,18 @@ export default function SettingsScreen({
             >
               <Text style={[styles.optionLabel, l === locale && styles.optionLabelActive]}>{LOCALE_LABELS[l]}</Text>
               {l === locale && <Check size={16} strokeWidth={2.5} color={COLORS.gold} />}
-            </Pressable>
+            </PressableScale>
           ))}
         </View>
 
         <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.notificationSectionLabel}</Text>
         <View style={styles.optionList}>
           {NOTIFICATION_OPTIONS.map((pref) => (
-            <Pressable
+            <PressableScale
               key={pref}
               style={[styles.optionRich, pref === notificationPref && styles.optionActive]}
               onPress={() => handlePickNotification(pref)}
+              haptic="select"
               disabled={applying}
               accessibilityRole="radio"
               accessibilityState={{ checked: pref === notificationPref, disabled: applying }}
@@ -200,14 +204,15 @@ export default function SettingsScreen({
               ) : (
                 pref === notificationPref && <Check size={16} strokeWidth={2.5} color={COLORS.gold} />
               )}
-            </Pressable>
+            </PressableScale>
           ))}
         </View>
         {solarTermsOn !== null && (
           <View style={[styles.optionList, styles.solarRow]}>
-            <Pressable
+            <PressableScale
               style={[styles.optionRich, notificationPref === "off" && styles.optionDisabled]}
               onPress={toggleSolarTerms}
+              haptic="select"
               disabled={solarApplying || notificationPref === "off"}
               accessibilityRole="switch"
               accessibilityState={{ checked: solarTermsOn && notificationPref !== "off", disabled: solarApplying || notificationPref === "off" }}
@@ -227,7 +232,7 @@ export default function SettingsScreen({
                   <View style={[styles.toggleThumb, solarTermsOn && notificationPref !== "off" && styles.toggleThumbOn]} />
                 </View>
               )}
-            </Pressable>
+            </PressableScale>
           </View>
         )}
         {permissionDenied && <Text style={styles.warning}>{strings.settings.notificationPermissionDenied}</Text>}
@@ -240,9 +245,9 @@ export default function SettingsScreen({
                 <Text style={[styles.optionLabel, styles.coupleLabel]} numberOfLines={1}>
                   {strings.couple.linkedTitle(pair.partnerName || strings.couple.partnerFallback)}
                 </Text>
-                <Pressable onPress={handleUnlink} disabled={unlinking} hitSlop={8} style={styles.unlinkButton} accessibilityRole="button">
+                <PressableScale onPress={handleUnlink} disabled={unlinking} hitSlop={8} style={styles.unlinkButton} accessibilityRole="button" haptic="none">
                   {unlinking ? <ActivityIndicator size="small" color={COLORS.danger} /> : <Text style={styles.unlinkLabel}>{strings.couple.unlinkButton}</Text>}
-                </Pressable>
+                </PressableScale>
               </View>
             </View>
           </>
@@ -250,7 +255,7 @@ export default function SettingsScreen({
 
         <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.legalSectionLabel}</Text>
         <View style={styles.optionList}>
-          <Pressable
+          <PressableScale
             style={styles.option}
             onPress={handleRestore}
             disabled={restoring}
@@ -259,18 +264,18 @@ export default function SettingsScreen({
           >
             <Text style={styles.optionLabel}>{strings.qa.restoreButton}</Text>
             {restoring && <ActivityIndicator size="small" color={COLORS.gold} />}
-          </Pressable>
+          </PressableScale>
           {legalLinks.map((link) => (
-            <Pressable key={link.label} style={styles.option} onPress={() => Linking.openURL(link.url)} accessibilityRole="link">
+            <PressableScale key={link.label} style={styles.option} onPress={() => Linking.openURL(link.url)} accessibilityRole="link" haptic="none">
               <Text style={styles.optionLabel}>{link.label}</Text>
-            </Pressable>
+            </PressableScale>
           ))}
         </View>
 
         <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.resetSectionLabel}</Text>
-        <Pressable style={styles.resetRow} onPress={handleResetPress} accessibilityRole="button">
+        <PressableScale style={styles.resetRow} onPress={handleResetPress} accessibilityRole="button">
           <Text style={styles.resetLabel}>{strings.settings.resetButton}</Text>
-        </Pressable>
+        </PressableScale>
 
         <Text style={styles.copyright}>© 2026 Studio Aron</Text>
       </ScrollView>
@@ -302,7 +307,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
   },
   optionRich: {
     flexDirection: "row",
@@ -313,7 +318,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     gap: 12,
   },
   optionActive: {
@@ -323,7 +328,7 @@ const styles = StyleSheet.create({
   optionTextWrap: { flex: 1, gap: 3 },
   solarRow: { marginTop: 10 },
   optionDisabled: { opacity: 0.55 },
-  toggleTrack: { width: 40, height: 24, borderRadius: 12, backgroundColor: COLORS.disabledBg, borderWidth: 1, borderColor: COLORS.border, padding: 2, justifyContent: "center" },
+  toggleTrack: { width: 40, height: 24, borderRadius: 12, backgroundColor: COLORS.disabledBg, borderWidth: 1, borderColor: SURFACE.hairline, padding: 2, justifyContent: "center" },
   toggleTrackOn: { backgroundColor: COLORS.gold, borderColor: COLORS.gold },
   toggleThumb: { width: 18, height: 18, borderRadius: 9, backgroundColor: COLORS.subheadline },
   toggleThumbOn: { backgroundColor: COLORS.ctaText, alignSelf: "flex-end" },
@@ -347,7 +352,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     alignItems: "center",
   },
   resetLabel: {

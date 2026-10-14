@@ -4,7 +4,7 @@
     "slug": "fatesaid",
     "scheme": "fatesaid",
     "owner": "aaron_435",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -69,7 +69,8 @@
             }
           ]
         }
-      ]
+      ],
+      "expo-image"
     ],
     "extra": {
       "eas": {

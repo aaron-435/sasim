@@ -1,13 +1,15 @@
 import { useRef } from "react";
-import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
+import PressableScale from "../components/motion/PressableScale";
 import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { to24HourString } from "../lib/zodiac";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { SURFACE } from "../theme/tokens";
 
 export default function TobScreen({
   hour,
@@ -46,7 +48,7 @@ export default function TobScreen({
       <View style={styles.top}>
         <View style={styles.headerRow}>
           <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.tob.heading}</Text>
-          <Pressable
+          <PressableScale
             onPress={onToggleUnknown}
             hitSlop={8}
             style={styles.unknownButton}
@@ -54,9 +56,10 @@ export default function TobScreen({
             accessibilityLabel={strings.tob.unknownTimeA11y}
             accessibilityState={{ checked: timeUnknown }}
             aria-checked={timeUnknown}
+            haptic="select"
           >
             <Text style={[styles.unknownLabel, timeUnknown && styles.unknownLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.tob.unknownTime}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
 
         <View style={styles.row}>
@@ -95,7 +98,7 @@ export default function TobScreen({
             keyboardType="number-pad"
             maxLength={2}
           />
-          <Pressable
+          <PressableScale
             style={[styles.periodButton, period === "AM" && styles.periodButtonActive, timeUnknown && styles.inputDisabled]}
             onPress={() => onChangePeriod("AM")}
             disabled={timeUnknown}
@@ -104,10 +107,11 @@ export default function TobScreen({
             accessibilityState={{ selected: period === "AM", checked: period === "AM" }}
             aria-selected={period === "AM"}
             aria-checked={period === "AM"}
+            haptic="select"
           >
             <Text style={[styles.periodLabel, period === "AM" && styles.periodLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.tob.periodAM}</Text>
-          </Pressable>
-          <Pressable
+          </PressableScale>
+          <PressableScale
             style={[styles.periodButton, period === "PM" && styles.periodButtonActive, timeUnknown && styles.inputDisabled]}
             onPress={() => onChangePeriod("PM")}
             disabled={timeUnknown}
@@ -116,9 +120,10 @@ export default function TobScreen({
             accessibilityState={{ selected: period === "PM", checked: period === "PM" }}
             aria-selected={period === "PM"}
             aria-checked={period === "PM"}
+            haptic="select"
           >
             <Text style={[styles.periodLabel, period === "PM" && styles.periodLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.tob.periodPM}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
       </View>
 
@@ -168,7 +173,7 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     borderRadius: 10,
     paddingVertical: 14,
   },
@@ -190,7 +195,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
   },
   periodButtonActive: {
     backgroundColor: "rgba(111,169,139,0.12)",

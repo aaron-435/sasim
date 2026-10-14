@@ -1,11 +1,16 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View, type LayoutChangeEvent } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withDelay, withTiming } from "react-native-reanimated";
 import Svg, { Defs, G, Line, Pattern, Rect, Text as SvgText } from "react-native-svg";
 import Text from "./AppText";
+import CountUp from "./motion/CountUp";
+import Reveal from "./motion/Reveal";
 import { ELEMENT_COLORS, ELEMENT_ORDER } from "../lib/elements";
 import { useStrings } from "../lib/i18n";
+import useReducedMotion from "../lib/useReducedMotion";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { EASING } from "../theme/motion";
 
 // The saju chart as one picture (SPEC 2026-10-03 §3, sketch A chosen by the user): four
 // columns (year · month · day · hour), heavenly stem on top in a round cell, earthly branch
@@ -33,6 +38,7 @@ const BRANCH_HANJA: Record<string, string> = { 자: "子", 축: "丑", 인: "寅
 
 const HEIGHT = 214;
 const BAR_Y = 202;
+const STROKE_PAD = 2;
 
 let hatchSeq = 0;
 
@@ -78,6 +84,19 @@ export default function FourPillarsChart({
   const t = strings.fourPillarsChart;
   const [width, setWidth] = useState(0);
   const hatchId = useRef(`pillarHatch${++hatchSeq}`).current;
+  const reduceMotion = useReducedMotion();
+  // The element bar fills in from the left after the pillars have entered.
+  const barProgress = useSharedValue(reduceMotion ? 1 : 0);
+  useEffect(() => {
+    if (reduceMotion) {
+      barProgress.value = 1;
+      return;
+    }
+    barProgress.value = withDelay(350, withTiming(1, { duration: 900, easing: EASING.enter }));
+  }, [reduceMotion, barProgress]);
+  const barStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: -width * (1 - barProgress.value) }],
+  }));
   const pillars = parseFourPillars(fourPillars);
   if (!pillars) return null;
 
@@ -115,93 +134,109 @@ export default function FourPillarsChart({
     <View style={styles.root} accessible accessibilityRole="image" accessibilityLabel={a11yLabel}>
       <View style={styles.canvas} onLayout={onLayout}>
         {width > 0 && (
-          <Svg width={width} height={HEIGHT}>
-            <Defs>
-              <Pattern id={hatchId} width={6} height={6} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                <Line x1={0} y1={0} x2={0} y2={6} stroke={COLORS.border} strokeWidth={2} />
-              </Pattern>
-            </Defs>
-            {ORDER.map((key, i) => {
-              const x = x0 + i * (colW + gap);
-              const pillar = pillars[key];
-              const isDay = key === "day";
-              return (
-                <G key={key}>
-                  <SvgText x={x + colW / 2} y={14} fill={isDay ? COLORS.headline : COLORS.footer} fontSize={12} fontFamily={FONTS.semibold} textAnchor="middle">
-                    {t.pillars[key]}
-                  </SvgText>
-                  {pillar ? (
-                    ([0, 1] as const).map((row) => {
-                      const el = KO_EL[row === 0 ? pillar.skyElement : pillar.earthElement];
-                      const hanja = row === 0 ? STEM_HANJA[pillar.sky] : BRANCH_HANJA[pillar.earth];
-                      const y = 26 + row * 82;
-                      const you = isDay && row === 0;
-                      return (
-                        <G key={row}>
-                          <Rect
-                            x={x}
-                            y={y}
-                            width={colW}
-                            height={74}
-                            rx={row === 0 ? colW / 2 : 14}
-                            fill={ELEMENT_COLORS[el]}
-                            fillOpacity={0.22}
-                            stroke={you ? COLORS.headline : ELEMENT_COLORS[el]}
-                            strokeWidth={you ? 2 : 1}
-                          />
-                          <SvgText x={x + colW / 2} y={y + 34} fill={COLORS.headline} fontSize={13} fontFamily={FONTS.semibold} textAnchor="middle">
-                            {t.elementNames[el]}
-                          </SvgText>
-                          {!!hanja && (
-                            <SvgText x={x + colW / 2} y={y + 54} fill={COLORS.subheadline} fontSize={12} fontFamily={FONTS.regular} textAnchor="middle">
-                              {hanja}
-                            </SvgText>
-                          )}
-                          {you && (
-                            <G>
-                              <Rect x={x + colW / 2 - 18} y={y - 9} width={36} height={18} rx={9} fill={COLORS.headline} />
-                              <SvgText x={x + colW / 2} y={y + 4} fill={COLORS.ctaText} fontSize={11} fontFamily={FONTS.bold} textAnchor="middle">
-                                {t.you}
+          <>
+            {/* One Svg per pillar so each column gets its own Reveal entrance. Geometry is
+                unchanged: the row's marginLeft + columnGap reproduce the old x0/gap math, and
+                the columns (BAR_Y tall) plus the bar below still fill HEIGHT. */}
+            <View style={[styles.columnsRow, { marginLeft: x0, columnGap: gap }]}>
+              {ORDER.map((key, i) => {
+                const pillar = pillars[key];
+                const isDay = key === "day";
+                const columnHatchId = `${hatchId}-${key}`;
+                return (
+                  <Reveal key={key} index={i} style={styles.columnBleed}>
+                    {/* STROKE_PAD on each side keeps the day master's 2px outline from being clipped at the Svg edge. */}
+                    <Svg width={colW + STROKE_PAD * 2} height={BAR_Y}>
+                      <G x={STROKE_PAD}>
+                      <Defs>
+                        <Pattern id={columnHatchId} width={6} height={6} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                          <Line x1={0} y1={0} x2={0} y2={6} stroke={COLORS.border} strokeWidth={2} />
+                        </Pattern>
+                      </Defs>
+                      <SvgText x={colW / 2} y={14} fill={isDay ? COLORS.headline : COLORS.footer} fontSize={12} fontFamily={FONTS.semibold} textAnchor="middle">
+                        {t.pillars[key]}
+                      </SvgText>
+                      {pillar ? (
+                        ([0, 1] as const).map((row) => {
+                          const el = KO_EL[row === 0 ? pillar.skyElement : pillar.earthElement];
+                          const hanja = row === 0 ? STEM_HANJA[pillar.sky] : BRANCH_HANJA[pillar.earth];
+                          const y = 26 + row * 82;
+                          const you = isDay && row === 0;
+                          return (
+                            <G key={row}>
+                              <Rect
+                                x={0}
+                                y={y}
+                                width={colW}
+                                height={74}
+                                rx={row === 0 ? colW / 2 : 14}
+                                fill={ELEMENT_COLORS[el]}
+                                fillOpacity={0.22}
+                                stroke={you ? COLORS.headline : ELEMENT_COLORS[el]}
+                                strokeWidth={you ? 2 : 1}
+                              />
+                              <SvgText x={colW / 2} y={y + 34} fill={COLORS.headline} fontSize={13} fontFamily={FONTS.semibold} textAnchor="middle">
+                                {t.elementNames[el]}
                               </SvgText>
+                              {!!hanja && (
+                                <SvgText x={colW / 2} y={y + 54} fill={COLORS.subheadline} fontSize={12} fontFamily={FONTS.regular} textAnchor="middle">
+                                  {hanja}
+                                </SvgText>
+                              )}
+                              {you && (
+                                <G>
+                                  <Rect x={colW / 2 - 18} y={y - 9} width={36} height={18} rx={9} fill={COLORS.headline} />
+                                  <SvgText x={colW / 2} y={y + 4} fill={COLORS.ctaText} fontSize={11} fontFamily={FONTS.bold} textAnchor="middle">
+                                    {t.you}
+                                  </SvgText>
+                                </G>
+                              )}
                             </G>
-                          )}
+                          );
+                        })
+                      ) : (
+                        <G>
+                          <Rect x={0} y={26} width={colW} height={156} rx={14} fill={`url(#${columnHatchId})`} stroke={COLORS.border} strokeDasharray="4 4" />
+                          {t.unknownHourLines.map((line, li) => (
+                            <SvgText key={li} x={colW / 2} y={100 + li * 15} fill={COLORS.footer} fontSize={11} fontFamily={FONTS.medium} textAnchor="middle">
+                              {line}
+                            </SvgText>
+                          ))}
                         </G>
-                      );
-                    })
-                  ) : (
-                    <G>
-                      <Rect x={x} y={26} width={colW} height={156} rx={14} fill={`url(#${hatchId})`} stroke={COLORS.border} strokeDasharray="4 4" />
-                      {t.unknownHourLines.map((line, li) => (
-                        <SvgText key={li} x={x + colW / 2} y={100 + li * 15} fill={COLORS.footer} fontSize={11} fontFamily={FONTS.medium} textAnchor="middle">
-                          {line}
-                        </SvgText>
-                      ))}
-                    </G>
-                  )}
-                </G>
-              );
-            })}
-            {(() => {
-              let cx = 0;
-              return ELEMENT_ORDER.map((k) => {
-                const w = ((elements[k] ?? 0) / 100) * width;
-                const bar = (
-                  <Rect
-                    key={k}
-                    x={cx}
-                    y={BAR_Y}
-                    width={Math.max(w - 2, 0)}
-                    height={10}
-                    rx={3}
-                    fill={ELEMENT_COLORS[k]}
-                    fillOpacity={top.includes(k as El) ? 1 : 0.55}
-                  />
+                      )}
+                      </G>
+                    </Svg>
+                  </Reveal>
                 );
-                cx += w;
-                return bar;
-              });
-            })()}
-          </Svg>
+              })}
+            </View>
+            <View style={styles.barClip}>
+              <Animated.View style={barStyle}>
+                <Svg width={width} height={HEIGHT - BAR_Y}>
+                  {(() => {
+                    let cx = 0;
+                    return ELEMENT_ORDER.map((k) => {
+                      const w = ((elements[k] ?? 0) / 100) * width;
+                      const bar = (
+                        <Rect
+                          key={k}
+                          x={cx}
+                          y={0}
+                          width={Math.max(w - 2, 0)}
+                          height={10}
+                          rx={3}
+                          fill={ELEMENT_COLORS[k]}
+                          fillOpacity={top.includes(k as El) ? 1 : 0.55}
+                        />
+                      );
+                      cx += w;
+                      return bar;
+                    });
+                  })()}
+                </Svg>
+              </Animated.View>
+            </View>
+          </>
         )}
       </View>
       {/* Legend for the stacked bar, so the mix doesn't rely on colour alone. Hidden from
@@ -211,8 +246,15 @@ export default function FourPillarsChart({
           <View key={k} style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: ELEMENT_COLORS[k] }]} />
             <Text style={styles.legendText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
-              {t.elementNames[k as El]} {Math.round(elements[k] ?? 0)}%
+              {t.elementNames[k as El]}{" "}
             </Text>
+            <CountUp
+              value={Math.round(elements[k] ?? 0)}
+              delay={350}
+              format={(n) => `${Math.round(n)}%`}
+              style={styles.legendText}
+              maxFontSizeMultiplier={MAX_FONT_SCALE.control}
+            />
           </View>
         ))}
       </View>
@@ -233,6 +275,9 @@ export default function FourPillarsChart({
 const styles = StyleSheet.create({
   root: { width: "100%" },
   canvas: { width: "100%", height: HEIGHT },
+  columnsRow: { flexDirection: "row" },
+  columnBleed: { marginHorizontal: -STROKE_PAD },
+  barClip: { overflow: "hidden" },
   legend: { flexDirection: "row", flexWrap: "wrap", columnGap: 12, rowGap: 4, marginTop: 8 },
   legendCentered: { justifyContent: "center" },
   legendItem: { flexDirection: "row", alignItems: "center", gap: 5 },

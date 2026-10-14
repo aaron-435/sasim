@@ -7,10 +7,11 @@ import Mountain from "lucide-react-native/icons/mountain";
 import Share2 from "lucide-react-native/icons/share-2";
 import TreePine from "lucide-react-native/icons/tree-pine";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, StyleSheet, View } from "react-native";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
+import PressableScale from "../components/motion/PressableScale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
@@ -25,6 +26,7 @@ import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // Domain share cards — "how I find money", "what sets my heart racing", "my bright spot
 // this year". Money and love are free and need no network (copy is picked by the saju
@@ -172,10 +174,10 @@ export default function ShareCardsScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button">
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-        </Pressable>
+        </PressableScale>
 
         <Text style={styles.heading} accessibilityRole="header">
           {strings.shareCards.heading}
@@ -184,19 +186,20 @@ export default function ShareCardsScreen({
 
         <View style={styles.tabRow}>
           {tabs.map((t) => (
-            <Pressable
+            <PressableScale
               key={t.key}
               onPress={() => setKind(t.key)}
               style={[styles.tab, kind === t.key && styles.tabActive]}
               accessibilityRole="tab"
               accessibilityState={{ selected: kind === t.key }}
               aria-selected={kind === t.key}
+              haptic="select"
             >
               <View style={styles.tabInner}>
                 {t.key === "year" && entitled === false && <Lock size={12} strokeWidth={2} color={kind === t.key ? COLORS.gold : COLORS.subheadline} />}
                 <Text style={[styles.tabLabel, kind === t.key && styles.tabLabelActive]}>{t.label}</Text>
               </View>
-            </Pressable>
+            </PressableScale>
           ))}
         </View>
 
@@ -237,23 +240,23 @@ export default function ShareCardsScreen({
             <Lock size={20} strokeWidth={1.75} color={COLORS.gold} />
             <Text style={styles.gateTitle}>{strings.shareCards.lockedTitle}</Text>
             <Text style={styles.gateBody}>{strings.shareCards.lockedBody}</Text>
-            <Pressable style={styles.primaryButton} onPress={onOpenFortune} accessibilityRole="button">
+            <PressableScale style={styles.primaryButton} onPress={onOpenFortune} accessibilityRole="button">
               <Text style={styles.primaryButtonLabel}>{strings.shareCards.lockedCta}</Text>
-            </Pressable>
+            </PressableScale>
           </View>
         )}
 
         {yearGate === "error" && (
           <View style={styles.gateCard}>
             <Text style={styles.gateBody}>{strings.shareCards.loadError}</Text>
-            <Pressable style={styles.retryButton} onPress={loadYear} accessibilityRole="button">
+            <PressableScale style={styles.retryButton} onPress={loadYear} accessibilityRole="button" haptic="none">
               <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
-            </Pressable>
+            </PressableScale>
           </View>
         )}
 
         {card && (
-          <Pressable style={styles.primaryButton} onPress={handleShare} disabled={sharing} accessibilityRole="button">
+          <PressableScale style={styles.primaryButton} onPress={handleShare} disabled={sharing} accessibilityRole="button">
             {sharing ? (
               <ActivityIndicator color={COLORS.ctaText} />
             ) : (
@@ -262,7 +265,7 @@ export default function ShareCardsScreen({
                 <Text style={styles.primaryButtonLabel}>{strings.shareCards.shareButton}</Text>
               </>
             )}
-          </Pressable>
+          </PressableScale>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -277,7 +280,7 @@ const styles = StyleSheet.create({
   heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginTop: 4 },
   subtitle: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginTop: 6, marginBottom: 16 },
   tabRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 20 },
-  tab: { minHeight: 44, justifyContent: "center", paddingHorizontal: 14, borderRadius: 999, backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border },
+  tab: { minHeight: 44, justifyContent: "center", paddingHorizontal: 14, borderRadius: 999, backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: SURFACE.hairline },
   tabActive: { backgroundColor: "rgba(111,169,139,0.12)", borderColor: "rgba(111,169,139,0.4)" },
   tabInner: { flexDirection: "row", alignItems: "center", gap: 5 },
   tabLabel: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.subheadline },
@@ -307,7 +310,7 @@ const styles = StyleSheet.create({
   tipText: { fontFamily: FONTS.medium, fontSize: 14, lineHeight: 20, color: COLORS.headline, textAlign: "center" },
   byLine: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.headline },
   footer: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.subheadline, textAlign: "center" },
-  gateCard: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 16, padding: 22, gap: 10, alignItems: "flex-start" },
+  gateCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 22, gap: 10, alignItems: "flex-start", ...SHADOW.raised },
   gateTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 22, color: COLORS.headline },
   gateBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline },
   primaryButton: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 15, marginTop: 20, alignSelf: "stretch" },

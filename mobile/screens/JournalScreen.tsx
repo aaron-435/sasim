@@ -2,8 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import ChevronLeft from "lucide-react-native/icons/chevron-left";
 import ChevronRight from "lucide-react-native/icons/chevron-right";
-import { ActivityIndicator, BackHandler, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import PressableScale from "../components/motion/PressableScale";
 import JournalSafetyNote from "../components/JournalSafetyNote";
 import MonthGrid from "../components/MonthGrid";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -25,6 +26,7 @@ import { formatMonthLabel, formatShortDate } from "../lib/shortDate";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // "한 줄 저널" — a sub-screen of FortuneScreen (like GoodDaysScreen). A month calendar of the
 // device's journal entries, the picked day's entry, and the month-end pattern report: the
@@ -158,16 +160,16 @@ export default function JournalScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
           <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
-        </Pressable>
+        </PressableScale>
 
         <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.journal.heading}</Text>
         <Text style={styles.intro}>{strings.journal.intro}</Text>
 
         <View style={styles.monthRow}>
-          <Pressable
+          <PressableScale
             onPress={() => setMonth(shiftMonth(month, -1))}
             disabled={!canGoBack}
             style={[styles.monthArrow, !canGoBack && styles.hidden]}
@@ -175,12 +177,12 @@ export default function JournalScreen({
             accessibilityLabel={strings.journal.prevMonthLabel}
           >
             <ChevronLeft size={20} strokeWidth={2} color={COLORS.headline} />
-          </Pressable>
+          </PressableScale>
           <View style={styles.monthTitleBlock}>
             <Text style={styles.monthTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{formatMonthLabel(month, locale)}</Text>
             <Text style={styles.monthCount} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.journal.monthCount(count)}</Text>
           </View>
-          <Pressable
+          <PressableScale
             onPress={() => setMonth(shiftMonth(month, 1))}
             disabled={!canGoForward}
             style={[styles.monthArrow, !canGoForward && styles.hidden]}
@@ -188,7 +190,7 @@ export default function JournalScreen({
             accessibilityLabel={strings.journal.nextMonthLabel}
           >
             <ChevronRight size={20} strokeWidth={2} color={COLORS.headline} />
-          </Pressable>
+          </PressableScale>
         </View>
 
         <MonthGrid
@@ -199,16 +201,17 @@ export default function JournalScreen({
             const isToday = date === todayIso;
             const label = String(Number(date.slice(8)));
             return (
-              <Pressable
+              <PressableScale
                 onPress={() => entry && setSelected(date)}
                 disabled={!entry}
                 style={[styles.day, entry && styles.dayRecorded, isSelected && styles.daySelected, isToday && !entry && styles.dayToday]}
                 accessibilityRole="button"
                 accessibilityState={{ disabled: !entry, selected: isSelected }}
                 accessibilityLabel={entry ? `${formatShortDate(date, locale)}, ${strings.journal.moods[entry.mood]}` : formatShortDate(date, locale)}
+                haptic="select"
               >
                 <Text style={[styles.dayLabel, entry && styles.dayLabelRecorded]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{label}</Text>
-              </Pressable>
+              </PressableScale>
             );
           }}
         />
@@ -236,9 +239,9 @@ export default function JournalScreen({
           {count >= MIN_REPORT_ENTRIES && !entitled && (
             <>
               <Text style={styles.reportText}>{strings.journal.reportLocked}</Text>
-              <Pressable onPress={onBack} style={styles.secondaryButton} accessibilityRole="button">
+              <PressableScale onPress={onBack} style={styles.secondaryButton} accessibilityRole="button">
                 <Text style={styles.secondaryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.journal.reportLockedButton}</Text>
-              </Pressable>
+              </PressableScale>
             </>
           )}
 
@@ -267,9 +270,9 @@ export default function JournalScreen({
                   <Text style={styles.reportText} accessibilityLiveRegion="polite">{strings.journal.generating}</Text>
                 </View>
               ) : (
-                <Pressable onPress={handleGenerate} style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]} accessibilityRole="button">
+                <PressableScale onPress={handleGenerate} style={styles.primaryButton} accessibilityRole="button">
                   <Text style={styles.primaryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{saved ? strings.journal.reportRefreshButton : strings.journal.reportButton}</Text>
-                </Pressable>
+                </PressableScale>
               )}
               {!!error && <Text style={styles.errorText} accessibilityLiveRegion="polite">{error}</Text>}
               <Text style={styles.privacy}>{strings.journal.reportPrivacy}</Text>
@@ -297,11 +300,11 @@ const styles = StyleSheet.create({
   day: { flex: 1, alignItems: "center", justifyContent: "center", borderRadius: 999 },
   dayRecorded: { backgroundColor: "rgba(111,169,139,0.18)" },
   daySelected: { borderWidth: 1.5, borderColor: COLORS.gold },
-  dayToday: { borderWidth: 1, borderColor: COLORS.border },
+  dayToday: { borderWidth: 1, borderColor: SURFACE.hairline },
   dayLabel: { fontFamily: FONTS.regular, fontVariant: ["lining-nums"], fontSize: 14, color: COLORS.footer },
   dayLabelRecorded: { fontFamily: FONTS.semibold, color: COLORS.headline },
   empty: { fontFamily: FONTS.regular, fontSize: 14, color: COLORS.footer, textAlign: "center", marginTop: 12 },
-  entryCard: { backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, padding: 16, gap: 10, marginTop: 16 },
+  entryCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 16, gap: 10, marginTop: 16, ...SHADOW.raised },
   entryHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
   entryDate: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.subheadline },
   moodChip: { borderRadius: 999, borderWidth: 1, borderColor: COLORS.gold, paddingHorizontal: 12, paddingVertical: 4 },
@@ -323,7 +326,6 @@ const styles = StyleSheet.create({
   primaryLabel: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.ctaText },
   secondaryButton: { minHeight: 44, alignSelf: "flex-start", justifyContent: "center", borderRadius: 999, borderWidth: 1, borderColor: COLORS.gold, paddingHorizontal: 18 },
   secondaryLabel: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.gold },
-  pressed: { opacity: 0.85 },
   errorText: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.danger },
   privacy: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer },
 });

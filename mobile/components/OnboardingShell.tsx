@@ -1,7 +1,8 @@
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
-import { KeyboardAvoidingView, Pressable, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "./PatternBackground";
+import PressableScale from "./motion/PressableScale";
 import { COLORS } from "../theme/colors";
 import { ONBOARDING_STEP_IDS } from "../lib/onboardingSteps";
 import { useStrings } from "../lib/i18n";
@@ -25,15 +26,16 @@ export default function OnboardingShell({
             without "padding" the primary button under a text field stayed hidden (2026-10-12 device test). */}
         <KeyboardAvoidingView style={styles.flex} behavior="padding">
           <View style={styles.header}>
-            <Pressable
+            <PressableScale
               onPress={onBack}
               hitSlop={12}
               style={styles.backButton}
               accessibilityRole="button"
               accessibilityLabel={strings.common.backLabel}
+              haptic="none"
             >
               <ArrowLeft size={20} strokeWidth={2} color={COLORS.subheadline} />
-            </Pressable>
+            </PressableScale>
             {stepIndex !== undefined && (
               <View
                 style={styles.progressRow}

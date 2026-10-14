@@ -9,12 +9,16 @@ import Settings from "lucide-react-native/icons/settings";
 import Share2 from "lucide-react-native/icons/share-2";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import Users from "lucide-react-native/icons/users";
+import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef, useState } from "react";
-import { AccessibilityInfo, AppState, Animated, Easing, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { AccessibilityInfo, AppState, Animated, Easing, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FourPillarsChart, { parseFourPillars } from "../components/FourPillarsChart";
 import PatternBackground from "../components/PatternBackground";
+import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
+import ElementMap from "../components/art/ElementMap";
 import ElementColorCard from "../components/ElementColorCard";
 import type { ElementColor } from "../lib/elementColorContent";
 import { DAILY_FORTUNE_CONTENT, getOverview } from "../lib/dailyFortuneContent";
@@ -36,6 +40,7 @@ import { currentWrappedYear } from "../lib/wrapped";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import { FONTS } from "../theme/fonts";
 
 // 2026-09-19 redesign (Impeccable critique of this screen, 25/40): Home used to be a
@@ -144,6 +149,7 @@ export default function HomeScreen({
   const strings = useStrings();
   const { locale } = useLocale();
   const fortuneContent = DAILY_FORTUNE_CONTENT[locale] ?? DAILY_FORTUNE_CONTENT.ko;
+  const dateLine = new Intl.DateTimeFormat(locale, { month: "long", day: "numeric", weekday: "long" }).format(new Date());
 
   const [today, setToday] = useState<TodayState>({ kind: "loading" });
   const [lastQuestion, setLastQuestion] = useState<LastQuestion | null>(null);
@@ -327,13 +333,14 @@ export default function HomeScreen({
     <PatternBackground>
       <SafeAreaView style={styles.root}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <Reveal index={0}>
           <View style={styles.header}>
             <View style={styles.headerTopRow}>
               <View style={styles.brandRow}>
                 <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
                 <Text style={styles.brandLabel}>FATESAID</Text>
               </View>
-              <Pressable
+              <PressableScale
                 onPress={onOpenSettings}
                 hitSlop={10}
                 style={styles.settingsButton}
@@ -341,34 +348,56 @@ export default function HomeScreen({
                 accessibilityLabel={strings.home.settingsLabel}
               >
                 <Settings size={20} strokeWidth={1.75} color={COLORS.subheadline} />
-              </Pressable>
+              </PressableScale>
             </View>
-            <Text style={styles.greeting} accessibilityRole="header">
-              {strings.home.greeting(nickname)}
-            </Text>
-            <View style={styles.identityRow}>
-              {sajuType && (
-                <Pressable
-                  style={styles.typeBadge}
-                  onPress={onOpenType}
-                  hitSlop={8}
-                  accessibilityRole="button"
-                  accessibilityLabel={formatSajuTypeName(locale, sajuType)}
-                  accessibilityHint={strings.home.typeBadgeHint}
-                >
-                  <Text style={styles.typeBadgeText}>{formatSajuTypeName(locale, sajuType)}</Text>
-                  <ChevronRight size={14} strokeWidth={2} color={COLORS.gold} />
-                </Pressable>
-              )}
+            <View style={styles.greetingRow}>
+              <View style={styles.greetingText}>
+                <Text style={styles.dateEyebrow}>{dateLine}</Text>
+                <Text style={[styles.greeting, locale === "ko" && styles.greetingKo]} accessibilityRole="header">
+                  {strings.home.greeting(nickname)}
+                </Text>
+                <View style={styles.identityRow}>
+                  {sajuType && (
+                    <PressableScale
+                      style={styles.typeBadge}
+                      onPress={onOpenType}
+                      hitSlop={8}
+                      haptic="select"
+                      accessibilityRole="button"
+                      accessibilityLabel={formatSajuTypeName(locale, sajuType)}
+                      accessibilityHint={strings.home.typeBadgeHint}
+                    >
+                      <Text style={styles.typeBadgeText}>{formatSajuTypeName(locale, sajuType)}</Text>
+                      <ChevronRight size={14} strokeWidth={2} color={COLORS.gold} />
+                    </PressableScale>
+                  )}
+                </View>
+              </View>
+              {elements &&
+                (sajuType ? (
+                  <PressableScale
+                    onPress={onOpenType}
+                    haptic="select"
+                    accessibilityRole="button"
+                    accessibilityLabel={formatSajuTypeName(locale, sajuType)}
+                  >
+                    <ElementMap elements={elements} seed={selfDayMasterChar ?? nickname} size={76} />
+                  </PressableScale>
+                ) : (
+                  <ElementMap elements={elements} seed={selfDayMasterChar ?? nickname} size={76} />
+                ))}
             </View>
           </View>
+          </Reveal>
 
           {selfDayMasterChar && (
-          <Pressable
+          // pressedScale=1: the custom hero spring (pressIn/pressOut) already handles the shrink.
+          <PressableScale
             onPress={heroPress_}
             disabled={!heroPress_}
             onPressIn={pressIn}
             onPressOut={pressOut}
+            pressedScale={1}
             accessibilityRole="button"
             accessibilityState={{ busy: today.kind === "loading", disabled: !heroPress_ }}
             accessibilityLabel={[heroTitle, headline, heroBody, heroChip].filter(Boolean).join(", ")}
@@ -385,6 +414,12 @@ export default function HomeScreen({
                 },
               ]}
             >
+              <LinearGradient
+                colors={["#86BCA0", COLORS.gold, "#5C957A"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={[StyleSheet.absoluteFill, styles.heroGradient]}
+              />
               <View style={styles.heroTopRow}>
                 <Text style={styles.heroTitle}>{heroTitle}</Text>
                 {heroChip && (
@@ -411,15 +446,21 @@ export default function HomeScreen({
                 </View>
               )}
             </Animated.View>
-          </Pressable>
+          </PressableScale>
           )}
 
-          {elementColor && <ElementColorCard color={elementColor} compact onPress={onOpenFortune} />}
+          {elementColor && (
+            <Reveal index={2}>
+              <ElementColorCard color={elementColor} compact onPress={onOpenFortune} />
+            </Reveal>
+          )}
 
           {wrappedYear !== null && selfDayMasterChar && (
-            <Pressable
+            <Reveal index={3}>
+            <PressableScale
               onPress={() => onOpenWrapped(wrappedYear)}
               style={({ pressed }) => [styles.pathCard, pressed && styles.listRowPressed]}
+              pressedScale={0.98}
               accessibilityRole="button"
               accessibilityLabel={`${strings.wrapped.homeTitle(wrappedYear)}. ${strings.wrapped.homeBody}`}
             >
@@ -433,11 +474,13 @@ export default function HomeScreen({
                 <Text style={styles.pathCta}>{strings.wrapped.homeCta}</Text>
                 <ArrowRight size={15} strokeWidth={2} color={COLORS.gold} />
               </View>
-            </Pressable>
+            </PressableScale>
+            </Reveal>
           )}
 
           {couple && couple.kind !== "gone" && (
-            <Pressable
+            <Reveal index={4}>
+            <PressableScale
               onPress={
                 couple.kind === "locked"
                   ? onOpenFortune
@@ -449,6 +492,7 @@ export default function HomeScreen({
               }
               disabled={couple.kind === "today"}
               style={({ pressed }) => [styles.coupleCard, pressed && styles.listRowPressed]}
+              pressedScale={0.98}
               accessibilityRole={couple.kind === "today" ? "summary" : "button"}
             >
               <View style={styles.pathEyebrowRow}>
@@ -481,12 +525,15 @@ export default function HomeScreen({
               )}
               {couple.kind === "pending" && <Text style={styles.pathBody}>{strings.couple.pendingHome}</Text>}
               {couple.kind === "error" && <Text style={styles.pathBody}>{strings.fortune.loadErrorText}</Text>}
-            </Pressable>
+            </PressableScale>
+            </Reveal>
           )}
 
-          <Pressable
+          <Reveal index={5}>
+          <PressableScale
             onPress={onOpenQuiz}
             style={({ pressed }) => [styles.pathCard, pressed && styles.listRowPressed]}
+            pressedScale={0.98}
             accessibilityRole="button"
             accessibilityLabel={`${hasSavedReports ? strings.home.pathTitleNext : strings.home.pathTitle}. ${strings.home.pathBody}`}
           >
@@ -500,72 +547,84 @@ export default function HomeScreen({
               <Text style={styles.pathCta}>{strings.home.pathCta}</Text>
               <ArrowRight size={15} strokeWidth={2} color={COLORS.gold} />
             </View>
-          </Pressable>
+          </PressableScale>
+          </Reveal>
 
           {showChart && elements && (
+            <Reveal index={6}>
             <View style={styles.section}>
-              <Text style={styles.sectionTitle} accessibilityRole="header">
+              <Text style={[styles.sectionTitle, locale === "ko" && styles.sectionTitleKo]} accessibilityRole="header">
                 {strings.home.myChartTitle}
               </Text>
-              {/* Unboxed on purpose: the grouped feature list below is the only bordered card
-                  besides the hero, so the static chart can't read as something to tap. */}
+              {/* Unboxed on purpose: the tiles below are all tappable cards, so the static
+                  chart can't read as something to tap. */}
               <FourPillarsChart fourPillars={fourPillars} elements={elements} />
             </View>
+            </Reveal>
           )}
 
+          <Reveal index={7}>
           <View style={styles.section}>
-            <Text style={styles.sectionTitle} accessibilityRole="header">
+            <Text style={[styles.sectionTitle, locale === "ko" && styles.sectionTitleKo]} accessibilityRole="header">
               {strings.home.featuresTitle}
             </Text>
-            <View style={styles.list}>
-              {features.map((key, index) => {
+            <View style={styles.tileGrid}>
+              {features.map((key, i) => {
                 const { label, description, onPress } = featureMeta[key];
                 const Icon = FEATURE_ICONS[key];
+                const fullWidth = i === 0 || (i === features.length - 1 && (features.length - 1) % 2 === 1);
+                const iconSize = i === 0 ? 28 : 24;
                 return (
-                  <Pressable
-                    key={key}
-                    onPress={onPress}
-                    android_ripple={{ color: "rgba(111,169,139,0.12)" }}
-                    style={({ pressed }) => [styles.listRow, index > 0 && styles.listRowDivider, pressed && styles.listRowPressed]}
-                    accessibilityRole="button"
-                    accessibilityLabel={`${label}. ${description}`}
-                  >
-                    <Icon size={20} strokeWidth={1.75} color={COLORS.gold} />
-                    <View style={styles.listRowText}>
-                      <Text style={styles.listRowLabel}>{label}</Text>
-                      <Text style={styles.listRowDescription} numberOfLines={2}>
+                  <Reveal key={key} index={i} delay={400 + i * 50} style={fullWidth ? styles.tileWrapFull : styles.tileWrapHalf}>
+                    <PressableScale
+                      onPress={onPress}
+                      style={[styles.tile, !fullWidth && styles.tileHalf]}
+                      pressedScale={0.97}
+                      accessibilityRole="button"
+                      accessibilityLabel={`${label}. ${description}`}
+                    >
+                      <View style={styles.tileIconCircle}>
+                        <Icon size={iconSize} strokeWidth={1.75} color={COLORS.gold} />
+                      </View>
+                      <Text style={i === 0 ? styles.tileTitleLarge : styles.tileTitle}>{label}</Text>
+                      <Text style={styles.tileDescription} numberOfLines={2}>
                         {description}
                       </Text>
-                    </View>
-                    <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
-                  </Pressable>
+                      {i === 0 && (
+                        <View style={styles.tileArrowRow}>
+                          <ArrowRight size={16} strokeWidth={2} color={COLORS.gold} />
+                        </View>
+                      )}
+                    </PressableScale>
+                  </Reveal>
                 );
               })}
             </View>
           </View>
+          </Reveal>
 
           {qa && (
             <View style={styles.qaPanel}>
               <Text style={styles.qaTitle}>
                 QA MODE · {qa.level} · persona: {qa.persona ?? "—"}
               </Text>
-              <Pressable onPress={qa.onOpenSampleReport} style={styles.qaButton} accessibilityRole="button">
+              <PressableScale onPress={qa.onOpenSampleReport} style={styles.qaButton} accessibilityRole="button" haptic="none">
                 <Text style={styles.qaButtonLabel}>Open sample deep report</Text>
-              </Pressable>
+              </PressableScale>
               {qa.onOpenSampleReportV2 && (
-                <Pressable onPress={qa.onOpenSampleReportV2} style={styles.qaButton} accessibilityRole="button">
+                <PressableScale onPress={qa.onOpenSampleReportV2} style={styles.qaButton} accessibilityRole="button" haptic="none">
                   <Text style={styles.qaButtonLabel}>Open sample 5-set report (v2)</Text>
-                </Pressable>
+                </PressableScale>
               )}
             </View>
           )}
 
           <View style={styles.footer}>
             <Text style={[styles.philosophyLine, locale === "ko" && styles.philosophyLineKo]}>{strings.home.philosophyLine}</Text>
-            <Pressable onPress={onOpenSajuLearn} style={styles.learnMoreLink} accessibilityRole="link">
+            <PressableScale onPress={onOpenSajuLearn} style={styles.learnMoreLink} accessibilityRole="link" haptic="none">
               <Text style={styles.learnMoreLinkText}>{strings.home.learnMoreLink}</Text>
               <ArrowRight size={14} strokeWidth={2} color={COLORS.gold} />
-            </Pressable>
+            </PressableScale>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -615,12 +674,32 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: -12,
   },
+  greetingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  greetingText: {
+    flex: 1,
+  },
+  dateEyebrow: {
+    fontFamily: FONTS.medium,
+    fontSize: 12,
+    letterSpacing: 0.4,
+    color: COLORS.subheadline,
+    marginBottom: 6,
+  },
   greeting: {
     fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
-    fontSize: 30,
-    lineHeight: 36,
+    fontSize: 34,
+    lineHeight: 40,
+    letterSpacing: -0.6,
     color: COLORS.headline,
+  },
+  greetingKo: {
+    fontWeight: "700",
+    letterSpacing: -0.8,
   },
   identityRow: {
     flexDirection: "row",
@@ -648,9 +727,14 @@ const styles = StyleSheet.create({
   },
   hero: {
     backgroundColor: COLORS.gold,
-    borderRadius: 20,
+    borderRadius: RADIUS.lg,
+    overflow: "hidden",
     padding: 20,
     gap: 8,
+    ...SHADOW.raised,
+  },
+  heroGradient: {
+    borderRadius: RADIUS.lg,
   },
   heroTopRow: {
     flexDirection: "row",
@@ -715,23 +799,21 @@ const styles = StyleSheet.create({
     color: COLORS.ctaText,
   },
   section: {
-    marginTop: 30,
+    marginTop: SPACE.xxl,
   },
   pathCard: {
-    marginTop: 16,
+    marginTop: SPACE.md,
     padding: 18,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "rgba(111,169,139,0.35)",
-    backgroundColor: "rgba(111,169,139,0.06)",
+    borderRadius: RADIUS.md,
+    backgroundColor: SURFACE.raised,
+    ...SHADOW.raised,
   },
   coupleCard: {
-    marginTop: 16,
+    marginTop: SPACE.md,
     padding: 18,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.inputBg,
+    borderRadius: RADIUS.md,
+    backgroundColor: SURFACE.raised,
+    ...SHADOW.raised,
   },
   coupleRows: { gap: 6, marginBottom: 4 },
   coupleRow: { flexDirection: "row", alignItems: "baseline", gap: 10 },
@@ -744,56 +826,79 @@ const styles = StyleSheet.create({
   pathCtaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 14 },
   pathCta: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.gold },
   sectionTitle: {
-    fontFamily: FONTS.semibold,
-    fontSize: 15,
+    fontFamily: FONTS.display,
+    fontSize: 20,
+    lineHeight: 26,
     color: COLORS.headline,
     marginBottom: 12,
   },
-  list: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 14,
-    overflow: "hidden",
+  sectionTitleKo: {
+    fontWeight: "700",
   },
-  listRow: {
+  tileGrid: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-    minHeight: 60,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    rowGap: SPACE.md,
   },
-  listRowDivider: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: COLORS.border,
+  tileWrapFull: {
+    width: "100%",
+  },
+  tileWrapHalf: {
+    width: "48%",
+  },
+  tile: {
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
+    padding: SPACE.lg,
+    ...SHADOW.raised,
+  },
+  tileHalf: {
+    minHeight: 132,
+  },
+  tileIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(111,169,139,0.12)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tileTitleLarge: {
+    fontFamily: FONTS.semibold,
+    fontSize: 18,
+    lineHeight: 24,
+    color: COLORS.headline,
+    marginTop: 12,
+  },
+  tileTitle: {
+    fontFamily: FONTS.semibold,
+    fontSize: 16,
+    lineHeight: 22,
+    color: COLORS.headline,
+    marginTop: 12,
+  },
+  tileDescription: {
+    fontFamily: FONTS.regular,
+    fontSize: 13,
+    lineHeight: 19,
+    color: COLORS.subheadline,
+    marginTop: 4,
+  },
+  tileArrowRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 8,
   },
   listRowPressed: {
     backgroundColor: "rgba(111,169,139,0.08)",
-  },
-  listRowText: {
-    flex: 1,
-    gap: 2,
-  },
-  listRowLabel: {
-    fontFamily: FONTS.semibold,
-    fontSize: 15,
-    color: COLORS.headline,
-  },
-  listRowLabelMuted: {
-    color: COLORS.subheadline,
-  },
-  listRowDescription: {
-    fontFamily: FONTS.regular,
-    fontSize: 13,
-    color: COLORS.subheadline,
   },
   qaPanel: { marginTop: 24, borderWidth: 1, borderStyle: "dashed", borderColor: "rgba(224,162,150,0.6)", borderRadius: 12, padding: 14, gap: 8 },
   qaTitle: { fontFamily: FONTS.semibold, fontSize: 12, color: "#E0A296" },
   qaButton: { minHeight: 44, justifyContent: "center", alignSelf: "flex-start" },
   qaButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.gold, textDecorationLine: "underline" },
   footer: {
-    marginTop: 30,
+    marginTop: SPACE.xxl,
     gap: 4,
   },
   philosophyLine: {

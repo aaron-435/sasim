@@ -6,10 +6,13 @@ import Gem from "lucide-react-native/icons/gem";
 import Mountain from "lucide-react-native/icons/mountain";
 import Share2 from "lucide-react-native/icons/share-2";
 import TreePine from "lucide-react-native/icons/tree-pine";
-import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, StyleSheet, View } from "react-native";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
+import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
+import RevealCard from "../components/motion/RevealCard";
 import CalcSourceBadge from "../components/CalcSourceBadge";
 import FourPillarsChart, { parseFourPillars } from "../components/FourPillarsChart";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,6 +25,7 @@ import { COLORS } from "../theme/colors";
 import { track } from "../lib/analytics";
 import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 const ELEMENT_ICON = { wood: TreePine, fire: Flame, earth: Mountain, metal: Gem, water: Droplets } as const;
 
@@ -57,6 +61,7 @@ export default function TypeScreen({
   const tint = ELEMENT_COLORS[sajuType.dayMasterElement] ?? COLORS.gold;
   const showChart = !!elements && parseFourPillars(fourPillars) !== null;
   const reveal = variant === "reveal";
+  const staggerBase = reveal ? 1200 : 200;
 
   async function handleShare() {
     if (sharing) return;
@@ -83,32 +88,37 @@ export default function TypeScreen({
     <SafeAreaView style={styles.root} edges={reveal ? ["top", "left", "right"] : undefined}>
       <ScrollView contentContainerStyle={styles.content}>
         {reveal ? (
+          <Reveal delay={0}>
           <Text style={styles.revealEyebrow} accessibilityRole="header">
             {strings.sajuType.revealEyebrow}
           </Text>
+          </Reveal>
         ) : (
-          <Pressable onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel}>
+          <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
             <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
             <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-          </Pressable>
+          </PressableScale>
         )}
 
-        <View style={[styles.card, { borderColor: `${tint}55` }]}>
+        <RevealCard tint={tint} ceremony={reveal}>
+        <View style={[styles.card, { borderWidth: 1, borderColor: `${tint}55` }]}>
           <Text style={styles.brandLabel}>FATESAID</Text>
           <View style={[styles.iconRow]}>
             <View style={[styles.iconBubble, { backgroundColor: `${tint}22` }]}>
               <ArchetypeIcon size={26} strokeWidth={1.75} color={tint} />
             </View>
           </View>
-          <Text style={styles.typeName}>{typeName}</Text>
+          <Text style={[styles.typeName, locale === "ko" && styles.typeNameKo]}>{typeName}</Text>
           <Text style={styles.typeGloss}>{strings.sajuType.typeGloss}</Text>
           <Text style={styles.greeting}>{strings.home.greeting(nickname)}</Text>
           <View style={styles.sourceRow}>
             <CalcSourceBadge />
           </View>
         </View>
+        </RevealCard>
 
         {!reveal && showChart && elements && (
+          <Reveal delay={staggerBase}>
           <View style={styles.section}>
             <Text style={[styles.sectionLabel, styles.chartLabel]} accessibilityRole="header">
               {strings.home.myChartTitle}
@@ -117,8 +127,10 @@ export default function TypeScreen({
                 chart's majority ("most present"); the chart's two captions keep them apart. */}
             <FourPillarsChart fourPillars={fourPillars} elements={elements} />
           </View>
+          </Reveal>
         )}
 
+        <Reveal delay={staggerBase + 60}>
         <View style={styles.section}>
           <View style={styles.sectionHeaderRow}>
             <ArchetypeIcon size={16} strokeWidth={2} color={tint} />
@@ -128,8 +140,10 @@ export default function TypeScreen({
           <Text style={styles.pieceTagline}>{archetype.tagline}</Text>
           <Text style={styles.pieceBody}>{archetype.body}</Text>
         </View>
+        </Reveal>
 
         {!reveal && (
+        <Reveal delay={staggerBase + 120}>
         <View style={styles.section}>
           <View style={styles.sectionHeaderRow}>
             <ModeIcon size={16} strokeWidth={2} color={ELEMENT_COLORS[sajuType.dominantElement]} />
@@ -139,14 +153,16 @@ export default function TypeScreen({
           <Text style={styles.pieceTagline}>{mode.tagline}</Text>
           <Text style={styles.pieceBody}>{mode.body}</Text>
         </View>
+        </Reveal>
         )}
 
         {celebrities.length > 0 && (
+          <Reveal delay={staggerBase + 180}>
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>{strings.sajuType.celebritiesLabel}</Text>
             <View style={styles.celebrityList}>
               {celebrities.map((c) => (
-                <View key={c.name} style={[styles.celebrityCard, { borderColor: `${tint}33` }]}>
+                <View key={c.name} style={[styles.celebrityCard, { borderWidth: 1, borderColor: `${tint}33` }]}>
                   <Text style={styles.celebrityName}>{celebrityDisplayName(c, locale)}</Text>
                   <Text style={styles.celebrityMeta}>
                     {c.field[locale]} · {strings.sajuType.celebrityBirthYear(c.birthYear)}
@@ -156,10 +172,12 @@ export default function TypeScreen({
               ))}
             </View>
           </View>
+          </Reveal>
         )}
 
         {/* Same labelled frame as the compatibility share card: the image repeats this screen, so
             it must read as a preview of what gets shared, and screen readers skip its copy. */}
+        <Reveal delay={staggerBase + 240}>
         <View style={styles.previewFrame}>
           <Text style={styles.previewLabel}>{strings.sajuType.sharePreviewLabel}</Text>
           <View ref={cardRef} collapsable={false} style={styles.shareCard} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
@@ -222,8 +240,10 @@ export default function TypeScreen({
             </View>
           </View>
         </View>
+        </Reveal>
 
-        <Pressable
+        <Reveal delay={staggerBase + 300}>
+        <PressableScale
           style={[styles.shareButton, reveal && styles.shareButtonSecondary]}
           onPress={handleShare}
           disabled={sharing}
@@ -239,19 +259,22 @@ export default function TypeScreen({
               <Text style={[styles.shareButtonLabel, reveal && styles.shareButtonLabelSecondary]}>{strings.sajuType.shareButton}</Text>
             </>
           )}
-        </Pressable>
+        </PressableScale>
+        </Reveal>
       </ScrollView>
       {reveal && (
+        <Reveal delay={staggerBase + 360}>
         <SafeAreaView edges={["bottom"]} style={styles.homeBar}>
-          <Pressable
-            style={({ pressed }) => [styles.homeButton, pressed && styles.pressed]}
+          <PressableScale
+            style={styles.homeButton}
             onPress={onBack}
             accessibilityRole="button"
             accessibilityLabel={strings.sajuType.revealGoHome}
           >
             <Text style={styles.homeButtonLabel}>{strings.sajuType.revealGoHome}</Text>
-          </Pressable>
+          </PressableScale>
         </SafeAreaView>
+        </Reveal>
       )}
     </SafeAreaView>
   );
@@ -285,12 +308,12 @@ const styles = StyleSheet.create({
   },
   card: {
     alignItems: "center",
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderRadius: 20,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.lg,
     paddingVertical: 32,
     paddingHorizontal: 20,
     gap: 10,
+    ...SHADOW.raised,
   },
   brandLabel: {
     fontFamily: FONTS.bold,
@@ -311,9 +334,13 @@ const styles = StyleSheet.create({
   typeName: {
     fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
-    fontSize: 28,
+    fontSize: 35,
+    letterSpacing: -0.6,
     color: COLORS.headline,
     marginTop: 4,
+  },
+  typeNameKo: {
+    fontWeight: "700",
   },
   typeGloss: {
     fontFamily: FONTS.regular,
@@ -332,7 +359,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 14,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: COLORS.border,
+    borderTopColor: SURFACE.hairline,
     alignSelf: "stretch",
   },
   section: {
@@ -376,10 +403,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   celebrityCard: {
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderRadius: 14,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     padding: 16,
+    ...SHADOW.raised,
   },
   celebrityName: {
     fontFamily: FONTS.semibold,
@@ -478,7 +505,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 12,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: COLORS.border,
+    borderTopColor: SURFACE.hairline,
     backgroundColor: COLORS.background,
   },
   homeButton: {
@@ -492,8 +519,5 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.semibold,
     fontSize: 15,
     color: COLORS.ctaText,
-  },
-  pressed: {
-    opacity: 0.85,
   },
 });

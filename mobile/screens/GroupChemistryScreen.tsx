@@ -3,7 +3,7 @@ import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import Plus from "lucide-react-native/icons/plus";
 import Share2 from "lucide-react-native/icons/share-2";
 import X from "lucide-react-native/icons/x";
-import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, StyleSheet, View } from "react-native";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,6 +19,8 @@ import type { ElementKey, SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
 import { readableColumn } from "../theme/layout";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import PressableScale from "../components/motion/PressableScale";
 
 // Group chemistry map (SPEC 2026-10-05 §7): the user plus 2–5 people — typed in by birth date or
 // picked from answered friend invites — get one five-element role each on a shareable card.
@@ -41,7 +43,7 @@ function AddByBirth({ onAdd }: { onAdd: (name: string, birth: OtherBirthPayload)
   return (
     <View>
       <OtherBirthFields form={form} />
-      <Pressable
+      <PressableScale
         style={({ pressed }) => [styles.addButton, pressed && styles.pressed, !form.isComplete && styles.disabled]}
         onPress={() => form.isComplete && onAdd(form.otherName.trim(), form.toPayload())}
         disabled={!form.isComplete}
@@ -50,7 +52,7 @@ function AddByBirth({ onAdd }: { onAdd: (name: string, birth: OtherBirthPayload)
       >
         <Plus size={16} strokeWidth={2} color={COLORS.gold} />
         <Text style={styles.addButtonLabel}>{strings.groupChemistry.addButton}</Text>
-      </Pressable>
+      </PressableScale>
     </View>
   );
 }
@@ -147,16 +149,17 @@ export default function GroupChemistryScreen({
   }
 
   const back = (
-    <Pressable
+    <PressableScale
       onPress={chemistry ? () => setChemistry(null) : onBack}
       hitSlop={12}
       style={styles.backButton}
       accessibilityRole="button"
       accessibilityLabel={strings.common.backLabel}
+      haptic="none"
     >
       <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
       <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
-    </Pressable>
+    </PressableScale>
   );
 
   if (chemistry) {
@@ -213,7 +216,7 @@ export default function GroupChemistryScreen({
             </View>
           </View>
 
-          <Pressable style={styles.primaryButton} onPress={handleShare} disabled={sharing} accessibilityRole="button" accessibilityLabel={strings.compatibility.shareButton}>
+          <PressableScale style={styles.primaryButton} onPress={handleShare} disabled={sharing} accessibilityRole="button" accessibilityLabel={strings.compatibility.shareButton}>
             {sharing ? (
               <ActivityIndicator color={COLORS.ctaText} />
             ) : (
@@ -222,10 +225,10 @@ export default function GroupChemistryScreen({
                 <Text style={styles.primaryButtonLabel}>{strings.compatibility.shareButton}</Text>
               </>
             )}
-          </Pressable>
-          <Pressable style={styles.textButton} onPress={() => setChemistry(null)} accessibilityRole="button">
+          </PressableScale>
+          <PressableScale style={styles.textButton} onPress={() => setChemistry(null)} accessibilityRole="button" haptic="none">
             <Text style={styles.textButtonLabel}>{strings.groupChemistry.editButton}</Text>
-          </Pressable>
+          </PressableScale>
         </ScrollView>
       </SafeAreaView>
     );
@@ -246,7 +249,7 @@ export default function GroupChemistryScreen({
                 {m.kind === "self" ? `${m.name} (${strings.groupChemistry.youLabel})` : m.name}
               </Text>
               {m.kind !== "self" && (
-                <Pressable
+                <PressableScale
                   onPress={() => setMembers((list) => list.filter((x) => x.id !== m.id))}
                   hitSlop={10}
                   style={styles.removeButton}
@@ -254,14 +257,14 @@ export default function GroupChemistryScreen({
                   accessibilityLabel={strings.groupChemistry.removeLabel(m.name)}
                 >
                   <X size={16} strokeWidth={2} color={COLORS.subheadline} />
-                </Pressable>
+                </PressableScale>
               )}
             </View>
           ))}
         </View>
         <Text style={styles.hint}>{full ? strings.groupChemistry.full : !ready ? strings.groupChemistry.needMore(GROUP_MIN - members.length) : " "}</Text>
 
-        <Pressable
+        <PressableScale
           style={[styles.primaryButton, !ready && styles.disabled]}
           onPress={handleSubmit}
           disabled={!ready || submitting}
@@ -269,7 +272,7 @@ export default function GroupChemistryScreen({
           accessibilityState={{ disabled: !ready, busy: submitting }}
         >
           {submitting ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.primaryButtonLabel}>{strings.groupChemistry.submit}</Text>}
-        </Pressable>
+        </PressableScale>
         {error && <Text style={styles.error}>{error}</Text>}
 
         {!full && pickable.length > 0 && (
@@ -279,16 +282,17 @@ export default function GroupChemistryScreen({
               {pickable.map((item) => {
                 const name = item.friendName?.trim() || strings.compatibility.unnamedOther;
                 return (
-                  <Pressable
+                  <PressableScale
                     key={item.code}
                     onPress={() => addInvite(item)}
                     style={({ pressed }) => [styles.chip, pressed && styles.pressed]}
                     accessibilityRole="button"
                     accessibilityLabel={`${strings.groupChemistry.addButton}: ${name}`}
+                    haptic="select"
                   >
                     <Plus size={14} strokeWidth={2} color={COLORS.gold} />
                     <Text style={styles.chipLabel}>{name}</Text>
-                  </Pressable>
+                  </PressableScale>
                 );
               })}
             </View>
@@ -330,10 +334,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     minHeight: 48,
     paddingHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: COLORS.inputBg,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    backgroundColor: SURFACE.raised,
+    ...SHADOW.raised,
   },
   memberName: { flex: 1, fontFamily: FONTS.medium, fontSize: 14.5, color: COLORS.headline },
   removeButton: { minWidth: 44, minHeight: 44, alignItems: "flex-end", justifyContent: "center" },
@@ -345,9 +348,9 @@ const styles = StyleSheet.create({
     gap: 6,
     minHeight: 44,
     paddingHorizontal: 14,
-    borderRadius: 22,
+    borderRadius: RADIUS.pill,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     backgroundColor: COLORS.inputBg,
   },
   chipLabel: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.headline },

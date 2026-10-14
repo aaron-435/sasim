@@ -3,6 +3,7 @@ import { AccessibilityInfo, Animated, Easing, StyleSheet, View } from "react-nat
 import Text from "./AppText";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 // Shared by ChatScreen (quiz→counseling chat) and QAScreen (saju Q&A) — both used to
 // carry byte-identical copies of these bubbles, the typing indicator and their styles.
@@ -77,13 +78,12 @@ const styles = StyleSheet.create({
   },
   bubbleBot: {
     maxWidth: "82%",
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 16,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     borderBottomLeftRadius: 4,
     paddingVertical: 12,
     paddingHorizontal: 15,
+    ...SHADOW.raised,
   },
   bubbleUser: {
     maxWidth: "82%",

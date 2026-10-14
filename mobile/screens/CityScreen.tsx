@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from "react-native";
+import { ActivityIndicator, StyleSheet, TextInput, View } from "react-native";
 import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
+import ElementsLoader from "../components/motion/ElementsLoader";
+import PressableScale from "../components/motion/PressableScale";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
 
 type CityResult = { id: string; cityDisplay: string; countryDisplay: string };
 
@@ -147,16 +150,17 @@ export default function CityScreen({
         {results.length > 0 && (
           <View style={styles.resultsBox}>
             {results.map((r) => (
-              <Pressable
+              <PressableScale
                 key={r.id}
                 style={styles.resultRow}
                 onPress={() => handlePick(r)}
                 accessibilityRole="button"
                 accessibilityLabel={`${r.cityDisplay}, ${r.countryDisplay}`}
+                haptic="select"
               >
                 <Text style={styles.resultCity} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{r.cityDisplay}</Text>
                 <Text style={styles.resultCountry} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{r.countryDisplay}</Text>
-              </Pressable>
+              </PressableScale>
             ))}
           </View>
         )}
@@ -165,7 +169,7 @@ export default function CityScreen({
 
       <View style={styles.middle}>
         {submitting ? (
-          <ActivityIndicator color={COLORS.gold} size="large" />
+          <ElementsLoader size="large" />
         ) : (
           <AuraNextButton disabled={!selected} onPress={handleSubmit} size={190} />
         )}
@@ -190,7 +194,7 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: SURFACE.hairline,
     borderRadius: 10,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -201,11 +205,10 @@ const styles = StyleSheet.create({
   },
   resultsBox: {
     marginTop: 6,
-    backgroundColor: COLORS.background,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: 10,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
     overflow: "hidden",
+    ...SHADOW.raised,
   },
   resultRow: {
     flexDirection: "row",
@@ -213,7 +216,7 @@ const styles = StyleSheet.create({
     paddingVertical: 13,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: SURFACE.hairline,
   },
   resultCity: {
     fontFamily: FONTS.medium,

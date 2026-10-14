@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Share2 from "lucide-react-native/icons/share-2";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
 import ReportPager, { type ReaderPage } from "../components/ReportPager";
+import PressableScale from "../components/motion/PressableScale";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
 import type { CompatibilityResult, CompatRelation } from "../lib/compatibility";
@@ -17,6 +18,7 @@ import { WRAPPED_CONTENT } from "../lib/wrappedContent";
 import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
+import { SURFACE } from "../theme/tokens";
 
 // Year Wrapped (연말 회고, 2026-10-06). Free, opened from Home between December 1 and
 // January 31 (lib/wrapped.ts). Up to five cards, each its own share image:
@@ -170,7 +172,7 @@ export default function WrappedScreen({
             {body}
             <Text style={styles.brand}>FATESAID</Text>
           </View>
-          <Pressable
+          <PressableScale
             style={styles.shareRow}
             onPress={() => handleShare(key)}
             disabled={!!sharingKey}
@@ -179,7 +181,7 @@ export default function WrappedScreen({
           >
             {sharingKey === key ? <ActivityIndicator size="small" color={COLORS.gold} /> : <Share2 size={16} strokeWidth={1.75} color={COLORS.gold} />}
             <Text style={styles.shareLabel}>{strings.wrapped.shareButton}</Text>
-          </Pressable>
+          </PressableScale>
           {after}
         </ScrollView>
       ),
@@ -260,12 +262,12 @@ export default function WrappedScreen({
           <Text style={styles.note}>{strings.wrapped.nextNote}</Text>
         </>,
         <View style={styles.actions}>
-          <Pressable onPress={onOpenYearReport} style={({ pressed }) => [styles.primary, pressed && styles.pressed]} accessibilityRole="button">
+          <PressableScale onPress={onOpenYearReport} style={styles.primary} accessibilityRole="button">
             <Text style={styles.primaryLabel}>{strings.wrapped.yearReportCta(year + 1)}</Text>
-          </Pressable>
-          <Pressable onPress={onBack} style={({ pressed }) => [styles.secondary, pressed && styles.pressed]} accessibilityRole="button">
+          </PressableScale>
+          <PressableScale onPress={onBack} style={styles.secondary} accessibilityRole="button">
             <Text style={styles.secondaryLabel}>{strings.wrapped.homeButton}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
       )
     );
@@ -289,12 +291,12 @@ export default function WrappedScreen({
           ) : (
             <>
               <Text style={styles.loadingText}>{strings.fortune.loadErrorText}</Text>
-              <Pressable onPress={load} style={styles.secondary} accessibilityRole="button">
+              <PressableScale onPress={load} style={styles.secondary} accessibilityRole="button">
                 <Text style={styles.secondaryLabel}>{strings.common.retryLabel}</Text>
-              </Pressable>
-              <Pressable onPress={onBack} style={styles.textButton} accessibilityRole="button">
+              </PressableScale>
+              <PressableScale onPress={onBack} style={styles.textButton} accessibilityRole="button" haptic="none">
                 <Text style={styles.textButtonLabel}>{strings.wrapped.homeButton}</Text>
-              </Pressable>
+              </PressableScale>
             </>
           )}
         </View>
@@ -351,9 +353,8 @@ const styles = StyleSheet.create({
   actions: { gap: 10, marginTop: 8 },
   primary: { backgroundColor: COLORS.headline, borderRadius: 12, paddingVertical: 15, paddingHorizontal: 16, alignItems: "center" },
   primaryLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.ctaText, textAlign: "center" },
-  secondary: { borderWidth: 1, borderColor: COLORS.border, borderRadius: 12, paddingVertical: 14, paddingHorizontal: 20, alignItems: "center", minWidth: 160 },
+  secondary: { borderWidth: 1, borderColor: SURFACE.hairline, borderRadius: 12, paddingVertical: 14, paddingHorizontal: 20, alignItems: "center", minWidth: 160 },
   secondaryLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
   textButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 12 },
   textButtonLabel: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.subheadline },
-  pressed: { opacity: 0.8 },
 });

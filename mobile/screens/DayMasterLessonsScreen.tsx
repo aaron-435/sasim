@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import Check from "lucide-react-native/icons/check";
 import Lock from "lucide-react-native/icons/lock";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import PressableScale from "../components/motion/PressableScale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LESSON_COUNT, getLessons } from "../lib/dayMasterLessons";
 import { getLessonProgress, isNextLessonOpen, markLessonRead, type LessonProgress } from "../lib/lessonProgress";
@@ -15,6 +16,7 @@ import { track } from "../lib/analytics";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
+import { SURFACE } from "../theme/tokens";
 
 // "Your Day Master in 10 days" (2026-10-06): opened from SajuLearnScreen. A list of the ten
 // lessons (read / today's / locked) and a reader for one lesson. One new lesson opens per
@@ -50,10 +52,10 @@ export default function DayMasterLessonsScreen({ sajuType, onBack }: { sajuType:
   }
 
   const back = (onPress: () => void, label: string) => (
-    <Pressable onPress={onPress} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={label}>
+    <PressableScale onPress={onPress} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={label} haptic="none">
       <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
       <Text style={styles.backLabel}>{label}</Text>
-    </Pressable>
+    </PressableScale>
   );
 
   if (openIndex !== null) {
@@ -73,13 +75,13 @@ export default function DayMasterLessonsScreen({ sajuType, onBack }: { sajuType:
             <Text style={styles.tryBody}>{lesson.tryToday}</Text>
           </View>
           {isNew ? (
-            <Pressable style={styles.primaryButton} onPress={() => handleMarkRead(openIndex)} accessibilityRole="button">
+            <PressableScale style={styles.primaryButton} onPress={() => handleMarkRead(openIndex)} accessibilityRole="button">
               <Text style={styles.primaryButtonLabel}>{s.markRead}</Text>
-            </Pressable>
+            </PressableScale>
           ) : (
-            <Pressable style={styles.secondaryButton} onPress={() => setOpenIndex(null)} accessibilityRole="button">
+            <PressableScale style={styles.secondaryButton} onPress={() => setOpenIndex(null)} accessibilityRole="button">
               <Text style={styles.secondaryButtonLabel}>{s.backToList}</Text>
-            </Pressable>
+            </PressableScale>
           )}
         </ScrollView>
       </SafeAreaView>
@@ -105,14 +107,15 @@ export default function DayMasterLessonsScreen({ sajuType, onBack }: { sajuType:
             const locked = !read && !today;
             const status = read ? s.readBadge : today ? s.todayBadge : i === progress.readCount ? s.lockedTomorrow : s.lockedLater;
             return (
-              <Pressable
+              <PressableScale
                 key={i}
-                style={[styles.row, today && { borderColor: `${accent}88` }, locked && styles.rowLocked]}
+                style={[styles.row, today && { borderWidth: 1, borderColor: `${accent}88` }, locked && styles.rowLocked]}
                 onPress={() => setOpenIndex(i)}
                 disabled={locked}
                 accessibilityRole="button"
                 accessibilityState={{ disabled: locked }}
                 accessibilityLabel={`${s.dayLabel(i + 1)}. ${locked ? status : `${lesson.title}. ${status}`}`}
+                pressedScale={0.98}
               >
                 <Text style={styles.rowDay}>{s.dayLabel(i + 1)}</Text>
                 <View style={styles.rowText}>
@@ -122,7 +125,7 @@ export default function DayMasterLessonsScreen({ sajuType, onBack }: { sajuType:
                   {!locked && <Text style={[styles.rowStatus, today && styles.rowStatusToday]}>{status}</Text>}
                 </View>
                 {read ? <Check size={16} strokeWidth={2.25} color={accent} /> : locked ? <Lock size={14} strokeWidth={2} color={COLORS.disabledText} /> : null}
-              </Pressable>
+              </PressableScale>
             );
           })}
         </View>
@@ -155,9 +158,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.inputBg,
+    backgroundColor: SURFACE.floating,
   },
   rowLocked: { backgroundColor: "transparent" },
   rowDay: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline, minWidth: 48 },
@@ -175,6 +176,6 @@ const styles = StyleSheet.create({
   tryBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 22, color: COLORS.subheadline, marginTop: 4 },
   primaryButton: { backgroundColor: COLORS.gold, borderRadius: 12, minHeight: 50, alignItems: "center", justifyContent: "center", marginTop: 28 },
   primaryButtonLabel: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.ctaText },
-  secondaryButton: { borderRadius: 12, borderWidth: 1, borderColor: COLORS.border, minHeight: 50, alignItems: "center", justifyContent: "center", marginTop: 28 },
+  secondaryButton: { borderRadius: 12, borderWidth: 1, borderColor: SURFACE.hairline, minHeight: 50, alignItems: "center", justifyContent: "center", marginTop: 28 },
   secondaryButtonLabel: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline },
 });

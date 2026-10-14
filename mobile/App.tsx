@@ -4,6 +4,7 @@ import { PlusJakartaSans_400Regular, PlusJakartaSans_500Medium, PlusJakartaSans_
 import { useEffect, useRef, useState } from "react";
 import { BackHandler, Linking, Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ChatScreen, { type ChatExtract } from "./screens/ChatScreen";
 import CityScreen, { type SajuResult } from "./screens/CityScreen";
 import CompatibilityScreen from "./screens/CompatibilityScreen";
@@ -33,6 +34,7 @@ import SettingsScreen from "./screens/SettingsScreen";
 import TypeScreen from "./screens/TypeScreen";
 import TypeRevealScreen from "./screens/TypeRevealScreen";
 import VerifyCodeScreen, { type VerifiedData } from "./screens/VerifyCodeScreen";
+import ScreenTransition, { type ScreenDirection } from "./components/motion/ScreenTransition";
 import * as Notifications from "expo-notifications";
 import { scheduleDecadeTransitionNotification } from "./lib/decadeNotification";
 import { setAnalyticsLocale, track } from "./lib/analytics";
@@ -114,6 +116,10 @@ const BACK_TARGET: Partial<Record<StepId, StepId>> = {
   wrapped: "home",
 };
 
+// Steps that arrive as a modal-like reveal (fade + slight grow) instead of a
+// directional slide — the celebratory or reader-style destinations.
+const FADE_IN_STEPS: ReadonlySet<StepId> = new Set(["typeReveal", "report", "yearReport", "compatReport", "qaReport", "wrapped"]);
+
 // The day master (일간) char and day branch (일지) the fortune/compatibility APIs key on —
 // pulled from the stored reading's loosely-typed summary/fourPillars.
 function dayMasterCharOf(homeData: HomeData): string | null {
@@ -145,9 +151,11 @@ export default function App() {
   }, []);
 
   return (
-    <LocaleProvider>
-      <AppContent />
-    </LocaleProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <LocaleProvider>
+        <AppContent />
+      </LocaleProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -353,6 +361,9 @@ function AppContent() {
   // back on any of those exited the app instead of returning Home.
   const stepRef = useRef(step);
   stepRef.current = step;
+  // Previous step for ScreenTransition's slide direction (read after the early
+  // return below, where `step` is known non-null).
+  const prevStepRef = useRef<StepId | null>(null);
   const savedReportRef = useRef(savedReport);
   savedReportRef.current = savedReport;
   useEffect(() => {
@@ -366,361 +377,379 @@ function AppContent() {
     return () => sub.remove();
   }, []);
 
+  // Record the committed step after render, so a re-render can't overwrite the
+  // previous step before the direction below is read.
+  useEffect(() => {
+    if (step !== null) prevStepRef.current = step;
+  }, [step]);
+
   if (!fontsLoaded || step === null) return null;
+
+  // Slide direction for the step switcher: back when returning to
+  // BACK_TARGET[prev], a fade for modal-like reveals, forward otherwise.
+  const prevStep = prevStepRef.current;
+  let direction: ScreenDirection = "forward";
+  if (prevStep !== null && BACK_TARGET[prevStep] === step) {
+    direction = "back";
+  } else if (FADE_IN_STEPS.has(step)) {
+    direction = "fade";
+  }
 
   return (
     <SafeAreaProvider>
       <StatusBar style="light" />
-      {step === "language" && <LanguageScreen onNext={() => setStep("intro")} />}
+      <ScreenTransition stepKey={step} direction={direction}>
+        {step === "language" && <LanguageScreen onNext={() => setStep("intro")} />}
 
-      {step === "intro" && <IntroScreen onNext={() => setStep("nickname")} onVerifyCode={() => setStep("verifyCode")} />}
+        {step === "intro" && <IntroScreen onNext={() => setStep("nickname")} onVerifyCode={() => setStep("verifyCode")} />}
 
-      {step === "verifyCode" && (
-        <VerifyCodeScreen
-          onVerified={(data: VerifiedData) => {
-            const row = data.sajuResult as Parameters<typeof normalizeVerifyCodeSajuResult>[0];
-            const dominant = dominantElementFrom(row?.elements);
-            const newHomeData: HomeData = { nickname: data.nickname, sajuResult: normalizeVerifyCodeSajuResult(row, dominant) };
-            setHomeData(newHomeData);
-            saveHomeData(newHomeData);
-            track("onboarding_complete", { via: "verify_code" });
-            setStep("home");
-          }}
-          onSkip={() => setStep("nickname")}
-          onBack={() => setStep("intro")}
-        />
-      )}
+        {step === "verifyCode" && (
+          <VerifyCodeScreen
+            onVerified={(data: VerifiedData) => {
+              const row = data.sajuResult as Parameters<typeof normalizeVerifyCodeSajuResult>[0];
+              const dominant = dominantElementFrom(row?.elements);
+              const newHomeData: HomeData = { nickname: data.nickname, sajuResult: normalizeVerifyCodeSajuResult(row, dominant) };
+              setHomeData(newHomeData);
+              saveHomeData(newHomeData);
+              track("onboarding_complete", { via: "verify_code" });
+              setStep("home");
+            }}
+            onSkip={() => setStep("nickname")}
+            onBack={() => setStep("intro")}
+          />
+        )}
 
-      {step === "nickname" && (
-        <NicknameScreen
-          value={nickname}
-          onChange={setNickname}
-          onNext={() => setStep("gender")}
-          onBack={() => setStep("intro")}
-        />
-      )}
+        {step === "nickname" && (
+          <NicknameScreen
+            value={nickname}
+            onChange={setNickname}
+            onNext={() => setStep("gender")}
+            onBack={() => setStep("intro")}
+          />
+        )}
 
-      {step === "gender" && (
-        <GenderScreen
-          isFemale={isFemale}
-          onChange={setIsFemale}
-          onNext={() => setStep("dob")}
-          onBack={() => setStep("nickname")}
-        />
-      )}
+        {step === "gender" && (
+          <GenderScreen
+            isFemale={isFemale}
+            onChange={setIsFemale}
+            onNext={() => setStep("dob")}
+            onBack={() => setStep("nickname")}
+          />
+        )}
 
-      {step === "dob" && (
-        <DobScreen
-          year={dobYear}
-          month={dobMonth}
-          day={dobDay}
-          onChangeYear={setDobYear}
-          onChangeMonth={setDobMonth}
-          onChangeDay={setDobDay}
-          onNext={() => setStep("tob")}
-          onBack={() => setStep("gender")}
-        />
-      )}
+        {step === "dob" && (
+          <DobScreen
+            year={dobYear}
+            month={dobMonth}
+            day={dobDay}
+            onChangeYear={setDobYear}
+            onChangeMonth={setDobMonth}
+            onChangeDay={setDobDay}
+            onNext={() => setStep("tob")}
+            onBack={() => setStep("gender")}
+          />
+        )}
 
-      {step === "tob" && (
-        <TobScreen
-          hour={tobHour}
-          minute={tobMinute}
-          period={tobPeriod}
-          timeUnknown={timeUnknown}
-          onChangeHour={setTobHour}
-          onChangeMinute={setTobMinute}
-          onChangePeriod={setTobPeriod}
-          onToggleUnknown={() => setTimeUnknown((v) => !v)}
-          onNext={() => setStep("city")}
-          onBack={() => setStep("dob")}
-        />
-      )}
+        {step === "tob" && (
+          <TobScreen
+            hour={tobHour}
+            minute={tobMinute}
+            period={tobPeriod}
+            timeUnknown={timeUnknown}
+            onChangeHour={setTobHour}
+            onChangeMinute={setTobMinute}
+            onChangePeriod={setTobPeriod}
+            onToggleUnknown={() => setTimeUnknown((v) => !v)}
+            onNext={() => setStep("city")}
+            onBack={() => setStep("dob")}
+          />
+        )}
 
-      {step === "city" && isFemale !== null && (
-        <CityScreen
-          birthPayload={{
-            birthYear: Number(dobYear),
-            birthMonth: Number(dobMonth),
-            birthDay: Number(dobDay),
-            birthHour: timeUnknown ? null : tobPeriod === "PM" ? (Number(tobHour) % 12) + 12 : Number(tobHour) % 12,
-            birthMinute: timeUnknown ? 0 : Number(tobMinute) || 0,
-            isFemale,
-            sessionId,
-            nickname: nickname.trim(),
-          }}
-          onSubmitted={(result: SajuResult) => {
-            const newHomeData: HomeData = {
+        {step === "city" && isFemale !== null && (
+          <CityScreen
+            birthPayload={{
+              birthYear: Number(dobYear),
+              birthMonth: Number(dobMonth),
+              birthDay: Number(dobDay),
+              birthHour: timeUnknown ? null : tobPeriod === "PM" ? (Number(tobHour) % 12) + 12 : Number(tobHour) % 12,
+              birthMinute: timeUnknown ? 0 : Number(tobMinute) || 0,
+              isFemale,
+              sessionId,
               nickname: nickname.trim(),
-              sajuResult: {
-                elements: result.elements ?? {},
-                dominantElement: result.dominantElement ?? null,
-                fourPillars: result.fourPillars,
-                decadeFortune: result.decadeFortune,
-                currentAge: result.currentAge,
-                sajuType: result.sajuType ?? null,
-                // 2026-09-15: 이 필드가 빠져 있어서 selfDayMasterChar가 계속 null이
-                // 되고, 궁합/오늘의 운세가 조용히 아무것도 안 뜨는 채로 멈춰 있었다.
-                summary: result.summary,
-                birthYear: result.birthYear,
-                birthMonth: result.birthMonth,
-                birthDay: result.birthDay,
-              },
-            };
-            setHomeData(newHomeData);
-            saveHomeData(newHomeData);
-            setStep("concern");
-          }}
-          onBack={() => setStep("tob")}
-        />
-      )}
+            }}
+            onSubmitted={(result: SajuResult) => {
+              const newHomeData: HomeData = {
+                nickname: nickname.trim(),
+                sajuResult: {
+                  elements: result.elements ?? {},
+                  dominantElement: result.dominantElement ?? null,
+                  fourPillars: result.fourPillars,
+                  decadeFortune: result.decadeFortune,
+                  currentAge: result.currentAge,
+                  sajuType: result.sajuType ?? null,
+                  // 2026-09-15: 이 필드가 빠져 있어서 selfDayMasterChar가 계속 null이
+                  // 되고, 궁합/오늘의 운세가 조용히 아무것도 안 뜨는 채로 멈춰 있었다.
+                  summary: result.summary,
+                  birthYear: result.birthYear,
+                  birthMonth: result.birthMonth,
+                  birthDay: result.birthDay,
+                },
+              };
+              setHomeData(newHomeData);
+              saveHomeData(newHomeData);
+              setStep("concern");
+            }}
+            onBack={() => setStep("tob")}
+          />
+        )}
 
-      {step === "concern" && (
-        <ConcernScreen
-          value={concern}
-          onChange={setConcern}
-          onNext={() => {
-            if (concern) saveUserConcern(concern);
-            track("onboarding_complete", { via: "app", ...(concern ? { topic: concern } : {}) });
-            // New users see their type once before Home; a reading without a type goes straight Home.
-            setStep(homeData?.sajuResult.sajuType ? "typeReveal" : "home");
-          }}
-          onBack={() => setStep("city")}
-        />
-      )}
+        {step === "concern" && (
+          <ConcernScreen
+            value={concern}
+            onChange={setConcern}
+            onNext={() => {
+              if (concern) saveUserConcern(concern);
+              track("onboarding_complete", { via: "app", ...(concern ? { topic: concern } : {}) });
+              // New users see their type once before Home; a reading without a type goes straight Home.
+              setStep(homeData?.sajuResult.sajuType ? "typeReveal" : "home");
+            }}
+            onBack={() => setStep("city")}
+          />
+        )}
 
-      {step === "typeReveal" && homeData?.sajuResult.sajuType && (
-        <TypeRevealScreen
-          nickname={homeData.nickname}
-          sajuType={homeData.sajuResult.sajuType}
-          fourPillars={homeData.sajuResult.fourPillars}
-          elements={homeData.sajuResult.elements ?? null}
-          onDone={() => setStep("home")}
-        />
-      )}
+        {step === "typeReveal" && homeData?.sajuResult.sajuType && (
+          <TypeRevealScreen
+            nickname={homeData.nickname}
+            sajuType={homeData.sajuResult.sajuType}
+            fourPillars={homeData.sajuResult.fourPillars}
+            elements={homeData.sajuResult.elements ?? null}
+            onDone={() => setStep("home")}
+          />
+        )}
 
-      {step === "home" && homeData && (
-        <HomeScreen
-          nickname={homeData.nickname}
-          elements={homeData.sajuResult.elements}
-          fourPillars={homeData.sajuResult.fourPillars}
-          sajuType={homeData.sajuResult.sajuType ?? null}
-          selfDayMasterChar={dayMasterCharOf(homeData)}
-          selfDayBranch={dayBranchOf(homeData)}
-          preferredTrack={concern}
-          onOpenQA={() => setStep("qa")}
-          onOpenQuiz={() => setStep("moduleSelect")}
-          onOpenType={() => setStep("type")}
-          onOpenCompatibility={() => setStep("compatibility")}
-          onOpenFortune={() => setStep("fortune")}
-          onOpenMyReports={() => setStep("myReports")}
-          onOpenShareCards={() => setStep("shareCards")}
-          onOpenYearReport={() => setStep("yearReport")}
-          onOpenWrapped={(year) => {
-            setWrappedYear(year);
-            setStep("wrapped");
-          }}
-          qa={(() => {
-            const mode = getQaMode();
-            if (!mode) return null;
-            const open = (v2: boolean) => () => {
-              setQaReportV2(v2);
-              setStep("qaReport");
-            };
-            const hasV2 = !!homeData && !!qaDeepReport(locale, homeData.nickname, true);
-            return { level: mode.level, persona: mode.persona, onOpenSampleReport: open(false), onOpenSampleReportV2: hasV2 ? open(true) : undefined };
-          })()}
-          onOpenSajuLearn={() => setStep("sajuLearn")}
-          onOpenSettings={() => setStep("settings")}
-        />
-      )}
+        {step === "home" && homeData && (
+          <HomeScreen
+            nickname={homeData.nickname}
+            elements={homeData.sajuResult.elements}
+            fourPillars={homeData.sajuResult.fourPillars}
+            sajuType={homeData.sajuResult.sajuType ?? null}
+            selfDayMasterChar={dayMasterCharOf(homeData)}
+            selfDayBranch={dayBranchOf(homeData)}
+            preferredTrack={concern}
+            onOpenQA={() => setStep("qa")}
+            onOpenQuiz={() => setStep("moduleSelect")}
+            onOpenType={() => setStep("type")}
+            onOpenCompatibility={() => setStep("compatibility")}
+            onOpenFortune={() => setStep("fortune")}
+            onOpenMyReports={() => setStep("myReports")}
+            onOpenShareCards={() => setStep("shareCards")}
+            onOpenYearReport={() => setStep("yearReport")}
+            onOpenWrapped={(year) => {
+              setWrappedYear(year);
+              setStep("wrapped");
+            }}
+            qa={(() => {
+              const mode = getQaMode();
+              if (!mode) return null;
+              const open = (v2: boolean) => () => {
+                setQaReportV2(v2);
+                setStep("qaReport");
+              };
+              const hasV2 = !!homeData && !!qaDeepReport(locale, homeData.nickname, true);
+              return { level: mode.level, persona: mode.persona, onOpenSampleReport: open(false), onOpenSampleReportV2: hasV2 ? open(true) : undefined };
+            })()}
+            onOpenSajuLearn={() => setStep("sajuLearn")}
+            onOpenSettings={() => setStep("settings")}
+          />
+        )}
 
-      {step === "qaReport" && homeData && (() => {
-        // Persona test mode only (dev web, opted in): a generated deep report opened directly,
-        // skipping the paid quiz + chat flow. See dev/README.md.
-        const fixture = qaDeepReport(locale, homeData.nickname, qaReportV2);
-        if (!fixture) return null;
-        return (
+        {step === "qaReport" && homeData && (() => {
+          // Persona test mode only (dev web, opted in): a generated deep report opened directly,
+          // skipping the paid quiz + chat flow. See dev/README.md.
+          const fixture = qaDeepReport(locale, homeData.nickname, qaReportV2);
+          if (!fixture) return null;
+          return (
+            <ReportScreen
+              nickname={homeData.nickname}
+              elements={homeData.sajuResult.elements}
+              decadeFortune={homeData.sajuResult.decadeFortune}
+              currentAge={homeData.sajuResult.currentAge}
+              quizDiagnosis={fixture.quizDiagnosis as QuizDiagnosis}
+              chatExtract={fixture.chatExtract as ChatExtract}
+              sessionId={sessionId}
+              savedContent={fixture.content as ReportContent}
+              onBack={() => setStep("home")}
+              onOpenModule={openModuleQuiz}
+            />
+          );
+        })()}
+
+        {step === "yearReport" && homeData && (
+          <YearReportScreen
+            nickname={homeData.nickname}
+            selfDayMasterChar={dayMasterCharOf(homeData)}
+            selfDayBranch={dayBranchOf(homeData)}
+            elements={homeData.sajuResult.elements}
+            sajuTypeName={homeData.sajuResult.sajuType ? formatSajuTypeName(locale, homeData.sajuResult.sajuType) : null}
+            decadeFortune={homeData.sajuResult.decadeFortune}
+            currentAge={homeData.sajuResult.currentAge}
+            onBack={() => setStep("home")}
+          />
+        )}
+
+        {step === "wrapped" && homeData && wrappedYear !== null && (
+          <WrappedScreen
+            year={wrappedYear}
+            nickname={homeData.nickname}
+            sajuTypeName={homeData.sajuResult.sajuType ? formatSajuTypeName(locale, homeData.sajuResult.sajuType) : null}
+            selfDayMasterChar={dayMasterCharOf(homeData)}
+            selfDayBranch={dayBranchOf(homeData)}
+            onOpenYearReport={() => setStep("yearReport")}
+            onBack={() => setStep("home")}
+          />
+        )}
+
+        {step === "shareCards" && homeData?.sajuResult.sajuType && (
+          <ShareCardsScreen
+            nickname={homeData.nickname}
+            sajuType={homeData.sajuResult.sajuType}
+            selfDayMasterChar={dayMasterCharOf(homeData)}
+            selfDayBranch={dayBranchOf(homeData)}
+            onOpenFortune={() => setStep("fortune")}
+            onBack={() => setStep("home")}
+          />
+        )}
+
+        {step === "myReports" && (
+          <MyReportsScreen
+            onOpen={(report) => {
+              setQuizDiagnosis(report.quizDiagnosis);
+              setChatExtract(report.chatExtract);
+              setSavedReport(report);
+              setStep("report");
+            }}
+            onOpenCompat={(report) => {
+              setSavedCompatReport(report);
+              setStep("compatReport");
+            }}
+            onBack={() => setStep("home")}
+          />
+        )}
+
+        {step === "compatReport" && savedCompatReport && homeData && dayMasterCharOf(homeData) && (
+          <CompatReportScreen
+            nickname={homeData.nickname}
+            otherName={savedCompatReport.otherName}
+            other={savedCompatReport.other}
+            selfDayMasterChar={dayMasterCharOf(homeData)!}
+            selfDayBranch={dayBranchOf(homeData)}
+            selfElements={homeData.sajuResult.elements ?? null}
+            sessionId={sessionId}
+            onBack={() => setStep("myReports")}
+          />
+        )}
+
+        {step === "sajuLearn" && <SajuLearnScreen sajuType={homeData?.sajuResult.sajuType ?? null} onBack={() => setStep("home")} />}
+
+        {step === "settings" && (
+          <SettingsScreen onBack={() => setStep("home")} onLogout={handleLogout} selfDayMasterChar={homeData ? dayMasterCharOf(homeData) : null} />
+        )}
+
+        {step === "type" && homeData?.sajuResult.sajuType && (
+          <TypeScreen
+            nickname={homeData.nickname}
+            sajuType={homeData.sajuResult.sajuType}
+            fourPillars={homeData.sajuResult.fourPillars}
+            elements={homeData.sajuResult.elements ?? null}
+            onBack={() => setStep("home")}
+          />
+        )}
+
+        {step === "compatibility" && homeData && (
+          <CompatibilityScreen
+            selfNickname={homeData.nickname}
+            selfDayMasterChar={dayMasterCharOf(homeData)}
+            selfDayBranch={dayBranchOf(homeData)}
+            selfElements={homeData.sajuResult.elements ?? null}
+            selfSajuType={homeData.sajuResult.sajuType ?? null}
+            sessionId={sessionId}
+            onBack={() => setStep("home")}
+          />
+        )}
+
+        {step === "fortune" && homeData && (
+          <FortuneScreen
+            selfDayMasterChar={dayMasterCharOf(homeData)}
+            selfDayBranch={dayBranchOf(homeData)}
+            elements={homeData.sajuResult.elements ?? null}
+            onOpenYearReport={() => setStep("yearReport")}
+            onBack={() => setStep("home")}
+          />
+        )}
+
+        {step === "qa" && homeData && (
+          <QAScreen
+            nickname={homeData.nickname}
+            sessionId={sessionId}
+            sajuResult={homeData.sajuResult}
+            onBack={() => setStep("home")}
+          />
+        )}
+
+        {step === "moduleSelect" && (
+          <ModuleSelectScreen
+            preferredTrack={concern}
+            onSelect={(id) => {
+              setModuleId(id);
+              setStep("quiz");
+            }}
+            onBack={() => setStep("home")}
+          />
+        )}
+
+        {step === "quiz" && moduleId && homeData && (
+          <QuizScreen
+            moduleId={moduleId}
+            sajuElements={homeData.sajuResult.elements}
+            sessionId={sessionId}
+            onComplete={(diagnosis) => {
+              setQuizDiagnosis(diagnosis);
+              setStep("chat");
+            }}
+            onBack={() => setStep("moduleSelect")}
+          />
+        )}
+
+        {step === "chat" && quizDiagnosis && homeData && (
+          <ChatScreen
+            nickname={homeData.nickname}
+            sessionId={sessionId}
+            quizDiagnosis={quizDiagnosis}
+            onComplete={(extract) => {
+              setChatExtract(extract);
+              setSavedReport(null);
+              setStep("report");
+            }}
+            onBack={() => setStep("home")}
+          />
+        )}
+
+        {step === "report" && quizDiagnosis && homeData && (
           <ReportScreen
             nickname={homeData.nickname}
             elements={homeData.sajuResult.elements}
             decadeFortune={homeData.sajuResult.decadeFortune}
             currentAge={homeData.sajuResult.currentAge}
-            quizDiagnosis={fixture.quizDiagnosis as QuizDiagnosis}
-            chatExtract={fixture.chatExtract as ChatExtract}
+            dayMaster={dayMasterOf(homeData)}
+            quizDiagnosis={quizDiagnosis}
+            chatExtract={chatExtract}
             sessionId={sessionId}
-            savedContent={fixture.content as ReportContent}
-            onBack={() => setStep("home")}
+            savedContent={savedReport?.content ?? null}
+            onBack={() => setStep(savedReport ? "myReports" : "home")}
             onOpenModule={openModuleQuiz}
           />
-        );
-      })()}
-
-      {step === "yearReport" && homeData && (
-        <YearReportScreen
-          nickname={homeData.nickname}
-          selfDayMasterChar={dayMasterCharOf(homeData)}
-          selfDayBranch={dayBranchOf(homeData)}
-          elements={homeData.sajuResult.elements}
-          sajuTypeName={homeData.sajuResult.sajuType ? formatSajuTypeName(locale, homeData.sajuResult.sajuType) : null}
-          decadeFortune={homeData.sajuResult.decadeFortune}
-          currentAge={homeData.sajuResult.currentAge}
-          onBack={() => setStep("home")}
-        />
-      )}
-
-      {step === "wrapped" && homeData && wrappedYear !== null && (
-        <WrappedScreen
-          year={wrappedYear}
-          nickname={homeData.nickname}
-          sajuTypeName={homeData.sajuResult.sajuType ? formatSajuTypeName(locale, homeData.sajuResult.sajuType) : null}
-          selfDayMasterChar={dayMasterCharOf(homeData)}
-          selfDayBranch={dayBranchOf(homeData)}
-          onOpenYearReport={() => setStep("yearReport")}
-          onBack={() => setStep("home")}
-        />
-      )}
-
-      {step === "shareCards" && homeData?.sajuResult.sajuType && (
-        <ShareCardsScreen
-          nickname={homeData.nickname}
-          sajuType={homeData.sajuResult.sajuType}
-          selfDayMasterChar={dayMasterCharOf(homeData)}
-          selfDayBranch={dayBranchOf(homeData)}
-          onOpenFortune={() => setStep("fortune")}
-          onBack={() => setStep("home")}
-        />
-      )}
-
-      {step === "myReports" && (
-        <MyReportsScreen
-          onOpen={(report) => {
-            setQuizDiagnosis(report.quizDiagnosis);
-            setChatExtract(report.chatExtract);
-            setSavedReport(report);
-            setStep("report");
-          }}
-          onOpenCompat={(report) => {
-            setSavedCompatReport(report);
-            setStep("compatReport");
-          }}
-          onBack={() => setStep("home")}
-        />
-      )}
-
-      {step === "compatReport" && savedCompatReport && homeData && dayMasterCharOf(homeData) && (
-        <CompatReportScreen
-          nickname={homeData.nickname}
-          otherName={savedCompatReport.otherName}
-          other={savedCompatReport.other}
-          selfDayMasterChar={dayMasterCharOf(homeData)!}
-          selfDayBranch={dayBranchOf(homeData)}
-          selfElements={homeData.sajuResult.elements ?? null}
-          sessionId={sessionId}
-          onBack={() => setStep("myReports")}
-        />
-      )}
-
-      {step === "sajuLearn" && <SajuLearnScreen sajuType={homeData?.sajuResult.sajuType ?? null} onBack={() => setStep("home")} />}
-
-      {step === "settings" && (
-        <SettingsScreen onBack={() => setStep("home")} onLogout={handleLogout} selfDayMasterChar={homeData ? dayMasterCharOf(homeData) : null} />
-      )}
-
-      {step === "type" && homeData?.sajuResult.sajuType && (
-        <TypeScreen
-          nickname={homeData.nickname}
-          sajuType={homeData.sajuResult.sajuType}
-          fourPillars={homeData.sajuResult.fourPillars}
-          elements={homeData.sajuResult.elements ?? null}
-          onBack={() => setStep("home")}
-        />
-      )}
-
-      {step === "compatibility" && homeData && (
-        <CompatibilityScreen
-          selfNickname={homeData.nickname}
-          selfDayMasterChar={dayMasterCharOf(homeData)}
-          selfDayBranch={dayBranchOf(homeData)}
-          selfElements={homeData.sajuResult.elements ?? null}
-          selfSajuType={homeData.sajuResult.sajuType ?? null}
-          sessionId={sessionId}
-          onBack={() => setStep("home")}
-        />
-      )}
-
-      {step === "fortune" && homeData && (
-        <FortuneScreen
-          selfDayMasterChar={dayMasterCharOf(homeData)}
-          selfDayBranch={dayBranchOf(homeData)}
-          elements={homeData.sajuResult.elements ?? null}
-          onOpenYearReport={() => setStep("yearReport")}
-          onBack={() => setStep("home")}
-        />
-      )}
-
-      {step === "qa" && homeData && (
-        <QAScreen
-          nickname={homeData.nickname}
-          sessionId={sessionId}
-          sajuResult={homeData.sajuResult}
-          onBack={() => setStep("home")}
-        />
-      )}
-
-      {step === "moduleSelect" && (
-        <ModuleSelectScreen
-          preferredTrack={concern}
-          onSelect={(id) => {
-            setModuleId(id);
-            setStep("quiz");
-          }}
-          onBack={() => setStep("home")}
-        />
-      )}
-
-      {step === "quiz" && moduleId && homeData && (
-        <QuizScreen
-          moduleId={moduleId}
-          sajuElements={homeData.sajuResult.elements}
-          sessionId={sessionId}
-          onComplete={(diagnosis) => {
-            setQuizDiagnosis(diagnosis);
-            setStep("chat");
-          }}
-          onBack={() => setStep("moduleSelect")}
-        />
-      )}
-
-      {step === "chat" && quizDiagnosis && homeData && (
-        <ChatScreen
-          nickname={homeData.nickname}
-          sessionId={sessionId}
-          quizDiagnosis={quizDiagnosis}
-          onComplete={(extract) => {
-            setChatExtract(extract);
-            setSavedReport(null);
-            setStep("report");
-          }}
-          onBack={() => setStep("home")}
-        />
-      )}
-
-      {step === "report" && quizDiagnosis && homeData && (
-        <ReportScreen
-          nickname={homeData.nickname}
-          elements={homeData.sajuResult.elements}
-          decadeFortune={homeData.sajuResult.decadeFortune}
-          currentAge={homeData.sajuResult.currentAge}
-          dayMaster={dayMasterOf(homeData)}
-          quizDiagnosis={quizDiagnosis}
-          chatExtract={chatExtract}
-          sessionId={sessionId}
-          savedContent={savedReport?.content ?? null}
-          onBack={() => setStep(savedReport ? "myReports" : "home")}
-          onOpenModule={openModuleQuiz}
-        />
-      )}
+        )}
+      </ScreenTransition>
     </SafeAreaProvider>
   );
 }
