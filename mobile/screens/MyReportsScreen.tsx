@@ -5,6 +5,7 @@ import Users from "lucide-react-native/icons/users";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import ArtImage from "../components/ArtImage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PressableScale from "../components/motion/PressableScale";
 import { useLocale, useStrings } from "../lib/i18n";
@@ -12,7 +13,7 @@ import { listSavedReports, type SavedReport } from "../lib/reportStorage";
 import { listPurchasedCompatReports, type SavedCompatReport } from "../lib/compatReportStorage";
 import { COLORS } from "../theme/colors";
 import { moduleDisplayTitle } from "../lib/quiz/modules";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import { FONTS } from "../theme/fonts";
 
 // Reopen a report generated earlier — see lib/reportStorage.ts for why this exists.
@@ -50,6 +51,7 @@ export default function MyReportsScreen({
           {strings.myReports.heading}
         </Text>
 
+        {reports?.length === 0 && compatReports?.length === 0 && <ArtImage artKey="empty-reports" style={styles.emptyArt} />}
         {reports?.length === 0 && compatReports?.length === 0 && <Text style={styles.empty}>{strings.myReports.empty}</Text>}
 
         <View style={styles.list}>
@@ -99,6 +101,7 @@ const styles = StyleSheet.create({
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginTop: 4, marginBottom: 16 },
   empty: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline },
+  emptyArt: { width: 120, height: 120, alignSelf: "center", opacity: 0.9, marginBottom: SPACE.md },
   list: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
   row: { flexDirection: "row", alignItems: "center", gap: 14, minHeight: 60, paddingVertical: 12, paddingHorizontal: 16 },
   rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },

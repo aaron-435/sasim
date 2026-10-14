@@ -15,6 +15,8 @@ import ElementsLoader from "../components/motion/ElementsLoader";
 import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
 import ElementMap from "../components/art/ElementMap";
+import ArtImage from "../components/ArtImage";
+import type { ArtKey } from "../data/art/manifest";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useReducedMotion from "../lib/useReducedMotion";
 import { DURATION, EASING } from "../theme/motion";
@@ -41,6 +43,24 @@ import { ELEMENT_COLORS } from "../lib/elements";
 // One source for element colours (lib/elements.ts); the quiz used to carry a drifted copy.
 const ELEMENT_COLOR = ELEMENT_COLORS;
 const ELEMENT_KEYS = ["wood", "fire", "earth", "metal", "water"] as const;
+
+/** The E-set art key for an element, or null when it can't be determined (page untouched). */
+function elementArtKey(element: string | null | undefined): ArtKey | null {
+  switch (element) {
+    case "wood":
+      return "element-wood";
+    case "fire":
+      return "element-fire";
+    case "earth":
+      return "element-earth";
+    case "metal":
+      return "element-metal";
+    case "water":
+      return "element-water";
+    default:
+      return null;
+  }
+}
 // Celadon-led, no red: a high share on a dimension (82% anxiety) is a tendency, not a warning.
 const DIMENSION_BAR_COLORS = [COLORS.gold, "#7FA8D6", "#C2A86B", "#9C8FBF", "#8FB09B"];
 const DEFAULT_ELEMENTS: Record<string, number> = { fire: 20, earth: 20, wood: 20, metal: 20, water: 20 };
@@ -1095,6 +1115,18 @@ function CoverPage({
   }));
 
   const ring = width * 1.1;
+  const coverDecor = elements ? (
+    // Own View for the opacity: ElementMap animates opacity on its root, which overrode a style prop.
+    <View style={pageStyles.coverMapDim}>
+      <ElementMap elements={elements} seed={seed} size={ring} animated />
+    </View>
+  ) : (
+    <Svg width={ring} height={ring}>
+      <Circle cx={ring / 2} cy={ring / 2} r={ring / 2} stroke={tint} strokeOpacity={0.35} strokeWidth={1} fill="none" />
+      <Circle cx={ring / 2} cy={ring / 2} r={(ring / 2) * 0.72} stroke={tint} strokeOpacity={0.2} strokeWidth={1} fill="none" />
+    </Svg>
+  );
+  const coverArtKey = elementArtKey(element);
 
   return (
     <PageShell>
@@ -1111,16 +1143,10 @@ function CoverPage({
           accessible={false}
           importantForAccessibility="no-hide-descendants"
         >
-          {elements ? (
-            // Own View for the opacity: ElementMap animates opacity on its root, which overrode a style prop.
-            <View style={pageStyles.coverMapDim}>
-              <ElementMap elements={elements} seed={seed} size={ring} animated />
-            </View>
+          {coverArtKey ? (
+            <ArtImage artKey={coverArtKey} contentFit="cover" style={{ width: ring, height: ring }} fallback={coverDecor} />
           ) : (
-            <Svg width={ring} height={ring}>
-              <Circle cx={ring / 2} cy={ring / 2} r={ring / 2} stroke={tint} strokeOpacity={0.35} strokeWidth={1} fill="none" />
-              <Circle cx={ring / 2} cy={ring / 2} r={(ring / 2) * 0.72} stroke={tint} strokeOpacity={0.2} strokeWidth={1} fill="none" />
-            </Svg>
+            coverDecor
           )}
         </Reanimated.View>
       </View>
@@ -1295,9 +1321,11 @@ function headingWithEmoji(elementKey: string, heading: string): string {
 }
 
 function ElementReadingPage({ pct, reading, elementKey }: { pct: number; reading: ElementReading; elementKey: string }) {
+  const artKey = elementArtKey(elementKey);
   return (
     <PageShell>
       <View style={pageStyles.elemMid}>
+        {artKey && <ArtImage artKey={artKey} contentFit="cover" style={pageStyles.elemArt} />}
         <Text style={pageStyles.elemNum}>{Math.round(pct)}%</Text>
         <Text style={pageStyles.elemHeading} accessibilityRole="header">{headingWithEmoji(elementKey, reading.heading)}</Text>
         <Prose style={pageStyles.caseBody} text={reading.body} />
@@ -1738,6 +1766,8 @@ const pageStyles = StyleSheet.create({
   barFill: { height: "100%", borderRadius: 999 },
 
   elemMid: { flex: 1, justifyContent: "flex-start", paddingTop: "16%" },
+  // Element motif above the share; draws nothing until its key has an entry.
+  elemArt: { width: 96, height: 96, borderRadius: 48, overflow: "hidden", marginBottom: 12 },
   elemNum: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 56, lineHeight: 60, color: COLORS.gold, marginBottom: 6 },
   elemHeading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 21, lineHeight: 28, color: COLORS.headline, marginBottom: 4 },
 

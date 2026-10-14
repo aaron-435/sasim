@@ -47,6 +47,8 @@ import TextShareCard, { shareCardImage } from "../components/TextShareCard";
 import FeedbackRow from "../components/FeedbackRow";
 import ElementColorCard from "../components/ElementColorCard";
 import RhythmWave, { type RhythmRelation } from "../components/art/RhythmWave";
+import ArtImage from "../components/ArtImage";
+import { currentSolarTermArtKey } from "../lib/currentSolarTerm";
 import { elementsParam, type ElementColor } from "../lib/elementColorContent";
 import { track, trackOnce } from "../lib/analytics";
 
@@ -777,6 +779,7 @@ export default function FortuneScreen({
                 instead of a score card followed by an overview card of the same weight. */}
             <Animated.View style={[styles.heroCard, styles.heroCardToday, sectionStyle(0)]}>
               <LinearGradient colors={["#1F3327", "#18291F"]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={StyleSheet.absoluteFill} />
+              <ArtImage artKey={currentSolarTermArtKey(new Date())} contentFit="cover" style={styles.heroTermBand} />
               <RhythmWave relation={toRhythmRelation(daily.compatibility.relation)} height={64} color={COLORS.gold} style={styles.heroWaveToday} />
               <Text style={styles.heroKickerToday}>{strings.fortune.scoreLabel}</Text>
               <Text style={[styles.heroRhythmToday, locale === "ko" && styles.heroRhythmTodayKo]} accessibilityRole="header">{strings.fortune.rhythmNames[daily.compatibility.relation]}</Text>
@@ -1218,6 +1221,8 @@ const styles = StyleSheet.create({
   heroNote: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.subheadline, marginTop: 14, paddingLeft: 12, borderLeftWidth: 2, borderLeftColor: "rgba(111,169,139,0.4)" },
   // Magazine-style "today" hero — the year tab keeps the original heroKicker/heroRhythm/heroHeadline above.
   heroCardToday: { overflow: "hidden" },
+  // Solar-term art band behind the wave; draws nothing until its key has an entry.
+  heroTermBand: { position: "absolute", top: 0, left: 0, right: 0, height: 96, opacity: 0.55 },
   // Cancels the hero card's own padding (20 horizontal, 24 top) so the wave touches its edges.
   // width "auto" overrides RhythmWave's 100% so the negative margins widen it to the card edges
   // (with 100% it kept the inner width and stopped 40px short on the right).

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Image, StyleSheet, View } from "react-native";
+import ArtImage from "./ArtImage";
 import { COLORS } from "../theme/colors";
 
 // The celadon-jade taegeuk/wave motif baked at ~4.5% opacity onto the jade-charcoal
@@ -28,6 +29,7 @@ export default function PatternBackground({ children }: { children: ReactNode })
         // forces it to stretch regardless.
         style={[StyleSheet.absoluteFill, styles.fillSize]}
       />
+      <ArtImage artKey="texture-hanji" contentFit="cover" style={[StyleSheet.absoluteFill, styles.texture]} />
       <View style={styles.fill}>{children}</View>
     </View>
   );
@@ -43,6 +45,9 @@ const styles = StyleSheet.create({
   fillSize: {
     width: "100%",
     height: "100%",
+  },
+  texture: {
+    opacity: 0.05,
   },
   fill: {
     flex: 1,

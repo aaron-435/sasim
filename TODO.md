@@ -20,7 +20,8 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
   - 변경: `scripts/art-process.mts`(새), 루트 `package.json` devDependency `sharp`·`blurhash`, 스크립트 `art:process`. 동작: `art-inbox/<키>.(png|jpg|webp)` → 묶음별 규격(크기는 `IMAGE_PROMPTS` "규격" 절) → WebP(품질 80) → 작은 묶음(오행·12지·빈 화면·질감)은 `mobile/assets/art/`, 큰 묶음(일간·모듈 표지·절기)은 `public/art/` → blurhash 계산 → `manifest.ts`의 해당 키만 다시 씀(번들은 `require`, 서버는 `{ uri: "https://www.fatesaidapp.com/art/<키>.webp" }`). 모르는 파일 이름은 경고만 하고 건너뛴다. 번들 합계가 3MB를 넘으면 경고.
   - QA: `npx tsc --noEmit`(루트) 통과. 시험 PNG 2장(`art-inbox/element-wood.png`, `art-inbox/module-01.png`, 아무 그림)을 넣고 `npm run art:process` → `mobile/assets/art/element-wood.webp`, `public/art/module-01.webp` 생성, `manifest.ts`에 두 키만 채워짐, 앱 tsc 통과. 확인 뒤 시험 파일과 매니페스트 변경은 되돌린다.
 
-- [ ] 3. 그림 자리 연결 (대체 그림 유지)
+- [x] 3. 그림 자리 연결 (대체 그림 유지)
+  - QA: 앱 tsc --noEmit → exit 0. mobile-web `?qa=all&persona=jisoo` 홈(PatternBackground 질감 자리) 정상 렌더, 콘솔 오류 0. muse 2건(08a/08b)이 만든 diff를 직접 읽어 확인(그림 키 없음 → fallback 경로가 기존 렌더와 동일). 못 한 것: 시험 그림을 넣어 표지·원소 자리에 뜨는지 스크린샷 확인과 모듈 선택·유형·리포트·운세·저널 빈 화면의 웹 개별 확인 → 15번(그림 넣기)에서 함께 확인. 오류 그림은 공용 오류 부품이 없어 `CompatibilityScreen`의 오류 문구 한 곳만 연결. 절기 키는 `mobile/lib/currentSolarTerm.ts`(고정 월/일 표, ±1일 오차).
   - 선행: 1
   - 변경: `ModuleArt.tsx`(모듈 표지 키, 대체 = 지금 그라데이션+번호), `TypeScreen`/`RevealCard`의 유형 공개(일간 키, 대체 = 지금 빛 고리), `ReportScreen` 원소 페이지(오행 키, 대체 = `ElementMap`/아이콘), `FortuneScreen` 오늘 헤더 절기 그림(절기 키, 대체 = `RhythmWave` 단독), 저널·받은 궁합·오류 빈 화면(빈 화면 키, 대체 = 지금 글자만), `PatternBackground` 질감(불투명도 0.04~0.06, 대체 = 지금 패턴). 절기 키는 이미 있는 절기 계산(`lib` 쪽)에서 얻는다. 화면당 몇 줄씩만 바꾼다.
   - QA: 공통 tsc. 웹 미리보기에서 모듈 선택·유형·리포트 원소 페이지·운세 오늘·저널 빈 화면이 1차와 똑같이 보이고 콘솔 오류 없음(그림 0장 상태). 2번의 시험 그림 2장을 넣으면 모듈 1 표지와 나무 원소 자리에 그림이 뜸(스크린샷), 확인 뒤 되돌림.

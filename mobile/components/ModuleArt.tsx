@@ -1,8 +1,10 @@
-// Placeholder cover until the D-set illustrations (IMAGE_PROMPTS_2026-10-14.md) arrive.
-// Swap the gradient + number for an expo-image cover inside this component only.
+// Module cover: the D-set illustration (IMAGE_PROMPTS_2026-10-14.md) when its key
+// has an entry in ART_MANIFEST, otherwise the gradient + number below (ArtImage fallback).
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 import Text from "./AppText";
+import ArtImage from "./ArtImage";
+import type { ArtKey } from "../data/art/manifest";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
 
@@ -11,6 +13,21 @@ const GRADIENTS: Array<readonly [string, string]> = [
   ["#1C2E25", "#3A5A47"],
   ["#22352A", "#4A6B57"],
 ];
+
+const MODULE_ART_KEYS: Partial<Record<number, ArtKey>> = {
+  1: "module1-love",
+  2: "module2-money",
+  3: "module3-burnout",
+  4: "module4-mask",
+  5: "module5-followthrough",
+  6: "module6-anger",
+  7: "module7-sensitivity",
+  8: "module8-sleep",
+  9: "module9-family",
+  10: "module10-focus",
+  11: "module11-expression",
+  12: "module12-freshstart",
+};
 
 export default function ModuleArt({
   moduleId,
@@ -25,7 +42,7 @@ export default function ModuleArt({
   const colors = GRADIENTS[(((n - 1) % 3) + 3) % 3];
   const number = String(n).padStart(2, "0");
 
-  return (
+  const fallback = (
     <LinearGradient
       colors={colors}
       start={{ x: 0, y: 0 }}
@@ -39,6 +56,11 @@ export default function ModuleArt({
       <Text style={[styles.number, size === "large" ? styles.large : styles.small]}>{number}</Text>
     </LinearGradient>
   );
+
+  const artKey = MODULE_ART_KEYS[n];
+  if (!artKey) return fallback;
+
+  return <ArtImage artKey={artKey} contentFit="cover" style={style} fallback={fallback} />;
 }
 
 const styles = StyleSheet.create({

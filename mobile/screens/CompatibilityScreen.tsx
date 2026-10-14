@@ -7,6 +7,7 @@ import { ActivityIndicator, Image, Platform, ScrollView, Share, StyleSheet, View
 import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
+import ArtImage from "../components/ArtImage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
@@ -19,7 +20,7 @@ import { formatSajuTypeName } from "../lib/sajuTypeContent";
 import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import { FONTS } from "../theme/fonts";
 import PressableScale from "../components/motion/PressableScale";
 import { OtherBirthFields, useOtherBirthForm, type OtherBirthPayload } from "../components/OtherBirthForm";
@@ -344,6 +345,12 @@ export default function CompatibilityScreen({
 
         <OtherBirthFields form={form} />
 
+        {error && (
+          <ArtImage
+            artKey={error === strings.compatibility.errorNetwork ? "error-network" : "error-generic"}
+            style={styles.errorArt}
+          />
+        )}
         {error && <Text style={styles.error}>{error}</Text>}
         {/* Say why the button is dimmed instead of leaving a silent disabled state. */}
         {!error && !canSubmit && !form.dobInvalid && <Text style={styles.submitHint}>{strings.compatibility.errorMissing}</Text>}
@@ -461,6 +468,7 @@ const styles = StyleSheet.create({
   heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline },
   subtitle: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 8, marginBottom: 20 },
   error: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.danger, marginTop: 14 },
+  errorArt: { width: 120, height: 120, alignSelf: "center", opacity: 0.9, marginTop: SPACE.xl },
   submitHint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, marginTop: 14 },
   submitButton: {
     alignItems: "center",

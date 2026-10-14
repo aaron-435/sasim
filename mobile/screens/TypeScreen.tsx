@@ -13,8 +13,10 @@ import Text from "../components/AppText";
 import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
 import RevealCard from "../components/motion/RevealCard";
+import ArtImage from "../components/ArtImage";
 import CalcSourceBadge from "../components/CalcSourceBadge";
 import FourPillarsChart, { parseFourPillars } from "../components/FourPillarsChart";
+import type { ArtKey } from "../data/art/manifest";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
@@ -25,9 +27,28 @@ import { COLORS } from "../theme/colors";
 import { track } from "../lib/analytics";
 import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 const ELEMENT_ICON = { wood: TreePine, fire: Flame, earth: Mountain, metal: Gem, water: Droplets } as const;
+
+// Day stem (Korean or hanja) → daymaster art key. Falls back to the archetype map
+// below when the pillars carry no readable day stem.
+const DAY_STEM_ART: Record<string, ArtKey> = {
+  갑: "daymaster-gap", 을: "daymaster-eul", 병: "daymaster-byeong", 정: "daymaster-jeong",
+  무: "daymaster-mu", 기: "daymaster-gi", 경: "daymaster-gyeong", 신: "daymaster-sin",
+  임: "daymaster-im", 계: "daymaster-gye",
+  甲: "daymaster-gap", 乙: "daymaster-eul", 丙: "daymaster-byeong", 丁: "daymaster-jeong",
+  戊: "daymaster-mu", 己: "daymaster-gi", 庚: "daymaster-gyeong", 辛: "daymaster-sin",
+  壬: "daymaster-im", 癸: "daymaster-gye",
+};
+
+// Archetype mirrors the day stem 1:1 (web lib/sajuType.ts STEM_ARCHETYPE), so it
+// resolves the same art key when the pillars are missing or unreadable.
+const ARCHETYPE_ART: Record<string, ArtKey> = {
+  oak: "daymaster-gap", vine: "daymaster-eul", sun: "daymaster-byeong", flame: "daymaster-jeong",
+  mountain: "daymaster-mu", field: "daymaster-gi", steel: "daymaster-gyeong", gem: "daymaster-sin",
+  ocean: "daymaster-im", dew: "daymaster-gye",
+};
 
 export default function TypeScreen({
   nickname,
@@ -60,6 +81,8 @@ export default function TypeScreen({
   const ModeIcon = ELEMENT_ICON[sajuType.dominantElement];
   const tint = ELEMENT_COLORS[sajuType.dayMasterElement] ?? COLORS.gold;
   const showChart = !!elements && parseFourPillars(fourPillars) !== null;
+  const daySky = parseFourPillars(fourPillars)?.day.sky;
+  const daymasterArtKey = (daySky && DAY_STEM_ART[daySky]) || ARCHETYPE_ART[sajuType.archetype] || null;
   const reveal = variant === "reveal";
   const staggerBase = reveal ? 1200 : 200;
 
@@ -103,11 +126,25 @@ export default function TypeScreen({
         <RevealCard tint={tint} ceremony={reveal}>
         <View style={[styles.card, { borderWidth: 1, borderColor: `${tint}55` }]}>
           <Text style={styles.brandLabel}>FATESAID</Text>
-          <View style={[styles.iconRow]}>
-            <View style={[styles.iconBubble, { backgroundColor: `${tint}22` }]}>
-              <ArchetypeIcon size={26} strokeWidth={1.75} color={tint} />
+          {daymasterArtKey ? (
+            <ArtImage
+              artKey={daymasterArtKey}
+              style={styles.daymasterArt}
+              fallback={
+                <View style={[styles.iconRow]}>
+                  <View style={[styles.iconBubble, { backgroundColor: `${tint}22` }]}>
+                    <ArchetypeIcon size={26} strokeWidth={1.75} color={tint} />
+                  </View>
+                </View>
+              }
+            />
+          ) : (
+            <View style={[styles.iconRow]}>
+              <View style={[styles.iconBubble, { backgroundColor: `${tint}22` }]}>
+                <ArchetypeIcon size={26} strokeWidth={1.75} color={tint} />
+              </View>
             </View>
-          </View>
+          )}
           <Text style={[styles.typeName, locale === "ko" && styles.typeNameKo]}>{typeName}</Text>
           <Text style={styles.typeGloss}>{strings.sajuType.typeGloss}</Text>
           <Text style={styles.greeting}>{strings.home.greeting(nickname)}</Text>
@@ -323,6 +360,13 @@ const styles = StyleSheet.create({
   },
   iconRow: {
     marginTop: 6,
+  },
+  daymasterArt: {
+    width: 240,
+    height: 240,
+    marginTop: SPACE.sm,
+    borderRadius: RADIUS.md,
+    overflow: "hidden",
   },
   iconBubble: {
     width: 56,

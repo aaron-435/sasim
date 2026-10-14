@@ -4,6 +4,7 @@ import ChevronLeft from "lucide-react-native/icons/chevron-left";
 import ChevronRight from "lucide-react-native/icons/chevron-right";
 import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
+import ArtImage from "../components/ArtImage";
 import PressableScale from "../components/motion/PressableScale";
 import JournalSafetyNote from "../components/JournalSafetyNote";
 import MonthGrid from "../components/MonthGrid";
@@ -26,7 +27,7 @@ import { formatMonthLabel, formatShortDate } from "../lib/shortDate";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 // "한 줄 저널" — a sub-screen of FortuneScreen (like GoodDaysScreen). A month calendar of the
 // device's journal entries, the picked day's entry, and the month-end pattern report: the
@@ -216,6 +217,7 @@ export default function JournalScreen({
           }}
         />
 
+        {count === 0 && <ArtImage artKey="empty-journal" style={styles.emptyArt} />}
         {count === 0 && <Text style={styles.empty}>{strings.journal.emptyMonth}</Text>}
 
         {selected && selectedEntry && (
@@ -304,6 +306,7 @@ const styles = StyleSheet.create({
   dayLabel: { fontFamily: FONTS.regular, fontVariant: ["lining-nums"], fontSize: 14, color: COLORS.footer },
   dayLabelRecorded: { fontFamily: FONTS.semibold, color: COLORS.headline },
   empty: { fontFamily: FONTS.regular, fontSize: 14, color: COLORS.footer, textAlign: "center", marginTop: 12 },
+  emptyArt: { width: 120, height: 120, alignSelf: "center", opacity: 0.9, marginTop: SPACE.md },
   entryCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 16, gap: 10, marginTop: 16, ...SHADOW.raised },
   entryHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
   entryDate: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.subheadline },
