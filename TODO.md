@@ -37,7 +37,8 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
 
 각 항목 공통: 카드 `SURFACE.raised`+`SHADOW.raised`, 제목·눈썹·본문 위계는 1차 홈·운세 오늘 탭 규칙, 첫 진입 요소에 `Reveal`(순차 간격은 `theme/motion.ts`), 누름은 `PressableScale`(이미 교체됨), 위 간격 grep 0줄. 문구·흐름은 바꾸지 않는다. ko/en/es 잘림 확인.
 
-- [ ] 5. 운세 이번 주·이달·신년 탭
+- [x] 5. 운세 이번 주·이달·신년 탭
+  - QA: 앱 tsc --noEmit → exit 0. mobile-web(`?qa=pro`, 375×812, ko)에서 이번 주·이달·신년 세 탭 렌더 확인(스크린샷), 이달 칩 선택·날짜 선택 동작 그대로, 콘솔 오류는 칩 누를 때 `/api/goodDays` 401 두 건뿐(미리보기 픽스처에 구독 확인이 없어서 나는 기존 동작). 못 한 것: en/es 확인(이 미리보기에서 언어 전환을 하지 않음) → 14번 마감 QA에서 함께. 파일 전체 간격 grep은 11번 몫. 이 항목에서 바꾼 것: 세 탭 요소에 `Reveal`(주간 3, 이달 2, 신년 5단계), 이 탭들이 쓰는 스타일의 간격·모서리를 `SPACE`/`RADIUS`로, `MonthGrid`의 셀 간격 3→`SPACE.xs`(4, 저널 달력도 같이 1px 넓어짐). `heroCard`(패딩 20)·`heroDivider`는 오늘 탭과 공유라 11번에서.
   - 선행: 4 (같은 파일)
   - 변경: `FortuneScreen.tsx`의 weekly·month·yearly 렌더 부분과 그 스타일, `MonthGrid.tsx`(이달 달력, 동작은 그대로). 오늘 탭 부분은 건드리지 않음(7번 몫).
   - QA: 공통 tsc. 웹 미리보기 `?qa=pro`에서 세 탭 각각 ko/en/es 스크린샷, 이달 달력 칩·날짜 상세 동작 그대로. 간격 grep은 7번에서 파일 전체로.

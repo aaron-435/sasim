@@ -7,6 +7,7 @@ import { WEEKDAY_SHORT } from "../lib/shortDate";
 import useReducedMotion from "../lib/useReducedMotion";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { RADIUS, SPACE } from "../theme/tokens";
 
 // Month calendar frame shared by the journal and the fortune "이달" tab: a Sunday-first weekday
 // row plus a 7-column grid of square cells. What goes inside a day's cell is up to the caller
@@ -74,17 +75,17 @@ export default function MonthGrid({ month, renderDay }: { month: string; renderD
 }
 
 const styles = StyleSheet.create({
-  weekRow: { flexDirection: "row", marginBottom: 4 },
+  weekRow: { flexDirection: "row", marginBottom: SPACE.xs },
   weekday: { width: `${100 / 7}%`, textAlign: "center", fontFamily: FONTS.medium, fontSize: 12, color: COLORS.footer },
   grid: { flexDirection: "row", flexWrap: "wrap" },
-  cell: { width: `${100 / 7}%`, aspectRatio: 1, padding: 3 },
+  cell: { width: `${100 / 7}%`, aspectRatio: 1, padding: SPACE.xs },
   todayRing: {
     position: "absolute",
-    top: 3,
-    left: 3,
-    right: 3,
-    bottom: 3,
-    borderRadius: 10,
+    top: SPACE.xs,
+    left: SPACE.xs,
+    right: SPACE.xs,
+    bottom: SPACE.xs,
+    borderRadius: RADIUS.sm,
     borderWidth: 1.5,
     borderColor: COLORS.gold,
   },

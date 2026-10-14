@@ -41,6 +41,7 @@ import MonthGrid from "../components/MonthGrid";
 import { refreshRoutineNotification } from "../lib/routineNotification";
 import { COLORS } from "../theme/colors";
 import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
+import Reveal from "../components/motion/Reveal";
 import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 import { SPRING } from "../theme/motion";
@@ -878,16 +879,21 @@ export default function FortuneScreen({
         )}
         {tab === "weekly" && !weeklyLoading && !weeklyError && weeklyBest && weeklyCaution && (
           <>
-            <View style={styles.highlightCard}>
-              <Text style={styles.highlightLabel}>{strings.fortune.weeklyBestDayLabel}</Text>
-              <Text style={styles.highlightDate}>{formatShortDate(weeklyBest.date, locale)}</Text>
-              <Text style={styles.highlightHeadline}>{getOverview(content, weeklyBest.compatibility!.relation, weeklyBest.dayMaster.pillarIndex).headline}</Text>
-            </View>
-            <View style={styles.highlightCard}>
-              <Text style={styles.highlightLabel}>{strings.fortune.weeklyCautionDayLabel}</Text>
-              <Text style={styles.highlightDate}>{formatShortDate(weeklyCaution.date, locale)}</Text>
-              <Text style={styles.highlightHeadline}>{getOverview(content, weeklyCaution.compatibility!.relation, weeklyCaution.dayMaster.pillarIndex).headline}</Text>
-            </View>
+            <Reveal index={0}>
+              <View style={styles.highlightCard}>
+                <Text style={styles.highlightLabel}>{strings.fortune.weeklyBestDayLabel}</Text>
+                <Text style={styles.highlightDate}>{formatShortDate(weeklyBest.date, locale)}</Text>
+                <Text style={styles.highlightHeadline}>{getOverview(content, weeklyBest.compatibility!.relation, weeklyBest.dayMaster.pillarIndex).headline}</Text>
+              </View>
+            </Reveal>
+            <Reveal index={1}>
+              <View style={styles.highlightCard}>
+                <Text style={styles.highlightLabel}>{strings.fortune.weeklyCautionDayLabel}</Text>
+                <Text style={styles.highlightDate}>{formatShortDate(weeklyCaution.date, locale)}</Text>
+                <Text style={styles.highlightHeadline}>{getOverview(content, weeklyCaution.compatibility!.relation, weeklyCaution.dayMaster.pillarIndex).headline}</Text>
+              </View>
+            </Reveal>
+            <Reveal index={2}>
             <View style={styles.weekList}>
               {weeklyWithScore.map((d) => (
                 <View key={d.date} style={styles.weekRow}>
@@ -898,6 +904,7 @@ export default function FortuneScreen({
                 </View>
               ))}
             </View>
+            </Reveal>
           </>
         )}
 
@@ -909,6 +916,7 @@ export default function FortuneScreen({
         )}
         {tab === "month" && !monthDaysLoading && !monthDaysError && monthKey && (
           <>
+            <Reveal index={0}>
             <Text style={styles.sectionLabel} accessibilityRole="header">{strings.goodDays.calendarChipsLabel}</Text>
             <Text style={styles.calendarHint}>{strings.goodDays.calendarChipsHint}</Text>
             <View style={styles.domainPickerRow} accessibilityRole="radiogroup">
@@ -934,6 +942,8 @@ export default function FortuneScreen({
             </View>
             {calError && <ErrorNotice text={calError} retryLabel={strings.common.retryLabel} onRetry={() => calPurpose && loadCalendarPurpose(calPurpose)} />}
             {calLoaded && !calLoading && !calError && calHighlights.size === 0 && <Text style={styles.calendarHint}>{strings.goodDays.calendarFewDays}</Text>}
+            </Reveal>
+            <Reveal index={1}>
             <Text style={styles.calendarTitle} accessibilityRole="header">{formatMonthLabel(monthKey, locale)}</Text>
             <MonthGrid
               month={monthKey}
@@ -960,6 +970,7 @@ export default function FortuneScreen({
                 );
               }}
             />
+            </Reveal>
             {monthSelected?.compatibility && (
               <View style={styles.dayDetailCard}>
                 <Text style={styles.highlightDate}>
@@ -986,19 +997,22 @@ export default function FortuneScreen({
         {tab === "yearly" && (
           // The paid deep read of this same year (a separate one-time purchase, not part of
           // the subscription) — the natural next step from the year tab.
-          <PressableScale style={styles.yearReportCard} onPress={onOpenYearReport} accessibilityRole="button" pressedScale={0.98}>
-            <View style={styles.yearReportText}>
-              <Text style={styles.yearReportTitle}>{strings.yearReport.tabCardTitle(yearly?.year ?? comingSajuYear())}</Text>
-              <Text style={styles.yearReportBody}>{strings.yearReport.tabCardBody}</Text>
-              <Text style={styles.yearReportCta}>{strings.yearReport.tabCardCta}</Text>
-            </View>
-          </PressableScale>
+          <Reveal index={0}>
+            <PressableScale style={styles.yearReportCard} onPress={onOpenYearReport} accessibilityRole="button" pressedScale={0.98}>
+              <View style={styles.yearReportText}>
+                <Text style={styles.yearReportTitle}>{strings.yearReport.tabCardTitle(yearly?.year ?? comingSajuYear())}</Text>
+                <Text style={styles.yearReportBody}>{strings.yearReport.tabCardBody}</Text>
+                <Text style={styles.yearReportCta}>{strings.yearReport.tabCardCta}</Text>
+              </View>
+            </PressableScale>
+          </Reveal>
         )}
 
         {tab === "yearly" && yearlyLoading && <ElementsLoader size="medium" style={styles.sectionSpinner} />}
         {tab === "yearly" && !yearlyLoading && yearlyError && <ErrorNotice text={yearlyError} retryLabel={strings.common.retryLabel} onRetry={retryYearly} />}
         {tab === "yearly" && !yearlyLoading && !yearlyError && yearly?.compatibility && (
           <>
+            <Reveal index={1}>
             <View style={styles.heroCard}>
               <Text style={styles.heroKicker}>{strings.fortune.yearHeading(yearly.year)}</Text>
               <Text style={styles.heroRhythm} accessibilityRole="header">{strings.fortune.rhythmNames[yearly.compatibility.relation]}</Text>
@@ -1009,7 +1023,9 @@ export default function FortuneScreen({
                 <Text style={styles.heroNote}>{yearly.branchRelation === "hap" ? yearContent.hapNote : yearContent.chungNote}</Text>
               )}
             </View>
+            </Reveal>
 
+            <Reveal index={2}>
             <AreaList
               title={strings.fortune.areasLabel}
               items={(["wealth", "love", "career", "study", "health"] as const).map((d) => ({
@@ -1018,7 +1034,9 @@ export default function FortuneScreen({
                 body: yearContent.relations[yearly.compatibility!.relation][d],
               }))}
             />
+            </Reveal>
 
+            <Reveal index={3}>
             <DetailList
               title={strings.fortune.yearDetailsLabel}
               items={[
@@ -1040,11 +1058,12 @@ export default function FortuneScreen({
                   : []),
               ]}
             />
+            </Reveal>
           </>
         )}
 
         {tab === "yearly" && (
-          <View style={styles.monthlySection}>
+          <Reveal index={4} style={styles.monthlySection}>
             <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.monthlyFlowLabel}</Text>
 
             <View style={styles.domainPickerRow}>
@@ -1103,7 +1122,7 @@ export default function FortuneScreen({
                   ))}
               </View>
             )}
-          </View>
+          </Reveal>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -1131,11 +1150,11 @@ const styles = StyleSheet.create({
     ...SHADOW.raised,
   },
   lockedHeading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 22, color: COLORS.headline },
-  yearReportCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 18, marginBottom: 14, ...SHADOW.raised },
-  yearReportText: { gap: 6 },
+  yearReportCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: SPACE.lg, marginBottom: SPACE.md, ...SHADOW.raised },
+  yearReportText: { gap: SPACE.sm },
   yearReportTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 20, color: COLORS.headline },
   yearReportBody: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.subheadline },
-  yearReportCta: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.gold, marginTop: 4 },
+  yearReportCta: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.gold, marginTop: SPACE.xs },
   benefitList: { gap: 14, marginBottom: 10 },
   benefitRow: { flexDirection: "row", gap: 12, alignItems: "flex-start" },
   benefitCheck: { marginTop: 2 },
@@ -1268,31 +1287,31 @@ const styles = StyleSheet.create({
   highlightCard: {
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.md,
-    padding: 16,
-    marginBottom: 12,
+    padding: SPACE.lg,
+    marginBottom: SPACE.md,
     ...SHADOW.raised,
   },
   highlightLabel: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold },
   highlightDate: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline, marginTop: 6 },
   highlightHeadline: { fontFamily: FONTS.regular, fontSize: 13.5, color: COLORS.subheadline, marginTop: 4 },
-  weekList: { marginTop: 8, gap: 8 },
+  weekList: { marginTop: SPACE.sm, gap: SPACE.sm },
   weekRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: SPACE.md,
     backgroundColor: SURFACE.floating,
-    borderRadius: 10,
-    paddingVertical: 11,
-    paddingHorizontal: 14,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.md,
+    paddingHorizontal: SPACE.lg,
   },
   weekRowDate: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.headline, width: 78 },
   weekRowHeadline: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.subheadline, flex: 1 },
-  calendarTitle: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline, marginTop: 14, marginBottom: 10, textAlign: "center" },
+  calendarTitle: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline, marginTop: SPACE.md, marginBottom: SPACE.sm, textAlign: "center" },
   // 2026-10-12 device test: the five per-rhythm fills were unreadable on a phone and nobody could say
   // what they meant, so cells are one neutral surface. The rhythm name is in the detail card on tap.
   // Only state is drawn on the grid: today (outline), purpose-picked days (filled + thick outline),
   // the selected day (lighter surface).
-  dayCell: { flex: 1, borderRadius: 10, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: "transparent", backgroundColor: COLORS.inputBg },
+  dayCell: { flex: 1, borderRadius: RADIUS.sm, alignItems: "center", justifyContent: "center", borderWidth: 2, borderColor: "transparent", backgroundColor: COLORS.inputBg },
   dayCellPast: { opacity: 0.55 },
   dayCellToday: { borderColor: COLORS.headline },
   dayCellGood: { borderColor: COLORS.gold, borderWidth: 3, backgroundColor: "rgba(111,169,139,0.28)" },
@@ -1300,17 +1319,17 @@ const styles = StyleSheet.create({
   dayCellSelected: { backgroundColor: COLORS.border },
   dayNumber: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.headline },
   dayNumberGood: { color: COLORS.headline, fontFamily: FONTS.bold },
-  dayDetailCard: { marginTop: 14, backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 16, ...SHADOW.raised },
-  dayDetailGoodLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.gold, marginTop: 12 },
-  calendarHint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: 4 },
-  chipSpinner: { alignSelf: "center", marginLeft: 4 },
-  dayDetailRhythm: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.gold, marginTop: 4 },
-  monthlySection: { marginTop: 22 },
-  domainPickerRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 10, marginBottom: 14 },
+  dayDetailCard: { marginTop: SPACE.md, backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: SPACE.lg, ...SHADOW.raised },
+  dayDetailGoodLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.gold, marginTop: SPACE.md },
+  calendarHint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: SPACE.xs },
+  chipSpinner: { alignSelf: "center", marginLeft: SPACE.xs },
+  dayDetailRhythm: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.gold, marginTop: SPACE.xs },
+  monthlySection: { marginTop: SPACE.xl },
+  domainPickerRow: { flexDirection: "row", flexWrap: "wrap", gap: SPACE.sm, marginTop: SPACE.sm, marginBottom: SPACE.md },
   domainChip: {
-    paddingVertical: 7,
-    paddingHorizontal: 12,
-    borderRadius: 999,
+    paddingVertical: SPACE.sm,
+    paddingHorizontal: SPACE.md,
+    borderRadius: RADIUS.pill,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
@@ -1320,18 +1339,18 @@ const styles = StyleSheet.create({
   domainChipLabelActive: { color: COLORS.gold },
   monthRow: {
     backgroundColor: SURFACE.floating,
-    borderRadius: 10,
-    padding: 12,
-    gap: 6,
+    borderRadius: RADIUS.sm,
+    padding: SPACE.md,
+    gap: SPACE.sm,
   },
   monthRowHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   monthRowDate: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.headline },
-  monthRowRight: { flexDirection: "row", alignItems: "center", gap: 6 },
+  monthRowRight: { flexDirection: "row", alignItems: "center", gap: SPACE.sm },
   monthRowStage: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.subheadline },
-  branchLegend: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.footer, marginTop: 10 },
+  branchLegend: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.footer, marginTop: SPACE.sm },
   monthRowText: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline },
   monthRowSame: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer },
-  branchBadge: { borderRadius: 999, paddingVertical: 2, paddingHorizontal: 8 },
+  branchBadge: { borderRadius: RADIUS.pill, paddingVertical: SPACE.xs, paddingHorizontal: SPACE.sm },
   branchBadgeHap: { backgroundColor: "rgba(111,169,139,0.15)" },
   branchBadgeChung: { borderWidth: 1, borderColor: "rgba(217,201,163,0.35)" },
   branchBadgeText: { fontFamily: FONTS.bold, fontSize: 12, color: COLORS.headline },
