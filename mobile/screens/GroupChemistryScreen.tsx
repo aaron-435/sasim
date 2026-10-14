@@ -19,8 +19,9 @@ import type { ElementKey, SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
 import { readableColumn } from "../theme/layout";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 
 // Group chemistry map (SPEC 2026-10-05 §7): the user plus 2–5 people — typed in by birth date or
 // picked from answered friend invites — get one five-element role each on a shareable card.
@@ -238,45 +239,51 @@ export default function GroupChemistryScreen({
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         {back}
-        <Text style={styles.heading} accessibilityRole="header">{strings.groupChemistry.heading}</Text>
-        <Text style={styles.subtitle}>{strings.groupChemistry.subtitle}</Text>
+        <Reveal index={0}>
+          <Text style={styles.heading} accessibilityRole="header">{strings.groupChemistry.heading}</Text>
+          <Text style={styles.subtitle}>{strings.groupChemistry.subtitle}</Text>
+        </Reveal>
 
-        <Text style={styles.sectionLabel} accessibilityRole="header">{strings.groupChemistry.membersTitle(members.length)}</Text>
-        <View style={styles.memberList}>
-          {members.map((m) => (
-            <View key={m.id} style={styles.memberRow}>
-              <Text style={styles.memberName} numberOfLines={1}>
-                {m.kind === "self" ? `${m.name} (${strings.groupChemistry.youLabel})` : m.name}
-              </Text>
-              {m.kind !== "self" && (
-                <PressableScale
-                  onPress={() => setMembers((list) => list.filter((x) => x.id !== m.id))}
-                  hitSlop={10}
-                  style={styles.removeButton}
-                  accessibilityRole="button"
-                  accessibilityLabel={strings.groupChemistry.removeLabel(m.name)}
-                >
-                  <X size={16} strokeWidth={2} color={COLORS.subheadline} />
-                </PressableScale>
-              )}
-            </View>
-          ))}
-        </View>
-        <Text style={styles.hint}>{full ? strings.groupChemistry.full : !ready ? strings.groupChemistry.needMore(GROUP_MIN - members.length) : " "}</Text>
+        <Reveal index={1}>
+          <Text style={styles.sectionLabel} accessibilityRole="header">{strings.groupChemistry.membersTitle(members.length)}</Text>
+          <View style={styles.memberList}>
+            {members.map((m) => (
+              <View key={m.id} style={styles.memberRow}>
+                <Text style={styles.memberName} numberOfLines={1}>
+                  {m.kind === "self" ? `${m.name} (${strings.groupChemistry.youLabel})` : m.name}
+                </Text>
+                {m.kind !== "self" && (
+                  <PressableScale
+                    onPress={() => setMembers((list) => list.filter((x) => x.id !== m.id))}
+                    hitSlop={10}
+                    style={styles.removeButton}
+                    accessibilityRole="button"
+                    accessibilityLabel={strings.groupChemistry.removeLabel(m.name)}
+                  >
+                    <X size={16} strokeWidth={2} color={COLORS.subheadline} />
+                  </PressableScale>
+                )}
+              </View>
+            ))}
+          </View>
+          <Text style={styles.hint}>{full ? strings.groupChemistry.full : !ready ? strings.groupChemistry.needMore(GROUP_MIN - members.length) : " "}</Text>
+        </Reveal>
 
-        <PressableScale
-          style={[styles.primaryButton, !ready && styles.disabled]}
-          onPress={handleSubmit}
-          disabled={!ready || submitting}
-          accessibilityRole="button"
-          accessibilityState={{ disabled: !ready, busy: submitting }}
-        >
-          {submitting ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.primaryButtonLabel}>{strings.groupChemistry.submit}</Text>}
-        </PressableScale>
-        {error && <Text style={styles.error}>{error}</Text>}
+        <Reveal index={2}>
+          <PressableScale
+            style={[styles.primaryButton, !ready && styles.disabled]}
+            onPress={handleSubmit}
+            disabled={!ready || submitting}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: !ready, busy: submitting }}
+          >
+            {submitting ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.primaryButtonLabel}>{strings.groupChemistry.submit}</Text>}
+          </PressableScale>
+          {error && <Text style={styles.error}>{error}</Text>}
+        </Reveal>
 
         {!full && pickable.length > 0 && (
-          <View style={styles.section}>
+          <Reveal index={3} style={styles.section}>
             <Text style={styles.sectionLabel} accessibilityRole="header">{strings.groupChemistry.fromReceivedTitle}</Text>
             <View style={styles.chipRow}>
               {pickable.map((item) => {
@@ -296,11 +303,11 @@ export default function GroupChemistryScreen({
                 );
               })}
             </View>
-          </View>
+          </Reveal>
         )}
 
         {!full && (
-          <View style={styles.section}>
+          <Reveal index={4} style={styles.section}>
             <Text style={styles.sectionLabel} accessibilityRole="header">{strings.groupChemistry.addByBirthTitle}</Text>
             <AddByBirth
               key={formKey}
@@ -309,7 +316,7 @@ export default function GroupChemistryScreen({
                 setFormKey((k) => k + 1);
               }}
             />
-          </View>
+          </Reveal>
         )}
 
         <Text style={styles.privacy}>{strings.groupChemistry.privacyNote}</Text>
@@ -320,34 +327,34 @@ export default function GroupChemistryScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { ...readableColumn, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
-  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },
+  content: { ...readableColumn, paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
+  backButton: { flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", padding: SPACE.sm, marginLeft: -SPACE.sm, marginBottom: SPACE.md, minHeight: 44 },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: FONTS.display, fontSize: 26, color: COLORS.headline },
-  subtitle: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 8, marginBottom: 24 },
-  section: { marginTop: 32 },
-  sectionLabel: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 0.2, color: COLORS.subheadline, marginBottom: 12 },
-  memberList: { gap: 8 },
+  subtitle: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: SPACE.sm, marginBottom: SPACE.xl },
+  section: { marginTop: SPACE.xxl },
+  sectionLabel: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 0.2, color: COLORS.subheadline, marginBottom: SPACE.md },
+  memberList: { gap: SPACE.sm },
   memberRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     minHeight: 48,
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACE.lg,
     borderRadius: RADIUS.md,
     backgroundColor: SURFACE.raised,
     ...SHADOW.raised,
   },
   memberName: { flex: 1, fontFamily: FONTS.medium, fontSize: 14.5, color: COLORS.headline },
   removeButton: { minWidth: 44, minHeight: 44, alignItems: "flex-end", justifyContent: "center" },
-  hint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, marginTop: 10 },
-  chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  hint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, marginTop: SPACE.md },
+  chipRow: { flexDirection: "row", flexWrap: "wrap", gap: SPACE.sm },
   chip: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: SPACE.sm,
     minHeight: 44,
-    paddingHorizontal: 14,
+    paddingHorizontal: SPACE.lg,
     borderRadius: RADIUS.pill,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
@@ -358,12 +365,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: SPACE.sm,
     borderWidth: 1,
     borderColor: COLORS.gold,
-    borderRadius: 12,
+    borderRadius: RADIUS.sm,
     minHeight: 48,
-    marginTop: 18,
+    marginTop: SPACE.lg,
   },
   addButtonLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.gold },
   pressed: { backgroundColor: "rgba(111,169,139,0.08)" },
@@ -372,55 +379,55 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: SPACE.sm,
     backgroundColor: COLORS.gold,
-    borderRadius: 12,
+    borderRadius: RADIUS.sm,
     minHeight: 52,
-    marginTop: 14,
+    marginTop: SPACE.lg,
   },
   primaryButtonLabel: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.ctaText },
-  error: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.danger, marginTop: 12 },
-  privacy: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 18, color: COLORS.footer, marginTop: 24 },
+  error: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.danger, marginTop: SPACE.md },
+  privacy: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 18, color: COLORS.footer, marginTop: SPACE.xl },
   eyebrow: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.gold },
-  resultHeadline: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 36, color: COLORS.headline, marginTop: 6 },
+  resultHeadline: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 36, color: COLORS.headline, marginTop: SPACE.sm },
   previewFrame: {
-    marginTop: 28,
-    padding: 14,
-    paddingTop: 12,
-    borderRadius: 24,
+    marginTop: SPACE.xxl,
+    padding: SPACE.lg,
+    paddingTop: SPACE.md,
+    borderRadius: RADIUS.lg,
     borderWidth: 1,
     borderStyle: "dashed",
     borderColor: COLORS.disabledText,
     backgroundColor: COLORS.inputBg,
   },
-  previewLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.footer, textAlign: "center", marginBottom: 10 },
+  previewLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.footer, textAlign: "center", marginBottom: SPACE.md },
   // No fixed aspect ratio: 3 to 6 rows, so the height follows the content (captured width-only).
-  shareCard: { width: "100%", borderRadius: 20, overflow: "hidden", backgroundColor: COLORS.background },
+  shareCard: { width: "100%", borderRadius: RADIUS.lg, overflow: "hidden", backgroundColor: COLORS.background },
   shareCardInner: { paddingHorizontal: "8%", paddingVertical: "9%", alignItems: "center" },
-  shareBrand: { fontFamily: FONTS.bold, fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: 24 },
+  shareBrand: { fontFamily: FONTS.bold, fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: SPACE.xl },
   shareEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: COLORS.gold },
-  shareHeadline: { fontFamily: FONTS.display, fontSize: 28, lineHeight: 34, color: COLORS.headline, textAlign: "center", marginTop: 8 },
-  shareLine: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: 6 },
-  roleList: { width: "100%", marginTop: 22, gap: 10 },
+  shareHeadline: { fontFamily: FONTS.display, fontSize: 28, lineHeight: 34, color: COLORS.headline, textAlign: "center", marginTop: SPACE.sm },
+  shareLine: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: SPACE.sm },
+  roleList: { width: "100%", marginTop: SPACE.xl, gap: SPACE.md },
   roleRow: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 12,
+    gap: SPACE.md,
     backgroundColor: "rgba(255,255,255,0.04)",
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.md,
+    paddingHorizontal: SPACE.lg,
   },
-  roleDot: { width: 30, height: 30, borderRadius: 15, alignItems: "center", justifyContent: "center", marginTop: 2 },
+  roleDot: { width: 30, height: 30, borderRadius: RADIUS.md, alignItems: "center", justifyContent: "center", marginTop: SPACE.xs },
   roleEmoji: { fontSize: 15 },
-  roleText: { flex: 1, gap: 2 },
+  roleText: { flex: 1, gap: SPACE.xs },
   roleName: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.subheadline },
   roleTitle: { fontFamily: FONTS.semibold, fontSize: 14.5, lineHeight: 20, color: COLORS.headline },
   roleLine: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline },
-  tipBlock: { width: "100%", marginTop: 18, alignItems: "center" },
-  tipLabel: { fontFamily: FONTS.bold, fontSize: 12, color: COLORS.gold, marginBottom: 4 },
+  tipBlock: { width: "100%", marginTop: SPACE.lg, alignItems: "center" },
+  tipLabel: { fontFamily: FONTS.bold, fontSize: 12, color: COLORS.gold, marginBottom: SPACE.xs },
   tipText: { fontFamily: FONTS.medium, fontSize: 13, lineHeight: 19, color: COLORS.headline, textAlign: "center" },
-  shareFooter: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, textAlign: "center", marginTop: 26 },
-  textButton: { alignItems: "center", paddingVertical: 14, marginTop: 10 },
+  shareFooter: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, textAlign: "center", marginTop: SPACE.xl },
+  textButton: { alignItems: "center", paddingVertical: SPACE.lg, marginTop: SPACE.md },
   textButtonLabel: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.subheadline },
 });

@@ -43,7 +43,8 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
   - 변경: `FortuneScreen.tsx`의 weekly·month·yearly 렌더 부분과 그 스타일, `MonthGrid.tsx`(이달 달력, 동작은 그대로). 오늘 탭 부분은 건드리지 않음(7번 몫).
   - QA: 공통 tsc. 웹 미리보기 `?qa=pro`에서 세 탭 각각 ko/en/es 스크린샷, 이달 달력 칩·날짜 상세 동작 그대로. 간격 grep은 7번에서 파일 전체로.
 
-- [ ] 6. 궁합·궁합 리포트·그룹 케미
+- [x] 6. 궁합·궁합 리포트·그룹 케미
+  - QA: 앱 tsc --noEmit → exit 0. 다섯 파일 간격 grep(`: 0` 제외) → 0줄. `git diff -w`로 muse 변경을 확인: 간격·모서리 토큰, `Reveal` 래핑, 태그 이동만이고 문구·`Purchases.` 변경 없음(`Reveal` 추가 29줄). mobile-web(375×812, `?qa=all&persona=jisoo`)에서 궁합 입력 화면 렌더 확인. 못 한 것: 궁합 결과·리포트·그룹 케미 화면은 웹 픽스처로 못 열어 코드만 확인, en/es 잘림 확인은 14번 마감 QA로. 참고: 콘솔에 GroupChemistryScreen `Reveal` 닫는 태그 오류가 남아 있으나 muse 편집 중 시점의 로그이며, 파일은 `<Reveal` 5개/`</Reveal>` 5개로 짝이 맞고 tsc 통과. 지시서 `.agents/tasks/09a-compat-a.md`, `09b-compat-b.md`(contributor 모델, 결제·프롬프트 로직 아님).
   - 변경: `CompatibilityScreen.tsx`, `CompatReportScreen.tsx`, `GroupChemistryScreen.tsx`, `CoupleModeSection.tsx`, `OtherBirthForm.tsx`. 오행 색 테두리는 유지(1차 리뷰 결정).
   - QA: 공통 tsc, 다섯 파일 간격 grep 0줄. 웹 미리보기 궁합 입력·결과·그룹 화면 ko/en/es.
 

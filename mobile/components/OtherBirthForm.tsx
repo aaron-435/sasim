@@ -8,7 +8,7 @@ import { dobFieldOrder, dobSeparator } from "../lib/dobOrder";
 import { toISODateString } from "../lib/zodiac";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 // The other person's birth-data form — name (optional), gender, birth date, birth time and
 // city. Lifted out of CompatibilityScreen (2026-10-05) so "그 사람에 대해 묻기" in Q&A asks for
@@ -298,7 +298,7 @@ export function OtherBirthFields({ form, showName = true }: { form: OtherBirthFo
 }
 
 const styles = StyleSheet.create({
-  fieldLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.subheadline, marginTop: 18, marginBottom: 8 },
+  fieldLabel: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.subheadline, marginTop: SPACE.lg, marginBottom: SPACE.sm },
   input: {
     fontFamily: FONTS.regular,
     fontSize: 15,
@@ -306,40 +306,40 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    borderRadius: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 13,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: SPACE.lg,
+    paddingVertical: SPACE.md,
     // Web only: drop the browser's default focus ring; the focused border below is the cue.
     outlineStyle: "solid",
     outlineWidth: 0,
   },
   inputFocused: { borderColor: COLORS.gold },
-  row: { flexDirection: "row", alignItems: "center", gap: 8 },
+  row: { flexDirection: "row", alignItems: "center", gap: SPACE.sm },
   yearInput: { flex: 2.3, minWidth: 0, textAlign: "center" },
   shortInput: { flex: 1.2, minWidth: 0, textAlign: "center" },
   dot: { color: COLORS.footer, fontSize: 18 },
   option: {
     flex: 1,
-    paddingVertical: 13,
-    borderRadius: 10,
+    paddingVertical: SPACE.md,
+    borderRadius: RADIUS.sm,
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
   },
   unknownToggle: {
-    paddingVertical: 13,
-    paddingHorizontal: 16,
-    borderRadius: 10,
+    paddingVertical: SPACE.md,
+    paddingHorizontal: SPACE.lg,
+    borderRadius: RADIUS.sm,
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
   },
   periodToggle: {
-    paddingVertical: 13,
-    paddingHorizontal: 12,
-    borderRadius: 10,
+    paddingVertical: SPACE.md,
+    paddingHorizontal: SPACE.md,
+    borderRadius: RADIUS.sm,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
@@ -347,9 +347,9 @@ const styles = StyleSheet.create({
   optionActive: { backgroundColor: "rgba(111,169,139,0.12)", borderColor: "rgba(111,169,139,0.4)" },
   optionLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.subheadline },
   optionLabelActive: { color: COLORS.gold },
-  resultsBox: { marginTop: 6, backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
-  resultRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 13, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: SURFACE.hairline },
+  resultsBox: { marginTop: SPACE.sm, backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
+  resultRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: SPACE.md, paddingHorizontal: SPACE.lg, borderBottomWidth: 1, borderBottomColor: SURFACE.hairline },
   resultCity: { fontFamily: FONTS.medium, fontSize: 14.5, color: COLORS.headline },
   resultCountry: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
-  fieldError: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.danger, marginTop: 8 },
+  fieldError: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.danger, marginTop: SPACE.sm },
 });

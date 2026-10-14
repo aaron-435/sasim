@@ -23,6 +23,7 @@ import { readableColumn } from "../theme/layout";
 import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import { FONTS } from "../theme/fonts";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { OtherBirthFields, useOtherBirthForm, type OtherBirthPayload } from "../components/OtherBirthForm";
 import CompatReportScreen from "./CompatReportScreen";
 import GroupChemistryScreen from "./GroupChemistryScreen";
@@ -340,121 +341,129 @@ export default function CompatibilityScreen({
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </PressableScale>
 
-        <Text style={styles.heading}>{strings.compatibility.heading}</Text>
-        <Text style={styles.subtitle}>{strings.compatibility.subtitle}</Text>
+        <Reveal index={0}>
+          <Text style={styles.heading}>{strings.compatibility.heading}</Text>
+          <Text style={styles.subtitle}>{strings.compatibility.subtitle}</Text>
+        </Reveal>
 
         <OtherBirthFields form={form} />
 
-        {error && (
-          <ArtImage
-            artKey={error === strings.compatibility.errorNetwork ? "error-network" : "error-generic"}
-            style={styles.errorArt}
-          />
-        )}
-        {error && <Text style={styles.error}>{error}</Text>}
-        {/* Say why the button is dimmed instead of leaving a silent disabled state. */}
-        {!error && !canSubmit && !form.dobInvalid && <Text style={styles.submitHint}>{strings.compatibility.errorMissing}</Text>}
+        <Reveal index={1}>
+          {error && (
+            <ArtImage
+              artKey={error === strings.compatibility.errorNetwork ? "error-network" : "error-generic"}
+              style={styles.errorArt}
+            />
+          )}
+          {error && <Text style={styles.error}>{error}</Text>}
+          {/* Say why the button is dimmed instead of leaving a silent disabled state. */}
+          {!error && !canSubmit && !form.dobInvalid && <Text style={styles.submitHint}>{strings.compatibility.errorMissing}</Text>}
 
-        <PressableScale
-          style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]}
-          onPress={handleSubmit}
-          disabled={!canSubmit || submitting}
-          accessibilityRole="button"
-          accessibilityLabel={strings.compatibility.submitButton}
-        >
-          {submitting ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.submitButtonLabel}>{strings.compatibility.submitButton}</Text>}
-        </PressableScale>
-
-        <View style={styles.inviteSection}>
-          <Text style={styles.inviteTitle} accessibilityRole="header">{strings.invite.sectionTitle}</Text>
-          <Text style={styles.inviteBody}>{strings.invite.sectionBody}</Text>
           <PressableScale
-            style={({ pressed }) => [styles.inviteButton, pressed && styles.inviteButtonPressed, !selfDayMasterChar && styles.submitButtonDisabled]}
-            onPress={() => handleInvite()}
-            disabled={inviting || !selfDayMasterChar}
+            style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]}
+            onPress={handleSubmit}
+            disabled={!canSubmit || submitting}
             accessibilityRole="button"
-            accessibilityLabel={strings.invite.sendButton}
+            accessibilityLabel={strings.compatibility.submitButton}
           >
-            {inviting ? (
-              <ActivityIndicator color={COLORS.gold} />
-            ) : (
-              <>
-                <Send size={16} strokeWidth={2} color={COLORS.gold} />
-                <Text style={styles.inviteButtonLabel}>{strings.invite.sendButton}</Text>
-              </>
-            )}
+            {submitting ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.submitButtonLabel}>{strings.compatibility.submitButton}</Text>}
           </PressableScale>
-          {inviteNote && <Text style={[styles.inviteNote, inviteNote.error && styles.inviteNoteError]}>{inviteNote.text}</Text>}
+        </Reveal>
 
-          {invites.length > 0 && (
-            <View style={styles.receivedList}>
-              <Text style={styles.receivedTitle} accessibilityRole="header">{strings.invite.receivedTitle}</Text>
-              {invites.map((item) => {
-                if (item.status === "answered" && item.result?.compatibility) {
-                  const content = COMPATIBILITY_CONTENT[locale] ?? COMPATIBILITY_CONTENT.ko;
-                  const name = item.friendName?.trim() || strings.compatibility.unnamedOther;
-                  const headline = content.relations[item.result.compatibility.relation].headline;
+        <Reveal index={2}>
+          <View style={styles.inviteSection}>
+            <Text style={styles.inviteTitle} accessibilityRole="header">{strings.invite.sectionTitle}</Text>
+            <Text style={styles.inviteBody}>{strings.invite.sectionBody}</Text>
+            <PressableScale
+              style={({ pressed }) => [styles.inviteButton, pressed && styles.inviteButtonPressed, !selfDayMasterChar && styles.submitButtonDisabled]}
+              onPress={() => handleInvite()}
+              disabled={inviting || !selfDayMasterChar}
+              accessibilityRole="button"
+              accessibilityLabel={strings.invite.sendButton}
+            >
+              {inviting ? (
+                <ActivityIndicator color={COLORS.gold} />
+              ) : (
+                <>
+                  <Send size={16} strokeWidth={2} color={COLORS.gold} />
+                  <Text style={styles.inviteButtonLabel}>{strings.invite.sendButton}</Text>
+                </>
+              )}
+            </PressableScale>
+            {inviteNote && <Text style={[styles.inviteNote, inviteNote.error && styles.inviteNoteError]}>{inviteNote.text}</Text>}
+
+            {invites.length > 0 && (
+              <View style={styles.receivedList}>
+                <Text style={styles.receivedTitle} accessibilityRole="header">{strings.invite.receivedTitle}</Text>
+                {invites.map((item) => {
+                  if (item.status === "answered" && item.result?.compatibility) {
+                    const content = COMPATIBILITY_CONTENT[locale] ?? COMPATIBILITY_CONTENT.ko;
+                    const name = item.friendName?.trim() || strings.compatibility.unnamedOther;
+                    const headline = content.relations[item.result.compatibility.relation].headline;
+                    return (
+                      <PressableScale
+                        key={item.code}
+                        onPress={() => openReceived(item)}
+                        android_ripple={{ color: "rgba(111,169,139,0.12)" }}
+                        style={({ pressed }) => [styles.receivedRow, pressed && styles.reportEntryPressed]}
+                        pressedScale={0.98}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${name}. ${headline}`}
+                      >
+                        <View style={styles.receivedText}>
+                          <Text style={styles.receivedName}>{name}</Text>
+                          <Text style={styles.receivedHeadline}>{headline}</Text>
+                        </View>
+                        <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
+                      </PressableScale>
+                    );
+                  }
+                  const daysLeft = Math.max(1, Math.ceil((Date.parse(item.expiresAt) - Date.now()) / 864e5));
                   return (
                     <PressableScale
                       key={item.code}
-                      onPress={() => openReceived(item)}
-                      android_ripple={{ color: "rgba(111,169,139,0.12)" }}
-                      style={({ pressed }) => [styles.receivedRow, pressed && styles.reportEntryPressed]}
+                      onPress={() => handleInvite(item)}
+                      style={({ pressed }) => [styles.receivedRow, styles.waitingRow, pressed && styles.reportEntryPressed]}
                       pressedScale={0.98}
                       accessibilityRole="button"
-                      accessibilityLabel={`${name}. ${headline}`}
+                      accessibilityLabel={`${strings.invite.waitingName}. ${strings.invite.waitingLabel(daysLeft)}`}
+                      accessibilityHint={strings.invite.resendHint}
                     >
                       <View style={styles.receivedText}>
-                        <Text style={styles.receivedName}>{name}</Text>
-                        <Text style={styles.receivedHeadline}>{headline}</Text>
+                        <Text style={styles.waitingName}>{strings.invite.waitingName}</Text>
+                        <Text style={styles.waitingLabel}>{strings.invite.waitingLabel(daysLeft)}</Text>
                       </View>
-                      <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
+                      <Share2 size={16} strokeWidth={1.75} color={COLORS.subheadline} />
                     </PressableScale>
                   );
-                }
-                const daysLeft = Math.max(1, Math.ceil((Date.parse(item.expiresAt) - Date.now()) / 864e5));
-                return (
-                  <PressableScale
-                    key={item.code}
-                    onPress={() => handleInvite(item)}
-                    style={({ pressed }) => [styles.receivedRow, styles.waitingRow, pressed && styles.reportEntryPressed]}
-                    pressedScale={0.98}
-                    accessibilityRole="button"
-                    accessibilityLabel={`${strings.invite.waitingName}. ${strings.invite.waitingLabel(daysLeft)}`}
-                    accessibilityHint={strings.invite.resendHint}
-                  >
-                    <View style={styles.receivedText}>
-                      <Text style={styles.waitingName}>{strings.invite.waitingName}</Text>
-                      <Text style={styles.waitingLabel}>{strings.invite.waitingLabel(daysLeft)}</Text>
-                    </View>
-                    <Share2 size={16} strokeWidth={1.75} color={COLORS.subheadline} />
-                  </PressableScale>
-                );
-              })}
-            </View>
-          )}
-          <Text style={styles.invitePrivacy}>{strings.invite.privacyNote}</Text>
-
-          {selfSajuType && (
-            <PressableScale
-              onPress={() => setGroupOpen(true)}
-              android_ripple={{ color: "rgba(111,169,139,0.12)" }}
-              style={({ pressed }) => [styles.reportEntry, styles.groupEntry, pressed && styles.reportEntryPressed]}
-              pressedScale={0.98}
-              accessibilityRole="button"
-              accessibilityLabel={`${strings.groupChemistry.entryEyebrow}. ${strings.groupChemistry.entryTitle}`}
-            >
-              <View style={styles.reportEntryText}>
-                <Text style={styles.reportEntryEyebrow}>{strings.groupChemistry.entryEyebrow}</Text>
-                <Text style={styles.reportEntryTitle}>{strings.groupChemistry.entryTitle}</Text>
-                <Text style={styles.reportEntryBody}>{strings.groupChemistry.entryBody}</Text>
+                })}
               </View>
-              <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
-            </PressableScale>
-          )}
-        </View>
+            )}
+            <Text style={styles.invitePrivacy}>{strings.invite.privacyNote}</Text>
 
-        <CoupleModeSection selfNickname={selfNickname} selfDayMasterChar={selfDayMasterChar} selfDayBranch={selfDayBranch ?? null} />
+            {selfSajuType && (
+              <PressableScale
+                onPress={() => setGroupOpen(true)}
+                android_ripple={{ color: "rgba(111,169,139,0.12)" }}
+                style={({ pressed }) => [styles.reportEntry, styles.groupEntry, pressed && styles.reportEntryPressed]}
+                pressedScale={0.98}
+                accessibilityRole="button"
+                accessibilityLabel={`${strings.groupChemistry.entryEyebrow}. ${strings.groupChemistry.entryTitle}`}
+              >
+                <View style={styles.reportEntryText}>
+                  <Text style={styles.reportEntryEyebrow}>{strings.groupChemistry.entryEyebrow}</Text>
+                  <Text style={styles.reportEntryTitle}>{strings.groupChemistry.entryTitle}</Text>
+                  <Text style={styles.reportEntryBody}>{strings.groupChemistry.entryBody}</Text>
+                </View>
+                <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
+              </PressableScale>
+            )}
+          </View>
+        </Reveal>
+
+        <Reveal index={3}>
+          <CoupleModeSection selfNickname={selfNickname} selfDayMasterChar={selfDayMasterChar} selfDayBranch={selfDayBranch ?? null} />
+        </Reveal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -462,21 +471,21 @@ export default function CompatibilityScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { ...readableColumn, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
-  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },
+  content: { ...readableColumn, paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
+  backButton: { flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", padding: SPACE.sm, marginLeft: -SPACE.sm, marginBottom: SPACE.md, minHeight: 44 },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline },
-  subtitle: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 8, marginBottom: 20 },
-  error: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.danger, marginTop: 14 },
+  subtitle: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: SPACE.sm, marginBottom: SPACE.xl },
+  error: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.danger, marginTop: SPACE.lg },
   errorArt: { width: 120, height: 120, alignSelf: "center", opacity: 0.9, marginTop: SPACE.xl },
-  submitHint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, marginTop: 14 },
+  submitHint: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, marginTop: SPACE.lg },
   submitButton: {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: COLORS.gold,
-    borderRadius: 12,
-    paddingVertical: 16,
-    marginTop: 28,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.lg,
+    marginTop: SPACE.xxl,
   },
   submitButtonDisabled: { opacity: 0.4 },
   submitButtonLabel: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.ctaText },
@@ -484,29 +493,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.lg,
-    paddingVertical: 28,
-    paddingHorizontal: 20,
-    marginTop: 8,
+    paddingVertical: SPACE.xxl,
+    paddingHorizontal: SPACE.xl,
+    marginTop: SPACE.sm,
     ...SHADOW.raised,
   },
   resultNames: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.subheadline, textAlign: "center" },
-  relationHeadline: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 36, color: COLORS.headline, textAlign: "center", marginTop: 10 },
-  scoreLine: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, marginTop: 12 },
+  relationHeadline: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 36, color: COLORS.headline, textAlign: "center", marginTop: SPACE.md },
+  scoreLine: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, marginTop: SPACE.md },
   scoreValue: { fontFamily: FONTS.semibold, fontVariant: ["lining-nums"] },
-  otherTypeLine: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.gold, marginTop: 18, textAlign: "center" },
-  relationBody: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 22, color: COLORS.subheadline, marginTop: 12 },
-  bondNote: { fontFamily: FONTS.medium, fontSize: 13.5, lineHeight: 20, color: COLORS.gold, marginTop: 16 },
+  otherTypeLine: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.gold, marginTop: SPACE.lg, textAlign: "center" },
+  relationBody: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 22, color: COLORS.subheadline, marginTop: SPACE.md },
+  bondNote: { fontFamily: FONTS.medium, fontSize: 13.5, lineHeight: 20, color: COLORS.gold, marginTop: SPACE.lg },
   previewFrame: {
-    marginTop: 32,
-    padding: 14,
-    paddingTop: 12,
-    borderRadius: 24,
+    marginTop: SPACE.xxl,
+    padding: SPACE.lg,
+    paddingTop: SPACE.md,
+    borderRadius: RADIUS.lg,
     borderWidth: 1,
     borderStyle: "dashed",
     borderColor: COLORS.disabledText,
     backgroundColor: COLORS.inputBg,
   },
-  previewLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.footer, textAlign: "center", marginBottom: 10 },
+  previewLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.footer, textAlign: "center", marginBottom: SPACE.md },
   shareCard: {
     // Deliberately no fixed aspectRatio — the content below (body + good-point + caution,
     // and sometimes a bond note) varies in length across relations/locales, and a hard
@@ -514,7 +523,7 @@ const styles = StyleSheet.create({
     // content-driven height instead; handleShare captures at width:1080 only (no forced
     // height) so the exported image keeps this same vertical proportion, uncut.
     width: "100%",
-    borderRadius: 20,
+    borderRadius: RADIUS.lg,
     overflow: "hidden",
     backgroundColor: COLORS.background,
   },
@@ -523,92 +532,92 @@ const styles = StyleSheet.create({
     paddingVertical: "9%",
     alignItems: "center",
   },
-  shareBrandLabel: { fontFamily: FONTS.bold, fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: 28 },
+  shareBrandLabel: { fontFamily: FONTS.bold, fontSize: 13, letterSpacing: 3, color: COLORS.gold, marginBottom: SPACE.xxl },
   shareCardMid: { alignItems: "center", width: "100%" },
-  shareEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: COLORS.gold, marginBottom: 4 },
+  shareEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: COLORS.gold, marginBottom: SPACE.xs },
   shareNames: { fontFamily: FONTS.semibold, fontSize: 17, color: COLORS.headline, textAlign: "center" },
-  shareHeadline: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 36, color: COLORS.headline, textAlign: "center", marginTop: 18 },
-  shareScoreLine: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.subheadline, textAlign: "center", marginTop: 10, marginBottom: 8 },
+  shareHeadline: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 36, color: COLORS.headline, textAlign: "center", marginTop: SPACE.lg },
+  shareScoreLine: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.subheadline, textAlign: "center", marginTop: SPACE.md, marginBottom: SPACE.sm },
   shareDetailBlock: {
     width: "100%",
     backgroundColor: "rgba(255,255,255,0.04)",
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    marginTop: 14,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.lg,
+    paddingHorizontal: SPACE.lg,
+    marginTop: SPACE.lg,
   },
   shareDetailLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2 },
-  shareDetailText: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.headline, marginTop: 6 },
-  shareBondNote: { fontFamily: FONTS.medium, fontSize: 12.5, lineHeight: 19, color: COLORS.gold, textAlign: "center", marginTop: 16 },
-  shareFooter: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, textAlign: "center", marginTop: 30 },
+  shareDetailText: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.headline, marginTop: SPACE.sm },
+  shareBondNote: { fontFamily: FONTS.medium, fontSize: 12.5, lineHeight: 19, color: COLORS.gold, textAlign: "center", marginTop: SPACE.lg },
+  shareFooter: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, textAlign: "center", marginTop: SPACE.xxl },
   shareButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: SPACE.sm,
     backgroundColor: COLORS.gold,
-    borderRadius: 12,
-    paddingVertical: 15,
-    marginTop: 28,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.lg,
+    marginTop: SPACE.xxl,
   },
   shareButtonLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.ctaText },
   reportEntry: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: SPACE.md,
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.md,
-    paddingVertical: 16,
-    paddingHorizontal: 18,
-    marginTop: 18,
+    paddingVertical: SPACE.lg,
+    paddingHorizontal: SPACE.lg,
+    marginTop: SPACE.lg,
     ...SHADOW.raised,
   },
-  groupEntry: { marginTop: 26 },
+  groupEntry: { marginTop: SPACE.xl },
   reportEntryPressed: { backgroundColor: "rgba(111,169,139,0.08)" },
-  reportEntryText: { flex: 1, gap: 3 },
+  reportEntryText: { flex: 1, gap: SPACE.xs },
   reportEntryEyebrow: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.gold },
   reportEntryTitle: { fontFamily: FONTS.semibold, fontSize: 15, lineHeight: 21, color: COLORS.headline },
-  reportEntryBody: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 19, color: COLORS.subheadline, marginTop: 2 },
-  inviteSection: { marginTop: 40, paddingTop: 28, borderTopWidth: 1, borderTopColor: SURFACE.hairline },
+  reportEntryBody: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 19, color: COLORS.subheadline, marginTop: SPACE.xs },
+  inviteSection: { marginTop: SPACE.xxxl, paddingTop: SPACE.xxl, borderTopWidth: 1, borderTopColor: SURFACE.hairline },
   inviteTitle: { fontFamily: FONTS.display, fontSize: 22, color: COLORS.headline },
-  inviteBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 8 },
+  inviteBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: SPACE.sm },
   inviteButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: SPACE.sm,
     borderWidth: 1,
     borderColor: COLORS.gold,
-    borderRadius: 12,
-    paddingVertical: 14,
-    marginTop: 18,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.lg,
+    marginTop: SPACE.lg,
     minHeight: 48,
   },
   inviteButtonPressed: { backgroundColor: "rgba(111,169,139,0.08)" },
   inviteButtonLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.gold },
-  inviteNote: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, marginTop: 10 },
+  inviteNote: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, marginTop: SPACE.md },
   inviteNoteError: { color: COLORS.danger },
-  receivedList: { marginTop: 26, gap: 10 },
-  receivedTitle: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.subheadline, marginBottom: 2 },
+  receivedList: { marginTop: SPACE.xl, gap: SPACE.md },
+  receivedTitle: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.subheadline, marginBottom: SPACE.xs },
   receivedRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: SPACE.md,
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.md,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    paddingVertical: SPACE.lg,
+    paddingHorizontal: SPACE.lg,
     minHeight: 56,
     ...SHADOW.raised,
   },
   // Dashed placeholder keeps its own border (receivedRow no longer provides one).
   waitingRow: { borderWidth: 1, borderColor: SURFACE.hairline, borderStyle: "dashed", backgroundColor: "transparent" },
-  receivedText: { flex: 1, gap: 3 },
+  receivedText: { flex: 1, gap: SPACE.xs },
   receivedName: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline },
   receivedHeadline: { fontFamily: FONTS.semibold, fontSize: 15, lineHeight: 21, color: COLORS.headline },
   waitingName: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.headline },
   waitingLabel: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.subheadline },
-  invitePrivacy: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 18, color: COLORS.footer, marginTop: 16 },
-  tryAgainButton: { alignItems: "center", paddingVertical: 14, marginTop: 10 },
+  invitePrivacy: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 18, color: COLORS.footer, marginTop: SPACE.lg },
+  tryAgainButton: { alignItems: "center", paddingVertical: SPACE.lg, marginTop: SPACE.md },
   tryAgainLabel: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.subheadline },
 });

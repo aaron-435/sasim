@@ -11,7 +11,7 @@ import { createPairCode, fetchCoupleDaily, formatPairCode, getSavedPair, joinPai
 import { getRevenueCatUserId } from "../lib/purchases";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 // Couple mode setup, under the compatibility screen's invite section (SPEC 2026-10-05 §7):
 // make a code for the partner, or type in the one they sent. Once linked, Home shows
@@ -233,46 +233,46 @@ export default function CoupleModeSection({
 }
 
 const styles = StyleSheet.create({
-  section: { marginTop: 40, paddingTop: 28, borderTopWidth: 1, borderTopColor: SURFACE.hairline },
-  titleRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  section: { marginTop: SPACE.xxxl, paddingTop: SPACE.xxl, borderTopWidth: 1, borderTopColor: SURFACE.hairline },
+  titleRow: { flexDirection: "row", alignItems: "center", gap: SPACE.sm },
   title: { fontFamily: FONTS.display, fontSize: 22, color: COLORS.headline },
-  body: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: 8 },
+  body: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 20, color: COLORS.subheadline, marginTop: SPACE.sm },
   card: {
-    marginTop: 18,
-    padding: 18,
+    marginTop: SPACE.lg,
+    padding: SPACE.lg,
     borderRadius: RADIUS.md,
     backgroundColor: SURFACE.raised,
     alignItems: "center",
     ...SHADOW.raised,
   },
   cardTitle: { fontFamily: FONTS.semibold, fontSize: 15, lineHeight: 21, color: COLORS.headline, textAlign: "center" },
-  cardBody: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, textAlign: "center", marginTop: 8 },
-  code: { fontFamily: FONTS.semibold, fontVariant: ["lining-nums"], fontSize: 28, letterSpacing: 3, color: COLORS.gold, marginTop: 14 },
+  cardBody: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, textAlign: "center", marginTop: SPACE.sm },
+  code: { fontFamily: FONTS.semibold, fontVariant: ["lining-nums"], fontSize: 28, letterSpacing: 3, color: COLORS.gold, marginTop: SPACE.lg },
   outlineButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: SPACE.sm,
     alignSelf: "stretch",
     borderWidth: 1,
     borderColor: COLORS.gold,
-    borderRadius: 12,
+    borderRadius: RADIUS.sm,
     minHeight: 48,
-    marginTop: 18,
+    marginTop: SPACE.lg,
   },
   outlineLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.gold },
   pressed: { backgroundColor: "rgba(111,169,139,0.08)" },
   disabled: { opacity: 0.4 },
-  linkButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 12, marginTop: 8 },
+  linkButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: SPACE.md, marginTop: SPACE.sm },
   unlinkLabel: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.danger },
   cancelLabel: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.subheadline },
-  inputLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline, marginTop: 22, marginBottom: 8 },
-  joinRow: { flexDirection: "row", gap: 10 },
+  inputLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline, marginTop: SPACE.xl, marginBottom: SPACE.sm },
+  joinRow: { flexDirection: "row", gap: SPACE.md },
   input: {
     flex: 1,
     minHeight: 48,
-    paddingHorizontal: 14,
-    borderRadius: 12,
+    paddingHorizontal: SPACE.lg,
+    borderRadius: RADIUS.sm,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
     backgroundColor: COLORS.inputBg,
@@ -281,9 +281,9 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     color: COLORS.headline,
   },
-  joinButton: { minHeight: 48, paddingHorizontal: 18, borderRadius: 12, backgroundColor: COLORS.gold, alignItems: "center", justifyContent: "center" },
+  joinButton: { minHeight: 48, paddingHorizontal: SPACE.lg, borderRadius: RADIUS.sm, backgroundColor: COLORS.gold, alignItems: "center", justifyContent: "center" },
   joinLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.ctaText },
-  note: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, marginTop: 10 },
+  note: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.subheadline, marginTop: SPACE.md },
   noteError: { color: COLORS.danger },
-  privacy: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 18, color: COLORS.footer, marginTop: 16 },
+  privacy: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 18, color: COLORS.footer, marginTop: SPACE.lg },
 });

@@ -10,6 +10,7 @@ import ReportClosingPage from "../components/ReportClosingPage";
 import ReportPager, { type ReaderPage } from "../components/ReportPager";
 import ElementsLoader from "../components/motion/ElementsLoader";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import type { OtherBirthPayload } from "../components/OtherBirthForm";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
@@ -26,7 +27,7 @@ import { getCompatReportPackage, getRevenueCatUserId, isUnavailableMessage, purc
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 // The paid compatibility report (product compat_report, one purchase per other person).
 // Server: app/api/compatReport (free preview) and app/api/compatReport/paid (verifies the
@@ -400,17 +401,23 @@ function CoverPage({ eyebrow, title, subtitle, names }: { eyebrow: string; title
         <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
         <Text style={pageStyles.brandLabel}>FATESAID</Text>
       </View>
-      <Text style={pageStyles.eyebrow}>{eyebrow}</Text>
+      <Reveal index={0}>
+        <Text style={pageStyles.eyebrow}>{eyebrow}</Text>
+      </Reveal>
       <View style={pageStyles.coverMid}>
-        <Text style={pageStyles.coverName}>{names}</Text>
-        <Text style={pageStyles.coverTitle} accessibilityRole="header">
-          {title}
-        </Text>
-        <View style={pageStyles.coverRule} />
-        <Text style={pageStyles.coverSub}>{subtitle}</Text>
-        <View style={pageStyles.coverSource}>
+        <Reveal index={1}>
+          <Text style={pageStyles.coverName}>{names}</Text>
+          <Text style={pageStyles.coverTitle} accessibilityRole="header">
+            {title}
+          </Text>
+        </Reveal>
+        <Reveal index={2}>
+          <View style={pageStyles.coverRule} />
+          <Text style={pageStyles.coverSub}>{subtitle}</Text>
+        </Reveal>
+        <Reveal index={3} style={pageStyles.coverSource}>
           <CalcSourceBadge align="start" />
-        </View>
+        </Reveal>
       </View>
     </View>
   );
@@ -476,43 +483,43 @@ function PaywallPage({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  backRow: { ...readableColumn, paddingHorizontal: 22, paddingTop: 8 },
-  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", minHeight: 44, marginLeft: -8, paddingHorizontal: 8 },
+  backRow: { ...readableColumn, paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm },
+  backButton: { flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", minHeight: 44, marginLeft: -SPACE.sm, paddingHorizontal: SPACE.sm },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
-  center: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32, gap: 16 },
+  center: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: SPACE.xxl, gap: SPACE.lg },
   centerText: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, textAlign: "center" },
-  retryButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 12 },
+  retryButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: SPACE.md },
   retryLabel: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.gold },
-  homeButton: { marginHorizontal: 22, marginBottom: 16, marginTop: 6, borderWidth: 1, borderColor: SURFACE.hairline, borderRadius: 12, paddingVertical: 14, alignItems: "center" },
+  homeButton: { marginHorizontal: SPACE.xl, marginBottom: SPACE.lg, marginTop: SPACE.sm, borderWidth: 1, borderColor: SURFACE.hairline, borderRadius: RADIUS.sm, paddingVertical: SPACE.lg, alignItems: "center" },
   homeButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
 });
 
 const pageStyles = StyleSheet.create({
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: 26, paddingTop: 20, paddingBottom: 40 },
-  eyebrow: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold, marginBottom: 12 },
-  title: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, lineHeight: 33, color: COLORS.headline, marginBottom: 18 },
-  body: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 25, color: COLORS.headline, marginBottom: 16 },
+  scrollContent: { paddingHorizontal: SPACE.xl, paddingTop: SPACE.xl, paddingBottom: SPACE.xxxl },
+  eyebrow: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold, marginBottom: SPACE.md },
+  title: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, lineHeight: 33, color: COLORS.headline, marginBottom: SPACE.lg },
+  body: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 25, color: COLORS.headline, marginBottom: SPACE.lg },
 
-  cover: { flex: 1, paddingHorizontal: 26, paddingTop: 20, paddingBottom: 24 },
+  cover: { flex: 1, paddingHorizontal: SPACE.xl, paddingTop: SPACE.xl, paddingBottom: SPACE.xl },
   coverMid: { flex: 1, justifyContent: "flex-start", paddingTop: "16%" },
-  coverName: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.subheadline, marginBottom: 14 },
+  coverName: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.subheadline, marginBottom: SPACE.lg },
   coverTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 32, lineHeight: 40, color: COLORS.headline },
-  coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: 18 },
+  coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: SPACE.lg },
   coverSub: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 23, color: COLORS.subheadline },
-  coverSource: { marginTop: 22 },
-  brandRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 18 },
+  coverSource: { marginTop: SPACE.xl },
+  brandRow: { flexDirection: "row", alignItems: "center", gap: SPACE.sm, marginBottom: SPACE.lg },
   brandLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 3, color: COLORS.gold, textTransform: "uppercase" },
 
-  paywallBody: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 22, color: COLORS.subheadline, marginBottom: 18 },
+  paywallBody: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 22, color: COLORS.subheadline, marginBottom: SPACE.lg },
   list: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
   rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },
-  lockedRow: { flexDirection: "row", alignItems: "center", gap: 12, minHeight: 48, paddingHorizontal: 16, paddingVertical: 10 },
+  lockedRow: { flexDirection: "row", alignItems: "center", gap: SPACE.md, minHeight: 48, paddingHorizontal: SPACE.lg, paddingVertical: SPACE.md },
   lockedLabel: { flex: 1, fontFamily: FONTS.medium, fontSize: 14.5, lineHeight: 20, color: COLORS.headline },
-  buyButton: { backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 15, alignItems: "center", marginTop: 22, minHeight: 50, justifyContent: "center" },
+  buyButton: { backgroundColor: COLORS.gold, borderRadius: RADIUS.sm, paddingVertical: SPACE.lg, alignItems: "center", marginTop: SPACE.xl, minHeight: 50, justifyContent: "center" },
   buyLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.ctaText },
   buttonDisabled: { opacity: 0.6 },
-  oneTime: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: 12 },
-  notice: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.danger, textAlign: "center", marginTop: 8 },
-  disclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.footer, marginTop: 20 },
+  oneTime: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: SPACE.md },
+  notice: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.danger, textAlign: "center", marginTop: SPACE.sm },
+  disclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.footer, marginTop: SPACE.xl },
 });
