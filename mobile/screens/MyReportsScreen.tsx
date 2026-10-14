@@ -8,6 +8,7 @@ import Text from "../components/AppText";
 import ArtImage from "../components/ArtImage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { useLocale, useStrings } from "../lib/i18n";
 import { listSavedReports, type SavedReport } from "../lib/reportStorage";
 import { listPurchasedCompatReports, type SavedCompatReport } from "../lib/compatReportStorage";
@@ -47,48 +48,56 @@ export default function MyReportsScreen({
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </PressableScale>
 
-        <Text style={styles.heading} accessibilityRole="header">
-          {strings.myReports.heading}
-        </Text>
+        <Reveal index={0}>
+          <Text style={styles.heading} accessibilityRole="header">
+            {strings.myReports.heading}
+          </Text>
+        </Reveal>
 
-        {reports?.length === 0 && compatReports?.length === 0 && <ArtImage artKey="empty-reports" style={styles.emptyArt} />}
-        {reports?.length === 0 && compatReports?.length === 0 && <Text style={styles.empty}>{strings.myReports.empty}</Text>}
+        {reports?.length === 0 && compatReports?.length === 0 && (
+          <Reveal index={1}>
+            <ArtImage artKey="empty-reports" style={styles.emptyArt} />
+            <Text style={styles.empty}>{strings.myReports.empty}</Text>
+          </Reveal>
+        )}
 
-        <View style={styles.list}>
-          {(reports ?? []).map((r, index) => (
-            <PressableScale
-              key={r.moduleId}
-              onPress={() => onOpen(r)}
-              android_ripple={{ color: "rgba(111,169,139,0.12)" }}
-              style={({ pressed }) => [styles.row, index > 0 && styles.rowDivider, pressed && styles.rowPressed]}
-              accessibilityRole="button"
-            >
-              <FileText size={20} strokeWidth={1.75} color={COLORS.gold} />
-              <View style={styles.rowText}>
-                <Text style={styles.rowTitle}>{moduleDisplayTitle(r.moduleTitle)}</Text>
-                <Text style={styles.rowDate}>{strings.myReports.savedOn(new Date(r.savedAt).toLocaleDateString(locale))}</Text>
-              </View>
-              <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
-            </PressableScale>
-          ))}
-          {onOpenCompat &&
-            (compatReports ?? []).map((r, index) => (
+        <Reveal index={2}>
+          <View style={styles.list}>
+            {(reports ?? []).map((r, index) => (
               <PressableScale
-                key={r.pairKey}
-                onPress={() => onOpenCompat(r)}
+                key={r.moduleId}
+                onPress={() => onOpen(r)}
                 android_ripple={{ color: "rgba(111,169,139,0.12)" }}
-                style={({ pressed }) => [styles.row, (index > 0 || !!reports?.length) && styles.rowDivider, pressed && styles.rowPressed]}
+                style={({ pressed }) => [styles.row, index > 0 && styles.rowDivider, pressed && styles.rowPressed]}
                 accessibilityRole="button"
               >
-                <Users size={20} strokeWidth={1.75} color={COLORS.gold} />
+                <FileText size={20} strokeWidth={1.75} color={COLORS.gold} />
                 <View style={styles.rowText}>
-                  <Text style={styles.rowTitle}>{compatTitle(r)}</Text>
+                  <Text style={styles.rowTitle}>{moduleDisplayTitle(r.moduleTitle)}</Text>
                   <Text style={styles.rowDate}>{strings.myReports.savedOn(new Date(r.savedAt).toLocaleDateString(locale))}</Text>
                 </View>
                 <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
               </PressableScale>
             ))}
-        </View>
+            {onOpenCompat &&
+              (compatReports ?? []).map((r, index) => (
+                <PressableScale
+                  key={r.pairKey}
+                  onPress={() => onOpenCompat(r)}
+                  android_ripple={{ color: "rgba(111,169,139,0.12)" }}
+                  style={({ pressed }) => [styles.row, (index > 0 || !!reports?.length) && styles.rowDivider, pressed && styles.rowPressed]}
+                  accessibilityRole="button"
+                >
+                  <Users size={20} strokeWidth={1.75} color={COLORS.gold} />
+                  <View style={styles.rowText}>
+                    <Text style={styles.rowTitle}>{compatTitle(r)}</Text>
+                    <Text style={styles.rowDate}>{strings.myReports.savedOn(new Date(r.savedAt).toLocaleDateString(locale))}</Text>
+                  </View>
+                  <ChevronRight size={18} strokeWidth={1.75} color={COLORS.subheadline} />
+                </PressableScale>
+              ))}
+          </View>
+        </Reveal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -96,17 +105,17 @@ export default function MyReportsScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
-  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", minHeight: 44, marginLeft: -8, paddingHorizontal: 8 },
+  content: { paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
+  backButton: { flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", minHeight: 44, marginLeft: -SPACE.sm, paddingHorizontal: SPACE.sm },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
-  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginTop: 4, marginBottom: 16 },
+  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginTop: SPACE.xs, marginBottom: SPACE.lg },
   empty: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline },
   emptyArt: { width: 120, height: 120, alignSelf: "center", opacity: 0.9, marginBottom: SPACE.md },
   list: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
-  row: { flexDirection: "row", alignItems: "center", gap: 14, minHeight: 60, paddingVertical: 12, paddingHorizontal: 16 },
+  row: { flexDirection: "row", alignItems: "center", gap: SPACE.lg, minHeight: 60, paddingVertical: SPACE.md, paddingHorizontal: SPACE.lg },
   rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },
   rowPressed: { backgroundColor: "rgba(111,169,139,0.08)" },
-  rowText: { flex: 1, gap: 2 },
+  rowText: { flex: 1, gap: SPACE.xs },
   rowTitle: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.headline },
   rowDate: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
 });

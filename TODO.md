@@ -53,7 +53,8 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
   - 변경: `QAScreen.tsx`, `QASubcategoryScreen.tsx`, `QAQuestionScreen.tsx`, `QAPersonFormScreen.tsx`, `ChatScreen.tsx`, `ChatBubbles.tsx`. 채팅 말풍선 등장은 이미 있는 애니메이션이 있으면 유지, 없으면 `Reveal` 한 단계만.
   - QA: 공통 tsc, 여섯 파일 간격 grep 0줄. 웹 미리보기 Q&A 흐름 끝까지(질문 고르기→결과), 채팅 첫 화면 ko/en/es. 채팅 API는 부르지 않아도 됨(픽스처).
 
-- [ ] 8. 저널·좋은 날·설정·내 리포트·공유 카드
+- [x] 8. 저널·좋은 날·설정·내 리포트·공유 카드
+  - QA: 앱 tsc --noEmit → exit 0. 여섯 파일 간격 grep(`: 0` 제외) → 0줄. `git diff -w`로 muse 변경에서 `Purchases.`·fetch·`/api`·`t(` 변경 없음, `Reveal` 25곳 추가(파일별 여는·닫는 태그 수 일치: 저널 5, 카드 1, 좋은 날 6, 설정 5, 내 리포트 3, 공유 카드 5). mobile-web(`?qa=pro&persona=jisoo`, 375×812, ko)에서 홈 → 설정 화면 내용 전부 렌더 확인(스크린샷은 페이드 중이라 비어 보여 페이지 텍스트로 확인). 못 한 것: 저널·좋은 날·내 리포트·공유 카드 화면 웹 개별 확인, en/es 잘림(14번 마감 QA로). 콘솔의 `Reveal` 닫는 태그 오류는 muse 편집 중 시점의 오래된 로그, 최종 파일은 tsc 통과. 지시서 `.agents/tasks/11a-journal-gooddays.md`, `11b-settings-reports-share.md`(contributor 모델, 결제·프롬프트 로직 아님, 병렬 실행). 브랜치 `task-04`.
   - 변경: `JournalScreen.tsx`, `JournalEntryCard.tsx`, `GoodDaysScreen.tsx`, `SettingsScreen.tsx`, `MyReportsScreen.tsx`, `ShareCardsScreen.tsx`. 설정은 토큰·`Reveal`만.
   - QA: 공통 tsc, 여섯 파일 간격 grep 0줄. 웹 미리보기 각 화면 ko/en/es, 저널 빈 상태와 글 있는 상태.
 

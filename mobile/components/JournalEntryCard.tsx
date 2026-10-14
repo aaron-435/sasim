@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import Text from "./AppText";
 import PressableScale from "./motion/PressableScale";
+import Reveal from "./motion/Reveal";
 import JournalSafetyNote from "./JournalSafetyNote";
 import { track } from "../lib/analytics";
 import { useStrings } from "../lib/i18n";
@@ -16,7 +17,7 @@ import {
 } from "../lib/journalStorage";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 // "오늘 한 줄" under today's reading (FortuneScreen, once the day is opened). A mood is required,
 // the line is optional; both stay on the device (lib/journalStorage.ts). If the line reads like a
@@ -56,7 +57,7 @@ export default function JournalEntryCard({ dateIso, onOpenJournal }: { dateIso: 
   if (!loaded) return null;
 
   return (
-    <View style={styles.card}>
+    <Reveal index={0} style={styles.card}>
       <Text style={styles.label} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.journal.cardLabel}</Text>
 
       {editing ? (
@@ -128,25 +129,25 @@ export default function JournalEntryCard({ dateIso, onOpenJournal }: { dateIso: 
           </>
         )
       )}
-    </View>
+    </Reveal>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 18, gap: 12, marginTop: 16, marginBottom: 14, ...SHADOW.raised },
+  card: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: SPACE.lg, gap: SPACE.md, marginTop: SPACE.lg, marginBottom: SPACE.lg, ...SHADOW.raised },
   label: { fontFamily: FONTS.semibold, fontSize: 13, letterSpacing: 0.3, color: COLORS.gold },
   prompt: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline },
-  moodGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  moodGrid: { flexDirection: "row", flexWrap: "wrap", gap: SPACE.sm },
   moodChip: {
     flexGrow: 1,
     flexBasis: "45%",
     minHeight: 44,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 999,
+    borderRadius: RADIUS.pill,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    paddingHorizontal: 10,
+    paddingHorizontal: SPACE.md,
   },
   moodChipSelected: { borderColor: COLORS.gold, backgroundColor: "rgba(111,169,139,0.12)" },
   moodLabel: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.subheadline },
@@ -155,23 +156,23 @@ const styles = StyleSheet.create({
     minHeight: 48,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    borderRadius: 12,
-    paddingHorizontal: 14,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: SPACE.lg,
     fontFamily: FONTS.regular,
     fontSize: 15,
     color: COLORS.headline,
     backgroundColor: COLORS.inputBg,
   },
-  footerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
+  footerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: SPACE.md },
   storageNote: { flexShrink: 1, fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.footer },
-  saveButton: { minHeight: 44, minWidth: 88, alignItems: "center", justifyContent: "center", borderRadius: 999, backgroundColor: COLORS.gold, paddingHorizontal: 20 },
+  saveButton: { minHeight: 44, minWidth: 88, alignItems: "center", justifyContent: "center", borderRadius: RADIUS.pill, backgroundColor: COLORS.gold, paddingHorizontal: SPACE.xl },
   saveButtonDisabled: { backgroundColor: COLORS.disabledBg },
   saveLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.ctaText },
   saveLabelDisabled: { color: COLORS.disabledText },
-  savedRow: { gap: 10, alignItems: "flex-start" },
-  savedChip: { flexGrow: 0, flexBasis: "auto", paddingHorizontal: 16 },
+  savedRow: { gap: SPACE.md, alignItems: "flex-start" },
+  savedChip: { flexGrow: 0, flexBasis: "auto", paddingHorizontal: SPACE.lg },
   savedNote: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 23, color: COLORS.headline },
-  linkRow: { flexDirection: "row", gap: 20 },
+  linkRow: { flexDirection: "row", gap: SPACE.xl },
   link: { minHeight: 44, justifyContent: "center" },
   linkText: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.gold, textDecorationLine: "underline" },
 });

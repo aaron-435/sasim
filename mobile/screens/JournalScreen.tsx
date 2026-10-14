@@ -6,6 +6,7 @@ import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, View } from "re
 import Text from "../components/AppText";
 import ArtImage from "../components/ArtImage";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import JournalSafetyNote from "../components/JournalSafetyNote";
 import MonthGrid from "../components/MonthGrid";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -161,15 +162,17 @@ export default function JournalScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
-          <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
-          <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
-        </PressableScale>
+        <Reveal index={0}>
+          <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
+            <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
+            <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
+          </PressableScale>
 
-        <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.journal.heading}</Text>
-        <Text style={styles.intro}>{strings.journal.intro}</Text>
+          <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.journal.heading}</Text>
+          <Text style={styles.intro}>{strings.journal.intro}</Text>
+        </Reveal>
 
-        <View style={styles.monthRow}>
+        <Reveal index={1} style={styles.monthRow}>
           <PressableScale
             onPress={() => setMonth(shiftMonth(month, -1))}
             disabled={!canGoBack}
@@ -192,48 +195,52 @@ export default function JournalScreen({
           >
             <ChevronRight size={20} strokeWidth={2} color={COLORS.headline} />
           </PressableScale>
-        </View>
+        </Reveal>
 
-        <MonthGrid
-          month={month}
-          renderDay={(date) => {
-            const entry = all[date];
-            const isSelected = date === selected;
-            const isToday = date === todayIso;
-            const label = String(Number(date.slice(8)));
-            return (
-              <PressableScale
-                onPress={() => entry && setSelected(date)}
-                disabled={!entry}
-                style={[styles.day, entry && styles.dayRecorded, isSelected && styles.daySelected, isToday && !entry && styles.dayToday]}
-                accessibilityRole="button"
-                accessibilityState={{ disabled: !entry, selected: isSelected }}
-                accessibilityLabel={entry ? `${formatShortDate(date, locale)}, ${strings.journal.moods[entry.mood]}` : formatShortDate(date, locale)}
-                haptic="select"
-              >
-                <Text style={[styles.dayLabel, entry && styles.dayLabelRecorded]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{label}</Text>
-              </PressableScale>
-            );
-          }}
-        />
+        <Reveal index={2}>
+          <MonthGrid
+            month={month}
+            renderDay={(date) => {
+              const entry = all[date];
+              const isSelected = date === selected;
+              const isToday = date === todayIso;
+              const label = String(Number(date.slice(8)));
+              return (
+                <PressableScale
+                  onPress={() => entry && setSelected(date)}
+                  disabled={!entry}
+                  style={[styles.day, entry && styles.dayRecorded, isSelected && styles.daySelected, isToday && !entry && styles.dayToday]}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: !entry, selected: isSelected }}
+                  accessibilityLabel={entry ? `${formatShortDate(date, locale)}, ${strings.journal.moods[entry.mood]}` : formatShortDate(date, locale)}
+                  haptic="select"
+                >
+                  <Text style={[styles.dayLabel, entry && styles.dayLabelRecorded]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{label}</Text>
+                </PressableScale>
+              );
+            }}
+          />
+        </Reveal>
 
-        {count === 0 && <ArtImage artKey="empty-journal" style={styles.emptyArt} />}
-        {count === 0 && <Text style={styles.empty}>{strings.journal.emptyMonth}</Text>}
+        <Reveal index={3}>
+          {count === 0 && <ArtImage artKey="empty-journal" style={styles.emptyArt} />}
+          {count === 0 && <Text style={styles.empty}>{strings.journal.emptyMonth}</Text>}
 
-        {selected && selectedEntry && (
-          <View style={styles.entryCard}>
-            <View style={styles.entryHeader}>
-              <Text style={styles.entryDate} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{formatShortDate(selected, locale)}</Text>
-              <View style={styles.moodChip}>
-                <Text style={styles.moodChipText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.journal.moods[selectedEntry.mood]}</Text>
+          {selected && selectedEntry && (
+            <View style={styles.entryCard}>
+              <View style={styles.entryHeader}>
+                <Text style={styles.entryDate} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{formatShortDate(selected, locale)}</Text>
+                <View style={styles.moodChip}>
+                  <Text style={styles.moodChipText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.journal.moods[selectedEntry.mood]}</Text>
+                </View>
               </View>
+              <Text style={selectedEntry.note ? styles.entryNote : styles.entryNoNote}>{selectedEntry.note ?? strings.journal.noNote}</Text>
+              {hasCrisisSignal(selectedEntry.note) && <JournalSafetyNote />}
             </View>
-            <Text style={selectedEntry.note ? styles.entryNote : styles.entryNoNote}>{selectedEntry.note ?? strings.journal.noNote}</Text>
-            {hasCrisisSignal(selectedEntry.note) && <JournalSafetyNote />}
-          </View>
-        )}
+          )}
+        </Reveal>
 
-        <View style={styles.reportSection}>
+        <Reveal index={4} style={styles.reportSection}>
           <Text style={styles.sectionLabel} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.journal.reportHeading}</Text>
 
           {count < MIN_REPORT_ENTRIES && !saved && <Text style={styles.reportText}>{strings.journal.reportProgress(count, MIN_REPORT_ENTRIES)}</Text>}
@@ -280,7 +287,7 @@ export default function JournalScreen({
               <Text style={styles.privacy}>{strings.journal.reportPrivacy}</Text>
             </>
           )}
-        </View>
+        </Reveal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -288,46 +295,46 @@ export default function JournalScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { ...readableColumn, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 48 },
-  backButton: { minHeight: 44, flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 8 },
+  content: { ...readableColumn, paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
+  backButton: { minHeight: 44, flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", padding: SPACE.sm, marginLeft: -SPACE.sm, marginBottom: SPACE.sm },
   backLabel: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.subheadline },
-  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, lineHeight: 32, color: COLORS.headline, marginBottom: 8 },
-  intro: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginBottom: 20 },
-  monthRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 12 },
-  monthArrow: { width: 44, height: 44, alignItems: "center", justifyContent: "center", borderRadius: 22 },
+  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, lineHeight: 32, color: COLORS.headline, marginBottom: SPACE.sm },
+  intro: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginBottom: SPACE.xl },
+  monthRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: SPACE.md },
+  monthArrow: { width: 44, height: 44, alignItems: "center", justifyContent: "center", borderRadius: RADIUS.lg },
   hidden: { opacity: 0 },
-  monthTitleBlock: { alignItems: "center", gap: 2 },
+  monthTitleBlock: { alignItems: "center", gap: SPACE.xs },
   monthTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 20, color: COLORS.headline },
   monthCount: { fontFamily: FONTS.regular, fontSize: 12.5, color: COLORS.footer },
-  day: { flex: 1, alignItems: "center", justifyContent: "center", borderRadius: 999 },
+  day: { flex: 1, alignItems: "center", justifyContent: "center", borderRadius: RADIUS.pill },
   dayRecorded: { backgroundColor: "rgba(111,169,139,0.18)" },
   daySelected: { borderWidth: 1.5, borderColor: COLORS.gold },
   dayToday: { borderWidth: 1, borderColor: SURFACE.hairline },
   dayLabel: { fontFamily: FONTS.regular, fontVariant: ["lining-nums"], fontSize: 14, color: COLORS.footer },
   dayLabelRecorded: { fontFamily: FONTS.semibold, color: COLORS.headline },
-  empty: { fontFamily: FONTS.regular, fontSize: 14, color: COLORS.footer, textAlign: "center", marginTop: 12 },
+  empty: { fontFamily: FONTS.regular, fontSize: 14, color: COLORS.footer, textAlign: "center", marginTop: SPACE.md },
   emptyArt: { width: 120, height: 120, alignSelf: "center", opacity: 0.9, marginTop: SPACE.md },
-  entryCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 16, gap: 10, marginTop: 16, ...SHADOW.raised },
-  entryHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
+  entryCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: SPACE.lg, gap: SPACE.md, marginTop: SPACE.lg, ...SHADOW.raised },
+  entryHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: SPACE.sm },
   entryDate: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.subheadline },
-  moodChip: { borderRadius: 999, borderWidth: 1, borderColor: COLORS.gold, paddingHorizontal: 12, paddingVertical: 4 },
+  moodChip: { borderRadius: RADIUS.pill, borderWidth: 1, borderColor: COLORS.gold, paddingHorizontal: SPACE.md, paddingVertical: SPACE.xs },
   moodChipText: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline },
   entryNote: { fontFamily: FONTS.regular, fontSize: 15.5, lineHeight: 24, color: COLORS.headline },
   entryNoNote: { fontFamily: FONTS.regular, fontSize: 14, color: COLORS.footer },
-  reportSection: { marginTop: 28, gap: 12 },
+  reportSection: { marginTop: SPACE.xxl, gap: SPACE.md },
   sectionLabel: { fontFamily: FONTS.semibold, fontSize: 13, letterSpacing: 0.3, color: COLORS.gold },
   reportText: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, flexShrink: 1 },
-  reportCard: { gap: 14 },
+  reportCard: { gap: SPACE.lg },
   reportTitle: { fontFamily: FONTS.display, fontSize: 22, lineHeight: 29, color: COLORS.headline },
-  observationRow: { flexDirection: "row", gap: 12, alignItems: "flex-start" },
-  observationDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: COLORS.gold, marginTop: 9 },
+  observationRow: { flexDirection: "row", gap: SPACE.md, alignItems: "flex-start" },
+  observationDot: { width: 6, height: 6, borderRadius: RADIUS.sm, backgroundColor: COLORS.gold, marginTop: SPACE.sm },
   observationText: { flex: 1, fontFamily: FONTS.regular, fontSize: 15, lineHeight: 23, color: COLORS.headline },
   reportClosing: { fontFamily: FONTS.displayItalic, fontSize: 16, lineHeight: 24, color: COLORS.subheadline },
   disclaimer: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer },
-  generatingRow: { flexDirection: "row", alignItems: "center", gap: 10, minHeight: 48 },
-  primaryButton: { minHeight: 48, alignItems: "center", justifyContent: "center", borderRadius: 999, backgroundColor: COLORS.gold, paddingHorizontal: 20 },
+  generatingRow: { flexDirection: "row", alignItems: "center", gap: SPACE.md, minHeight: 48 },
+  primaryButton: { minHeight: 48, alignItems: "center", justifyContent: "center", borderRadius: RADIUS.pill, backgroundColor: COLORS.gold, paddingHorizontal: SPACE.xl },
   primaryLabel: { fontFamily: FONTS.semibold, fontSize: 15, color: COLORS.ctaText },
-  secondaryButton: { minHeight: 44, alignSelf: "flex-start", justifyContent: "center", borderRadius: 999, borderWidth: 1, borderColor: COLORS.gold, paddingHorizontal: 18 },
+  secondaryButton: { minHeight: 44, alignSelf: "flex-start", justifyContent: "center", borderRadius: RADIUS.pill, borderWidth: 1, borderColor: COLORS.gold, paddingHorizontal: SPACE.lg },
   secondaryLabel: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.gold },
   errorText: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.danger },
   privacy: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer },

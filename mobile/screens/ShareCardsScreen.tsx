@@ -12,6 +12,7 @@ import * as Sharing from "expo-sharing";
 import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
@@ -26,7 +27,7 @@ import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 // Domain share cards — "how I find money", "what sets my heart racing", "my bright spot
 // this year". Money and love are free and need no network (copy is picked by the saju
@@ -179,29 +180,33 @@ export default function ShareCardsScreen({
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </PressableScale>
 
-        <Text style={styles.heading} accessibilityRole="header">
-          {strings.shareCards.heading}
-        </Text>
-        <Text style={styles.subtitle}>{strings.shareCards.subtitle}</Text>
+        <Reveal index={0}>
+          <Text style={styles.heading} accessibilityRole="header">
+            {strings.shareCards.heading}
+          </Text>
+          <Text style={styles.subtitle}>{strings.shareCards.subtitle}</Text>
+        </Reveal>
 
-        <View style={styles.tabRow}>
-          {tabs.map((t) => (
-            <PressableScale
-              key={t.key}
-              onPress={() => setKind(t.key)}
-              style={[styles.tab, kind === t.key && styles.tabActive]}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: kind === t.key }}
-              aria-selected={kind === t.key}
-              haptic="select"
-            >
-              <View style={styles.tabInner}>
-                {t.key === "year" && entitled === false && <Lock size={12} strokeWidth={2} color={kind === t.key ? COLORS.gold : COLORS.subheadline} />}
-                <Text style={[styles.tabLabel, kind === t.key && styles.tabLabelActive]}>{t.label}</Text>
-              </View>
-            </PressableScale>
-          ))}
-        </View>
+        <Reveal index={1}>
+          <View style={styles.tabRow}>
+            {tabs.map((t) => (
+              <PressableScale
+                key={t.key}
+                onPress={() => setKind(t.key)}
+                style={[styles.tab, kind === t.key && styles.tabActive]}
+                accessibilityRole="tab"
+                accessibilityState={{ selected: kind === t.key }}
+                aria-selected={kind === t.key}
+                haptic="select"
+              >
+                <View style={styles.tabInner}>
+                  {t.key === "year" && entitled === false && <Lock size={12} strokeWidth={2} color={kind === t.key ? COLORS.gold : COLORS.subheadline} />}
+                  <Text style={[styles.tabLabel, kind === t.key && styles.tabLabelActive]}>{t.label}</Text>
+                </View>
+              </PressableScale>
+            ))}
+          </View>
+        </Reveal>
 
         {card && (
           <View ref={cardRef} collapsable={false} style={styles.card}>
@@ -236,36 +241,42 @@ export default function ShareCardsScreen({
         {yearGate === "loading" && <ActivityIndicator color={COLORS.gold} style={styles.spinner} />}
 
         {yearGate === "locked" && (
-          <View style={styles.gateCard}>
-            <Lock size={20} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.gateTitle}>{strings.shareCards.lockedTitle}</Text>
-            <Text style={styles.gateBody}>{strings.shareCards.lockedBody}</Text>
-            <PressableScale style={styles.primaryButton} onPress={onOpenFortune} accessibilityRole="button">
-              <Text style={styles.primaryButtonLabel}>{strings.shareCards.lockedCta}</Text>
-            </PressableScale>
-          </View>
+          <Reveal index={2}>
+            <View style={styles.gateCard}>
+              <Lock size={20} strokeWidth={1.75} color={COLORS.gold} />
+              <Text style={styles.gateTitle}>{strings.shareCards.lockedTitle}</Text>
+              <Text style={styles.gateBody}>{strings.shareCards.lockedBody}</Text>
+              <PressableScale style={styles.primaryButton} onPress={onOpenFortune} accessibilityRole="button">
+                <Text style={styles.primaryButtonLabel}>{strings.shareCards.lockedCta}</Text>
+              </PressableScale>
+            </View>
+          </Reveal>
         )}
 
         {yearGate === "error" && (
-          <View style={styles.gateCard}>
-            <Text style={styles.gateBody}>{strings.shareCards.loadError}</Text>
-            <PressableScale style={styles.retryButton} onPress={loadYear} accessibilityRole="button" haptic="none">
-              <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
-            </PressableScale>
-          </View>
+          <Reveal index={2}>
+            <View style={styles.gateCard}>
+              <Text style={styles.gateBody}>{strings.shareCards.loadError}</Text>
+              <PressableScale style={styles.retryButton} onPress={loadYear} accessibilityRole="button" haptic="none">
+                <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
+              </PressableScale>
+            </View>
+          </Reveal>
         )}
 
         {card && (
-          <PressableScale style={styles.primaryButton} onPress={handleShare} disabled={sharing} accessibilityRole="button">
-            {sharing ? (
-              <ActivityIndicator color={COLORS.ctaText} />
-            ) : (
-              <>
-                <Share2 size={16} strokeWidth={2} color={COLORS.ctaText} />
-                <Text style={styles.primaryButtonLabel}>{strings.shareCards.shareButton}</Text>
-              </>
-            )}
-          </PressableScale>
+          <Reveal index={2}>
+            <PressableScale style={styles.primaryButton} onPress={handleShare} disabled={sharing} accessibilityRole="button">
+              {sharing ? (
+                <ActivityIndicator color={COLORS.ctaText} />
+              ) : (
+                <>
+                  <Share2 size={16} strokeWidth={2} color={COLORS.ctaText} />
+                  <Text style={styles.primaryButtonLabel}>{strings.shareCards.shareButton}</Text>
+                </>
+              )}
+            </PressableScale>
+          </Reveal>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -274,24 +285,24 @@ export default function ShareCardsScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { ...readableColumn, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
-  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", minHeight: 44, marginLeft: -8, paddingHorizontal: 8 },
+  content: { ...readableColumn, paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
+  backButton: { flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", minHeight: 44, marginLeft: -SPACE.sm, paddingHorizontal: SPACE.sm },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
-  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginTop: 4 },
-  subtitle: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginTop: 6, marginBottom: 16 },
-  tabRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 20 },
-  tab: { minHeight: 44, justifyContent: "center", paddingHorizontal: 14, borderRadius: 999, backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: SURFACE.hairline },
+  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginTop: SPACE.xs },
+  subtitle: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginTop: SPACE.sm, marginBottom: SPACE.lg },
+  tabRow: { flexDirection: "row", flexWrap: "wrap", gap: SPACE.sm, marginBottom: SPACE.xl },
+  tab: { minHeight: 44, justifyContent: "center", paddingHorizontal: SPACE.lg, borderRadius: RADIUS.pill, backgroundColor: COLORS.inputBg, borderWidth: 1, borderColor: SURFACE.hairline },
   tabActive: { backgroundColor: "rgba(111,169,139,0.12)", borderColor: "rgba(111,169,139,0.4)" },
-  tabInner: { flexDirection: "row", alignItems: "center", gap: 5 },
+  tabInner: { flexDirection: "row", alignItems: "center", gap: SPACE.xs },
   tabLabel: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.subheadline },
   tabLabelActive: { color: COLORS.gold },
-  spinner: { marginVertical: 40 },
+  spinner: { marginVertical: SPACE.xxxl },
   card: {
     width: "100%",
     maxWidth: 420,
     alignSelf: "center",
     aspectRatio: 9 / 16,
-    borderRadius: 20,
+    borderRadius: RADIUS.lg,
     overflow: "hidden",
     backgroundColor: COLORS.background,
   },
@@ -299,21 +310,21 @@ const styles = StyleSheet.create({
   brand: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 3, color: COLORS.gold, textAlign: "center" },
   cardMid: { alignItems: "center" },
   cardTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 30, lineHeight: 36, color: COLORS.headline, textAlign: "center" },
-  archetypeRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 14, marginBottom: 16 },
-  iconBubble: { width: 32, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center" },
+  archetypeRow: { flexDirection: "row", alignItems: "center", gap: SPACE.sm, marginTop: SPACE.lg, marginBottom: SPACE.lg },
+  iconBubble: { width: 32, height: 32, borderRadius: RADIUS.md, alignItems: "center", justifyContent: "center" },
   archetypeName: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
   headline: { fontFamily: FONTS.semibold, fontSize: 19, lineHeight: 26, color: COLORS.gold, textAlign: "center" },
-  body: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, textAlign: "center", marginTop: 12 },
-  cardBottom: { alignItems: "center", gap: 10 },
-  tipPanel: { width: "100%", borderWidth: 1, borderColor: COLORS.border, borderRadius: 14, backgroundColor: "rgba(255,255,255,0.04)", paddingVertical: 12, paddingHorizontal: 14, alignItems: "center", gap: 4 },
+  body: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, textAlign: "center", marginTop: SPACE.md },
+  cardBottom: { alignItems: "center", gap: SPACE.md },
+  tipPanel: { width: "100%", borderWidth: 1, borderColor: COLORS.border, borderRadius: RADIUS.md, backgroundColor: "rgba(255,255,255,0.04)", paddingVertical: SPACE.md, paddingHorizontal: SPACE.lg, alignItems: "center", gap: SPACE.xs },
   tipLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.gold },
   tipText: { fontFamily: FONTS.medium, fontSize: 14, lineHeight: 20, color: COLORS.headline, textAlign: "center" },
   byLine: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.headline },
   footer: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.subheadline, textAlign: "center" },
-  gateCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 22, gap: 10, alignItems: "flex-start", ...SHADOW.raised },
+  gateCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: SPACE.xl, gap: SPACE.md, alignItems: "flex-start", ...SHADOW.raised },
   gateTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 22, color: COLORS.headline },
   gateBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline },
-  primaryButton: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 15, marginTop: 20, alignSelf: "stretch" },
+  primaryButton: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: SPACE.sm, backgroundColor: COLORS.gold, borderRadius: RADIUS.sm, paddingVertical: SPACE.lg, marginTop: SPACE.xl, alignSelf: "stretch" },
   primaryButtonLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.ctaText },
   retryButton: { minHeight: 44, justifyContent: "center" },
   retryLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.gold },

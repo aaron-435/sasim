@@ -4,6 +4,7 @@ import ArrowRight from "lucide-react-native/icons/arrow-right";
 import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
@@ -13,7 +14,7 @@ import { formatShortDate } from "../lib/shortDate";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 // "좋은 날 찾기" — a subscriber sub-screen of FortuneScreen. Pick a purpose, and the server
 // (app/api/goodDays, lib/goodDays.ts) returns the 3-5 best-matched days in the next 30
@@ -103,23 +104,27 @@ export default function GoodDaysScreen({
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
-        <PressableScale
-          onPress={purpose ? handleChangePurpose : onBack}
-          hitSlop={12}
-          style={styles.backButton}
-          accessibilityRole="button"
-          accessibilityLabel={strings.common.backLabel}
-          haptic="none"
-        >
-          <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
-          <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
-        </PressableScale>
+        <Reveal index={0}>
+          <PressableScale
+            onPress={purpose ? handleChangePurpose : onBack}
+            hitSlop={12}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel={strings.common.backLabel}
+            haptic="none"
+          >
+            <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
+            <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
+          </PressableScale>
+        </Reveal>
 
         {!purpose && (
           <>
-            <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.goodDays.heading}</Text>
-            <Text style={styles.intro}>{strings.goodDays.intro}</Text>
-            <View style={styles.purposeList}>
+            <Reveal index={1}>
+              <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.goodDays.heading}</Text>
+              <Text style={styles.intro}>{strings.goodDays.intro}</Text>
+            </Reveal>
+            <Reveal index={2} style={styles.purposeList}>
               {GOOD_DAY_PURPOSES.map((p) => (
                 <PressableScale
                   key={p}
@@ -137,52 +142,58 @@ export default function GoodDaysScreen({
                   <ArrowRight size={16} strokeWidth={2.25} color={COLORS.gold} />
                 </PressableScale>
               ))}
-            </View>
+            </Reveal>
           </>
         )}
 
         {purpose && (
           <>
-            <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>
-              {strings.goodDays.resultHeading(content.purposes[purpose].label)}
-            </Text>
-            {loading && <ActivityIndicator color={COLORS.gold} style={styles.spinner} />}
-            {!loading && error && (
-              <View style={styles.errorBlock}>
-                <Text style={styles.errorText} accessibilityLiveRegion="polite">{error}</Text>
-                <PressableScale onPress={() => load(purpose)} style={styles.retryButton} accessibilityRole="button">
-                  <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
-                </PressableScale>
-              </View>
-            )}
-            {!loading && !error && days && (
-              <>
-                <Text style={styles.intro}>{strings.goodDays.resultNote}</Text>
-                <View style={styles.dayList}>
-                  {rows.map(({ day, reason }) => {
-                    const isToday = day.date === todayIso;
-                    return (
-                      <View key={day.date} style={styles.dayCard}>
-                        <View style={styles.dayHeader}>
-                          <Text style={styles.dayDate} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{formatShortDate(day.date, locale)}</Text>
-                          {isToday && (
-                            <View style={styles.todayBadge}>
-                              <Text style={styles.todayBadgeText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.fortune.todayBadge}</Text>
-                            </View>
-                          )}
-                        </View>
-                        <Text style={styles.dayRhythm} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.fortune.rhythmNames[day.relation]}</Text>
-                        <Text style={styles.dayReason}>{reason}</Text>
-                      </View>
-                    );
-                  })}
+            <Reveal index={1}>
+              <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>
+                {strings.goodDays.resultHeading(content.purposes[purpose].label)}
+              </Text>
+            </Reveal>
+            <Reveal index={2}>
+              {loading && <ActivityIndicator color={COLORS.gold} style={styles.spinner} />}
+              {!loading && error && (
+                <View style={styles.errorBlock}>
+                  <Text style={styles.errorText} accessibilityLiveRegion="polite">{error}</Text>
+                  <PressableScale onPress={() => load(purpose)} style={styles.retryButton} accessibilityRole="button">
+                    <Text style={styles.retryLabel}>{strings.common.retryLabel}</Text>
+                  </PressableScale>
                 </View>
-                <Text style={styles.disclaimer}>{strings.goodDays.disclaimer}</Text>
-              </>
-            )}
-            <PressableScale onPress={handleChangePurpose} style={styles.changeLink} accessibilityRole="button" haptic="none">
-              <Text style={styles.changeLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.goodDays.changePurpose}</Text>
-            </PressableScale>
+              )}
+              {!loading && !error && days && (
+                <>
+                  <Text style={styles.intro}>{strings.goodDays.resultNote}</Text>
+                  <View style={styles.dayList}>
+                    {rows.map(({ day, reason }) => {
+                      const isToday = day.date === todayIso;
+                      return (
+                        <View key={day.date} style={styles.dayCard}>
+                          <View style={styles.dayHeader}>
+                            <Text style={styles.dayDate} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{formatShortDate(day.date, locale)}</Text>
+                            {isToday && (
+                              <View style={styles.todayBadge}>
+                                <Text style={styles.todayBadgeText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.fortune.todayBadge}</Text>
+                              </View>
+                            )}
+                          </View>
+                          <Text style={styles.dayRhythm} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.fortune.rhythmNames[day.relation]}</Text>
+                          <Text style={styles.dayReason}>{reason}</Text>
+                        </View>
+                      );
+                    })}
+                  </View>
+                  <Text style={styles.disclaimer}>{strings.goodDays.disclaimer}</Text>
+                </>
+              )}
+            </Reveal>
+            <Reveal index={3}>
+              <PressableScale onPress={handleChangePurpose} style={styles.changeLink} accessibilityRole="button" haptic="none">
+                <Text style={styles.changeLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.goodDays.changePurpose}</Text>
+              </PressableScale>
+            </Reveal>
           </>
         )}
       </ScrollView>
@@ -192,40 +203,40 @@ export default function GoodDaysScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { ...readableColumn, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 48 },
-  backButton: { minHeight: 44, flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 8 },
+  content: { ...readableColumn, paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
+  backButton: { minHeight: 44, flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", padding: SPACE.sm, marginLeft: -SPACE.sm, marginBottom: SPACE.sm },
   backLabel: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.subheadline },
-  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, lineHeight: 32, color: COLORS.headline, marginBottom: 8 },
-  intro: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginBottom: 18 },
-  purposeList: { gap: 10 },
+  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, lineHeight: 32, color: COLORS.headline, marginBottom: SPACE.sm },
+  intro: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginBottom: SPACE.lg },
+  purposeList: { gap: SPACE.md },
   purposeCard: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: SPACE.md,
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.md,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    paddingVertical: SPACE.lg,
+    paddingHorizontal: SPACE.lg,
     minHeight: 60,
     ...SHADOW.raised,
   },
-  purposeText: { flex: 1, gap: 3 },
+  purposeText: { flex: 1, gap: SPACE.xs },
   purposeLabel: { fontFamily: FONTS.semibold, fontSize: 15.5, color: COLORS.headline },
   purposeHint: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.footer },
-  spinner: { marginTop: 32 },
-  dayList: { gap: 12 },
-  dayCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 16, gap: 6, ...SHADOW.raised },
-  dayHeader: { flexDirection: "row", alignItems: "center", gap: 8 },
+  spinner: { marginTop: SPACE.xxl },
+  dayList: { gap: SPACE.md },
+  dayCard: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: SPACE.lg, gap: SPACE.sm, ...SHADOW.raised },
+  dayHeader: { flexDirection: "row", alignItems: "center", gap: SPACE.sm },
   dayDate: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 19, color: COLORS.headline },
   dayRhythm: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold },
   dayReason: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 22, color: COLORS.headline },
-  todayBadge: { borderRadius: 999, borderWidth: 1, borderColor: COLORS.gold, paddingHorizontal: 8, paddingVertical: 2 },
+  todayBadge: { borderRadius: RADIUS.pill, borderWidth: 1, borderColor: COLORS.gold, paddingHorizontal: SPACE.sm, paddingVertical: SPACE.xs },
   todayBadgeText: { fontFamily: FONTS.medium, fontSize: 11.5, color: COLORS.gold },
-  disclaimer: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: 18 },
-  errorBlock: { gap: 10, marginTop: 12, alignItems: "flex-start" },
+  disclaimer: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: SPACE.lg },
+  errorBlock: { gap: SPACE.md, marginTop: SPACE.md, alignItems: "flex-start" },
   errorText: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.danger },
-  retryButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 16, borderRadius: 10, borderWidth: 1, borderColor: SURFACE.hairline },
+  retryButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: SPACE.lg, borderRadius: RADIUS.sm, borderWidth: 1, borderColor: SURFACE.hairline },
   retryLabel: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.headline },
-  changeLink: { minHeight: 44, justifyContent: "center", alignSelf: "flex-start", marginTop: 12 },
+  changeLink: { minHeight: 44, justifyContent: "center", alignSelf: "flex-start", marginTop: SPACE.md },
   changeLinkText: { fontFamily: FONTS.medium, fontSize: 14, color: COLORS.gold, textDecorationLine: "underline" },
 });

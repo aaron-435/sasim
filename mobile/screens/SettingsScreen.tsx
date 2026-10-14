@@ -6,6 +6,7 @@ import { API_BASE_URL } from "../config";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { LOCALE_LABELS, useLocale, useStrings, type Locale } from "../lib/i18n";
 import { getNotificationPreference, setNotificationPreference, type NotificationPreference } from "../lib/notificationPreference";
 import { applyNotificationPreference } from "../lib/routineNotification";
@@ -15,7 +16,7 @@ import { getSavedPair, unlinkPair, type SavedPair } from "../lib/pairs";
 import { track } from "../lib/analytics";
 import { confirmUnlink } from "../components/CoupleModeSection";
 import { COLORS } from "../theme/colors";
-import { SURFACE } from "../theme/tokens";
+import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 import { FONTS } from "../theme/fonts";
 
 const NOTIFICATION_OPTIONS: NotificationPreference[] = ["off", "daily", "weekly"];
@@ -160,85 +161,91 @@ export default function SettingsScreen({
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </PressableScale>
 
-        <Text style={styles.heading} accessibilityRole="header">{strings.settings.heading}</Text>
+        <Reveal index={0}>
+          <Text style={styles.heading} accessibilityRole="header">{strings.settings.heading}</Text>
+        </Reveal>
 
-        <Text style={styles.sectionLabel} accessibilityRole="header">{strings.settings.languageSectionLabel}</Text>
-        <View style={styles.optionList}>
-          {LANGUAGE_ORDER.map((l: Locale) => (
-            <PressableScale
-              key={l}
-              style={[styles.option, l === locale && styles.optionActive]}
-              onPress={() => setLocale(l)}
-              haptic="select"
-              accessibilityRole="radio"
-              accessibilityState={{ checked: l === locale }}
-              aria-checked={l === locale}
-              accessibilityLabel={LOCALE_LABELS[l]}
-            >
-              <Text style={[styles.optionLabel, l === locale && styles.optionLabelActive]}>{LOCALE_LABELS[l]}</Text>
-              {l === locale && <Check size={16} strokeWidth={2.5} color={COLORS.gold} />}
-            </PressableScale>
-          ))}
-        </View>
-
-        <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.notificationSectionLabel}</Text>
-        <View style={styles.optionList}>
-          {NOTIFICATION_OPTIONS.map((pref) => (
-            <PressableScale
-              key={pref}
-              style={[styles.optionRich, pref === notificationPref && styles.optionActive]}
-              onPress={() => handlePickNotification(pref)}
-              haptic="select"
-              disabled={applying}
-              accessibilityRole="radio"
-              accessibilityState={{ checked: pref === notificationPref, disabled: applying }}
-              aria-checked={pref === notificationPref}
-              accessibilityLabel={`${notificationLabels[pref].label}. ${notificationLabels[pref].description}`}
-            >
-              <View style={styles.optionTextWrap}>
-                <Text style={[styles.optionLabel, pref === notificationPref && styles.optionLabelActive]}>{notificationLabels[pref].label}</Text>
-                <Text style={styles.optionDescription}>{notificationLabels[pref].description}</Text>
-              </View>
-              {applying && pref === notificationPref ? (
-                <ActivityIndicator size="small" color={COLORS.gold} />
-              ) : (
-                pref === notificationPref && <Check size={16} strokeWidth={2.5} color={COLORS.gold} />
-              )}
-            </PressableScale>
-          ))}
-        </View>
-        {solarTermsOn !== null && (
-          <View style={[styles.optionList, styles.solarRow]}>
-            <PressableScale
-              style={[styles.optionRich, notificationPref === "off" && styles.optionDisabled]}
-              onPress={toggleSolarTerms}
-              haptic="select"
-              disabled={solarApplying || notificationPref === "off"}
-              accessibilityRole="switch"
-              accessibilityState={{ checked: solarTermsOn && notificationPref !== "off", disabled: solarApplying || notificationPref === "off" }}
-              aria-checked={solarTermsOn && notificationPref !== "off"}
-              accessibilityLabel={`${strings.solarTerms.settingLabel}. ${notificationPref === "off" ? strings.solarTerms.settingDisabledDescription : strings.solarTerms.settingDescription}`}
-            >
-              <View style={styles.optionTextWrap}>
-                <Text style={styles.optionLabel}>{strings.solarTerms.settingLabel}</Text>
-                <Text style={styles.optionDescription}>
-                  {notificationPref === "off" ? strings.solarTerms.settingDisabledDescription : strings.solarTerms.settingDescription}
-                </Text>
-              </View>
-              {solarApplying ? (
-                <ActivityIndicator size="small" color={COLORS.gold} />
-              ) : (
-                <View style={[styles.toggleTrack, solarTermsOn && notificationPref !== "off" && styles.toggleTrackOn]}>
-                  <View style={[styles.toggleThumb, solarTermsOn && notificationPref !== "off" && styles.toggleThumbOn]} />
-                </View>
-              )}
-            </PressableScale>
+        <Reveal index={1}>
+          <Text style={styles.sectionLabel} accessibilityRole="header">{strings.settings.languageSectionLabel}</Text>
+          <View style={styles.optionList}>
+            {LANGUAGE_ORDER.map((l: Locale) => (
+              <PressableScale
+                key={l}
+                style={[styles.option, l === locale && styles.optionActive]}
+                onPress={() => setLocale(l)}
+                haptic="select"
+                accessibilityRole="radio"
+                accessibilityState={{ checked: l === locale }}
+                aria-checked={l === locale}
+                accessibilityLabel={LOCALE_LABELS[l]}
+              >
+                <Text style={[styles.optionLabel, l === locale && styles.optionLabelActive]}>{LOCALE_LABELS[l]}</Text>
+                {l === locale && <Check size={16} strokeWidth={2.5} color={COLORS.gold} />}
+              </PressableScale>
+            ))}
           </View>
-        )}
-        {permissionDenied && <Text style={styles.warning}>{strings.settings.notificationPermissionDenied}</Text>}
+        </Reveal>
+
+        <Reveal index={2}>
+          <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.notificationSectionLabel}</Text>
+          <View style={styles.optionList}>
+            {NOTIFICATION_OPTIONS.map((pref) => (
+              <PressableScale
+                key={pref}
+                style={[styles.optionRich, pref === notificationPref && styles.optionActive]}
+                onPress={() => handlePickNotification(pref)}
+                haptic="select"
+                disabled={applying}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: pref === notificationPref, disabled: applying }}
+                aria-checked={pref === notificationPref}
+                accessibilityLabel={`${notificationLabels[pref].label}. ${notificationLabels[pref].description}`}
+              >
+                <View style={styles.optionTextWrap}>
+                  <Text style={[styles.optionLabel, pref === notificationPref && styles.optionLabelActive]}>{notificationLabels[pref].label}</Text>
+                  <Text style={styles.optionDescription}>{notificationLabels[pref].description}</Text>
+                </View>
+                {applying && pref === notificationPref ? (
+                  <ActivityIndicator size="small" color={COLORS.gold} />
+                ) : (
+                  pref === notificationPref && <Check size={16} strokeWidth={2.5} color={COLORS.gold} />
+                )}
+              </PressableScale>
+            ))}
+          </View>
+          {solarTermsOn !== null && (
+            <View style={[styles.optionList, styles.solarRow]}>
+              <PressableScale
+                style={[styles.optionRich, notificationPref === "off" && styles.optionDisabled]}
+                onPress={toggleSolarTerms}
+                haptic="select"
+                disabled={solarApplying || notificationPref === "off"}
+                accessibilityRole="switch"
+                accessibilityState={{ checked: solarTermsOn && notificationPref !== "off", disabled: solarApplying || notificationPref === "off" }}
+                aria-checked={solarTermsOn && notificationPref !== "off"}
+                accessibilityLabel={`${strings.solarTerms.settingLabel}. ${notificationPref === "off" ? strings.solarTerms.settingDisabledDescription : strings.solarTerms.settingDescription}`}
+              >
+                <View style={styles.optionTextWrap}>
+                  <Text style={styles.optionLabel}>{strings.solarTerms.settingLabel}</Text>
+                  <Text style={styles.optionDescription}>
+                    {notificationPref === "off" ? strings.solarTerms.settingDisabledDescription : strings.solarTerms.settingDescription}
+                  </Text>
+                </View>
+                {solarApplying ? (
+                  <ActivityIndicator size="small" color={COLORS.gold} />
+                ) : (
+                  <View style={[styles.toggleTrack, solarTermsOn && notificationPref !== "off" && styles.toggleTrackOn]}>
+                    <View style={[styles.toggleThumb, solarTermsOn && notificationPref !== "off" && styles.toggleThumbOn]} />
+                  </View>
+                )}
+              </PressableScale>
+            </View>
+          )}
+          {permissionDenied && <Text style={styles.warning}>{strings.settings.notificationPermissionDenied}</Text>}
+        </Reveal>
 
         {pair?.status === "linked" && (
-          <>
+          <Reveal index={3}>
             <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.couple.sectionTitle}</Text>
             <View style={styles.optionList}>
               <View style={styles.option}>
@@ -250,34 +257,36 @@ export default function SettingsScreen({
                 </PressableScale>
               </View>
             </View>
-          </>
+          </Reveal>
         )}
 
-        <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.legalSectionLabel}</Text>
-        <View style={styles.optionList}>
-          <PressableScale
-            style={styles.option}
-            onPress={handleRestore}
-            disabled={restoring}
-            accessibilityRole="button"
-            accessibilityState={{ disabled: restoring, busy: restoring }}
-          >
-            <Text style={styles.optionLabel}>{strings.qa.restoreButton}</Text>
-            {restoring && <ActivityIndicator size="small" color={COLORS.gold} />}
-          </PressableScale>
-          {legalLinks.map((link) => (
-            <PressableScale key={link.label} style={styles.option} onPress={() => Linking.openURL(link.url)} accessibilityRole="link" haptic="none">
-              <Text style={styles.optionLabel}>{link.label}</Text>
+        <Reveal index={4}>
+          <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.legalSectionLabel}</Text>
+          <View style={styles.optionList}>
+            <PressableScale
+              style={styles.option}
+              onPress={handleRestore}
+              disabled={restoring}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: restoring, busy: restoring }}
+            >
+              <Text style={styles.optionLabel}>{strings.qa.restoreButton}</Text>
+              {restoring && <ActivityIndicator size="small" color={COLORS.gold} />}
             </PressableScale>
-          ))}
-        </View>
+            {legalLinks.map((link) => (
+              <PressableScale key={link.label} style={styles.option} onPress={() => Linking.openURL(link.url)} accessibilityRole="link" haptic="none">
+                <Text style={styles.optionLabel}>{link.label}</Text>
+              </PressableScale>
+            ))}
+          </View>
 
-        <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.resetSectionLabel}</Text>
-        <PressableScale style={styles.resetRow} onPress={handleResetPress} accessibilityRole="button">
-          <Text style={styles.resetLabel}>{strings.settings.resetButton}</Text>
-        </PressableScale>
+          <Text style={[styles.sectionLabel, styles.sectionSpacing]} accessibilityRole="header">{strings.settings.resetSectionLabel}</Text>
+          <PressableScale style={styles.resetRow} onPress={handleResetPress} accessibilityRole="button">
+            <Text style={styles.resetLabel}>{strings.settings.resetButton}</Text>
+          </PressableScale>
 
-        <Text style={styles.copyright}>© 2026 Studio Aron</Text>
+          <Text style={styles.copyright}>© 2026 Studio Aron</Text>
+        </Reveal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -285,26 +294,26 @@ export default function SettingsScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
-  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },
+  content: { paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
+  backButton: { flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", padding: SPACE.sm, marginLeft: -SPACE.sm, marginBottom: SPACE.md, minHeight: 44 },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
-  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginBottom: 24 },
+  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginBottom: SPACE.xl },
   sectionLabel: {
     fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 0.2,
     color: COLORS.subheadline,
-    marginBottom: 12,
+    marginBottom: SPACE.md,
   },
-  sectionSpacing: { marginTop: 28 },
-  optionList: { gap: 10 },
+  sectionSpacing: { marginTop: SPACE.xxl },
+  optionList: { gap: SPACE.md },
   option: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 15,
-    paddingHorizontal: 16,
-    borderRadius: 12,
+    paddingVertical: SPACE.lg,
+    paddingHorizontal: SPACE.lg,
+    borderRadius: RADIUS.sm,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
@@ -313,43 +322,43 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 15,
-    paddingHorizontal: 16,
-    borderRadius: 12,
+    paddingVertical: SPACE.lg,
+    paddingHorizontal: SPACE.lg,
+    borderRadius: RADIUS.sm,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    gap: 12,
+    gap: SPACE.md,
   },
   optionActive: {
     backgroundColor: "rgba(111,169,139,0.12)",
     borderColor: "rgba(111,169,139,0.4)",
   },
-  optionTextWrap: { flex: 1, gap: 3 },
-  solarRow: { marginTop: 10 },
+  optionTextWrap: { flex: 1, gap: SPACE.xs },
+  solarRow: { marginTop: SPACE.md },
   optionDisabled: { opacity: 0.55 },
-  toggleTrack: { width: 40, height: 24, borderRadius: 12, backgroundColor: COLORS.disabledBg, borderWidth: 1, borderColor: SURFACE.hairline, padding: 2, justifyContent: "center" },
+  toggleTrack: { width: 40, height: 24, borderRadius: RADIUS.sm, backgroundColor: COLORS.disabledBg, borderWidth: 1, borderColor: SURFACE.hairline, padding: SPACE.xs, justifyContent: "center" },
   toggleTrackOn: { backgroundColor: COLORS.gold, borderColor: COLORS.gold },
-  toggleThumb: { width: 18, height: 18, borderRadius: 9, backgroundColor: COLORS.subheadline },
+  toggleThumb: { width: 18, height: 18, borderRadius: RADIUS.sm, backgroundColor: COLORS.subheadline },
   toggleThumbOn: { backgroundColor: COLORS.ctaText, alignSelf: "flex-end" },
   optionLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.headline },
   optionLabelActive: { color: COLORS.gold },
   optionDescription: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.footer },
-  copyright: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.footer, textAlign: "center", marginTop: 32 },
+  copyright: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.footer, textAlign: "center", marginTop: SPACE.xxl },
   warning: {
     fontFamily: FONTS.regular,
     fontSize: 12.5,
     lineHeight: 19,
     color: COLORS.danger,
-    marginTop: 14,
+    marginTop: SPACE.lg,
   },
-  coupleLabel: { flex: 1, marginRight: 12 },
+  coupleLabel: { flex: 1, marginRight: SPACE.md },
   unlinkButton: { minHeight: 32, justifyContent: "center" },
   unlinkLabel: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.danger },
   resetRow: {
-    paddingVertical: 15,
-    paddingHorizontal: 16,
-    borderRadius: 12,
+    paddingVertical: SPACE.lg,
+    paddingHorizontal: SPACE.lg,
+    borderRadius: RADIUS.sm,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
