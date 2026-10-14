@@ -4,13 +4,14 @@ import Sparkles from "lucide-react-native/icons/sparkles";
 import { ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import type { QaSubcategory, QaTopicGroup } from "../lib/qaTopicGroups";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 // Ported from components/QASubcategoryPage.jsx — full-screen 중분류 picker. In the app it
 // shows one display group (lib/qaTopicGroups.ts), which can hold more than one bank
@@ -36,14 +37,17 @@ export default function QASubcategoryScreen({
           <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
         </PressableScale>
 
-        <View style={styles.header}>
-          <View style={styles.categoryRow}>
-            <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.categoryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.topicGroups[group.id]}</Text>
+        <Reveal index={0}>
+          <View style={styles.header}>
+            <View style={styles.categoryRow}>
+              <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
+              <Text style={styles.categoryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.topicGroups[group.id]}</Text>
+            </View>
+            <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.qa.categoryHeading}</Text>
           </View>
-          <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.qa.categoryHeading}</Text>
-        </View>
+        </Reveal>
 
+        <Reveal index={1}>
         {group.categories.map((category) => (
           <View key={category.id} style={sectioned && styles.section}>
             {sectioned && (
@@ -66,6 +70,7 @@ export default function QASubcategoryScreen({
             ))}
           </View>
         ))}
+        </Reveal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -77,19 +82,19 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   content: {
-    paddingHorizontal: 22,
-    paddingTop: 8,
-    paddingBottom: 40,
+    paddingHorizontal: SPACE.xl,
+    paddingTop: SPACE.sm,
+    paddingBottom: SPACE.xxxl,
   },
   backButton: {
     minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: SPACE.xs,
     alignSelf: "flex-start",
-    padding: 8,
-    marginLeft: -8,
-    marginBottom: 12,
+    padding: SPACE.sm,
+    marginLeft: -SPACE.sm,
+    marginBottom: SPACE.md,
   },
   backLabel: {
     fontFamily: FONTS.regular,
@@ -97,13 +102,13 @@ const styles = StyleSheet.create({
     color: COLORS.subheadline,
   },
   header: {
-    marginBottom: 20,
+    marginBottom: SPACE.xl,
   },
   categoryRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginBottom: 10,
+    gap: SPACE.sm,
+    marginBottom: SPACE.md,
   },
   categoryLabel: {
     fontFamily: FONTS.semibold,
@@ -118,24 +123,24 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
   },
   section: {
-    marginBottom: 14,
+    marginBottom: SPACE.lg,
   },
   sectionLabel: {
     fontFamily: FONTS.medium,
     fontSize: 13,
     color: COLORS.subheadline,
-    marginBottom: 10,
+    marginBottom: SPACE.md,
   },
   card: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 12,
+    gap: SPACE.md,
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.md,
-    paddingVertical: 16,
-    paddingHorizontal: 18,
-    marginBottom: 10,
+    paddingVertical: SPACE.lg,
+    paddingHorizontal: SPACE.lg,
+    marginBottom: SPACE.md,
     ...SHADOW.raised,
   },
   cardLabel: {

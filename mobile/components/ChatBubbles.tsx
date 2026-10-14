@@ -3,7 +3,7 @@ import { AccessibilityInfo, Animated, Easing, StyleSheet, View } from "react-nat
 import Text from "./AppText";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 // Shared by ChatScreen (quiz→counseling chat) and QAScreen (saju Q&A) — both used to
 // carry byte-identical copies of these bubbles, the typing indicator and their styles.
@@ -67,7 +67,7 @@ export function TypingDots() {
 
 const styles = StyleSheet.create({
   bubbleRow: {
-    marginBottom: 10,
+    marginBottom: SPACE.md,
     flexDirection: "row",
   },
   bubbleRowUser: {
@@ -80,18 +80,18 @@ const styles = StyleSheet.create({
     maxWidth: "82%",
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.md,
-    borderBottomLeftRadius: 4,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
+    borderBottomLeftRadius: RADIUS.sm,
+    paddingVertical: SPACE.md,
+    paddingHorizontal: SPACE.lg,
     ...SHADOW.raised,
   },
   bubbleUser: {
     maxWidth: "82%",
     backgroundColor: COLORS.gold,
-    borderRadius: 16,
-    borderBottomRightRadius: 4,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
+    borderRadius: RADIUS.md,
+    borderBottomRightRadius: RADIUS.sm,
+    paddingVertical: SPACE.md,
+    paddingHorizontal: SPACE.lg,
   },
   bubbleTextBot: {
     fontFamily: FONTS.regular,
@@ -107,14 +107,14 @@ const styles = StyleSheet.create({
   },
   typingBubble: {
     flexDirection: "row",
-    gap: 4,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    gap: SPACE.xs,
+    paddingVertical: SPACE.lg,
+    paddingHorizontal: SPACE.lg,
   },
   typingDot: {
     width: 5,
     height: 5,
-    borderRadius: 3,
+    borderRadius: RADIUS.sm,
     backgroundColor: COLORS.subheadline,
   },
 });

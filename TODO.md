@@ -48,7 +48,8 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
   - 변경: `CompatibilityScreen.tsx`, `CompatReportScreen.tsx`, `GroupChemistryScreen.tsx`, `CoupleModeSection.tsx`, `OtherBirthForm.tsx`. 오행 색 테두리는 유지(1차 리뷰 결정).
   - QA: 공통 tsc, 다섯 파일 간격 grep 0줄. 웹 미리보기 궁합 입력·결과·그룹 화면 ko/en/es.
 
-- [ ] 7. Q&A 4화면 + 채팅
+- [x] 7. Q&A 4화면 + 채팅
+  - QA: 앱 tsc --noEmit → exit 0. 여섯 파일 간격 grep(`: 0` 제외) → 0줄. `git diff -w`로 muse 변경에서 `Purchases.`·fetch·`/api`·문구 키 변경 없음 확인, `Reveal` 11곳 추가(QA 화면 위계, 채팅은 헤더·점검 줄·입력 줄만, 말풍선은 건드리지 않음). mobile-web(`?qa=pro&persona=jisoo`, 375×812, ko)에서 Q&A 주제 화면 → 하위 분류 화면 렌더 확인(스크린샷). 못 한 것: 질문 → 결과, 채팅 첫 화면, 사람 폼은 웹 픽스처로 열지 못해 코드만 확인; en/es 잘림은 14번 마감 QA로. 콘솔의 `Reveal` 닫는 태그 오류는 muse 편집 중 시점의 로그이고 최종 파일은 tsc 통과. 지시서 `.agents/tasks/10a-qa.md`, `10b-chat.md`(contributor 모델, 결제·프롬프트 로직 아님). 브랜치 `task-04`.
   - 변경: `QAScreen.tsx`, `QASubcategoryScreen.tsx`, `QAQuestionScreen.tsx`, `QAPersonFormScreen.tsx`, `ChatScreen.tsx`, `ChatBubbles.tsx`. 채팅 말풍선 등장은 이미 있는 애니메이션이 있으면 유지, 없으면 `Reveal` 한 단계만.
   - QA: 공통 tsc, 여섯 파일 간격 grep 0줄. 웹 미리보기 Q&A 흐름 끝까지(질문 고르기→결과), 채팅 첫 화면 ko/en/es. 채팅 API는 부르지 않아도 됨(픽스처).
 

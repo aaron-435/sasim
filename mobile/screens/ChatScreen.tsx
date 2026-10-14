@@ -16,6 +16,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "../components/AppText";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
@@ -23,7 +24,7 @@ import { findTopAnswers, findTopAnswersOverall } from "../lib/quiz/quizProfile";
 import type { QuizDiagnosis } from "./QuizScreen";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
-import { SURFACE } from "../theme/tokens";
+import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 
 // TOTAL_TURNS/TIME_LIMIT_MINUTES/CHECKPOINT_TURN mirror lib/chatPrompts.ts's exports
 // (web's server-side prompt builder) — that file isn't ported here since prompt building
@@ -278,7 +279,7 @@ export default function ChatScreen({
   return (
     <SafeAreaView style={styles.root}>
       <KeyboardAvoidingView style={styles.flex} behavior="padding">
-        <View style={styles.header}>
+        <Reveal index={0} style={styles.header}>
           <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
             <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
           </PressableScale>
@@ -307,7 +308,7 @@ export default function ChatScreen({
               <Text style={styles.headerFinishLabel}>{strings.chat.finishEarlyButton}</Text>
             </PressableScale>
           )}
-        </View>
+        </Reveal>
 
         <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContent}>
           {messages.map((m, i) => (
@@ -336,18 +337,18 @@ export default function ChatScreen({
         </ScrollView>
 
         {showCheckpoint && (
-          <View style={styles.checkpointRow}>
+          <Reveal index={1} style={styles.checkpointRow}>
             <PressableScale style={styles.checkpointButtonSecondary} onPress={handleWrapUpAtCheckpoint} accessibilityRole="button">
               <Text style={styles.checkpointButtonSecondaryLabel}>{strings.chat.checkpointFinishButton}</Text>
             </PressableScale>
             <PressableScale style={styles.checkpointButtonPrimary} onPress={handleContinueAtCheckpoint} accessibilityRole="button">
               <Text style={styles.checkpointButtonPrimaryLabel}>{strings.chat.checkpointContinueButton}</Text>
             </PressableScale>
-          </View>
+          </Reveal>
         )}
 
         {showTextInput && (
-          <View style={styles.inputRow}>
+          <Reveal index={1} style={styles.inputRow}>
             <TextInput
               style={styles.input}
               value={input}
@@ -361,7 +362,7 @@ export default function ChatScreen({
             <PressableScale style={[styles.sendButton, isTyping && styles.sendButtonBusy]} onPress={handleSend} disabled={isTyping} accessibilityRole="button" accessibilityLabel={strings.chat.sendLabel} accessibilityState={{ disabled: isTyping }}>
               <Send size={16} strokeWidth={2} color={COLORS.ctaText} />
             </PressableScale>
-          </View>
+          </Reveal>
         )}
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -379,16 +380,16 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    gap: SPACE.sm,
+    paddingHorizontal: SPACE.lg,
+    paddingVertical: SPACE.lg,
     borderBottomWidth: 1,
     borderBottomColor: SURFACE.hairline,
   },
   backButton: {
     minHeight: 44,
-    padding: 4,
-    marginRight: 2,
+    padding: SPACE.xs,
+    marginRight: SPACE.xs,
   },
   headerLabel: {
     flex: 1,
@@ -400,7 +401,7 @@ const styles = StyleSheet.create({
   countdown: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
+    gap: SPACE.xs,
   },
   countdownLabel: {
     fontFamily: FONTS.medium,
@@ -411,16 +412,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 18,
-    paddingBottom: 12,
+    padding: SPACE.lg,
+    paddingBottom: SPACE.md,
   },
   errorCard: {
     backgroundColor: "rgba(203,98,73,0.08)",
     borderWidth: 1,
     borderColor: "rgba(203,98,73,0.35)",
-    borderRadius: 12,
-    padding: 14,
-    gap: 10,
+    borderRadius: RADIUS.sm,
+    padding: SPACE.lg,
+    gap: SPACE.md,
   },
   errorText: {
     fontFamily: FONTS.regular,
@@ -438,15 +439,15 @@ const styles = StyleSheet.create({
   doneBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: SPACE.sm,
     alignSelf: "center",
     backgroundColor: "rgba(255,255,255,0.03)",
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    borderRadius: 999,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    marginTop: 20,
+    borderRadius: RADIUS.pill,
+    paddingVertical: SPACE.sm,
+    paddingHorizontal: SPACE.md,
+    marginTop: SPACE.xl,
   },
   doneBadgeLabel: {
     fontFamily: FONTS.regular,
@@ -456,13 +457,13 @@ const styles = StyleSheet.create({
   headerFinishButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: SPACE.xs,
     backgroundColor: "rgba(255,255,255,0.03)",
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    borderRadius: 999,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    borderRadius: RADIUS.pill,
+    paddingVertical: SPACE.xs,
+    paddingHorizontal: SPACE.md,
   },
   headerFinishLabel: {
     fontFamily: FONTS.semibold,
@@ -471,10 +472,10 @@ const styles = StyleSheet.create({
   },
   checkpointRow: {
     flexDirection: "row",
-    gap: 10,
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 20,
+    gap: SPACE.md,
+    paddingHorizontal: SPACE.lg,
+    paddingTop: SPACE.md,
+    paddingBottom: SPACE.xl,
     borderTopWidth: 1,
     borderTopColor: SURFACE.hairline,
   },
@@ -483,8 +484,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: COLORS.gold,
-    borderRadius: 999,
-    paddingVertical: 13,
+    borderRadius: RADIUS.pill,
+    paddingVertical: SPACE.md,
   },
   checkpointButtonPrimaryLabel: {
     fontFamily: FONTS.semibold,
@@ -498,8 +499,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.03)",
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    borderRadius: 999,
-    paddingVertical: 13,
+    borderRadius: RADIUS.pill,
+    paddingVertical: SPACE.md,
   },
   checkpointButtonSecondaryLabel: {
     fontFamily: FONTS.medium,
@@ -508,10 +509,10 @@ const styles = StyleSheet.create({
   },
   inputRow: {
     flexDirection: "row",
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 20,
+    gap: SPACE.sm,
+    paddingHorizontal: SPACE.lg,
+    paddingTop: SPACE.md,
+    paddingBottom: SPACE.xl,
     borderTopWidth: 1,
     borderTopColor: SURFACE.hairline,
   },
@@ -523,15 +524,15 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    borderRadius: 999,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    borderRadius: RADIUS.pill,
+    paddingHorizontal: SPACE.lg,
+    paddingVertical: SPACE.md,
   },
   sendButtonBusy: { opacity: 0.45 },
   sendButton: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: RADIUS.lg,
     backgroundColor: COLORS.gold,
     alignItems: "center",
     justifyContent: "center",

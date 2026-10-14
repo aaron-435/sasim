@@ -4,12 +4,13 @@ import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { localizedText } from "../lib/qaBankLocale";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 type Question = { id: string; text_ko: string; text_en?: string; text_es?: string };
 type Subcategory = { id: string; name_ko: string; name_en?: string; name_es?: string; questions: Question[] };
@@ -43,11 +44,14 @@ export default function QAQuestionScreen({
           <Text style={styles.backLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.common.backLabel}</Text>
         </PressableScale>
 
-        <View style={styles.header}>
-          <Text style={styles.subcategoryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{localizedText(subcategory.name_ko, subcategory.name_en, subcategory.name_es, locale)}</Text>
-          <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.qa.subcategoryHeading}</Text>
-        </View>
+        <Reveal index={0}>
+          <View style={styles.header}>
+            <Text style={styles.subcategoryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{localizedText(subcategory.name_ko, subcategory.name_en, subcategory.name_es, locale)}</Text>
+            <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.qa.subcategoryHeading}</Text>
+          </View>
+        </Reveal>
 
+        <Reveal index={1}>
         {visible.map((q) => (
           <PressableScale
             key={q.id}
@@ -66,6 +70,7 @@ export default function QAQuestionScreen({
             <Text style={styles.moreLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.moreQuestions(hiddenCount)}</Text>
           </PressableScale>
         )}
+        </Reveal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -77,19 +82,19 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   content: {
-    paddingHorizontal: 22,
-    paddingTop: 8,
-    paddingBottom: 40,
+    paddingHorizontal: SPACE.xl,
+    paddingTop: SPACE.sm,
+    paddingBottom: SPACE.xxxl,
   },
   backButton: {
     minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: SPACE.xs,
     alignSelf: "flex-start",
-    padding: 8,
-    marginLeft: -8,
-    marginBottom: 12,
+    padding: SPACE.sm,
+    marginLeft: -SPACE.sm,
+    marginBottom: SPACE.md,
   },
   backLabel: {
     fontFamily: FONTS.regular,
@@ -97,14 +102,14 @@ const styles = StyleSheet.create({
     color: COLORS.subheadline,
   },
   header: {
-    marginBottom: 20,
+    marginBottom: SPACE.xl,
   },
   subcategoryLabel: {
     fontFamily: FONTS.semibold,
     fontSize: 12,
     letterSpacing: 0.2,
     color: COLORS.gold,
-    marginBottom: 10,
+    marginBottom: SPACE.md,
   },
   heading: {
     fontFamily: FONTS.display,
@@ -115,16 +120,16 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 10,
+    gap: SPACE.md,
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.md,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    marginBottom: 8,
+    paddingVertical: SPACE.lg,
+    paddingHorizontal: SPACE.lg,
+    marginBottom: SPACE.sm,
     ...SHADOW.raised,
   },
   cardIcon: {
-    marginTop: 2,
+    marginTop: SPACE.xs,
   },
   cardLabel: {
     fontFamily: FONTS.regular,
@@ -137,8 +142,8 @@ const styles = StyleSheet.create({
     minHeight: 44,
     alignSelf: "flex-start",
     justifyContent: "center",
-    paddingHorizontal: 4,
-    marginTop: 4,
+    paddingHorizontal: SPACE.xs,
+    marginTop: SPACE.xs,
   },
   moreLabel: {
     fontFamily: FONTS.semibold,

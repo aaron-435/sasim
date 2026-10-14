@@ -25,9 +25,10 @@ import QASubcategoryScreen from "./QASubcategoryScreen";
 import QAPersonFormScreen from "./QAPersonFormScreen";
 import { useOtherBirthForm, type OtherBirthPayload } from "../components/OtherBirthForm";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import FeedbackRow from "../components/FeedbackRow";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { track } from "../lib/analytics";
 
 // "그 사람에 대해 묻기": which fixed question, and the other person's birth data for this answer.
@@ -309,24 +310,27 @@ export default function QAScreen({
 
   return (
     <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
-          <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
-        </PressableScale>
-        <View style={styles.headerText}>
-          <View style={styles.headerTitleRow}>
-            <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.headerLabel} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.headerLabel}</Text>
+      <Reveal index={0}>
+        <View style={styles.header}>
+          <PressableScale onPress={onBack} hitSlop={12} style={styles.backButton} accessibilityRole="button" accessibilityLabel={strings.common.backLabel} haptic="none">
+            <ArrowLeft size={18} strokeWidth={2} color={COLORS.subheadline} />
+          </PressableScale>
+          <View style={styles.headerText}>
+            <View style={styles.headerTitleRow}>
+              <Sparkles size={14} strokeWidth={1.75} color={COLORS.gold} />
+              <Text style={styles.headerLabel} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.headerLabel}</Text>
+            </View>
+            {remainingLabel && (
+              <Text style={styles.remaining} accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
+                {remainingLabel}
+              </Text>
+            )}
           </View>
-          {remainingLabel && (
-            <Text style={styles.remaining} accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.control}>
-              {remainingLabel}
-            </Text>
-          )}
         </View>
-      </View>
+      </Reveal>
 
-      <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+      <Reveal index={1} style={styles.scrollReveal}>
+        <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {messages.map((m, i) => {
           if (m.role === "picker") {
             return (
@@ -412,7 +416,8 @@ export default function QAScreen({
             </PressableScale>
           </View>
         )}
-      </ScrollView>
+        </ScrollView>
+      </Reveal>
     </SafeAreaView>
   );
 }
@@ -425,25 +430,25 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    gap: SPACE.sm,
+    paddingHorizontal: SPACE.lg,
+    paddingVertical: SPACE.lg,
     borderBottomWidth: 1,
     borderBottomColor: SURFACE.hairline,
   },
   backButton: {
     minHeight: 44,
-    padding: 4,
-    marginRight: 2,
+    padding: SPACE.xs,
+    marginRight: SPACE.xs,
   },
   headerText: {
     flex: 1,
-    gap: 3,
+    gap: SPACE.xs,
   },
   headerTitleRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: SPACE.sm,
   },
   headerLabel: {
     flexShrink: 1,
@@ -453,7 +458,7 @@ const styles = StyleSheet.create({
     color: COLORS.gold,
   },
   remaining: {
-    paddingLeft: 22,
+    paddingLeft: SPACE.xl,
     fontFamily: FONTS.medium,
     fontSize: 12,
     color: COLORS.subheadline,
@@ -462,16 +467,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 18,
-    paddingBottom: 24,
+    padding: SPACE.lg,
+    paddingBottom: SPACE.xl,
+  },
+  scrollReveal: {
+    flex: 1,
   },
   feedbackRow: {
     width: "88%",
-    marginTop: -2,
-    marginBottom: 10,
+    marginTop: -SPACE.xs,
+    marginBottom: SPACE.md,
   },
   pickerRow: {
-    marginBottom: 10,
+    marginBottom: SPACE.md,
     flexDirection: "row",
     justifyContent: "flex-start",
   },
@@ -479,22 +487,22 @@ const styles = StyleSheet.create({
     width: "88%",
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.md,
-    borderBottomLeftRadius: 4,
-    padding: 12,
+    borderBottomLeftRadius: RADIUS.sm,
+    padding: SPACE.md,
     ...SHADOW.raised,
   },
   optionButton: {
     backgroundColor: SURFACE.floating,
     borderRadius: RADIUS.sm,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    marginBottom: 8,
+    paddingVertical: SPACE.md,
+    paddingHorizontal: SPACE.lg,
+    marginBottom: SPACE.sm,
   },
   optionRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 8,
+    gap: SPACE.sm,
   },
   optionLabel: {
     flexShrink: 1,
@@ -512,15 +520,15 @@ const styles = StyleSheet.create({
     width: "88%",
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.md,
-    borderBottomLeftRadius: 4,
-    padding: 14,
-    gap: 10,
+    borderBottomLeftRadius: RADIUS.sm,
+    padding: SPACE.lg,
+    gap: SPACE.md,
     ...SHADOW.raised,
   },
   subscribeButton: {
     backgroundColor: COLORS.gold,
-    borderRadius: 10,
-    paddingVertical: 13,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.md,
     alignItems: "center",
   },
   subscribeButtonDisabled: {
@@ -533,7 +541,7 @@ const styles = StyleSheet.create({
   },
   restoreLink: {
     alignItems: "center",
-    paddingVertical: 4,
+    paddingVertical: SPACE.xs,
   },
   restoreLinkText: {
     fontFamily: FONTS.medium,
@@ -557,9 +565,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(203,98,73,0.08)",
     borderWidth: 1,
     borderColor: "rgba(203,98,73,0.35)",
-    borderRadius: 12,
-    padding: 14,
-    gap: 10,
+    borderRadius: RADIUS.sm,
+    padding: SPACE.lg,
+    gap: SPACE.md,
   },
   errorText: {
     fontFamily: FONTS.regular,
@@ -569,7 +577,7 @@ const styles = StyleSheet.create({
   retryButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: SPACE.sm,
     alignSelf: "flex-start",
   },
   retryLabel: {
