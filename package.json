@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "validate:manseryeok": "tsx scripts/validate-manseryeok.mts"
+    "validate:manseryeok": "tsx scripts/validate-manseryeok.mts",
+    "art:process": "tsx scripts/art-process.mts"
   },
   "dependencies": {
     "@expo-google-fonts/newsreader": "^0.4.1",
@@ -28,9 +29,11 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "blurhash": "^2.0.5",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
     "postcss": "^8",
+    "sharp": "^0.35.5",
     "tailwindcss": "^3.4.1",
     "tsx": "^4.23.13",
     "typescript": "^5"

@@ -14,7 +14,8 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
   - QA: 공통 tsc. 아직 쓰는 화면 없음 → 웹 미리보기에서 변화 없음, 콘솔 오류 없음.
   - QA: `mobile/`에서 tsc --noEmit → 오류 없음(exit 0). 아직 어느 화면도 `ArtImage`를 쓰지 않아 웹 미리보기는 열지 않음(3번에서 확인). 키 목록은 `IMAGE_PROMPTS` 파일 이름 기준 70개, `manifest.ts`의 `ENTRIES-START/END` 블록은 2번 스크립트가 다시 쓴다.
 
-- [ ] 2. 후보정 스크립트
+- [x] 2. 후보정 스크립트
+  - QA: 루트 `npx tsc --noEmit` → `.next/types` 쪽 기존 오류만(우리 파일 오류 0). 시험 PNG 2장 + 모르는 이름 1장으로 `npm run art:process` → `mobile/assets/art/element-wood.webp`(512²), `public/art/module1-love.webp`(1024×1280) 생성, `manifest.ts`에 두 키만 채워짐(blurhash 포함), `bogus.png`는 경고 후 건너뜀, 재실행해도 항목 유지, 앱 tsc exit 0. 시험 파일·매니페스트 변경은 되돌림. 참고: 시험 키는 TODO 예시의 `module-01` 대신 매니페스트 키 `module1-love`를 썼다.
   - 선행: 1
   - 변경: `scripts/art-process.mts`(새), 루트 `package.json` devDependency `sharp`·`blurhash`, 스크립트 `art:process`. 동작: `art-inbox/<키>.(png|jpg|webp)` → 묶음별 규격(크기는 `IMAGE_PROMPTS` "규격" 절) → WebP(품질 80) → 작은 묶음(오행·12지·빈 화면·질감)은 `mobile/assets/art/`, 큰 묶음(일간·모듈 표지·절기)은 `public/art/` → blurhash 계산 → `manifest.ts`의 해당 키만 다시 씀(번들은 `require`, 서버는 `{ uri: "https://www.fatesaidapp.com/art/<키>.webp" }`). 모르는 파일 이름은 경고만 하고 건너뛴다. 번들 합계가 3MB를 넘으면 경고.
   - QA: `npx tsc --noEmit`(루트) 통과. 시험 PNG 2장(`art-inbox/element-wood.png`, `art-inbox/module-01.png`, 아무 그림)을 넣고 `npm run art:process` → `mobile/assets/art/element-wood.webp`, `public/art/module-01.webp` 생성, `manifest.ts`에 두 키만 채워짐, 앱 tsc 통과. 확인 뒤 시험 파일과 매니페스트 변경은 되돌린다.
