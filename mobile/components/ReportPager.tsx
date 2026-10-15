@@ -2,11 +2,13 @@ import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import ArrowRight from "lucide-react-native/icons/arrow-right";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import Animated, { interpolateColor, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "./AppText";
 import PressableScale from "./motion/PressableScale";
 import { hasSeenReaderHint, markReaderHintSeen, type ReaderHintId } from "../lib/readerHint";
 import { maybeRequestReview } from "../lib/reviewPrompt";
+import useReducedMotion from "../lib/useReducedMotion";
 import { COLORS } from "../theme/colors";
 import { READABLE_MAX_WIDTH, readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
@@ -22,6 +24,11 @@ import { SHADOW, SURFACE } from "../theme/tokens";
 // First open only: a quiet "swipe to turn" note sits over the bottom of page one until the
 // reader turns a page once (remembered per report kind, lib/readerHint.ts). Static, so no
 // reduced-motion handling is needed.
+//
+// Optional `pageColors` (one background per page): the backdrop behind the pages blends between
+// the neighbouring pages' colors as the reader drags (reanimated interpolateColor, on the UI
+// thread), so element pages hand their color over instead of cutting. With Reduce Motion on it
+// simply switches when the page changes. Pages must be transparent to show it.
 //
 // Controlled: the screen owns pageIndex (so a table of contents can jump to a page) and the
 // pager scrolls to it whenever it changes.
@@ -42,6 +49,7 @@ export default function ReportPager({
   footer,
   swipeHint,
   reviewAtEnd = false,
+  pageColors,
 }: {
   pages: ReaderPage[];
   pageIndex: number;
@@ -59,11 +67,30 @@ export default function ReportPager({
   /** True only while the last page is the report's real closing page (not a paywall): reaching
    * it may ask for a store review (lib/reviewPrompt.ts). */
   reviewAtEnd?: boolean;
+  /** Backdrop color per page (same order as `pages`). Omit for the plain app background. */
+  pageColors?: string[];
 }) {
   // Read live (not once at module load) so rotation, iPad Split View and window resizes
   // keep the page width and offsets correct.
   const { width: screenWidth } = useWindowDimensions();
   const scrollRef = useRef<ScrollView>(null);
+  const reduceMotion = useReducedMotion();
+  const scrollX = useSharedValue(0);
+  // Plain JS onScroll writing a shared value: the color blend itself runs on the UI thread.
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    scrollX.value = e.nativeEvent.contentOffset.x;
+  };
+  const blendable = !!pageColors && pageColors.length === pages.length && pages.length > 1;
+  const backdropStyle = useAnimatedStyle(() => {
+    if (!blendable || !pageColors) return { backgroundColor: COLORS.background };
+    return {
+      backgroundColor: interpolateColor(
+        scrollX.value,
+        pageColors.map((_, i) => i * screenWidth),
+        pageColors,
+      ),
+    };
+  });
   // Pages get the pager's measured height explicitly: on react-native-web a flex:1 page
   // inside the horizontal scroller collapses to its content, which left cover footers and
   // centred closings floating at the top.
@@ -111,6 +138,13 @@ export default function ReportPager({
 
   return (
     <SafeAreaView style={styles.root} edges={["top", "left", "right"]}>
+      {/* Whole-screen backdrop (under the top bar too) so the tint has no seam. */}
+      {pageColors && (
+        <Animated.View
+          pointerEvents="none"
+          style={[StyleSheet.absoluteFill, reduceMotion || !blendable ? { backgroundColor: pageColors[pageIndex] ?? COLORS.background } : backdropStyle]}
+        />
+      )}
       <View style={styles.chrome}>
         <PressableScale onPress={onBack} hitSlop={12} style={styles.chromeBack} accessibilityRole="button" accessibilityLabel={labels.back} haptic="none">
           <ArrowLeft size={16} strokeWidth={2} color={COLORS.subheadline} />
@@ -133,7 +167,15 @@ export default function ReportPager({
       </View>
 
       <View style={styles.pagerWrap} onLayout={(e) => setPageHeight(e.nativeEvent.layout.height)}>
-        <ScrollView ref={scrollRef} horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={handleMomentumEnd}>
+        <ScrollView
+          ref={scrollRef}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          scrollEventThrottle={16}
+          onScroll={onScroll}
+          onMomentumScrollEnd={handleMomentumEnd}
+        >
           {pages.map((p) => (
             <View key={p.key} style={{ width: screenWidth, height: pageHeight }}>
               {/* Full-width page for paging math; the page itself reads as a centered column on iPad. */}

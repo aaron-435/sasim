@@ -1018,6 +1018,7 @@ export default function ReportScreen({
       onBack={onBack}
       labels={{ back: strings.common.backLabel, previous: strings.report.previousPageLabel, next: strings.report.nextPageLabel }}
       swipeHint={{ id: "deep", label: strings.reader.swipeHint }}
+      pageColors={pages.map((p) => elementBackdrop(p.key))}
       reviewAtEnd={lockedOpen}
       // None on a paywall page: the zones sat on top of — and swallowed the taps meant for —
       // the paywall's buy, bundle and restore buttons. Swiping still turns pages everywhere.
@@ -1052,6 +1053,20 @@ export default function ReportScreen({
 // however many real content items exist (e.g. CardPage renders every
 // strength/weakness/behavior-guide, one per page).
 // ------------------------------------------------------------------
+
+/** Backdrop for a page: the app background, or for an element page that element's color mixed
+ * in lightly (kept dark so body text keeps its contrast). */
+function elementBackdrop(pageKey: string): string {
+  const base = COLORS.background;
+  const color = pageKey.startsWith("element-") ? ELEMENT_COLOR[pageKey.slice("element-".length)] : undefined;
+  if (!color || !/^#[0-9a-f]{6}$/i.test(color) || !/^#[0-9a-f]{6}$/i.test(base)) return base;
+  const mix = (i: number) => {
+    const a = parseInt(base.slice(i, i + 2), 16);
+    const b = parseInt(color.slice(i, i + 2), 16);
+    return Math.round(a + (b - a) * 0.14).toString(16).padStart(2, "0");
+  };
+  return `#${mix(1)}${mix(3)}${mix(5)}`;
+}
 
 function PageShell({ paper, children }: { paper?: boolean; children: React.ReactNode }) {
   return <View style={[pageStyles.shell, paper ? pageStyles.shellPaper : pageStyles.shellDark]}>{children}</View>;
@@ -1696,7 +1711,8 @@ const styles = StyleSheet.create({
 
 const pageStyles = StyleSheet.create({
   shell: { flex: 1, paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xl },
-  shellDark: { backgroundColor: COLORS.background },
+  // Transparent: the pager's backdrop shows through so element pages can tint it (ReportPager pageColors).
+  shellDark: { backgroundColor: "transparent" },
   shellPaper: { backgroundColor: PAPER_BG },
 
   brandRow: { flexDirection: "row", alignItems: "center", gap: SPACE.sm, marginBottom: SPACE.lg },

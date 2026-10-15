@@ -76,7 +76,8 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
 
 ## D. 핵심 장면
 
-- [ ] 12. 리포트 원소 페이지 색 이어짐
+- [x] 12. 리포트 원소 페이지 색 이어짐
+  - QA: 앱 tsc --noEmit → exit 0(디버그 코드 제거 뒤 다시 실행). mobile-web(`?qa=all&persona=mia`, 375×812, en) 심층 리포트에서 원소 페이지 배경이 오행 색을 14% 섞은 어두운 색으로 바뀜(나무 7번째 쪽 `rgb(26,46,36)`, 금 `rgb(43,56,51)` 값 확인, 스크린샷). 스크롤 위치 6.5에서 스크린샷 → 두 쪽 사이가 한 배경으로 이어지고 상단 바까지 같은 색(이음새 없음). 못 한 것: 동작 줄이기 에뮬레이션은 도구로 못 켜서 코드만 확인(`useReducedMotion`이면 `pageColors[pageIndex]` 고정색, 보간 없음). 참고: 이 웹 미리보기는 "다음" 누름이나 `scrollLeft` 대입으로 쪽이 넘어가지 않는 기존 현상이 있어(원래 `ReportPager`로 되돌려도 같음) 위 값은 직접 스크롤 위치를 대입해 읽었다. 구현: `ReportPager`에 선택 prop `pageColors`(쪽마다 배경색), 화면 전체 뒤에 깔리는 `Animated.View` 배경을 `interpolateColor`(UI 스레드, 공유 값은 일반 `onScroll`에서 씀 — reanimated 스크롤 핸들러는 웹에서 값이 안 바뀌어 뺌)로 보간. `ReportScreen`은 쪽 key가 `element-*`면 그 오행 색을 섞은 색, 아니면 기본 배경색 배열만 넘기고 `shellDark`를 투명으로 바꿈(신년·Wrapped·궁합 리포트는 `pageColors`를 안 넘겨 변화 없음).
   - 선행: 11 (`ReportScreen.tsx`)
   - 변경: `ReportPager.tsx`(스크롤 위치 → reanimated `interpolateColor`로 배경을 앞뒤 페이지 오행 색 사이에서 보간), `ReportScreen.tsx`는 페이지별 색 배열만 넘김. 동작 줄이기면 페이지가 바뀔 때 색만 즉시 바뀜.
   - QA: 공통 tsc. 웹 미리보기 `?qa=all&persona=mia` 심층 리포트에서 원소 페이지 사이를 반쯤 끌었을 때 배경이 중간색(스크린샷 2장: 반쯤, 다 넘김). 동작 줄이기(브라우저 `prefers-reduced-motion` 에뮬레이션)에서 보간 없음.
