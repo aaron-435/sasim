@@ -182,19 +182,19 @@ const styles = StyleSheet.create({
   },
   content: {
     ...readableColumn,
-    paddingHorizontal: 22,
-    paddingTop: 8,
-    paddingBottom: 40,
+    paddingHorizontal: SPACE.xl,
+    paddingTop: SPACE.sm,
+    paddingBottom: SPACE.xxl,
   },
   backButton: {
     minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: SPACE.xs,
     alignSelf: "flex-start",
-    padding: 8,
-    marginLeft: -8,
-    marginBottom: 12,
+    padding: SPACE.sm,
+    marginLeft: -SPACE.sm,
+    marginBottom: SPACE.md,
   },
   backLabel: {
     fontFamily: FONTS.regular,
@@ -208,8 +208,8 @@ const styles = StyleSheet.create({
   badgeRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginBottom: 12,
+    gap: SPACE.sm,
+    marginBottom: SPACE.md,
   },
   badgeLabel: {
     fontFamily: FONTS.semibold,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.semibold,
     fontSize: 15,
     color: COLORS.headline,
-    marginBottom: 4,
+    marginBottom: SPACE.xs,
   },
   reason: {
     fontFamily: FONTS.regular,
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.semibold,
     fontSize: 20,
     color: COLORS.headline,
-    marginBottom: 6,
+    marginBottom: SPACE.sm,
   },
   featuredBlurb: {
     fontFamily: FONTS.regular,
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: COLORS.headline,
     opacity: 0.85,
-    marginBottom: 10,
+    marginBottom: SPACE.md,
   },
   featuredMeta: {
     fontFamily: FONTS.medium,
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.semibold,
     fontSize: 16,
     color: COLORS.headline,
-    marginBottom: 4,
+    marginBottom: SPACE.xs,
   },
   halfBlurb: {
     fontFamily: FONTS.regular,
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     color: COLORS.headline,
     opacity: 0.85,
-    marginBottom: 8,
+    marginBottom: SPACE.sm,
   },
   halfMeta: {
     fontFamily: FONTS.medium,
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 6,
+    gap: SPACE.sm,
     marginBottom: SPACE.md,
   },
   toggleLabel: {
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.semibold,
     fontSize: 15,
     color: COLORS.headline,
-    marginBottom: 4,
+    marginBottom: SPACE.xs,
   },
   gridBlurb: {
     fontFamily: FONTS.regular,

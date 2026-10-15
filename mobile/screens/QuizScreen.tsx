@@ -29,7 +29,7 @@ import useReducedMotion from "../lib/useReducedMotion";
 import { COLORS } from "../theme/colors";
 import { EASING } from "../theme/motion";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import { ELEMENT_COLORS } from "../lib/elements";
 
 
@@ -396,26 +396,26 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    paddingHorizontal: 20,
-    paddingTop: 8,
+    gap: SPACE.md,
+    paddingHorizontal: SPACE.xl,
+    paddingTop: SPACE.sm,
   },
   backButton: {
     minHeight: 44,
-    padding: 8,
-    marginLeft: -8,
+    padding: SPACE.sm,
+    marginLeft: -SPACE.sm,
   },
   progressTrack: {
     flex: 1,
     height: 3,
     backgroundColor: COLORS.border,
-    borderRadius: 2,
+    borderRadius: RADIUS.sm,
     overflow: "hidden",
   },
   progressFill: {
     height: "100%",
     backgroundColor: COLORS.gold,
-    borderRadius: 2,
+    borderRadius: RADIUS.sm,
   },
   progressLabel: {
     fontFamily: FONTS.regular,
@@ -423,15 +423,15 @@ const styles = StyleSheet.create({
     color: COLORS.footer,
   },
   content: {
-    paddingHorizontal: 22,
-    paddingTop: 24,
-    paddingBottom: 40,
+    paddingHorizontal: SPACE.xl,
+    paddingTop: SPACE.xl,
+    paddingBottom: SPACE.xxl,
   },
   moduleRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginBottom: 14,
+    gap: SPACE.sm,
+    marginBottom: SPACE.lg,
   },
   moduleLabel: {
     fontFamily: FONTS.semibold,
@@ -445,16 +445,16 @@ const styles = StyleSheet.create({
     fontSize: 22,
     lineHeight: 30,
     color: COLORS.headline,
-    marginBottom: 22,
+    marginBottom: SPACE.xl,
   },
   optionList: {
-    gap: 10,
+    gap: SPACE.md,
   },
   optionButton: {
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.md,
-    paddingVertical: 16,
-    paddingHorizontal: 18,
+    paddingVertical: SPACE.lg,
+    paddingHorizontal: SPACE.lg,
     ...SHADOW.raised,
   },
   optionLabel: {
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
   sliderLabelRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 6,
+    marginBottom: SPACE.sm,
   },
   sliderEdgeLabel: {
     fontFamily: FONTS.regular,
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: COLORS.gold,
     textAlign: "center",
-    marginTop: 6,
+    marginTop: SPACE.sm,
   },
   sliderValueUntouched: {
     color: COLORS.footer,
@@ -500,13 +500,13 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: COLORS.subheadline,
     textAlign: "center",
-    marginTop: 10,
+    marginTop: SPACE.md,
   },
   sliderButton: {
-    marginTop: 18,
+    marginTop: SPACE.lg,
     backgroundColor: COLORS.gold,
-    borderRadius: 12,
-    paddingVertical: 14,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.lg,
     alignItems: "center",
   },
   sliderButtonUntouched: {
@@ -518,16 +518,16 @@ const styles = StyleSheet.create({
     color: COLORS.ctaText,
   },
   doneContent: {
-    paddingHorizontal: 22,
-    paddingTop: 48,
-    paddingBottom: 40,
+    paddingHorizontal: SPACE.xl,
+    paddingTop: SPACE.xxxl,
+    paddingBottom: SPACE.xxl,
     alignItems: "center",
   },
   doneBadgeRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginBottom: 20,
+    gap: SPACE.sm,
+    marginBottom: SPACE.xl,
   },
   doneBadgeLabel: {
     fontFamily: FONTS.semibold,
@@ -538,25 +538,25 @@ const styles = StyleSheet.create({
   resultCard: {
     width: "100%",
     borderRadius: RADIUS.lg,
-    padding: 26,
+    padding: SPACE.xl,
     backgroundColor: "rgba(111,169,139,0.08)",
     ...SHADOW.raised,
   },
   elementChip: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 7,
+    gap: SPACE.sm,
     alignSelf: "flex-start",
     backgroundColor: SURFACE.floating,
-    borderRadius: 999,
-    paddingVertical: 6,
-    paddingHorizontal: 13,
-    marginBottom: 18,
+    borderRadius: RADIUS.pill,
+    paddingVertical: SPACE.sm,
+    paddingHorizontal: SPACE.md,
+    marginBottom: SPACE.lg,
   },
   elementDot: {
     width: 7,
     height: 7,
-    borderRadius: 4,
+    borderRadius: RADIUS.pill,
   },
   elementChipLabel: {
     fontFamily: FONTS.semibold,
@@ -568,20 +568,20 @@ const styles = StyleSheet.create({
     fontVariant: ["lining-nums"],
     fontSize: 28,
     color: COLORS.headline,
-    marginBottom: 10,
+    marginBottom: SPACE.md,
   },
   resultHook: {
     fontFamily: FONTS.regular,
     fontSize: 13.5,
     lineHeight: 22,
     color: COLORS.headline,
-    marginBottom: 20,
+    marginBottom: SPACE.xl,
   },
   resultFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingTop: 16,
+    paddingTop: SPACE.lg,
     borderTopWidth: 1,
     borderTopColor: "rgba(111,169,139,0.18)",
   },
@@ -602,18 +602,18 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: COLORS.footer,
     textAlign: "center",
-    marginTop: 18,
-    marginBottom: 22,
+    marginTop: SPACE.lg,
+    marginBottom: SPACE.xl,
   },
   continueButton: {
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: SPACE.sm,
     backgroundColor: COLORS.gold,
-    borderRadius: 12,
-    paddingVertical: 16,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.lg,
   },
   continueLabel: {
     fontFamily: FONTS.bold,
@@ -623,9 +623,9 @@ const styles = StyleSheet.create({
   restartButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
-    marginTop: 14,
-    padding: 6,
+    gap: SPACE.sm,
+    marginTop: SPACE.lg,
+    padding: SPACE.sm,
   },
   restartLabel: {
     fontFamily: FONTS.regular,

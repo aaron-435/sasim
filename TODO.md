@@ -68,7 +68,8 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
   - 변경: `IntroScreen`, `LanguageScreen`, `NicknameScreen`, `GenderScreen`, `DobScreen`, `TobScreen`, `CityScreen`, `ConcernScreen`, `VerifyCodeScreen`, 공용 `OnboardingShell.tsx`. 가능한 한 `OnboardingShell`에서 한 번에 처리하고 화면별로는 숫자만 바꾼다. muse 한도 때문에 두 묶음(Intro~Gender / Dob~VerifyCode + Shell)으로 나눠 돌려도 됨.
   - QA: 공통 tsc, 열 파일 간격 grep 0줄. 웹 미리보기에서 저장 데이터 없이(새 창) 온보딩 처음부터 끝까지 ko/en/es 중 1개 언어 전체 + 나머지 두 언어는 Dob·City 화면만.
 
-- [ ] 11. 1차 화면 숫자 정리
+- [x] 11. 1차 화면 숫자 정리
+  - QA: 앱 tsc --noEmit → exit 0. 여섯 파일 간격 grep(`: 0` 제외) → 0줄. `git diff -w`로 `Purchases.`·fetch·`/api`·`t(`·`Reveal` 변경 없음(숫자→토큰만, 새 import 없이 기존 `tokens` import 사용). mobile-web(`?qa=pro&persona=jisoo`, 375×812, ko)에서 홈·심리테스트 선택·퀴즈 첫 문항 렌더 확인(스크린샷), 새 오류 없음(콘솔의 `SPACE is not defined`는 muse 편집 중 핫리로드 시점 로그이고 새로 불러온 뒤 퀴즈가 정상 렌더, import 6파일 모두 있음). 값이 바뀐 곳: 가까운 토큰으로 맞춤(예: 14→16, 18→16, 22→24, 6→8). 못 한 것: 운세 오늘 탭·리포트·유형 공개의 웹 스크린샷 비교와 en/es 잘림 → 14번 마감 QA로. 지시서 `.agents/tasks/14a-home-fortune.md`, `14b-report.md`, `14c-type-quiz-module.md`(contributor 모델, 병렬). 브랜치 `task-06`.
   - 선행: 3, 4, 5 (같은 파일)
   - 변경: `HomeScreen.tsx`, `FortuneScreen.tsx`(오늘 탭 포함 파일 전체), `ReportScreen.tsx`, `TypeScreen.tsx`, `QuizScreen.tsx`, `ModuleSelectScreen.tsx`. 숫자만 토큰으로, 구성은 그대로. 파일이 커서 두 묶음(Home·Fortune / 나머지 넷)으로 나눈다.
   - QA: 공통 tsc, 여섯 파일 간격 grep 0줄. 웹 미리보기에서 1차 스크린샷과 비교해 눈에 띄는 어긋남 없음(값이 바뀐 곳은 보고).
