@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(muse exec:*)"
+      "Bash(muse exec:*)",
+      "Bash(claude plugin *)"
     ]
   }
 }
