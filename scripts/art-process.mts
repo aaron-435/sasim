@@ -2,6 +2,7 @@
 // 작은 묶음(오행·12지·빈 화면·질감)은 mobile/assets/art/, 큰 묶음(일간·모듈 표지·절기)은 public/art/.
 // 실행: npm run art:process
 
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
@@ -103,9 +104,23 @@ async function main() {
     const outFile = path.join(dir, `${key}.webp`);
 
     // 투명 배경 유지, 비율은 자르지 않고 안에 맞춘다(규격 비율이면 딱 맞음).
-    await sharp(path.join(INBOX, file))
+    // 모듈 표지는 캔버스 안 그림 위치가 제각각이라 투명 여백을 잘라 내고(trim) 작은 여백만 다시 둔다.
+    // 화면 쪽은 contain으로 그려 그림이 잘리지 않는다.
+    const isCover = /^module\d+-/.test(key);
+    let pipeline = sharp(path.join(INBOX, file));
+    if (isCover) {
+      const trimmed = await pipeline.trim({ threshold: 10 }).toBuffer();
+      pipeline = sharp(trimmed).extend({
+        top: 24,
+        bottom: 24,
+        left: 24,
+        right: 24,
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      });
+    }
+    await pipeline
       .resize(group.width, group.height, {
-        fit: "contain",
+        fit: isCover ? "inside" : "contain",
         background: { r: 0, g: 0, b: 0, alpha: 0 },
         withoutEnlargement: true,
       })
@@ -116,7 +131,7 @@ async function main() {
     const source =
       group.where === "bundle"
         ? `require("../../assets/art/${key}.webp")`
-        : `{ uri: "${SERVER_BASE}/${key}.webp" }`;
+        : `{ uri: "${SERVER_BASE}/${key}.webp?v=${crypto.createHash("sha1").update(fs.readFileSync(outFile)).digest("hex").slice(0, 8)}" }`;
     entries.set(key, {
       source,
       width: meta.width ?? group.width,

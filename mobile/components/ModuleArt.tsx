@@ -60,7 +60,8 @@ export default function ModuleArt({
   const artKey = MODULE_ART_KEYS[n];
   if (!artKey) return fallback;
 
-  return <ArtImage artKey={artKey} contentFit="cover" style={style} fallback={fallback} />;
+  // contain: 표지 그림은 투명 컷아웃이라 cover로 채우면 위아래가 잘린다.
+  return <ArtImage artKey={artKey} contentFit="contain" style={style} fallback={fallback} />;
 }
 
 const styles = StyleSheet.create({
