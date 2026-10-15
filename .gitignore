@@ -43,3 +43,6 @@ next-env.d.ts
 
 # Playwright MCP debug captures (screenshots, console logs)
 .playwright-mcp/
+
+# AI 그림 원본(후보정 전)
+/art-inbox/
