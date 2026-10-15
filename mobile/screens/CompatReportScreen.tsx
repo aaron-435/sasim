@@ -22,7 +22,7 @@ import {
   type CompatPaidPart,
 } from "../lib/compatReportStorage";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
-import { success } from "../lib/haptics";
+import { playPurchaseSuccess } from "../components/motion/PurchaseSuccess";
 import { getCompatReportPackage, getRevenueCatUserId, isUnavailableMessage, purchaseCompatReport, purchaseIssueDetail } from "../lib/purchases";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
@@ -229,7 +229,7 @@ export default function CompatReportScreen({
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
-      success();
+      playPurchaseSuccess();
       if (!outcome.transactionId) {
         setError({ kind: "paid", text: s.errorPaidButFailed });
         setPhase("error");

@@ -23,7 +23,7 @@ import { DURATION, EASING } from "../theme/motion";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
-import { success } from "../lib/haptics";
+import { playPurchaseSuccess } from "../components/motion/PurchaseSuccess";
 import { getReportPackages, getRevenueCatUserId, isUnavailableMessage, purchaseIssueDetail, purchaseReportBundle, purchaseReportModule, restoreReports, type ReportPackageMap } from "../lib/purchases";
 import { findNextDecadeAge } from "../lib/decadeTransition";
 import { findTopAnswers, INTENSITY_LABEL } from "../lib/quiz/quizProfile";
@@ -501,7 +501,7 @@ export default function ReportScreen({
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
-      success();
+      playPurchaseSuccess();
       await refreshEntitlement();
     } else if (outcome.status === "error") {
       setPurchaseNotice(isUnavailableMessage(outcome.message) ? `${strings.report.purchaseUnavailable}${purchaseIssueDetail(outcome.message) ? `\n(${purchaseIssueDetail(outcome.message)})` : ""}` : `${strings.report.purchaseErrorDefault}${outcome.message ? `\n(${outcome.message.slice(0, 160)})` : ""}`);
@@ -516,7 +516,7 @@ export default function ReportScreen({
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
-      success();
+      playPurchaseSuccess();
       await refreshEntitlement();
     } else if (outcome.status === "error") {
       setPurchaseNotice(isUnavailableMessage(outcome.message) ? `${strings.report.purchaseUnavailable}${purchaseIssueDetail(outcome.message) ? `\n(${purchaseIssueDetail(outcome.message)})` : ""}` : `${strings.report.purchaseErrorDefault}${outcome.message ? `\n(${outcome.message.slice(0, 160)})` : ""}`);

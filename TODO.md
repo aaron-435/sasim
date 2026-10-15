@@ -82,7 +82,8 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
   - 변경: `ReportPager.tsx`(스크롤 위치 → reanimated `interpolateColor`로 배경을 앞뒤 페이지 오행 색 사이에서 보간), `ReportScreen.tsx`는 페이지별 색 배열만 넘김. 동작 줄이기면 페이지가 바뀔 때 색만 즉시 바뀜.
   - QA: 공통 tsc. 웹 미리보기 `?qa=all&persona=mia` 심층 리포트에서 원소 페이지 사이를 반쯤 끌었을 때 배경이 중간색(스크린샷 2장: 반쯤, 다 넘김). 동작 줄이기(브라우저 `prefers-reduced-motion` 에뮬레이션)에서 보간 없음.
 
-- [ ] 13. 페이월·결제 완료 장면
+- [x] 13. 페이월·결제 완료 장면
+  - QA: 앱 tsc --noEmit → exit 0. `git diff -w`에서 `Purchases.`·`purchase*(`·entitlement 줄 변경 없음(구매 호출 줄은 그대로, `success()` 6곳만 `playPurchaseSuccess()`로 교체). mobile-web(`?qa=free&persona=jisoo`, ko) 오늘 운세 무료 페이월 렌더 확인(페이지 텍스트): 카운트다운·부정 예측 없음, 구독 버튼 위 문구는 "구독하면 나머지가 모두 열려요", 새 콘솔 오류 없음. 못 한 것: 웹은 월간 단일 상품·체험 없음이라 `PlanPicker`가 null을 돌려줘 패널 등장과 결제 완료 연출은 화면으로 못 봄 → 코드만 확인, 15번이 아니라 "나"(네이티브 확인)에서 확인. 판단: 6곳이 서로 다른 화면(페이월 뷰가 구매 후 다른 뷰로 바뀜)이라 연출을 `App.tsx` 루트의 `PurchaseSuccessHost` 하나로 띄우고 각 화면은 `playPurchaseSuccess()`(햅틱+연출)만 호출. 동작 줄이기면 연출 없음(햅틱만). muse·verifier는 쓰지 않음(수정 8줄·새 파일 1개, 결제 로직 변경 없음).
   - 선행: 4
   - 변경: `PlanPicker.tsx` 패널 등장(아래서 올라옴 + 페이드, `FrostedSurface` 위), 결제 완료 연출(성공 진동 6곳 옆에 짧은 빛 고리/체크 등장, 공용 부품 `mobile/components/motion/PurchaseSuccess.tsx` 하나). 결제 로직·RevenueCat 호출은 건드리지 않는다. muse 표준 모델 + verifier 리뷰.
   - QA: 공통 tsc. `git diff`에 `Purchases.`·entitlement 관련 줄 변경 없음. 웹 미리보기 무료 상태 페이월 등장(스크린샷), 압박 규칙 확인(페이월 바로 위에 부정 예측·카운트다운 없음). 결제 완료 장면은 웹에서 못 띄우면 "코드만 확인"으로 적고 15번에서 확인.

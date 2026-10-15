@@ -20,7 +20,7 @@ import PressableScale from "../components/motion/PressableScale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
-import { success } from "../lib/haptics";
+import { playPurchaseSuccess } from "../components/motion/PurchaseSuccess";
 import { DAILY_FORTUNE_CONTENT, LUCKY_NUMBERS, LUCKY_POINTS, getOverview } from "../lib/dailyFortuneContent";
 import { TWELVE_STAGES_CONTENT } from "../lib/twelveStagesContent";
 import { reconciledBody } from "../lib/reconciledCards";
@@ -512,7 +512,7 @@ export default function FortuneScreen({
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
-      success();
+      playPurchaseSuccess();
       setEntitled(true);
       refreshRoutineNotification(strings).catch(() => {});
     } else if (outcome.status === "error") {

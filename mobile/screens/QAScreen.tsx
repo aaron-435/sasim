@@ -9,7 +9,7 @@ import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
-import { success } from "../lib/haptics";
+import { playPurchaseSuccess } from "../components/motion/PurchaseSuccess";
 import { localizedText } from "../lib/qaBankLocale";
 import { getDailyLimit, getUsageToday, incrementUsageToday, isSubscribed, PAID_DAILY_LIMIT } from "../lib/qaQuota";
 import { getRevenueCatUserId, isUnavailableMessage, purchaseIssueDetail, purchaseQaPro, restoreQaPro } from "../lib/purchases";
@@ -270,7 +270,7 @@ export default function QAScreen({
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
-      success();
+      playPurchaseSuccess();
       pushBot(strings.qa.subscribeSuccess(PAID_DAILY_LIMIT));
       await unlockAfterEntitlementChange();
     } else if (outcome.status === "error") {

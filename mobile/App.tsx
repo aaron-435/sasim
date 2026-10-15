@@ -1,3 +1,4 @@
+import PurchaseSuccessHost from "./components/motion/PurchaseSuccess";
 import { StatusBar } from "expo-status-bar";
 import { useFonts, Newsreader_500Medium, Newsreader_500Medium_Italic } from "@expo-google-fonts/newsreader";
 import { PlusJakartaSans_400Regular, PlusJakartaSans_500Medium, PlusJakartaSans_600SemiBold, PlusJakartaSans_700Bold } from "@expo-google-fonts/plus-jakarta-sans";
@@ -154,6 +155,7 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <LocaleProvider>
         <AppContent />
+        <PurchaseSuccessHost />
       </LocaleProvider>
     </GestureHandlerRootView>
   );

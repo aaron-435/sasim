@@ -2,6 +2,7 @@ import { StyleSheet, View } from "react-native";
 import Text from "./AppText";
 import FrostedSurface from "./FrostedSurface";
 import PressableScale from "./motion/PressableScale";
+import Reveal from "./motion/Reveal";
 import { useStrings } from "../lib/i18n";
 import type { SubscriptionOffer } from "../lib/useSubscriptionOffer";
 import { COLORS } from "../theme/colors";
@@ -20,7 +21,7 @@ export default function PlanPicker({ offer, disabled }: { offer: SubscriptionOff
   if (!showPlans && !offer.trialLine) return null;
 
   return (
-    <View style={styles.root}>
+    <Reveal index={1} style={styles.root}>
       {showPlans && (
         <FrostedSurface style={styles.plans} accessibilityRole="radiogroup" accessibilityLabel={strings.subscription.planPickerLabel}>
           {offer.plans.map((plan) => {
@@ -62,7 +63,7 @@ export default function PlanPicker({ offer, disabled }: { offer: SubscriptionOff
       {!!offer.trialLine && (
         <Text style={styles.trialLine} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{offer.trialLine}</Text>
       )}
-    </View>
+    </Reveal>
   );
 }
 

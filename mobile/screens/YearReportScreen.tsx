@@ -16,7 +16,7 @@ import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
-import { success } from "../lib/haptics";
+import { playPurchaseSuccess } from "../components/motion/PurchaseSuccess";
 import { exportReportPdf, pdfErrorMessage } from "../lib/reportPdf";
 import { getRevenueCatUserId, getYearReportPackage, hasYearReportEntitlement, isUnavailableMessage, purchaseIssueDetail, purchaseYearReport, restoreReports } from "../lib/purchases";
 import { qaYearReport } from "../dev/qaMode";
@@ -200,7 +200,7 @@ export default function YearReportScreen({
     if (!mountedRef.current) return;
     setPurchasing(false);
     if (outcome.status === "success") {
-      success();
+      playPurchaseSuccess();
       generate(year);
     } else if (outcome.status === "error") {
       setNotice(isUnavailableMessage(outcome.message) ? `${strings.yearReport.purchaseUnavailable}${purchaseIssueDetail(outcome.message) ? `\n(${purchaseIssueDetail(outcome.message)})` : ""}` : `${strings.yearReport.purchaseError}${outcome.message ? `\n(${outcome.message.slice(0, 160)})` : ""}`);
