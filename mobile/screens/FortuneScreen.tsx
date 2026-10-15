@@ -782,6 +782,14 @@ export default function FortuneScreen({
             <Animated.View style={[styles.heroCard, styles.heroCardToday, sectionStyle(0)]}>
               <LinearGradient colors={["#1F3327", "#18291F"]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={StyleSheet.absoluteFill} />
               <ArtImage artKey={currentSolarTermArtKey(new Date())} contentFit="cover" style={styles.heroTermBand} />
+              {/* The band ends right where the kicker starts; fade it into the card so the kicker stays readable. */}
+              <LinearGradient
+                colors={["rgba(30,49,37,0)", "#1E3125"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.heroTermFade}
+                pointerEvents="none"
+              />
               <RhythmWave relation={toRhythmRelation(daily.compatibility.relation)} height={64} color={COLORS.gold} style={styles.heroWaveToday} />
               <Text style={styles.heroKickerToday}>{strings.fortune.scoreLabel}</Text>
               <Text style={[styles.heroRhythmToday, locale === "ko" && styles.heroRhythmTodayKo]} accessibilityRole="header">{strings.fortune.rhythmNames[daily.compatibility.relation]}</Text>
@@ -1242,6 +1250,7 @@ const styles = StyleSheet.create({
   heroCardToday: { overflow: "hidden" },
   // Solar-term art band behind the wave; draws nothing until its key has an entry.
   heroTermBand: { position: "absolute", top: 0, left: 0, right: 0, height: 96, opacity: 0.55 },
+  heroTermFade: { position: "absolute", top: 40, left: 0, right: 0, height: 64 },
   // Cancels the hero card's own padding (20 horizontal, 24 top) so the wave touches its edges.
   // width "auto" overrides RhythmWave's 100% so the negative margins widen it to the card edges
   // (with 100% it kept the inner width and stopped 40px short on the right).
