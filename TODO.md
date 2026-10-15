@@ -58,7 +58,8 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
   - 변경: `JournalScreen.tsx`, `JournalEntryCard.tsx`, `GoodDaysScreen.tsx`, `SettingsScreen.tsx`, `MyReportsScreen.tsx`, `ShareCardsScreen.tsx`. 설정은 토큰·`Reveal`만.
   - QA: 공통 tsc, 여섯 파일 간격 grep 0줄. 웹 미리보기 각 화면 ko/en/es, 저널 빈 상태와 글 있는 상태.
 
-- [ ] 9. 신년 리포트·Wrapped·일간 수업·사주 배우기
+- [x] 9. 신년 리포트·Wrapped·일간 수업·사주 배우기
+  - QA: 앱 tsc --noEmit → exit 0. 네 파일 간격 grep(`: 0` 제외) → 0줄. `git diff -w`로 `Purchases.`·fetch·`/api`·`t(` 변경 없음, `Reveal` 열고 닫는 태그 수 일치(신년 5, Wrapped 2, 일간 수업 8, 사주 배우기 5). 못 한 것: mobile-web 스크린샷(이번 세션에서 미리보기를 열지 않음; Wrapped는 12/1~1/31에만 보이고 신년 리포트는 픽스처로 못 열음) → 코드만 확인, ko/en/es 잘림은 14번 마감 QA로. 판단: 토큰에 없는 값은 가장 가까운 토큰(동점은 큰 쪽), 원형 swatch는 `RADIUS.pill`로 원 유지, 일간 수업 진입 카드의 민트 틴트는 강조 의미라 표면 교체 없이 간격만. 지시서 `.agents/tasks/12a-yearreport.md`, `12b-wrapped-lessons.md`(contributor 모델, 병렬). 브랜치 `task-05`.
   - 변경: `YearReportScreen.tsx`, `WrappedScreen.tsx`, `DayMasterLessonsScreen.tsx`, `SajuLearnScreen.tsx`.
   - QA: 공통 tsc, 네 파일 간격 grep 0줄. 웹 미리보기에서 열리는 화면은 ko/en/es 스크린샷, 픽스처가 없어 못 여는 화면(신년 리포트 등)은 "코드만 확인"으로 적는다.
 

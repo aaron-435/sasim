@@ -10,6 +10,7 @@ import ReportClosingPage from "../components/ReportClosingPage";
 import ReportPager, { readerChromeButtonStyle, type ReaderPage } from "../components/ReportPager";
 import ElementsLoader from "../components/motion/ElementsLoader";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
@@ -24,7 +25,7 @@ import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 // The paid year-ahead report: five life areas, a 12-month timeline and a four-step action
 // plan (server: app/api/yearReport, which verifies the purchase itself before generating).
@@ -330,45 +331,55 @@ export default function YearReportScreen({
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.content}>
         {backButton}
-        <Text style={styles.heading} accessibilityRole="header">
-          {heading}
-        </Text>
-        <Text style={styles.subtitle}>{strings.yearReport.subtitle}</Text>
+        <Reveal index={0}>
+          <Text style={styles.heading} accessibilityRole="header">
+            {heading}
+          </Text>
+          <Text style={styles.subtitle}>{strings.yearReport.subtitle}</Text>
+        </Reveal>
 
         {relationCopy && (
-          <View style={styles.card}>
-            <Text style={styles.previewLabel}>{strings.yearReport.previewLabel}</Text>
-            <Text style={styles.cardHeading} accessibilityRole="header">{relationCopy.headline}</Text>
-            <Text style={styles.body}>{relationCopy.overview}</Text>
-          </View>
+          <Reveal index={1}>
+            <View style={styles.card}>
+              <Text style={styles.previewLabel}>{strings.yearReport.previewLabel}</Text>
+              <Text style={styles.cardHeading} accessibilityRole="header">{relationCopy.headline}</Text>
+              <Text style={styles.body}>{relationCopy.overview}</Text>
+            </View>
+          </Reveal>
         )}
 
-        <Text style={styles.vsProNote}>{strings.yearReport.vsProNote}</Text>
-        <Text style={styles.lockedNote}>{strings.yearReport.lockedNote}</Text>
-        <View style={styles.list}>
-          {lockedChapters.map((label, i) => (
-            <View key={label} style={[styles.lockedRow, i > 0 && styles.rowDivider]}>
-              <Lock size={16} strokeWidth={1.75} color={COLORS.gold} />
-              <Text style={styles.lockedLabel}>{label}</Text>
-            </View>
-          ))}
-        </View>
+        <Reveal index={2}>
+          <Text style={styles.vsProNote}>{strings.yearReport.vsProNote}</Text>
+          <Text style={styles.lockedNote}>{strings.yearReport.lockedNote}</Text>
+          <View style={styles.list}>
+            {lockedChapters.map((label, i) => (
+              <View key={label} style={[styles.lockedRow, i > 0 && styles.rowDivider]}>
+                <Lock size={16} strokeWidth={1.75} color={COLORS.gold} />
+                <Text style={styles.lockedLabel}>{label}</Text>
+              </View>
+            ))}
+          </View>
+        </Reveal>
 
-        <PressableScale
-          style={[styles.buyButton, (purchasing || restoring) && styles.buttonDisabled]}
-          onPress={handleBuy}
-          disabled={purchasing || restoring}
-          accessibilityRole="button"
-        >
-          {purchasing ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.buyLabel}>{strings.yearReport.buyButton(price)}</Text>}
-        </PressableScale>
-        <Text style={styles.oneTime}>{price ? strings.yearReport.oneTimeNote : `${strings.yearReport.priceAtCheckout} ${strings.yearReport.oneTimeNote}`}</Text>
-        <PressableScale style={styles.restoreButton} onPress={handleRestore} disabled={purchasing || restoring} accessibilityRole="button" haptic="none">
-          <Text style={styles.restoreLabel}>{restoring ? strings.yearReport.restoring : strings.yearReport.restore}</Text>
-        </PressableScale>
-        {notice && <Text style={styles.notice}>{notice}</Text>}
+        <Reveal index={3}>
+          <PressableScale
+            style={[styles.buyButton, (purchasing || restoring) && styles.buttonDisabled]}
+            onPress={handleBuy}
+            disabled={purchasing || restoring}
+            accessibilityRole="button"
+          >
+            {purchasing ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.buyLabel}>{strings.yearReport.buyButton(price)}</Text>}
+          </PressableScale>
+          <Text style={styles.oneTime}>{price ? strings.yearReport.oneTimeNote : `${strings.yearReport.priceAtCheckout} ${strings.yearReport.oneTimeNote}`}</Text>
+          <PressableScale style={styles.restoreButton} onPress={handleRestore} disabled={purchasing || restoring} accessibilityRole="button" haptic="none">
+            <Text style={styles.restoreLabel}>{restoring ? strings.yearReport.restoring : strings.yearReport.restore}</Text>
+          </PressableScale>
+          {notice && <Text style={styles.notice}>{notice}</Text>}
+        </Reveal>
 
-        <Text style={styles.disclaimer}>{strings.report.disclaimer1}</Text>
+        <Reveal index={4}>
+          <Text style={styles.disclaimer}>{strings.report.disclaimer1}</Text>
+        </Reveal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -546,66 +557,66 @@ function PlanPage({ heading, steps }: { heading: string; steps: YearReportConten
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { ...readableColumn, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 48 },
-  backRow: { paddingHorizontal: 22, paddingTop: 8 },
-  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", minHeight: 44, marginLeft: -8, paddingHorizontal: 8 },
+  content: { ...readableColumn, paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
+  backRow: { paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm },
+  backButton: { flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", minHeight: 44, marginLeft: -SPACE.sm, paddingHorizontal: SPACE.sm },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
-  center: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32, gap: 16 },
+  center: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: SPACE.xxl, gap: SPACE.lg },
   centerText: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, textAlign: "center" },
-  retryButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 12 },
+  retryButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: SPACE.md },
   retryLabel: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.gold },
-  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 30, lineHeight: 36, color: COLORS.headline, marginTop: 4 },
-  subtitle: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginTop: 8, marginBottom: 20 },
-  body: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 23, color: COLORS.headline, marginBottom: 12 },
-  card: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: 18, marginTop: 14, ...SHADOW.raised },
-  cardHeading: { fontFamily: FONTS.semibold, fontSize: 16, lineHeight: 23, color: COLORS.gold, marginBottom: 10 },
-  previewLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline, marginBottom: 6 },
+  heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 30, lineHeight: 36, color: COLORS.headline, marginTop: SPACE.xs },
+  subtitle: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, marginTop: SPACE.sm, marginBottom: SPACE.xl },
+  body: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 23, color: COLORS.headline, marginBottom: SPACE.md },
+  card: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: SPACE.lg, marginTop: SPACE.lg, ...SHADOW.raised },
+  cardHeading: { fontFamily: FONTS.semibold, fontSize: 16, lineHeight: 23, color: COLORS.gold, marginBottom: SPACE.md },
+  previewLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline, marginBottom: SPACE.sm },
   list: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
   rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },
-  vsProNote: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.subheadline, marginTop: 4, marginBottom: 14 },
-  disclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.subheadline, marginTop: 16 },
-  lockedNote: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold, marginTop: 22, marginBottom: 10 },
-  lockedRow: { flexDirection: "row", alignItems: "center", gap: 12, minHeight: 48, paddingHorizontal: 16 },
+  vsProNote: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.subheadline, marginTop: SPACE.xs, marginBottom: SPACE.lg },
+  disclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.subheadline, marginTop: SPACE.lg },
+  lockedNote: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold, marginTop: SPACE.xl, marginBottom: SPACE.md },
+  lockedRow: { flexDirection: "row", alignItems: "center", gap: SPACE.md, minHeight: 48, paddingHorizontal: SPACE.lg },
   lockedLabel: { fontFamily: FONTS.medium, fontSize: 14.5, color: COLORS.headline },
-  buyButton: { backgroundColor: COLORS.gold, borderRadius: 12, paddingVertical: 15, alignItems: "center", marginTop: 22, minHeight: 50, justifyContent: "center" },
+  buyButton: { backgroundColor: COLORS.gold, borderRadius: RADIUS.sm, paddingVertical: SPACE.lg, alignItems: "center", marginTop: SPACE.xl, minHeight: 50, justifyContent: "center" },
   buyLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.ctaText },
   buttonDisabled: { opacity: 0.6 },
-  oneTime: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: 12 },
-  restoreButton: { minHeight: 44, alignItems: "center", justifyContent: "center", marginTop: 4 },
+  oneTime: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: SPACE.md },
+  restoreButton: { minHeight: 44, alignItems: "center", justifyContent: "center", marginTop: SPACE.xs },
   restoreLabel: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, textDecorationLine: "underline" },
-  notice: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.danger, textAlign: "center", marginTop: 4 },
-  homeButton: { marginHorizontal: 22, marginBottom: 16, marginTop: 6, borderWidth: 1, borderColor: SURFACE.hairline, borderRadius: 12, paddingVertical: 14, alignItems: "center" },
+  notice: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.danger, textAlign: "center", marginTop: SPACE.xs },
+  homeButton: { marginHorizontal: SPACE.xl, marginBottom: SPACE.lg, marginTop: SPACE.sm, borderWidth: 1, borderColor: SURFACE.hairline, borderRadius: RADIUS.sm, paddingVertical: SPACE.lg, alignItems: "center" },
   homeButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
 });
 
 const pageStyles = StyleSheet.create({
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: 26, paddingTop: 20, paddingBottom: 40 },
-  eyebrow: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold, marginBottom: 12 },
-  title: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, lineHeight: 33, color: COLORS.headline, marginBottom: 18 },
-  body: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 25, color: COLORS.headline, marginBottom: 16 },
-  note: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: -8, marginBottom: 14 },
+  scrollContent: { paddingHorizontal: SPACE.xl, paddingTop: SPACE.xl, paddingBottom: SPACE.xxxl },
+  eyebrow: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold, marginBottom: SPACE.md },
+  title: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, lineHeight: 33, color: COLORS.headline, marginBottom: SPACE.lg },
+  body: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 25, color: COLORS.headline, marginBottom: SPACE.lg },
+  note: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: -SPACE.sm, marginBottom: SPACE.lg },
 
-  cover: { flex: 1, paddingHorizontal: 26, paddingTop: 20, paddingBottom: 24 },
+  cover: { flex: 1, paddingHorizontal: SPACE.xl, paddingTop: SPACE.xl, paddingBottom: SPACE.xl },
   coverMid: { flex: 1, justifyContent: "flex-start", paddingTop: "16%" },
   coverTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 32, lineHeight: 40, color: COLORS.headline },
-  coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: 18 },
+  coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: SPACE.lg },
   coverSub: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 23, color: COLORS.subheadline },
-  coverName: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline, marginTop: 22 },
-  coverSource: { marginTop: 22 },
-  brandRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 18 },
+  coverName: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline, marginTop: SPACE.xl },
+  coverSource: { marginTop: SPACE.xl },
+  brandRow: { flexDirection: "row", alignItems: "center", gap: SPACE.sm, marginBottom: SPACE.lg },
   brandLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 3, color: COLORS.gold, textTransform: "uppercase" },
   coverFoot: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 1.5, color: COLORS.footer },
 
-  monthBlock: { paddingVertical: 16, gap: 4 },
+  monthBlock: { paddingVertical: SPACE.lg, gap: SPACE.xs },
   monthDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },
   monthName: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold },
   monthHeadline: { fontFamily: FONTS.semibold, fontSize: 15.5, lineHeight: 22, color: COLORS.headline },
   monthBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 22, color: COLORS.subheadline },
 
-  step: { flexDirection: "row", gap: 14, paddingVertical: 14 },
+  step: { flexDirection: "row", gap: SPACE.lg, paddingVertical: SPACE.lg },
   stepIndex: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 22, lineHeight: 26, color: COLORS.gold, width: 30 },
-  stepText: { flex: 1, gap: 4 },
+  stepText: { flex: 1, gap: SPACE.xs },
   stepTitle: { fontFamily: FONTS.semibold, fontSize: 15.5, lineHeight: 22, color: COLORS.headline },
 
 });

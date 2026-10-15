@@ -4,6 +4,7 @@ import ArrowRight from "lucide-react-native/icons/arrow-right";
 import { ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
 import { SAJU_TYPE_CONTENT } from "../lib/sajuTypeContent";
@@ -11,7 +12,7 @@ import type { SajuType } from "../lib/sajuType";
 import DayMasterLessonsScreen from "./DayMasterLessonsScreen";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 // Split out from HomeScreen's home.philosophy* block (2026-09-16) — the home screen
 // keeps just the quote + three principles as a short, emotionally-anchored teaser, and
@@ -37,58 +38,68 @@ export default function SajuLearnScreen({ sajuType, onBack }: { sajuType?: SajuT
           <Text style={styles.backLabel}>{strings.common.backLabel}</Text>
         </PressableScale>
 
-        <Text style={styles.pageTitle}>{s.pageTitle}</Text>
+        <Reveal index={0}>
+          <Text style={styles.pageTitle}>{s.pageTitle}</Text>
+        </Reveal>
 
         {sajuType && (
-          <PressableScale
-            style={styles.lessonCard}
-            onPress={() => setShowLessons(true)}
-            accessibilityRole="button"
-            accessibilityLabel={`${strings.lessons.entryTitle}. ${strings.lessons.entryBody(archetypeName)}`}
-            pressedScale={0.98}
-          >
-            <Text style={styles.lessonEyebrow}>{strings.lessons.entryEyebrow}</Text>
-            <Text style={styles.lessonTitle}>{strings.lessons.entryTitle}</Text>
-            <Text style={styles.lessonBody}>{strings.lessons.entryBody(archetypeName)}</Text>
-            <View style={styles.lessonCtaRow}>
-              <ArrowRight size={16} strokeWidth={2} color={COLORS.gold} />
-            </View>
-          </PressableScale>
+          <Reveal index={1}>
+            <PressableScale
+              style={styles.lessonCard}
+              onPress={() => setShowLessons(true)}
+              accessibilityRole="button"
+              accessibilityLabel={`${strings.lessons.entryTitle}. ${strings.lessons.entryBody(archetypeName)}`}
+              pressedScale={0.98}
+            >
+              <Text style={styles.lessonEyebrow}>{strings.lessons.entryEyebrow}</Text>
+              <Text style={styles.lessonTitle}>{strings.lessons.entryTitle}</Text>
+              <Text style={styles.lessonBody}>{strings.lessons.entryBody(archetypeName)}</Text>
+              <View style={styles.lessonCtaRow}>
+                <ArrowRight size={16} strokeWidth={2} color={COLORS.gold} />
+              </View>
+            </PressableScale>
+          </Reveal>
         )}
 
-        <View style={styles.section}>
-          <Text style={styles.sectionHeading}>{s.usageHeading}</Text>
-          <Text style={styles.sectionBody}>{s.usageBody}</Text>
-        </View>
-
-        <View style={styles.divider} />
-
-        <View style={styles.section}>
-          <Text style={styles.sectionHeading}>{s.introHeading}</Text>
-          <Text style={styles.sectionBody}>{s.introBody}</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionHeading}>{s.termsHeading}</Text>
-          <View style={styles.termList}>
-            {s.terms.map((term) => (
-              <View key={term.label} style={styles.termCard}>
-                <Text style={styles.termLabel}>{term.label}</Text>
-                <Text style={styles.termBody}>{term.body}</Text>
-              </View>
-            ))}
+        <Reveal index={2}>
+          <View style={styles.section}>
+            <Text style={styles.sectionHeading}>{s.usageHeading}</Text>
+            <Text style={styles.sectionBody}>{s.usageBody}</Text>
           </View>
-        </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionHeading}>{s.elementsHeading}</Text>
-          <Text style={styles.sectionBody}>{s.elementsBody}</Text>
-        </View>
+          <View style={styles.divider} />
 
-        <View style={styles.section}>
-          <Text style={styles.sectionHeading}>{s.cyclesHeading}</Text>
-          <Text style={styles.sectionBody}>{s.cyclesBody}</Text>
-        </View>
+          <View style={styles.section}>
+            <Text style={styles.sectionHeading}>{s.introHeading}</Text>
+            <Text style={styles.sectionBody}>{s.introBody}</Text>
+          </View>
+        </Reveal>
+
+        <Reveal index={3}>
+          <View style={styles.section}>
+            <Text style={styles.sectionHeading}>{s.termsHeading}</Text>
+            <View style={styles.termList}>
+              {s.terms.map((term) => (
+                <View key={term.label} style={styles.termCard}>
+                  <Text style={styles.termLabel}>{term.label}</Text>
+                  <Text style={styles.termBody}>{term.body}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        </Reveal>
+
+        <Reveal index={4}>
+          <View style={styles.section}>
+            <Text style={styles.sectionHeading}>{s.elementsHeading}</Text>
+            <Text style={styles.sectionBody}>{s.elementsBody}</Text>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionHeading}>{s.cyclesHeading}</Text>
+            <Text style={styles.sectionBody}>{s.cyclesBody}</Text>
+          </View>
+        </Reveal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -96,8 +107,8 @@ export default function SajuLearnScreen({ sajuType, onBack }: { sajuType?: SajuT
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 40 },
-  backButton: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", padding: 8, marginLeft: -8, marginBottom: 12, minHeight: 44 },
+  content: { paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
+  backButton: { flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", padding: SPACE.sm, marginLeft: -SPACE.sm, marginBottom: SPACE.md, minHeight: 44 },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   pageTitle: {
     fontFamily: FONTS.display,
@@ -105,27 +116,27 @@ const styles = StyleSheet.create({
     fontSize: 24,
     lineHeight: 31,
     color: COLORS.headline,
-    marginBottom: 24,
+    marginBottom: SPACE.xl,
   },
   lessonCard: {
     backgroundColor: "rgba(111,169,139,0.08)",
     borderRadius: RADIUS.md,
-    padding: 18,
-    marginBottom: 8,
+    padding: SPACE.lg,
+    marginBottom: SPACE.sm,
     ...SHADOW.raised,
   },
   lessonEyebrow: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 0.2, color: COLORS.gold },
-  lessonTitle: { fontFamily: FONTS.display, fontSize: 20, lineHeight: 27, color: COLORS.headline, marginTop: 6 },
-  lessonBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, marginTop: 6 },
-  lessonCtaRow: { alignItems: "flex-end", marginTop: 8 },
-  divider: { height: 1, backgroundColor: SURFACE.hairline, marginVertical: 8 },
-  section: { marginTop: 24 },
+  lessonTitle: { fontFamily: FONTS.display, fontSize: 20, lineHeight: 27, color: COLORS.headline, marginTop: SPACE.sm },
+  lessonBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, marginTop: SPACE.sm },
+  lessonCtaRow: { alignItems: "flex-end", marginTop: SPACE.sm },
+  divider: { height: 1, backgroundColor: SURFACE.hairline, marginVertical: SPACE.sm },
+  section: { marginTop: SPACE.xl },
   sectionHeading: {
     fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
     fontSize: 20,
     color: COLORS.headline,
-    marginBottom: 10,
+    marginBottom: SPACE.md,
   },
   sectionBody: {
     fontFamily: FONTS.regular,
@@ -133,13 +144,13 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     color: COLORS.subheadline,
   },
-  termList: { gap: 12 },
+  termList: { gap: SPACE.md },
   termCard: {
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.md,
-    padding: 16,
+    padding: SPACE.lg,
     ...SHADOW.raised,
   },
   termLabel: { fontFamily: FONTS.bold, fontSize: 14, color: COLORS.gold },
-  termBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, marginTop: 6 },
+  termBody: { fontFamily: FONTS.regular, fontSize: 13.5, lineHeight: 21, color: COLORS.subheadline, marginTop: SPACE.sm },
 });

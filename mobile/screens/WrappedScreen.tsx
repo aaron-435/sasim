@@ -7,6 +7,7 @@ import { captureRef } from "react-native-view-shot";
 import Text from "../components/AppText";
 import ReportPager, { type ReaderPage } from "../components/ReportPager";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
 import type { CompatibilityResult, CompatRelation } from "../lib/compatibility";
@@ -18,7 +19,7 @@ import { WRAPPED_CONTENT } from "../lib/wrappedContent";
 import { YEAR_FORTUNE_CONTENT } from "../lib/yearFortuneContent";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
-import { SURFACE } from "../theme/tokens";
+import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 
 // Year Wrapped (연말 회고, 2026-10-06). Free, opened from Home between December 1 and
 // January 31 (lib/wrapped.ts). Up to five cards, each its own share image:
@@ -172,17 +173,19 @@ export default function WrappedScreen({
             {body}
             <Text style={styles.brand}>FATESAID</Text>
           </View>
-          <PressableScale
-            style={styles.shareRow}
-            onPress={() => handleShare(key)}
-            disabled={!!sharingKey}
-            accessibilityRole="button"
-            accessibilityState={{ busy: sharingKey === key, disabled: !!sharingKey }}
-          >
-            {sharingKey === key ? <ActivityIndicator size="small" color={COLORS.gold} /> : <Share2 size={16} strokeWidth={1.75} color={COLORS.gold} />}
-            <Text style={styles.shareLabel}>{strings.wrapped.shareButton}</Text>
-          </PressableScale>
-          {after}
+          <Reveal index={0}>
+            <PressableScale
+              style={styles.shareRow}
+              onPress={() => handleShare(key)}
+              disabled={!!sharingKey}
+              accessibilityRole="button"
+              accessibilityState={{ busy: sharingKey === key, disabled: !!sharingKey }}
+            >
+              {sharingKey === key ? <ActivityIndicator size="small" color={COLORS.gold} /> : <Share2 size={16} strokeWidth={1.75} color={COLORS.gold} />}
+              <Text style={styles.shareLabel}>{strings.wrapped.shareButton}</Text>
+            </PressableScale>
+          </Reveal>
+          {after && <Reveal index={1}>{after}</Reveal>}
         </ScrollView>
       ),
     };
@@ -318,43 +321,44 @@ export default function WrappedScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  center: { flex: 1, alignItems: "center", justifyContent: "center", gap: 14, paddingHorizontal: 32 },
+  center: { flex: 1, alignItems: "center", justifyContent: "center", gap: SPACE.lg, paddingHorizontal: SPACE.xxl },
   loadingText: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, textAlign: "center" },
-  pageScroll: { flexGrow: 1, justifyContent: "center", paddingHorizontal: 26, paddingVertical: 20 },
+  pageScroll: { flexGrow: 1, justifyContent: "center", paddingHorizontal: SPACE.xl, paddingVertical: SPACE.xl },
   card: {
     backgroundColor: COLORS.background,
     borderWidth: 1,
     borderColor: COLORS.border,
-    borderRadius: 20,
-    paddingTop: 26,
-    paddingBottom: 22,
-    paddingHorizontal: 24,
+    borderRadius: RADIUS.lg,
+    paddingTop: SPACE.xl,
+    paddingBottom: SPACE.xl,
+    paddingHorizontal: SPACE.xl,
     alignItems: "center",
     minHeight: 420,
   },
   eyebrow: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 0.4, color: COLORS.subheadline },
-  label: { fontFamily: FONTS.medium, fontSize: 14, lineHeight: 20, color: COLORS.gold, marginTop: 6, textAlign: "center" },
-  swatch: { width: 68, height: 68, borderRadius: 34, marginTop: 26, borderWidth: 1, borderColor: "rgba(255,255,255,0.12)" },
-  big: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 38, color: COLORS.headline, marginTop: 18, textAlign: "center" },
-  bigMonth: { fontSize: 40, lineHeight: 48, marginTop: 30 },
-  rhythm: { fontFamily: FONTS.semibold, fontSize: 14, lineHeight: 20, color: COLORS.subheadline, marginTop: 6, textAlign: "center" },
-  body: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 24, color: COLORS.headline, marginTop: 16, textAlign: "center" },
-  note: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 18, color: COLORS.footer, marginTop: 14, textAlign: "center" },
-  quote: { fontFamily: FONTS.displayItalic, fontSize: 26, lineHeight: 36, color: COLORS.headline, marginTop: 40, textAlign: "center" },
-  by: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 19, color: COLORS.subheadline, marginTop: 18, textAlign: "center" },
-  monthStrip: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 6, marginTop: 20 },
-  monthCell: { width: 26, height: 26, borderRadius: 13, borderWidth: 1, borderColor: COLORS.border, alignItems: "center", justifyContent: "center" },
+  label: { fontFamily: FONTS.medium, fontSize: 14, lineHeight: 20, color: COLORS.gold, marginTop: SPACE.sm, textAlign: "center" },
+  // Pill keeps the 68px swatch a circle (the nearest radius would square it).
+  swatch: { width: 68, height: 68, borderRadius: RADIUS.pill, marginTop: SPACE.xl, borderWidth: 1, borderColor: "rgba(255,255,255,0.12)" },
+  big: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 38, color: COLORS.headline, marginTop: SPACE.lg, textAlign: "center" },
+  bigMonth: { fontSize: 40, lineHeight: 48, marginTop: SPACE.xxl },
+  rhythm: { fontFamily: FONTS.semibold, fontSize: 14, lineHeight: 20, color: COLORS.subheadline, marginTop: SPACE.sm, textAlign: "center" },
+  body: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 24, color: COLORS.headline, marginTop: SPACE.lg, textAlign: "center" },
+  note: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 18, color: COLORS.footer, marginTop: SPACE.lg, textAlign: "center" },
+  quote: { fontFamily: FONTS.displayItalic, fontSize: 26, lineHeight: 36, color: COLORS.headline, marginTop: SPACE.xxxl, textAlign: "center" },
+  by: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 19, color: COLORS.subheadline, marginTop: SPACE.lg, textAlign: "center" },
+  monthStrip: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: SPACE.sm, marginTop: SPACE.xl },
+  monthCell: { width: 26, height: 26, borderRadius: RADIUS.md, borderWidth: 1, borderColor: COLORS.border, alignItems: "center", justifyContent: "center" },
   monthCellBest: { backgroundColor: COLORS.gold, borderColor: COLORS.gold },
   monthCellText: { fontFamily: FONTS.medium, fontSize: 11, color: COLORS.subheadline },
   monthCellTextBest: { color: COLORS.ctaText, fontFamily: FONTS.bold },
-  brand: { fontFamily: FONTS.semibold, fontSize: 10, letterSpacing: 2, color: COLORS.subheadline, marginTop: "auto", paddingTop: 22 },
-  shareRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, minHeight: 44, marginTop: 8 },
+  brand: { fontFamily: FONTS.semibold, fontSize: 10, letterSpacing: 2, color: COLORS.subheadline, marginTop: "auto", paddingTop: SPACE.xl },
+  shareRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: SPACE.sm, minHeight: 44, marginTop: SPACE.sm },
   shareLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.gold },
-  actions: { gap: 10, marginTop: 8 },
-  primary: { backgroundColor: COLORS.headline, borderRadius: 12, paddingVertical: 15, paddingHorizontal: 16, alignItems: "center" },
+  actions: { gap: SPACE.md, marginTop: SPACE.sm },
+  primary: { backgroundColor: COLORS.headline, borderRadius: RADIUS.sm, paddingVertical: SPACE.lg, paddingHorizontal: SPACE.lg, alignItems: "center" },
   primaryLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.ctaText, textAlign: "center" },
-  secondary: { borderWidth: 1, borderColor: SURFACE.hairline, borderRadius: 12, paddingVertical: 14, paddingHorizontal: 20, alignItems: "center", minWidth: 160 },
+  secondary: { borderWidth: 1, borderColor: SURFACE.hairline, borderRadius: RADIUS.sm, paddingVertical: SPACE.lg, paddingHorizontal: SPACE.xl, alignItems: "center", minWidth: 160 },
   secondaryLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
-  textButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: 12 },
+  textButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: SPACE.md },
   textButtonLabel: { fontFamily: FONTS.medium, fontSize: 13.5, color: COLORS.subheadline },
 });
