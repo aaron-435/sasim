@@ -3,12 +3,13 @@ import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { SURFACE } from "../theme/tokens";
+import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 
 // 2026-09-19: 온보딩 마지막 단계 — "지금 가장 궁금한 것"을 가볍게 물어, 이후
 // ModuleSelectScreen이 추천 모듈을 보여줄 수 있게 한다(mobile/lib/userConcern.ts
@@ -29,40 +30,42 @@ export default function ConcernScreen({
     <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.concern} onBack={onBack}>
       <View style={styles.top}>
         <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.concern.heading}</Text>
-        <Text style={styles.subheading} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.subheading}</Text>
-        <View style={styles.column} accessibilityRole="radiogroup" accessibilityLabel={strings.concern.heading}>
-          <PressableScale
-            style={[styles.option, value === "romance" && styles.optionActive]}
-            onPress={() => onChange("romance")}
-            accessibilityRole="radio"
-            accessibilityLabel={`${strings.concern.romanceLabel}, ${strings.concern.romanceHint}`}
-            accessibilityState={{ selected: value === "romance", checked: value === "romance" }}
-            aria-selected={value === "romance"}
-            aria-checked={value === "romance"}
-            haptic="select"
-          >
-            <Text style={[styles.optionLabel, value === "romance" && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.romanceLabel}</Text>
-            <Text style={styles.optionHint} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.romanceHint}</Text>
-          </PressableScale>
-          <PressableScale
-            style={[styles.option, value === "career" && styles.optionActive]}
-            onPress={() => onChange("career")}
-            accessibilityRole="radio"
-            accessibilityLabel={`${strings.concern.careerLabel}, ${strings.concern.careerHint}`}
-            accessibilityState={{ selected: value === "career", checked: value === "career" }}
-            aria-selected={value === "career"}
-            aria-checked={value === "career"}
-            haptic="select"
-          >
-            <Text style={[styles.optionLabel, value === "career" && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.careerLabel}</Text>
-            <Text style={styles.optionHint} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.careerHint}</Text>
-          </PressableScale>
-        </View>
+        <Reveal index={0}>
+          <Text style={styles.subheading} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.subheading}</Text>
+          <View style={styles.column} accessibilityRole="radiogroup" accessibilityLabel={strings.concern.heading}>
+            <PressableScale
+              style={[styles.option, value === "romance" && styles.optionActive]}
+              onPress={() => onChange("romance")}
+              accessibilityRole="radio"
+              accessibilityLabel={`${strings.concern.romanceLabel}, ${strings.concern.romanceHint}`}
+              accessibilityState={{ selected: value === "romance", checked: value === "romance" }}
+              aria-selected={value === "romance"}
+              aria-checked={value === "romance"}
+              haptic="select"
+            >
+              <Text style={[styles.optionLabel, value === "romance" && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.romanceLabel}</Text>
+              <Text style={styles.optionHint} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.romanceHint}</Text>
+            </PressableScale>
+            <PressableScale
+              style={[styles.option, value === "career" && styles.optionActive]}
+              onPress={() => onChange("career")}
+              accessibilityRole="radio"
+              accessibilityLabel={`${strings.concern.careerLabel}, ${strings.concern.careerHint}`}
+              accessibilityState={{ selected: value === "career", checked: value === "career" }}
+              aria-selected={value === "career"}
+              aria-checked={value === "career"}
+              haptic="select"
+            >
+              <Text style={[styles.optionLabel, value === "career" && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.careerLabel}</Text>
+              <Text style={styles.optionHint} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.concern.careerHint}</Text>
+            </PressableScale>
+          </View>
+        </Reveal>
       </View>
 
-      <View style={styles.middle}>
+      <Reveal index={1} style={styles.middle}>
         <AuraNextButton disabled={value === null} onPress={onNext} size={190} />
-      </View>
+      </Reveal>
     </OnboardingShell>
   );
 }
@@ -82,20 +85,20 @@ const styles = StyleSheet.create({
     fontSize: 13.5,
     lineHeight: 20,
     color: COLORS.subheadline,
-    marginTop: 10,
+    marginTop: SPACE.md,
   },
   column: {
-    gap: 10,
-    marginTop: 24,
+    gap: SPACE.md,
+    marginTop: SPACE.xl,
   },
   option: {
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderRadius: 12,
+    paddingVertical: SPACE.lg,
+    paddingHorizontal: SPACE.lg,
+    borderRadius: RADIUS.sm,
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    gap: 4,
+    gap: SPACE.xs,
   },
   optionActive: {
     backgroundColor: "rgba(111,169,139,0.12)",

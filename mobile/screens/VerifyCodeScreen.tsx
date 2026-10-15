@@ -5,11 +5,12 @@ import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import ElementsLoader from "../components/motion/ElementsLoader";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { API_BASE_URL } from "../config";
 import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { SURFACE } from "../theme/tokens";
+import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 
 const CODE_LENGTH = 6;
 
@@ -62,26 +63,28 @@ export default function VerifyCodeScreen({
     <OnboardingShell onBack={onBack}>
       <View style={styles.top}>
         <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.verifyCode.heading}</Text>
-        <Text style={styles.subtext} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.verifyCode.subtext}</Text>
-        <TextInput
-          style={styles.input}
-          placeholder={strings.verifyCode.placeholder}
-          accessibilityLabel={strings.verifyCode.inputLabel}
-          maxFontSizeMultiplier={MAX_FONT_SCALE.control}
-          placeholderTextColor={COLORS.placeholder}
-          value={code}
-          onChangeText={(v) => setCode(v.replace(/[^0-9]/g, "").slice(0, CODE_LENGTH))}
-          keyboardType="number-pad"
-          maxLength={CODE_LENGTH}
-          autoFocus
-        />
+        <Reveal index={0}>
+          <Text style={styles.subtext} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.verifyCode.subtext}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder={strings.verifyCode.placeholder}
+            accessibilityLabel={strings.verifyCode.inputLabel}
+            maxFontSizeMultiplier={MAX_FONT_SCALE.control}
+            placeholderTextColor={COLORS.placeholder}
+            value={code}
+            onChangeText={(v) => setCode(v.replace(/[^0-9]/g, "").slice(0, CODE_LENGTH))}
+            keyboardType="number-pad"
+            maxLength={CODE_LENGTH}
+            autoFocus
+          />
+        </Reveal>
         {error && <Text style={styles.error} accessibilityRole="alert" accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{error}</Text>}
       </View>
 
       {/* Skip sits right under the button, inside the same centered group, rather than
           pinned to the bottom edge — that's what put the old "다음" pill close enough
           to collide with Android's gesture nav bar (see AuraNextButton.tsx's note). */}
-      <View style={styles.middle}>
+      <Reveal index={1} style={styles.middle}>
         {loading ? (
           <ElementsLoader size="large" />
         ) : (
@@ -97,7 +100,7 @@ export default function VerifyCodeScreen({
         >
           <Text style={styles.skipLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.verifyCode.skipLabel}</Text>
         </PressableScale>
-      </View>
+      </Reveal>
     </OnboardingShell>
   );
 }
@@ -117,8 +120,8 @@ const styles = StyleSheet.create({
     fontSize: 13.5,
     lineHeight: 20,
     color: COLORS.subheadline,
-    marginTop: 10,
-    marginBottom: 24,
+    marginTop: SPACE.md,
+    marginBottom: SPACE.xl,
   },
   input: {
     fontFamily: FONTS.semibold,
@@ -129,14 +132,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    borderRadius: 10,
-    paddingVertical: 14,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.lg,
   },
   error: {
     fontFamily: FONTS.regular,
     fontSize: 12.5,
     color: COLORS.danger,
-    marginTop: 10,
+    marginTop: SPACE.md,
   },
   middle: {
     flex: 1,
@@ -144,8 +147,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   skipButton: {
-    marginTop: 20,
-    padding: 8,
+    marginTop: SPACE.xl,
+    padding: SPACE.sm,
   },
   skipLabel: {
     fontFamily: FONTS.semibold,

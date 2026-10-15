@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
+import Reveal from "../components/motion/Reveal";
 import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { SURFACE } from "../theme/tokens";
+import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 
 const MAX_LENGTH = 20;
 
@@ -28,7 +29,8 @@ export default function NicknameScreen({
 
   return (
     <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.nickname} onBack={onBack}>
-      <View style={styles.top}>
+      {/* Index 0 is the Shell header. */}
+      <Reveal index={1} style={styles.top}>
         <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.nickname.heading}</Text>
         <Text style={styles.subtext} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.nickname.subtext}</Text>
         <TextInput
@@ -46,11 +48,11 @@ export default function NicknameScreen({
           onSubmitEditing={canProceed ? onNext : undefined}
           returnKeyType="next"
         />
-      </View>
+      </Reveal>
 
-      <View style={styles.middle}>
+      <Reveal index={2} style={styles.middle}>
         <AuraNextButton disabled={!canProceed} onPress={onNext} />
-      </View>
+      </Reveal>
     </OnboardingShell>
   );
 }
@@ -69,8 +71,8 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
     fontSize: 13.5,
     color: COLORS.subheadline,
-    marginTop: 10,
-    marginBottom: 24,
+    marginTop: SPACE.md,
+    marginBottom: SPACE.xl,
   },
   input: {
     fontFamily: FONTS.regular,
@@ -79,9 +81,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    borderRadius: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: SPACE.lg,
+    paddingVertical: SPACE.lg,
   },
   inputFocused: {
     borderColor: COLORS.gold,

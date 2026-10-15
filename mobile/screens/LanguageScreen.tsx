@@ -4,10 +4,11 @@ import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "../components/PatternBackground";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { LOCALE_LABELS, useLocale, type Locale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 // The very first screen, before IntroScreen — picked manually here rather than
 // auto-detected from the device locale (explicit user choice per product decision).
@@ -28,16 +29,18 @@ export default function LanguageScreen({ onNext }: { onNext: () => void }) {
     <PatternBackground>
       <SafeAreaView style={styles.root}>
         <View style={styles.content}>
-          <View style={styles.brandRow}>
+          <Reveal index={0} style={styles.brandRow}>
             <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
             <Text style={styles.brandLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>FATESAID</Text>
-          </View>
+          </Reveal>
           {/* No dictionary lookup here on purpose — the user hasn't picked a locale
               yet, so this heading is shown in all three languages at once rather than
               guessing one. */}
-          <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>Choose your language · Elige tu idioma · 언어를 선택하세요</Text>
+          <Reveal index={1}>
+            <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>Choose your language · Elige tu idioma · 언어를 선택하세요</Text>
+          </Reveal>
 
-          <View style={styles.optionList}>
+          <Reveal index={2} style={styles.optionList}>
             {LANGUAGE_ORDER.map((locale) => (
               <PressableScale
                 key={locale}
@@ -52,7 +55,7 @@ export default function LanguageScreen({ onNext }: { onNext: () => void }) {
                 <Text style={styles.optionLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{LOCALE_LABELS[locale]}</Text>
               </PressableScale>
             ))}
-          </View>
+          </Reveal>
         </View>
       </SafeAreaView>
     </PatternBackground>
@@ -68,13 +71,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 32,
+    paddingHorizontal: SPACE.xxl,
   },
   brandRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginBottom: 20,
+    gap: SPACE.sm,
+    marginBottom: SPACE.xl,
   },
   brandLabel: {
     fontFamily: FONTS.semibold,
@@ -89,20 +92,21 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: COLORS.headline,
     textAlign: "center",
-    marginBottom: 36,
+    marginBottom: SPACE.xxl,
   },
   optionList: {
     width: "100%",
-    gap: 12,
+    gap: SPACE.md,
   },
   option: {
     width: "100%",
-    paddingVertical: 18,
-    borderRadius: 12,
+    paddingVertical: SPACE.lg,
+    borderRadius: RADIUS.sm,
     alignItems: "center",
-    backgroundColor: COLORS.inputBg,
+    backgroundColor: SURFACE.raised,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
+    ...SHADOW.raised,
   },
   optionLabel: {
     fontFamily: FONTS.semibold,

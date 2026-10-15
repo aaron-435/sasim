@@ -63,7 +63,8 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
   - 변경: `YearReportScreen.tsx`, `WrappedScreen.tsx`, `DayMasterLessonsScreen.tsx`, `SajuLearnScreen.tsx`.
   - QA: 공통 tsc, 네 파일 간격 grep 0줄. 웹 미리보기에서 열리는 화면은 ko/en/es 스크린샷, 픽스처가 없어 못 여는 화면(신년 리포트 등)은 "코드만 확인"으로 적는다.
 
-- [ ] 10. 온보딩 9화면
+- [x] 10. 온보딩 9화면
+  - QA: 앱 tsc --noEmit → exit 0. 열 파일 간격 grep(`: 0` 제외) → 0줄. `git diff -w`로 `fetch`·`/api`·`Purchases.`·`t(`·`setStep`·`AsyncStorage` 변경 없음, `Reveal` 여는·닫는 태그 수 파일마다 일치. mobile-web(375×812, 저장 데이터 지운 새 창, en)에서 언어 → 인트로 → 닉네임 → 성별 → 생년월일(자동 칸 이동·별자리 카드) → 시간("Unknown") → 도시(검색·결과) → 고민까지 끝까지 진행, 콘솔 오류 0. 생년월일 화면에서 포커스 때 위로 밀리는 것은 변경 전 코드(stash)에서도 같게 나와 기존 웹 동작. 손댄 것: muse가 별자리 카드의 민트 틴트·테두리를 `SURFACE.raised`로 바꿔서 강조 의미가 사라져 원래 틴트로 되돌림(9번 판단과 같음). 못 한 것: es·ko 잘림 확인(Dob·City) → 14번 마감 QA로. 지시서 `.agents/tasks/13a-onboard-a.md`, `13b-onboard-b.md`(contributor 모델, 병렬). 브랜치 `task-05`. `OnboardingShell`의 제목에 `Reveal`을 한 번 넣었고 화면 본문 블록은 2~3단계.
   - 변경: `IntroScreen`, `LanguageScreen`, `NicknameScreen`, `GenderScreen`, `DobScreen`, `TobScreen`, `CityScreen`, `ConcernScreen`, `VerifyCodeScreen`, 공용 `OnboardingShell.tsx`. 가능한 한 `OnboardingShell`에서 한 번에 처리하고 화면별로는 숫자만 바꾼다. muse 한도 때문에 두 묶음(Intro~Gender / Dob~VerifyCode + Shell)으로 나눠 돌려도 됨.
   - QA: 공통 tsc, 열 파일 간격 grep 0줄. 웹 미리보기에서 저장 데이터 없이(새 창) 온보딩 처음부터 끝까지 ko/en/es 중 1개 언어 전체 + 나머지 두 언어는 Dob·City 화면만.
 

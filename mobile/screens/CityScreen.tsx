@@ -5,13 +5,14 @@ import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import ElementsLoader from "../components/motion/ElementsLoader";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { API_BASE_URL } from "../config";
 import { useLocale, useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { RADIUS, SHADOW, SURFACE } from "../theme/tokens";
+import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 type CityResult = { id: string; cityDisplay: string; countryDisplay: string };
 
@@ -126,7 +127,9 @@ export default function CityScreen({
   return (
     <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.city} onBack={onBack}>
       <View style={styles.top}>
-        <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.city.heading}</Text>
+        <Reveal index={0}>
+          <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.city.heading}</Text>
+        </Reveal>
         <TextInput
           style={styles.input}
           placeholder={strings.city.placeholder}
@@ -195,16 +198,16 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    borderRadius: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginTop: 24,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: SPACE.lg,
+    paddingVertical: SPACE.lg,
+    marginTop: SPACE.xl,
   },
   searchSpinner: {
-    marginTop: 12,
+    marginTop: SPACE.md,
   },
   resultsBox: {
-    marginTop: 6,
+    marginTop: SPACE.sm,
     backgroundColor: SURFACE.raised,
     borderRadius: RADIUS.md,
     overflow: "hidden",
@@ -213,8 +216,8 @@ const styles = StyleSheet.create({
   resultRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 13,
-    paddingHorizontal: 16,
+    paddingVertical: SPACE.md,
+    paddingHorizontal: SPACE.lg,
     borderBottomWidth: 1,
     borderBottomColor: SURFACE.hairline,
   },
@@ -233,13 +236,13 @@ const styles = StyleSheet.create({
     fontSize: 12.5,
     lineHeight: 19,
     color: COLORS.subheadline,
-    marginTop: 10,
+    marginTop: SPACE.md,
   },
   error: {
     fontFamily: FONTS.regular,
     fontSize: 12.5,
     color: COLORS.danger,
-    marginTop: 10,
+    marginTop: SPACE.md,
   },
   middle: {
     flex: 1,

@@ -4,12 +4,13 @@ import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { to24HourString } from "../lib/zodiac";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { SURFACE } from "../theme/tokens";
+import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 
 export default function TobScreen({
   hour,
@@ -62,7 +63,7 @@ export default function TobScreen({
           </PressableScale>
         </View>
 
-        <View style={styles.row}>
+        <Reveal index={0} style={styles.row}>
           <TextInput
             style={[styles.input, styles.shortInput, timeUnknown && styles.inputDisabled]}
             placeholder={strings.tob.hourPlaceholder}
@@ -124,12 +125,12 @@ export default function TobScreen({
           >
             <Text style={[styles.periodLabel, period === "PM" && styles.periodLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.tob.periodPM}</Text>
           </PressableScale>
-        </View>
+        </Reveal>
       </View>
 
-      <View style={styles.middle}>
+      <Reveal index={1} style={styles.middle}>
         <AuraNextButton disabled={!canProceed} onPress={onNext} size={170} />
-      </View>
+      </Reveal>
     </OnboardingShell>
   );
 }
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
   },
   unknownButton: {
-    padding: 6,
+    padding: SPACE.sm,
   },
   unknownLabel: {
     fontFamily: FONTS.semibold,
@@ -163,8 +164,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginTop: 24,
+    gap: SPACE.sm,
+    marginTop: SPACE.xl,
   },
   input: {
     fontFamily: FONTS.medium,
@@ -174,8 +175,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    borderRadius: 10,
-    paddingVertical: 14,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.lg,
   },
   shortInput: {
     flex: 1,
@@ -190,8 +191,8 @@ const styles = StyleSheet.create({
   },
   periodButton: {
     flex: 1.2,
-    paddingVertical: 14,
-    borderRadius: 10,
+    paddingVertical: SPACE.lg,
+    borderRadius: RADIUS.sm,
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,

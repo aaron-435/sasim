@@ -3,7 +3,9 @@ import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PatternBackground from "./PatternBackground";
 import PressableScale from "./motion/PressableScale";
+import Reveal from "./motion/Reveal";
 import { COLORS } from "../theme/colors";
+import { RADIUS, SPACE } from "../theme/tokens";
 import { ONBOARDING_STEP_IDS } from "../lib/onboardingSteps";
 import { useStrings } from "../lib/i18n";
 
@@ -25,7 +27,7 @@ export default function OnboardingShell({
         {/* Android is edge-to-edge here, so the window no longer resizes for the keyboard on its own:
             without "padding" the primary button under a text field stayed hidden (2026-10-12 device test). */}
         <KeyboardAvoidingView style={styles.flex} behavior="padding">
-          <View style={styles.header}>
+          <Reveal index={0} style={styles.header}>
             <PressableScale
               onPress={onBack}
               hitSlop={12}
@@ -51,7 +53,7 @@ export default function OnboardingShell({
                 ))}
               </View>
             )}
-          </View>
+          </Reveal>
           <View style={styles.body}>{children}</View>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -68,23 +70,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingHorizontal: 24,
-    paddingTop: 8,
+    paddingHorizontal: SPACE.xl,
+    paddingTop: SPACE.sm,
   },
   backButton: {
     alignSelf: "flex-start",
-    padding: 8,
-    marginLeft: -8,
-    marginBottom: 16,
+    padding: SPACE.sm,
+    marginLeft: -SPACE.sm,
+    marginBottom: SPACE.lg,
   },
   progressRow: {
     flexDirection: "row",
-    gap: 6,
+    gap: SPACE.sm,
   },
   progressSegment: {
     flex: 1,
     height: 3,
-    borderRadius: 2,
+    borderRadius: RADIUS.sm,
     backgroundColor: COLORS.border,
   },
   progressSegmentActive: {
@@ -92,6 +94,6 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: SPACE.xl,
   },
 });

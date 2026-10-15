@@ -3,11 +3,12 @@ import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { SURFACE } from "../theme/tokens";
+import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 
 export default function GenderScreen({
   isFemale,
@@ -23,7 +24,8 @@ export default function GenderScreen({
   const strings = useStrings();
   return (
     <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.gender} onBack={onBack}>
-      <View style={styles.top}>
+      {/* Index 0 is the Shell header. */}
+      <Reveal index={1} style={styles.top}>
         <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.gender.heading}</Text>
         <Text style={styles.why} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.gender.why}</Text>
         <View style={styles.row} accessibilityRole="radiogroup" accessibilityLabel={strings.gender.heading}>
@@ -52,11 +54,11 @@ export default function GenderScreen({
             <Text style={[styles.optionLabel, isFemale === true && styles.optionLabelActive]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.gender.female}</Text>
           </PressableScale>
         </View>
-      </View>
+      </Reveal>
 
-      <View style={styles.middle}>
+      <Reveal index={2} style={styles.middle}>
         <AuraNextButton disabled={isFemale === null} onPress={onNext} size={190} />
-      </View>
+      </Reveal>
     </OnboardingShell>
   );
 }
@@ -76,17 +78,17 @@ const styles = StyleSheet.create({
     fontSize: 13.5,
     lineHeight: 20,
     color: COLORS.subheadline,
-    marginTop: 10,
+    marginTop: SPACE.md,
   },
   row: {
     flexDirection: "row",
-    gap: 10,
-    marginTop: 24,
+    gap: SPACE.md,
+    marginTop: SPACE.xl,
   },
   option: {
     flex: 1,
-    paddingVertical: 16,
-    borderRadius: 10,
+    paddingVertical: SPACE.lg,
+    borderRadius: RADIUS.sm,
     alignItems: "center",
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,

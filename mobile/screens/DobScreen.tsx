@@ -3,6 +3,7 @@ import { StyleSheet, TextInput, View } from "react-native";
 import Text from "../components/AppText";
 import AuraNextButton from "../components/AuraNextButton";
 import OnboardingShell from "../components/OnboardingShell";
+import Reveal from "../components/motion/Reveal";
 import { calculateAge, MIN_AGE } from "../lib/age";
 import { useLocale, useStrings } from "../lib/i18n";
 import { dobFieldOrder, dobSeparator } from "../lib/dobOrder";
@@ -10,7 +11,7 @@ import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { getZodiac, toISODateString } from "../lib/zodiac";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { SURFACE } from "../theme/tokens";
+import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 
 export default function DobScreen({
   year,
@@ -58,7 +59,7 @@ export default function DobScreen({
     <OnboardingShell stepIndex={ONBOARDING_STEP_INDEX.dob} onBack={onBack}>
       <View style={styles.top}>
         <Text style={styles.heading} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.dob.heading}</Text>
-        <View style={styles.row}>
+        <Reveal index={0} style={styles.row}>
           {order.map((field, i) => (
             <Fragment key={field}>
               {i > 0 && <Text style={styles.dot} importantForAccessibility="no" accessibilityElementsHidden maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{dobSeparator(locale)}</Text>}
@@ -82,7 +83,7 @@ export default function DobScreen({
               />
             </Fragment>
           ))}
-        </View>
+        </Reveal>
 
         {zodiac && (
           <View style={styles.zodiacCard} accessible accessibilityLabel={strings.common.zodiacLabels[zodiac.nameKey]}>
@@ -94,9 +95,9 @@ export default function DobScreen({
         {isTooYoung && <Text style={styles.ageWarning} accessibilityLiveRegion="polite" accessibilityRole="alert" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.dob.ageWarning(MIN_AGE)}</Text>}
       </View>
 
-      <View style={styles.middle}>
+      <Reveal index={1} style={styles.middle}>
         <AuraNextButton disabled={!canProceed} onPress={onNext} size={170} />
-      </View>
+      </Reveal>
     </OnboardingShell>
   );
 }
@@ -114,8 +115,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    marginTop: 24,
+    gap: SPACE.sm,
+    marginTop: SPACE.xl,
   },
   input: {
     fontFamily: FONTS.medium,
@@ -125,8 +126,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.inputBg,
     borderWidth: 1,
     borderColor: SURFACE.hairline,
-    borderRadius: 10,
-    paddingVertical: 14,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.lg,
   },
   yearInput: {
     flex: 2.3,
@@ -144,14 +145,14 @@ const styles = StyleSheet.create({
   zodiacCard: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    marginTop: 16,
+    gap: SPACE.md,
+    marginTop: SPACE.lg,
     backgroundColor: "rgba(111,169,139,0.06)",
     borderWidth: 1,
     borderColor: "rgba(111,169,139,0.25)",
-    borderRadius: 12,
-    paddingVertical: 13,
-    paddingHorizontal: 16,
+    borderRadius: RADIUS.sm,
+    paddingVertical: SPACE.md,
+    paddingHorizontal: SPACE.lg,
   },
   zodiacSymbol: {
     fontFamily: FONTS.display,
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
     fontSize: 12.5,
     color: COLORS.danger,
-    marginTop: 14,
+    marginTop: SPACE.lg,
   },
   middle: {
     flex: 1,

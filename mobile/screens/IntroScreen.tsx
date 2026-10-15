@@ -6,10 +6,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AuraNextButton from "../components/AuraNextButton";
 import PatternBackground from "../components/PatternBackground";
 import PressableScale from "../components/motion/PressableScale";
+import Reveal from "../components/motion/Reveal";
 import { API_BASE_URL } from "../config";
 import { useStrings, useLocale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { SPACE } from "../theme/tokens";
 
 export default function IntroScreen({ onNext, onVerifyCode }: { onNext: () => void; onVerifyCode: () => void }) {
   const strings = useStrings();
@@ -83,18 +85,23 @@ export default function IntroScreen({ onNext, onVerifyCode }: { onNext: () => vo
 
         {/* Web-to-app handoff is the minority path, so it waits behind a quiet link instead of
             being a screen every store install has to pass. */}
-        <PressableScale onPress={onVerifyCode} style={styles.verifyLink} accessibilityRole="button" hitSlop={8} haptic="none">
-          <Text style={styles.verifyLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.intro.verifyCodeLink}</Text>
-        </PressableScale>
+        {/* Hero keeps its bespoke entrance above; these footer Reveals follow it. */}
+        <Reveal index={2} style={styles.footerReveal}>
+          <PressableScale onPress={onVerifyCode} style={styles.verifyLink} accessibilityRole="button" hitSlop={8} haptic="none">
+            <Text style={styles.verifyLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.intro.verifyCodeLink}</Text>
+          </PressableScale>
+        </Reveal>
 
-        <Text style={styles.footer} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>
-          {strings.intro.freeNote}
-          {"\n"}
-          {strings.intro.ageNoticeShort}
-        </Text>
+        <Reveal index={3} style={styles.footerReveal}>
+          <Text style={styles.footer} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>
+            {strings.intro.freeNote}
+            {"\n"}
+            {strings.intro.ageNoticeShort}
+          </Text>
+        </Reveal>
         {/* Real buttons with a 44pt target. Inline links inside the sentence were a few pixels
             tall and hard to hit on a phone (2026-10-04 device test). */}
-        <View style={styles.legalRow}>
+        <Reveal index={3} style={styles.legalRow}>
           <PressableScale onPress={() => Linking.openURL(termsUrl)} style={styles.legalLink} accessibilityRole="link" hitSlop={6} haptic="none">
             <Text style={styles.footerLink} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.intro.termsLinkLabel}</Text>
           </PressableScale>
@@ -102,7 +109,7 @@ export default function IntroScreen({ onNext, onVerifyCode }: { onNext: () => vo
           <PressableScale onPress={() => Linking.openURL(privacyUrl)} style={styles.legalLink} accessibilityRole="link" hitSlop={6} haptic="none">
             <Text style={styles.footerLink} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.intro.privacyLinkLabel}</Text>
           </PressableScale>
-        </View>
+        </Reveal>
       </SafeAreaView>
     </PatternBackground>
   );
@@ -115,14 +122,14 @@ const styles = StyleSheet.create({
   },
   content: {
     alignItems: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: SPACE.xl,
     paddingTop: "10%",
   },
   brandRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    marginBottom: 16,
+    gap: SPACE.sm,
+    marginBottom: SPACE.lg,
   },
   brandLabel: {
     fontFamily: FONTS.semibold,
@@ -145,7 +152,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: COLORS.subheadline,
     textAlign: "center",
-    marginTop: 16,
+    marginTop: SPACE.lg,
   },
   centerLayer: {
     position: "absolute",
@@ -162,12 +169,16 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   // zIndex above centerLayer (1): that full-screen layer otherwise sits on top of these taps.
+  // Footer Reveal wrappers carry the same zIndex so taps stay above centerLayer.
+  footerReveal: {
+    zIndex: 2,
+  },
   verifyLink: {
     alignSelf: "center",
     minHeight: 44,
     justifyContent: "center",
-    paddingHorizontal: 12,
-    marginBottom: 6,
+    paddingHorizontal: SPACE.md,
+    marginBottom: SPACE.sm,
     zIndex: 2,
   },
   verifyLinkText: {
@@ -183,21 +194,21 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     color: COLORS.footer,
     textAlign: "center",
-    paddingHorizontal: 24,
-    paddingBottom: 4,
+    paddingHorizontal: SPACE.xl,
+    paddingBottom: SPACE.xs,
   },
   legalRow: {
     zIndex: 2,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 4,
-    paddingBottom: 16,
+    gap: SPACE.xs,
+    paddingBottom: SPACE.lg,
   },
   legalLink: {
     minHeight: 44,
     justifyContent: "center",
-    paddingHorizontal: 12,
+    paddingHorizontal: SPACE.md,
   },
   legalDot: {
     fontFamily: FONTS.regular,
