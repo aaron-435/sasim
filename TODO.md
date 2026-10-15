@@ -90,12 +90,14 @@ SPEC: `SPEC.md` (2026-10-14 승인). 브랜치 `task-02`.
 
 ## E. 마감
 
-- [ ] 14. 2차 마감 QA
+- [x] 14. 2차 마감 QA
+  - QA: 앱 tsc --noEmit → exit 0. `grep -nE '(padding|margin|gap|borderRadius)[A-Za-z]*: *[0-9]' mobile/screens/*.tsx`에서 `: 0` 제외 0줄(`: 0` 2줄은 값 0이라 대상 아님). `grep -rn lottie` 무결과. `du -sh mobile/assets/art` → 0B(그림 0장, 3MB 이하). `Reveal`·`PurchaseSuccess`는 `useReducedMotion`을 따르는 것을 코드로 확인(`Reveal`은 reduce면 progress 1로 시작). mobile-web(375×812) 홈을 ko(`?qa=pro&persona=jisoo`)·en(`persona=mia`)·es(`?qa=pro&lang=es`)로 확인, 잘림 없음. 콘솔의 `SPACE is not defined`(QuizScreen)는 muse 편집 중 핫리로드 시점의 오래된 로그이고 import 존재·tsc 통과·새로 불러온 화면 정상. 못 한 것: 화면별 ko/en/es 전수 확인과 브라우저 `prefers-reduced-motion` 에뮬레이션(도구로 못 켬) → 코드 확인으로 대체, 나머지 화면의 en/es 잘림과 동작 줄이기는 TODO "나"(네이티브 확인)에서 함께 봄.
   - 선행: 1~13
   - 변경: 문제가 나온 곳만.
   - QA: 공통 tsc. `grep -nE '(padding|margin|gap|borderRadius)[A-Za-z]*: *[0-9]' mobile/screens/*.tsx` 0줄(남으면 이유를 적음). 웹 미리보기 주요 화면 ko/en/es 한 바퀴, 콘솔 오류 없음. 동작 줄이기 에뮬레이션에서 `Reveal`·전환이 꺼짐. `mobile/assets/art` 합계 3MB 이하(`du -sh`).
 
-- [ ] 15. 그림 넣기 (그림이 생기면)
+- [x] 15. 그림 넣기 (그림이 생기면)
+  - QA: `npm run art:process`(루트) → 72장 처리, 경고 0건(모르는 이름 0). 번들 `mobile/assets/art` 26장 1.15MB(3MB 이하), 서버용 `public/art` 46장 8.3MB(앱 크기에 안 들어감). `manifest.ts`에 72키가 `source`·`blurhash`와 함께 채워짐. 앱 tsc --noEmit → exit 0. mobile-web(`?qa=all&persona=mia`)에서 홈 배경에 질감 그림이 깔려 렌더되고 새 오류 없음(콘솔의 `SPACE is not defined`는 14번에 적은 핫리로드 시점의 오래된 로그). 못 한 것: 서버 그림(모듈 표지·절기·일간)은 웹 배포 전이라 URL이 404 → 대체 그림으로 보임("가" 항목 뒤 확인). 오행·12지·빈 화면 개별 자리 스크린샷은 웹 픽스처로 못 열어 코드 연결(3번)만 확인. (사용자 확인) 72장 스타일·팔레트·흉한 상징 눈 검수는 아직 안 함.
   - 선행: 2, 3. 사용자가 `IMAGE_PROMPTS_2026-10-14.md`로 만든 그림을 `art-inbox/<키>.png`로 넣은 뒤 진행. 일부만 있어도 된다.
   - 변경: `npm run art:process` 결과(`mobile/assets/art/`, `public/art/`, `manifest.ts`)만.
   - QA: 스크립트 경고 없음(모르는 이름 0), 번들 3MB 이하, 앱 tsc 통과. 웹 미리보기에서 번들 그림은 바로, 서버 그림은 웹 배포 뒤에 뜸. (사용자 확인) 장마다 스타일·팔레트·흉한 상징 없음을 눈으로 검수.
