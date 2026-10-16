@@ -1,0 +1,157 @@
+# 숏폼 제작 키트 (TODO 5번)
+
+작성: 2026-10-16. **초안이며 사용자가 확정한다.** 틱톡·릴스·쇼츠에 같은 영상을 동시에 올린다. 첫 2주는 아래 형식 하나만 쓰고 훅(첫 2초)만 바꾼다. 영어 기준. 스페인어는 영어 성과 뒤.
+
+## 지킬 규칙 (SPEC·PRODUCT 기준)
+
+- 제품·결과물이 주어. 보는 사람의 성격·상태·고민을 짐작하는 문장 금지("you're anxious" 류).
+- "정확하다/적중/예측/proven/accurate/exact/fortune-telling" 금지. 계산은 "calculated from a birth date"까지만.
+- 압박 규칙: 가짜 카운트다운·희소성, 불운·건강·죽음 예언, 단정적 부정 예언 금지.
+- 후기·평점·조회수 같은 수치 조작 금지. 영상에 쓰는 수치는 제품 사실만("50 types", "ten Day Masters").
+- 유명인 이름·얼굴은 화면에서 가린다. 타인 생년월일을 실제 개인 정보로 노출하지 않는다(촬영용 생년월일은 본인 것이나 임의로 만든 것).
+- 의학·심리 진단처럼 들리는 말 금지. 자기이해 도구라고만 말한다.
+- 팔레트·폰트는 앱·웹 화면을 그대로 녹화하므로 건드리지 않는다. 직접 만드는 자막·썸네일도 Celadon & Hanji 색, Newsreader/Plus Jakarta Sans 계열만.
+- 금융·송금 연상 단어 금지(iOS 2.3.1(a) 거절 이력). 돈 관련 검사는 영상에서 다루지 않는다.
+
+## 1. 고정 형식: "생일 → 유형 카드 → 풀이 → CTA" (25~35초)
+
+제품 사실 근거: 웹 랜딩의 유형 카드는 생년월일만으로 뜬다(50가지 중 하나, 이름·한 줄 설명·같은 유형 유명인). 계산기(`/saju-calculator`)는 네 기둥·일간·오행 분포를 보여 준다(`WIKI.md` 2장).
+
+| 구간 | 시간 | 화면 | 말(자막과 동일) |
+|---|---|---|---|
+| 훅 | 0~2초 | 얼굴 출연 클로즈업 또는 카드 이미지 + 큰 자막. 아래 훅 15개 중 하나 | 훅 문장 그대로 |
+| 생일 받기 | 2~7초 | 웹 랜딩/계산기에서 연·월·일 입력(화면 녹화, 임의 생년월일) | "Type in a birth date. That's the only input." |
+| 유형 카드 | 7~14초 | 카드 공개 컷. **유명인 이름 가림** | 카드의 유형 이름을 그대로 읽는다 |
+| 풀이 | 14~27초 | 카드·원국 그래프를 가리키며 카드에 적힌 설명을 쉬운 말로 풀이. 일간 한 줄, 오행 중 가장 많은 것 하나 | "In saju, this part is the Day Master… The chart shows wood is the biggest element." 등 화면에 있는 사실만 |
+| CTA | 27~32초 | 프로필 링크 안내 화면 | "The free type card is at the link in my bio." (스토어 공개 뒤엔 "The app is linked in my bio.") |
+
+풀이 구간 원칙:
+- 카드·계산 결과에 **실제로 적힌 내용만** 읽는다. 카드에 없는 성격 단정을 덧붙이지 않는다.
+- 말투는 "This card says…", "The chart shows…". "You are…"로 시작하는 문장 금지.
+- 어려운 용어는 한 번만 영어로 풀고 넘어간다(Day Master = the pillar that stands for you in the chart).
+- 한 영상에 생년월일은 1~3개. 3개면 나란히 비교하는 형식(훅 9·10).
+
+## 2. 훅 15개
+
+규칙 점검 열: **A** 제품·결과물이 주어(개인 특성 짐작 없음) / **B** 정확·예측류 표현 없음 / **C** 압박·부정 예언·가짜 긴박 없음 / **D** 수치는 제품 사실만 / **E** 유명인 이름·후기 없음. 전부 통과면 "통과".
+
+| # | 훅 (자막 = 말) | A | B | C | D | E | 결과 |
+|---|---|---|---|---|---|---|---|
+| 1 | This free tool turns one birth date into one of 50 saju types. | ○ | ○ | ○ | 50 types는 제품 사실 | ○ | 통과 |
+| 2 | Korean saju reads a birth date as four pillars. Here's what the card looks like. | ○ | ○ | ○ | - | ○ | 통과 |
+| 3 | One birth date in. One saju type card out. | ○ | ○ | ○ | - | ○ | 통과 |
+| 4 | This is what a saju type card looks like. | ○ | ○ | ○ | - | ○ | 통과 |
+| 5 | The Korean birth chart that only needs a birthday to get started. | ○ | ○ | ○ | - | ○ | 통과 |
+| 6 | A saju chart uses a birth date, time, and city. Here's how the card gets made. | ○ | ○ | ○ | - | ○ | 통과 |
+| 7 | Saju has something called a Day Master. This app finds it from a birthday. | ○ | ○ | ○ | - | ○ | 통과 |
+| 8 | Ten Day Masters, fifty saju types. Here's how a birthday lands on one. | ○ | ○ | ○ | 10·50은 제품 사실 | ○ | 통과 |
+| 9 | Same app, three different birthdays, three different cards. | ○ | ○ | ○ | 3은 영상 속 개수 | ○ | 통과 |
+| 10 | I typed three birthdays into a Korean saju app. Here are the cards. | ○ | ○ | ○ | - | ○ | 통과 |
+| 11 | The five elements in a saju chart, shown as one simple bar. | ○ | ○ | ○ | - | ○ | 통과 |
+| 12 | This saju app explains the chart in plain English, no jargon. | ○ | ○ | ○ | - | ○ | 통과 |
+| 13 | Saju 101: why a birth date has four pillars. | ○ | ○ | ○ | - | ○ | 통과 |
+| 14 | Two birth dates in, one relationship name out. A look at saju compatibility. | ○ | ○ | ○ | - | ○ | 통과 |
+| 15 | A saju type card made to share. Free, from a birth date. | ○ | ○ | ○ | - | ○ | 통과 |
+
+위반 0개. 점검은 사람이 읽고 매긴 것이고, 금지 단어는 아래 스크립트로도 확인했다.
+
+사용 메모:
+- 12번의 "plain English"는 앱이 영어 설명을 제공한다는 사실에 근거한다(언어 en/es/ko).
+- 14번은 궁합 기능(관계 이름·점수는 작게)을 보여 주는 영상. 상대 생년월일은 임의 값.
+- 훅 하나당 2~3개 영상으로 반복한 뒤, 중앙값 대비 5배 이상 조회가 나온 훅을 승자 후보로 기록한다(성공 기준, SPEC).
+
+## 3. 화면 녹화 체크리스트
+
+촬영 전
+- [ ] 화면 녹화 소스: 웹(`fatesaidapp.com` 랜딩 또는 `/saju-calculator`)을 기본으로 쓴다. 앱 화면은 스토어 공개·결제 열린 뒤에 추가.
+- [ ] 입력할 생년월일은 임의 값 또는 본인 것. 실제 지인·고객 것은 쓰지 않는다.
+- [ ] 알림·배터리·시계·개인 앱 이름이 화면에 안 나오게 방해 금지 모드, 상태 막대 정리.
+- [ ] 세로 9:16, 화면 위 14%·아래 35%는 플랫폼 UI에 가려지므로 자막·카드 핵심을 그 밖에 둔다(기존 `meta/04-scripts.md` 규칙 재사용).
+- [ ] 밝기 최대, 확대/축소 없이 기본 배율.
+
+녹화 중
+- [ ] 입력은 천천히(보는 사람이 연·월·일을 읽을 수 있게). 타이핑 소리 없이 음성만.
+- [ ] 카드가 뜨는 순간 유명인 이름이 보이면 **즉시 컷**. 편집에서 가린다.
+- [ ] 유형 이름과 한 줄 설명이 화면에 최소 2초 머무르게.
+
+편집
+- [ ] 유명인 이름은 블러가 아니라 단색 박스로 덮는다(블러는 복원돼 보일 수 있음). 이름뿐 아니라 얼굴 사진이 있으면 같이 가린다.
+- [ ] 자막은 말과 똑같이. 수치·"free"는 사실일 때만.
+- [ ] 마지막 컷에 "Not medical or psychological advice" 같은 문구는 영상엔 불필요하나, 설명란에 한 줄 둔다(아래 캡션 틀).
+- [ ] 내보내기 전 훅 점검표(위 2장 A~E)를 다시 읽는다.
+
+게시 전
+- [ ] 프로필 링크의 UTM이 맞는지 확인(4장).
+- [ ] AI 음성을 썼으면 5장 표기를 넣었는지.
+- [ ] 같은 영상을 세 곳에 올릴 때 플랫폼 워터마크가 남은 파일을 다른 곳에 재업로드하지 않는다(원본 내보내기 파일 사용).
+
+## 4. 링크·UTM 규칙
+
+웹 이벤트는 `utm_source/medium/campaign/content`를 기록한다(소문자 영숫자·`_-`, 40자 이하, `WIKI.md` 측정 항목). 영상 본문에는 링크를 넣을 수 없는 곳이 많으므로 **프로필 링크**를 플랫폼별로 다르게 설정한다.
+
+| 플랫폼 | 프로필 링크 |
+|---|---|
+| TikTok | `https://www.fatesaidapp.com/?utm_source=tiktok&utm_medium=organic&utm_campaign=shortform` |
+| Instagram | `https://www.fatesaidapp.com/?utm_source=instagram&utm_medium=organic&utm_campaign=shortform` |
+| YouTube | `https://www.fatesaidapp.com/?utm_source=youtube&utm_medium=organic&utm_campaign=shortform` |
+
+- 훅별 구분(`utm_content=hook01` 등)은 프로필 링크 하나에 못 넣는다. 훅별 성과는 플랫폼 분석(조회·저장·프로필 클릭)으로 보고, 웹에서는 플랫폼별만 센다. 훅별 링크가 필요하면 영상 댓글 고정 링크나 설명란 링크에 `utm_content=hookNN`을 쓴다(플랫폼이 허용하는 곳만).
+- 링크는 미리 한 번 열어 랜딩이 뜨는지 확인한다.
+
+## 5. AI 음성 사용 시 표기
+
+- 영상 설명란 첫 줄 또는 마지막 줄: `Voiceover is AI-generated.`
+- 틱톡의 AI 생성 콘텐츠 라벨, 인스타그램·유튜브의 합성 콘텐츠 표시 옵션은 각 플랫폼의 업로드 화면에서 켠다. 플랫폼별 정확한 위치와 의무 범위는 정책이 바뀔 수 있어 **업로드 시점에 화면 안내를 따른다(미확인)**.
+- 얼굴 출연 영상에는 이 문구가 필요 없다. 얼굴과 AI 음성을 섞으면 AI 음성이 들어간 영상에만 쓴다.
+- 실존 인물을 흉내 낸 목소리는 쓰지 않는다.
+
+## 6. 게시 캡션·해시태그 틀
+
+캡션 틀 (플랫폼 공통, 줄바꿈 유지):
+
+```text
+{hook 한 문장, 영상 자막과 동일}
+Free saju type card from a birth date: link in bio.
+Self-reflection tool, not medical or psychological advice.
+#saju #koreansaju #fourpillars #astrology #personalitytypes
+```
+
+- 해시태그는 3~5개. 위 5개로 시작해 첫 2주 성과를 보고 바꾼다. 어떤 태그가 영어권에서 노출이 큰지는 확인하지 못했다(직접 검색 필요).
+- "정확", "맞았다", "믿어도 된다", 후기 인용을 캡션에 쓰지 않는다.
+- 댓글 유도 문구는 생년월일을 달라고 하지 않는다. 쓰려면 "Which element is biggest in your chart?"처럼 내용 질문만.
+- 유료 협찬이 아닌 자기 채널 게시물에는 협찬 표기가 필요 없다. 크리에이터 시딩은 6번 키트에서 다룬다.
+
+## 7. 제작 흐름 (주 4~5개 목표)
+
+1. 월요일: 훅 2개 고르고 임의 생년월일 3세트 준비.
+2. 하루에 같은 형식으로 2~3개 연속 촬영(화면 녹화 1회 + 얼굴 출연 컷 따로).
+3. 편집 후 3장 체크리스트 → 게시.
+4. 게시 48시간 뒤 훅별 조회·저장·프로필 클릭을 `marketing/` 아래 성과 기록표(6번 시딩 키트의 표와 같은 양식)에 적는다.
+
+## 훅 점검 스크립트
+
+```bash
+python3 - <<'EOF'
+import re
+hooks = """This free tool turns one birth date into one of 50 saju types.
+Korean saju reads a birth date as four pillars. Here's what the card looks like.
+One birth date in. One saju type card out.
+This is what a saju type card looks like.
+The Korean birth chart that only needs a birthday to get started.
+A saju chart uses a birth date, time, and city. Here's how the card gets made.
+Saju has something called a Day Master. This app finds it from a birthday.
+Ten Day Masters, fifty saju types. Here's how a birthday lands on one.
+Same app, three different birthdays, three different cards.
+I typed three birthdays into a Korean saju app. Here are the cards.
+The five elements in a saju chart, shown as one simple bar.
+This saju app explains the chart in plain English, no jargon.
+Saju 101: why a birth date has four pillars.
+Two birth dates in, one relationship name out. A look at saju compatibility.
+A saju type card made to share. Free, from a birth date.""".split("\n")
+banned = r"accura|exact|proven|predict|fortune|money|bank|pay|wallet|invest|lucky|unlucky|doom|you are|you're|countdown|last chance"
+print(len(hooks), "hooks")
+for i,h in enumerate(hooks,1):
+    m = re.search(banned, h, re.I)
+    print(i, "FAIL "+m.group(0) if m else "ok", len(h))
+EOF
+```
