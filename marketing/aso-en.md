@@ -91,8 +91,18 @@ Smoother, more readable reports and a refreshed look across the app.
 메모: 1.2.0 재제출 때 실제 변경과 맞는지 사용자가 확인. 근거 없는 주장은 넣지 않았다.
 
 ### iOS 스크린샷 캡션 (화면당 짧게, 각 limit 40으로 자체 제한)
-| # | 화면 | 캡션 |
-|---|---|---|
+2026-10-16 실기기 캡처 4장을 6.9"(1290x2796)로 확대해 `mobile/store-assets/ios-screenshots/*-iphone69.png`로 저장. 원본이 924x2000이라 약간 부드럽다. 구독·구매 화면, "money"가 나오는 오늘 개요, Money 검사 카드가 보이는 화면은 뺐다.
+| # | 화면 | 파일 | 캡션 (글자 수) |
+|---|---|---|---|
+| 1 | 유형 공개 | `type-iphone69.png` | Your saju type, from one birth date (35) |
+| 2 | 홈(오늘의 리듬) | `home-iphone69.png` | Today's rhythm, in plain words (30) |
+| 3 | 사주 차트 | `chart-iphone69.png` | Your Four Pillars chart, explained (34) |
+| 4 | 심리검사 목록 | `tests-iphone69.png` | Self-insight tests, at your own pace (36) |
+| (대기) | 심층 리포트 | 구매 계약이 열린 뒤 실기기 캡처 | A report built from your own answers (36) |
+
+iPad 13"는 기존 3장(`home/qa/type-ipad13.png`)을 그대로 쓴다. 기존 iPhone 6.5" 3장은 이번 개편 전 화면이라 쓰지 않는다.
+
+---|---|---|
 | 1 | 유형 공개 (기존 `type-iphone65.png`) | Your saju type, from one birth date |
 | 2 | Q&A (기존 `qa-iphone65.png`) | Ask what's on your mind |
 | 3 | 원국 차트 (유형 화면에 포함, 기존 `type-*`로 대체 가능) | Your Four Pillars chart, explained |
