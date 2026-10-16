@@ -121,14 +121,23 @@ export default function ReportPager({
   }, [reviewAtEnd, atEnd]);
 
   // Also re-applied once the pager is measured, so a page chosen before layout still lands.
+  // Page a programmatic scroll is heading to. Android emits a momentum-end for an animation it
+  // cancels or restarts, with the offset at that moment; read as a swipe it pulled pageIndex
+  // back to the old page and undid jumps like the closing card's "see the plan again".
+  const scrollTargetRef = useRef<number | null>(null);
   useEffect(() => {
+    scrollTargetRef.current = pageIndex;
     scrollRef.current?.scrollTo({ x: pageIndex * screenWidth, animated: true });
   }, [pageIndex, screenWidth, pageHeight]);
 
   const goTo = (index: number) => onPageIndexChange(Math.max(0, Math.min(pages.length - 1, index)));
 
   function handleMomentumEnd(e: NativeSyntheticEvent<NativeScrollEvent>) {
-    goTo(Math.round(e.nativeEvent.contentOffset.x / screenWidth));
+    const landed = Math.round(e.nativeEvent.contentOffset.x / screenWidth);
+    const target = scrollTargetRef.current;
+    if (target !== null && landed !== target) return;
+    scrollTargetRef.current = null;
+    goTo(landed);
   }
 
   const total = pages.length;
@@ -174,6 +183,9 @@ export default function ReportPager({
           showsHorizontalScrollIndicator={false}
           scrollEventThrottle={16}
           onScroll={onScroll}
+          onScrollBeginDrag={() => {
+            scrollTargetRef.current = null;
+          }}
           onMomentumScrollEnd={handleMomentumEnd}
         >
           {pages.map((p) => (
