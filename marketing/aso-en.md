@@ -13,7 +13,7 @@
 
 ## 확인이 필요한 것 (사용자)
 
-1. **이름 표기**: `mobile/app.json`의 앱 이름은 "Fate Said"(띄어쓰기), 웹·브랜드는 "Fatesaid". 스토어에 이미 등록된 이름이 있으면 아래 제목 앞부분을 그것에 맞춘다(등록 이름은 이 저장소에서 확인하지 못함).
+1. ~~이름 표기~~ 확정(2026-10-16): 스토어 등록 이름은 두 곳 모두 "Fate Said"(띄어쓰기). 본문 브랜드 표기도 모두 "Fate Said"로 맞춤. (원래 메모: `mobile/app.json`의 앱 이름은 "Fate Said"(띄어쓰기), 웹·브랜드는 "Fatesaid". 스토어에 이미 등록된 이름이 있으면 아래 제목 앞부분을 그것에 맞춘다(등록 이름은 이 저장소에서 확인하지 못함).)
 2. **구독 가격 표시**: 설명에 금액을 넣지 않았다(위 규칙). Apple은 앱 안 구독 화면에 가격·갱신 문구를 요구하며 설명에는 구독 존재와 이용약관·개인정보처리방침 링크만 둔다. 스토어 가격표는 스토어가 자동으로 보여 준다.
 3. **스크린샷**: 현재 `mobile/store-assets/ios-screenshots/`에는 홈·Q&A·유형 3종(iPhone 6.5", iPad 13")뿐이다. 아래 캡션 5개 중 4~5번은 새 화면 캡처가 필요하다(이 항목 범위 밖, 발견 사항에 기록).
 4. **스페인어·한국어 등록정보**: SPEC에 따라 영어 성과 뒤로 미룬다.
@@ -24,7 +24,7 @@
 
 ### iOS 앱 이름 (limit 30)
 ```text
-Fatesaid: Saju Self-Insight
+Fate Said: Saju Self-Insight
 ```
 
 ### iOS 부제 (limit 30)
@@ -45,9 +45,9 @@ Enter your birth date and meet your saju type, the Korean Four Pillars pattern b
 
 ### iOS 설명 (limit 4000)
 ```text
-Fatesaid turns your birth date into a clear picture of your saju (Korean Four Pillars) and helps you reflect on it, one small step at a time.
+Fate Said turns your birth date into a clear picture of your saju (Korean Four Pillars) and helps you reflect on it, one small step at a time.
 
-Saju is a centuries-old Korean way of reading a person through four pillars: year, month, day, and hour. Fatesaid calculates your chart from your birth details, then explains it in plain language, with no jargon to decode.
+Saju is a centuries-old Korean way of reading a person through four pillars: year, month, day, and hour. Fate Said calculates your chart from your birth details, then explains it in plain language, with no jargon to decode.
 
 START FREE
 • Your saju type: one of 50 types, found from your birth date alone
@@ -63,7 +63,7 @@ GO DEEPER
 • A personal report that sets your chart beside what you actually answered and said, with a PDF you can keep
 • A yearly report with a month-by-month timeline and a step-by-step plan
 
-FATESAID PRO (optional subscription)
+FATE SAID PRO (optional subscription)
 • More questions per day
 • Today, this week, this month, and new-year readings
 • Find good days for an interview, a first date, a move, or a fresh start
@@ -72,12 +72,12 @@ FATESAID PRO (optional subscription)
 Reports can also be bought one at a time, with no subscription needed.
 
 HOW WE SEE IT
-There are no bad days or bad matches here. Fatesaid talks about rhythms: when to push, when to pace yourself, and why. Readings are calculated from your birth date and presented as a tool for reflection. They are not medical, psychological, or professional advice, and not a diagnosis. If you are struggling, please reach out to a qualified professional or a local support line.
+There are no bad days or bad matches here. Fate Said talks about rhythms: when to push, when to pace yourself, and why. Readings are calculated from your birth date and presented as a tool for reflection. They are not medical, psychological, or professional advice, and not a diagnosis. If you are struggling, please reach out to a qualified professional or a local support line.
 
 PRIVACY
-No account is needed. Your results and reports are stored on your device. We do not sell your personal data.
+No account is needed. Your results and reports are kept on your device. To write your answers, the questions you choose and your chart details are sent securely to an AI service. We do not sell your personal data.
 
-Subscription terms: Fatesaid Pro renews automatically unless cancelled at least 24 hours before the end of the current period. Manage or cancel any time in your Apple ID settings.
+Subscription terms: Fate Said Pro renews automatically unless cancelled at least 24 hours before the end of the current period. Manage or cancel any time in your Apple ID settings.
 
 Terms of Use: https://www.fatesaidapp.com/terms
 Privacy Policy: https://www.fatesaidapp.com/privacy
@@ -86,7 +86,7 @@ Privacy Policy: https://www.fatesaidapp.com/privacy
 
 ### iOS 새로운 기능 What's New (limit 4000)
 ```text
-Smoother, more readable reports, a refreshed look across the app, and fixes for report page navigation on Android.
+Smoother, more readable reports and a refreshed look across the app.
 ```
 메모: 1.2.0 재제출 때 실제 변경과 맞는지 사용자가 확인. 근거 없는 주장은 넣지 않았다.
 
@@ -105,7 +105,7 @@ Smoother, more readable reports, a refreshed look across the app, and fixes for 
 
 ### Play 앱 이름 (limit 30)
 ```text
-Fatesaid: Saju Self-Insight
+Fate Said: Saju Self-Insight
 ```
 
 ### Play 간단한 설명 (limit 80)
@@ -115,9 +115,9 @@ Find your Korean saju type, daily rhythm, and self-insight tests.
 
 ### Play 자세한 설명 (limit 4000)
 ```text
-Fatesaid turns your birth date into a clear picture of your saju (Korean Four Pillars) and helps you reflect on it, one small step at a time.
+Fate Said turns your birth date into a clear picture of your saju (Korean Four Pillars) and helps you reflect on it, one small step at a time.
 
-Saju is a centuries-old Korean way of reading a person through four pillars: year, month, day, and hour. Fatesaid calculates your chart from your birth details, then explains it in plain language, with no jargon to decode.
+Saju is a centuries-old Korean way of reading a person through four pillars: year, month, day, and hour. Fate Said calculates your chart from your birth details, then explains it in plain language, with no jargon to decode.
 
 START FREE
 • Your saju type: one of 50 types, found from your birth date alone
@@ -133,7 +133,7 @@ GO DEEPER
 • A personal report that sets your chart beside what you actually answered and said, with a PDF you can keep
 • A yearly report with a month-by-month timeline and a step-by-step plan
 
-FATESAID PRO (optional subscription)
+FATE SAID PRO (optional subscription)
 • More questions per day
 • Today, this week, this month, and new-year readings
 • Find good days for an interview, a first date, a move, or a fresh start
@@ -142,12 +142,12 @@ FATESAID PRO (optional subscription)
 Reports can also be bought one at a time, with no subscription needed.
 
 HOW WE SEE IT
-There are no bad days or bad matches here. Fatesaid talks about rhythms: when to push, when to pace yourself, and why. Readings are calculated from your birth date and presented as a tool for reflection. They are not medical, psychological, or professional advice, and not a diagnosis. If you are struggling, please reach out to a qualified professional or a local support line.
+There are no bad days or bad matches here. Fate Said talks about rhythms: when to push, when to pace yourself, and why. Readings are calculated from your birth date and presented as a tool for reflection. They are not medical, psychological, or professional advice, and not a diagnosis. If you are struggling, please reach out to a qualified professional or a local support line.
 
 PRIVACY
-No account is needed. Your results and reports are stored on your device. We do not sell your personal data.
+No account is needed. Your results and reports are kept on your device. To write your answers, the questions you choose and your chart details are sent securely to an AI service. We do not sell your personal data.
 
-Fatesaid Pro renews automatically until cancelled. Manage or cancel any time from your Google Play subscriptions.
+Fate Said Pro renews automatically until cancelled. Manage or cancel any time from your Google Play subscriptions.
 
 Terms of Use: https://www.fatesaidapp.com/terms
 Privacy Policy: https://www.fatesaidapp.com/privacy
