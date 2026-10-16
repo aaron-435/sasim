@@ -53,7 +53,20 @@ export const EVENT_NAMES = [
 export type EventName = (typeof EVENT_NAMES)[number];
 
 /** Short, enumerable values only — never a date, a name or something the user typed. */
-export const PROP_KEYS = ["step", "surface", "product", "kind", "value", "topic", "position", "module", "via"] as const;
+export const PROP_KEYS = ["step", "surface", "product", "kind", "value", "topic", "position", "module", "via", "utm_source", "utm_medium", "utm_campaign", "utm_content"] as const;
+
+/** Campaign tags (web arrivals from ads/videos): lowercase letters, digits, "_" and "-", up to 40 chars. */
+export const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content"] as const;
+export const MAX_UTM_LENGTH = 40;
+const UTM_PATTERN = /^[a-z0-9_-]+$/;
+const UTM_SET = new Set<string>(UTM_KEYS);
+
+/** Returns the tag lowercased if it is a valid campaign tag, else null (never a date, name or free text). */
+export function cleanUtmValue(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const v = raw.trim().toLowerCase();
+  return v.length > 0 && v.length <= MAX_UTM_LENGTH && UTM_PATTERN.test(v) && !DATE_LIKE.test(v) ? v : null;
+}
 
 export const PLATFORMS = ["ios", "android", "app-web", "site"] as const;
 export const LOCALES = ["ko", "en", "es"] as const;
@@ -120,6 +133,11 @@ export function parseEventBatch(body: unknown): CleanBatch | string {
       props = {};
       for (const [key, value] of entries) {
         if (!KEY_SET.has(key)) return `prop:${key}`;
+        if (UTM_SET.has(key)) {
+          if (cleanUtmValue(value) !== value) return `prop:${key}`;
+          props[key] = value as string;
+          continue;
+        }
         if (typeof value === "boolean") props[key] = value;
         else if (typeof value === "number") {
           // Small counts only (a step index, a page number) — keeps a birth year from passing as a number.

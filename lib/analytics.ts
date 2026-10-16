@@ -21,6 +21,7 @@
  */
 
 import { track } from "@vercel/analytics";
+import { cleanUtmValue, UTM_KEYS } from "./eventSchema";
 import type { EventName, PROP_KEYS } from "./eventSchema";
 
 const ANON_ID_KEY = "fatesaid_anon_id";
@@ -51,6 +52,35 @@ function currentLocale(): string | null {
   return ok(navigator.language?.slice(0, 2).toLowerCase());
 }
 
+const UTM_STORAGE_KEY = "fatesaid_utm";
+
+/**
+ * Campaign tags from the arrival URL (?utm_source=tiktok&…), kept for the browser session so
+ * later pages and events from the same visit carry them. Only values that pass cleanUtmValue.
+ */
+function campaignTags(): Record<string, string> {
+  const tags: Record<string, string> = {};
+  try {
+    const params = new URLSearchParams(window.location.search);
+    for (const key of UTM_KEYS) {
+      const v = cleanUtmValue(params.get(key));
+      if (v) tags[key] = v;
+    }
+    if (Object.keys(tags).length > 0) {
+      sessionStorage.setItem(UTM_STORAGE_KEY, JSON.stringify(tags));
+      return tags;
+    }
+    const stored = JSON.parse(sessionStorage.getItem(UTM_STORAGE_KEY) ?? "{}");
+    for (const key of UTM_KEYS) {
+      const v = cleanUtmValue(stored?.[key]);
+      if (v) tags[key] = v;
+    }
+  } catch {
+    // storage blocked or bad JSON — no tags
+  }
+  return tags;
+}
+
 /** Fire-and-forget write to our own event log. Never throws, never awaited. */
 export function logEvent(name: EventName, props?: Partial<Record<(typeof PROP_KEYS)[number], string | number | boolean>>, locale?: string) {
   if (typeof window === "undefined") return;
@@ -60,7 +90,7 @@ export function logEvent(name: EventName, props?: Partial<Record<(typeof PROP_KE
       platform: "site",
       locale: locale ?? currentLocale(),
       dev: window.location.hostname === "localhost",
-      events: [{ name, props, ts: Date.now() }],
+      events: [{ name, props: { ...campaignTags(), ...props }, ts: Date.now() }],
     });
     fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => {});
   } catch {

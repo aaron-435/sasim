@@ -10,9 +10,10 @@ SPEC: `SPEC.md` (= `MARKETING_SPEC.md`, 2026-10-16 결정 반영). 직전 UI 개
   - 범위: Apple 오퍼 코드/Google 프로모 코드가 우리 IAP 종류(리포트=비소모성)에 쓸 수 있는지 공식 문서로 확인, 자체 서버 코드(권한 부여) 설계안과 비교. 결과는 `marketing/CODES.md`(한국어, 출처 링크 포함, 추정은 표시).
   - QA: 파일 존재 + 모든 주장에 출처 링크. 추천안 1개와 이유 명시. 사용자가 방식 승인 전에는 3번 착수 금지.
   - QA: `ls -l marketing/CODES.md` + `grep -c https://` → 파일 존재, 링크 다수, 추정은 `(추정)` 표시, 추천 (c) 자체 코드+RevenueCat 프로모션 권한 1개 명시. (명령은 존재·링크 수만 보증, 내용은 WebFetch로 읽은 Apple·RevenueCat 문서 기준)
-- [ ] 2. UTM 기록
+- [x] 2. UTM 기록
   - 범위: `lib/eventSchema.ts` PROP_KEYS에 utm 4개 키 추가(값은 소문자 영숫자·`_-` 최대 40자), 랜딩·계산기 도착 시 쿼리에서 읽어 이벤트에 포함. 개인정보 값은 받지 않는다.
   - QA: `npx tsc --noEmit` 통과 + `npm run dev`에서 `/?utm_source=tiktok&utm_campaign=test` 방문 후 `/api/events` 요청 본문에 utm이 실리는지 네트워크 로그로 확인(어느 명령/로그로 봤는지 기록).
+  - QA: `npx tsc --noEmit` → 내 변경 파일 오류 0(남은 2건은 `.next/types/.../report-pdf/diag/route.ts` 낡은 생성물, 기존 문제). mobile 아님, work-dev 프리뷰에서 `/?utm_source=tiktok&utm_campaign=test` 방문 후 fetch 가로채기로 본 `landing_cta_click` 본문에 `utm_source:tiktok, utm_campaign:test` 포함 확인, 서버 로그 `POST /api/events 200`. 직접 POST로 대문자·공백·날짜꼴·41자 값은 400 `prop:utm_source`, 정상 값은 200.
 - [ ] 3. 자체 리포트 코드 구현 (1번에서 자체 코드로 결정된 경우만)
   - 범위: 1번 승인안대로. 서버 검증·1회 사용·만료, 발급 스크립트. 서버 권한 확인 경로 보안 검토(`verifier`).
   - QA: 1번 승인안에 적힌 테스트 + `npx tsc --noEmit` + `npm run lint && npm run build`.
@@ -47,5 +48,7 @@ SPEC: `SPEC.md` (= `MARKETING_SPEC.md`, 2026-10-16 결정 반영). 직전 UI 개
 - [ ] 바. (사용자 결정) 4주 뒤 성과로 설치 최적화 캠페인(SDK 필요) 별도 SPEC을 쓸지.
 
 ## 발견 사항
+- `.next/types`에 지워진 `app/api/report-pdf/diag/route`를 가리키는 낡은 타입이 남아 `tsc --noEmit`이 2건 실패한다(코드 문제 아님, `.next` 정리하면 사라질 것 — 미확인).
+- 계산기(`/saju-calculator`)는 도착 시 이벤트가 없고 `type_reveal_view`가 나올 때 utm이 같이 실린다(세션 저장 덕분에 랜딩→계산기 이동에도 유지). 도착만 세려면 계산기 view 이벤트가 따로 필요(8번에서 판단).
 - 궁합 리포트(소모성)는 권한이 없어 RevenueCat 프로모션 권한으로 못 연다 → 시딩 상품은 심층·신년 리포트로 한정(CODES.md).
 - 앱이 익명 RevenueCat id를 쓰면 재설치 시 프로모션 권한이 사라질 수 있음(미확인) → 3번 구현 때 확인.
