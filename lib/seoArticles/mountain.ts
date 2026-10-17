@@ -57,7 +57,7 @@ const mountain: ArticleSet = {
     description:
       "사주에서 무토(戊土) 일간, 곧 산은 어떤 모습일까요? 단단하게 지키는 방식, 잘하는 것, 사람들과의 관계, 나를 채워 주는 기운을 살펴봅니다.",
     h1: "무토(戊土) 일간: 양의 흙, 산",
-    lead: "사주(四柱)에서 일간(日干)은 내가 태어난 날의 천간이에요. 사주 안에서 ‘나 자신’을 뜻하고, 모두 열 가지가 있어요. 양의 흙인 무토(戊土)는 그중 다섯 번째로, 여기서는 ‘산’이라고 불러요. 사주는 오랜 문화 전통이자 나를 돌아보는 하나의 틀이에요. 아래 내용은 정해진 결론이 아니라 한번 대어 보는 경향으로 읽어 주세요.",
+    lead: "사주(四柱)에서 일간(日干)은 내가 태어난 날의 천간이에요. 사주 안에서 ‘나 자신’을 뜻하고, 모두 열 가지가 있어요. 양의 흙인 무토(戊土)는 그중 다섯 번째로, 여기서는 ‘산’이라고 불러요. 사주는 오랜 문화 전통이자 나를 돌아보는 하나의 틀이에요. 아래 내용은 한번 대어 보는 경향으로 읽어 주세요.",
     sections: [
       {
         heading: "제자리를 지키는 산",
@@ -110,7 +110,7 @@ const mountain: ArticleSet = {
       {
         heading: "Una montaña que se queda donde está",
         body: [
-          "Imagina una montaña grande al borde de una llanura. No persigue nada. Se queda donde está, y el paisaje a su alrededor se orienta a partir de ella. Esa es la imagen de la montaña. Quienes tienen este Maestro del Día suelen describir un estilo parecido: sin prisa, constante y difícil de apurar.",
+          "Imagina una montaña grande al borde de una llanura. No persigue nada. Se queda donde está, y todo lo que la rodea se orienta a partir de ella. Esa es la imagen de la montaña. Quienes tienen este Maestro del Día suelen describir un estilo parecido: sin prisa, constante y difícil de apurar.",
           "La Tierra es el elemento del suelo, eso sobre lo que todo crece y descansa, y el yang es su forma alta, firme y visible desde lejos. Su hermana yin, el campo (己), es baja y abierta, y toma forma según lo que se siembra en ella. El campo recibe y se adapta. La montaña tiende a plantarse y sostener. Quizá te muevas menos veces, pero cuando decides, suele ser con intención y no es fácil hacerte cambiar de rumbo.",
         ],
       },

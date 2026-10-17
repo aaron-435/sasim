@@ -56,19 +56,19 @@ const ko: DailyFortuneContent = {
       overviewVariants: [
         {
           headline: "거울 같은 하루",
-          body: "오늘의 기운이 내 타고난 결과 정확히 겹치는 날입니다. 애써 꾸미거나 무리해서 다른 사람인 척하지 않아도, 평소의 나 그대로 움직이는 게 가장 잘 맞는 하루입니다. 익숙한 방식으로 일을 처리하면 생각보다 매끄럽게 풀리고, 낯선 방법을 새로 시도하기보다는 이미 검증된 루틴을 믿고 가는 편이 낫습니다. 다만 나와 똑같은 기운이라 보니 내가 못 보는 사각지대도 그대로 반복될 수 있습니다. 평소에 자주 놓치던 부분이 있다면 오늘 유독 눈에 띄게 다시 걸릴 수 있으니, 그 부분만큼은 한 번 더 확인하고 넘어가세요. 사람 관계에서도 비슷한 성향의 사람과는 말이 잘 통하지만, 다른 의견을 가진 사람과는 서로 자기 말만 하다 끝날 수 있습니다. 큰 변화를 만들기보다는, 이미 갖고 있는 걸 다지고 정리하는 데 하루를 쓰는 게 더 남는 장사입니다. 전체적으로 무난하고 편안한 하루지만, '편안함'을 '멈춤'으로 착각하지 않는 게 오늘의 숙제입니다.",
+          body: "오늘의 기운이 내 타고난 결과 정확히 겹칩니다. 애써 꾸미거나 무리해서 다른 사람인 척하지 않아도, 평소의 나 그대로 움직이는 게 가장 잘 맞는 하루입니다. 익숙한 방식으로 일을 처리하면 생각보다 매끄럽게 풀리고, 낯선 방법을 새로 시도하기보다는 이미 검증된 루틴을 믿고 가 보세요. 다만 나와 똑같은 기운이라 보니 내가 못 보는 사각지대도 그대로 반복될 수 있습니다. 평소에 자주 놓치던 부분이 있다면 오늘 유독 눈에 띄게 다시 걸릴 수 있으니, 그 부분만큼은 한 번 더 확인하고 넘어가세요. 사람 관계에서도 비슷한 성향의 사람과는 말이 잘 통하지만, 다른 의견을 가진 사람과는 서로 자기 말만 하다 끝날 수 있습니다. 큰 변화를 만들기보다는, 이미 갖고 있는 걸 다지고 정리하는 데 하루를 쓰는 게 더 남는 장사입니다. 전체적으로 무난하고 편안한 하루지만, '편안함'을 '멈춤'으로 착각하지 않는 게 오늘의 숙제입니다.",
         },
         {
           headline: "익숙한 옷을 입은 날",
-          body: "몸에 맞는 옷을 입은 것처럼, 오늘은 나답게 움직이는 것 자체가 정답인 날입니다. 새 옷(새로운 방식)을 억지로 껴입기보다는, 손에 익은 방법과 도구로 하루를 채워보세요. 결과물의 완성도가 오히려 평소보다 안정적으로 나올 가능성이 높습니다. 다만 편한 옷만 입다 보면 가끔은 옷장 정리를 미루게 되듯, 오늘도 묵혀둔 일들을 손보기보다는 계속 미루고 싶은 유혹이 클 수 있습니다. 작은 숙제 하나 정도는 오늘 끝내겠다고 스스로 정해두면 나중에 훨씬 편해집니다. 대화에서도 억지로 꾸민 말보다는 평소 말투 그대로가 더 진심으로 전달되는 하루입니다. 굳이 특별한 이벤트를 만들지 않아도, 사람들은 오늘의 나를 편안하게 느낄 가능성이 큽니다. 무리한 계획보다는 하루를 있는 그대로 흘러가게 두는 게 결국 더 남는 하루가 될 것입니다.",
+          body: "몸에 맞는 옷을 입은 것처럼, 오늘은 나답게 움직이는 것 자체가 정답입니다. 새 옷(새로운 방식)을 억지로 껴입기보다는, 손에 익은 방법과 도구로 하루를 채워보세요. 결과물의 완성도가 오히려 평소보다 안정적으로 나올 가능성이 높습니다. 다만 편한 옷만 입다 보면 가끔은 옷장 정리를 미루게 되듯, 오늘도 묵혀둔 일들을 손보기보다는 계속 미루고 싶은 유혹이 클 수 있습니다. 작은 숙제 하나만 오늘 끝내겠다고 정해두면 나중이 훨씬 편해지니 꼭 챙겨보세요. 대화에서도 억지로 꾸민 말보다는 평소 말투 그대로가 더 진심으로 전달되는 하루입니다. 굳이 특별한 이벤트를 만들지 않아도, 사람들은 오늘의 나를 편안하게 느낄 가능성이 큽니다. 무리한 계획보다는 하루를 있는 그대로 흘러가게 두는 쪽이 더 많이 남습니다.",
         },
         {
           headline: "같은 파도를 타는 하루",
-          body: "오늘의 기운은 내가 원래 타고 있던 파도와 같은 방향, 같은 리듬으로 흘러갑니다. 억지로 방향을 틀거나 속도를 바꾸려 하지 않아도, 지금 흐름에 몸을 맡기는 것만으로 충분히 앞으로 나아갈 수 있는 날입니다. 일에서든 관계에서든 원래 하던 패턴을 유지하는 쪽이 유리하고, 갑자기 다른 방식을 시도하면 오히려 균형을 잃기 쉽습니다. 같은 파도라는 건 동시에, 같은 곳에서 넘어질 위험도 있다는 뜻입니다. 예전에 한 번 걸렸던 실수나 습관이 있다면 오늘 다시 그 자리에서 흔들릴 수 있으니 미리 마음의 준비를 해두는 게 좋습니다. 대화 상대가 나와 성향이 비슷한 사람이라면 유난히 편안하게 느껴지고, 서로 다른 얘기를 오래 나눌 필요 없이도 이해가 빠를 것입니다. 반대로 나와 결이 다른 사람과는 그 차이가 평소보다 더 크게 느껴질 수 있습니다. 무리해서 새 파도를 찾기보다, 지금 타고 있는 파도를 더 능숙하게 타는 연습을 하는 하루로 삼아보세요.",
+          body: "오늘의 기운은 내가 원래 타고 있던 파도와 같은 방향, 같은 리듬으로 흘러갑니다. 억지로 방향을 틀거나 속도를 바꾸려 하지 않아도, 지금 흐름에 몸을 맡기는 것만으로 충분히 앞으로 나아갈 수 있습니다. 일에서든 관계에서든 원래 하던 패턴을 유지하는 쪽이 유리하고, 갑자기 다른 방식을 시도하면 오히려 균형을 잃기 쉽습니다. 같은 파도라면 같은 곳에서 넘어질 위험도 함께 있다는 점을 기억하세요. 예전에 한 번 걸렸던 실수나 습관이 있다면 오늘 다시 그 자리에서 흔들릴 수 있으니 미리 마음의 준비를 해두는 게 좋습니다. 대화 상대가 나와 성향이 비슷한 사람이라면 유난히 편안하게 느껴지고, 서로 다른 얘기를 오래 나눌 필요 없이도 이해가 빠를 것입니다. 반대로 나와 결이 다른 사람과는 그 차이가 평소보다 더 크게 느껴질 수 있습니다. 무리해서 새 파도를 찾기보다, 지금 타고 있는 파도를 더 능숙하게 타는 연습을 하는 하루로 삼아보세요.",
         },
         {
           headline: "늘 걷던 길 위에서",
-          body: "오늘은 늘 걷던 길을 그대로 걷는 게 가장 안전하고 효율적인 날입니다. 지도를 새로 그리거나 지름길을 찾으려 애쓰기보다는, 이미 잘 아는 경로로 움직이는 편이 시간과 에너지 모두를 아껴줍니다. 익숙한 길이라 발밑을 잘 안 보고 걷게 되는 것처럼, 오늘도 늘 하던 실수를 무심코 반복할 위험이 있습니다. 특히 돈이나 약속처럼 평소에도 자주 흔들리던 부분은 한 번 더 점검하고 넘어가는 게 좋습니다. 사람들과의 대화에서도 오래 알고 지낸 사이일수록 편안함이 배가되는 하루라, 굳이 어려운 이야기를 새로 꺼내지 않아도 관계가 자연스럽게 다져집니다. 새로운 사람이나 낯선 환경과의 만남은 평소보다 설렘이 덜할 수 있지만, 그게 나쁜 신호는 아닙니다. 오늘 하루의 성취는 화려함보다 꾸준함에서 나올 가능성이 큽니다. 지금 걷고 있는 길이 맞다는 확신을 다시 얻는 날로 삼아보세요.",
+          body: "오늘은 늘 걷던 길을 그대로 걷는 게 가장 안전하고 효율적입니다. 지도를 새로 그리거나 지름길을 찾으려 애쓰기보다는, 이미 잘 아는 경로로 움직이는 편이 시간과 에너지 모두를 아껴줍니다. 익숙한 길이라 발밑을 잘 안 보고 걷게 되는 것처럼, 오늘도 늘 하던 실수를 무심코 반복할 위험이 있습니다. 특히 돈이나 약속처럼 평소에도 자주 흔들리던 부분은 한 번 더 점검하고 넘어가세요. 사람들과의 대화에서도 오래 알고 지낸 사이일수록 편안함이 배가되는 하루라, 굳이 어려운 이야기를 새로 꺼내지 않아도 관계가 자연스럽게 다져집니다. 새로운 사람이나 낯선 환경과의 만남은 평소보다 설렘이 덜할 수 있지만, 그게 나쁜 신호는 아닙니다. 오늘의 성취는 화려함보다 꾸준함에서 나옵니다. 지금 걷고 있는 길이 맞다는 확신을 다시 얻는 날로 삼아보세요.",
         },
       ],
       wealth: "돈 흐름도 평소와 비슷하게 흘러가는 날입니다. 새로운 투자나 큰 지출보다는, 이미 하던 방식을 그대로 유지하는 쪽이 안전합니다.",
@@ -79,7 +79,7 @@ const ko: DailyFortuneContent = {
       overviewVariants: [
         {
           headline: "등불을 켜는 하루",
-          body: "오늘은 내 기운이 앞장서서 주변을 밝혀주는 방향으로 흐르는 날입니다. 회의에서 먼저 의견을 내거나, 망설이던 일을 먼저 시작하는 쪽이 유난히 잘 통합니다. 다른 사람이 머뭇거릴 때 내가 먼저 움직이면, 생각보다 쉽게 분위기가 풀리고 일이 진행될 것입니다. 다만 등불은 계속 켜두면 기름이 닳듯, 나 혼자 계속 밝혀주기만 하면 저녁쯤엔 정작 나를 위한 기운이 남지 않을 수 있습니다. 중간에 잠깐 불을 낮추듯 쉬어가는 시간을 꼭 챙기세요. 돈이나 제안에서도 내가 먼저 손을 내미는 쪽이 유리한 하루라, 망설이던 제안이 있다면 오늘 꺼내보는 것도 좋습니다. 다만 계속 베풀기만 하다 보면 지갑도, 마음도 허전해질 수 있으니 적당한 선은 지켜주세요. 오늘 내가 밝힌 불빛은 생각보다 오래, 멀리까지 다른 사람들에게 도움이 될 것입니다.",
+          body: "오늘은 내 기운이 앞장서서 주변을 밝혀주는 방향으로 흐릅니다. 회의에서 먼저 의견을 내거나, 망설이던 일을 먼저 시작하는 쪽이 유난히 잘 통합니다. 다른 사람이 머뭇거릴 때는 내가 먼저 움직여 보세요. 생각보다 쉽게 분위기가 풀리고 일이 진행될 것입니다. 다만 등불은 계속 켜두면 기름이 닳듯, 나 혼자 계속 밝혀주기만 하면 저녁쯤엔 정작 나를 위한 기운이 남지 않을 수 있습니다. 중간에 잠깐 불을 낮추듯 쉬어가는 시간을 꼭 챙기세요. 돈이나 제안에서도 내가 먼저 손을 내미는 쪽이 유리한 하루라, 망설이던 제안이 있다면 오늘 꺼내보는 것도 좋습니다. 다만 계속 베풀기만 하다 보면 지갑도, 마음도 허전해질 수 있으니 적당한 선은 지켜주세요. 오늘 내가 밝힌 불빛은 생각보다 오래, 멀리까지 다른 사람들에게 도움이 될 것입니다.",
         },
         {
           headline: "샘이 되어주는 날",
@@ -91,7 +91,7 @@ const ko: DailyFortuneContent = {
         },
         {
           headline: "다리를 놓는 날",
-          body: "오늘은 내가 나서서 두 사람, 혹은 두 상황 사이를 이어주는 다리 역할을 하게 되는 날입니다. 갈등을 중재하거나, 정보를 전달하거나, 먼저 연결고리를 만들어주는 자리에 서게 될 가능성이 큽니다. 이런 역할이 낯설지 않고 오히려 자연스럽게 느껴지는 하루라, 평소보다 적극적으로 나서봐도 좋습니다. 다만 다리는 양쪽 무게를 다 견뎌야 하듯, 중간에서 조율하다 보면 생각보다 에너지 소모가 클 수 있습니다. 모든 걸 내가 해결하려 하기보다, 연결까지만 해주고 나머지는 당사자들에게 맡기는 것도 필요합니다. 대화나 협업에서 내가 먼저 손을 내미는 쪽이 관계를 훨씬 부드럽게 만들어줄 것입니다. 오늘 놓은 다리 하나가 나중에 예상치 못한 곳에서 나에게 도움으로 돌아올 수 있습니다.",
+          body: "오늘은 내가 나서서 두 사람, 혹은 두 상황 사이를 이어주는 다리 역할을 맡게 됩니다. 갈등을 중재하거나 정보를 전달하거나 먼저 연결고리를 만들어주는 자리에 서기 쉽습니다. 이런 역할이 낯설지 않고 오히려 자연스럽게 느껴지는 하루라, 평소보다 적극적으로 나서봐도 좋습니다. 다만 다리는 양쪽 무게를 다 견뎌야 하듯, 중간에서 조율하다 보면 생각보다 에너지 소모가 클 수 있다는 점을 기억하세요. 모든 걸 내가 해결하려 하기보다, 연결까지만 해주고 나머지는 당사자들에게 맡기는 것도 필요합니다. 대화나 협업에서 내가 먼저 손을 내미는 쪽이 관계를 훨씬 부드럽게 만들어줄 것입니다. 오늘 놓은 다리 하나가 나중에 예상치 못한 곳에서 나에게 도움으로 돌아올 수 있습니다.",
         },
       ],
       wealth: "내가 먼저 움직이는 만큼 돈이 따라오는 날입니다. 제안하거나 먼저 나서는 지출·투자는 좋은 결과로 이어지기 쉽지만, 너무 베풀기만 하면 지갑이 허전해질 수 있습니다.",
@@ -102,11 +102,11 @@ const ko: DailyFortuneContent = {
       overviewVariants: [
         {
           headline: "순풍이 부는 하루",
-          body: "오늘은 내가 애써 노를 젓지 않아도 등 뒤에서 순풍이 불어와 배를 밀어주는 것 같은 흐름입니다. 일이 예상보다 수월하게 풀리고, 도움을 청하지 않았는데도 손을 내밀어주는 사람이 나타날 수 있습니다. 평소라면 며칠 걸릴 일이 오늘은 뜻밖에 빠르게 정리될 가능성도 있습니다. 다만 순풍이 분다고 방향타를 완전히 놓아버리면 배가 엉뚱한 곳으로 흘러갈 수 있으니, 흐름에 몸을 맡기되 최소한의 방향은 스스로 잡고 있어야 합니다. 뜻밖의 제안이나 좋은 소식이 온다면 부담 갖지 말고 편하게 받아들이세요. 오늘만큼은 모든 걸 혼자 해결하려는 습관을 잠시 내려놓아도 괜찮습니다. 순풍은 오래 머물지 않으니, 이 흐름을 타고 갈 수 있는 만큼 멀리 나아가 보세요.",
+          body: "오늘은 내가 애써 노를 젓지 않아도 등 뒤에서 순풍이 불어와 배를 밀어주는 것 같습니다. 일이 예상보다 수월하게 풀리고, 도움을 청하지 않았는데도 손을 내밀어주는 사람이 나타날 수 있습니다. 평소라면 며칠 걸릴 일이 오늘은 뜻밖에 빠르게 정리될 수도 있으니 기대해 보세요. 다만 순풍이 분다고 방향타를 완전히 놓아버리면 배가 엉뚱한 곳으로 흘러갈 수 있으니, 흐름에 몸을 맡기되 최소한의 방향은 스스로 잡고 있어야 합니다. 뜻밖의 제안이나 좋은 소식이 온다면 부담 갖지 말고 편하게 받아들이세요. 오늘만큼은 모든 걸 혼자 해결하려는 습관을 잠시 내려놓아도 괜찮습니다. 순풍은 오래 머물지 않으니, 이 흐름을 타고 갈 수 있는 만큼 멀리 나아가 보세요.",
         },
         {
           headline: "봄비 같은 하루",
-          body: "메마른 땅에 조용히 스며드는 봄비처럼, 오늘의 기운은 애쓰지 않아도 나를 촉촉하게 채워주는 방향으로 흐릅니다. 지쳐 있던 부분이 있다면 오늘 뜻밖의 위로나 회복의 계기를 만나게 될 수 있습니다. 사람들과의 관계에서도 누군가 먼저 나에게 다가와 챙겨주는 하루라, 굳이 먼저 나서지 않아도 자연스럽게 좋은 흐름이 만들어집니다. 다만 봄비가 너무 오래 내리면 땅이 질척해지듯, 받는 것에만 익숙해지면 스스로 움직이는 힘을 잃을 수도 있습니다. 오늘의 도움은 감사히 받되, 내일은 다시 내 발로 걸을 준비를 해두세요. 재물 면에서도 뜻밖의 수입이나 좋은 제안이 스며들듯 들어올 수 있는 날입니다. 오늘 하루는 억지로 채우려 하지 말고, 자연스럽게 스며드는 것들을 그대로 받아들여 보세요.",
+          body: "메마른 땅에 조용히 스며드는 봄비처럼, 오늘의 기운은 애쓰지 않아도 나를 촉촉하게 채워줍니다. 지쳐 있던 부분이 있다면 오늘 뜻밖의 위로나 회복의 계기를 만나게 될 수 있으니 마음을 열어두세요. 사람들과의 관계에서도 누군가 먼저 나에게 다가와 챙겨주는 하루라, 굳이 먼저 나서지 않아도 자연스럽게 좋은 흐름이 만들어집니다. 다만 봄비가 너무 오래 내리면 땅이 질척해지듯, 받는 것에만 익숙해지면 스스로 움직이는 힘을 잃을 수도 있습니다. 오늘의 도움은 감사히 받되, 내일은 다시 내 발로 걸을 준비를 해두세요. 재물 면에서도 뜻밖의 수입이나 좋은 제안이 스며들듯 들어올 수 있는 날입니다. 오늘 하루는 억지로 채우려 하지 말고, 자연스럽게 스며드는 것들을 그대로 받아들여 보세요.",
         },
         {
           headline: "받쳐주는 손이 있는 날",
@@ -114,7 +114,7 @@ const ko: DailyFortuneContent = {
         },
         {
           headline: "볕이 드는 하루",
-          body: "그늘져 있던 자리에 뜻밖에 볕이 드는 것처럼, 오늘은 애쓰지 않아도 좋은 기운이 나를 향해 스며드는 날입니다. 막막했던 일에 실마리가 보이거나, 걱정하던 문제가 생각보다 쉽게 풀릴 수 있습니다. 사람들에게서도 예상치 못한 호의나 배려를 받을 가능성이 커서, 오늘은 마음의 문을 조금 더 열어둬도 좋습니다. 다만 볕이 좋다고 해서 하루 종일 아무것도 안 하고 누워만 있으면 정작 볕이 지나간 뒤엔 아무것도 남지 않을 수 있습니다. 좋은 흐름이 왔을 때 그 안에서 할 수 있는 작은 행동 하나쯤은 챙겨두세요. 재정이나 일에서도 뜻밖의 좋은 소식이 들려올 가능성이 있는 하루입니다. 오늘의 볕을 온전히 누리되, 내일을 위한 씨앗도 하나쯤 심어두는 걸 잊지 마세요.",
+          body: "그늘져 있던 자리에 뜻밖에 볕이 드는 것처럼, 오늘은 애쓰지 않아도 좋은 기운이 나를 향해 스며듭니다. 막막했던 일에 실마리가 보이거나, 걱정하던 문제가 생각보다 쉽게 풀릴 수 있으니 천천히 살펴보세요. 사람들에게서 예상치 못한 호의나 배려를 받을 수 있으니, 오늘은 마음의 문을 조금 더 열어둬도 좋습니다. 다만 볕이 좋다고 해서 하루 종일 아무것도 안 하고 누워만 있으면 정작 볕이 지나간 뒤엔 아무것도 남지 않을 수 있습니다. 좋은 흐름이 왔을 때 그 안에서 할 수 있는 작은 행동 하나쯤은 챙겨두세요. 재정이나 일에서도 뜻밖의 좋은 소식이 들려올 가능성이 있는 하루입니다. 오늘의 볕을 온전히 누리되, 내일을 위한 씨앗도 하나쯤 심어두는 걸 잊지 마세요.",
         },
       ],
       wealth: "별다른 노력 없이도 돈이 들어오거나 좋은 제안이 생기기 쉬운 날입니다. 뜻밖의 수입이나 도움이 온다면 부담 없이 받아들이세요.",
@@ -125,19 +125,19 @@ const ko: DailyFortuneContent = {
       overviewVariants: [
         {
           headline: "고삐를 쥐는 하루",
-          body: "오늘은 내가 상황의 고삐를 쥐고 원하는 방향으로 이끌어갈 힘이 유난히 센 날입니다. 미뤄왔던 결정을 내리거나, 눈치 보던 제안을 밀어붙이기에 좋은 타이밍입니다. 다만 고삐를 너무 세게 당기면 말이 놀라 오히려 엇나가듯, 상대를 지나치게 몰아붙이면 예상 밖의 반발을 만날 수 있습니다. 원하는 방향으로 이끌되, 상대가 따라올 수 있는 속도인지 한 번씩 확인하는 여유가 필요합니다. 대화에서도 내 주장이 강하게 먹히는 하루라 설득이 잘 통하지만, 일방적으로만 밀어붙이면 관계에 앙금이 남을 수 있습니다. 재정이나 일에서 적극적인 결정이 좋은 결과로 이어질 가능성이 크지만, 무리한 수준까지 밀어붙이는 건 피하는 게 안전합니다. 오늘 쥔 고삐를 지혜롭게 다룬다면, 원하는 방향으로 한 걸음 크게 나아갈 수 있을 것입니다.",
+          body: "오늘은 내가 상황의 고삐를 쥐고 원하는 방향으로 이끌어갈 힘이 유난히 셉니다. 미뤄왔던 결정을 내리거나, 눈치 보던 제안을 밀어붙이기에 좋은 타이밍입니다. 다만 고삐를 너무 세게 당기면 말이 놀라 오히려 엇나가듯, 상대를 지나치게 몰아붙이면 예상 밖의 반발을 만날 수 있습니다. 원하는 방향으로 이끌되, 상대가 따라올 수 있는 속도인지 한 번씩 확인하는 여유를 가지세요. 대화에서도 내 주장이 강하게 먹히는 하루라 설득이 잘 통하지만, 일방적으로만 밀어붙이면 관계에 앙금이 남을 수 있습니다. 재정이나 일에서 적극적인 결정이 좋은 결과로 이어질 가능성이 크지만, 무리한 수준까지 밀어붙이는 건 피하는 게 안전합니다. 오늘 쥔 고삐를 지혜롭게 다룬다면, 원하는 방향으로 한 걸음 크게 나아갈 수 있을 것입니다.",
         },
         {
           headline: "노를 젓는 날",
-          body: "물살을 거슬러서라도 내가 원하는 방향으로 배를 밀어갈 힘이 있는 하루입니다. 남들이 주춤하는 상황에서도 내가 먼저 노를 저으면 생각보다 수월하게 앞으로 나아갈 수 있습니다. 다만 계속 있는 힘껏 노를 저으면 팔이 지치듯, 오늘의 추진력을 하루 종일 최대치로 쓰면 저녁쯤 급격히 지칠 수 있습니다. 중간중간 속도를 조절하면서 힘을 아껴 쓰는 게 중요합니다. 사람들과의 관계에서도 내가 방향을 정하고 이끄는 역할이 잘 맞는 하루지만, 함께 노를 젓는 사람의 속도도 가끔 확인해주세요. 일이나 재정 면에서 적극적으로 밀어붙이는 결정이 좋은 결과를 가져올 가능성이 크지만, 무리한 방향 전환은 피하는 게 좋습니다. 오늘 저은 노 한 번 한 번이 원하는 목적지에 조금씩 가까워지게 해줄 것입니다.",
+          body: "물살을 거슬러서라도 내가 원하는 방향으로 배를 밀어갈 힘이 있습니다. 남들이 주춤하는 상황에서도 내가 먼저 노를 저으면 생각보다 수월하게 앞으로 나아갈 수 있습니다. 다만 계속 있는 힘껏 노를 저으면 팔이 지치듯, 오늘의 추진력을 하루 종일 최대치로 쓰면 저녁쯤 급격히 지칠 수 있습니다. 중간중간 속도를 조절하면서 힘을 아껴 쓰세요. 사람들과의 관계에서도 내가 방향을 정하고 이끄는 역할이 잘 맞는 하루지만, 함께 노를 젓는 사람의 속도도 가끔 확인해주세요. 일이나 재정 면에서 적극적으로 밀어붙이는 결정이 좋은 결과를 가져올 가능성이 크지만, 무리한 방향 전환은 피하는 게 좋습니다. 오늘 저은 노 한 번 한 번이 원하는 목적지에 조금씩 가까워지게 해줄 것입니다.",
         },
         {
           headline: "방향타를 잡는 하루",
-          body: "오늘은 상황이라는 배의 방향타를 내가 직접 쥐게 되는 날입니다. 애매하게 흘러가던 일에 명확한 방향을 제시하면, 주변 사람들도 안심하고 그 방향을 따라오는 분위기가 만들어집니다. 결정을 미루기보다 오늘 확실하게 정해버리는 게 전체적으로 더 나은 결과를 만들 가능성이 큽니다. 다만 방향타를 너무 급하게 꺾으면 배가 휘청이듯, 큰 변화를 줄 때는 한 번에 확 틀기보다 조금씩 조정하는 편이 안전합니다. 대화에서도 내가 주도권을 쥐는 게 자연스러운 하루지만, 상대의 의견을 완전히 무시하면 나중에 반발이 생길 수 있습니다. 재정이나 계획 면에서 방향을 새로 정하기에 좋은 타이밍이니, 미뤄왔던 결정이 있다면 오늘 매듭지어 보세요. 방향타를 쥔 손에 힘을 주되, 눈은 계속 앞을 살피는 균형이 필요한 하루입니다.",
+          body: "오늘은 상황이라는 배의 방향타를 내가 직접 쥡니다. 애매하게 흘러가던 일에 명확한 방향을 제시하면, 주변 사람들도 안심하고 그 방향을 따라오는 분위기가 만들어집니다. 결정을 미루기보다 오늘 확실하게 정해버리는 게 전체적으로 더 나은 결과를 만들 가능성이 큽니다. 다만 방향타를 너무 급하게 꺾으면 배가 휘청이듯, 큰 변화를 줄 때는 한 번에 확 틀지 말고 조금씩 조정하세요. 대화에서도 내가 주도권을 쥐는 게 자연스러운 하루지만, 상대의 의견을 완전히 무시하면 나중에 반발이 생길 수 있습니다. 재정이나 계획 면에서 방향을 새로 정하기에 좋은 타이밍이니, 미뤄왔던 결정이 있다면 오늘 매듭지어 보세요. 방향타를 쥔 손에 힘을 주되, 눈은 계속 앞을 살피는 균형이 필요한 하루입니다.",
         },
         {
           headline: "활시위를 당기는 하루",
-          body: "목표를 향해 활시위를 팽팽하게 당기는 것처럼, 오늘은 원하는 걸 향해 적극적으로 힘을 모으기 좋은 날입니다. 평소라면 망설였을 제안이나 도전도 오늘은 자신 있게 밀어붙일 수 있는 힘이 생깁니다. 다만 활시위를 너무 오래 당기고 있으면 손이 떨리듯, 준비만 계속하기보다 적절한 타이밍에 놓아주는 결단도 필요합니다. 너무 세게, 너무 오래 힘을 주면 정작 중요한 순간에 힘이 빠질 수 있습니다. 사람들과의 관계에서도 내가 원하는 바를 분명하게 표현하는 게 잘 통하는 하루지만, 상대를 정조준하듯 몰아붙이는 말투는 피하는 게 좋습니다. 재정이나 일에서 결단력 있는 선택이 좋은 결과로 이어질 가능성이 큰 날입니다. 오늘 당긴 활시위를 정확한 타이밍에 놓아준다면, 원하는 곳에 정확히 닿을 수 있을 것입니다.",
+          body: "목표를 향해 활시위를 팽팽하게 당기는 것처럼, 오늘은 원하는 걸 향해 적극적으로 힘을 모으기 좋습니다. 평소라면 망설였을 제안이나 도전도 오늘은 자신 있게 밀어붙일 수 있는 힘이 생깁니다. 다만 활시위를 너무 오래 당기고 있으면 손이 떨리듯, 준비만 계속하기보다 적절한 타이밍에 놓아주는 결단도 필요합니다. 너무 세게, 너무 오래 힘을 주면 정작 중요한 순간에 힘이 빠질 수 있으니 힘 조절을 잊지 마세요. 사람들과의 관계에서도 내가 원하는 바를 분명하게 표현하는 게 잘 통하는 하루지만, 상대를 정조준하듯 몰아붙이는 말투는 피하는 게 좋습니다. 재정이나 일에서 결단력 있는 선택이 좋은 결과로 이어질 가능성이 큰 날입니다. 오늘 당긴 활시위를 정확한 타이밍에 놓아준다면, 원하는 곳에 정확히 닿을 수 있을 것입니다.",
         },
       ],
       wealth: "적극적으로 밀어붙이면 재물운도 따라오는 날이지만, 너무 무리한 투자나 지출은 나중에 부담이 될 수 있습니다. 원하는 걸 밀어붙이되 강도는 조절하세요.",
@@ -148,7 +148,7 @@ const ko: DailyFortuneContent = {
       overviewVariants: [
         {
           headline: "역풍이 부는 하루",
-          body: "오늘은 가려는 방향과 반대쪽에서 바람이 불어오는 것 같은, 유독 진도가 안 나가는 느낌을 받을 수 있는 날입니다. 일이 뜻대로 안 풀리거나 예상치 못한 걸림돌이 생기더라도, 이건 방향이 틀려서가 아니라 잠시 속도를 늦추라는 신호에 가깝습니다. 무리해서 역풍을 거슬러 전진하려 하면 오히려 체력만 크게 소모될 수 있습니다. 오늘은 큰 결정을 새로 내리기보다, 이미 정한 방향을 유지하면서 버티는 데 집중하는 게 낫습니다. 사람들과의 관계에서도 사소한 오해나 마찰이 생기기 쉬운 하루라, 감정적으로 바로 반응하기보다 한 박자 쉬고 대응하는 게 훨씬 안전합니다. 돈에 관한 큰 결정도 하루쯤 묵혀 두면 더 또렷하게 보일 것입니다. 역풍은 영원히 불지 않으니, 오늘 하루만 잘 버티면 내일은 분명 바람의 방향이 달라질 것입니다.",
+          body: "오늘은 가려는 방향과 반대쪽에서 바람이 불어오는 것 같은, 유독 진도가 안 나가는 느낌을 받을 수 있습니다. 일이 뜻대로 안 풀리거나 예상치 못한 걸림돌이 생기더라도, 방향은 맞으니 잠시 속도만 늦추라는 신호입니다. 무리해서 역풍을 거슬러 전진하려 하면 오히려 체력만 크게 소모될 수 있습니다. 오늘은 큰 결정을 새로 내리기보다, 이미 정한 방향을 유지하면서 버티는 데 집중하세요. 사람들과의 관계에서도 사소한 오해나 마찰이 생기기 쉬운 하루라, 감정적으로 바로 반응하기보다 한 박자 쉬고 대응하는 게 훨씬 안전합니다. 돈에 관한 큰 결정도 하루쯤 묵혀 두면 더 또렷하게 보일 것입니다. 역풍은 영원히 불지 않으니, 오늘 하루만 잘 버티면 내일은 분명 바람의 방향이 달라질 것입니다.",
         },
         {
           headline: "자갈길을 걷는 날",
@@ -156,7 +156,7 @@ const ko: DailyFortuneContent = {
         },
         {
           headline: "좁은 문을 지나는 하루",
-          body: "넓은 길이 아니라 몸을 낮추고 지나야 하는 좁은 문 앞에 선 것 같은 하루입니다. 평소라면 쉽게 지나갔을 일도 오늘은 이런저런 조건과 제약이 붙어 더 신중하게 움직여야 할 수 있습니다. 답답하게 느껴지더라도, 이 문을 지나고 나면 지금까지와는 다른 공간이 기다리고 있을 가능성이 큽니다. 오늘은 힘으로 밀어붙이기보다 몸을 낮추고 상황에 맞춰가는 유연함이 필요합니다. 관계에서도 자존심을 앞세우기보다 한 발 물러서서 대화하는 편이 오해를 줄여줍니다. 돈이나 계획 면에서 큰 결정을 내리기엔 조건이 아직 덜 갖춰진 날이니, 서두르지 말고 다음 기회를 기다려보세요. 좁은 문을 지나는 그 잠깐의 불편함이, 지나고 나면 아무것도 아니었다는 걸 알게 될 것입니다.",
+          body: "몸을 낮추고 지나야 하는 좁은 문 앞에 선 것 같습니다. 평소라면 쉽게 지나갔을 일도 오늘은 이런저런 조건과 제약이 붙어 더 신중하게 움직여야 할 수 있습니다. 답답하게 느껴지더라도, 이 문을 지나고 나면 지금까지와는 다른 공간이 기다리고 있을 테니 조금만 견뎌 보세요. 오늘은 힘으로 밀어붙이기보다 몸을 낮추고 상황에 맞춰가는 유연함이 필요합니다. 관계에서도 자존심을 앞세우기보다 한 발 물러서서 대화하는 편이 오해를 줄여줍니다. 돈이나 계획 면에서 큰 결정을 내리기엔 조건이 아직 덜 갖춰진 날이니, 서두르지 말고 다음 기회를 기다려보세요. 좁은 문을 지나는 그 잠깐의 불편함이, 지나고 나면 아무것도 아니었다는 걸 알게 될 것입니다.",
         },
         {
           headline: "밀려오는 파도 앞에서",
@@ -178,11 +178,11 @@ const en: DailyFortuneContent = {
       overviewVariants: [
         {
           headline: "A day like a mirror",
-          body: "Today's energy lines up exactly with your own nature. You don't need to dress up or act like someone else — moving as your everyday self is exactly right today. Handling things the way you usually do tends to go more smoothly than expected, and it's better to trust a proven routine than reach for something unfamiliar. But since it's the same energy as yours, the blind spots you usually can't see stay just as hidden. If there's something you often overlook, it's more likely than usual to trip you up again today — so double-check that one thing. In conversations, you'll click easily with people who share your temperament, but with someone who sees things differently, you might both end up just talking past each other. Rather than chasing something new, today pays off more if you spend it consolidating and organizing what you already have. It's a comfortable, low-drama day overall — just don't mistake that comfort for a reason to stand still.",
+          body: "Today's energy lines up exactly with your own nature. You don't need to dress up or act like someone else; moving as your everyday self is exactly right today. Handling things the way you usually do tends to go more smoothly than expected, and it's better to trust a proven routine than reach for something unfamiliar. But since it's the same energy as yours, the blind spots you usually can't see stay just as hidden. If there's something you often overlook, it's more likely than usual to trip you up again today — so double-check that one thing. In conversations, you'll click easily with people who share your temperament, but with someone who sees things differently, you might both end up just talking past each other. Rather than chasing something new, today pays off more if you spend it consolidating and organizing what you already have. It's a comfortable, low-drama day overall — just don't mistake that comfort for a reason to stand still.",
         },
         {
           headline: "A day in familiar clothes",
-          body: "Like slipping into clothes that already fit, being yourself is the right move today. Instead of forcing on something new, fill your day with the methods and tools you already know well — the results are likely to come out more solid than usual. But just like comfortable clothes can make you put off cleaning the closet, today carries a real temptation to keep postponing the tasks you've been sitting on. Decide on one small thing to actually finish today, and future-you will thank you. In conversations, your usual way of speaking lands more sincerely than anything dressed up for the occasion. You don't need a big gesture — people are likely to find you easy to be around just as you are. Skip the ambitious plans and let the day flow as it naturally wants to; in the end, that's what pays off more.",
+          body: "Like slipping into clothes that already fit, being yourself is the right move today. Instead of forcing on something new, fill your day with the methods and tools you already know well, and the results are likely to come out more solid than usual. But just like comfortable clothes can make you put off cleaning the closet, today carries a real temptation to keep postponing the tasks you've been sitting on. Decide on one small thing to actually finish today, and future-you will thank you. In conversations, your usual way of speaking lands more sincerely than anything dressed up for the occasion. You don't need a big gesture — people are likely to find you easy to be around just as you are. Skip the ambitious plans and let the day flow as it naturally wants to. That usually leaves you with more.",
         },
         {
           headline: "Riding the same wave",
@@ -190,7 +190,7 @@ const en: DailyFortuneContent = {
         },
         {
           headline: "On the path you always walk",
-          body: "Today, walking the path you already know is both the safest and most efficient choice. Rather than redrawing the map or hunting for a shortcut, moving along a familiar route saves you both time and energy. But just as a familiar path makes you stop watching your feet, there's a real risk today of absentmindedly repeating a mistake you always make. Anything that's shaken you before — money, commitments — is worth double-checking today. In conversations, comfort doubles with people you've known a long time, and relationships deepen naturally without needing to bring up anything difficult. Meeting someone new or stepping into an unfamiliar setting might feel less exciting than usual, but that's not a bad sign. Today's wins are more likely to come from consistency than from anything flashy. Treat it as a day to reconfirm that the path you're on is the right one.",
+          body: "Today, walking the path you already know is both the safest and most efficient choice. Rather than redrawing the map or hunting for a shortcut, moving along a familiar route saves you both time and energy. But just as a familiar path makes you stop watching your feet, there's a real risk today of absentmindedly repeating a mistake you always make. Anything that has shaken you before, like money or commitments, is worth double-checking today. In conversations, comfort doubles with people you've known a long time, and relationships deepen naturally without needing to bring up anything difficult. Meeting someone new or stepping into an unfamiliar setting might feel less exciting than usual, but that's not a bad sign. Today's wins are more likely to come from consistency than from anything flashy. Treat it as a day to reconfirm that the path you're on is the right one.",
         },
       ],
       wealth: "Money moves in its usual rhythm today — nothing dramatic either way. Stick with what you're already doing rather than chasing a new investment or big purchase.",
@@ -270,7 +270,7 @@ const en: DailyFortuneContent = {
       overviewVariants: [
         {
           headline: "A headwind",
-          body: "Today may feel like a wind is blowing straight against the direction you're trying to go — progress feels unusually slow. If things don't go as planned or an unexpected obstacle shows up, it's less a sign you're headed the wrong way and more a cue to slow down for now. Forcing your way straight into the headwind risks burning through your energy for nothing. Rather than making a big new decision today, focus on holding your ground and sticking with the direction you already chose. Small misunderstandings or friction are more likely in relationships today, so pausing before reacting emotionally is far safer than responding right away. A big money decision will look clearer after a day of letting it sit. Headwinds never last forever — get through today, and the wind is bound to shift by tomorrow.",
+          body: "Today may feel like a wind is blowing straight against the direction you're trying to go, and progress feels unusually slow. If things don't go as planned or an unexpected obstacle shows up, your direction is fine; it's a cue to slow down for now. Forcing your way straight into the headwind risks burning through your energy for nothing. Rather than making a big new decision today, focus on holding your ground and sticking with the direction you already chose. Small misunderstandings or friction are more likely in relationships today, so pausing before reacting emotionally is far safer than responding right away. A big money decision will look clearer after a day of letting it sit. Headwinds never last forever — get through today, and the wind is bound to shift by tomorrow.",
         },
         {
           headline: "Walking a gravel path",
@@ -323,7 +323,7 @@ const es: DailyFortuneContent = {
       overviewVariants: [
         {
           headline: "Una lámpara encendida",
-          body: "Hoy tu energía fluye en una dirección que ilumina primero todo lo que te rodea. Hablar antes que nadie en una reunión, o empezar algo que te daba dudas, suele funcionar especialmente bien. Cuando los demás vacilan, que tú te muevas primero suele desbloquear las cosas con más facilidad de la que esperas. Pero igual que una lámpara gasta su aceite cuanto más tiempo está encendida, si sigues alumbrando a todos los demás puede que al anochecer no te quede nada para ti. Baja la llama y tómate un descanso a mitad del día. Hoy también favorece ser quien da el primer paso con el dinero o con una propuesta: si tienes algo guardado desde hace tiempo, es un buen día para plantearlo. Solo cuida que dar sin parar no te deje sin fondos ni sin ánimo. La luz que enciendas hoy probablemente llegue más lejos y dure más de lo que imaginas.",
+          body: "Hoy tu energía fluye en una dirección que ilumina primero todo lo que te rodea. Hablar antes que nadie en una reunión, o empezar algo que te daba dudas, suele funcionar especialmente bien. Cuando los demás vacilan, que tú te muevas primero suele destrabar las cosas con más facilidad de la que esperas. Pero igual que una lámpara gasta su aceite cuanto más tiempo está encendida, si sigues alumbrando a todos los demás puede que al anochecer no te quede nada para ti. Baja la llama y tómate un descanso a mitad del día. Hoy también favorece ser quien da el primer paso con el dinero o con una propuesta: si tienes algo guardado desde hace tiempo, es un buen día para plantearlo. Solo cuida que dar sin parar no te deje sin fondos ni sin ánimo. La luz que enciendas hoy probablemente llegue más lejos y dure más de lo que imaginas.",
         },
         {
           headline: "Un manantial para los demás",
@@ -358,7 +358,7 @@ const es: DailyFortuneContent = {
         },
         {
           headline: "Un rayo de sol",
-          body: "Como el sol que entra de pronto en un rincón en sombra, hoy la buena energía llega hacia ti sin esfuerzo. Algo que parecía atascado puede mostrar de repente una salida, o un problema que te preocupaba puede resolverse con más facilidad de la esperada. Además, la gente puede mostrarte una amabilidad o una atención inesperadas, así que vale la pena abrirte un poco más de lo habitual. Pero si pasas todo el día al sol sin hacer nada, cuando pase puede que no te quede nada que mostrar. Aprovecha para dar al menos un pequeño paso mientras dure la buena racha. En lo económico o en el trabajo, también puede llegar una buena noticia inesperada. Disfruta del sol de hoy con calma, pero no olvides sembrar también una semilla para mañana.",
+          body: "Como el sol que entra de pronto en un rincón en sombra, hoy la buena energía llega hacia ti sin esfuerzo. Algo que parecía atascado puede mostrar de repente una salida, o un problema que te preocupaba puede resolverse con más facilidad de la esperada. También la gente puede mostrarte una amabilidad o una atención inesperadas, así que vale la pena abrirte un poco más de lo habitual. Pero si pasas todo el día al sol sin hacer nada, cuando pase puede que no te quede nada que mostrar. Aprovecha para dar al menos un pequeño paso mientras dure la buena racha. En lo económico o en el trabajo, también puede llegar una buena noticia inesperada. Disfruta del sol de hoy con calma, pero no olvides sembrar también una semilla para mañana.",
         },
       ],
       wealth: "Hoy el dinero o las buenas oportunidades tienden a llegar sin mucho esfuerzo de tu parte. Si aparece un ingreso inesperado o una ayuda, puedes aceptarlo con tranquilidad.",
@@ -381,7 +381,7 @@ const es: DailyFortuneContent = {
         },
         {
           headline: "Tensar el arco",
-          body: "Como quien tensa un arco hacia su objetivo, hoy es un buen día para reunir tu energía y avanzar con decisión hacia lo que quieres. Incluso una propuesta o un reto que normalmente te harían dudar, hoy puedes impulsarlos con verdadera confianza. Pero así como la mano empieza a temblar si mantienes la cuerda tensa demasiado tiempo, prepararte sin llegar a soltar puede dejarte sin fuerzas justo en el momento que importa. Tirar con demasiada fuerza y durante demasiado tiempo puede agotar la energía que más necesitas. Decir con claridad lo que quieres funciona bien hoy en las relaciones, pero evita un tono que parezca apuntar a alguien. Una decisión firme sobre dinero o trabajo probablemente salga bien hoy. Suelta la cuerda en el momento justo y la flecha llegará exactamente donde querías.",
+          body: "Como quien tensa un arco hacia su objetivo, hoy es un buen día para reunir tu energía y avanzar con determinación hacia lo que quieres. Incluso una propuesta o un reto que normalmente te harían dudar, hoy puedes impulsarlos con verdadera confianza. Pero así como la mano empieza a temblar si mantienes la cuerda tensa demasiado tiempo, prepararte sin llegar a soltar puede dejarte sin fuerzas justo en el momento que importa. Tirar con demasiada fuerza y durante demasiado tiempo puede agotar la energía que más necesitas. Decir con claridad lo que quieres funciona bien hoy en las relaciones, pero evita un tono que parezca apuntar a alguien. Una decisión firme sobre dinero o trabajo probablemente salga bien hoy. Suelta la cuerda en el momento justo y la flecha llegará exactamente donde querías.",
         },
       ],
       wealth: "Hoy, empujar con decisión tiende a traer dinero, pero cuida que una inversión o una compra demasiado agresiva no se convierta en una carga más adelante. Ve por lo que quieres, pero baja la intensidad.",
@@ -392,7 +392,7 @@ const es: DailyFortuneContent = {
       overviewVariants: [
         {
           headline: "Viento en contra",
-          body: "Hoy puede parecer que sopla un viento justo contra la dirección en la que quieres ir, y el avance se siente especialmente lento. Si las cosas no salen como planeabas o aparece un obstáculo inesperado, no es señal de que vayas mal, sino más bien un aviso para bajar el ritmo por ahora. Forzar el paso de frente contra el viento solo te haría gastar energía en balde. En lugar de tomar una gran decisión nueva hoy, concéntrate en mantener tu posición y seguir con el rumbo que ya elegiste. Los pequeños malentendidos o roces son más probables hoy en las relaciones, así que hacer una pausa antes de reaccionar es mucho más seguro que responder de inmediato. Una decisión grande sobre dinero se verá más clara si la dejas reposar un día. Ningún viento en contra dura para siempre: aguanta hoy, y mañana el viento cambiará de dirección.",
+          body: "Hoy puede parecer que sopla un viento justo contra la dirección en la que quieres ir, y el avance se siente especialmente lento. Si las cosas no salen como planeabas o aparece un obstáculo inesperado, tu rumbo es el correcto; es un aviso para bajar el ritmo por ahora. Forzar el paso de frente contra el viento solo te haría gastar energía en balde. En lugar de tomar una gran decisión nueva hoy, concéntrate en mantener tu posición y seguir con el rumbo que ya elegiste. Los pequeños malentendidos o roces son más probables hoy en las relaciones, así que hacer una pausa antes de reaccionar es mucho más seguro que responder de inmediato. Una decisión grande sobre dinero se verá más clara si la dejas reposar un día. Ningún viento en contra dura para siempre: aguanta hoy, y mañana el viento cambiará de dirección.",
         },
         {
           headline: "Un camino de grava",

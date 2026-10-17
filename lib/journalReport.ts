@@ -17,7 +17,7 @@ import { logLlmUsage } from "./llmUsage";
 import type { Locale } from "./i18n/types";
 import { getDailyFortune } from "./dailyFortune";
 import { checkLanguageSlips, makeRewriter, repairStringFindings, stripHanja } from "./reportQuality";
-import { FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
+import { FIELD_LANGUAGE_NAME, koVoiceRule, outputLanguageDirective } from "./promptLocale";
 import {
   allowedNumbers,
   checkJournalReport,
@@ -102,6 +102,8 @@ ${describeData(locale, days, t)}
 6. 독자는 2인칭. 성별을 가정하지 마세요. 한국어는 "~해요"체로 끝까지 통일합니다("~습니다" 섞지 않기).
 7. 리듬·기분은 데이터에 나온 이름으로 부르되, 문장 안에서는 관사와 대소문자를 그 언어답게 맞춥니다(영어 예: "on days with a giving rhythm", "you often chose calm", "on days that ran on your own rhythm"; 스페인어 예: "en los días de ritmo generoso", "elegiste calma", "en los días con tu propio ritmo"). 제목은 문장형 대소문자(첫 단어만 대문자)로 씁니다.
 8. 날짜는 쓰지 말고("어느 날", "그런 날") 같은 날을 여러 관찰에서 되풀이해 인용하지 말고, 숫자 나열(각각 몇 번씩)로 관찰을 채우지 마세요.
+9. 말투: 관찰마다 문장 길이와 끝맺음을 달리하고(같은 시작 어구 반복 금지), 관찰 끝에 교훈을 붙이지 않으며, 추상어보다 기록에 나온 구체적 기분·말을 씁니다. "X가 아니라 Y" 문형은 한 번까지만. 'It sounds like', 'journey', 'navigate', 'Es importante notar que', 'viaje', '~를 통해' 같은 상투구는 평범한 말로 바꿉니다.
+${koVoiceRule(locale)}
 
 ## 출력 형식 — 아래 키만 가진 JSON 객체 하나. 모든 문자열 값은 ${outLang}로 씁니다.
 {

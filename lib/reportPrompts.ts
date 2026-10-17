@@ -24,7 +24,7 @@
 import type { ElementKey } from "./sajuScore";
 import type { ChatExtract } from "./chat";
 import type { Locale } from "./i18n/types";
-import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
+import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, koVoiceRule, outputLanguageDirective } from "./promptLocale";
 import { getModulePlaybook, type ModulePlaybook } from "./modulePlaybooks";
 import { describeCardSlots, describeQuizAnswersByDimension, describeSetPackets, type ReportSetsInput } from "./reportSets";
 
@@ -493,6 +493,14 @@ ${sets ? `6. 검사 × 대화 카드(set_card_1, set_cards_2to5)의 quote는 세
 12. 모든 필드는 ${FIELD_LANGUAGE_NAME[locale]}로만 쓴다. 한자는 어떤 언어에서도 쓰지 않는다("화(火)", "대운(大運)" 병기 금지, 원소는 이모지 🌳🔥⛰️💎💧). 용어집(대운=영어 "10-year cycle", 스페인어 "ciclo de diez años" 등)을 지키고, 처음 나오는 용어는 같은 문장 안에서 짧게 풀어 준다. 데이터의 라벨·표기를 문장에 그대로 옮기지 않는다.
 13. (한국어) 앱 화면과 같은 해요체("~예요", "~해요")로 통일하고 독자는 항상 "${context.nickname}님"으로 부른다. 위 문체 예시의 합쇼체 어미는 따라 하지 말고 밀도와 장면 묘사 방식만 따른다. 입말로 자연스럽게 쓴다("남기고 싶은 문장은 이거예요").
 14. 스키마의 설명문을 값으로 베끼거나 번역하지 말고 이 사람의 데이터에 맞는 새 문장을 직접 쓴다. 출력은 아래 스키마와 정확히 일치하는 JSON 객체 하나만(다른 텍스트 금지).
+
+### 말투
+- 문장 길이와 끝맺음을 섞는다. 짧은 문장 뒤에 긴 문장을 두고, 같은 어미·같은 시작 어구를 한 페이지에서 세 번 이상 쓰지 않는다.
+- 섹션마다 교훈이나 다짐으로 끝내지 않는다. 마무리 문장은 리포트 전체에서 closing 한 곳에만 둔다.
+- 항목을 늘 세 개로 나열하지 않는다. 필요한 만큼(1~2개도 가능)만 쓰고, 추상어 대신 이 사람 데이터의 구체적 장면·숫자를 쓴다.
+- "X가 아니라 Y" 대비 문형은 리포트 전체에서 한 번까지만 쓴다.
+- 영어 'It sounds like…', 'journey', 'navigate', 스페인어 'Es importante notar que', 'viaje', 한국어 '~를 통해', '~하는 것이 중요합니다' 같은 상투구는 평범한 말로 바꿔 쓴다.
+${koVoiceRule(locale)}
 
 ## 이번 요청의 범위
 ${scopeNote}

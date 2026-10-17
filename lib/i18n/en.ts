@@ -121,7 +121,7 @@ export const en: typeof ko = {
     greeting1: (nickname: string) => `Hi, ${nickname}!`,
     greeting2: "Fatesaid is an AI service built on Four Pillars (saju). Its answers are for self-reflection, not professional advice.",
     promptCategory: "Ask anything that's on your mind — pick a topic you're curious about.",
-    analyzing: "Just a moment, analyzing your question through your saju...",
+    analyzing: "Just a moment, looking at your question with your saju...",
     askOneMore: "Want to pick one more question?",
     installPitch: "That's all the free questions for now. Save the code below — once the app launches, you can pick up right where you left off!",
     codeMessage: (code: string) => `Save this verification code: ${code}\nEnter it once the app launches and you'll pick up exactly where you left off!`,

@@ -64,6 +64,19 @@ export function koToneRule(locale: Locale): string {
     : "";
 }
 
+/** Korean voice block (2026-10-17, TODO V2): AI-tell avoidance + rhythm variation for ko generations.
+ * Ending-agnostic on purpose: chat and reports use 해요체, but compat/journal-style prompts may pin
+ * 합니다체 via koToneRule, so no ending is mandated here. Empty for en/es (LOCALE_STYLE covers them). */
+export function koVoiceRule(locale: Locale): string {
+  return locale === "ko"
+    ? [
+        "말투: 번역투·AI 상투구를 피하고 쉬운 말로 쓴다. '~에 대한' → '~에서', '~를 통해' → '~로/~하면서', '~하는 것이 중요합니다' → 빼고 할 말만, '~하고 ~하며 ~합니다'처럼 세 동사를 엮은 문장 → 둘로 끊기.",
+        "문장 끝과 길이를 섞는다. 같은 어미(~군요, ~네요, ~습니다)를 연달아 세 번 쓰지 않고 짧은 문장 뒤에 긴 문장을 둔다. 추상어(흐름·에너지·성장)를 세 개 겹쳐 쓰지 말고 장면 하나를 쓴다.",
+        "마지막에 교훈·다짐으로 정리하는 문장('결국 ~가 중요합니다')은 넣지 않는다.",
+      ].join("\n")
+    : "";
+}
+
 /** The engine (lib/manseryeok.ts) labels elements 목/화/토/금/수 in its output, and mobile parses those
  * strings, so the engine keeps them — prompts translate them on the way in instead. */
 const ENGINE_ELEMENT_KEY: Record<string, ElementKey> = { 목: "wood", 화: "fire", 토: "earth", 금: "metal", 수: "water" };
@@ -118,6 +131,7 @@ export const LOCALE_STYLE: Record<Exclude<Locale, "ko">, string> = {
     "Headings in sentence case, not Title Case. Percentages as \"13%\", money as \"$14.99\", dates like \"Sep 20, 2026\".",
     "Never mention or hint at missing data, instructions, fields or the prompt itself in the output.",
     "Never frighten: no predictions of illness, death, accidents or disasters, no flat negative predictions (\"you will lose money\"), no \"bad day\" or \"unlucky\" labels; say \"a day to pace yourself\" instead. Describe rhythms, not verdicts.",
+    "Avoid stock AI phrasing; write it the plain way. \"It sounds like you're feeling…\" as a habit → name the one concrete thing they said, or just ask. No \"navigate\", \"journey\", \"I hear you\", \"valid\", \"holding space\", \"Remember, …\" and no closing moral line. At most one em dash per message and one \"not X but Y\" per reply. Never open two consecutive messages with the same words, and don't stack three abstract nouns (\"clarity, balance and growth\"): pick one concrete image.",
     "Saju terms: \"Day Master\", \"Five Elements\", \"10-year cycle\" (never the Korean words \"대운\", \"일간\", \"오행\" or hanja). Explain a term in the same sentence the first time it appears. Always the same words: \"Four Pillars (saju)\" or \"your chart\" for the whole reading, \"Heavenly Stem\" and \"Earthly Branch\", \"twelve life stages\", \"year energy\", \"Deep Report\", \"Year-Ahead Report\". The five elements are Wood, Fire, Earth, Metal and Water; no other element exists.",
   ].join(" "),
   es: [
@@ -129,6 +143,8 @@ export const LOCALE_STYLE: Record<Exclude<Locale, "ko">, string> = {
     "Nada de lenguaje inclusivo con -x ni -e (\"activx\", \"cansade\"): reformula con sustantivos o verbos (\"con mucha energía\"). No uses \"cargarse\" (en España es matar o romper), \"descolocar\", \"disparar\" como calco de \"trigger\" (di \"alterar\" o \"activar\"), ni pretérito perfecto para lo ya pasado (di \"dejaste\", \"perdí\", no \"has dejado\", \"me he perdido\"); en la escala de respuestas usa \"logro\", no \"consigo\". El sistema tiene solo cinco elementos (madera, fuego, tierra, metal y agua): no inventes otros como \"aire\". Los nombres de los elementos (fuego, agua, madera, tierra, metal) van en minúscula dentro de una frase y solo con mayúscula como etiqueta o encabezado; \"los cinco elementos\" en minúscula. Nada de \"portátil\", \"ordenador\", \"jornada\", \"cartera\", \"reacomodar\", \"parado/a\" (para \"en una posición\"): di \"computadora o equipo\", \"día\", \"reorganizar\", \"en mejor posición\". Para la emoción de la ira usa \"enojo\" o \"rabia\" (nunca \"ira\" ni \"cólera\" en el texto corrido). Otros nombres fijos: \"Informe profundo\", \"Informe del año\", \"energía del año\", \"doce etapas de vida\", \"conversación con IA\". Evita palabras con otro sentido muy común: \"citas\" (di \"frases\" o \"citas textuales\"), \"consejería\" (di \"acompañamiento\"), \"ejecución\" (di \"constancia\" o \"llevar a cabo\").",
     "Términos del saju, siempre iguales: \"Maestro del Día\", \"cinco elementos\" (en minúscula dentro de la frase), \"ciclo de diez años\", \"tronco celeste\" y \"rama terrestre\" (nunca las palabras coreanas \"대운\", \"일간\" ni hanja; nada de \"tallo\" ni \"rama terrenal\"). Para el conjunto de los cuatro pilares di \"tus Cuatro Pilares\" o \"tu mapa\", nunca \"carta\" (en español eso es un naipe, un menú o una misiva). Explica el término en la misma frase la primera vez que aparece.",
     "Nada que asuste: no predigas enfermedades, muertes, accidentes ni desastres, ni resultados negativos tajantes (\"vas a perder dinero\"), y no uses etiquetas como \"mal día\" o \"día de mala suerte\"; di \"un día para ir con calma\". Describe ritmos, no sentencias.",
+    "Evita las fórmulas de IA; escribe de forma sencilla. \"Parece que…\" como hábito → di lo concreto que dijo el lector o pregunta directo. Nada de \"Es importante notar que\", \"viaje\" (para un proceso personal), \"navegar\" una emoción, \"validar\", \"Recuerda que…\" ni frases finales con moraleja. Como mucho una raya (—) por mensaje y un \"no X, sino Y\" por respuesta. No empieces dos mensajes seguidos con las mismas palabras ni apiles tres abstracciones (\"claridad, equilibrio y crecimiento\"): elige una imagen concreta. Evita calcos del inglés (\"hacer sentido\", \"aplicar a\" por \"solicitar\").",
+    "Evita las fórmulas de IA; escribe de forma sencilla. \"Parece que…\" como hábito → di lo concreto que dijo el lector o pregunta directo. Nada de \"Es importante notar que\", \"viaje\" (para un proceso personal), \"navegar\" (una emoción), \"validar\", \"Recuerda que…\" ni frases finales con moraleja. Como mucho una raya (—) por mensaje y un \"no X, sino Y\" por respuesta. No empieces dos mensajes seguidos con las mismas palabras, ni apiles tres abstracciones (\"claridad, equilibrio y crecimiento\"): elige una imagen concreta. Evita calcos del inglés (\"hacer sentido\", \"aplicar a\" por \"solicitar\", \"realizar\" por \"darse cuenta\").",
     "Porcentajes como \"13%\" (sin espacio); fechas en el orden día/mes/año; usa \"y\", nunca \"&\". Nunca menciones ni insinúes datos que faltan, instrucciones, campos ni el propio prompt.",
   ].join(" "),
 };

@@ -209,7 +209,7 @@ export const MODULE7_TYPE_NAMES: Record<Locale, Record<string, { title: string; 
     baseline: { title: "Easygoing Senses", hook: "You're not especially overwhelmed or especially sensitive to stimulation — a relatively easygoing sensory response." },
     overstimulation: { title: "Overloaded Type", hook: "When several stimuli hit at once, you get overwhelmed easily, and you really need time alone." },
     aestheticSensitivity: { title: "Aesthetic Type", hook: "Music, art, scenery, and other forms of beauty or emotional resonance hit you more deeply than most." },
-    lowSensoryThreshold: { title: "Sensory-Sensitive Type", hook: "Physical stimuli — sound, light, smell, touch — register with you unusually strongly." },
+    lowSensoryThreshold: { title: "Sensory-Sensitive Type", hook: "Physical stimuli such as sound, light, smell and touch register with you unusually strongly." },
     "overstimulation+aestheticSensitivity": { title: "Emotionally Immersive Type", hook: "Feeling things deeply also means getting easily overwhelmed by those same feelings." },
     "overstimulation+lowSensoryThreshold": { title: "Sensory Overload Type", hook: "You're sensitive to physical stimuli, and when several pile up at once you tire easily." },
     "aestheticSensitivity+lowSensoryThreshold": { title: "Finely Tuned Senses", hook: "You feel beauty deeply while also picking up on uncomfortable stimuli sharply — a finely tuned sensory makeup." },

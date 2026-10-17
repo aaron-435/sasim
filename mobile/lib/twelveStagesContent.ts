@@ -117,7 +117,7 @@ const en: TwelveStagesContent = {
     { name: "Quiet growth", body: "What you planted earlier is growing quietly now. Steady, patient care matters more than speed — today's small effort pays off later." },
   ],
   sinsal: [
-    { name: "Unexpected turns", body: "Energy — or resources — can slip away in unexpected ways today. Double-check anything involving money or valuables before moving forward." },
+    { name: "Unexpected turns", body: "Energy, or resources, can slip away in unexpected ways today. Double-check anything involving money or valuables before moving forward." },
     { name: "Friction", body: "Disagreements or conflict are more likely to surface today. Stepping back instead of proving a point will probably cost you less in the end." },
     { name: "Wildcard", body: "Something outside your control may interrupt your plans today. If things don't go as expected, don't panic — flexibility serves you better than resistance." },
     { name: "Fresh ground", body: "Today favors movement — a new place, a new environment, a change of scene. An unfamiliar setting or person could turn into an opportunity, so don't shy away from it." },

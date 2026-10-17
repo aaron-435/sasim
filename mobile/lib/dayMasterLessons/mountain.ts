@@ -30,7 +30,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "How you shape results: Water",
-      body: "Earth shapes Water the way riverbanks guide a river, giving it a course instead of a flood. That's often how you go after work and money: not by chasing every current, but by building structure around it. Budgets, routines, and long-range plans tend to suit you better than fast bets. What helps is staying flexible, since water also needs room to move, and a plan that bends a little can carry more.",
+      body: "Earth shapes Water the way riverbanks guide a river, giving it a course instead of a flood. That's often how you go after work and money: you build structure around it instead of chasing every current. Budgets, routines, and long-range plans tend to suit you better than fast bets. What helps is staying flexible, since water also needs room to move, and a plan that bends a little can carry more.",
       tryToday: "Look at one routine around work or money and notice where it could use a little more give.",
     },
     {
@@ -50,14 +50,14 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "More than one mountain",
-      body: "Your Day Master is the center of your chart, but it's only one piece. The other pillars, your balance of elements, and your 10-year cycles all shape how your mountain actually shows up: some are sunlit, some wooded, some full of ore.\n\nSo treat these ten lessons as a lens, not a label. Over the coming weeks, notice when your steadiness helps and when you'd like a little more movement. You know your own landscape best.",
+      body: "Your Day Master is the center of your chart, but it's only one piece. The other pillars, your balance of elements, and your 10-year cycles all shape how your mountain actually shows up: some are sunlit, some wooded, some full of ore.\n\nSo treat these ten lessons as a lens, not a label. Over the coming weeks, notice when your steadiness helps and when you'd like a little more movement. You know your own mountain best.",
       tryToday: "Pick one lesson from these ten that felt true, and watch for it once today.",
     },
   ],
   es: [
     {
       title: "Una montaña que no se mueve",
-      body: "Tu Maestro del Día es la montaña: Tierra yang, la Tierra grande y firme. Una montaña no persigue nada. Se queda donde está, y el paisaje alrededor toma de ella su orientación.\n\nAsí suele mostrarse tu estilo. Tiendes a ir a tu propio ritmo, a sostener una postura una vez que la tomas y a ofrecer a los demás algo sólido en lo que apoyarse. Ese mismo peso que te hace confiable puede volver lentos los cambios, y eso también forma parte del retrato.",
+      body: "Tu Maestro del Día es la montaña: Tierra yang, la Tierra grande y firme. Una montaña no persigue nada. Se queda donde está, y todo lo que la rodea toma de ella su orientación.\n\nAsí suele mostrarse tu estilo. Tiendes a ir a tu propio ritmo, a sostener una postura una vez que la tomas y a ofrecer a los demás algo sólido en lo que apoyarse. Ese mismo peso que te hace confiable puede volver lentos los cambios, y eso también forma parte del retrato.",
       tryToday: "Fíjate hoy en un momento en que alguien te consulta antes de decidir algo.",
     },
     {
@@ -66,7 +66,7 @@ const lessons: DayMasterLessons = {
       tryToday: "Fíjate hoy en un momento en que sostienes tu postura y pregúntate si todavía la quieres.",
     },
     {
-      title: "Cómo se ve la firmeza en el día a día",
+      title: "La firmeza en la vida cotidiana",
       body: "Tus fortalezas suelen ser silenciosas. Eres quien mantiene la calma cuando un plan se cae, quien recuerda lo que se acordó, quien no se deja arrastrar por el ánimo del grupo. Es probable que tus amistades te busquen cuando quieren una opinión clara y sin prisas. En el trabajo, sueles ser quien evita que un proyecto largo pierda el rumbo. La paciencia y la constancia te parecen normales, pero para otras personas son poco comunes.",
       tryToday: "Anota algo que hiciste con constancia esta semana y que nadie te agradeció.",
     },
@@ -102,7 +102,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Más que una montaña",
-      body: "Tu Maestro del Día es el centro de tu mapa, pero solo es una parte. Los otros pilares, el equilibrio de tus elementos y tus ciclos de diez años influyen en cómo se ve tu montaña de verdad: unas tienen sol, otras bosque, otras mineral por dentro.\n\nAsí que toma estas diez lecciones como una lente, no como una etiqueta. En las próximas semanas, fíjate en cuándo tu firmeza ayuda y cuándo te gustaría un poco más de movimiento. Nadie conoce tu paisaje mejor que tú.",
+      body: "Tu Maestro del Día es el centro de tu mapa, pero solo es una parte. Los otros pilares, el equilibrio de tus elementos y tus ciclos de diez años influyen en cómo se ve tu montaña de verdad: unas tienen sol, otras bosque, otras mineral por dentro.\n\nAsí que toma estas diez lecciones como una lente, no como una etiqueta. En las próximas semanas, fíjate en cuándo tu firmeza ayuda y cuándo te gustaría un poco más de movimiento. Nadie conoce tu montaña mejor que tú.",
       tryToday: "Elige una de estas diez lecciones que te haya resonado y búscala hoy una vez.",
     },
   ],
@@ -154,7 +154,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "하나의 산보다 더 큰 그림",
-      body: "일간은 사주의 중심이지만 전부는 아니에요. 다른 기둥들, 오행의 균형, 대운이 모두 당신의 산이 실제로 어떤 모습인지를 함께 정해요. 햇살이 드는 산도, 숲이 우거진 산도, 광물을 품은 산도 있죠.\n\n그러니 이 열 가지 이야기를 꼬리표가 아니라 하나의 렌즈로 써 주세요. 앞으로 몇 주 동안, 나의 단단함이 도움이 될 때와 조금 더 움직이고 싶을 때를 알아차려 보세요. 당신의 풍경은 당신이 가장 잘 알아요.",
+      body: "일간은 사주의 중심이지만 전부는 아니에요. 다른 기둥들, 오행의 균형, 대운이 모두 당신의 산이 실제로 어떤 모습인지를 함께 정해요. 햇살이 드는 산도, 숲이 우거진 산도, 광물을 품은 산도 있죠.\n\n그러니 이 열 가지 이야기를 꼬리표 삼지 말고 하나의 렌즈로 써 주세요. 앞으로 몇 주 동안, 나의 단단함이 도움이 될 때와 조금 더 움직이고 싶을 때를 알아차려 보세요. 당신의 풍경은 당신이 가장 잘 알아요.",
       tryToday: "열 가지 중 와닿았던 이야기 하나를 골라, 오늘 한 번 찾아보세요.",
     },
   ],

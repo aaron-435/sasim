@@ -19,7 +19,7 @@
 
 import type { Locale } from "./i18n/types";
 import type { CompatibilityResult, CompatRelation } from "./compatibility";
-import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, koToneRule, outputLanguageDirective } from "./promptLocale";
+import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, koToneRule, koVoiceRule, outputLanguageDirective } from "./promptLocale";
 import type { ElementKey } from "./sajuType";
 
 export const OTHER_TOKEN = "{other}";
@@ -122,7 +122,9 @@ ${dataBlock(ctx)}
 5. 단정 대신 경향과 제안으로 씁니다("~하기 쉽습니다", "~해 보면 한결 편합니다"). 긴장은 허용되지만 겁주지 마세요. ${koToneRule(ctx.locale)}
 6. ${ctx.nickname}님은 2인칭으로 부르고, 이름은 리포트 전체에서 두세 번만 자연스럽게 씁니다. 성별을 가정하지 마세요.
 7. ${NAME_RULES[ctx.locale]}
-8. 데이터 줄의 라벨이나 퍼센트를 나열하지 말고, 퍼센트는 꼭 필요할 때 한두 번만 데이터 그대로 쓰세요. 데이터가 "언급하지 말 것"이라고 한 항목은 쓰지 마세요.`;
+8. 데이터 줄의 라벨이나 퍼센트를 나열하지 말고, 퍼센트는 꼭 필요할 때 한두 번만 데이터 그대로 쓰세요. 데이터가 "언급하지 말 것"이라고 한 항목은 쓰지 마세요.
+9. 말투: 문장 길이와 끝맺음을 섞고, 같은 시작 어구를 세 번 넘게 쓰지 마세요. 섹션마다 교훈으로 끝내지 말고, 항목을 습관적으로 세 개씩 나열하지 말며, 추상어보다 구체적인 장면·행동을 쓰세요. "X가 아니라 Y" 문형은 리포트 전체에서 한 번까지만. 'It sounds like', 'journey', 'navigate', 'Es importante notar que', 'viaje', '~를 통해', '~하는 것이 중요합니다' 같은 상투구는 평범한 말로 바꾸세요.
+${koVoiceRule(ctx.locale)}`;
 }
 
 export function buildCompatFreePrompt(ctx: CompatReportContext): string {

@@ -31,7 +31,7 @@ export const MODULE4_QUESTIONS: ModuleQuestion[] = [
   { id: "IM5", dimension: "imageManagement", format: "choice", prompt: "상사/윗사람 앞에서의 나와 친구들 앞에서의 나는?", options: [
     { label: "거의 비슷하다", score: 0 }, { label: "조금 다르다", score: 1 },
     { label: "꽤 다르다", score: 2 }, { label: "완전히 다른 사람 같다", score: 3 } ] },
-  { id: "IM6", dimension: "imageManagement", format: "choice", prompt: "사람들이 좋아하는 '나'는, 사실 진짜 내가 아니라 내가 만든 캐릭터에 가깝다.", options: [
+  { id: "IM6", dimension: "imageManagement", format: "choice", prompt: "사람들이 좋아하는 '나'는, 사실 내가 만든 캐릭터에 가깝다.", options: [
     { label: "전혀 그렇지 않다", score: 0 }, { label: "매우 그렇다", score: 3 } ] },
   { id: "IM7", dimension: "imageManagement", format: "choice", prompt: "대화 중 상대의 반응을 보면서?", options: [
     { label: "별로 신경 안 쓴다", score: 0 }, { label: "가볍게 참고한다", score: 1 },

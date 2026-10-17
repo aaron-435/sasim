@@ -67,7 +67,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Lo que haces bien sin esfuerzo",
-      body: "Tus fortalezas viven en los detalles. Sueles tener buen ojo para el diseño, para las palabras, para saber qué combina con qué. Tiendes a percibir pequeños cambios en el ánimo de alguien antes de que lo diga. Y cuando asumes algo, el acabado suele reflejar el cuidado.\n\nEn el día a día se ve así: eres quien hace el regalo pensado, quien encuentra el error en la versión final, quien tiene un espacio que siempre parece en orden.",
+      body: "Tus fortalezas viven en los detalles. Sueles tener buen ojo para el diseño, para las palabras, para saber qué combina con qué. Tiendes a percibir pequeños cambios en el ánimo de alguien antes de que lo diga. Y cuando asumes algo, el acabado suele reflejar el cuidado.\n\nEn la práctica se ve así: eres quien hace el regalo pensado, quien encuentra el error en la versión final, quien tiene un espacio que siempre parece en orden.",
       tryToday: "Cuéntale hoy a alguien un detalle suyo que notaste y te gustó.",
     },
     {
@@ -144,7 +144,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "쇠와 쇠, 친구이자 맞수",
-      body: "같은 쇠(금)의 사람들과는 공통의 언어를 쉽게 찾는 편이에요. 품질, 기준, ‘잘 만든 것’이 어떤 건지 이야기하면서 길게 설명하지 않아도 통한다고 느껴요.\n\n다만 예리한 눈 두 쌍은 서로를 재기 시작할 수도 있어요. 특히 같은 보석끼리는 비교가 조용히 끼어들기 쉬워요. 서로의 솜씨를 드러내 놓고 아껴 주고, 기준이 다른 걸 순위가 아니라 스타일의 차이로 볼 때 팀워크가 가장 잘 돌아가요.",
+      body: "같은 쇠(금)의 사람들과는 공통의 언어를 쉽게 찾는 편이에요. 품질, 기준, ‘잘 만든 것’이 어떤 건지 이야기하면서 길게 설명하지 않아도 통한다고 느껴요.\n\n다만 예리한 눈 두 쌍은 서로를 재기 시작할 수도 있어요. 특히 같은 보석끼리는 비교가 조용히 끼어들기 쉬워요. 서로의 솜씨를 드러내 놓고 아껴 주고, 기준이 다른 걸 순위 매기지 않고 스타일의 차이로 볼 때 팀워크가 가장 잘 돌아가요.",
       tryToday: "나만큼 기준이 높은 사람을 한 명 떠올리고, 그 사람이 정말 멋지게 해내는 것 하나를 찾아보세요.",
     },
     {

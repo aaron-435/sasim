@@ -93,7 +93,7 @@ const es: CompatibilityContent = {
       body: "La otra persona te mantiene alerta, incluso cuando resulta incómodo. Por eso mismo te mueve: ayuda confirmar, a veces en voz alta, que esa presión viene del cariño.",
     },
   },
-  bondNote: "Además, los dos Maestros del Día forman un vínculo clásico: esta combinación trae una atracción extra que no es fácil de explicar.",
+  bondNote: "Los dos Maestros del Día también forman un vínculo clásico: esta combinación trae una atracción extra que no es fácil de explicar.",
 };
 
 export const COMPATIBILITY_CONTENT: Record<Locale, CompatibilityContent> = { ko, en, es };

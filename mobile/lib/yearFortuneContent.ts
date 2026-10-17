@@ -274,7 +274,7 @@ const es: YearFortuneContent = {
       health: "Tu energía pide un cuidado más deliberado este año: incorpora descanso a propósito y no cargues con la presión por tu cuenta.",
     },
   },
-  hapNote: "Además, este año forma una conexión especial con tus Cuatro Pilares: puede llegar una buena relación o una oportunidad cuando menos lo esperes.",
+  hapNote: "Este año también forma una conexión especial con tus Cuatro Pilares: puede llegar una buena relación o una oportunidad cuando menos lo esperes.",
   chungNote: "Este año también forma con tus Cuatro Pilares una relación de cambio: habrá más movimiento, así que es buen año para pasar a algo nuevo. Date un poco más de tiempo antes de tomar decisiones importantes.",
   monthRelations: {
     mirror: {

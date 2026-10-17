@@ -67,7 +67,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Lo que haces bien sin esfuerzo",
-      body: "Tus fortalezas son las que otros buscan cuando las cosas se enredan. Sabes decir que no con claridad, y eso ahorra tiempo a todos. Sueles cumplir lo que prometes, a veces aunque te cueste. Notas cuando algo es injusto y te animas a decirlo en voz alta.\n\nEn el día a día se ve sencillo: eres quien elige el restaurante, quien nombra el problema real en una reunión, quien aparece cuando dijo que aparecería.",
+      body: "Tus fortalezas son las que otros buscan cuando las cosas se enredan. Sabes decir que no con claridad, y eso ahorra tiempo a todos. Sueles cumplir lo que prometes, a veces aunque te cueste. Notas cuando algo es injusto y te animas a decirlo en voz alta.\n\nEn la práctica se ve sencillo: eres quien elige el restaurante, quien nombra el problema real en una reunión, quien aparece cuando dijo que aparecería.",
       tryToday: "Elige una decisión pequeña que vienes posponiendo y observa qué se siente al tomarla.",
     },
     {

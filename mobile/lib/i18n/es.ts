@@ -167,7 +167,7 @@ export const es: typeof ko = {
     priceAtCheckout: "El precio aparece en la pantalla de pago de la tienda.",
     generating: ["Leyendo tus doce meses...", "Escribiendo las cinco áreas de tu vida...", "Seguimos escribiendo, puede tardar hasta un minuto..."],
     timelineHeading: "Línea de tiempo de 12 meses",
-    vsProNote: "La pestaña del año que viene de Pro es un resumen por temas. Este informe es la versión completa —cinco áreas de vida en profundidad, una línea de tiempo de 12 meses y un plan de acción— y se compra aparte, una sola vez por año.",
+    vsProNote: "La pestaña del año que viene de Pro es un resumen por temas. Este informe es la versión completa: cinco áreas de vida en profundidad, una línea de tiempo de 12 meses y un plan de acción. Se compra aparte, una sola vez por año.",
     timelineNote: "Los meses siguen el calendario del saju, que empieza a principios de febrero.",
     planHeading: "Plan de acción",
     errorGeneric: "No pudimos crear tu informe. Inténtalo de nuevo.",
@@ -275,7 +275,7 @@ export const es: typeof ko = {
     ],
     elementsHeading: "Por qué importan los cinco elementos",
     elementsBody:
-      "No se trata de tener los cinco elementos perfectamente equilibrados; casi nadie los tiene. Lo que importa es cuáles son fuertes y cuáles son débiles, y qué suele significar ese patrón. Un mapa con mucho Fuego suele leerse como expresivo y visible; con mucha Agua, como perceptivo y adaptable. Un elemento débil suele señalar algo que conviene reforzar de forma consciente, no un defecto.",
+      "No se trata de tener los cinco elementos perfectamente equilibrados; casi nadie los tiene. Conviene mirar cuáles son fuertes y cuáles débiles, y qué suele significar ese patrón. Un mapa con mucho Fuego suele leerse como expresivo y visible; con mucha Agua, como perceptivo y adaptable. Un elemento débil suele señalar algo que conviene reforzar de forma consciente, no un defecto.",
     cyclesHeading: "Lo que aportan los ciclos largos",
     cyclesBody:
       "Tu mapa por sí solo muestra un patrón fijo, pero el saju también sigue los ciclos de diez años: tramos que cambian aquello para lo que tu mapa está más o menos preparado en cada momento (estabilidad, visibilidad, responsabilidad, cambio, relaciones). Por eso una lectura se parece menos a una etiqueta de personalidad fija y más a un camino que va cambiando mientras avanzas. Los ciclos de diez años de Fatesaid se basan justo en esta idea.",

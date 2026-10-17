@@ -123,7 +123,7 @@ const es: CompatibilityContent = {
       caution: "La presión no siempre es cómoda, así que ayuda confirmar en voz alta que viene del cariño.",
     },
   },
-  bondNote: "Además, los elementos que están en el centro de sus dos mapas forman una de las combinaciones clásicas del saju: esta combinación trae una atracción extra que no es fácil de explicar.",
+  bondNote: "Los elementos que están en el centro de sus dos mapas también forman una de las combinaciones clásicas del saju: esta combinación trae una atracción extra que no es fácil de explicar.",
 };
 
 export const COMPATIBILITY_CONTENT: Record<Locale, CompatibilityContent> = { ko, en, es };

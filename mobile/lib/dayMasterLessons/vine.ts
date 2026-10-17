@@ -62,7 +62,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "La enredadera y el roble: dos formas de Madera",
-      body: "La Madera tiene dos caras. El roble, su hermano yang, se sostiene por sí mismo y crece recto hacia arriba. La enredadera, Madera yin, crece conectando: se apoya, se enrosca y usa lo que la rodea para subir. Tú sueles leer el ambiente antes de moverte, y se te da bien encontrar la puerta lateral cuando la principal está cerrada. Eso no es debilidad, sino otra clase de fuerza: una que se dobla sin soltar.",
+      body: "La Madera tiene dos caras. El roble, su hermano yang, se sostiene por sí mismo y crece recto hacia arriba. La enredadera, Madera yin, crece conectando: se apoya, se enrosca y usa lo que la rodea para subir. Tú sueles leer el ambiente antes de moverte, y se te da bien encontrar la puerta lateral cuando la principal está cerrada. Eso es otra clase de fuerza: una que se dobla sin soltar.",
       tryToday: "Si hoy te topas con un muro, busca una forma de rodearlo antes de darlo por cerrado.",
     },
     {
@@ -124,7 +124,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "물: 나를 자라게 하는 것",
-      body: "오행에서 물(수)은 나무(목)를 길러요. 덩굴에게 물은 주로 관계를 통해 와요. 따뜻한 대화, 나를 알아주는 친구, 새로운 걸 천천히 받아들일 수 있는 조용한 자리요. 다른 사람에게 마음을 잘 맞추는 만큼, 도움과 함께 상대의 기분까지 흡수하기도 해요.\n\n혼자만의 시간은 무엇이 내 것이고 무엇이 오는 길에 묻어 온 것인지 가려내게 도와줘요.",
+      body: "오행에서 물(수)은 나무(목)를 길러요. 덩굴에게 물은 주로 관계에서 와요. 따뜻한 대화, 나를 알아주는 친구, 새로운 걸 천천히 받아들일 수 있는 조용한 자리요. 다른 사람에게 마음을 잘 맞추는 만큼, 도움과 함께 상대의 기분까지 흡수하기도 해요.\n\n혼자만의 시간은 무엇이 내 것이고 무엇이 오는 길에 묻어 온 것인지 가려내게 도와줘요.",
       tryToday: "오늘 몇 분쯤 조용한 곳에서, 혼자일 때 내 기분이 어떤지 가만히 느껴 보세요.",
     },
     {

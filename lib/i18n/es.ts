@@ -122,7 +122,7 @@ export const es: typeof ko = {
     greeting1: (nickname: string) => `¡Hola, ${nickname}!`,
     greeting2: "Fatesaid es un servicio con IA basado en los Cuatro Pilares (saju). Sus respuestas sirven para reflexionar sobre ti, no son un consejo profesional.",
     promptCategory: "Pregunta lo que quieras: elige un tema que te interese.",
-    analyzing: "Un momento, estoy analizando tu pregunta a través de tu saju...",
+    analyzing: "Un momento, estoy analizando tu pregunta con tu saju...",
     askOneMore: "¿Quieres elegir otra pregunta?",
     installPitch: "Esas son todas las preguntas gratuitas por ahora. Guarda el código de abajo: cuando la app esté disponible, podrás continuar justo donde lo dejaste.",
     codeMessage: (code: string) => `Guarda este código de verificación: ${code}\nEscríbelo cuando la app esté disponible y seguirás justo donde lo dejaste.`,

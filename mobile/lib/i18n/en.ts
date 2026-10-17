@@ -167,7 +167,7 @@ export const en: typeof ko = {
     priceAtCheckout: "The price is shown on the store's checkout sheet.",
     generating: ["Reading your twelve months...", "Writing the five life areas...", "Still writing — this can take up to a minute..."],
     timelineHeading: "12-month timeline",
-    vsProNote: "Pro's Year Ahead tab is a short outline of the year by topic. This report is the full written version — five life areas in depth, a 12-month timeline and an action plan — and is bought separately, once for that year.",
+    vsProNote: "Pro's Year Ahead tab is a short outline of the year by topic. This report is the full written version: five life areas in depth, a 12-month timeline and an action plan. It is bought separately, once for that year.",
     timelineNote: "Months follow the saju calendar, which starts in early February.",
     planHeading: "Action plan",
     errorGeneric: "We couldn't make your report. Please try again.",
@@ -275,7 +275,7 @@ export const en: typeof ko = {
     ],
     elementsHeading: "Why the Five Elements matter",
     elementsBody:
-      "The point isn't to have all five elements perfectly balanced — almost no one does. What matters is which elements run strong and which run weak, and what that pattern tends to mean. A chart heavy in Fire often reads as expressive and visible; heavy Water often reads as perceptive and adaptive. A weak element usually points to something worth deliberately supporting, not a flaw.",
+      "The point isn't to have all five elements perfectly balanced — almost no one does. Look at which elements run strong and which run weak, and what that pattern tends to mean. A chart heavy in Fire often reads as expressive and visible; heavy Water often reads as perceptive and adaptive. A weak element usually points to something worth deliberately supporting, not a flaw.",
     cyclesHeading: "What longer cycles add",
     cyclesBody:
       "Your chart on its own shows a fixed pattern, but Saju also tracks \"luck cycles\" — roughly decade-long stretches that shift what a chart is more or less suited for at a given time (stability, visibility, responsibility, change, relationships). This is why a reading feels less like a fixed personality label and more like a map that changes as you move through it. Fatesaid's 10-year cycle view is built on exactly this idea.",

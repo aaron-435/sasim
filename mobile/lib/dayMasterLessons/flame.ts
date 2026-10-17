@@ -20,7 +20,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "What keeps your flame steady",
-      body: "In the Five Elements, Wood feeds Fire, so Wood is your resource: what refuels you. A flame needs good fuel and some shelter from the wind, and you often recharge the same way: through calm learning, a trusted mentor, or a few people who make you feel safe.\n\nBecause you take in so much of the mood around you, quiet time isn't a luxury for you; it's fuel. A book, a slow walk among trees, or an evening with no plans can all count as Wood.",
+      body: "In the Five Elements, Wood feeds Fire, so Wood is your resource: what refuels you. A flame needs good fuel and some shelter from the wind, and you often recharge the same way: through calm learning, a trusted mentor, or a few people who make you feel safe.\n\nBecause you take in so much of the mood around you, quiet time works as fuel for you. A book, a slow walk among trees, or an evening with no plans can all count as Wood.",
       tryToday: "Give yourself twenty minutes today with no one else's mood to read, and notice how your energy shifts.",
     },
     {
@@ -72,7 +72,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Lo que mantiene firme tu llama",
-      body: "En los cinco elementos, la Madera alimenta al Fuego, así que la Madera es tu recurso: lo que te recarga. Una llama necesita buen combustible y algo de resguardo del viento, y tú sueles recargarte igual: aprendiendo con calma, con una persona mentora de confianza o con pocas personas que te dan seguridad.\n\nComo absorbes tanto del ambiente, el tiempo en calma no es un lujo para ti; es combustible. Un libro, un paseo lento entre árboles o una tarde sin planes pueden ser tu Madera.",
+      body: "En los cinco elementos, la Madera alimenta al Fuego, así que la Madera es tu recurso: lo que te recarga. Una llama necesita buen combustible y algo de resguardo del viento, y tú sueles recargarte igual: aprendiendo con calma, con una persona mentora de confianza o con pocas personas que te dan seguridad.\n\nComo absorbes tanto del ambiente, el tiempo en calma es combustible para ti. Un libro, un paseo lento entre árboles o una tarde sin planes pueden ser tu Madera.",
       tryToday: "Regálate hoy veinte minutos sin tener que leer el ánimo de nadie y observa cómo cambia tu energía.",
     },
     {
@@ -124,7 +124,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "등불을 꾸준히 지켜주는 것",
-      body: "오행에서 나무(목)는 불(화)을 키워요. 그래서 나무는 당신을 다시 채워주는 기운이에요. 등불에는 좋은 땔감과 바람을 막아줄 자리가 필요하듯, 당신도 차분한 배움, 믿을 수 있는 스승, 마음 놓이는 몇 사람 곁에서 다시 채워지는 편이에요.\n\n주변 분위기를 많이 받아들이는 만큼, 조용한 시간은 당신에게 사치가 아니라 땔감이에요. 책 한 권, 나무 사이를 천천히 걷는 산책, 약속 없는 저녁 모두 나무가 될 수 있어요.",
+      body: "오행에서 나무(목)는 불(화)을 키워요. 그래서 나무는 당신을 다시 채워주는 기운이에요. 등불에는 좋은 땔감과 바람을 막아줄 자리가 필요하듯, 당신도 차분한 배움, 믿을 수 있는 스승, 마음 놓이는 몇 사람 곁에서 다시 채워지는 편이에요.\n\n주변 분위기를 많이 받아들이는 만큼, 조용한 시간은 당신에게 땔감이에요. 책 한 권, 나무 사이를 천천히 걷는 산책, 약속 없는 저녁 모두 나무가 될 수 있어요.",
       tryToday: "오늘 누구의 기분도 살필 필요 없는 이십 분을 나에게 주고, 기운이 어떻게 달라지는지 느껴 보세요.",
     },
     {
@@ -149,7 +149,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "나의 계절, 여름",
-      body: "사주의 달력에서 불(화)은 여름 몇 달, 대략 5월 초부터 7월 초까지 가장 강해요. 이 날짜는 사주가 나온 절기 달력을 따르기 때문에, 남반구에 산다면 그 지역 날씨가 아니라 하나의 리듬으로 읽어 주세요.\n\n많은 등불이 이 무렵 마음이 더 열리고 표현이 늘어난다고 느껴요. 어두운 계절에는 등불이 오히려 더 눈에 띄어서, 당신의 꾸준한 빛이 주변 사람들에게 더 크게 다가갈 수도 있어요.",
+      body: "사주의 달력에서 불(화)은 여름 몇 달, 대략 5월 초부터 7월 초까지 가장 강해요. 이 날짜는 사주가 나온 절기 달력을 따르기 때문에, 남반구에 산다면 그 지역 날씨와는 다를 수 있으니 하나의 리듬으로 읽어 주세요.\n\n많은 등불이 이 무렵 마음이 더 열리고 표현이 늘어난다고 느껴요. 어두운 계절에는 등불이 오히려 더 눈에 띄어서, 당신의 꾸준한 빛이 주변 사람들에게 더 크게 다가갈 수도 있어요.",
       tryToday: "하루 중 기운이 가장 따뜻하게 느껴지는 시간을 찾아, 아끼는 일 하나를 그때로 옮겨 보세요.",
     },
     {

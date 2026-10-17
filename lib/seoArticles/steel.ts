@@ -57,7 +57,7 @@ const steel: ArticleSet = {
     description:
       "사주에서 경금(庚金) 일간, 곧 원석은 어떤 모습일까요? 결단하는 방식, 잘하는 것, 사람들과의 관계, 나를 든든하게 받쳐 주는 기운을 살펴봅니다.",
     h1: "경금(庚金) 일간: 양의 쇠, 원석",
-    lead: "사주(四柱)에서 일간(日干)은 내가 태어난 날의 천간이에요. 사주 안에서 ‘나 자신’을 뜻하고, 모두 열 가지가 있어요. 양의 쇠인 경금(庚金)은 그중 일곱 번째로, 여기서는 ‘원석’이라고 불러요. 사주는 오랜 문화 전통이자 나를 돌아보는 하나의 틀이에요. 아래 내용은 정해진 결론이 아니라 한번 대어 보는 경향으로 읽어 주세요.",
+    lead: "사주(四柱)에서 일간(日干)은 내가 태어난 날의 천간이에요. 사주 안에서 ‘나 자신’을 뜻하고, 모두 열 가지가 있어요. 양의 쇠인 경금(庚金)은 그중 일곱 번째로, 여기서는 ‘원석’이라고 불러요. 사주는 오랜 문화 전통이자 나를 돌아보는 하나의 틀이에요. 아래 내용은 한번 대어 보는 경향으로 읽어 주세요.",
     sections: [
       {
         heading: "아직 다듬지 않은 단단한 쇠",
@@ -118,7 +118,7 @@ const steel: ArticleSet = {
         heading: "Lo que el acero suele hacer bien",
         body: [
           "El acero suele lucirse cuando las cosas se enredan. Puede que sepas decir que no con claridad, lo que ahorra tiempo a todos, y nombrar el problema real en una reunión mientras los demás todavía son corteses. La gente suele saber a qué atenerse contigo, y esa constancia puede ser una forma callada de confianza.",
-          "Un sentido de la justicia atraviesa gran parte de esto. Quizá notes cuando algo no es parejo y te animes a decirlo, y sueles cumplir tu palabra, a veces incluso cuando te cuesta. En el día a día se ve sencillo: la amistad que elige el restaurante, la persona que aparece justo cuando dijo que aparecería.",
+          "Un sentido de la justicia atraviesa gran parte de esto. Quizá notes cuando algo no es parejo y te animes a decirlo, y sueles cumplir tu palabra, a veces incluso cuando te cuesta. En la práctica se ve sencillo: la amistad que elige el restaurante, la persona que aparece justo cuando dijo que aparecería.",
           "Hay un reverso suave que conviene conocer. La misma franqueza que genera confianza puede sentirse como un corte en momentos que pedían primero la versión suave, y un criterio alto puede volverse contra ti, de modo que lo que está bien rara vez te parece terminado. Añadir una frase con el porqué de una decisión, o una palabra de aprecio antes de una corrección, suele mantener el filo útil sin embotarlo.",
         ],
       },

@@ -1,0 +1,191 @@
+{
+  "generatedAt": "2026-10-17T07:46:19.039Z",
+  "files": 310,
+  "strings": 7124,
+  "languages": {
+    "ko": {
+      "chars": 117842,
+      "hits": 49,
+      "hitsPer1k": 0.416,
+      "emDashPer1k": 0.28,
+      "threeListPer1k": 0.424
+    },
+    "en": {
+      "chars": 266755,
+      "hits": 38,
+      "hitsPer1k": 0.142,
+      "emDashPer1k": 0.645,
+      "threeListPer1k": 0.517
+    },
+    "es": {
+      "chars": 277467,
+      "hits": 23,
+      "hitsPer1k": 0.083,
+      "emDashPer1k": 0.029,
+      "threeListPer1k": 0.497
+    }
+  },
+  "patterns": {
+    "em_dash_dense": 11,
+    "en_contrast": 21,
+    "es_transition": 6,
+    "es_calque": 5,
+    "ko_trans_tonghae": 3,
+    "ko_contrast": 28,
+    "en_closing": 3,
+    "en_metaphor": 4,
+    "en_tells": 1,
+    "es_metaphor": 5,
+    "ko_repeat_ending": 15,
+    "ko_closing": 3,
+    "es_mente_dense": 1,
+    "es_contrast": 3,
+    "es_closing": 1
+  },
+  "rateOnly": {
+    "ko_trans_daehan": {
+      "count": 33,
+      "per1kKo": 0.28
+    },
+    "ko_nominal": {
+      "count": 25,
+      "per1kKo": 0.212
+    }
+  },
+  "removedAsFalsePositive": {
+    "rule1 prompt ko strings skipped": 64,
+    "rule2 quiz questions/short options skipped": 16,
+    "rule3 ko rate-only (daehan/nominal/geot_gata) moved out of totals": 58,
+    "ko_closing question sentences": 0,
+    "ko_metaphor literal nouns": 29
+  },
+  "groups": {
+    "instructions (en/es only)": {
+      "chars": 48529,
+      "hits": 4,
+      "hitsPer1k": 0.082
+    },
+    "*Content*.ts (mobile/lib + lib)": {
+      "chars": 141058,
+      "hits": 37,
+      "hitsPer1k": 0.262
+    },
+    "lib/i18n": {
+      "chars": 21557,
+      "hits": 3,
+      "hitsPer1k": 0.139
+    },
+    "other": {
+      "chars": 65202,
+      "hits": 0,
+      "hitsPer1k": 0
+    },
+    "quiz (mobile/lib/quiz + lib/module*, question banks)": {
+      "chars": 61905,
+      "hits": 13,
+      "hitsPer1k": 0.21
+    },
+    "lib/seoArticles": {
+      "chars": 112406,
+      "hits": 19,
+      "hitsPer1k": 0.169
+    },
+    "mobile/lib/dayMasterLessons": {
+      "chars": 131792,
+      "hits": 24,
+      "hitsPer1k": 0.182
+    },
+    "mobile/lib/i18n": {
+      "chars": 52713,
+      "hits": 10,
+      "hitsPer1k": 0.19
+    },
+    "components+app": {
+      "chars": 26902,
+      "hits": 0,
+      "hitsPer1k": 0
+    }
+  },
+  "topFiles": [
+    [
+      "mobile/lib/dailyFortuneContent.ts",
+      27
+    ],
+    [
+      "mobile/lib/dayMasterLessons/mountain.ts",
+      7
+    ],
+    [
+      "mobile/lib/i18n/en.ts",
+      5
+    ],
+    [
+      "mobile/lib/dayMasterLessons/flame.ts",
+      4
+    ],
+    [
+      "mobile/lib/dayMasterLessons/gem.ts",
+      4
+    ],
+    [
+      "mobile/lib/dayMasterLessons/steel.ts",
+      4
+    ],
+    [
+      "mobile/lib/i18n/es.ts",
+      4
+    ],
+    [
+      "mobile/lib/quiz/module3Burnout.ts",
+      4
+    ],
+    [
+      "lib/seoArticles/field.ts",
+      3
+    ],
+    [
+      "lib/seoArticles/flame.ts",
+      3
+    ],
+    [
+      "lib/yearFortuneContent.ts",
+      3
+    ],
+    [
+      "lib/chatPrompts.ts",
+      2
+    ],
+    [
+      "lib/compatibilityContent.ts",
+      2
+    ],
+    [
+      "lib/i18n/ko.ts",
+      2
+    ],
+    [
+      "lib/modulePlaybooks.ts",
+      2
+    ],
+    [
+      "lib/seoArticles/gem.ts",
+      2
+    ],
+    [
+      "lib/seoArticles/mountain.ts",
+      2
+    ],
+    [
+      "lib/seoArticles/steel.ts",
+      2
+    ],
+    [
+      "lib/seoArticles/sun.ts",
+      2
+    ],
+    [
+      "lib/seoArticles/vine.ts",
+      2
+    ]
+  ]
+}
