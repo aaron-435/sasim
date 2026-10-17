@@ -21,7 +21,7 @@ import type { YearReportContent } from "./yearReport";
 import { logLlmUsage } from "./llmUsage";
 import type { Locale } from "./i18n/types";
 import { describeUpcomingPeriod, relationToDayMaster, type ReportContext } from "./reportPrompts";
-import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME } from "./promptLocale";
+import { ELEMENT_LABEL, FIELD_LANGUAGE_NAME, LOCALE_STYLE } from "./promptLocale";
 import type { ElementKey } from "./sajuScore";
 import { getModuleChatSets, getModulePlaybook } from "./modulePlaybooks";
 import { cardQuizFor, describeSetPackets, type SetCard } from "./reportSets";
@@ -75,7 +75,7 @@ export function flattenStrings(value: unknown, path = "report", out: [string, st
 
 const ES_GENDERED_READER =
   /(?<!\b(?:he|has|ha|hemos|han|había|habías|habrás|apego)\s)\b(atrapad|agotad|cansad|abrumad|sobrecargad|desbordad|preocupad|ansios|estresad|frustrad|aislad|agobiad|vaciad|quemad|inquiet|conectad|desconectad|bloquead|desorientad|saturad|exhaust|sobrepasad|expuest|pegad|protegid)[ao]s?\b/i;
-const ES_STYLE_SLIP = /\busted(es)?\b|\b[a-záéíóúñ]{3,}x\b|\bcargarse\b|\bdescolocar|\bsu carta\b|\btu carta\b|\bla carta\b|\bvuestr/i;
+const ES_STYLE_SLIP = /\busted(es)?\b|\b[a-záéíóúñ]{3,}x\b|\bcargarse\b|\bdescolocar|\b(?:su|tu|mi|la) carta\b(?!\s+de\s+(?:presentaci|recomendaci|despedida|agradecimiento))|\bvuestr|\bcoger\b|\bahorita\b|\bch[eé]vere\b|\bguay\b|\bregañ|\benfad/i;
 const ES_CAPITALIZED_ELEMENTS = /\bCinco Elementos\b/; // running text uses lowercase "cinco elementos"
 const META_LEAK = /\b(prompt|json|schema)\b|(se describe|se indica|se menciona|se da) aquí|named here|(only|sole|one) (supporting |direct )?relationship (that|which|here|named)|the only relationship|(único|única) relación|(only|sole) (supporting )?(relationship|relation) (named|given|provided|listed)|(único|única) (relación|apoyo) (nombrad|indicad|dad)[ao]|no (future )?age range|age range (is )?(not|un)specified|not specified|no se especifica|edad no (está )?especificad|\bfree (preview|strengths?)\b|\b(vista previa|fortalezas?) gratuitas?\b|무료 (강점|미리보기)/i;
 // An age as the grammatical subject of a Spanish sentence ("38 años marcan…", "Los 38 años traen…"): a
@@ -516,7 +516,7 @@ export function makeRewriter(client: OpenAI, model: string, locale: Locale, sess
         messages: [
           {
             role: "system",
-            content: `다음 문장을 ${FIELD_LANGUAGE_NAME[locale]}로 고쳐 써라. 고칠 점: ${issue}. 뜻, 분량(문장 수), 어조는 그대로 유지하고 그 문제만 없애라. 독자 성별을 드러내는 형용사·분사는 명사나 동사로 바꿔라. JSON 객체 {"text": "..."} 하나만 출력.`,
+            content: `다음 문장을 ${FIELD_LANGUAGE_NAME[locale]}로 고쳐 써라. 고칠 점: ${issue}. 뜻, 분량(문장 수), 어조는 그대로 유지하고 그 문제만 없애라. 독자 성별을 드러내는 형용사·분사는 명사나 동사로 바꿔라. JSON 객체 {"text": "..."} 하나만 출력.${locale === "ko" ? "" : `\n\n[Style rules for the rewritten text]\n${LOCALE_STYLE[locale]}`}`,
           },
           { role: "user", content: original },
         ],
