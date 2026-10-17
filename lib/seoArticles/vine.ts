@@ -103,16 +103,16 @@ const vine: ArticleSet = {
   },
 
   es: {
-    metaTitle: "Maestro del Día Madera yin (乙): la enredadera en el saju | Fatesaid",
+    metaTitle: "Madera yin (乙), Maestro del Día: la enredadera en el saju | Fatesaid",
     description:
       "Cómo suele verse el Maestro del Día Madera yin (乙), la enredadera, en el saju: cómo crece, qué hace bien, cómo se relaciona con la gente y qué la alimenta.",
-    h1: "Maestro del Día Madera yin (乙): la enredadera",
-    lead: "En el saju, la versión coreana de los Cuatro Pilares, tu Maestro del Día es el Tronco Celestial del día en que naciste. Te representa dentro de tu carta y hay diez posibles. La Madera yin, escrita 乙 (eul en coreano), es el segundo, y aquí lo llamamos la enredadera. El saju es una tradición cultural y una forma de mirarte a ti mismo, no una ciencia, así que lee lo que sigue como tendencias para probarte, no como un veredicto.",
+    h1: "Madera yin (乙), Maestro del Día: la enredadera",
+    lead: "En el saju, la versión coreana de los Cuatro Pilares, tu Maestro del Día es el tronco celeste del día en que naciste. Te representa dentro de tu mapa y hay diez posibles. La Madera yin, escrita 乙 (eul en coreano), es el segundo, y aquí lo llamamos la enredadera. El saju es una tradición cultural y una forma de mirar tu propia vida, no una ciencia, así que lee lo que sigue como tendencias para probarte, no como un veredicto.",
     sections: [
       {
         heading: "Una trepadora que encuentra el camino hacia arriba",
         body: [
-          "Imagina una planta trepadora en el muro de un jardín antiguo. No sube en línea recta empujando con su propia fuerza. Busca una grieta, una barandilla o la rama de un árbol vecino, se enrosca en ella y sigue hacia la luz. Esa es la imagen de la enredadera. Quienes tienen este Maestro del Día suelen describir su camino de forma parecida: primero leen la situación, después encuentran la ruta que funciona, y casi siempre lo hacen sin hacer mucho ruido.",
+          "Imagina una planta trepadora en el muro de un jardín antiguo. No sube en línea recta empujando con su propia fuerza. Busca una grieta, una reja o la rama de un árbol vecino, se enrosca en ella y sigue hacia la luz. Esa es la imagen de la enredadera. Quienes tienen este Maestro del Día suelen describir su camino de forma parecida: primero leen la situación, después encuentran la ruta que funciona, y casi siempre lo hacen sin hacer mucho ruido.",
           "La Madera es el elemento del crecimiento, y el yin es su forma más suave y receptiva. Su hermano yang, el roble, se sostiene solo sobre un único tronco y crece manteniendo su línea. La enredadera crece conectando. Se apoya, se enrosca y toma prestada la estructura de lo que tiene cerca. Cuando la puerta principal está cerrada, muchas enredaderas son quienes notan en silencio la puerta lateral. No es una fuerza menor. Es una fuerza que se dobla sin soltar.",
         ],
       },
@@ -128,21 +128,21 @@ const vine: ArticleSet = {
         heading: "La enredadera entre las demás personas",
         body: [
           "Las enredaderas suelen ser quienes unen a la gente. Recuerdas quién se lleva bien con quién, te fijas en quien está callado en el borde del grupo y ayudas a que un grupo se sienta como grupo. A los demás les resulta fácil hablar contigo, y quizá no se den cuenta de cuánta atención les estás dedicando.",
-          "Junto a una personalidad fuerte, una enredadera puede empezar a seguir la dirección de esa persona más que la suya, simplemente porque apoyarse es natural. No hay nada malo en apoyarse. Las amistades que mejor le sientan a este Maestro del Día suelen ser aquellas en las que ambas partes se sostienen y cada quien alcanza su propia luz. En las relaciones cercanas, decir lo que de verdad prefieres, aunque sea sobre algo pequeño, les da a quienes te rodean algo real en lo que apoyarse también.",
+          "Junto a una personalidad fuerte, una enredadera puede empezar a seguir la dirección de esa persona más que la suya, simplemente porque apoyarse es natural. No hay nada malo en apoyarse. Las amistades que mejor le sientan a este Maestro del Día suelen ser aquellas en las que ambas partes se sostienen y cada quien alcanza su propia luz. En las relaciones cercanas, decir lo que de verdad prefieres, aunque sea sobre algo pequeño, les da a quienes te rodean algo real en lo que apoyarse.",
         ],
       },
       {
         heading: "Lo que alimenta a la enredadera",
         body: [
-          "En los Cinco Elementos, el Agua nutre a la Madera. Para una enredadera, el Agua suele llegar a través del vínculo: una conversación cálida, una amistad que de verdad te entiende, un rincón tranquilo donde absorber algo nuevo sin que nadie te pida lucirte. Como absorbes el ambiente que te rodea, el tiempo a solas importa aquí. Unos minutos de calma pueden ayudarte a separar lo que es tuyo de lo que fuiste recogiendo por el camino.",
+          "En los cinco elementos, el Agua nutre a la Madera. Para una enredadera, el Agua suele llegar a través del vínculo: una conversación cálida, una amistad que de verdad te entiende, un rincón tranquilo donde absorber algo nuevo sin que nadie te pida lucirte. Como absorbes el ambiente que te rodea, el tiempo a solas importa aquí. Unos minutos de calma pueden ayudarte a separar lo que es tuyo de lo que fuiste recogiendo por el camino.",
           "A su vez, la Madera alimenta al Fuego, que en el saju representa la expresión: hablar, crear, dar estilo, compartir. Las enredaderas suelen expresarse con un toque ligero, a través del gusto, los pequeños detalles y la sensación que dejan en una habitación o en un mensaje. Darle un poco más de espacio a eso, incluso en gestos pequeños, es lo que hace que tu Fuego prenda.",
           "Algunas lecturas señalan también la estructura. Un enrejado le marca la línea a una enredadera, y una enredadera con un buen soporte suele subir más alto que una que se extiende sin guía. Un compromiso claro o un límite suave pueden darle a tu flexibilidad una dirección por la que crecer.",
         ],
       },
       {
-        heading: "Un Maestro del Día no es toda la carta",
+        heading: "Un Maestro del Día no es todo el mapa",
         body: [
-          "Tu Maestro del Día es el centro de tu carta, pero solo una parte de ella. Tus otros pilares, el equilibrio de los Cinco Elementos y tus ciclos de diez años influyen en cómo se muestra, así que dos enredaderas en muros distintos pueden seguir caminos muy diferentes.",
+          "Tu Maestro del Día es el centro de tu mapa, pero solo una parte de él. Tus otros pilares, el equilibrio de los cinco elementos y tus ciclos de diez años influyen en cómo se muestra, así que dos enredaderas en muros distintos pueden seguir caminos muy diferentes.",
           "Para conocer tu propio Maestro del Día, usa la calculadora de saju gratuita de abajo. Pide tu fecha de nacimiento y, si la sabes, la hora.",
         ],
       },

@@ -58,7 +58,7 @@ const en: CompatibilityContent = {
   relations: {
     mirror: {
       headline: "Cut from the same cloth",
-      body: "You run on the same current, so a lot goes unsaid and still lands. It's easy — the cost is that you tend to stall at the exact same point, so the same blind spot can hide from both of you at once.",
+      body: "You run on the same current, so a lot goes unsaid and still lands. It's easy, but you tend to stall at the exact same point, so the same blind spot can hide from both of you at once.",
       goodPoint: "You run on the same current, so a lot goes unsaid and still lands — being together feels easy.",
       caution: "You tend to stall at the exact same point, so it helps to have a third perspective catch what neither of you can see.",
     },
@@ -123,7 +123,7 @@ const es: CompatibilityContent = {
       caution: "La presión no siempre es cómoda, así que ayuda confirmar en voz alta que viene del cariño.",
     },
   },
-  bondNote: "Además, los elementos que están en el centro de sus dos cartas forman una de las parejas clásicas del saju: esta combinación trae una atracción extra que no es fácil de explicar.",
+  bondNote: "Además, los elementos que están en el centro de sus dos mapas forman una de las combinaciones clásicas del saju: esta combinación trae una atracción extra que no es fácil de explicar.",
 };
 
 export const COMPATIBILITY_CONTENT: Record<Locale, CompatibilityContent> = { ko, en, es };

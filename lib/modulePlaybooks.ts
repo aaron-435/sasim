@@ -138,7 +138,7 @@ const MODULE1: ModulePlaybook = {
   signatureQuestion: {
     ko: "답장이 안 올 때, 머릿속에 가장 먼저 떠오르는 이야기는 뭐예요? '바쁘겠지'예요, '내가 뭘 잘못했나'예요?",
     en: "When a reply doesn't come, what's the first story your mind tells you? \"They're probably busy,\" or \"Did I do something wrong?\"",
-    es: "Cuando no llega una respuesta, ¿qué historia te cuenta tu mente primero? ¿\"Seguro que no ha podido\" o \"¿Hice algo mal?\"?",
+    es: "Cuando no llega una respuesta, ¿qué historia te cuenta tu mente primero? ¿\"Seguro que tiene mucho encima\" o \"¿Hice algo mal?\"?",
   },
   signatureStage: "A",
   stages: {
@@ -183,8 +183,8 @@ const MODULE1: ModulePlaybook = {
     { ko: "서운함", en: "hurt", es: "dolor" },
     { ko: "버려질 것 같은 느낌", en: "fear of being left", es: "miedo a que te dejen" },
     { ko: "답답함", en: "feeling hemmed in", es: "agobio" },
-    { ko: "숨막힘", en: "suffocation", es: "sensación de ahogo" },
-    { ko: "무덤덤함", en: "numbness", es: "indiferencia" },
+    { ko: "숨막힘", en: "feeling smothered", es: "sensación de ahogo" },
+    { ko: "무덤덤함", en: "numbness", es: "adormecimiento emocional" },
   ],
   contradictions: [
     "겉으로는 쿨한데 속으로는 확인받고 싶어 한다.",
@@ -262,7 +262,7 @@ const MODULE2: ModulePlaybook = {
     { ko: "불안", en: "anxiety", es: "ansiedad" },
     { ko: "죄책감", en: "guilt", es: "culpa" },
     { ko: "허탈함", en: "emptiness", es: "vacío" },
-    { ko: "들뜸", en: "a rush", es: "euforia" },
+    { ko: "들뜸", en: "excitement", es: "euforia" },
     { ko: "민망함", en: "embarrassment", es: "vergüenza" },
     { ko: "안도", en: "relief", es: "alivio" },
   ],
@@ -298,7 +298,7 @@ const MODULE3: ModulePlaybook = {
   signatureQuestion: {
     ko: "요즘 하루에서 에너지를 빼 가는 것과 조금이라도 채워 주는 것을 하나씩 꼽는다면요?",
     en: "In your days lately, what's one thing that drains your energy, and one thing that gives even a little back?",
-    es: "En tus días últimamente, ¿qué es lo que más energía te quita y qué es lo que te devuelve aunque sea un poco?",
+    es: "En tu día a día de últimamente, ¿qué es lo que más energía te quita y qué es lo que te devuelve aunque sea un poco?",
   },
   signatureStage: "D",
   stages: {
@@ -529,7 +529,7 @@ const MODULE6: ModulePlaybook = {
   signatureQuestion: {
     ko: "그 화를 한 겹 벗기면 아래에 뭐가 있었을까요? 억울함이었어요, 서운함이었어요, 무시당한 느낌이었어요?",
     en: "If you peeled back one layer of that anger, what would be underneath? Was it feeling wronged, feeling hurt, or feeling dismissed?",
-    es: "Si le quitaras una capa a ese enfado, ¿qué habría debajo? ¿Sentiste que era injusto, que te dolió o que no te tomaban en cuenta?",
+    es: "Si le quitaras una capa a ese enojo, ¿qué habría debajo? ¿Sentiste que era injusto, que te dolió o que no te tomaban en cuenta?",
   },
   signatureStage: "B",
   stages: {
@@ -564,7 +564,7 @@ const MODULE6: ModulePlaybook = {
     {
       name: "반추",
       options: [
-        { ko: "상대에게 향했어요", en: "It was aimed at them", es: "Fue hacia la otra persona" },
+        { ko: "상대에게 향했어요", en: "It was aimed at them", es: "Se dirigió a la otra persona" },
         { ko: "나 자신에게 향했어요", en: "It turned on myself", es: "Se volvió contra mí" },
       ],
     },
@@ -589,7 +589,7 @@ const MODULE6: ModulePlaybook = {
   ],
   reportPages: {
     module_map: {
-      title: { ko: "화의 빙산", en: "The anger iceberg", es: "El iceberg del enfado" },
+      title: { ko: "화의 빙산", en: "The anger iceberg", es: "El iceberg del enojo" },
       instruction: "겉으로 보인 화, 그 아래의 감정, 침범된 선을 대화에 나온 실제 장면으로 세 층으로 그린다. 화가 어디로 갔는지(삼킴, 터짐, 곱씹음)를 짚되 화 자체를 나쁜 것으로 쓰지 않는다.",
     },
     module_deep: {
@@ -887,7 +887,7 @@ const MODULE10: ModulePlaybook = {
     { ko: "답답함", en: "frustration", es: "frustración" },
     { ko: "들뜸", en: "restless excitement", es: "entusiasmo inquieto" },
     { ko: "후회", en: "regret", es: "arrepentimiento" },
-    { ko: "몰입의 쾌감", en: "the thrill of being absorbed", es: "el gusto de estar absorto en algo" },
+    { ko: "몰입의 쾌감", en: "the thrill of being absorbed", es: "el placer de sumergirte en algo" },
   ],
   contradictions: [
     "산만하다면서 어떤 일에는 몇 시간씩 빠진다.",
@@ -998,7 +998,7 @@ const MODULE12: ModulePlaybook = {
   boundary: "애착(모듈 1)은 지금 관계의 거리 조절, 실행력(모듈 5)은 일 하나를 시작하기 직전의 브레이크, 원가족(모듈 9)은 가족 체계 속 내 자리를 본다. 새 출발은 이별·이직·이사·졸업처럼 삶의 한 장이 바뀐 시기에 끝난 것을 보내고, 아직 정해지지 않은 시간을 지나, 새 자리에 마음을 두는 과정을 본다. 이별을 다뤄도 상대의 마음이나 다시 만날 가능성이 아니라 내 일상과 정체성이 어떻게 옮겨 가는지를 본다.",
   signatureQuestion: {
     ko: "그 변화가 있기 전의 나와 지금의 나 사이에, 아직 옮겨 오지 못한 게 하나 있다면 뭐예요?",
-    en: "Between who you were before that change and who you are now, is there one thing you haven't quite carried over yet?",
+    en: "Between who you were before that change and who you are now, is there one thing you haven't carried over yet?",
     es: "Entre quien eras antes de ese cambio y quien eres ahora, ¿hay algo que todavía no has terminado de traer contigo?",
   },
   signatureStage: "A",
@@ -1192,7 +1192,7 @@ const MODULE1_SETS: ModuleChatSets = {
         {
           text: {
             ko: "상대가 먼저 성큼 다가오면 반가워요, 살짝 부담돼요?",
-            en: "When the other person moves in close first, and quickly, does it feel welcome or a little heavy?",
+            en: "When the other person closes the distance first, does it feel welcome or a little heavy?",
             es: "Cuando la otra persona se acerca primero y con ganas, ¿te alegra o te pesa un poco?",
           },
         },
@@ -1463,7 +1463,7 @@ const MODULE2_SETS: ModuleChatSets = {
           text: {
             ko: "돈과 편안한 사이라면, 월급날 하루는 어떤 모습일 것 같아요?",
             en: "If you and money were on easy terms, what would payday look like?",
-            es: "Si tu relación con el dinero fuera tranquila, ¿cómo sería tu día de cobro?",
+            es: "Si tu relación con el dinero fuera tranquila, ¿cómo sería tu día de pago?",
           },
           free: true,
         },
@@ -1689,7 +1689,7 @@ const MODULE4_SETS: ModuleChatSets = {
         text: {
           ko: "모임 약속이 잡히면 기대돼요, 벌써 피곤해요?",
           en: "When group plans get set, do you look forward to it, or feel tired already?",
-          es: "Cuando se cierra un plan con un grupo, ¿te hace ilusión o ya te cansa de antemano?",
+          es: "Cuando se cierra un plan con un grupo, ¿te entusiasma o ya te cansa de antemano?",
         },
       },
     },
@@ -1854,7 +1854,7 @@ const MODULE5_SETS: ModuleChatSets = {
           text: {
             ko: "그 기준은 내가 정한 거예요, 누군가 기대한다고 느끼는 거예요?",
             en: "That standard: is it one you set yourself, or one you feel someone expects of you?",
-            es: "Ese listón, ¿te lo pones tú o sientes que alguien lo espera de ti?",
+            es: "Ese nivel de exigencia, ¿te lo pones tú o sientes que alguien lo espera de ti?",
           },
         },
         {
@@ -1901,7 +1901,7 @@ const MODULE5_SETS: ModuleChatSets = {
           text: {
             ko: "주변은 내가 미루는 걸 알아요, 티 안 나게 숨겨요?",
             en: "Do the people around you know you put things off, or do you keep it out of sight?",
-            es: "¿La gente a tu alrededor sabe que lo dejas para después o lo mantienes en secreto?",
+            es: "¿La gente a tu alrededor sabe que lo dejas para después o lo disimulas?",
           },
         },
       ],
@@ -1938,7 +1938,7 @@ const MODULE6_SETS: ModuleChatSets = {
       fallbackQuestion: {
         ko: "최근에 화가 올라왔던 순간이 있었다면, 어떤 장면이었어요?",
         en: "Think of a recent moment when anger rose up in you. What was happening?",
-        es: "Piensa en algún momento reciente en que sentiste que te subía el enfado. ¿Qué estaba pasando?",
+        es: "Piensa en algún momento reciente en que sentiste que te subía el enojo. ¿Qué estaba pasando?",
       },
       questions: [
         { text: MODULE6.signatureQuestion, signature: true },
@@ -1946,14 +1946,14 @@ const MODULE6_SETS: ModuleChatSets = {
           text: {
             ko: "화는 그 자리에서 바로 올라왔어요, 한참 뒤에 올라왔어요?",
             en: "Did the anger come up right there in the moment, or much later?",
-            es: "¿El enfado te subió ahí mismo o mucho después?",
+            es: "¿El enojo te subió ahí mismo o mucho después?",
           },
         },
         {
           text: {
             ko: "상대는 내가 화난 걸 알았어요, 몰랐어요?",
             en: "Did the other person know you were angry, or not?",
-            es: "¿La otra persona se dio cuenta de tu enfado o no?",
+            es: "¿La otra persona se dio cuenta de tu enojo o no?",
           },
         },
       ],
@@ -1965,21 +1965,21 @@ const MODULE6_SETS: ModuleChatSets = {
       fallbackQuestion: {
         ko: "화가 난 뒤에 늘 비슷하게 흘러가는 순서가 있다면, 보통 어떻게 흘러가요?",
         en: "After you get angry, is there a sequence things usually follow? How does it tend to go?",
-        es: "Después de enfadarte, ¿suele repetirse la misma secuencia? ¿Cómo suele ir?",
+        es: "Después de enojarte, ¿suele repetirse la misma secuencia? ¿Cómo suele ir?",
       },
       questions: [
         {
           text: {
             ko: "그 화는 어디로 갔어요? 삼켰어요, 터졌어요, 계속 곱씹었어요?",
             en: "Where did that anger go? Did you swallow it, let it burst out, or keep going over it?",
-            es: "¿A dónde fue ese enfado? ¿Te lo tragaste, estalló o le seguiste dando vueltas?",
+            es: "¿A dónde fue ese enojo? ¿Te lo tragaste, estalló o le seguiste dando vueltas?",
           },
         },
         {
           text: {
             ko: "같은 사람에게 같은 일로 화난 적이 또 있어요, 이번이 처음이에요?",
             en: "Has the same person made you angry over the same thing before, or is this the first time?",
-            es: "¿Ya te había enfadado la misma persona por lo mismo o es la primera vez?",
+            es: "¿Ya te había enojado la misma persona por lo mismo o es la primera vez?",
           },
         },
       ],
@@ -1987,7 +1987,7 @@ const MODULE6_SETS: ModuleChatSets = {
         text: {
           ko: "화가 가라앉는 데 몇 시간이면 돼요, 며칠 가요?",
           en: "Does it take a few hours for the anger to settle, or does it last for days?",
-          es: "¿Se te pasa el enfado en unas horas o te dura días?",
+          es: "¿Se te pasa el enojo en unas horas o te dura días?",
         },
       },
     },
@@ -1998,7 +1998,7 @@ const MODULE6_SETS: ModuleChatSets = {
       fallbackQuestion: {
         ko: "화가 날 때, 그 화에 대해 속으로 드는 생각이 있다면 어떤 거예요?",
         en: "When you get angry, what do you tell yourself about that anger?",
-        es: "Cuando te enfadas, ¿qué te dices por dentro sobre ese enfado?",
+        es: "Cuando te enojas, ¿qué te dices por dentro sobre ese enojo?",
       },
       questions: [
         {
@@ -2012,14 +2012,14 @@ const MODULE6_SETS: ModuleChatSets = {
           text: {
             ko: "어릴 때 집에서 화는 내도 되는 거였어요, 참아야 하는 거였어요?",
             en: "Growing up, was anger something you were allowed to show at home, or something you had to hold in?",
-            es: "En tu infancia, ¿en casa se podía mostrar el enfado o había que aguantarlo?",
+            es: "En tu infancia, ¿en casa se podía mostrar el enojo o había que aguantarlo?",
           },
         },
         {
           text: {
             ko: "화를 내고 나면 내가 나쁜 사람 같아요, 할 말을 한 것 같아요?",
             en: "After you get angry, do you feel like a bad person, or like you said what needed saying?",
-            es: "Después de enfadarte, ¿sientes que hiciste algo malo o que dijiste lo que había que decir?",
+            es: "Después de enojarte, ¿sientes que eres mala persona o que dijiste lo que había que decir?",
           },
         },
       ],
@@ -2031,28 +2031,28 @@ const MODULE6_SETS: ModuleChatSets = {
       fallbackQuestion: {
         ko: "화가 올라왔을 때 그걸 가라앉히려고 주로 어떻게 해요?",
         en: "When anger rises, what do you usually do to bring it down?",
-        es: "Cuando te sube el enfado, ¿qué sueles hacer para calmarlo?",
+        es: "Cuando te sube el enojo, ¿qué sueles hacer para calmarlo?",
       },
       questions: [
         {
           text: {
             ko: "화가 지나간 뒤 그 장면을 다시 떠올려요, 아예 덮어 둬요?",
             en: "Once the anger passes, do you replay the scene, or bury it completely?",
-            es: "Cuando se te pasa el enfado, ¿vuelves a repasar la escena o la entierras del todo?",
+            es: "Cuando se te pasa el enojo, ¿vuelves a repasar la escena o la entierras del todo?",
           },
         },
         {
           text: {
             ko: "화를 말로 꺼냈을 때 받아들여졌어요, 더 큰 싸움이 됐어요?",
             en: "When you've put your anger into words, was it heard, or did it turn into a bigger fight?",
-            es: "Cuando has puesto tu enfado en palabras, ¿te escucharon o terminó en una pelea más grande?",
+            es: "Cuando has puesto tu enojo en palabras, ¿te escucharon o terminó en una pelea más grande?",
           },
         },
         {
           text: {
             ko: "화를 편하게 털어놓을 수 있는 사람이 있어요, 없어요?",
             en: "Is there someone you can vent your anger to freely, or not really?",
-            es: "¿Tienes a alguien con quien desahogar tu enfado con libertad o no realmente?",
+            es: "¿Tienes a alguien con quien desahogar tu enojo con libertad o no realmente?",
           },
         },
       ],
@@ -2064,7 +2064,7 @@ const MODULE6_SETS: ModuleChatSets = {
       fallbackQuestion: {
         ko: "화가 나는 상황에서도 '이건 내가 꽤 잘 지킨다' 싶은 게 있다면 뭐예요?",
         en: "Even when you're angry, is there something you feel you hold on to pretty well?",
-        es: "Incluso con enfado, ¿hay algo que sientes que mantienes bastante bien?",
+        es: "Incluso con enojo, ¿hay algo que sientes que mantienes bastante bien?",
       },
       questions: [
         {
@@ -2164,7 +2164,7 @@ const MODULE7_SETS: ModuleChatSets = {
           text: {
             ko: "'예민하다'는 말을 처음 들은 게 어릴 때였어요, 커서였어요?",
             en: "When did you first hear \"you're too sensitive\": as a kid, or as an adult?",
-            es: "¿Cuándo te dijeron por primera vez que tenías demasiada sensibilidad: en tu infancia o más adelante?",
+            es: "¿Cuándo te dijeron por primera vez que eras demasiado sensible: en tu infancia o ya de adulto?",
           },
         },
         {
@@ -2408,7 +2408,7 @@ const MODULE9_SETS: ModuleChatSets = {
           text: {
             ko: "끝나고 남은 건 죄책감이에요, 서운함이에요, 무거운 책임감이에요?",
             en: "Afterward, what was left: guilt, hurt, or a heavy sense of responsibility?",
-            es: "Al terminar, ¿qué te quedó: culpa, dolor o un peso de responsabilidad?",
+            es: "Al terminar, ¿qué te quedó: culpa, tristeza o un peso de responsabilidad?",
           },
         },
         {
@@ -2527,7 +2527,7 @@ const MODULE9_SETS: ModuleChatSets = {
           text: {
             ko: "가족과 연결된 채로 나로 있을 수 있다면, 명절 하루는 어떤 모습일까요?",
             en: "If you could stay connected to your family and still be fully yourself, what would a holiday look like?",
-            es: "Si pudieras seguir en contacto con tu familia sin dejar de ser tú, ¿cómo sería un día de fiesta familiar?",
+            es: "Si pudieras seguir en contacto con tu familia sin dejar de ser tú, ¿cómo sería un día de celebración en familia?",
           },
           free: true,
         },
@@ -2553,7 +2553,7 @@ const MODULE10_SETS: ModuleChatSets = {
           text: {
             ko: "그때 주의를 가져간 건 알림이었어요, 다른 생각이었어요, 더 하고 싶은 다른 일이었어요?",
             en: "What pulled your attention away: a notification, another thought, or something else you'd rather be doing?",
-            es: "¿Qué se llevó tu atención: una notificación, otro pensamiento u otra cosa que te apetecía más hacer?",
+            es: "¿Qué se llevó tu atención: una notificación, otro pensamiento u otra cosa que preferirías estar haciendo?",
           },
         },
         {
@@ -2705,7 +2705,7 @@ const MODULE11_SETS: ModuleChatSets = {
         {
           text: {
             ko: "삼키고 나서 답답했어요, 아쉬웠어요, 안도했어요?",
-            en: "After you swallowed it, did you feel stifled, a little regretful, or relieved?",
+            en: "After you held it back, did you feel stifled, a little regretful, or relieved?",
             es: "Después de tragártela, ¿sentiste ahogo, pena o alivio?",
           },
         },

@@ -30,7 +30,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Earth: how you go after results",
-      body: "Wood shapes Earth, the way roots hold soil and break new ground. In saju, the element you shape speaks to work, money and the results you chase. As an Oak, you tend to go after goals directly: set the target, put down roots, build year after year. Your strength is staying power. What's worth supporting is flexibility, since some ground asks you to spread your roots wider rather than deeper.",
+      body: "Wood shapes Earth, the way roots hold soil and break new ground. In saju, the element you shape speaks to work, money and the results you chase. As an Oak, you tend to go after goals directly: set the target, put down roots, build year after year. Your strength is staying power. What helps is flexibility, since some ground asks you to spread your roots wider rather than deeper.",
       tryToday: "Pick one goal and name a single small, practical step that would move it forward this week.",
     },
     {
@@ -81,8 +81,8 @@ const lessons: DayMasterLessons = {
       tryToday: "Comparte hoy con alguien una idea a medio formar, solo para ver adónde lleva.",
     },
     {
-      title: "Tierra: cómo vas tras los resultados",
-      body: "La Madera da forma a la Tierra, como las raíces que sujetan el suelo y abren camino. En el saju, el elemento que moldeas habla del trabajo, el dinero y los resultados que buscas. Como roble, sueles ir a por tus metas de forma directa: fijas el objetivo, echas raíces y construyes año tras año. Tu fuerza es la constancia. Lo que vale la pena cuidar es la flexibilidad, porque a veces el terreno pide extender las raíces a lo ancho y no solo en profundidad.",
+      title: "Tierra: cómo avanzas hacia los resultados",
+      body: "La Madera da forma a la Tierra, como las raíces que sujetan el suelo y abren camino. En el saju, el elemento que moldeas habla del trabajo, el dinero y los resultados que buscas. Como roble, sueles ir tras tus metas de forma directa: fijas el objetivo, echas raíces y construyes año tras año. Tu fuerza es la constancia. Lo que ayuda es la flexibilidad, porque a veces el terreno pide extender las raíces a lo ancho y no solo en profundidad.",
       tryToday: "Elige una meta y nombra un paso pequeño y práctico que la acerque esta semana.",
     },
     {
@@ -92,12 +92,12 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Otros árboles del bosque",
-      body: "Las personas con mucha Madera son tus pares: amistades, hermanos, colegas, rivales. Dos robles juntos pueden formar un bosque, y sueles rendir bien con compañía que comparte tu empuje. A veces, eso sí, los árboles buscan la misma luz, y puede que sientas el impulso de demostrar tu valía junto a alguien parecido a ti. Un bosque funciona mejor cuando cada árbol tiene espacio para crecer.",
+      body: "Las personas con mucha Madera son tus pares: amistades, hermanos o hermanas, colegas, rivales. Dos robles juntos pueden formar un bosque, y sueles rendir bien con compañía que comparte tu empuje. A veces, eso sí, los árboles buscan la misma luz, y puede que sientas el impulso de demostrar tu valía junto a alguien parecido a ti. Un bosque funciona mejor cuando cada árbol tiene espacio para crecer.",
       tryToday: "Piensa en alguien que crece a tu lado y dile algo que admiras de esa persona.",
     },
     {
       title: "Primavera: cuando la Madera es más fuerte",
-      body: "En el calendario del saju, la Madera es más fuerte en primavera, más o menos de principios de febrero a principios de abril. Ese momento sigue el calendario de términos solares del que viene el sistema, así que si vives en el hemisferio sur, léelo como un ritmo y no como tu clima. La primavera trae brotes nuevos y comienzos, y muchos robles la viven como ganas de empezar algo. Sea cual sea la estación afuera, puedes notar cuándo aparece en ti esa sensación de brotar.",
+      body: "En el calendario del saju, la Madera es más fuerte en primavera, más o menos de principios de febrero a principios de abril. Esas fechas siguen el calendario de términos solares del que viene el sistema, así que si vives en el hemisferio sur, léelo como un ritmo y no como tu clima. La primavera trae brotes nuevos y comienzos, y mucha gente con este Maestro del Día la vive como ganas de empezar algo. Sea cual sea la estación fuera de casa, puedes notar cuándo aparece en ti esa sensación de brotar.",
       tryToday: "Fíjate en qué te apetece empezar ahora mismo, aunque todavía no lo empieces.",
     },
     {

@@ -300,7 +300,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "리스본의 가난한 동네에서 시작해 세계적인 축구 스타가 됐습니다.",
         "Rose from a poor Lisbon neighborhood to global soccer stardom.",
-        "Surgió de un barrio pobre de Lisboa para convertirse en una estrella global del fútbol."
+        "Creció en un barrio pobre de Lisboa y llegó a ser una estrella mundial del fútbol."
       ),
     },
     {
@@ -386,8 +386,8 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       field: t("가수", "Singer", "Cantante"),
       blurb: t(
         "걸그룹 멤버에서 시작해 솔로 최정상 스타로 올라섰습니다.",
-        "Rose from a girl group to solo global superstardom.",
-        "Pasó de un grupo femenino a convertirse en una superestrella global en solitario."
+        "Went from a girl group to solo global superstardom.",
+        "Pasó de un grupo femenino a ser una superestrella global como solista."
       ),
     },
     {
@@ -728,7 +728,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       field: t("테니스선수", "Tennis player", "Tenista"),
       blurb: t(
         "끊임없는 시선 속에서도 20년 넘게 테니스를 지배했습니다.",
-        "Dominated tennis for two decades against constant scrutiny.",
+        "Dominated tennis for two decades under constant scrutiny.",
         "Dominó el tenis durante dos décadas bajo un escrutinio constante."
       ),
     },
@@ -910,8 +910,8 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       field: t("배우", "Actor", "Actriz"),
       blurb: t(
         "아역 스타에서 시작해 한 시대를 대표하는 할리우드 아이콘이 됐습니다.",
-        "Became a defining Hollywood icon from childhood stardom onward.",
-        "Se convirtió en un ícono definitorio de Hollywood desde su fama infantil en adelante."
+        "Went from child star to lasting Hollywood icon.",
+        "Pasó de estrella infantil a ícono perdurable de Hollywood."
       ),
     },
   ],
@@ -971,8 +971,8 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       field: t("음악가", "Musician", "Músico"),
       blurb: t(
         "어릴 적 시력을 잃었지만 음악 천재이자 다작 히트메이커가 됐습니다.",
-        "Became a musical genius and prolific hitmaker despite blindness since infancy.",
-        "Se convirtió en un genio musical y prolífico creador de éxitos pese a perder la vista de bebé."
+        "A musical genius and prolific hitmaker, blind since infancy.",
+        "Genio musical y prolífico creador de éxitos, ciego desde la infancia."
       ),
     },
     {
@@ -1325,8 +1325,8 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       field: t("기업가", "Entrepreneur", "Persona emprendedora"),
       blurb: t(
         "가난한 농가에서 나와 현대그룹을 세웠습니다.",
-        "Left a poor farming family and went on to found the Hyundai Group.",
-        "Salió de una familia campesina pobre y llegó a fundar el Grupo Hyundai."
+        "Born into a poor farming family, he went on to found the Hyundai Group.",
+        "Nacido en una familia campesina pobre, llegó a fundar el Grupo Hyundai."
       ),
     },
   ],
@@ -1350,7 +1350,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "영국 최초의 여성 총리가 됐습니다.",
         "Became Britain's first female prime minister.",
-        "Fue la primera mujer en ocupar el cargo de primera ministra de Gran Bretaña."
+        "Fue la primera mujer al frente del gobierno británico."
       ),
     },
     {
@@ -1655,7 +1655,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "'테하노 음악의 여왕'으로 불리며 이 장르를 대중 음악의 중심으로 끌어왔습니다.",
         "Known as the Queen of Tejano music, she brought the genre into the mainstream.",
-        "Conocida como la Reina del Tex-Mex, llevó el género al gran público."
+        "Conocida como la Reina de la música tejana, llevó el género al gran público."
       ),
     },
     {
@@ -1681,7 +1681,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "익명의 믹스테이프로 시작해 슈퍼볼 할프타임 무대에 섰습니다.",
         "Rose from anonymous mixtapes to headline the Super Bowl halftime show.",
-        "Surgió de sus primeras grabaciones anónimas en internet para encabezar el show de medio tiempo del Super Bowl."
+        "Pasó de subir música anónima a internet a encabezar el espectáculo del medio tiempo del Super Bowl."
       ),
     },
     {
@@ -1987,7 +1987,7 @@ export const SAJU_TYPE_CELEBRITIES: Record<string, CelebrityEntry[]> = {
       blurb: t(
         "거리 생활을 딛고 수십억 달러 규모의 비즈니스와 음악 제국을 세웠습니다.",
         "Turned street hustling into a billion-dollar business and music empire.",
-        "Convirtió las calles en un imperio musical y empresarial de miles de millones de dólares."
+        "Pasó de buscarse la vida en la calle a levantar un imperio musical y empresarial de miles de millones de dólares."
       ),
     },
     {

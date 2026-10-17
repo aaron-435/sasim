@@ -57,13 +57,13 @@ const lessons: DayMasterLessons = {
   es: [
     {
       title: "El acero: metal duro, todavía sin pulir",
-      body: "Tu Maestro del Día es el acero: Metal en bruto recién sacado de la tierra, pesado y firme antes de que alguien le dé forma. No se dobla con facilidad y sabe mantener el filo.\n\nEsa imagen dice mucho de tu estilo. Sueles ver qué hay que decidir y decidirlo, sin rodeos. La gente suele sentir que contigo sabe a qué atenerse, y esa constancia es una forma callada de confianza.",
-      tryToday: "Fíjate hoy en un momento en que vayas al grano y en cómo lo recibe la otra persona.",
+      body: "Tu Maestro del Día es el acero: Metal en bruto recién sacado de la tierra, pesado y firme antes de que alguien le dé forma. No se dobla con facilidad y sabe mantener el filo.\n\nEsa imagen dice mucho de tu estilo. Sueles ver qué hay que decidir y decidirlo, sin rodeos. La gente suele sentir que contigo sabe a qué atenerse, y esa firmeza es una forma callada de confianza.",
+      tryToday: "Fíjate hoy en un momento en que fuiste al grano y en cómo lo recibió la otra persona.",
     },
     {
       title: "El acero y la gema: dos formas del Metal",
       body: "El Metal tiene dos versiones. El acero es su lado yang: la barra sin trabajar, fuerte y hacia afuera, hecha para cargar peso y cortar limpio. La gema, su pareja yin, es Metal ya tallado y pulido, cuidadoso y afinado.\n\nMientras la gema perfecciona el detalle, tú tiendes a mover el conjunto hacia adelante. Actúas primero y pules después, y muchas veces eres quien dice «decidamos ya» cuando el grupo da vueltas.",
-      tryToday: "Cuando surja una elección hoy, nota si quieres resolverla ya o mirarla un poco más.",
+      tryToday: "Cuando surja una elección hoy, fíjate en si quieres resolverla ya o mirarla un poco más.",
     },
     {
       title: "Lo que haces bien sin esfuerzo",
@@ -73,37 +73,37 @@ const lessons: DayMasterLessons = {
     {
       title: "Tierra: lo que te recarga",
       body: "En los cinco elementos, la Tierra alimenta al Metal. El mineral se forma en lo hondo del suelo, sostenido y presionado con el tiempo. Para ti, eso significa una base firme: una rutina que no cambia, personas que siguen ahí, un lugar que se siente como casa.\n\nSueles recargarte menos con la emoción y más con la estabilidad. Aprender paso a paso, una buena comida, un fin de semana sin sorpresas. Cuando el suelo se siente firme, el filo vuelve solo.",
-      tryToday: "Fíjate qué parte de tu día se siente más como suelo firme y regálale unos minutos más.",
+      tryToday: "Fíjate en qué parte de tu día se siente más como suelo firme y regálale unos minutos más.",
     },
     {
       title: "Agua: cómo te expresas",
-      body: "El Metal produce Agua, como el metal frío que junta gotas de rocío en su superficie. Tu forma de expresarte suele ser clara y sobria: dices lo que hay que decir y paras. Las palabras salen limpias, como agua filtrada.\n\nCuando dejas fluir este lado, puedes sorprender. Detrás de la superficie firme suele haber mucha reflexión, y compartir un poco de ella, el porqué de tu decisión, ayuda a que otros te sigan.",
+      body: "El Metal produce Agua, como el metal frío que junta gotas de rocío en su superficie. Tu forma de expresarte suele ser clara y sobria: dices lo que hay que decir y paras. Las palabras salen limpias, como agua filtrada.\n\nCuando dejas fluir este lado, puedes sorprender a la gente. Detrás de la superficie firme suele haber mucha reflexión, y compartir un poco de ella, el porqué de tu decisión, ayuda a que los demás te sigan.",
       tryToday: "La próxima vez que des una respuesta, añade una frase sobre por qué llegaste a ella.",
     },
     {
       title: "Madera: cómo buscas resultados",
-      body: "El Metal da forma a la Madera, como la hoja que convierte un tronco en algo útil. Así sueles trabajar: tomas algo desordenado y en crecimiento y le das una forma clara. Cortas lo que sobra, guardas lo que importa y terminas.\n\nCon el trabajo y el dinero, sueles preferir las líneas rectas: una meta clara, un precio claro, un sí claro. Tus resultados suelen nacer de tu capacidad de decidir. Vale la pena dar espacio también a lo que crece, porque algunos proyectos necesitan tiempo antes de estar a punto para el corte.",
+      body: "El Metal da forma a la Madera, como la hoja que convierte un tronco en algo útil. Así sueles trabajar: tomas algo desordenado y en crecimiento y le das una forma clara. Cortas lo que sobra, guardas lo que importa y terminas.\n\nCon el trabajo y el dinero, sueles preferir las líneas rectas: una meta clara, un precio claro, un sí claro. Tus resultados suelen nacer de tu capacidad de decidir. Vale la pena dar espacio también a lo que crece, porque algunos proyectos necesitan tiempo antes de estar listos para el corte.",
       tryToday: "Mira hoy un proyecto y pregúntate qué parte necesita poda y qué parte solo necesita tiempo.",
     },
     {
       title: "Fuego: el calor que te da forma",
       body: "El Fuego da forma al Metal. El acero en bruto se vuelve herramienta solo después de pasar por la fragua. Para ti, las reglas, los plazos y la responsabilidad pueden cumplir ese papel: el calor que convierte la fuerza en algo con propósito.\n\nQuizá al principio te resistas a la presión, porque te gusta hacer las cosas a tu manera. Pero un reto justo, alguien que te exige con cariño o un rol con responsabilidad real suelen sacar tu mejor trabajo. El calor no está para derretirte, sino para darte forma.",
-      tryToday: "Observa hoy una expectativa que pesa sobre ti y pregúntate qué podría estar formando en ti.",
+      tryToday: "Observa hoy una expectativa que hay sobre ti y pregúntate qué podría estar formando en ti.",
     },
     {
       title: "Metal con Metal: amistades y rivales",
-      body: "Cuando te encuentras con otras personas de Metal, la honestidad llega rápido. Valoras la franqueza, así que suelen reconocerse enseguida y construir amistades leales que no piden mucho mantenimiento.\n\nDos hojas fuertes también pueden chocar. Con alguien igual de firme, un desacuerdo puede volverse una prueba de quién cede primero. El trabajo en equipo suele ir mejor cuando cada quien tiene su propia área clara y ambos recuerdan que juegan del mismo lado.",
-      tryToday: "Piensa en alguien con tanta terquedad como tú y nota una cosa que de verdad respetas de esa persona.",
+      body: "Cuando te encuentras con otras personas de Metal, la honestidad llega rápido. Valoras la franqueza, así que sueles reconocerlas enseguida y construir amistades leales que no piden mucho mantenimiento.\n\nDos hojas fuertes también pueden chocar. Con alguien igual de firme, un desacuerdo puede volverse una prueba de quién cede primero. El trabajo en equipo suele ir mejor cuando cada quien tiene su propia área clara y ambas partes recuerdan que están del mismo lado.",
+      tryToday: "Piensa en alguien tan firme en sus ideas como tú y fíjate en algo que de verdad respetas de esa persona.",
     },
     {
       title: "El otoño: tu estación",
-      body: "En el calendario del saju, el Metal está en su punto más fuerte en otoño, más o menos de principios de agosto a principios de octubre. Es tiempo de cosecha: cortar, recoger y guardar lo que ya maduró. Encaja con tu manera de quitar lo que sobra y quedarte con lo que cuenta.\n\nLas fechas siguen el calendario de términos solares del que viene el sistema. Si vives en el hemisferio sur, léelo como un ritmo del año, no como tu clima.",
-      tryToday: "Nota si hay algo en tu vida que hoy parece a punto de cosecharse o de soltarse.",
+      body: "En el calendario del saju, el Metal está en su punto más fuerte en otoño, más o menos de principios de agosto a principios de octubre. Es tiempo de cosecha: cortar, recoger y guardar lo que ya maduró. Encaja con tu manera de quitar lo que sobra y quedarte con lo que cuenta.\n\nLas fechas siguen el calendario de términos solares del que viene el sistema. Si vives en el hemisferio sur, léelo como un ritmo del año, no como el clima de tu zona.",
+      tryToday: "Fíjate en si hay algo en tu vida que hoy parece a punto de cosecharse o de soltarse.",
     },
     {
       title: "El acero es solo el comienzo",
-      body: "Tu Maestro del Día es el centro de tu mapa, pero no es toda la historia. Los otros pilares, el equilibrio de los cinco elementos y tus ciclos de diez años añaden matices, así que dos personas de acero pueden sentirse muy distintas.\n\nPiensa en estos diez días como una lente. Nota cuándo tu franqueza ayuda, cuándo te apoyas en suelo firme, cuándo un poco de calor saca lo mejor de ti. Cuanto más lo notes, más tuya se vuelve la imagen.",
-      tryToday: "Antes de dormir, recuerda un momento de hoy muy de «acero» y sonríele.",
+      body: "Tu Maestro del Día es el centro de tu mapa, pero no es toda la historia. Los otros pilares, el equilibrio de los cinco elementos y tus ciclos de diez años añaden matices, así que dos personas de acero pueden sentirse muy distintas.\n\nPiensa en estos diez días como una lente. Fíjate en cuándo tu franqueza ayuda, cuándo te apoyas en suelo firme, cuándo un poco de calor saca lo mejor de ti. Cuanto más lo notes, más tuya se vuelve la imagen.",
+      tryToday: "Antes de dormir, recuerda un momento de hoy en que te sentiste muy «acero» y sonríele.",
     },
   ],
   ko: [

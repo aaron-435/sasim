@@ -119,14 +119,14 @@ const mountain: ArticleSet = {
         body: [
           "Las montañas suelen mantener la calma cuando un plan se cae. Puede que seas quien recuerda lo que todos acordaron, quien no se deja arrastrar por el ánimo del grupo y quien evita que un proyecto largo pierda el rumbo. Tus amistades quizá te busquen cuando quieren una opinión sincera y sin prisas.",
           "La paciencia y la constancia pueden parecer normales vistas desde dentro, pero a otras personas les resultan poco comunes. Mucho de lo que haces bien ocurre en silencio, y a veces nadie te lo agradece.",
-          "Hay un reverso suave que conviene conocer. El mismo peso que te hace confiable puede volver lentos los cambios, y sostener una postura a veces continúa cuando la razón ya se desdibujó. Preguntarte de vez en cuando si todavía quieres estar en ese lugar mantiene tu firmeza como algo tuyo.",
+          "Hay un reverso suave que conviene conocer. El mismo peso que te hace confiable puede volver lentos los cambios, y mantener una postura puede seguir adelante cuando ya se ha desdibujado el motivo. Preguntarte de vez en cuando si esa postura sigue siendo la que quieres mantener hace que tu firmeza siga siendo tuya.",
         ],
       },
       {
         heading: "La montaña entre las demás personas",
         body: [
           "Sueles ofrecer algo sólido en qué apoyarse, así que otras personas tal vez te cuenten sus preocupaciones antes de decidir algo. El otro lado es que quizá hables poco de las tuyas, y alguien puede no darse cuenta de cuánto llevas encima.",
-          "Con otras personas de Tierra sueles encontrar una confianza fácil y sin palabras, porque las dos partes valoran presentarse y cumplir lo dicho. Eso sí, dos montañas no se mueven fácilmente la una a la otra, y un desacuerdo puede volverse un pulso largo. Ayuda recordar que se puede compartir una cordillera sin ser la misma cumbre, y que ceder primero en algo pequeño no es perder. En las relaciones cercanas, decir en voz alta una idea todavía a medias puede acercar a la gente más rápido que una respuesta pulida.",
+          "Con otras personas de Tierra sueles encontrar una confianza fácil y sin palabras, porque las dos partes valoran dar la cara y cumplir lo dicho. Eso sí, dos montañas no se mueven fácilmente la una a la otra, y un desacuerdo puede volverse un pulso largo. Ayuda recordar que se puede compartir una cordillera sin ser la misma cumbre, y que ceder primero en algo pequeño no es perder. En las relaciones cercanas, decir en voz alta una idea todavía a medias puede acercar a la gente más rápido que una respuesta pulida.",
         ],
       },
       {

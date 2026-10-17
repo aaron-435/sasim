@@ -101,15 +101,15 @@ ${describeElementContrasts(ctx).map((l) => `  · ${l}`).join("\n")}`;
 
 const NAME_RULES: Record<Locale, string> = {
   ko: `상대방은 이름 대신 반드시 토큰 {other}로만 쓰세요(앱이 이름으로 바꿉니다). {other} 뒤의 조사는 받침이 있는 말처럼 붙이세요: "{other}은", "{other}이", "{other}을", "{other}과", "{other}으로". "님"은 붙이지 마세요(앱이 붙입니다). "그 사람", "상대방" 같은 말로 바꿔 쓰지 마세요.`,
-  en: `Refer to the other person only with the token {other} (the app swaps in their name). Never use he/she/him/her for {other}; repeat {other} or use "they" with plural verbs.`,
-  es: `Refer to the other person only with the token {other} (the app swaps in their name). Do not use él/ella or any gendered adjective or participle about {other} or the reader; prefer nouns and verbs ("{other} tiene una energía tranquila", not "{other} es tranquilo/a").`,
+  en: `Refer to the other person only with the token {other} (the app swaps in their name, or "that person" when it is unknown). Never use he/she/him/her/his/hers for {other}: repeat {other}, rephrase, or use singular "they" naturally. Possessive is "{other}'s". Write the way a native speaker would, never as a translation of the Korean.`,
+  es: `Refer to the other person only with the token {other} (the app swaps in their name, or "esa persona" when it is unknown). Do not use él/ella or any gendered adjective or participle about {other} or the reader; prefer nouns and verbs ("{other} tiene una energía tranquila", not "{other} es tranquilo/a"). Never put an article or a gendered word right before {other} ("con {other}", not "con el/la {other}"). Address the reader as tú only. Write the way a native speaker would, never as a translation of the Korean.`,
 };
 
 function sharedRules(ctx: CompatReportContext): string {
   return `## 이 리포트의 성격
 - 두 사람의 사주가 어떻게 만나는지 읽어 주는 자기이해용 읽을거리입니다. 미래를 맞히는 글이 아닙니다.
 - 두 사람이 어떤 사이인지(연인, 친구, 가족, 동료) 모릅니다. 관계를 짐작해 이름 붙이지 말고, 어떤 사이에도 맞는 말로 쓰세요("함께 있을 때", "같이 무언가를 할 때").
-- 독자는 사주를 처음 접하는 외국인일 수 있습니다. 일간, 일지, 천간합, 상생, 상극, 격국, 용신, Day Master, Maestro del Día 같은 전문용어와 한자는 쓰지 말고 뜻으로 풀어 쓰세요. 오행 이름(데이터에 쓰인 단어)은 써도 됩니다.
+- 독자는 사주를 처음 접하는 외국인일 수 있습니다. 일간, 일지, 천간합, 상생, 상극, 격국, 용신, Day Master, Maestro del Día 같은 전문용어와 한자는 쓰지 말고 뜻으로 풀어 쓰세요. 오행 이름(데이터에 쓰인 단어)은 써도 됩니다. 아래 "이 언어의 스타일 규칙"이 Day Master·Maestro del Día 같은 용어를 허용하더라도 이 리포트에서는 쓰지 않습니다.
 
 ## 근거 데이터 (엔진이 계산한 값 — 이 밖의 사주 사실을 지어내지 말 것)
 ${dataBlock(ctx)}

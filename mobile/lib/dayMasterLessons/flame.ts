@@ -30,7 +30,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "How you go after results",
-      body: "Fire shapes Metal: a steady, concentrated heat is what a jeweler uses to work fine metal. Metal is your wealth element: work, money, and results you can hold.\n\nThe Flame tends to pursue goals with precision rather than noise, working on one thing until it's right. What's worth supporting is letting your work be seen. A short update, asking for what your effort is worth, or sharing a result before it feels perfect can help your quiet skill turn into results.",
+      body: "Fire shapes Metal: a steady, concentrated heat is what a jeweler uses to work fine metal. Metal is your wealth element: work, money, and results you can hold.\n\nThe Flame tends to pursue goals with precision rather than noise, working on one thing until it's right. What helps is letting your work be seen. A short update, asking for what your effort is worth, or sharing a result before it feels perfect lets your quiet skill turn into results.",
       tryToday: "Share one piece of finished work with someone today, even if it still feels a little unpolished to you.",
     },
     {
@@ -57,42 +57,42 @@ const lessons: DayMasterLessons = {
   es: [
     {
       title: "Una llama que ilumina el lugar donde estás",
-      body: "Tu Maestro del Día es la llama, el lado yin del Fuego. Piensa en una lámpara sobre el escritorio o una vela en la mesa: no ilumina todo el cielo, pero quien se sienta cerca ve con claridad y siente calor.\n\nAlgo parecido pasa con tu estilo de base. Tiendes a poner toda tu atención en lo que tienes delante, y las personas cercanas a menudo sienten que de verdad las ves.",
-      tryToday: "Fíjate hoy en quién estuvo más cerca de tu luz y en qué notaste de esa persona que otros quizá no vieron.",
+      body: "Tu Maestro del Día es la llama, el lado yin del Fuego. Piensa en una lámpara sobre el escritorio o una vela en la mesa: no ilumina todo el cielo, pero quien se sienta cerca ve con claridad y siente calor.\n\nAlgo parecido pasa con tu estilo de fondo. Tiendes a poner toda tu atención en lo que tienes delante, y las personas cercanas a menudo sienten que de verdad las ves.",
+      tryToday: "Fíjate hoy en quién estuvo más cerca de tu luz y en lo que notaste de esa persona que otros quizá no vieron.",
     },
     {
       title: "La llama y el sol: dos tipos de Fuego",
-      body: "En los Cuatro Pilares (saju), el Fuego tiene dos formas. El sol es el Fuego yang: amplio, brillante, alumbra a todos a la vez. Tú eres la forma yin, la llama: concentras tu luz, la acercas y la mantienes.\n\nDonde el sol tiende a abarcar, tú tiendes a profundizar. Te mueves recogiéndote y enfocando, y por eso tu calor llega a lugares que una luz amplia no alcanza, como una preocupación que alguien todavía no se ha atrevido a decir.",
+      body: "En los Cuatro Pilares (saju), el Fuego tiene dos formas. El sol es el Fuego yang: amplio, brillante, alumbra a todos a la vez. Tú eres la forma yin, la llama: concentras tu luz, la acercas y la mantienes.\n\nDonde el sol tiende a abarcar, tú tiendes a profundizar. Avanzas recogiendo y concentrando tu luz, y por eso tu calor llega a lugares que una luz amplia no alcanza, como una preocupación que alguien todavía no se ha atrevido a decir.",
       tryToday: "Elige hoy a una persona y dale cinco minutos de toda tu atención, sin distracciones.",
     },
     {
       title: "Lo que te sale de forma natural",
-      body: "Sueles captar cambios pequeños: un tono distinto en una amistad, un detalle que falta en un plan, el momento en que una sala se pone tensa. Tiendes a recordar lo que le importa a cada persona y a demostrarlo sin hacer ruido, con el mensaje justo en el momento justo.\n\nTambién puedes seguir con constancia algo que te importa, mucho después de que pase la emoción del principio. Como una lámpara encendida toda la noche, tu luz suele durar.",
-      tryToday: "Haz hoy algo pequeño con un detalle que notaste en alguien, aunque sea un mensaje corto.",
+      body: "Sueles captar cambios pequeños: un cambio de tono en una amistad, un detalle que falta en un plan, el momento en que una sala se pone tensa. Tiendes a recordar lo que le importa a cada persona y a mostrarlo sin hacer ruido, con el mensaje justo en el momento justo.\n\nTambién puedes seguir con constancia algo que te importa, mucho después de que pase la emoción del principio. Como una lámpara encendida toda la noche, tu luz suele durar.",
+      tryToday: "Haz hoy algo pequeño a partir de un detalle que notaste en alguien, aunque sea un mensaje corto.",
     },
     {
       title: "Lo que mantiene firme tu llama",
-      body: "En los cinco elementos, la Madera alimenta al Fuego, así que la Madera es tu recurso: lo que te recarga. Una llama necesita buen combustible y algo de resguardo del viento, y tú sueles recargarte igual: aprendiendo con calma, con alguien de confianza que te guíe o con pocas personas que te dan seguridad.\n\nComo absorbes tanto del ambiente, el tiempo de calma no es un lujo para ti; es combustible. Un libro, un paseo lento entre árboles o una tarde sin planes pueden ser tu Madera.",
+      body: "En los cinco elementos, la Madera alimenta al Fuego, así que la Madera es tu recurso: lo que te recarga. Una llama necesita buen combustible y algo de resguardo del viento, y tú sueles recargarte igual: aprendiendo con calma, con una persona mentora de confianza o con pocas personas que te dan seguridad.\n\nComo absorbes tanto del ambiente, el tiempo en calma no es un lujo para ti; es combustible. Un libro, un paseo lento entre árboles o una tarde sin planes pueden ser tu Madera.",
       tryToday: "Regálate hoy veinte minutos sin tener que leer el ánimo de nadie y observa cómo cambia tu energía.",
     },
     {
       title: "Cuando tu cuidado se vuelve algo concreto",
-      body: "El Fuego produce Tierra: lo que arde deja ceniza, y la ceniza se vuelve suelo. La Tierra es tu forma de expresión, la manera en que tu calor interior se convierte en algo que otros pueden sostener.\n\nEn tu caso suele ser algo cuidadoso y personal: una nota escrita a mano, un plato bien hecho, un texto, un espacio ordenado con mimo. Sueles expresarte mejor en un trabajo que lleva tu atención al detalle, hecho para gente que sabes que lo va a notar.",
+      body: "El Fuego produce Tierra: lo que arde deja ceniza, y la ceniza se vuelve suelo. La Tierra es tu forma de expresión, la manera en que tu calor interior se convierte en algo que otras personas pueden sostener.\n\nEn tu caso suele ser algo cuidadoso y personal: una nota escrita a mano, un plato bien hecho, un texto, un espacio ordenado con mimo. Sueles expresarte mejor en un trabajo que lleva tu atención al detalle, hecho para gente que sabes que lo va a notar.",
       tryToday: "Haz o termina hoy algo pequeño con cuidado, solo por el gusto de hacerlo bien.",
     },
     {
-      title: "Cómo vas tras los resultados",
-      body: "El Fuego da forma al Metal: un calor constante y concentrado es lo que usa quien trabaja la joyería fina. El Metal es tu elemento de riqueza: el trabajo, el dinero y los resultados que puedes tocar.\n\nLa llama tiende a perseguir sus metas con precisión más que con ruido, trabajando en una cosa hasta que queda bien. Lo que vale la pena apoyar es dejar que tu trabajo se vea. Un breve aviso de avance, pedir lo que vale tu esfuerzo o mostrar un resultado antes de que te parezca perfecto ayudan a que tu talento callado dé fruto.",
+      title: "Cómo persigues los resultados",
+      body: "El Fuego da forma al Metal: un calor constante y concentrado es lo que usa quien trabaja en joyería fina. El Metal es tu elemento de riqueza: el trabajo, el dinero y los resultados que puedes tocar.\n\nLa llama tiende a perseguir sus metas con precisión más que con ruido, trabajando en una cosa hasta que queda bien. Lo que ayuda es dejar que tu trabajo se vea. Una breve actualización, pedir lo que vale tu esfuerzo o mostrar un resultado antes de que te parezca perfecto ayudan a que tu talento silencioso dé fruto.",
       tryToday: "Comparte hoy con alguien un trabajo terminado, aunque todavía te parezca un poco sin pulir.",
     },
     {
       title: "Lo que te ayuda a crecer",
-      body: "El Agua da forma al Fuego, así que el Agua es tu estructura: normas, responsabilidades, plazos y las personas que te los recuerdan. Para una llama, eso puede sentirse como una corriente de aire fuerte, y quizá lo notes más que otras personas.\n\nAun así, una lámpara arde mejor con un poco de cristal alrededor. Expectativas claras, alguien a cargo con paciencia o una rutina en la que confías pueden proteger tu luz, para que no gastes energía adivinando qué se espera de ti.",
+      body: "El Agua da forma al Fuego, así que el Agua es tu estructura: normas, responsabilidades, plazos y las personas que te los recuerdan. Para una llama, eso puede sentirse como una corriente de aire fuerte, y quizá lo notes más que otras personas.\n\nAun así, una lámpara arde mejor con un poco de cristal alrededor. Expectativas claras, una jefatura paciente o una rutina en la que confías pueden proteger tu luz, para que no gastes energía adivinando qué se espera de ti.",
       tryToday: "Haz hoy una pregunta clara sobre lo que se espera de ti y observa si te da más calma.",
     },
     {
       title: "Tú entre otros fuegos",
-      body: "Las personas de Fuego, llamas y soles, son tus pares. Con otra llama puede haber un entendimiento fácil, casi sin palabras; con un sol quizá disfrutes de cuánto espacio llena mientras tú cuidas los detalles.\n\nSueles estar a gusto en círculos pequeños donde la luz de cada quien cuenta. Si alguien brilla más que tú durante un tiempo, eso no hace tu luz más pequeña. Dos llamas juntas suelen iluminar más una sala, no competir por ella.",
+      body: "Las personas de Fuego, llamas y soles, son tus pares. Con otra llama puede haber un entendimiento fácil, casi sin palabras; con un sol quizá disfrutes de cuánto espacio llena mientras tú cuidas los detalles.\n\nSueles estar a gusto en círculos pequeños donde la luz de cada quien cuenta. Si alguien brilla más que tú durante un tiempo, eso no hace tu luz más pequeña. Dos llamas juntas suelen iluminar mejor una sala que competir por ella.",
       tryToday: "Dile a alguien de tu círculo algo concreto que admiras de su forma de trabajar.",
     },
     {

@@ -54,7 +54,7 @@ const ko: ShareCardContent = {
 
 const en: ShareCardContent = {
   money: {
-    oak: { headline: "Bets big on one big direction", body: "You do better putting real weight behind one clear direction than chasing small change. Once a plan is set you rarely change it, so knowing when to fold can come late.", tip: "Write your exit rule in advance" },
+    oak: { headline: "Bets big on one clear direction", body: "You do better putting real weight behind one clear direction than chasing small change. Once a plan is set you rarely change it, so knowing when to fold can come late.", tip: "Write your exit rule in advance" },
     vine: { headline: "Gets there by going around", body: "You find money through people and information more than head-on plays. Your network and instinct are the path, but climbing too many things at once spreads you thin.", tip: "Pick one thing to climb this month" },
     sun: { headline: "Earns more the more you show up", body: "Opportunities and people gather when you're visible. Money follows recognition, though spending can swell when you're in a good mood.", tip: "Sleep on any purchase made in a good mood" },
     flame: { headline: "Goes deep on one thing", body: "You raise your worth by digging deep into one field instead of spreading wide. Focus becomes income, but when your energy runs out your spending gets loose too.", tip: "Budget your rest days too" },
@@ -66,10 +66,10 @@ const en: ShareCardContent = {
     dew: { headline: "Quietly builds", body: "You have a knack for saving without fanfare. Careful observation lets you spot opportunity, and caring about other people's situations can open your wallet.", tip: "Sleep on any request for money" },
   },
   love: {
-    oak: { headline: "When the direction feels trustworthy", body: "Your heart opens to someone whose words and actions match. Once you give it, you go straight, but a blunt way of expressing yourself can be misread.", tip: "Say the nice thing out loud once more" },
-    vine: { headline: "When someone notices the small things", body: "You're drawn to people who remember your little tastes and habits. Your approach is gentle, so when paces don't match you may wind your feelings up alone.", tip: "Say it in a sentence before it tangles" },
-    sun: { headline: "When you can laugh and be honest", body: "You like people who laugh and express themselves without hiding. Your feelings show, which makes you popular, but you tire fast if the response isn't the same size.", tip: "Ask about their pace too" },
-    flame: { headline: "When the talk goes deep", body: "You attach when you can talk deeply with one person. Being high-temperature, you flare and cool, so a slow warm-up suits you.", tip: "After the first spark, just watch for a week" },
+    oak: { headline: "When the direction feels trustworthy", body: "Your heart opens to someone whose words and actions match. Once you give it, you stay steady, but a blunt way of expressing yourself can be misread.", tip: "Say the nice thing out loud once more" },
+    vine: { headline: "When someone notices the small things", body: "You're drawn to people who remember your little tastes and habits. Your approach is gentle, so when paces don't match you may end up tangled in your feelings alone.", tip: "Say it in a sentence before it tangles" },
+    sun: { headline: "When you can laugh and be honest", body: "You like people who laugh and express themselves without hiding. Your feelings show, which makes you popular, but you tire fast if the response doesn't match.", tip: "Ask about their pace too" },
+    flame: { headline: "When the talk goes deep", body: "You attach when you can talk deeply with one person. You run hot, so you can flare and cool fast; a slow warm-up suits you.", tip: "After the first spark, just watch for a week" },
     mountain: { headline: "When trust doesn't waver", body: "Steadiness beats words for you. It takes time for feelings to deepen, but once they do, they last.", tip: "Send a signal that you're opening up" },
     field: { headline: "When care goes both ways", body: "You relax in relationships where you look after each other. You're used to giving, so receiving takes practice.", tip: "Ask for one small favor today" },
     steel: { headline: "Someone clear and direct", body: "You like people who don't talk around things. You're direct too, so the closer you get, the sharper your words can be.", tip: "Lead with the kind words" },
@@ -93,16 +93,16 @@ const es: ShareCardContent = {
     dew: { headline: "Acumula en silencio", body: "Tienes talento para ahorrar sin hacer ruido. Tu observación atenta te ayuda a detectar oportunidades, y preocuparte por la situación de los demás puede llevarte a compartir con generosidad lo que tienes.", tip: "Deja reposar cualquier petición de dinero antes de responder" },
   },
   love: {
-    oak: { headline: "Cuando la dirección da confianza", body: "Tu corazón se abre a quien es coherente entre lo que dice y lo que hace. Cuando te entregas, vas en línea recta, pero una forma de expresarte algo seca puede malinterpretarse.", tip: "Di en voz alta lo bonito una vez más" },
+    oak: { headline: "Cuando la dirección da confianza", body: "Tu corazón se abre a quien es coherente entre lo que dice y lo que hace. Cuando te entregas, lo haces con constancia, pero una forma de expresarte algo seca puede malinterpretarse.", tip: "Di en voz alta lo bonito una vez más" },
     vine: { headline: "Cuando alguien se fija en los detalles", body: "Te atraen quienes recuerdan tus pequeños gustos y costumbres. Te acercas con suavidad, y si los ritmos no coinciden puedes acabar enredándote en tus sentimientos por tu cuenta.", tip: "Dilo en una frase antes de que se enrede" },
     sun: { headline: "Cuando hay risas y sinceridad", body: "Te gustan las personas que ríen y se expresan sin esconderse. Tus sentimientos se ven, lo que te hace popular, pero te cansas si la respuesta no está a la misma altura.", tip: "Pregunta también por su ritmo" },
-    flame: { headline: "Cuando la conversación se vuelve profunda", body: "Te enganchas cuando puedes hablar a fondo con una persona. Como tu temperatura es alta, tus sentimientos prenden y se enfrían rápido, por eso te van las relaciones que se calientan poco a poco.", tip: "Tras la primera chispa, observa una semana" },
+    flame: { headline: "Cuando la conversación se vuelve profunda", body: "Te apegas cuando puedes hablar a fondo con una persona. Como tu temperatura es alta, tus sentimientos prenden y se enfrían rápido, por eso te convienen las relaciones que se calientan poco a poco.", tip: "Tras la primera chispa, observa una semana" },
     mountain: { headline: "Cuando la confianza es firme", body: "Para ti la constancia vale más que las palabras. Tus sentimientos tardan en profundizarse, pero cuando lo hacen, duran.", tip: "Envía alguna señal de que te estás abriendo" },
-    field: { headline: "Cuando el cuidado va en los dos sentidos", body: "Te sientes a gusto en relaciones donde ambos se cuidan. Dar se te da con naturalidad, así que recibir requiere práctica.", tip: "Pide hoy un pequeño favor" },
+    field: { headline: "Cuando el cuidado va en los dos sentidos", body: "Te sientes a gusto en relaciones donde ambos se cuidan. Dar te sale con naturalidad, así que recibir requiere práctica.", tip: "Pide hoy un pequeño favor" },
     steel: { headline: "Una persona clara y directa", body: "Te gustan quienes no dan rodeos. Tú también hablas sin adornos, así que cuanto más cerca estás de alguien, más afiladas pueden volverse tus palabras.", tip: "Empieza por las palabras amables" },
     gem: { headline: "Cuando coinciden gustos y sensibilidad", body: "Se te acelera el corazón cuando coinciden el estilo y la delicadeza. Tus estándares altos hacen que el comienzo sea lento, pero cuando empiezas tu dedicación es excepcional.", tip: "Un primer encuentro imperfecto también vale" },
     ocean: { headline: "Alguien que lo acoge todo", body: "Te atrae la generosidad de quien te escucha hasta el final. Tus emociones son amplias, por eso te va bien alguien que transmita calma.", tip: "En días de emociones grandes, planes cortos" },
-    dew: { headline: "Alguien que te acompaña en silencio", body: "Te gustan las personas con las que conectas por el ambiente y la sutileza más que por las palabras. No muestras con facilidad lo que sientes, así que si no lo dices, la otra persona no lo sabrá.", tip: "Manda un mensaje de una sola línea con lo que sientes" },
+    dew: { headline: "Alguien que te acompaña en silencio", body: "Te gustan las personas con las que conectas por el ambiente y la sutileza más que por las palabras. No muestras con facilidad lo que sientes, así que si no lo dices, la otra persona no lo sabrá.", tip: "Envía un mensaje de una sola línea con lo que sientes" },
   },
 };
 

@@ -62,8 +62,8 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "La gema y el acero: dos formas del Metal",
-      body: "El Metal tiene dos versiones. El acero es su lado yang: la barra en bruto, fuerte y hacia afuera, hecha para el trabajo pesado y el corte limpio. La gema es su lado yin: Metal refinado, hacia adentro y preciso, cuyo valor está en el acabado.\n\nMientras el acero empuja el conjunto hacia adelante, tú tiendes a afinarlo. Prefieres esperar y hacerlo bien antes que apurar algo tosco. En un grupo, muchas veces eres quien pregunta en voz baja: «¿De verdad es la mejor versión?».",
-      tryToday: "Cuando algo te parezca «casi bien» hoy, nota si pide otra vuelta o si ya es suficiente.",
+      body: "El Metal tiene dos versiones. El acero es su lado yang: la barra en bruto, fuerte y hacia afuera, hecha para el trabajo pesado y el corte limpio. La gema es su lado yin: Metal refinado, hacia adentro y preciso, cuyo valor está en el acabado.\n\nMientras el acero empuja el conjunto hacia adelante, tú tiendes a afinarlo. Prefieres esperar y hacerlo bien antes que apresurar algo tosco. En un grupo, muchas veces eres quien pregunta en voz baja: «¿De verdad es la mejor versión?».",
+      tryToday: "Cuando algo te parezca «casi bien» hoy, fíjate si pide otra vuelta o si ya es suficiente.",
     },
     {
       title: "Lo que haces bien sin esfuerzo",
@@ -72,38 +72,38 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Tierra: lo que te recarga",
-      body: "En los cinco elementos, la Tierra alimenta al Metal. Una gema descansa dentro de la tierra, protegida, hasta que llega su momento de aparecer. Para ti, eso significa un entorno suave y seguro: una habitación en calma, personas que no te apuran, un rato sin miradas encima.\n\nSueles recargarte con cuidados silenciosos más que con grandes planes. Un espacio ordenado, un café conocido, aprender algo despacio y bien. Estar donde no tienes que actuar suele devolverte el brillo.",
+      body: "En los cinco elementos, la Tierra alimenta al Metal. Una gema descansa dentro de la tierra, protegida, hasta que llega su momento de aparecer. Para ti, eso significa un entorno suave y seguro: una habitación en calma, personas que no te apuran, un rato sin miradas encima.\n\nSueles recargarte con cuidados silenciosos más que con grandes eventos. Un espacio ordenado, un café conocido, aprender algo despacio y bien. Estar donde no tienes que aparentar suele devolverte el brillo.",
       tryToday: "Busca un rincón tranquilo en tu día donde nadie te pida nada y quédate un poco ahí.",
     },
     {
       title: "Agua: cómo te expresas",
-      body: "El Metal produce Agua, como una piedra fresca que reúne gotas claras. Tu forma de expresarte suele ser refinada: eliges las palabras con cuidado, y lo que dices muchas veces llega con una claridad sorprendente. Un mensaje corto tuyo puede decir mucho.\n\nComo te importa hacerlo bien, quizá te guardes algo hasta sentirlo pulido. Vale la pena recordar que una idea compartida un poco antes, todavía sin terminar, también puede ser un regalo.",
+      body: "El Metal produce Agua, como una piedra fresca que reúne gotas claras. Tu forma de expresarte suele ser refinada: eliges las palabras con cuidado, y lo que dices muchas veces llega con una claridad sorprendente. Un mensaje corto tuyo puede decir mucho.\n\nComo te importa hacerlo bien, quizá te guardes lo que piensas hasta sentirlo pulido. Vale la pena recordar que una idea compartida un poco antes, todavía sin terminar, también puede ser un regalo.",
       tryToday: "Comparte hoy una idea antes de que te parezca perfecta y observa qué pasa.",
     },
     {
       title: "Madera: cómo buscas resultados",
-      body: "El Metal da forma a la Madera, como las herramientas finas que tallan una rama hasta volverla algo delicado. Así sueles trabajar: no talas, tallas. Tus resultados nacen de la precisión, el gusto y las ganas de refinar.\n\nCon el trabajo y el dinero, sueles brillar donde la calidad se nota y se valora. A veces le pones menos precio a un trabajo que pidió mucha habilidad, solo porque el esfuerzo no se ve. Nombrar el cuidado que hubo detrás ayuda a que otros vean su valor.",
+      body: "El Metal da forma a la Madera, como las herramientas finas que tallan una rama hasta volverla algo delicado. Así sueles trabajar: no talas, tallas. Tus resultados nacen de la precisión, el gusto y las ganas de refinar.\n\nCon el trabajo y el dinero, sueles brillar donde la calidad se nota y se valora. A veces subestimas un trabajo que pidió mucha habilidad, solo porque el esfuerzo no se ve. Nombrar el cuidado que hubo detrás ayuda a que otros vean su valor.",
       tryToday: "Mira algo que hiciste hace poco y nombra, aunque sea para ti, la habilidad que pidió.",
     },
     {
       title: "Fuego: el calor que te da forma",
       body: "El Fuego da forma al Metal. A una gema, el calor justo le saca el color, mientras que demasiado puede sentirse duro. Las reglas, los comentarios y la responsabilidad pueden funcionar igual para ti: en la medida justa, muestran todo lo que puedes hacer.\n\nQuizá sientas la crítica con más intensidad de lo que otros imaginan, porque ya te exiges mucho. Las expectativas claras y justas, y las personas que critican el trabajo y no a ti, suelen ayudarte a crecer. La presión te sirve más como pulido que como martillo.",
-      tryToday: "Si hoy recibes un comentario, nota qué parte habla del trabajo y qué parte tomaste como algo sobre ti.",
+      tryToday: "Si hoy recibes un comentario, fíjate en qué parte habla del trabajo y qué parte tomaste como algo sobre ti.",
     },
     {
       title: "Metal con Metal: amistades y rivales",
-      body: "Con otras personas de Metal sueles encontrar un idioma común sin esfuerzo. Pueden hablar de calidad, de criterios y de cómo se ve algo «bien hecho», y sentir que se entienden sin explicar mucho.\n\nDos miradas finas también pueden empezar a medirse. La comparación puede colarse en silencio, sobre todo con otra gema. El trabajo en equipo suele ir mejor cuando cada quien admira abiertamente el oficio del otro y entiende los distintos criterios como estilos, no como una clasificación.",
-      tryToday: "Piensa en alguien con un criterio tan alto como el tuyo y nota algo que hace de maravilla.",
+      body: "Con otras personas de Metal sueles encontrar un idioma común sin esfuerzo. Puedes hablar de calidad, de criterios y de cómo se ve algo «bien hecho», y sentir que te entienden sin explicar mucho.\n\nDos miradas finas también pueden empezar a medirse. La comparación puede colarse en silencio, sobre todo con otra gema. El trabajo en equipo suele ir mejor cuando cada quien admira abiertamente el oficio de la otra persona y entiende los distintos criterios como estilos, no como una clasificación.",
+      tryToday: "Piensa en alguien con un criterio tan alto como el tuyo y fíjate en algo que hace de maravilla.",
     },
     {
       title: "El otoño: tu estación",
-      body: "En el calendario del saju, el Metal está en su punto más fuerte en otoño, más o menos de principios de agosto a principios de octubre. Es la estación del aire limpio, la fruta madura y las cosas ordenadas y guardadas. Encaja con tu manera de refinar, elegir y quedarte solo con lo que de verdad vale.\n\nLas fechas siguen el calendario de términos solares del que viene el sistema. Si vives en el hemisferio sur, léelo como un ritmo del año, no como tu clima.",
-      tryToday: "Nota una cosa que quieres conservar y otra que ya puedes despejar.",
+      body: "En el calendario del saju, el Metal está en su punto más fuerte en otoño, más o menos de principios de agosto a principios de octubre. Es la estación del aire limpio, la fruta madura y las cosas ordenadas y guardadas. Encaja con tu manera de refinar, elegir y quedarte solo con lo que de verdad vale.\n\nLas fechas siguen el calendario de términos solares del que viene el sistema. Si vives en el hemisferio sur, léelo como un ritmo del año, no como el clima de tu zona.",
+      tryToday: "Piensa en una cosa que quieres conservar y en otra que ya puedes soltar.",
     },
     {
       title: "La gema es solo el comienzo",
-      body: "Tu Maestro del Día es el centro de tu mapa, pero no es toda la historia. Los otros pilares, el equilibrio de los cinco elementos y tus ciclos de diez años suman lo suyo, así que dos personas de gema pueden brillar de formas muy distintas.\n\nPiensa en estos diez días como una lente. Nota cuándo tu ojo para el detalle ayuda, cuándo necesitas un entorno en calma, cuándo una presión amable saca tu color. Cuanto más lo notes, más tuya se vuelve la imagen.",
-      tryToday: "Antes de dormir, recuerda un momento de hoy muy de «gema» y date permiso para disfrutarlo.",
+      body: "Tu Maestro del Día es el centro de tu mapa, pero no es toda la historia. Los otros pilares, el equilibrio de los cinco elementos y tus ciclos de diez años también influyen, así que dos personas de gema pueden brillar de formas muy distintas.\n\nPiensa en estos diez días como una lente. Fíjate en cuándo tu ojo para el detalle ayuda, cuándo necesitas un entorno en calma y cuándo una presión amable saca tu color. Cuanto más lo notes, más tuya se vuelve la imagen.",
+      tryToday: "Antes de dormir, recuerda un momento de hoy en que te sentiste muy «gema» y date permiso para disfrutarlo.",
     },
   ],
   ko: [

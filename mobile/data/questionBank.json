@@ -136,7 +136,7 @@
               "text_es": "¿Cuál es mi forma de expresar el amor?"
             }
           ],
-          "name_en": "New Love",
+          "name_en": "New love",
           "name_es": "Nuevo amor"
         },
         {
@@ -264,7 +264,7 @@
               "text_es": "¿Cómo será mi vida junto a mi pareja más adelante?"
             }
           ],
-          "name_en": "Marriage & the Future",
+          "name_en": "Marriage & the future",
           "name_es": "Matrimonio y futuro"
         },
         {
@@ -392,7 +392,7 @@
               "text_es": "¿Está teniendo esta relación un efecto realmente bueno en mí?"
             }
           ],
-          "name_en": "The Person I'm Seeing Now",
+          "name_en": "The person I'm seeing now",
           "name_es": "La persona con la que salgo"
         },
         {
@@ -520,7 +520,7 @@
               "text_es": "¿Puedo evitar que esta situación me haga daño?"
             }
           ],
-          "name_en": "Crushes & Almost-Relationships",
+          "name_en": "Crushes & almost-relationships",
           "name_es": "Enamoramientos y relaciones sin definir"
         },
         {
@@ -648,11 +648,11 @@
               "text_es": "¿Cómo recordaré esta relación con el paso del tiempo?"
             }
           ],
-          "name_en": "Breakups & Reunions",
+          "name_en": "Breakups & reunions",
           "name_es": "Rupturas y reencuentros"
         }
       ],
-      "name_en": "Love & Relationships",
+      "name_en": "Love & relationships",
       "name_es": "Amor y relaciones"
     },
     {
@@ -784,7 +784,7 @@
               "text_es": "¿Me llega el dinero sobre todo a través del trabajo, o por algún otro camino?"
             }
           ],
-          "name_en": "Money & Financial Luck",
+          "name_en": "Money & financial luck",
           "name_es": "Dinero y suerte financiera"
         },
         {
@@ -912,7 +912,7 @@
               "text_es": "¿Se adapta mi forma de generar patrimonio a mi personalidad?"
             }
           ],
-          "name_en": "Investing & Building Wealth",
+          "name_en": "Investing & building wealth",
           "name_es": "Inversión y patrimonio"
         },
         {
@@ -1040,11 +1040,11 @@
               "text_es": "¿Se acerca un período en el que se me abran nuevas puertas?"
             }
           ],
-          "name_en": "Life Opportunities",
+          "name_en": "Life opportunities",
           "name_es": "Oportunidades en la vida"
         }
       ],
-      "name_en": "Money & Success",
+      "name_en": "Money & success",
       "name_es": "Dinero y éxito"
     },
     {
@@ -1176,7 +1176,7 @@
               "text_es": "¿Cuándo se aliviará el estrés laboral que estoy atravesando?"
             }
           ],
-          "name_en": "My Current Job",
+          "name_en": "My current job",
           "name_es": "Mi trabajo actual"
         },
         {
@@ -1304,7 +1304,7 @@
               "text_es": "¿Es este el momento de empezar de nuevo?"
             }
           ],
-          "name_en": "Changing Jobs & Careers",
+          "name_en": "Changing jobs & careers",
           "name_es": "Cambio de trabajo o de rumbo profesional"
         },
         {
@@ -1432,7 +1432,7 @@
               "text_es": "¿Hay un período del que debería tener especial cuidado en mi negocio?"
             }
           ],
-          "name_en": "Starting a Business",
+          "name_en": "Starting a business",
           "name_es": "Emprender un negocio"
         },
         {
@@ -1560,11 +1560,11 @@
               "text_es": "¿Soy alguien que aprovecha bien lo que ha aprendido?"
             }
           ],
-          "name_en": "Studies & Exams",
+          "name_en": "Studies & exams",
           "name_es": "Estudios y exámenes"
         }
       ],
-      "name_en": "Career & Studies",
+      "name_en": "Career & studies",
       "name_es": "Trabajo y estudios"
     },
     {
@@ -1696,7 +1696,7 @@
               "text_es": "¿Se acerca un buen momento para una conversación honesta con mis padres?"
             }
           ],
-          "name_en": "My Relationship with My Parents",
+          "name_en": "My relationship with my parents",
           "name_es": "Mi relación con mis padres"
         },
         {
@@ -1824,8 +1824,8 @@
               "text_es": "¿Qué papel me toca desempeñar con las generaciones que vienen?"
             }
           ],
-          "name_en": "Children & the Next Generation",
-          "name_es": "Hijos y próxima generación"
+          "name_en": "Children & the next generation",
+          "name_es": "Hijos y futuras generaciones"
         },
         {
           "id": "family_siblings",
@@ -1952,7 +1952,7 @@
               "text_es": "¿Está bien que hable con más sinceridad dentro de mi familia?"
             }
           ],
-          "name_en": "Siblings & Relatives",
+          "name_en": "Siblings & relatives",
           "name_es": "Hermanos y familiares"
         },
         {
@@ -2080,11 +2080,11 @@
               "text_es": "¿De qué manera se nota más mi lado sociable?"
             }
           ],
-          "name_en": "Friends & Connections",
+          "name_en": "Friends & connections",
           "name_es": "Amigos y contactos"
         }
       ],
-      "name_en": "Family & Relationships",
+      "name_en": "Family & relationships",
       "name_es": "Familia y relaciones"
     },
     {
@@ -2216,7 +2216,7 @@
               "text_es": "¿Cuál es mi temperamento innato?"
             }
           ],
-          "name_en": "My Personality & Temperament",
+          "name_en": "My personality & temperament",
           "name_es": "Mi personalidad y temperamento"
         },
         {
@@ -2344,7 +2344,7 @@
               "text_es": "¿Estoy avanzando a mi propio ritmo?"
             }
           ],
-          "name_en": "Strengths & Weaknesses",
+          "name_en": "Strengths & weaknesses",
           "name_es": "Fortalezas y debilidades"
         },
         {
@@ -2472,7 +2472,7 @@
               "text_es": "¿En qué tipo de persona voy a convertirme de aquí en adelante?"
             }
           ],
-          "name_en": "Life Direction & Purpose",
+          "name_en": "Life direction & purpose",
           "name_es": "Rumbo y propósito en la vida"
         }
       ],
@@ -2608,7 +2608,7 @@
               "text_es": "¿Cuál es el rumbo general de mi año?"
             }
           ],
-          "name_en": "This Year's Flow",
+          "name_en": "This year's flow",
           "name_es": "Panorama de este año"
         },
         {
@@ -2736,7 +2736,7 @@
               "text_es": "¿Es esta decisión realmente mía?"
             }
           ],
-          "name_en": "Timing for Important Decisions",
+          "name_en": "Timing for important decisions",
           "name_es": "El momento de las decisiones importantes"
         },
         {
@@ -2864,11 +2864,11 @@
               "text_es": "¿Viviré una vida mejor después de este cambio?"
             }
           ],
-          "name_en": "Moving & Life Changes",
+          "name_en": "Moving & life changes",
           "name_es": "Mudanzas y cambios de vida"
         }
       ],
-      "name_en": "Timing & Change",
+      "name_en": "Timing & change",
       "name_es": "Momento y cambio"
     },
     {
@@ -3000,7 +3000,7 @@
               "text_es": "¿Qué necesito ahora mismo: actividad, o descanso?"
             }
           ],
-          "name_en": "Condition & Energy Management",
+          "name_en": "Condition & energy",
           "name_es": "Estado físico y energía"
         },
         {
@@ -3128,7 +3128,7 @@
               "text_es": "¿Se acerca un período de tranquilidad mental?"
             }
           ],
-          "name_en": "Mental Wellbeing",
+          "name_en": "Mental wellbeing",
           "name_es": "Bienestar mental"
         },
         {
@@ -3256,11 +3256,11 @@
               "text_es": "¿Qué hábito regular necesito ahora mismo?"
             }
           ],
-          "name_en": "Habits & Routines",
+          "name_en": "Habits & routines",
           "name_es": "Hábitos y rutinas"
         }
       ],
-      "name_en": "Condition & Mind",
+      "name_en": "Body & mind",
       "name_es": "Cuerpo y mente"
     },
     {
@@ -3453,11 +3453,11 @@
               "text_es": "¿Tengo más suerte de lo habitual hoy?"
             }
           ],
-          "name_en": "Today & This Week",
+          "name_en": "Today & this week",
           "name_es": "Hoy y esta semana"
         }
       ],
-      "name_en": "Today's Questions",
+      "name_en": "Today's questions",
       "name_es": "Preguntas de hoy"
     }
   ]

@@ -128,8 +128,8 @@ export type IntensityTier = "약함" | "보통" | "강함" | "매우 강함";
  * needs to render it in the user's locale instead of the raw Korean value. */
 export const INTENSITY_LABEL: Record<Locale, Record<IntensityTier, string>> = {
   ko: { "약함": "약함", "보통": "보통", "강함": "강함", "매우 강함": "매우 강함" },
-  en: { "약함": "Weak", "보통": "Moderate", "강함": "Strong", "매우 강함": "Very Strong" },
-  es: { "약함": "Débil", "보통": "Moderado", "강함": "Fuerte", "매우 강함": "Muy Fuerte" },
+  en: { "약함": "Weak", "보통": "Moderate", "강함": "Strong", "매우 강함": "Very strong" },
+  es: { "약함": "Débil", "보통": "Moderado", "강함": "Fuerte", "매우 강함": "Muy fuerte" },
 };
 
 export interface DimensionResult {
@@ -290,15 +290,15 @@ export interface DimensionLabelMap {
 const CLAUSE_TEMPLATE: Record<"en" | "es", Record<IntensityTier, (label: string) => string>> = {
   en: {
     "약함": (label) => `${label} shows up a little, though not clearly`,
-    "보통": (label) => `${label} appears to a moderate degree`,
+    "보통": (label) => `${label} shows up moderately`,
     "강함": (label) => `${label} comes through fairly strongly`,
-    "매우 강함": (label) => `${label} shows up at an almost extreme level`,
+    "매우 강함": (label) => `${label} shows up very strongly`,
   },
   es: {
     "약함": (label) => `${label} aparece un poco, aunque no de forma clara`,
     "보통": (label) => `${label} se nota de forma moderada`,
     "강함": (label) => `${label} se manifiesta con bastante claridad`,
-    "매우 강함": (label) => `${label} aparece de forma casi extrema`,
+    "매우 강함": (label) => `${label} aparece con mucha intensidad`,
   },
 };
 

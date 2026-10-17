@@ -9,7 +9,7 @@ const lessons: DayMasterLessons = {
       tryToday: "Notice one moment today when someone checks in with you before deciding something.",
     },
     {
-      title: "Mountain and field: two kinds of Earth",
+      title: "Mountain and Field: two kinds of Earth",
       body: "Earth comes in two forms. The Field is yin Earth: low, open, and shaped by whatever grows in it. The Mountain is yang Earth: tall, firm, and visible from far away. Where the field receives and adapts, you tend to stand and hold. You move less often, but when you do, it's usually deliberate and hard to push back on. Neither is better; they just carry their weight differently.",
       tryToday: "Catch yourself holding your ground once today, and ask whether it's still a stand you want to take.",
     },
@@ -30,7 +30,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "How you shape results: Water",
-      body: "Earth shapes Water the way riverbanks guide a river, giving it a course instead of a flood. That's often how you go after work and money: not by chasing every current, but by building structure around it. Budgets, routines, and long-range plans tend to suit you better than fast bets. The thing worth supporting is flexibility, since water also needs room to move, and a plan that bends a little can carry more.",
+      body: "Earth shapes Water the way riverbanks guide a river, giving it a course instead of a flood. That's often how you go after work and money: not by chasing every current, but by building structure around it. Budgets, routines, and long-range plans tend to suit you better than fast bets. What helps is staying flexible, since water also needs room to move, and a plan that bends a little can carry more.",
       tryToday: "Look at one routine around work or money and notice where it could use a little more give.",
     },
     {
@@ -45,7 +45,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Your season: the turns between seasons",
-      body: "In the saju calendar, Earth doesn't own a single season. It's strongest in the four in-between months that close each season: roughly early April to early May, early July to early August, early October to early November, and early January to early February.\n\nThese dates follow the solar-term calendar the system comes from, so in the southern hemisphere, read them as a rhythm rather than your weather. It suits a mountain: the ground that holds while everything around it turns.",
+      body: "In the saju calendar, Earth doesn't own a single season. It's strongest in the four in-between months that close each season: roughly early April to early May, early July to early August, early October to early November, and early January to early February.\n\nThese dates follow the solar-term calendar the system comes from, so in the southern hemisphere, read them as a rhythm rather than your local weather. It suits a mountain: the ground that holds while everything around it turns.",
       tryToday: "Notice whether endings and beginnings, like the close of a week, are when you feel most like yourself.",
     },
     {
@@ -57,17 +57,17 @@ const lessons: DayMasterLessons = {
   es: [
     {
       title: "Una montaña que no se mueve",
-      body: "Tu Maestro del Día es la montaña: Tierra yang, la Tierra grande y firme. Una montaña no persigue nada. Se queda donde está, y el paisaje alrededor se orienta con ella.\n\nAsí suele mostrarse tu estilo. Tiendes a ir a tu propio ritmo, a sostener una postura una vez que la tomas y a dar a los demás algo sólido en qué apoyarse. Ese mismo peso que te hace confiable puede volver lentos los cambios, y eso también forma parte del retrato.",
-      tryToday: "Fíjate hoy en un momento en que alguien te consulte antes de decidir algo.",
+      body: "Tu Maestro del Día es la montaña: Tierra yang, la Tierra grande y firme. Una montaña no persigue nada. Se queda donde está, y el paisaje alrededor toma de ella su orientación.\n\nAsí suele mostrarse tu estilo. Tiendes a ir a tu propio ritmo, a sostener una postura una vez que la tomas y a ofrecer a los demás algo sólido en lo que apoyarse. Ese mismo peso que te hace confiable puede volver lentos los cambios, y eso también forma parte del retrato.",
+      tryToday: "Fíjate hoy en un momento en que alguien te consulta antes de decidir algo.",
     },
     {
       title: "La montaña y el campo: dos tipos de Tierra",
-      body: "La Tierra tiene dos formas. El campo es Tierra yin: baja, abierta y moldeada por lo que crece en ella. La montaña es Tierra yang: alta, firme y visible desde lejos. Mientras el campo recibe y se adapta, tú tiendes a plantarte y sostener. Te mueves menos, pero cuando lo haces suele ser con intención y cuesta hacerte retroceder. Ninguna es mejor; simplemente cargan su peso de otra manera.",
+      body: "La Tierra tiene dos formas. El campo es Tierra yin: baja, abierta y moldeada por lo que crece en ella. La montaña es Tierra yang: alta, firme y visible desde lejos. Mientras el campo recibe y se adapta, tú tiendes a plantarte y sostener tu posición. Te mueves menos, pero cuando lo haces suele ser con intención y cuesta hacerte retroceder. Ninguna es mejor; simplemente cargan su peso de otra manera.",
       tryToday: "Fíjate hoy en un momento en que sostienes tu postura y pregúntate si todavía la quieres.",
     },
     {
       title: "Cómo se ve la firmeza en el día a día",
-      body: "Tus fortalezas suelen ser silenciosas. Eres quien mantiene la calma cuando un plan se cae, quien recuerda lo que se acordó, quien no se deja arrastrar por el ánimo del grupo. Es probable que tus amistades te busquen cuando quieren una opinión clara y sin prisas. En el trabajo, sueles ser quien evita que un proyecto largo pierda el rumbo. La paciencia y la constancia te parecen normales, pero a otras personas les resultan raras.",
+      body: "Tus fortalezas suelen ser silenciosas. Eres quien mantiene la calma cuando un plan se cae, quien recuerda lo que se acordó, quien no se deja arrastrar por el ánimo del grupo. Es probable que tus amistades te busquen cuando quieren una opinión clara y sin prisas. En el trabajo, sueles ser quien evita que un proyecto largo pierda el rumbo. La paciencia y la constancia te parecen normales, pero para otras personas son poco comunes.",
       tryToday: "Anota algo que hiciste con constancia esta semana y que nadie te agradeció.",
     },
     {
@@ -77,33 +77,33 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Lo que guarda la montaña: el Metal",
-      body: "La Tierra produce Metal, como el mineral que se forma despacio dentro de una montaña. Así sueles expresarte. Rara vez compartes ideas a medio hacer: las dejas asentarse hasta que tienen cuerpo y luego ofreces algo claro y terminado, como un plan bien armado, un consejo preciso o una habilidad pulida durante años. Si a veces otras personas desean oírte antes, mostrar de vez en cuando un borrador puede ser un buen ejercicio.",
+      body: "La Tierra produce Metal, como el mineral que se forma despacio dentro de una montaña. Así sueles expresarte. Rara vez compartes ideas a medio hacer: las dejas asentarse hasta que tienen cuerpo y luego ofreces algo claro y terminado, como un plan bien armado, un consejo preciso o una habilidad pulida durante años. Si a veces otras personas quisieran oírte antes, mostrar de vez en cuando un borrador puede ser un buen ejercicio.",
       tryToday: "Comparte hoy una idea mientras todavía es un borrador y mira cómo la reciben.",
     },
     {
       title: "Cómo das forma a los resultados: el Agua",
-      body: "La Tierra da forma al Agua, como las orillas que guían un río y le dan cauce en lugar de dejarlo desbordarse. Así sueles ir tras el trabajo y el dinero: no persigues cada corriente, sino que construyes una estructura alrededor. Presupuestos, rutinas y planes a largo plazo tienden a irte mejor que las apuestas rápidas. Lo que vale la pena cuidar es la flexibilidad: el agua también necesita moverse, y un plan que se dobla un poco llega más lejos.",
-      tryToday: "Mira una rutina de trabajo o de dinero y nota dónde le vendría bien un poco de holgura.",
+      body: "La Tierra da forma al Agua, como las orillas que guían un río y le dan cauce en lugar de dejarlo desbordarse. Así sueles ir tras el trabajo y el dinero: no persigues cada corriente, sino que construyes una estructura alrededor. Presupuestos, rutinas y planes a largo plazo tienden a irte mejor que las apuestas rápidas. Ayuda mantener la flexibilidad: el agua también necesita moverse, y un plan que se dobla un poco llega más lejos.",
+      tryToday: "Mira una rutina de trabajo o de dinero y fíjate en dónde le vendría bien un poco de holgura.",
     },
     {
       title: "Lo que te ayuda a crecer: la Madera",
-      body: "La Madera da forma a la Tierra: las raíces se abren paso en el suelo duro y sostienen la ladera. Para ti, la Madera es todo lo que te empuja a salir de tu sitio de siempre: una norma nueva, una mentora exigente, una fecha límite o una amistad que no deja de preguntar «¿y por qué no?».\n\nEsa presión puede incomodar, porque quedarte en tu lugar es lo que te sale natural. Pero muchas veces es lo que mantiene verde a la montaña en vez de roca pelada.",
+      body: "La Madera da forma a la Tierra: las raíces se abren paso en el suelo duro y sostienen la ladera. Para ti, la Madera es todo lo que te empuja a salir de tu sitio de siempre: una norma nueva, una persona mentora exigente, una fecha límite o una amistad que no deja de preguntar «¿y por qué no?».\n\nEsa presión puede incomodar, porque quedarte en tu lugar es lo que te sale natural. Pero muchas veces es lo que mantiene verde a la montaña en vez de roca pelada.",
       tryToday: "Acepta hoy una pequeña sugerencia que normalmente dejarías pasar.",
     },
     {
       title: "Montañas entre montañas",
-      body: "Con otras personas de Tierra sueles encontrar una confianza fácil y sin palabras: las dos partes valoran presentarse y cumplir lo dicho. Trabajar en equipo puede sentirse sólido y con poco drama. Lo delicado es que dos montañas no se mueven fácilmente la una a la otra, y un desacuerdo puede volverse un pulso largo. Ayuda recordar que se puede compartir una cordillera sin ser la misma cumbre, y que ceder primero no es perder.",
+      body: "Con otras personas de Tierra sueles encontrar una confianza fácil y sin palabras: las dos partes valoran estar presentes y cumplir lo dicho. Trabajar en equipo puede sentirse sólido y con poco drama. Lo delicado es que dos montañas no se mueven fácilmente la una a la otra, y un desacuerdo puede volverse un pulso largo. Ayuda recordar que se puede compartir una cordillera sin ser la misma cumbre, y que ceder primero no es perder.",
       tryToday: "Si hoy chocas con alguien, prueba a ceder tú primero en algo pequeño.",
     },
     {
       title: "Tu estación: los cambios entre estaciones",
-      body: "En el calendario del saju, la Tierra no tiene una sola estación. Es más fuerte en los cuatro meses de transición que cierran cada estación: más o menos de principios de abril a principios de mayo, de principios de julio a principios de agosto, de principios de octubre a principios de noviembre y de principios de enero a principios de febrero.\n\nEstas fechas siguen el calendario de términos solares del que viene el sistema; en el hemisferio sur, léelas como un ritmo y no como tu clima. Le va bien a la montaña: el suelo que sostiene mientras todo gira.",
-      tryToday: "Observa si los cierres y comienzos, como el final de una semana, son cuando más te reconoces.",
+      body: "En el calendario del saju, la Tierra no tiene una sola estación. Es más fuerte en los cuatro meses de transición que cierran cada estación: más o menos de principios de abril a principios de mayo, de principios de julio a principios de agosto, de principios de octubre a principios de noviembre y de principios de enero a principios de febrero.\n\nEstas fechas siguen el calendario de términos solares del que viene el sistema; en el hemisferio sur, léelas como un ritmo y no como el clima de tu zona. Le sienta bien a una montaña: el suelo que sostiene mientras todo gira.",
+      tryToday: "Observa si los cierres y comienzos, como el final de una semana, son los momentos en que más te sientes tú.",
     },
     {
       title: "Más que una montaña",
-      body: "Tu Maestro del Día es el centro de tu mapa, pero solo es una parte. Los otros pilares, el equilibrio de tus elementos y tus ciclos de diez años influyen en cómo se ve tu montaña de verdad: unas tienen sol, otras bosque, otras mineral por dentro.\n\nAsí que toma estas diez lecciones como una lente, no como una etiqueta. En las próximas semanas, nota cuándo tu firmeza ayuda y cuándo te gustaría un poco más de movimiento. Nadie conoce tu paisaje mejor que tú.",
-      tryToday: "Elige una de estas diez lecciones que te haya sonado verdadera y búscala hoy una vez.",
+      body: "Tu Maestro del Día es el centro de tu mapa, pero solo es una parte. Los otros pilares, el equilibrio de tus elementos y tus ciclos de diez años influyen en cómo se ve tu montaña de verdad: unas tienen sol, otras bosque, otras mineral por dentro.\n\nAsí que toma estas diez lecciones como una lente, no como una etiqueta. En las próximas semanas, fíjate en cuándo tu firmeza ayuda y cuándo te gustaría un poco más de movimiento. Nadie conoce tu paisaje mejor que tú.",
+      tryToday: "Elige una de estas diez lecciones que te haya resonado y búscala hoy una vez.",
     },
   ],
   ko: [

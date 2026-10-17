@@ -45,7 +45,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Winter is your season",
-      body: "In the saju calendar, Water is strongest in winter, roughly from early November to early January. The timing follows the solar-term calendar the system comes from, so if you live in the southern hemisphere, read it as a rhythm rather than your weather.\n\nWinter is the season of going inward and storing up, and many oceans find that their thinking feels deep and clear when the year turns quiet.",
+      body: "In the saju calendar, Water is strongest in winter, roughly from early November to early January. The timing follows the solar-term calendar the system comes from, so if you live in the southern hemisphere, read it as a rhythm rather than your weather.\n\nWinter is the season of going inward and storing up, and many people with ocean energy find that their thinking feels deep and clear when the year turns quiet.",
       tryToday: "Give yourself a few still minutes today, the way winter does, and see what surfaces.",
     },
     {
@@ -57,13 +57,13 @@ const lessons: DayMasterLessons = {
   es: [
     {
       title: "Eres el océano",
-      body: "Tu Maestro del Día es Agua yang, y su imagen es el océano: amplio, profundo y siempre en movimiento por debajo. El océano recibe ríos, tormentas y mareas sin dejar de ser él mismo.\n\nA menudo tú funcionas igual. Sueles sostener muchas cosas a la vez, pensar en grandes corrientes más que en detalles y mantener la calma en la superficie aunque por dentro pase mucho.",
+      body: "Tu Maestro del Día es Agua yang, y su imagen es el océano: amplio, profundo y siempre en movimiento por debajo. El océano recibe ríos, tormentas y mareas sin dejar de ser él mismo.\n\nA menudo tú también eres así. Sueles sostener muchas cosas a la vez, pensar en grandes corrientes más que en detalles y mantener la calma en la superficie aunque por dentro pase mucho.",
       tryToday: "Fíjate hoy en un momento en que recibiste algo en silencio en vez de reaccionar al instante.",
     },
     {
       title: "Agua grande que avanza",
       body: "El Agua tiene dos versiones. El rocío es Agua yin: callado, cercano, empapa un punto cada vez. Tú eres el océano, Agua yang, y te mueves en grandes barridos.\n\nTiendes a pensar hacia dónde va todo en conjunto, y cuando encuentras rumbo, arrastras mucho contigo. El rocío ve la hoja; tú sueles ver la costa entera.",
-      tryToday: "Cuando planees algo hoy, observa cómo primero te alejas para ver el panorama completo.",
+      tryToday: "Cuando planees algo hoy, observa cómo te alejas primero para ver el panorama completo.",
     },
     {
       title: "Espacio para casi todo",
@@ -72,7 +72,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Lo que llena tu mar",
-      body: "En los cinco elementos, el Metal alimenta al Agua. Piensa en los minerales de un manantial o en la piedra fría que recoge agua limpia. Para ti, el Metal aparece como claridad: una regla clara, un plan bien hecho, alguien que te guía y te habla sin rodeos.\n\nCuando sientes la mente dispersa, sueles recargarte con estructura y aprendizaje preciso, no con más estímulos. Un escritorio en orden, un libro afilado o una conversación honesta te llenan antes que un fin de semana lleno de planes.",
+      body: "En los cinco elementos, el Metal alimenta al Agua. Piensa en los minerales de un manantial o en la piedra fría que recoge agua limpia. Para ti, el Metal aparece como claridad: una regla clara, un plan bien hecho, alguien que te guía y te habla sin rodeos.\n\nCuando sientes la mente dispersa, sueles recargarte con estructura y aprendizaje preciso, no con más estímulos. Un escritorio en orden, un libro claro y directo o una conversación honesta te recargan más rápido que un fin de semana lleno de planes.",
       tryToday: "Elige hoy una cosa pequeña para dejarla clara: una lista, un estante o una decisión.",
     },
     {
@@ -81,7 +81,7 @@ const lessons: DayMasterLessons = {
       tryToday: "Comparte hoy una idea o un consejo con alguien y observa qué crece a partir de ahí.",
     },
     {
-      title: "Cómo vas por resultados",
+      title: "Cómo avanzas hacia los resultados",
       body: "El Agua da forma al Fuego, así que el Fuego es tu terreno de trabajo, dinero y resultados. El Agua y el Fuego no se mezclan con facilidad, por eso ir tras tus metas puede sentirse como un esfuerzo real y no como dejarse llevar.\n\nTe va bien cuando llevas tu profundidad a algo cálido y visible: una propuesta, un producto, una meta con final claro. Sueles pensar el dinero a largo plazo, y tener a la vista un objetivo concreto ayuda a que tu gran corriente llegue a puerto.",
       tryToday: "Anota un resultado concreto que te gustaría esta semana, lo bastante pequeño para verlo claro.",
     },
@@ -97,13 +97,13 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "El invierno es tu estación",
-      body: "En el calendario del saju, el Agua está en su punto más fuerte en invierno, más o menos de principios de noviembre a principios de enero. Las fechas siguen el calendario de términos solares del que viene el sistema; si vives en el hemisferio sur, léelo como un ritmo y no como tu clima.\n\nEl invierno es la estación de ir hacia dentro y guardar fuerzas, y muchos océanos sienten que piensan con más hondura y claridad cuando el año se aquieta.",
+      body: "En el calendario del saju, el Agua está en su punto más fuerte en invierno, más o menos de principios de noviembre a principios de enero. Las fechas siguen el calendario de términos solares del que viene el sistema; si vives en el hemisferio sur, léelo como un ritmo y no como tu clima.\n\nEl invierno es la estación de ir hacia dentro y guardar fuerzas, y muchas personas con energía de océano sienten que piensan con más hondura y claridad cuando el año se aquieta.",
       tryToday: "Regálate hoy unos minutos de quietud, como hace el invierno, y mira qué sale a flote.",
     },
     {
       title: "Más que un océano",
-      body: "Tu Maestro del Día es el centro de tu mapa, pero no es todo el mapa. Los otros pilares, el equilibrio de los cinco elementos y tus ciclos de diez años añaden sus propios colores, así que tu océano puede ser sereno, bravo o templado de maneras que solo muestra tu mapa completo.\n\nEn estos diez días conociste la forma básica. Ahora viene lo bonito: reconocerla en la vida diaria, cuando recibes, cuando fluyes y cuando necesitas una orilla.",
-      tryToday: "Esta noche, recuerda un momento de hoy en que te sentiste más océano que nunca.",
+      body: "Tu Maestro del Día es el centro de tu mapa, pero no es todo el mapa. Los otros pilares, el equilibrio de los cinco elementos y tus ciclos de diez años añaden sus propios colores, así que tu océano puede ser sereno, bravo o templado de maneras que solo muestra tu mapa completo.\n\nEn estos diez días conociste la forma básica. Ahora viene la parte bonita: reconocerla en la vida diaria, cuando recibes, cuando fluyes y cuando necesitas una orilla.",
+      tryToday: "Esta noche, recuerda un momento de hoy en que te sentiste más como el océano.",
     },
   ],
   ko: [

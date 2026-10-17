@@ -141,7 +141,7 @@ export const en: typeof ko = {
 
   report: {
     disclaimer: "This report is reference material intended to support self-understanding. It is not a medical or psychological diagnosis and does not substitute for professional counseling.",
-    generatedNote: "This report was written by AI, combining precise saju calculations from our own manseryeok engine with your personality test results and counseling conversation. The person in the example scenario is a fictional illustration used for clarity.",
+    generatedNote: "This report was written by AI, combining precise saju calculations from our own Korean calendar engine with your personality test results and counseling conversation. The person in the example scenario is a fictional illustration used for clarity.",
     loadingMessages: [
       "Unfolding your saju chart again",
       "Layering your assessment results over your Five Elements",
@@ -260,7 +260,7 @@ export const en: typeof ko = {
     me: "You",
     sentNote: (name: string) => `This result has also been sent to ${name}'s app.`,
     sentNoteNoName: "This result has also been sent to the app of the person who sent the link.",
-    appTitle: "What you give each other, and where you rub, is in the app",
+    appTitle: "What you give each other, and where you clash, is in the app",
     appBody: "In the Fatesaid app you get your own saju type, your daily rhythm and a compatibility report that reads the two of you in depth. The app is coming soon to iOS and Android.",
     expiredTitle: "This link has expired",
     expiredBody: "Invite links stay open for 30 days. Ask the person who sent it for a new one.",

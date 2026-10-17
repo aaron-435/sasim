@@ -9,8 +9,8 @@ const lessons: DayMasterLessons = {
       tryToday: "Notice one thing today that is growing a little because you made space for it.",
     },
     {
-      title: "Field and mountain: two kinds of Earth",
-      body: "Earth comes in two forms. The Mountain is yang Earth: tall, fixed, a landmark. The Field is yin Earth: low, open, and changed by what's planted in it. Where the mountain holds a position, you tend to absorb, adjust, and work with what's in front of you. You move through small, steady adjustments rather than big stands. That flexibility is a real strength, and the thing worth supporting is your own boundaries.",
+      title: "Field and Mountain: two kinds of Earth",
+      body: "Earth comes in two forms. The Mountain is yang Earth: tall, fixed, a landmark. The Field is yin Earth: low, open, and changed by what's planted in it. Where the mountain holds a position, you tend to absorb, adjust, and work with what's in front of you. You move through small, steady adjustments rather than big stands. That flexibility is a real strength, and it helps to keep your own boundaries clear.",
       tryToday: "Notice one moment today when you adjusted to someone, and whether you actually wanted to.",
     },
     {
@@ -21,7 +21,7 @@ const lessons: DayMasterLessons = {
     {
       title: "What warms the soil: Fire",
       body: "In the Five Elements, Fire feeds Earth, like sunlight warming soil so things can grow. For you, Fire might be encouragement, a warm friend, a class that excites you, or simply rest in the light.\n\nBecause you give so much attention to others, it's easy to forget that soil needs warming too. Letting someone take care of you isn't a detour from who you are. It's how the field stays fertile.",
-      tryToday: "Let someone do one small thing for you today without turning it back around.",
+      tryToday: "Let someone do one small thing for you today without rushing to return the favor.",
     },
     {
       title: "What the field brings up: Metal",
@@ -30,7 +30,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "How you shape results: Water",
-      body: "Earth shapes Water: soil soaks up rain and holds it where roots can reach it. That's a picture of how you tend to handle work and money. You're often good at gathering resources quietly, storing them, and spreading them where they're needed. Small, regular steps may suit you better than one big push. The thing worth supporting is keeping some for yourself, since a field that waters every neighbor's crop can forget its own.",
+      body: "Earth shapes Water: soil soaks up rain and holds it where roots can reach it. That's a picture of how you tend to handle work and money. You're often good at gathering resources quietly, storing them, and spreading them where they're needed. Small, regular steps may suit you better than one big push. What helps is keeping some for yourself, since a field that waters every neighbor's crop can forget its own.",
       tryToday: "Set aside one small thing today, a bit of time or money, that's only for you.",
     },
     {
@@ -40,12 +40,12 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Fields side by side",
-      body: "With other Earth people, you often find an easy comfort: you both value being useful and dependable. Shared work can feel natural, like neighboring fields planted together. The thing to watch is that two caretakers can both wait for the other to say what they want. It helps to be the one who names a preference, even a small one, so the friendship gets tended in both directions.",
+      body: "With other Earth people, you often find an easy comfort: you both value being useful and dependable. Shared work can feel natural, like neighboring fields planted together. One thing to watch: two caretakers can both wait for the other to say what they want. It helps to be the one who names a preference, even a small one, so the friendship gets tended in both directions.",
       tryToday: "Tell one person a clear preference today, like where to eat or which time works for you.",
     },
     {
       title: "Your season: the turns between seasons",
-      body: "In the saju calendar, Earth doesn't own a single season. It's strongest in the four in-between months that close each season: roughly early April to early May, early July to early August, early October to early November, and early January to early February.\n\nThese dates follow the solar-term calendar the system comes from, so in the southern hemisphere, read them as a rhythm rather than your weather. It suits a field: soil turned over and readied between one crop and the next.",
+      body: "In the saju calendar, Earth doesn't own a single season. It's strongest in the four in-between months that close each season: roughly early April to early May, early July to early August, early October to early November, and early January to early February.\n\nThese dates follow the solar-term calendar the system comes from, so in the southern hemisphere, read them as a rhythm rather than your local weather. It suits a field: soil turned over and readied between one crop and the next.",
       tryToday: "Notice whether in-between times, like a weekend or a pause between tasks, help you reset.",
     },
     {
@@ -62,17 +62,17 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "El campo y la montaña: dos tipos de Tierra",
-      body: "La Tierra tiene dos formas. La montaña es Tierra yang: alta, fija, un punto de referencia. El campo es Tierra yin: bajo, abierto y transformado por lo que se siembra en él. Mientras la montaña sostiene una postura, tú tiendes a absorber, ajustarte y trabajar con lo que tienes delante. Avanzas con pequeños ajustes constantes más que con grandes gestos. Esa flexibilidad es una fortaleza real, y lo que vale la pena cuidar son tus propios límites.",
-      tryToday: "Nota hoy un momento en que te adaptaste a alguien y pregúntate si de verdad querías.",
+      body: "La Tierra tiene dos formas. La montaña es Tierra yang: alta, fija, un punto de referencia. El campo es Tierra yin: bajo, abierto y transformado por lo que se siembra en él. Mientras la montaña sostiene una postura, tú tiendes a absorber, ajustarte y trabajar con lo que tienes delante. Avanzas con pequeños ajustes constantes más que con grandes gestos. Esa flexibilidad es una fortaleza real, y conviene cuidar tus propios límites.",
+      tryToday: "Fíjate hoy en un momento en que te adaptaste a alguien y pregúntate si de verdad querías.",
     },
     {
       title: "Un cuidado práctico y discreto",
-      body: "Tus fortalezas suelen ser prácticas y de cuidado. Muchas veces notas lo que alguien necesita antes de que lo diga, y eres quien convierte un plan vago en pasos concretos. Quizá se te dan bien los detalles que otras personas pasan por alto: el calendario compartido, el mensaje de seguimiento, el café para la reunión. La gente suele relajarse contigo porque la aceptas tal como es. Parecen cosas pequeñas, pero de ahí crece mucho buen trabajo.",
-      tryToday: "Nombra algo práctico que hiciste por alguien esta semana y date el crédito.",
+      body: "Tus fortalezas suelen ser prácticas y de cuidado. Muchas veces notas lo que alguien necesita antes de que lo diga, y eres quien convierte un plan vago en pasos concretos. Quizá se te den bien los detalles que otras personas pasan por alto: el calendario compartido, el mensaje de seguimiento, el café para la reunión. La gente suele relajarse contigo porque la aceptas tal como es. Parecen cosas pequeñas, pero de ahí crece mucho buen trabajo.",
+      tryToday: "Nombra algo práctico que hiciste por alguien esta semana y reconócete el mérito.",
     },
     {
       title: "Lo que calienta el suelo: el Fuego",
-      body: "En los cinco elementos, el Fuego alimenta a la Tierra, como el sol que entibia el suelo para que algo pueda crecer. Para ti, el Fuego puede ser una palabra de ánimo, una amistad cálida, una clase que te entusiasma o simplemente descansar a la luz.\n\nComo das tanta atención a los demás, es fácil olvidar que el suelo también necesita calor. Dejar que alguien te cuide no te aleja de quien eres. Es lo que mantiene fértil el campo.",
+      body: "En los cinco elementos, el Fuego alimenta a la Tierra, como el sol que da calor al suelo para que algo pueda crecer. Para ti, el Fuego puede ser una palabra de ánimo, una amistad cálida, una clase que te entusiasma o simplemente descansar al sol.\n\nComo das tanta atención a los demás, es fácil olvidar que el suelo también necesita calor. Dejar que alguien te cuide no te aleja de quien eres. Es lo que mantiene fértil el campo.",
       tryToday: "Deja que alguien haga hoy algo pequeño por ti sin devolverle el favor enseguida.",
     },
     {
@@ -82,28 +82,28 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Cómo das forma a los resultados: el Agua",
-      body: "La Tierra da forma al Agua: el suelo absorbe la lluvia y la guarda donde las raíces pueden alcanzarla. Así sueles manejar el trabajo y el dinero. A menudo se te da bien reunir recursos sin hacer ruido, guardarlos y repartirlos donde hacen falta. Los pasos pequeños y regulares quizá te vayan mejor que un gran empujón. Lo que vale la pena cuidar es guardar algo para ti, porque un campo que riega los cultivos de todos puede olvidar los suyos.",
+      body: "La Tierra da forma al Agua: el suelo absorbe la lluvia y la guarda donde las raíces pueden alcanzarla. Así sueles manejar el trabajo y el dinero. A menudo se te da bien reunir recursos sin hacer ruido, guardarlos y repartirlos donde hacen falta. Los pasos pequeños y regulares quizá te vayan mejor que un gran empujón. Ayuda guardar algo para ti, porque un campo que riega los cultivos de todos puede olvidar los suyos.",
       tryToday: "Aparta hoy algo pequeño, un poco de tiempo o de dinero, solo para ti.",
     },
     {
       title: "Lo que te ayuda a crecer: la Madera",
-      body: "La Madera da forma a la Tierra: las plantas extienden sus raíces por el suelo y le dan estructura. En tu vida, la Madera puede ser un orden, expectativas, un rol con responsabilidades claras o personas que te piden mucho.\n\nEsa presión puede pesar, sobre todo porque decir que sí te sale con facilidad. Pero son las raíces adecuadas las que mantienen unido un campo. Muchas veces creces al elegir qué exigencias dejas echar raíz y declinar con amabilidad las demás.",
+      body: "La Madera da forma a la Tierra: las plantas extienden sus raíces por el suelo y le dan estructura. En tu vida, la Madera puede ser estructura, expectativas, un rol con responsabilidades claras o personas que te piden mucho.\n\nEsa presión puede pesar, sobre todo porque decir que sí te sale con facilidad. Pero son las raíces adecuadas las que mantienen unido un campo. Muchas veces creces al elegir qué exigencias dejas echar raíz y dejar pasar con amabilidad las demás.",
       tryToday: "Cuando hoy te pidan algo, respira una vez antes de responder.",
     },
     {
       title: "Campos vecinos",
-      body: "Con otras personas de Tierra sueles encontrar una comodidad fácil: las dos partes valoran ser útiles y confiables. Trabajar en equipo puede sentirse natural, como campos vecinos sembrados a la vez. Lo que conviene vigilar es que dos personas que cuidan pueden quedarse esperando a que la otra diga qué quiere. Ayuda ser quien nombra una preferencia, aunque sea pequeña, para que la amistad se cuide en las dos direcciones.",
+      body: "Con otras personas de Tierra sueles encontrar una comodidad fácil: las dos partes valoran ser útiles y confiables. Trabajar en equipo puede sentirse natural, como campos vecinos sembrados a la vez. Algo a tener en cuenta es que dos personas que cuidan pueden quedarse esperando a que la otra diga qué quiere. Ayuda ser quien nombra una preferencia, aunque sea pequeña, para que la amistad se cuide en las dos direcciones.",
       tryToday: "Dile hoy a alguien una preferencia clara, como dónde comer o qué hora te viene bien.",
     },
     {
       title: "Tu estación: los cambios entre estaciones",
-      body: "En el calendario del saju, la Tierra no tiene una sola estación. Es más fuerte en los cuatro meses de transición que cierran cada estación: más o menos de principios de abril a principios de mayo, de principios de julio a principios de agosto, de principios de octubre a principios de noviembre y de principios de enero a principios de febrero.\n\nEstas fechas siguen el calendario de términos solares del que viene el sistema; en el hemisferio sur, léelas como un ritmo y no como tu clima. Le va bien al campo: la tierra que se remueve y se prepara entre una cosecha y la siguiente.",
+      body: "En el calendario del saju, la Tierra no tiene una sola estación. Es más fuerte en los cuatro meses de transición que cierran cada estación: más o menos de principios de abril a principios de mayo, de principios de julio a principios de agosto, de principios de octubre a principios de noviembre y de principios de enero a principios de febrero.\n\nEstas fechas siguen el calendario de términos solares del que viene el sistema; en el hemisferio sur, léelas como un ritmo y no como el clima de tu zona. Le sienta bien a un campo: la tierra que se remueve y se prepara entre una cosecha y la siguiente.",
       tryToday: "Observa si los momentos intermedios, como un fin de semana o una pausa entre tareas, te ayudan a recomponerte.",
     },
     {
       title: "Más que un campo",
-      body: "Tu Maestro del Día es el centro de tu mapa, pero no es todo. Los otros pilares, el equilibrio de tus elementos y tus ciclos de diez años influyen en qué clase de campo eres: con sol o con sombra, húmedo o seco, abierto o con su cerca bien puesta.\n\nAsí que toma estas lecciones con ligereza, como una lente y no como una etiqueta. En las próximas semanas, nota dónde haces lugar a los demás y dónde podrías hacerte lugar a ti. Nadie conoce tu terreno mejor que tú.",
-      tryToday: "Elige una de estas diez lecciones que te haya sonado verdadera y búscala hoy una vez.",
+      body: "Tu Maestro del Día es el centro de tu mapa, pero no es todo. Los otros pilares, el equilibrio de tus elementos y tus ciclos de diez años influyen en qué clase de campo eres: con sol o con sombra, húmedo o seco, abierto o con su cerca bien puesta.\n\nAsí que toma estas lecciones con ligereza, como una lente y no como una etiqueta. En las próximas semanas, fíjate en dónde haces lugar a los demás y dónde podrías hacerte lugar a ti. Nadie conoce tu terreno mejor que tú.",
+      tryToday: "Elige una de estas diez lecciones que te haya resonado y búscala hoy una vez.",
     },
   ],
   ko: [

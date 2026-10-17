@@ -104,7 +104,7 @@ export const MODULE8_QUESTIONS: ModuleQuestion[] = [
 // equivalent comment in module1Attachment.ts for why id/dimension/format/
 // score aren't duplicated per locale.
 export const MODULE8_QUESTIONS_EN: Record<string, QuestionTextOverride> = {
-  C1: { prompt: "How much do your thoughts keep chaining into each other once you're in bed?", minLabel: "Not at all (my mind is quiet)", maxLabel: "Very much (thoughts won't stop)" },
+  C1: { prompt: "Once you're in bed, how much does one thought keep leading to another?", minLabel: "Not at all (my mind is quiet)", maxLabel: "Very much (thoughts won't stop)" },
   C2: { prompt: "What's your mind like right before falling asleep?", optionLabels: ["Fairly quiet", "The occasional thought passes through", "All sorts of thoughts keep coming up", "I can't stop the thoughts"] },
   C3: { prompt: "Do you replay what happened during the day while in bed?", optionLabels: ["Almost never", "Lightly, sometimes", "I keep dwelling on it", "Scenes of mistakes I made keep replaying"] },
   C4: { prompt: "Do tomorrow's tasks or worries come up before sleep?", optionLabels: ["I don't think about them before sleep", "They cross my mind occasionally", "I keep making plans in my head", "Worry chases sleep away"] },
@@ -206,9 +206,9 @@ export const MODULE8_TYPE_NAMES: Record<Locale, Record<string, { title: string; 
   },
   en: {
     baseline: { title: "Peaceful Sleeper", hook: "Your mind, body, and subconscious all settle down relatively comfortably — a stable sleep pattern." },
-    cognitiveArousal: { title: "Overthinking Type", hook: "The moment you lie down, your thoughts chain into each other, so it takes a long time to actually fall asleep." },
-    somaticArousal: { title: "Bodily-Tense Type", hook: "Your mind is relatively quiet, but your body just won't relax, which makes falling asleep hard." },
-    subconsciousLeak: { title: "Subconscious-Leak Type", hook: "The day's emotions leak into your dreams, and you don't wake up feeling refreshed." },
+    cognitiveArousal: { title: "Overthinking Type", hook: "The moment you lie down, one thought leads to another, so it takes a long time to actually fall asleep." },
+    somaticArousal: { title: "Tense-Body Type", hook: "Your mind is relatively quiet, but your body just won't relax, which makes falling asleep hard." },
+    subconsciousLeak: { title: "Dream-Spillover Type", hook: "The day's emotions leak into your dreams, and you don't wake up feeling refreshed." },
     "cognitiveArousal+somaticArousal": { title: "Mind and Body Both Wired", hook: "Neither your mind nor your body gets to rest before you go to sleep." },
     "cognitiveArousal+subconsciousLeak": { title: "Thoughts That Carry Into Dreams", hook: "Your daytime worries keep running right through falling asleep and into your dreams." },
     "somaticArousal+subconsciousLeak": { title: "Tension That Leaks Into Dreams", hook: "You fall asleep without your body's tension releasing, and the aftereffects carry into your dreams and your morning." },

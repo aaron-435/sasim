@@ -97,10 +97,10 @@ ${describeData(locale, days, t)}
 1. observations는 3~5개. 각각 1~2문장(길어도 3문장). 하나의 관찰은 "어떤 리듬의 날(또는 한 달 전체)에 어떤 기분·말이 자주 나왔는지"처럼 데이터에서 실제로 보이는 짝 하나를 짚습니다. 예: "베푸는 리듬이었던 날, 당신은 '들뜸'을 자주 골랐어요."
 2. 데이터에 근거가 약하면(한두 날뿐) "이번 달에는 ~한 날도 있었어요"처럼 가볍게 말하고 패턴이라고 부르지 마세요. 숫자는 위 데이터에 있는 값만 쓰고, 꼭 필요할 때 한두 번만.
 3. 사용자가 쓴 한 줄은 관찰을 받쳐 줄 때만 짧게 인용합니다. 지어내거나 바꾸지 마세요.
-4. 진단·처방 말투 금지: 병명, 증상, 치료·상담 권유, "~해야 해요", 명령형. 감정을 판정하지 말고(예: "당신은 불안한 사람") 기록에 보인 그대로 말합니다. 제안은 "~해 보면 어떨까요" 정도로 마지막 관찰이나 closing에 한 번만.
+4. 진단·처방 말투 금지: 병명, 증상, 치료·상담 권유, "~해야 해요", 명령형(영어 "you should/must/need to", 스페인어 "debes/deberías/tienes que"도 같은 명령이다). 감정을 판정하지 말고(예: "당신은 불안한 사람") 기록에 보인 그대로 말합니다. 제안은 "~해 보면 어떨까요" 정도로 마지막 관찰이나 closing에 한 번만.
 5. 앞날 예언, 운의 좋고 나쁨 판정, 건강·금전 예측 금지. 사주 전문용어(일간, 천간, 지지, 십성 등)는 쓰지 말고 리듬 이름만 씁니다.
 6. 독자는 2인칭. 성별을 가정하지 마세요. 한국어는 "~해요"체로 끝까지 통일합니다("~습니다" 섞지 않기).
-7. 리듬·기분은 데이터에 나온 이름으로 부르되, 문장 안에서는 관사와 대소문자를 그 언어답게 맞춥니다(영어 예: "on your giving-rhythm days", "you often chose calm"; 스페인어 예: "en los días de ritmo generoso", "elegiste calma"). 제목은 문장형 대소문자(첫 단어만 대문자)로 씁니다.
+7. 리듬·기분은 데이터에 나온 이름으로 부르되, 문장 안에서는 관사와 대소문자를 그 언어답게 맞춥니다(영어 예: "on days with a giving rhythm", "you often chose calm", "on days that ran on your own rhythm"; 스페인어 예: "en los días de ritmo generoso", "elegiste calma", "en los días con tu propio ritmo"). 제목은 문장형 대소문자(첫 단어만 대문자)로 씁니다.
 8. 날짜는 쓰지 말고("어느 날", "그런 날") 같은 날을 여러 관찰에서 되풀이해 인용하지 말고, 숫자 나열(각각 몇 번씩)로 관찰을 채우지 마세요.
 
 ## 출력 형식 — 아래 키만 가진 JSON 객체 하나. 모든 문자열 값은 ${outLang}로 씁니다.
@@ -112,7 +112,7 @@ ${describeData(locale, days, t)}
   return (
     prompt +
     outputLanguageDirective(locale, {
-      en: `JSON object (title, every observation, closing). Use the rhythm and mood names from the data, lowercased and with natural articles inside a sentence`,
+      en: `JSON object (title, every observation, closing). Use the rhythm and mood names from the data, lowercased and with natural articles inside a sentence ("on days with a giving rhythm", not "on A giving rhythm days")`,
       es: `objeto JSON (title, cada observación, closing). Usa los nombres de ritmo y de estado de ánimo de los datos, en minúscula y con artículos naturales dentro de la frase ("en los días de ritmo generoso", nunca "de Un ritmo generoso")`,
     })
   );

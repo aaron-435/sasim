@@ -45,7 +45,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Winter is your season",
-      body: "In the saju calendar, Water is strongest in winter, roughly from early November to early January. The timing follows the solar-term calendar the system comes from, so if you live in the southern hemisphere, read it as a rhythm rather than your weather.\n\nWinter is a season of rest and gathering inward, like frost on a still morning. Many dews find their intuition feels especially clear when the year slows down.",
+      body: "In the saju calendar, Water is strongest in winter, roughly from early November to early January. The timing follows the solar-term calendar the system comes from, so if you live in the southern hemisphere, read it as a rhythm rather than your weather.\n\nWinter is a season of rest and gathering inward, like frost on a still morning. Many people with dew energy find their intuition feels especially clear when the year slows down.",
       tryToday: "Take a few quiet minutes today and notice which thought keeps returning.",
     },
     {
@@ -57,7 +57,7 @@ const lessons: DayMasterLessons = {
   es: [
     {
       title: "Eres el rocío",
-      body: "Tu Maestro del Día es Agua yin, y su imagen es el rocío: gotas pequeñas que se reúnen de noche, sin ruido, y dejan todo lo que tocan un poco más vivo. El rocío no llega con estruendo; simplemente está ahí al amanecer.\n\nA menudo tú funcionas igual. Sueles notar las cosas en silencio, guardar más de lo que muestras y dejar huella con una presencia constante y suave, no con grandes anuncios.",
+      body: "Tu Maestro del Día es Agua yin, y su imagen es el rocío: gotas pequeñas que se reúnen de noche, sin ruido, y dejan todo lo que tocan un poco más vivo. El rocío no llega con estruendo; simplemente está ahí al amanecer.\n\nA menudo tú también eres así. Sueles notar las cosas en silencio, guardar más de lo que muestras y dejar huella con una presencia constante y suave, no con grandes anuncios.",
       tryToday: "Fíjate hoy en algo pequeño que percibiste antes de que alguien lo dijera en voz alta.",
     },
     {
@@ -76,12 +76,12 @@ const lessons: DayMasterLessons = {
       tryToday: "Busca hoy un rincón fresco y claro en tu día, como un escritorio en orden o un paseo en calma.",
     },
     {
-      title: "Cómo haces crecer",
+      title: "Cómo ayudas a crecer",
       body: "El Agua alimenta a la Madera, así que la Madera es la forma en que lo que llevas dentro llega a los demás. El rocío sobre un brote no lo inunda; le da lo justo, justo donde hace falta.\n\nSueles expresarte de la misma manera: una nota pensada, una sugerencia pequeña que resulta importante, un texto o una obra que gana con el tiempo. Tu expresión suele ser suave y concreta, y sigue haciendo efecto mucho después de compartirla.",
       tryToday: "Deja hoy a alguien una palabra de ánimo pequeña y concreta.",
     },
     {
-      title: "Cómo vas por resultados",
+      title: "Cómo avanzas hacia los resultados",
       body: "El Agua da forma al Fuego, así que el Fuego es tu terreno de trabajo, dinero y resultados. Imagina el rocío bajo el sol de la mañana: la luz hace brillar cada gota. Las metas claras y visibles pueden sacar tu brillo, aunque también te piden dejarte ver un poco más.\n\nTe suele ir bien en trabajos que premian la precisión y el cuidado, y con el dinero muchas veces prefieres pasos pequeños y constantes a las grandes apuestas. Ponerle nombre a una meta clara ayuda a que tu esfuerzo callado se vea.",
       tryToday: "Di en voz alta algo que hiciste bien esta semana, a ti o a alguien de confianza.",
     },
@@ -92,18 +92,18 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Gotas que se encuentran",
-      body: "Las personas con mucha Agua suelen resultarte cómodas. Se entienden con pocas palabras, y el tiempo en silencio juntas se siente lleno, no vacío.\n\nPero dos gotas también pueden juntarse y perder sus bordes: quizá cada cual espera que la otra persona hable primero, o las dos absorben un ánimo sin nombrarlo. En equipo, decir con suavidad lo que cada quien piensa mantiene clara la cercanía.",
+      body: "Las personas con mucha Agua suelen resultarte cómodas. Con ellas te entiendes con pocas palabras, y el tiempo en silencio juntos se siente lleno, no vacío.\n\nPero dos gotas también pueden juntarse y perder sus bordes: quizá cada cual espera que la otra persona hable primero, o las dos absorben un ánimo sin nombrarlo. En equipo, decir con suavidad lo que cada quien piensa mantiene clara la cercanía.",
       tryToday: "Con alguien de confianza, sé quien nombre primero lo que comparten en silencio.",
     },
     {
       title: "El invierno es tu estación",
-      body: "En el calendario del saju, el Agua está en su punto más fuerte en invierno, más o menos de principios de noviembre a principios de enero. Las fechas siguen el calendario de términos solares del que viene el sistema; si vives en el hemisferio sur, léelo como un ritmo y no como tu clima.\n\nEl invierno es una estación de descanso y recogimiento, como la escarcha en una mañana quieta. Muchos rocíos sienten su intuición especialmente clara cuando el año baja el ritmo.",
+      body: "En el calendario del saju, el Agua está en su punto más fuerte en invierno, más o menos de principios de noviembre a principios de enero. Las fechas siguen el calendario de términos solares del que viene el sistema; si vives en el hemisferio sur, léelo como un ritmo y no como tu clima.\n\nEl invierno es una estación de descanso y recogimiento, como la escarcha en una mañana quieta. Muchas personas con energía de rocío sienten su intuición especialmente clara cuando el año baja el ritmo.",
       tryToday: "Tómate hoy unos minutos de calma y observa qué pensamiento vuelve una y otra vez.",
     },
     {
       title: "Más que una sola gota",
-      body: "Tu Maestro del Día es el centro de tu mapa, pero no es todo el mapa. Los otros pilares, el equilibrio de los cinco elementos y tus ciclos de diez años añaden sus propios colores, así que tu rocío puede ser bruma, destello o constancia de maneras que solo muestra tu mapa completo.\n\nEn estos diez días conociste la forma básica. Ahora viene lo más suave: reconocerla en la vida diaria, cuando percibes, cuando calas y cuando necesitas tierra donde posarte.",
-      tryToday: "Esta noche, recuerda un momento de hoy en que te sentiste más rocío que nunca.",
+      body: "Tu Maestro del Día es el centro de tu mapa, pero no es todo el mapa. Los otros pilares, el equilibrio de los cinco elementos y tus ciclos de diez años añaden sus propios colores, así que tu rocío puede ser bruma, destello o constancia de maneras que solo muestra tu mapa completo.\n\nEn estos diez días conociste la forma básica. Ahora viene la parte más suave: reconocerla en la vida diaria, cuando percibes, cuando calas y cuando necesitas tierra donde posarte.",
+      tryToday: "Esta noche, recuerda un momento de hoy en que te sentiste más como el rocío.",
     },
   ],
   ko: [

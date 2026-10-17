@@ -15,7 +15,7 @@ const gem: ArticleSet = {
         heading: "Metal that has already been cut and polished",
         body: [
           "Think of a small stone that has been cut, polished and set. Next to a mountain of raw ore it is tiny, yet it catches the light and people tend to look twice. That is the picture behind the Gem. People with this Day Master are often described as refined, observant and particular about how things are made.",
-          "Metal is the element of edge and structure, and it comes in two forms. Its yang sibling, Steel (庚), is the raw bar: strong, direct and built for heavy work. The Gem is the yin side, where the value lives in the finish. Steel tends to push a thing forward, while the Gem tends to sharpen it. You may prefer to wait and do something well than to hand over something rough.",
+          "Metal is the element of edge and structure, and it comes in two forms. Its yang sibling, Steel (庚), is the raw bar: strong, direct and built for heavy work. The Gem is the yin side, where the value lives in the finish. Steel tends to push a thing forward, while the Gem tends to sharpen it. You may prefer to wait and do something well rather than hand over something rough.",
         ],
       },
       {
@@ -126,13 +126,13 @@ const gem: ArticleSet = {
         heading: "La gema entre las demás personas",
         body: [
           "Sueles ser sensible al tono, así que tal vez percibas lo que no se dice en una sala y te ajustes sin que te lo pidan. Otras personas pueden sentirse comprendidas a tu lado. El otro lado es que un comentario pequeño puede llegar con más filo del que quiso quien lo dijo, y quizá lo lleves contigo más tiempo del que nadie imagina.",
-          "Con otras personas de Metal suele haber un lenguaje fácil sobre la calidad y sobre cómo se ve lo bueno. Dos ojos afilados también pueden empezar a medirse entre sí, sobre todo dos gemas. Ayuda admirar en voz alta el oficio de la otra persona y tratar un criterio distinto como un estilo distinto, no como un ranking. En las relaciones cercanas, compartir una idea un poco antes de que esté pulida puede acercar a la gente más que una frase perfecta.",
+          "Con otras personas de Metal suele haber un lenguaje fácil sobre la calidad y sobre cómo se ve lo bueno. Dos ojos afilados también pueden empezar a medirse entre sí, sobre todo dos gemas. Ayuda admirar en voz alta el oficio de la otra persona y tratar un criterio distinto como un estilo distinto, no como una clasificación. En las relaciones cercanas, compartir una idea un poco antes de que esté pulida puede acercar a la gente más que una frase perfecta.",
         ],
       },
       {
         heading: "Lo que le devuelve el brillo a la gema",
         body: [
-          "En los cinco elementos, la Tierra alimenta al Metal. Una gema descansa en el suelo, protegida, hasta que llega el momento de encontrarla. Para ti suele verse como un entorno tranquilo, gente que no te apura y un rato para pasar desapercibida. Muchas gemas se recargan más con un cuidado silencioso que con grandes eventos: un escritorio ordenado, un café conocido, aprender algo despacio y bien.",
+          "En los cinco elementos, la Tierra alimenta al Metal. Una gema descansa en el suelo, protegida, hasta que llega el momento de encontrarla. Para ti suele verse como un entorno tranquilo, gente que no te apura y un rato lejos de las miradas. Muchas gemas se recargan más con un cuidado silencioso que con grandes eventos: un escritorio ordenado, un café conocido, aprender algo despacio y bien.",
           "A su vez, el Metal produce Agua, como una piedra fría que junta gotas claras. Es una buena imagen de cómo sueles expresarte. Eliges las palabras con cuidado, y un mensaje corto tuyo puede decir mucho. Como quieres que quede bien, a veces esperas hasta que suene terminado. Compartir una idea un poco antes, todavía algo áspera, puede ser un buen ejercicio.",
         ],
       },

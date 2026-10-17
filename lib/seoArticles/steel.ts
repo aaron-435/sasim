@@ -29,7 +29,7 @@ const steel: ArticleSet = {
       {
         heading: "Steel among other people",
         body: [
-          "You tend to bring honesty and a sense of loyalty to friendships. Others may come to you when they want a straight answer, and you often respect people who return the favour. Your care can be hard to see from the outside, because you show it through reliability more than through words.",
+          "You tend to bring honesty and a sense of loyalty to friendships. Others may come to you when they want a straight answer, and you often respect people who return the favor. Your care can be hard to see from the outside, because you show it through reliability more than through words.",
           "With other Metal people, things can get honest fast. You recognize each other quickly and build loyal bonds that need little upkeep. Two strong blades can also clash, though, and a disagreement may turn into a contest over who bends first. It helps to give each person a clear area of their own and to remember you are on the same side. In close relationships, letting someone see the thinking behind a firm answer often does more than the answer alone.",
         ],
       },

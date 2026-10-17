@@ -82,7 +82,7 @@ const ko: YearFortuneContent = {
 const en: YearFortuneContent = {
   relations: {
     mirror: {
-      headline: "A Year Cut From the Same Cloth",
+      headline: "A year cut from the same cloth",
       overview: "This year brings energy that mirrors your own. It's familiar and comfortable, but without a fresh push, it can start to feel like standing still.",
       wealth: "Sticking with what already works holds steady, but don't expect a big shift this year.",
       love: "Existing relationships stay comfortable, but new connections may be harder to spot.",
@@ -91,8 +91,8 @@ const en: YearFortuneContent = {
       health: "Your usual condition carries through as-is — steady upkeep matters more than any big change.",
     },
     selfNurturesOther: {
-      headline: "A Year of Pouring Out",
-      overview: "Your own energy flows outward this year. Your ability to express and create gets stronger, but if you only ever give, you'll run tired — make sure to recover too.",
+      headline: "A year of pouring out",
+      overview: "Your own energy flows outward this year. Your ability to express and create gets stronger, but if you only ever give, you'll run on empty — make sure to recover too.",
       wealth: "Spending picks up along with earning this year — plan deliberately so outflow doesn't outpace income.",
       love: "You'll find yourself expressing more. Reaching out first works in your favor, but don't wear yourself out trying to please.",
       career: "A good year for turning ideas into real output. Just pace yourself so you don't burn out.",
@@ -100,7 +100,7 @@ const en: YearFortuneContent = {
       health: "You're spending a lot of energy this year, so fatigue builds easily — build rest in deliberately.",
     },
     otherNurturesSelf: {
-      headline: "A Year of Being Filled",
+      headline: "A year of being filled",
       overview: "Support and good energy from around you naturally fill you up this year. Accept it comfortably, but keep building your own strength too — leaning too long can dull it.",
       wealth: "Unexpected help or opportunity could fill your finances this year — just keep growing your own earning power alongside it.",
       love: "Someone likely to look out for you shows up this year, letting an easy, comfortable connection take shape.",
@@ -109,7 +109,7 @@ const en: YearFortuneContent = {
       health: "Body and mind are in a recovering phase — if you've been pushing hard, this is the year to properly recharge.",
     },
     selfChallengesOther: {
-      headline: "A Year of Taking the Lead",
+      headline: "A year of taking the lead",
       overview: "Your ability to steer and take charge grows stronger this year. Good for pushing toward what you want, but trying to control everything can create friction.",
       wealth: "A good year to actively build wealth — favorable for investments or business moves, but watch for overreach.",
       love: "You'll tend to take the lead in relationships. Just don't push things too far in your own direction, or it can spark conflict.",
@@ -118,7 +118,7 @@ const en: YearFortuneContent = {
       health: "Your activity level rises and energy runs high — just be careful not to run your body into the ground.",
     },
     otherChallengesSelf: {
-      headline: "A Year of Being Tempered",
+      headline: "A year of being tempered",
       overview: "Outside pressure or responsibility grows heavier this year. It's not always comfortable, but that pressure can be exactly what pushes you to the next level.",
       wealth: "Spending may need tightening this year — managing it deliberately can actually leave you sturdier.",
       love: "Responsibility in relationships grows heavier this year. It can feel like a burden, but it's also when bonds deepen.",
@@ -128,7 +128,7 @@ const en: YearFortuneContent = {
     },
   },
   hapNote: "On top of that, this year forms a special bond with your chart — a good connection or opportunity could arrive when you least expect it.",
-  chungNote: "This year also clashes with your chart, though — change and movement pick up, so approach big decisions carefully.",
+  chungNote: "This year also sets up a 'shift' with your chart. With more change and movement ahead, it's a good year to head toward something new. Give big decisions a little more time.",
 };
 
 const es: YearFortuneContent = {
@@ -137,7 +137,7 @@ const es: YearFortuneContent = {
       headline: "Un año en tu misma sintonía",
       overview: "Este año trae una energía parecida a la tuya. Es familiar y cómodo, pero sin un nuevo impulso puede sentirse como estar siempre en el mismo sitio.",
       wealth: "Seguir con lo que ya funciona mantiene tus finanzas estables, pero no esperes un gran cambio este año.",
-      love: "Los vínculos que ya tienes se mantienen cómodos, pero las personas nuevas pueden costar más de ver.",
+      love: "Los vínculos que ya tienes se mantienen cómodos, pero puede costar más reconocer las conexiones nuevas.",
       career: "Buen año para seguir avanzando con constancia en lo que ya haces, en vez de perseguir algo nuevo.",
       study: "Este año conviene afianzar lo que ya sabes antes que lanzarte a algo totalmente nuevo.",
       health: "Tu estado habitual continúa igual: el cuidado constante importa más que cualquier gran cambio.",
@@ -156,7 +156,7 @@ const es: YearFortuneContent = {
       overview: "El apoyo y la buena energía de tu entorno te llenan de forma natural este año. Acéptalos con tranquilidad, pero sigue fortaleciendo tus propias fuerzas: apoyarte demasiado tiempo puede debilitarlas.",
       wealth: "Una ayuda o una oportunidad inesperada podría mejorar tus finanzas este año; sigue desarrollando también tu propia capacidad de generar ingresos.",
       love: "Este año puede aparecer alguien dispuesto a cuidarte, y con esa persona un vínculo fácil y cómodo.",
-      career: "Buen año para encontrar un mentor, a alguien con más experiencia o a un colaborador; tener ganas de aprender es lo que más ayuda.",
+      career: "Buen año para encontrar a alguien que te guíe, a una persona con más experiencia o a quien colabore contigo; tener ganas de aprender es lo que más ayuda.",
       study: "Lo que estudias se asienta bien y se convierte en habilidad real este año: buen momento para invertir en aprender.",
       health: "Cuerpo y mente están en una fase de recuperación. Si te has exigido mucho, este es el año para recargar energía de verdad.",
     },
@@ -180,7 +180,7 @@ const es: YearFortuneContent = {
     },
   },
   hapNote: "Además, este año forma una conexión especial con tus Cuatro Pilares: puede llegar una buena relación o una oportunidad cuando menos lo esperes.",
-  chungNote: "Eso sí, este año también entra en tensión con tus Cuatro Pilares: aumentan el cambio y el movimiento, así que toma las decisiones importantes con calma.",
+  chungNote: "Este año también forma con tus Cuatro Pilares una relación de cambio: habrá más movimiento, así que es buen año para pasar a algo nuevo. Date un poco más de tiempo antes de tomar decisiones importantes.",
 };
 
 export const YEAR_FORTUNE_CONTENT: Record<Locale, YearFortuneContent> = { ko, en, es };

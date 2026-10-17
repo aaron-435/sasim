@@ -101,17 +101,17 @@ const sun: ArticleSet = {
   },
 
   es: {
-    metaTitle: "Maestro del Día Fuego yang (丙): el sol en el saju | Fatesaid",
+    metaTitle: "Fuego yang (丙), Maestro del Día: el sol en el saju | Fatesaid",
     description:
       "Cómo suele verse el Maestro del Día Fuego yang (丙), el sol, en el saju: cómo brilla, qué hace bien, cómo se relaciona con la gente y qué lo alimenta.",
-    h1: "Maestro del Día Fuego yang (丙): el sol",
-    lead: "En el saju, la versión coreana de los Cuatro Pilares, tu Maestro del Día es el Tronco Celestial del día en que naciste. Te representa dentro de tu carta y hay diez posibles. El Fuego yang, escrito 丙 (byeong en coreano), es el tercero, y aquí lo llamamos el sol. El saju es una tradición cultural y una forma de mirarte a ti mismo, no una ciencia, así que lee lo que sigue como tendencias para probarte, no como un veredicto.",
+    h1: "Fuego yang (丙), Maestro del Día: el sol",
+    lead: "En el saju, la versión coreana de los Cuatro Pilares, tu Maestro del Día es el tronco celeste del día en que naciste. Te representa dentro de tu mapa y hay diez posibles. El Fuego yang, escrito 丙 (byeong en coreano), es el tercero, y aquí lo llamamos el sol. El saju es una tradición cultural y una forma de mirar tu propia vida, no una ciencia, así que lee lo que sigue como tendencias para probarte, no como un veredicto.",
     sections: [
       {
         heading: "Un sol que sale sobre todos",
         body: [
           "Imagina el sol saliendo sobre un valle amplio. No elige qué casas reciben la luz primero: sale, y todo lo que alcanza a ver se calienta un poco. Esa es la imagen del sol. Quienes tienen este Maestro del Día suelen describir un estilo parecido: abierto, directo y con una calidez que se nota desde el otro lado de la sala.",
-          "El Fuego es el elemento del calor y de lo visible, y el yang es su forma amplia y hacia fuera. Su hermana yin, la llama (丁), se parece más a una vela o a una lámpara: ilumina con constancia un espacio pequeño para unas pocas personas. El sol funciona al revés. Se expande, alumbra todo a la vez y no le preocupa que lo vean. Lo que sientes suele notarse en tu cara, y eso hace que seas fácil de entender y fácil de creer.",
+          "El Fuego es el elemento del calor y de lo visible, y el yang es su forma amplia y hacia fuera. Su hermana yin, la llama (丁), se parece más a una vela o a una lámpara: ilumina con constancia un espacio pequeño para unas pocas personas. El sol funciona al revés. Se expande, alumbra todo a la vez y no le preocupa que lo vean. Lo que sientes suele notarse en tu cara, y eso hace que seas fácil de entender y que inspires confianza.",
         ],
       },
       {
@@ -126,20 +126,20 @@ const sun: ArticleSet = {
         heading: "El sol entre las demás personas",
         body: [
           "Tu calidez suele hacer que los demás se sientan bienvenidos enseguida, así que quizá sumes amistades y conocidos con facilidad. El otro lado es que tu apertura puede confundirse con una cercanía igual hacia todos, y algunas personas tal vez deseen un rato más largo y tranquilo contigo del que permite un día ocupado.",
-          "Las demás personas de Fuego, soles y llamas, son tus pares, y a menudo las reconoces rápido por la misma chispa y la misma risa pronta. Eso sí, dos soles en la misma sala pueden querer ocupar el centro a la vez. Turnarse para dirigir y para aplaudir suele funcionar mejor que competir por el foco. En las relaciones cercanas, hacer preguntas y quedarte a escuchar la respuesta, y no solo compartir tu energía, suele hacer que los demás se sientan vistos además de calentados.",
+          "Las demás personas de Fuego, soles y llamas, son tus pares, y a menudo las reconoces rápido por la misma chispa y la misma risa pronta. Eso sí, dos soles en la misma sala pueden querer ocupar el centro a la vez. Alternar entre dirigir y aplaudir suele funcionar mejor que competir por el foco. En las relaciones cercanas, hacer preguntas y quedarte a escuchar la respuesta, y no solo compartir tu energía, suele hacer que los demás se sientan vistos además de acogidos.",
         ],
       },
       {
         heading: "Lo que alimenta al sol",
         body: [
-          "En los Cinco Elementos, la Madera alimenta al Fuego. Para un sol, la Madera suele verse como aprender algo nuevo, tener a alguien que te guíe o, simplemente, dejar que te cuiden por una vez. Como das tanto calor, es fácil olvidar que tú también necesitas combustible. Un buen libro, descanso de verdad, un maestro que te exija crecer o un rato entre árboles y plantas pueden ser tu Madera del día.",
+          "En los cinco elementos, la Madera alimenta al Fuego. Para un sol, la Madera suele verse como aprender algo nuevo, tener a alguien que te guíe o, simplemente, dejar que te cuiden por una vez. Como das tanto calor, es fácil olvidar que tú también necesitas combustible. Un buen libro, descanso de verdad, alguien que te enseñe y te exija crecer o un rato entre árboles y plantas pueden ser tu Madera del día.",
           "A su vez, el Fuego alimenta a la Tierra, que en el saju es lo que da base: algo sólido que tu energía deja atrás. Para un sol, puede ser recibir gente en casa, enseñar, empezar un proyecto que otros puedan continuar o convertir un buen ánimo en un plan. Tu calor suele sentirse mejor cuando tiene dónde aterrizar y dura un poco más que el momento.",
         ],
       },
       {
-        heading: "Un Maestro del Día no es toda la carta",
+        heading: "Un Maestro del Día no es todo el mapa",
         body: [
-          "Tu Maestro del Día es el centro de tu carta, pero solo una parte de ella. Tus otros pilares, el equilibrio de los Cinco Elementos y tus ciclos de diez años influyen en cómo se muestra, así que dos soles pueden verse bastante distintos según lo que los rodee.",
+          "Tu Maestro del Día es el centro de tu mapa, pero solo una parte de él. Tus otros pilares, el equilibrio de los cinco elementos y tus ciclos de diez años influyen en cómo se muestra, así que dos soles pueden verse bastante distintos según lo que los rodee.",
           "Para conocer tu propio Maestro del Día, usa la calculadora de saju gratuita de abajo. Pide tu fecha de nacimiento y, si la sabes, la hora.",
         ],
       },

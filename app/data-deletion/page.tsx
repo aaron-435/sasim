@@ -3,8 +3,8 @@ import { getDictionary, LOCALES, type Locale } from "@/lib/i18n";
 
 const TITLE: Record<Locale, string> = {
   ko: "데이터 삭제 요청",
-  en: "Request Data Deletion",
-  es: "Solicitar Eliminación de Datos",
+  en: "Request data deletion",
+  es: "Solicitar la eliminación de datos",
 };
 
 const BODY: Record<Locale, { intro: string; stepsHeading: string; steps: string[]; note: string; emailLabel: string }> = {
@@ -34,12 +34,12 @@ const BODY: Record<Locale, { intro: string; stepsHeading: string; steps: string[
   },
   es: {
     intro:
-      "Fatesaid no requiere registro ni inicio de sesión. La fecha de nacimiento, hora de nacimiento, ciudad de nacimiento y apodo que ingresas durante el onboarding, junto con el contenido de tus conversaciones de chat con IA y Q&A, se almacenan en nuestros servidores junto con un identificador de sesión anónimo.",
+      "Fatesaid no requiere registro ni inicio de sesión. La fecha de nacimiento, hora de nacimiento, ciudad de nacimiento y apodo que escribes durante el registro inicial, junto con el contenido de tus conversaciones con la IA y de las preguntas y respuestas, se almacenan en nuestros servidores con un identificador de sesión anónimo.",
     stepsHeading: "Cómo solicitar la eliminación",
     steps: [
       "Escríbenos al correo indicado abajo.",
-      "Usa el asunto “Solicitud de Eliminación de Datos”.",
-      "Para confirmar que eres el usuario real, indica aproximadamente cuándo usaste el Servicio o el apodo que ingresaste.",
+      "Usa el asunto “Solicitud de eliminación de datos”.",
+      "Para confirmar que eres tú quien usó la app, indica aproximadamente cuándo usaste el servicio o el apodo que escribiste.",
     ],
     note: "Eliminamos todos los datos de esa sesión de inmediato al recibir la solicitud. Incluso sin una solicitud, todos los datos se eliminan automáticamente a más tardar un año después de su recopilación.",
     emailLabel: "Correo electrónico",

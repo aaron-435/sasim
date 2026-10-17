@@ -30,7 +30,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "How you go after results",
-      body: "Fire shapes Metal, the way heat softens and forms raw ore. Metal is your wealth element: work, money, and results you can hold. The Sun tends to chase goals with enthusiasm and visibility, rallying people and getting things started.\n\nWhat's worth supporting is the finishing. Details, numbers, and clean edges are Metal's language, and a little structure, like a budget or a checklist, often helps your drive turn into something you can keep.",
+      body: "Fire shapes Metal, the way heat softens and forms raw ore. Metal is your wealth element: work, money, and results you can hold. The Sun tends to chase goals with enthusiasm and visibility, rallying people and getting things started.\n\nWhat helps is the finishing. Details, numbers, and clean edges are Metal's language, and a little structure, like a budget or a checklist, often helps your drive turn into something you can keep.",
       tryToday: "Pick one task you started with energy and give it ten quiet minutes of tidying up.",
     },
     {
@@ -81,18 +81,18 @@ const lessons: DayMasterLessons = {
       tryToday: "Toma una idea que te entusiasmó hace poco y anota un solo paso concreto para seguir.",
     },
     {
-      title: "Cómo vas tras los resultados",
-      body: "El Fuego da forma al Metal, como el calor ablanda y moldea el mineral. El Metal es tu elemento de riqueza: el trabajo, el dinero y los resultados que puedes tocar. El sol tiende a perseguir sus metas con entusiasmo y a la vista de todos, sumando gente y arrancando cosas.\n\nLo que vale la pena apoyar es el cierre. Los detalles, los números y los bordes bien hechos son el idioma del Metal, y un poco de estructura, como un presupuesto o una lista, ayuda a que tu empuje se convierta en algo que perdure.",
+      title: "Cómo avanzas hacia los resultados",
+      body: "El Fuego da forma al Metal, como el calor ablanda y moldea el mineral. El Metal es tu elemento de riqueza: el trabajo, el dinero y los resultados que puedes tocar. El sol tiende a perseguir sus metas con entusiasmo y a la vista de todos, sumando gente y poniendo las cosas en marcha.\n\nLo que ayuda es el cierre. Los detalles, los números y los bordes bien hechos son el idioma del Metal, y un poco de estructura, como un presupuesto o una lista, ayuda a que tu empuje se convierta en algo que perdure.",
       tryToday: "Elige una tarea que empezaste con ganas y dale diez minutos tranquilos para ordenarla.",
     },
     {
       title: "Lo que te ayuda a crecer",
-      body: "El Agua da forma al Fuego, así que el Agua es tu estructura: normas, responsabilidades, plazos y las personas que te los recuerdan. A veces se siente como si te bajaran la intensidad, y al sol no siempre le gusta.\n\nPero el Agua también evita que el Fuego se consuma o queme lo que toca. Una jefa justa, un límite claro o una amistad que te pregunta «¿lo tienes claro?» pueden llevar tu luz a donde más sirve.",
+      body: "El Agua da forma al Fuego, así que el Agua es tu estructura: normas, responsabilidades, plazos y las personas que te los recuerdan. A veces se siente como si te bajaran la intensidad, y al sol no siempre le gusta.\n\nPero el Agua también evita que el Fuego se consuma o queme lo que toca. Una jefatura justa, un límite claro o una amistad que te pregunta «¿lo tienes claro?» pueden llevar tu luz a donde más sirve.",
       tryToday: "Fíjate hoy en una norma o un límite que, en realidad, te facilitó las cosas.",
     },
     {
       title: "Tú entre otros fuegos",
-      body: "Las personas de Fuego, soles y llamas, son tus pares. Sueles reconocerlas enseguida: la misma chispa, la misma risa rápida. Juntas pueden encender un equipo, aunque dos soles en la misma sala quizá quieran ocupar el centro a la vez.\n\nCon tus pares sueles brillar más cuando compartes el escenario a propósito, turnándose para dirigir y para aplaudir. Una rivalidad amistosa también puede ayudarte a brillar con más constancia.",
+      body: "Las personas de Fuego, soles y llamas, son tus pares. Sueles reconocerlas enseguida: la misma chispa, la misma risa rápida. Juntas pueden encender un equipo, aunque dos soles en la misma sala quizá quieran ocupar el centro a la vez.\n\nCon tus pares sueles lucir más cuando compartes el escenario a propósito, alternando entre dirigir y aplaudir. Una rivalidad amistosa también puede ayudarte a brillar con más constancia.",
       tryToday: "En una conversación de hoy, cede el protagonismo a otra persona y mira qué hace con él.",
     },
     {
@@ -103,7 +103,7 @@ const lessons: DayMasterLessons = {
     {
       title: "Más que tu Maestro del Día",
       body: "Tu Maestro del Día es el corazón de tu mapa, pero es solo una parte. Tus otros pilares, el equilibrio de los cinco elementos entre ellos y tus ciclos de diez años le añaden sus propios colores al sol. Por eso dos soles pueden sentirse muy distintos.\n\nEn estos diez días has conocido una capa de ti; el resto aparece en la vida diaria, en lo que te levanta y en lo que te pide descanso. Sigue observando. Tu luz merece que la entiendas.",
-      tryToday: "Esta noche, recuerda un momento de hoy en que te sentiste más sol que nunca.",
+      tryToday: "Esta noche, recuerda un momento de hoy en que te sentiste más como el sol.",
     },
   ],
   ko: [

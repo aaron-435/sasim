@@ -48,7 +48,7 @@ const en: CompatibilityContent = {
   relations: {
     mirror: {
       headline: "Cut from the same cloth",
-      body: "You run on the same current, so a lot goes unsaid and still lands. It's easy — the cost is that you tend to stall at the exact same point, so the same blind spot can hide from both of you at once.",
+      body: "You run on the same current, so a lot goes unsaid and still lands. It's easy, but you tend to stall at the exact same point, so the same blind spot can hide from both of you at once.",
     },
     selfNurturesOther: {
       headline: "You're the one who fuels them",
@@ -67,7 +67,7 @@ const en: CompatibilityContent = {
       body: "They keep you sharp, even when it's not comfortable. That's exactly why they move you — it helps to check, out loud sometimes, that the pressure is coming from care.",
     },
   },
-  bondNote: "On top of that, your two day-masters form a classic bond pair — this combination carries an extra pull that isn't easy to explain.",
+  bondNote: "On top of that, your two Day Masters form a classic bond pair — this combination carries an extra pull that isn't easy to explain.",
 };
 
 const es: CompatibilityContent = {

@@ -69,7 +69,7 @@ const ko: WrappedContent = {
 const en: WrappedContent = {
   yearLines: {
     mirror: "All year, an energy much like your own flowed close by. It was a good stretch for going deeper into what already works for you.",
-    selfNurturesOther: "This was a year of pouring yourself outward. What you expressed and made is where it left its mark.",
+    selfNurturesOther: "This was a year of pouring yourself outward. Your mark is on everything you expressed and made.",
     otherNurturesSelf: "This was a year when the energy around you filled you up. The help and learning that came your way became solid ground.",
     selfChallengesOther: "This was a year with you out in front, setting the pace and shaping things with your own hands.",
     otherChallengesSelf: "As more landed on your plate, this was a year of growing sturdier. The ground you covered becomes footing for what's next.",
@@ -102,17 +102,17 @@ const en: WrappedContent = {
 const es: WrappedContent = {
   yearLines: {
     mirror: "Todo el año te acompañó una energía muy parecida a la tuya. Fue un buen tiempo para profundizar en lo que ya te funciona.",
-    selfNurturesOther: "Fue un año para volcarte hacia afuera. Lo que expresaste y creaste es donde quedó tu huella.",
+    selfNurturesOther: "Fue un año para volcarte hacia fuera. Tu huella quedó en todo lo que expresaste y creaste.",
     otherNurturesSelf: "Fue un año en que la energía a tu alrededor te llenó. La ayuda y lo aprendido se volvieron terreno firme.",
     selfChallengesOther: "Fue un año en que tú marcaste el paso y diste forma a las cosas con tus propias manos.",
-    otherChallengesSelf: "Con más cosas a tu cargo, fue un año para ganar firmeza. El camino recorrido será la base de lo que viene.",
+    otherChallengesSelf: "Con más cosas a tu cargo, fue un año para ganar firmeza. El camino recorrido es la base de lo que viene.",
   },
   monthLines: {
     mirror: "El mes en que tu propio ritmo encajó con más naturalidad.",
     selfNurturesOther: "El mes en que tu fuerza para expresar y crear fluyó con más libertad.",
     otherNurturesSelf: "El mes en que la energía a tu alrededor más te llenó.",
     selfChallengesOther: "El mes en que tu impulso para guiar tuvo más fuerza.",
-    otherChallengesSelf: "Un mes para ir a tu ritmo que te dejó más firmeza.",
+    otherChallengesSelf: "Un mes de ir a tu propio ritmo que te dejó con más firmeza.",
   },
   mottos: {
     mirror: "Profundicé en terreno conocido.",
@@ -122,7 +122,7 @@ const es: WrappedContent = {
     otherChallengesSelf: "Sostuve el peso y gané firmeza.",
   },
   topicLines: {
-    love: "Este año tus preguntas fueron sobre todo hacia las personas y los vínculos.",
+    love: "Este año tus preguntas giraron sobre todo en torno a las personas y los vínculos.",
     person: "Este año lo que más te intrigó fue una persona en particular.",
     work: "Este año preguntaste sobre todo por el trabajo y el dinero.",
     self: "Este año miraste sobre todo hacia dentro: a ti y a cómo estás.",

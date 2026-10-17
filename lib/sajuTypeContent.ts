@@ -196,7 +196,7 @@ const es: SajuTypeContent = {
     oak: {
       name: "El roble",
       tagline: "El árbol alto que solo crece hacia arriba",
-      body: "Cuando eliges una dirección, avanzas sin mirar atrás. Ese mismo tronco que te sostiene cuesta que se doble, así que sueles mantener una postura mucho después de que soltarla te costaría menos.",
+      body: "Cuando eliges una dirección, avanzas sin mirar atrás. A ese mismo tronco que te sostiene le cuesta doblarse, así que sueles mantener una postura mucho después de que soltarla te costaría menos.",
     },
     vine: {
       name: "La enredadera",
@@ -253,7 +253,7 @@ const es: SajuTypeContent = {
     voice: {
       name: "Voz",
       tagline: "Tu mapa se inclina hacia lo que expresas",
-      body: "Únicamente te calmas cuando lo que llevas dentro sale, ya sea hablado, escrito o hecho. El talento aflora con facilidad, y un entorno que bloquea la expresión te agota muy rápido.",
+      body: "Solo te calmas cuando lo que llevas dentro sale, ya sea hablado, escrito o hecho. El talento aflora con facilidad, y un entorno que bloquea la expresión te agota muy rápido.",
     },
     harvest: {
       name: "Cosecha",

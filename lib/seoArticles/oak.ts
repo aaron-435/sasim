@@ -101,11 +101,11 @@ const oak: ArticleSet = {
   },
 
   es: {
-    metaTitle: "Maestro del Día Madera yang (甲): el roble en el saju | Fatesaid",
+    metaTitle: "Madera yang (甲), Maestro del Día: el roble en el saju | Fatesaid",
     description:
       "Cómo suele verse el Maestro del Día Madera yang (甲), el roble, en el saju: cómo crece, qué hace bien, cómo se relaciona con la gente y qué lo alimenta.",
-    h1: "Maestro del Día Madera yang (甲): el roble",
-    lead: "En el saju, la versión coreana de los Cuatro Pilares, tu Maestro del Día es el Tronco Celestial del día en que naciste. Te representa dentro de tu carta y hay diez posibles. La Madera yang, escrita 甲 (gap en coreano), es el primero, y aquí lo llamamos el roble. El saju es una tradición cultural y una forma de mirarte a ti mismo, no una ciencia, así que lee lo que sigue como tendencias para probarte, no como un veredicto.",
+    h1: "Madera yang (甲), Maestro del Día: el roble",
+    lead: "En el saju, la versión coreana de los Cuatro Pilares, tu Maestro del Día es el tronco celeste del día en que naciste. Te representa dentro de tu mapa y hay diez posibles. La Madera yang, escrita 甲 (gap en coreano), es el primero, y aquí lo llamamos el roble. El saju es una tradición cultural y una forma de mirar tu propia vida, no una ciencia, así que lee lo que sigue como tendencias para probarte, no como un veredicto.",
     sections: [
       {
         heading: "Un árbol alto en un campo abierto",
@@ -117,7 +117,7 @@ const oak: ArticleSet = {
       {
         heading: "Lo que el roble suele hacer bien",
         body: [
-          "Los robles suelen ser fiables, rectos y buenos para empezar cosas. Puede que seas quien dice “hagámoslo” y de verdad aparece a la mañana siguiente. Los amigos tienden a buscarte cuando necesitan una respuesta clara, y los equipos se apoyan en ti porque te mantienes firme cuando los planes se tambalean.",
+          "Los robles suelen ser fiables, rectos y buenos para empezar cosas. Puede que seas quien dice “hagámoslo” y de verdad aparece a la mañana siguiente. Tus amistades tienden a buscarte cuando necesitan una respuesta clara, y los equipos se apoyan en ti porque te mantienes firme cuando los planes se tambalean.",
           "También es común un fuerte sentido de la justicia. Muchos robles cuidan a los demás en silencio, como la sombra de un árbol en una tarde calurosa, sin necesitar que nadie lo note.",
           "Hay un reverso suave que conviene conocer. Un tronco que casi no se dobla puede sentir el cambio como un esfuerzo, y una dirección elegida pronto a veces cuesta revisarla. Doblarse un poco también es una manera de crecer.",
         ],
@@ -125,27 +125,27 @@ const oak: ArticleSet = {
       {
         heading: "El roble entre las demás personas",
         body: [
-          "Como estás donde dijiste que estarías, la gente suele saber dónde encontrarte. Eso te hace fácil de confiar y fácil de pedirte ayuda. También puede hacer que otros den por hecho que tú nunca necesitas ninguna.",
-          "Dos robles juntos forman un bosque, y quienes tienen este Maestro del Día suelen rendir bien junto a personas con su mismo impulso. Pero los árboles también buscan la misma luz, y al lado de alguien parecido puedes sentir la necesidad de demostrar tu valor. Un bosque funciona mejor cuando cada árbol tiene espacio. En las relaciones cercanas, decir en voz alta lo que necesitas, en lugar de guardarlo como un tronco, suele acercar a quienes te rodean.",
+          "Como estás donde dijiste que estarías, la gente suele saber dónde encontrarte. Eso hace fácil confiar en ti y pedirte ayuda. También puede hacer que los demás den por hecho que tú nunca necesitas ninguna.",
+          "Dos robles juntos forman un bosque, y quienes tienen este Maestro del Día suelen rendir bien junto a personas con su mismo impulso. Pero los árboles también buscan la misma luz, y al lado de alguien parecido puedes sentir el impulso de demostrar tu valor. Un bosque funciona mejor cuando cada árbol tiene espacio. En las relaciones cercanas, decir en voz alta lo que necesitas, en lugar de guardarlo como un tronco, suele acercar a quienes te rodean.",
         ],
       },
       {
         heading: "Lo que alimenta al roble",
         body: [
-          "En los Cinco Elementos, el Agua nutre a la Madera. Para un roble, el Agua suele verse como aprender, tener tiempo tranquilo para pensar y contar con personas que te apoyan sin pedir nada a cambio. Un árbol alto bebe mucho, así que quizá necesites recargarte más a menudo de lo que dejas ver. Después de dar sombra durante mucho tiempo, un buen libro, un paseo lento o una charla con alguien más sabio pueden ser la lluvia que tus raíces esperaban.",
+          "En los cinco elementos, el Agua nutre a la Madera. Para un roble, el Agua suele verse como aprender, tener tiempo tranquilo para pensar y contar con personas que te apoyan sin pedir nada a cambio. Un árbol alto bebe mucho, así que quizá necesites recargarte más a menudo de lo que dejas ver. Después de dar sombra durante mucho tiempo, un buen libro, un paseo lento o una charla con alguien de más experiencia pueden ser la lluvia que tus raíces esperaban.",
           "A su vez, la Madera alimenta al Fuego, que en el saju representa la expresión: hablar, crear, enseñar, compartir lo que sabes. Los robles suelen hablar solo cuando se sienten seguros, y las ideas pueden quedarse dentro un tiempo. Dejar salir un pensamiento a medias, y pronto, suele ayudar a que tu Fuego prenda.",
         ],
       },
       {
-        heading: "Un Maestro del Día no es toda la carta",
+        heading: "Un Maestro del Día no es todo el mapa",
         body: [
-          "Tu Maestro del Día es el centro de tu carta, pero solo una parte de ella. Tus otros pilares, el equilibrio de los Cinco Elementos y tus ciclos de diez años influyen en cómo se muestra, así que dos robles pueden verse bastante distintos según lo que crezca a su alrededor.",
+          "Tu Maestro del Día es el centro de tu mapa, pero solo una parte de él. Tus otros pilares, el equilibrio de los cinco elementos y tus ciclos de diez años influyen en cómo se muestra, así que dos robles pueden verse bastante distintos según lo que crezca a su alrededor.",
           "Para conocer tu propio Maestro del Día, usa la calculadora de saju gratuita de abajo. Pide tu fecha de nacimiento y, si la sabes, la hora.",
         ],
       },
     ],
     tryThis:
-      "Esta semana, elige algo que llevas solo y compártelo con alguien, aunque esté a medias. Fíjate en si tu tronco se mantiene igual de firme con compañía.",
+      "Esta semana, elige algo que llevas por tu cuenta y compártelo con alguien, aunque esté a medias. Fíjate en si tu tronco se mantiene igual de firme con compañía.",
   },
 };
 

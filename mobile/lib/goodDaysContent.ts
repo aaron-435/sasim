@@ -72,7 +72,7 @@ export const GOOD_DAYS_CONTENT: Record<Locale, GoodDaysContent> = {
     reasons: {
       interview: {
         otherNurturesSelf: ["Support comes to you easily today, so it's easier to stay calm when the pressure is on.", "Your preparation has your back in this rhythm, so steady answers come more naturally."],
-        selfNurturesOther: ["Thoughts turn into words easily today, a good day to explain your experience in your own voice.", "Your expressive side is lively. Introduce yourself short and clear."],
+        selfNurturesOther: ["Thoughts turn into words easily today, a good day to explain your experience in your own voice.", "Your expressive side is lively. Keep your introduction short and clear."],
         mirror: ["Your footing is firm today, so you can answer like yourself without being thrown.", "Steady confidence backs you up. Pick one strength and say it plainly."],
         selfChallengesOther: ["Your grip on the work is sharp today, a good day to talk about concrete results.", "Quick judgment runs through this rhythm. Let numbers and outcomes speak for you."],
       },
@@ -97,7 +97,7 @@ export const GOOD_DAYS_CONTENT: Record<Locale, GoodDaysContent> = {
       newStart: {
         mirror: ["Your own drive is strong today, a good day to take the first step.", "Momentum is steady in this rhythm. Start the first stage of the plan you've been putting off."],
         selfNurturesOther: ["New ideas bloom easily today, a good day to start making something.", "A rhythm for showing and sharing. Tell someone about your start and it gains strength."],
-        otherNurturesSelf: ["A rhythm for learning and filling up, good for a new class or a new habit.", "Help comes along today. Reach out to someone who could start with you."],
+        otherNurturesSelf: ["A rhythm for learning and filling up, good for a new class or a new habit.", "Help comes your way today. Reach out to someone who could start it with you."],
         selfChallengesOther: ["A good day to set a concrete goal. Put a number on your start and it lasts longer.", "Your sense for action is good in this rhythm. Begin with something small, right away."],
       },
     },
@@ -115,7 +115,7 @@ export const GOOD_DAYS_CONTENT: Record<Locale, GoodDaysContent> = {
         otherNurturesSelf: ["Hoy el apoyo llega con facilidad, así que es más fácil mantener la calma bajo presión.", "Lo que preparaste te respalda en este ritmo, y las respuestas tranquilas salen solas."],
         selfNurturesOther: ["Hoy las ideas se vuelven palabras con facilidad: buen día para contar tu experiencia con tu propia voz.", "Tu lado expresivo está despierto. Preséntate de forma breve y clara."],
         mirror: ["Hoy pisas firme, así que puedes responder como tú sin que nada te desvíe.", "Una confianza estable te sostiene. Elige una fortaleza y dila sin rodeos."],
-        selfChallengesOther: ["Hoy tienes el trabajo bien agarrado: buen día para hablar de resultados concretos.", "En este ritmo decides rápido. Deja que los números y los logros hablen por ti."],
+        selfChallengesOther: ["Hoy llevas el trabajo con mano firme: buen día para hablar de resultados concretos.", "En este ritmo decides rápido. Deja que los números y los logros hablen por ti."],
       },
       firstMeeting: {
         selfNurturesOther: ["Hoy tu lado generoso está fuerte, y la conversación fluye con suavidad.", "En este ritmo la calidez sale sola. Pregunta primero y escucha de verdad."],
@@ -132,14 +132,14 @@ export const GOOD_DAYS_CONTENT: Record<Locale, GoodDaysContent> = {
       contract: {
         selfChallengesOther: ["Hoy tu sentido práctico está afinado: buen día para revisar las condiciones con calma.", "En este ritmo juzgas con claridad. Revisa cifras y fechas una vez más y luego firma."],
         otherNurturesSelf: ["Tienes ayuda de confianza cerca: buen día para escuchar consejo antes de decidir.", "Hoy cuentas con buen respaldo. Lee los papeles a tu propio ritmo."],
-        mirror: ["Hoy tus criterios están claros, así que puedes pedir lo que quieres sin titubear.", "Buen ritmo para hablar de igual a igual. Dejen claro qué le toca a cada quien."],
+        mirror: ["Hoy tus criterios están claros, así que puedes pedir lo que quieres sin titubear.", "Buen ritmo para hablar de igual a igual. Deja claro qué le toca a cada quien."],
         selfNurturesOther: ["Hoy explicas y convences bien: buen día para presentar tu propuesta con claridad.", "En este ritmo la conversación fluye. Haz tus preguntas ahí mismo."],
       },
       newStart: {
         mirror: ["Hoy tu propio impulso es fuerte: buen día para dar el primer paso.", "El empuje es firme en este ritmo. Empieza la primera etapa de ese plan que venías posponiendo."],
         selfNurturesOther: ["Hoy las ideas nuevas brotan con facilidad: buen día para empezar a crear algo.", "Un ritmo para mostrar y compartir. Cuéntale a alguien que empiezas y tomará fuerza."],
         otherNurturesSelf: ["Un ritmo para aprender y llenarte, ideal para una clase o un hábito nuevo.", "Hoy la ayuda acompaña. Busca a alguien que pueda empezar contigo."],
-        selfChallengesOther: ["Buen día para fijar una meta concreta. Si le pones un número a tu comienzo, dura más.", "En este ritmo tienes buen sentido para actuar. Empieza por algo pequeño, ya mismo."],
+        selfChallengesOther: ["Buen día para fijar una meta concreta. Si le pones un número a tu comienzo, dura más.", "En este ritmo tienes buen sentido para actuar. Empieza por algo pequeño, ahora mismo."],
       },
     },
   },

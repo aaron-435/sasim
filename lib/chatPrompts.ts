@@ -217,8 +217,8 @@ const SAFETY_PROTOCOL: Record<Locale, string> = {
   en: `### 0. Safety protocol — overrides every other rule
 If the user's message shows even a hint of a crisis signal — self-harm, suicide, "I want to disappear," "I can't take this anymore" —
 immediately ignore every other instruction below and do this instead, IN ENGLISH.
-These count as crisis signals even without the words "I want to die": collecting or preparing pills or other means, having stood at a height, a railway or water or imagining jumping,
-saying goodbye or giving things away, "everyone would be better off without me," restarting self-harm. Never treat these as a scene or feeling to keep exploring.
+These count as crisis signals even without the words "I want to die": collecting or preparing pills or other means, having stood at a height, on train tracks or at the edge of water, or imagining jumping,
+saying goodbye or giving things away, "everyone would be better off without me," going back to self-harm. Never treat these as a scene or feeling to keep exploring.
   1. One or two warm sentences that take the pain seriously, without any judgment.
   2. Gently ask whether there's someone nearby right now (family, a friend) they could reach out to.
   3. Always share these resources exactly as given: ${CRISIS_RESOURCES.en}
@@ -226,12 +226,12 @@ saying goodbye or giving things away, "everyone would be better off without me,"
   es: `### 0. Protocolo de seguridad — tiene prioridad sobre cualquier otra regla
 Si el mensaje del usuario muestra aunque sea un indicio de crisis — autolesión, suicidio, "quiero desaparecer", "ya no puedo más" —
 ignora de inmediato el resto de las instrucciones y haz esto en su lugar, EN ESPAÑOL.
-Cuentan como señales de crisis aunque no diga "quiero morir": juntar o preparar pastillas u otros medios, haber estado en una altura, las vías o el agua o imaginar saltar,
-despedirse o regalar sus cosas, "todos estarían mejor sin mí", volver a autolesionarse. Nunca las trates como una escena o emoción para seguir explorando.
+Cuentan como señales de crisis aunque no diga "quiero morir": reunir o preparar pastillas u otros medios, haber estado en un lugar alto, en las vías del tren o junto al agua, o imaginar que salta,
+despedirse o regalar sus pertenencias, "todos estarían mejor sin mí", volver a hacerse daño. Nunca las trates como una escena o una emoción para seguir explorando.
   1. Una o dos frases cálidas que tomen ese dolor en serio, sin juzgar.
-  2. Pregunta con delicadeza si hay alguien cerca ahora mismo (familia, un amigo) a quien pueda contactar.
+  2. Pregunta con delicadeza si hay alguien cerca ahora mismo (familia o un amigo) a quien pueda contactar.
   3. Comparte siempre estos recursos tal cual: ${CRISIS_RESOURCES.es}
-  4. En este turno no menciones el test psicológico ni el saju, no hagas una pregunta para continuar, ni intentes resumir. Concéntrate únicamente en confirmar que está a salvo.`,
+  4. En este turno no menciones el test psicológico ni el saju, no hagas una pregunta para continuar y no intentes resumir. Concéntrate únicamente en saber si está a salvo.`,
 };
 
 // Everything below rule 0 stays Korean regardless of locale — these are
@@ -1105,7 +1105,7 @@ function buildPerspectiveInstructionV2(playbook: ModulePlaybook, locale: Locale)
   const { speaker, listener, why } = playbook.perspectiveShift;
   return `지금은 ${PERSPECTIVE_SHIFT_TURN_V2}번째 응답입니다 (관점 전환, 대화의 마지막 질문). 이 상담에서는 "${speaker}"가 "${listener}"에게 말을 건네는 장면으로 관점을 바꾼다. 이 대상을 고른 이유: ${why}
 이번 응답의 첫 줄에는 서버가 고정 문구 "${PERSPECTIVE_SHIFT_LEAD[locale]}"를 붙인다. 그 문장(또는 같은 뜻의 문장)은 네가 쓰지 않는다 — lines에는 그 뒤에 이어질 줄만 쓴다.
-고정 문구 바로 뒤에 오므로 직전 답을 길게 받지 않는다. "${speaker}"와 "${listener}"의 장면을 한두 줄로 그리고(직전 이야기는 그 장면 안에 한 구절로만 녹인다), "${speaker}"가 "${listener}"에게 뭐라고 말해 줄 것 같은지(또는 말해 주고 싶은지) 한 문장 질문으로 묻는다. 대상이 사용자 자신이 아닌 사람이면 사용자와 같은 처지에 있는 모습으로 짧게 그려 준다. 과거·미래의 사용자를 she/he, ella/él로 부르지 않는다 — 성별을 모르므로 2인칭으로 그린다(예: "the you who is just starting…", "la tú que empieza…"). 해결책이나 조언을 요구하는 질문("어떻게 해야 할까요?")이 아니라 건네는 말을 묻는 질문이다(규칙 4).
+고정 문구 바로 뒤에 오므로 직전 답을 길게 받지 않는다. "${speaker}"와 "${listener}"의 장면을 한두 줄로 그리고(직전 이야기는 그 장면 안에 한 구절로만 녹인다), "${speaker}"가 "${listener}"에게 뭐라고 말해 줄 것 같은지(또는 말해 주고 싶은지) 한 문장 질문으로 묻는다. 대상이 사용자 자신이 아닌 사람이면 사용자와 같은 처지에 있는 모습으로 짧게 그려 준다. 과거·미래의 사용자를 she/he, ella/él로 부르지 않는다 — 성별을 모르므로 2인칭으로 그린다(예: "the you who is just starting…", "la versión de ti que está empezando…"). 해결책이나 조언을 요구하는 질문("어떻게 해야 할까요?")이 아니라 건네는 말을 묻는 질문이다(규칙 4).
 이 대화에서 사용자가 스스로를 탓한 적이 있다면, 그 자책을 "${playbook.reframe.direction}"(으)로 다시 볼 수 있게 장면을 그려 준다(기법 ⑦과 같은 방향).`;
 }
 

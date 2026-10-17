@@ -101,11 +101,11 @@ const flame: ArticleSet = {
   },
 
   es: {
-    metaTitle: "Maestro del Día Fuego yin (丁): la llama en el saju | Fatesaid",
+    metaTitle: "Fuego yin (丁), Maestro del Día: la llama en el saju | Fatesaid",
     description:
       "Cómo suele verse el Maestro del Día Fuego yin (丁), la llama, en el saju: cómo da luz, qué hace bien, cómo se relaciona con la gente y qué lo alimenta.",
-    h1: "Maestro del Día Fuego yin (丁): la llama",
-    lead: "En el saju, la versión coreana de los Cuatro Pilares, tu Maestro del Día es el Tronco Celestial del día en que naciste. Te representa dentro de tu mapa y hay diez posibles. El Fuego yin, escrito 丁 (jeong en coreano), es el cuarto, y aquí lo llamamos la llama. El saju es una tradición cultural y una forma de mirarte por dentro, no una ciencia, así que lee lo que sigue como tendencias para probar, no como un veredicto.",
+    h1: "Fuego yin (丁), Maestro del Día: la llama",
+    lead: "En el saju, la versión coreana de los Cuatro Pilares, tu Maestro del Día es el tronco celeste del día en que naciste. Te representa dentro de tu mapa y hay diez posibles. El Fuego yin, escrito 丁 (jeong en coreano), es el cuarto, y aquí lo llamamos la llama. El saju es una tradición cultural y una forma de mirarte por dentro, no una ciencia, así que lee lo que sigue como tendencias para probar, no como un veredicto.",
     sections: [
       {
         heading: "Una luz para la mesa donde te sientas",

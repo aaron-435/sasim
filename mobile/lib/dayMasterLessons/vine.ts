@@ -30,7 +30,7 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Earth: how you go after results",
-      body: "Wood shapes Earth, the way roots work their way through soil. In saju, the element you shape speaks to work, money and results. As a Vine, you often reach goals through relationships and timing rather than force. You notice openings, combine what's available and make good use of what's already there. What's worth supporting is a clear sense of where you're climbing, so your flexibility always has a direction.",
+      body: "Wood shapes Earth, the way roots work their way through soil. In saju, the element you shape speaks to work, money and results. As a Vine, you often reach goals through relationships and timing rather than force. You notice openings, combine what's available and make good use of what's already there. What helps is a clear sense of where you're climbing, so your flexibility always has a direction.",
       tryToday: "Name one goal in a single sentence, so you know which way you're growing this week.",
     },
     {
@@ -73,7 +73,7 @@ const lessons: DayMasterLessons = {
     {
       title: "Agua: lo que te hace crecer",
       body: "En los cinco elementos, el Agua alimenta a la Madera. Para la enredadera, esa Agua suele llegar a través del vínculo: una conversación cálida, una amistad que te entiende, un rincón tranquilo para absorber algo nuevo. Como sintonizas tanto con los demás, puedes absorber sus estados de ánimo junto con su apoyo.\n\nTener tiempo solo para ti te ayuda a separar lo que es tuyo de lo que fuiste recogiendo por el camino.",
-      tryToday: "Pasa hoy unos minutos en un lugar en calma, solo notando cómo te sientes a solas.",
+      tryToday: "Pasa hoy unos minutos en un lugar tranquilo, solo notando cómo te sientes a solas.",
     },
     {
       title: "Fuego: cómo te permites florecer",
@@ -81,8 +81,8 @@ const lessons: DayMasterLessons = {
       tryToday: "Di hoy una vez lo que de verdad prefieres, aunque sea sobre algo pequeño.",
     },
     {
-      title: "Tierra: cómo vas tras los resultados",
-      body: "La Madera da forma a la Tierra, como las raíces que se abren paso en el suelo. En el saju, el elemento que moldeas habla del trabajo, el dinero y los resultados. Como enredadera, sueles alcanzar tus metas a través de las relaciones y el buen momento, más que por la fuerza. Ves las oportunidades, combinas lo que hay a mano y sacas partido de lo que ya existe. Lo que vale la pena cuidar es saber con claridad hacia dónde trepas, para que tu flexibilidad siempre tenga rumbo.",
+      title: "Tierra: cómo avanzas hacia los resultados",
+      body: "La Madera da forma a la Tierra, como las raíces que se abren paso en el suelo. En el saju, el elemento que moldeas habla del trabajo, el dinero y los resultados. Como enredadera, sueles alcanzar tus metas a través de las relaciones y el buen momento, más que por la fuerza. Ves las oportunidades, combinas lo que hay a mano y sacas partido de lo que ya existe. Lo que ayuda es saber con claridad hacia dónde trepas, para que tu flexibilidad siempre tenga rumbo.",
       tryToday: "Resume una meta en una sola frase, para saber hacia dónde creces esta semana.",
     },
     {
@@ -92,12 +92,12 @@ const lessons: DayMasterLessons = {
     },
     {
       title: "Crecer junto a otras personas",
-      body: "Las personas con mucha Madera son tus pares: amistades, compañeros de clase, colegas, rivales. Con ellas, sueles ser quien une a la gente y mantiene al grupo. A veces quizá te apoyes en una personalidad más fuerte, o acabes siguiendo su dirección más que la tuya. Las amistades que mejor le sientan a la enredadera suelen ser aquellas en las que ambas partes se sostienen y cada quien alcanza su propia luz.",
+      body: "Las personas con mucha Madera son tus pares: amistades, gente de tu clase, colegas, rivales. Con ellas, sueles ser quien une a la gente y mantiene al grupo. A veces quizá te apoyes en una personalidad más fuerte, o acabes siguiendo su dirección más que la tuya. Las amistades que mejor le sientan a la enredadera suelen ser aquellas en las que ambas partes se sostienen y cada quien alcanza su propia luz.",
       tryToday: "Piensa en una amistad en la que das mucho y fíjate en lo que recibes de vuelta.",
     },
     {
       title: "Primavera: cuando la Madera es más fuerte",
-      body: "En el calendario del saju, la Madera es más fuerte en primavera, más o menos de principios de febrero a principios de abril. Ese momento sigue el calendario de términos solares del que viene el sistema, así que si vives en el hemisferio sur, léelo como un ritmo y no como tu clima. En primavera las enredaderas buscan nuevos apoyos, y mucha gente con este Maestro del Día siente un suave impulso de reencontrarse, probar algo nuevo o acercarse a alguien. Sea cual sea la estación afuera, puedes notar cuándo aparece en ti esas ganas de alcanzar.",
+      body: "En el calendario del saju, la Madera es más fuerte en primavera, más o menos de principios de febrero a principios de abril. Esas fechas siguen el calendario de términos solares del que viene el sistema, así que si vives en el hemisferio sur, léelo como un ritmo y no como tu clima. En primavera las enredaderas buscan nuevos apoyos, y mucha gente con este Maestro del Día siente un suave impulso de reencontrarse, probar algo nuevo o acercarse a alguien. Sea cual sea la estación fuera de casa, puedes notar cuándo aparecen en ti esas ganas de acercarte a algo.",
       tryToday: "Fíjate en una persona o un lugar hacia el que te apetece acercarte últimamente.",
     },
     {

@@ -233,8 +233,8 @@ const CLOSING_LINE_PATTERN: Record<string, RegExp> = {
 };
 const CLOSING_LINE_FALLBACK: Record<string, string> = {
   ko: "잠시만 기다려 주세요. 들려주신 이야기와 사주, 테스트 결과를 함께 살펴볼게요.",
-  en: "Give me a moment — I'll look at everything you shared together with your saju and test results.",
-  es: "Dame un momento: voy a revisar todo lo que compartiste junto con tu saju y los resultados del test.",
+  en: "Give me a moment while I bring together what you've shared, your saju and your test results.",
+  es: "Dame un momento mientras reúno lo que compartiste, tu saju y los resultados del test.",
 };
 // 위기 대응(규칙 0) 중인 응답에는 리포트로 넘어간다는 안내를 붙이지 않는다 — 안전 안내가 마지막 말이어야 한다.
 // 번호는 lib/promptLocale.ts의 언어별 위기 상담 안내와 같다.
@@ -288,8 +288,8 @@ const RECAP_RECHECK_PATTERN: Record<string, RegExp> = {
 const RECAP_RECHECK_FALLBACK: Record<number, Record<string, string>> = {
   10: {
     ko: "제가 들은 모습과 다른 데가 있다면, 이어서 이야기하면서 고쳐 주셔도 돼요.",
-    en: "If any of that isn't how it was for you, you can correct me as we keep going.",
-    es: "Si algo de esto no fue así para ti, puedes corregirme mientras seguimos hablando.",
+    en: "If any of that doesn't match how it was for you, feel free to correct me as we keep going.",
+    es: "Si algo de esto no coincide con lo que viviste, puedes corregirme mientras seguimos conversando.",
   },
 };
 const normForMatch = (t: string) => t.toLowerCase().replace(/[\s"'“”‘’「」.,!?¿¡…·:;()—-]+/g, "");

@@ -101,11 +101,11 @@ const field: ArticleSet = {
   },
 
   es: {
-    metaTitle: "Tierra yin (己) como Maestro del Día: el campo en el saju | Fatesaid",
+    metaTitle: "Tierra yin (己), Maestro del Día: el campo en el saju | Fatesaid",
     description:
       "Cómo suele verse el Maestro del Día Tierra yin (己), el campo, en el saju: cómo cuida, qué hace bien, cómo se relaciona con la gente y qué lo alimenta.",
-    h1: "Tierra yin (己) como Maestro del Día: el campo",
-    lead: "En el saju, la versión coreana de los Cuatro Pilares, tu Maestro del Día es el Tronco Celeste del día en que naciste. Te representa dentro de tu mapa y hay diez posibles. La Tierra yin, escrita 己 (gi en coreano), es el sexto, y aquí lo llamamos el campo. El saju es una tradición cultural y una forma de mirarte por dentro, no una ciencia, así que lee lo que sigue como tendencias para probar, no como un veredicto.",
+    h1: "Tierra yin (己), Maestro del Día: el campo",
+    lead: "En el saju, la versión coreana de los Cuatro Pilares, tu Maestro del Día es el tronco celeste del día en que naciste. Te representa dentro de tu mapa y hay diez posibles. La Tierra yin, escrita 己 (gi en coreano), es el sexto, y aquí lo llamamos el campo. El saju es una tradición cultural y una forma de mirarte por dentro, no una ciencia, así que lee lo que sigue como tendencias para probar, no como un veredicto.",
     sections: [
       {
         heading: "Una tierra hecha para que algo crezca",
@@ -145,7 +145,7 @@ const field: ArticleSet = {
       },
     ],
     tryThis:
-      "Hoy, cuando llegue una petición, respira despacio una vez antes de responder. Luego dile a una persona una preferencia clara, como dónde comer o qué hora te conviene, y observa qué se siente al ser concreto.",
+      "Hoy, cuando llegue una petición, respira despacio una vez antes de responder. Luego dile a una persona una preferencia clara, como dónde comer o qué hora te conviene, y observa qué se siente al decir las cosas con claridad.",
   },
 };
 
