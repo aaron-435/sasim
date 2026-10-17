@@ -1,16 +1,17 @@
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import MessageCircleQuestion from "lucide-react-native/icons/message-circle-question-mark";
 import { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Modal, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocale, useStrings } from "../lib/i18n";
+import useReducedMotion from "../lib/useReducedMotion";
 import { localizedText } from "../lib/qaBankLocale";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
+import { RADIUS, SCRIM, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 type Question = { id: string; text_ko: string; text_en?: string; text_es?: string };
 type Subcategory = { id: string; name_ko: string; name_en?: string; name_es?: string; questions: Question[] };
@@ -24,16 +25,23 @@ export default function QAQuestionScreen({
   subcategory,
   onBack,
   onSelect,
+  quota,
 }: {
   subcategory: Subcategory;
   onBack: () => void;
   onSelect: (q: Question) => void;
+  /** Today's usage; null while it is still loading. */
+  quota: { used: number; limit: number } | null;
 }) {
   const strings = useStrings();
   const { locale } = useLocale();
   // ~20 questions per subcategory is a wall when a free user gets one a day: show the first
   // few, the rest behind one tap.
   const [expanded, setExpanded] = useState(false);
+  // One tap must not spend a free question: a pick opens a confirm sheet first.
+  const [pending, setPending] = useState<Question | null>(null);
+  const reduceMotion = useReducedMotion();
+  const left = quota ? Math.max(0, quota.limit - quota.used) : null;
   const visible = expanded ? subcategory.questions : subcategory.questions.slice(0, INITIAL_QUESTIONS);
   const hiddenCount = subcategory.questions.length - visible.length;
   return (
@@ -52,11 +60,14 @@ export default function QAQuestionScreen({
         </Reveal>
 
         <Reveal index={1}>
+        {quota && left !== null && (
+          <Text style={styles.remaining} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.remainingToday(left, quota.limit)}</Text>
+        )}
         {visible.map((q) => (
           <PressableScale
             key={q.id}
             style={styles.card}
-            onPress={() => onSelect(q)}
+            onPress={() => setPending(q)}
             accessibilityRole="button"
             accessibilityLabel={localizedText(q.text_ko, q.text_en, q.text_es, locale)}
             pressedScale={0.98}
@@ -72,6 +83,45 @@ export default function QAQuestionScreen({
         )}
         </Reveal>
       </ScrollView>
+      <Modal
+        visible={pending !== null}
+        transparent
+        animationType={reduceMotion ? "none" : "fade"}
+        onRequestClose={() => setPending(null)}
+      >
+        <View style={styles.backdrop}>
+          <View style={styles.sheet} accessibilityViewIsModal>
+            <Text style={styles.sheetTitle} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>{strings.qa.confirmTitle}</Text>
+            {pending && (
+              <Text style={styles.sheetQuestion} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{localizedText(pending.text_ko, pending.text_en, pending.text_es, locale)}</Text>
+            )}
+            {quota && left !== null && (
+              <Text style={styles.sheetBody} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.qa.confirmBody(left, quota.limit)}</Text>
+            )}
+            <PressableScale
+              style={styles.sheetPrimary}
+              accessibilityRole="button"
+              accessibilityLabel={strings.qa.confirmAsk}
+              onPress={() => {
+                const q = pending;
+                setPending(null);
+                if (q) onSelect(q);
+              }}
+            >
+              <Text style={styles.sheetPrimaryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.confirmAsk}</Text>
+            </PressableScale>
+            <PressableScale
+              style={styles.sheetSecondary}
+              accessibilityRole="button"
+              accessibilityLabel={strings.qa.confirmCancel}
+              haptic="none"
+              onPress={() => setPending(null)}
+            >
+              <Text style={styles.sheetSecondaryLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.qa.confirmCancel}</Text>
+            </PressableScale>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -137,6 +187,68 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     color: COLORS.headline,
     flex: 1,
+  },
+  remaining: {
+    fontFamily: FONTS.regular,
+    fontSize: 13,
+    color: COLORS.subheadline,
+    marginBottom: SPACE.md,
+  },
+  backdrop: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: SCRIM,
+  },
+  sheet: {
+    backgroundColor: SURFACE.raised,
+    borderTopLeftRadius: RADIUS.lg,
+    borderTopRightRadius: RADIUS.lg,
+    paddingHorizontal: SPACE.xl,
+    paddingTop: SPACE.xl,
+    paddingBottom: SPACE.xxl,
+  },
+  sheetTitle: {
+    fontFamily: FONTS.display,
+    fontSize: 20,
+    color: COLORS.headline,
+    marginBottom: SPACE.md,
+  },
+  sheetQuestion: {
+    fontFamily: FONTS.regular,
+    fontSize: 15,
+    lineHeight: 22,
+    color: COLORS.headline,
+    marginBottom: SPACE.md,
+  },
+  sheetBody: {
+    fontFamily: FONTS.regular,
+    fontSize: 13,
+    lineHeight: 19,
+    color: COLORS.subheadline,
+    marginBottom: SPACE.lg,
+  },
+  sheetPrimary: {
+    minHeight: 48,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.gold,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  sheetPrimaryLabel: {
+    fontFamily: FONTS.semibold,
+    fontSize: 15,
+    color: COLORS.ctaText,
+  },
+  sheetSecondary: {
+    minHeight: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: SPACE.xs,
+  },
+  sheetSecondaryLabel: {
+    fontFamily: FONTS.semibold,
+    fontSize: 14,
+    color: COLORS.subheadline,
   },
   moreButton: {
     minHeight: 44,

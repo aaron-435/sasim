@@ -24,3 +24,9 @@ export const MAX_FONT_SCALE = {
   control: 1.4,
   body: 1.6,
 } as const;
+
+// Korean headings use the system font, which has no medium cut: bold is the closest to the
+// Latin display weight. One helper instead of a per-screen copy; pass that heading's tracking.
+export function koDisplay(letterSpacing?: number) {
+  return { fontWeight: "700" as const, letterSpacing };
+}

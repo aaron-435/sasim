@@ -31,7 +31,7 @@ export default function LanguageScreen({ onNext }: { onNext: () => void }) {
         <View style={styles.content}>
           <Reveal index={0} style={styles.brandRow}>
             <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.brandLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>FATESAID</Text>
+            <Text style={styles.brandLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>Fatesaid</Text>
           </Reveal>
           {/* No dictionary lookup here on purpose — the user hasn't picked a locale
               yet, so this heading is shown in all three languages at once rather than
@@ -81,10 +81,9 @@ const styles = StyleSheet.create({
   },
   brandLabel: {
     fontFamily: FONTS.semibold,
-    fontSize: 12,
-    letterSpacing: 2,
+    fontSize: 13,
+    letterSpacing: 0.4,
     color: COLORS.gold,
-    textTransform: "uppercase",
   },
   heading: {
     fontFamily: FONTS.medium,

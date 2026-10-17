@@ -1,16 +1,15 @@
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import Download from "lucide-react-native/icons/download";
-import Lock from "lucide-react-native/icons/lock";
-import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
-import CalcSourceBadge from "../components/CalcSourceBadge";
 import ReportClosingPage from "../components/ReportClosingPage";
 import ReportPager, { readerChromeButtonStyle, type ReaderPage } from "../components/ReportPager";
 import ElementsLoader from "../components/motion/ElementsLoader";
 import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
+import ReportPaywall from "../components/ReportPaywall";
+import ReportCover, { coverElement, elementBackdropColor } from "../components/ReportCover";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
@@ -288,7 +287,7 @@ export default function YearReportScreen({
   }
 
   if (phase === "reader" && report) {
-    const pages = yearReaderPages(report, strings, nickname, {
+    const pages = yearReaderPages(report, strings, nickname, elements, {
       onShared: handleShared,
       pdf: { label: strings.pdf.button, busyLabel: strings.pdf.preparing, busy: exporting, onPress: handleExportPdf },
       onOpenPlan: setPageIndex,
@@ -301,6 +300,8 @@ export default function YearReportScreen({
         onBack={onBack}
         labels={{ back: strings.common.backLabel, previous: strings.report.previousPageLabel, next: strings.report.nextPageLabel }}
         swipeHint={{ id: "year", label: strings.reader.swipeHint }}
+        // Cover takes the dominant element's tint and hands it back to the plain backdrop as the reader pages on.
+        pageColors={pages.map((p) => (p.key === "cover" ? elementBackdropColor(coverElement(elements)) : COLORS.background))}
         reviewAtEnd
         trailing={
           <PressableScale
@@ -350,31 +351,19 @@ export default function YearReportScreen({
 
         <Reveal index={2}>
           <Text style={styles.vsProNote}>{strings.yearReport.vsProNote}</Text>
-          <Text style={styles.lockedNote}>{strings.yearReport.lockedNote}</Text>
-          <View style={styles.list}>
-            {lockedChapters.map((label, i) => (
-              <View key={label} style={[styles.lockedRow, i > 0 && styles.rowDivider]}>
-                <Lock size={16} strokeWidth={1.75} color={COLORS.gold} />
-                <Text style={styles.lockedLabel}>{label}</Text>
-              </View>
-            ))}
-          </View>
-        </Reveal>
-
-        <Reveal index={3}>
-          <PressableScale
-            style={[styles.buyButton, (purchasing || restoring) && styles.buttonDisabled]}
-            onPress={handleBuy}
-            disabled={purchasing || restoring}
-            accessibilityRole="button"
-          >
-            {purchasing ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={styles.buyLabel}>{strings.yearReport.buyButton(price)}</Text>}
-          </PressableScale>
-          <Text style={styles.oneTime}>{price ? strings.yearReport.oneTimeNote : `${strings.yearReport.priceAtCheckout} ${strings.yearReport.oneTimeNote}`}</Text>
-          <PressableScale style={styles.restoreButton} onPress={handleRestore} disabled={purchasing || restoring} accessibilityRole="button" haptic="none">
-            <Text style={styles.restoreLabel}>{restoring ? strings.yearReport.restoring : strings.yearReport.restore}</Text>
-          </PressableScale>
-          {notice && <Text style={styles.notice}>{notice}</Text>}
+          <ReportPaywall
+            lockedNote={strings.yearReport.lockedNote}
+            lockedLabels={lockedChapters}
+            maxVisible={5}
+            moreLabel={strings.report.paywallMoreChapters}
+            buyLabel={strings.yearReport.buyButton(price)}
+            onBuy={handleBuy}
+            purchasing={purchasing}
+            busy={purchasing || restoring}
+            oneTimeNote={price ? strings.yearReport.oneTimeNote : `${strings.yearReport.priceAtCheckout} ${strings.yearReport.oneTimeNote}`}
+            restore={{ label: restoring ? strings.yearReport.restoring : strings.yearReport.restore, onPress: handleRestore }}
+            notice={notice}
+          />
         </Reveal>
 
         <Reveal index={4}>
@@ -400,7 +389,7 @@ type ClosingActions = {
   onOpenPlan: (pageIndex: number) => void;
 };
 
-function yearReaderPages(report: YearReportContent, strings: Dictionary, nickname: string, actions: ClosingActions): ReaderPage[] {
+function yearReaderPages(report: YearReportContent, strings: Dictionary, nickname: string, elements: Record<string, number> | null, actions: ClosingActions): ReaderPage[] {
   const y = strings.yearReport;
   const pages: ReaderPage[] = [];
   pages.push({ key: "overview", node: <SectionPage eyebrow={y.chapterOverview} body={report.overview} /> });
@@ -449,12 +438,15 @@ function yearReaderPages(report: YearReportContent, strings: Dictionary, nicknam
   pages.unshift({
     key: "cover",
     node: (
-      <CoverPage
-        eyebrow={y.heading(report.year)}
+      <ReportCover
+        kicker={y.heading(report.year)}
         title={report.title}
         subtitle={report.subtitle}
-        nickname={`${nickname}${strings.report.nicknameSuffix}`}
-        totalPagesLabel={strings.report.totalPagesLabel(total)}
+        byline={`${nickname}${strings.report.nicknameSuffix}`}
+        footLabel={strings.report.totalPagesLabel(total)}
+        element={coverElement(elements)}
+        elements={elements}
+        seed={`${nickname}-year-${report.year}`}
       />
     ),
   });
@@ -466,31 +458,6 @@ function PageScroll({ children }: { children: React.ReactNode }) {
     <ScrollView style={pageStyles.scroll} contentContainerStyle={pageStyles.scrollContent} showsVerticalScrollIndicator={false}>
       {children}
     </ScrollView>
-  );
-}
-
-function CoverPage({ eyebrow, title, subtitle, nickname, totalPagesLabel }: { eyebrow: string; title: string; subtitle: string; nickname: string; totalPagesLabel: string }) {
-  return (
-    <View style={pageStyles.cover}>
-      {/* Same masthead and source line as the deep report's cover, so both paid reports open alike. */}
-      <View style={pageStyles.brandRow}>
-        <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-        <Text style={pageStyles.brandLabel}>FATESAID</Text>
-      </View>
-      <Text style={pageStyles.eyebrow}>{eyebrow}</Text>
-      <View style={pageStyles.coverMid}>
-        <Text style={pageStyles.coverTitle} accessibilityRole="header">
-          {title}
-        </Text>
-        <View style={pageStyles.coverRule} />
-        <Text style={pageStyles.coverSub}>{subtitle}</Text>
-        <Text style={pageStyles.coverName}>{nickname}</Text>
-        <View style={pageStyles.coverSource}>
-          <CalcSourceBadge align="start" />
-        </View>
-      </View>
-      <Text style={pageStyles.coverFoot}>{totalPagesLabel}</Text>
-    </View>
   );
 }
 
@@ -571,21 +538,9 @@ const styles = StyleSheet.create({
   card: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, padding: SPACE.lg, marginTop: SPACE.lg, ...SHADOW.raised },
   cardHeading: { fontFamily: FONTS.semibold, fontSize: 16, lineHeight: 23, color: COLORS.gold, marginBottom: SPACE.md },
   previewLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline, marginBottom: SPACE.sm },
-  list: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
-  rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },
   vsProNote: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 20, color: COLORS.subheadline, marginTop: SPACE.xs, marginBottom: SPACE.lg },
   disclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.subheadline, marginTop: SPACE.lg },
-  lockedNote: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold, marginTop: SPACE.xl, marginBottom: SPACE.md },
-  lockedRow: { flexDirection: "row", alignItems: "center", gap: SPACE.md, minHeight: 48, paddingHorizontal: SPACE.lg },
-  lockedLabel: { fontFamily: FONTS.medium, fontSize: 14.5, color: COLORS.headline },
-  buyButton: { backgroundColor: COLORS.gold, borderRadius: RADIUS.sm, paddingVertical: SPACE.lg, alignItems: "center", marginTop: SPACE.xl, minHeight: 50, justifyContent: "center" },
-  buyLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.ctaText },
-  buttonDisabled: { opacity: 0.6 },
-  oneTime: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: SPACE.md },
-  restoreButton: { minHeight: 44, alignItems: "center", justifyContent: "center", marginTop: SPACE.xs },
-  restoreLabel: { fontFamily: FONTS.medium, fontSize: 12.5, color: COLORS.subheadline, textDecorationLine: "underline" },
-  notice: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.danger, textAlign: "center", marginTop: SPACE.xs },
-  homeButton: { marginHorizontal: SPACE.xl, marginBottom: SPACE.lg, marginTop: SPACE.sm, borderWidth: 1, borderColor: SURFACE.hairline, borderRadius: RADIUS.sm, paddingVertical: SPACE.lg, alignItems: "center" },
+  homeButton: { marginHorizontal: SPACE.xl, marginBottom: SPACE.lg, marginTop: SPACE.sm, backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, paddingVertical: SPACE.lg, alignItems: "center", minHeight: 48, justifyContent: "center", ...SHADOW.raised },
   homeButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
 });
 
@@ -597,16 +552,6 @@ const pageStyles = StyleSheet.create({
   body: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 25, color: COLORS.headline, marginBottom: SPACE.lg },
   note: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: -SPACE.sm, marginBottom: SPACE.lg },
 
-  cover: { flex: 1, paddingHorizontal: SPACE.xl, paddingTop: SPACE.xl, paddingBottom: SPACE.xl },
-  coverMid: { flex: 1, justifyContent: "flex-start", paddingTop: "16%" },
-  coverTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 32, lineHeight: 40, color: COLORS.headline },
-  coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: SPACE.lg },
-  coverSub: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 23, color: COLORS.subheadline },
-  coverName: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline, marginTop: SPACE.xl },
-  coverSource: { marginTop: SPACE.xl },
-  brandRow: { flexDirection: "row", alignItems: "center", gap: SPACE.sm, marginBottom: SPACE.lg },
-  brandLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 3, color: COLORS.gold, textTransform: "uppercase" },
-  coverFoot: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 1.5, color: COLORS.footer },
 
   monthBlock: { paddingVertical: SPACE.lg, gap: SPACE.xs },
   monthDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },

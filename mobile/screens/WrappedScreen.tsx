@@ -8,10 +8,10 @@ import Text from "../components/AppText";
 import ReportPager, { type ReaderPage } from "../components/ReportPager";
 import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
+import { ElementMedallion, elementBackdropColor } from "../components/ReportCover";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
 import type { CompatibilityResult, CompatRelation } from "../lib/compatibility";
-import { ELEMENT_COLORS } from "../lib/elements";
 import { useLocale, useStrings } from "../lib/i18n";
 import { getQaTopicSummary, type QaTopicSummary } from "../lib/qaHistory";
 import { QA_TOPIC_GROUPS, type QaTopicGroupId } from "../lib/qaTopicGroups";
@@ -159,8 +159,6 @@ export default function WrappedScreen({
     }
   }
 
-  const swatch = (key: string) => ELEMENT_COLORS[key] ?? COLORS.gold;
-
   // One page = the card (what gets captured) + its share link (+ the closing actions on the last page).
   function page(key: string, label: string, body: ReactNode, after?: ReactNode): ReaderPage {
     return {
@@ -199,7 +197,7 @@ export default function WrappedScreen({
         "year",
         strings.wrapped.yearLabel,
         <>
-          <View style={[styles.swatch, { backgroundColor: swatch(thisYear.element) }]} />
+          <ElementMedallion element={thisYear.element} />
           <Text style={styles.big}>{content.yearName(thisYear.element, thisYear.branch)}</Text>
           <Text style={styles.rhythm}>{strings.fortune.rhythmNames[thisYear.relation]}</Text>
           <Text style={styles.body}>{content.yearLines[thisYear.relation]}</Text>
@@ -258,7 +256,7 @@ export default function WrappedScreen({
         "next",
         strings.wrapped.nextLabel(year + 1),
         <>
-          <View style={[styles.swatch, { backgroundColor: swatch(nextYear.element) }]} />
+          <ElementMedallion element={nextYear.element} />
           <Text style={styles.big}>{content.yearName(nextYear.element, nextYear.branch)}</Text>
           <Text style={styles.rhythm}>{strings.fortune.rhythmNames[nextYear.relation]}</Text>
           <Text style={styles.body}>{yearContent.relations[nextYear.relation].headline}</Text>
@@ -315,6 +313,8 @@ export default function WrappedScreen({
       onBack={onBack}
       labels={{ back: strings.common.backLabel, previous: strings.report.previousPageLabel, next: strings.report.nextPageLabel }}
       swipeHint={{ id: "wrapped", label: strings.reader.swipeHint }}
+      // The year pages take their element's tint (this year, next year); the rest stay on the plain backdrop.
+      pageColors={pages.map((p) => elementBackdropColor(p.key === "year" ? data?.thisYear.element : p.key === "next" ? data?.nextYear.element : null))}
     />
   );
 }
@@ -337,8 +337,6 @@ const styles = StyleSheet.create({
   },
   eyebrow: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 0.4, color: COLORS.subheadline },
   label: { fontFamily: FONTS.medium, fontSize: 14, lineHeight: 20, color: COLORS.gold, marginTop: SPACE.sm, textAlign: "center" },
-  // Pill keeps the 68px swatch a circle (the nearest radius would square it).
-  swatch: { width: 68, height: 68, borderRadius: RADIUS.pill, marginTop: SPACE.xl, borderWidth: 1, borderColor: "rgba(255,255,255,0.12)" },
   big: { fontFamily: FONTS.display, fontSize: 30, lineHeight: 38, color: COLORS.headline, marginTop: SPACE.lg, textAlign: "center" },
   bigMonth: { fontSize: 40, lineHeight: 48, marginTop: SPACE.xxl },
   rhythm: { fontFamily: FONTS.semibold, fontSize: 14, lineHeight: 20, color: COLORS.subheadline, marginTop: SPACE.sm, textAlign: "center" },
@@ -347,11 +345,11 @@ const styles = StyleSheet.create({
   quote: { fontFamily: FONTS.displayItalic, fontSize: 26, lineHeight: 36, color: COLORS.headline, marginTop: SPACE.xxxl, textAlign: "center" },
   by: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 19, color: COLORS.subheadline, marginTop: SPACE.lg, textAlign: "center" },
   monthStrip: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: SPACE.sm, marginTop: SPACE.xl },
-  monthCell: { width: 26, height: 26, borderRadius: RADIUS.md, borderWidth: 1, borderColor: COLORS.border, alignItems: "center", justifyContent: "center" },
+  monthCell: { width: 28, height: 28, borderRadius: RADIUS.md, borderWidth: 1, borderColor: COLORS.border, alignItems: "center", justifyContent: "center" },
   monthCellBest: { backgroundColor: COLORS.gold, borderColor: COLORS.gold },
-  monthCellText: { fontFamily: FONTS.medium, fontSize: 11, color: COLORS.subheadline },
+  monthCellText: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.subheadline },
   monthCellTextBest: { color: COLORS.ctaText, fontFamily: FONTS.bold },
-  brand: { fontFamily: FONTS.semibold, fontSize: 10, letterSpacing: 2, color: COLORS.subheadline, marginTop: "auto", paddingTop: SPACE.xl },
+  brand: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 2, color: COLORS.subheadline, marginTop: "auto", paddingTop: SPACE.xl },
   shareRow: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: SPACE.sm, minHeight: 44, marginTop: SPACE.sm },
   shareLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.gold },
   actions: { gap: SPACE.md, marginTop: SPACE.sm },

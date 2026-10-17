@@ -1,6 +1,6 @@
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useEffect, useRef } from "react";
-import { AccessibilityInfo, Animated, Easing, Linking, StyleSheet, View } from "react-native";
+import { Animated, Easing, Linking, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AuraNextButton from "../components/AuraNextButton";
@@ -12,6 +12,7 @@ import { useStrings, useLocale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 import { SPACE } from "../theme/tokens";
+import useReducedMotion from "../lib/useReducedMotion";
 
 export default function IntroScreen({ onNext, onVerifyCode }: { onNext: () => void; onVerifyCode: () => void }) {
   const strings = useStrings();
@@ -21,29 +22,23 @@ export default function IntroScreen({ onNext, onVerifyCode }: { onNext: () => vo
   // even though the content is fully translated (see lib/legalContent.ts).
   const termsUrl = `${API_BASE_URL}/terms?lang=${locale}`;
   const privacyUrl = `${API_BASE_URL}/privacy?lang=${locale}`;
+  const reduceMotion = useReducedMotion();
   const contentAnim = useRef(new Animated.Value(0)).current;
   const ctaAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    let cancelled = false;
-    AccessibilityInfo.isReduceMotionEnabled()
-      .catch(() => false)
-      .then((reduceMotion) => {
-        if (cancelled) return;
-        if (reduceMotion) {
-          contentAnim.setValue(1);
-          ctaAnim.setValue(1);
-          return;
-        }
-        Animated.stagger(180, [
-          Animated.timing(contentAnim, { toValue: 1, duration: 550, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-          Animated.timing(ctaAnim, { toValue: 1, duration: 450, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-        ]).start();
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [contentAnim, ctaAnim]);
+    if (reduceMotion) {
+      contentAnim.setValue(1);
+      ctaAnim.setValue(1);
+      return;
+    }
+    const run = Animated.stagger(180, [
+      Animated.timing(contentAnim, { toValue: 1, duration: 550, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(ctaAnim, { toValue: 1, duration: 450, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+    ]);
+    run.start();
+    return () => run.stop();
+  }, [contentAnim, ctaAnim, reduceMotion]);
 
   const contentStyle = {
     opacity: contentAnim,
@@ -60,7 +55,7 @@ export default function IntroScreen({ onNext, onVerifyCode }: { onNext: () => vo
         <Animated.View style={[styles.content, contentStyle]}>
           <View style={styles.brandRow}>
             <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={styles.brandLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>FATESAID</Text>
+            <Text style={styles.brandLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>Fatesaid</Text>
           </View>
           <Text style={styles.headline} accessibilityRole="header" maxFontSizeMultiplier={MAX_FONT_SCALE.display}>
             {strings.intro.headlineLine1}
@@ -133,10 +128,9 @@ const styles = StyleSheet.create({
   },
   brandLabel: {
     fontFamily: FONTS.semibold,
-    fontSize: 12,
-    letterSpacing: 2,
+    fontSize: 13,
+    letterSpacing: 0.4,
     color: COLORS.gold,
-    textTransform: "uppercase",
   },
   headline: {
     fontFamily: FONTS.display,

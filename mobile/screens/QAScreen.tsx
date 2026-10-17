@@ -301,7 +301,7 @@ export default function QAScreen({
     return <QASubcategoryScreen group={activeGroup} onBack={() => setView("chat")} onSelect={handlePickSubcategory} />;
   }
   if (view === "question" && activeSubcategory) {
-    return <QAQuestionScreen subcategory={activeSubcategory} onBack={() => setView(questionBackView)} onSelect={handleSelectQuestion} />;
+    return <QAQuestionScreen subcategory={activeSubcategory} onBack={() => setView(questionBackView)} onSelect={handleSelectQuestion} quota={quota} />;
   }
 
   // The paid cap doubles as "is subscribed" here, so the person topic's badge needs no extra lookup.
@@ -512,7 +512,7 @@ const styles = StyleSheet.create({
   },
   optionBadge: {
     fontFamily: FONTS.semibold,
-    fontSize: 11,
+    fontSize: 12,
     letterSpacing: 0.2,
     color: COLORS.gold,
   },
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
   },
   renewNoteText: {
     fontFamily: FONTS.regular,
-    fontSize: 11.5,
+    fontSize: 12,
     lineHeight: 17,
     color: COLORS.subheadline,
     textAlign: "center",

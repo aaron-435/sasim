@@ -1,18 +1,19 @@
 // Module cover: the D-set illustration (IMAGE_PROMPTS_2026-10-14.md) when its key
-// has an entry in ART_MANIFEST, otherwise the gradient + number below (ArtImage fallback).
+// has an entry in ART_MANIFEST, otherwise the element-tinted gradient + number below (ArtImage fallback).
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 import Text from "./AppText";
 import ArtImage from "./ArtImage";
 import type { ArtKey } from "../data/art/manifest";
+import { elementBackdropColor } from "./ReportCover";
+import { ELEMENT_COLORS } from "../lib/elements";
 import { COLORS } from "../theme/colors";
+import { SURFACE } from "../theme/tokens";
 import { FONTS } from "../theme/fonts";
 
-const GRADIENTS: Array<readonly [string, string]> = [
-  ["#1F3327", "#2C4A3A"],
-  ["#1C2E25", "#3A5A47"],
-  ["#22352A", "#4A6B57"],
-];
+// Offline / failed-download fallback: one element tint per module (cycling wood to water), so
+// twelve covers never look like twelve copies of the same green tile. The number stays quiet.
+const COVER_ELEMENTS = ["wood", "fire", "earth", "metal", "water"] as const;
 
 const MODULE_ART_KEYS: Partial<Record<number, ArtKey>> = {
   1: "module1-love",
@@ -39,7 +40,8 @@ export default function ModuleArt({
   style?: StyleProp<ViewStyle>;
 }) {
   const n = Number.parseInt(moduleId.replace(/\D/g, ""), 10) || 0;
-  const colors = GRADIENTS[(((n - 1) % 3) + 3) % 3];
+  const element = COVER_ELEMENTS[(((n - 1) % 5) + 5) % 5];
+  const colors = [SURFACE.raised, elementBackdropColor(element, 0.3)] as const;
   const number = String(n).padStart(2, "0");
 
   const fallback = (
@@ -52,7 +54,7 @@ export default function ModuleArt({
       importantForAccessibility="no-hide-descendants"
       aria-hidden
     >
-      <View style={styles.dot} />
+      <View style={[styles.dot, { backgroundColor: ELEMENT_COLORS[element] }]} />
       <Text style={[styles.number, size === "large" ? styles.large : styles.small]}>{number}</Text>
     </LinearGradient>
   );
@@ -72,7 +74,6 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: COLORS.gold,
   },
   number: {
     position: "absolute",
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
     bottom: 6,
     fontFamily: FONTS.displayItalic,
     color: COLORS.headline,
-    opacity: 0.9,
+    opacity: 0.55,
     letterSpacing: -1,
     includeFontPadding: false,
   },

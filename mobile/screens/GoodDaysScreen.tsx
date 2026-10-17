@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   dayRhythm: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold },
   dayReason: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 22, color: COLORS.headline },
   todayBadge: { borderRadius: RADIUS.pill, borderWidth: 1, borderColor: COLORS.gold, paddingHorizontal: SPACE.sm, paddingVertical: SPACE.xs },
-  todayBadgeText: { fontFamily: FONTS.medium, fontSize: 11.5, color: COLORS.gold },
+  todayBadgeText: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.gold },
   disclaimer: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, marginTop: SPACE.lg },
   errorBlock: { gap: SPACE.md, marginTop: SPACE.md, alignItems: "flex-start" },
   errorText: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.danger },

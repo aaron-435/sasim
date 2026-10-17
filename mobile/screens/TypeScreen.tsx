@@ -26,7 +26,7 @@ import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
 import { track } from "../lib/analytics";
 import { readableColumn } from "../theme/layout";
-import { FONTS } from "../theme/fonts";
+import { FONTS, koDisplay } from "../theme/fonts";
 import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 const ELEMENT_ICON = { wood: TreePine, fire: Flame, earth: Mountain, metal: Gem, water: Droplets } as const;
@@ -125,7 +125,7 @@ export default function TypeScreen({
 
         <RevealCard tint={tint} ceremony={reveal}>
         <View style={[styles.card, { borderWidth: 1, borderColor: `${tint}55` }]}>
-          <Text style={styles.brandLabel}>FATESAID</Text>
+          <Text style={styles.brandLabel}>Fatesaid</Text>
           {daymasterArtKey ? (
             <ArtImage
               artKey={daymasterArtKey}
@@ -354,8 +354,8 @@ const styles = StyleSheet.create({
   },
   brandLabel: {
     fontFamily: FONTS.bold,
-    fontSize: 12,
-    letterSpacing: 2,
+    fontSize: 13,
+    letterSpacing: 0.4,
     color: COLORS.gold,
   },
   iconRow: {
@@ -383,9 +383,7 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
     marginTop: SPACE.xs,
   },
-  typeNameKo: {
-    fontWeight: "700",
-  },
+  typeNameKo: koDisplay(),
   typeGloss: {
     fontFamily: FONTS.regular,
     fontSize: 13,

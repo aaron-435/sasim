@@ -1,11 +1,14 @@
 import { useEffect, useRef } from "react";
-import { AccessibilityInfo, Animated, Easing, StyleSheet, View } from "react-native";
+import { Animated, Easing, StyleSheet, View } from "react-native";
+
+import useReducedMotion from "../lib/useReducedMotion";
 
 // The slow-breathing gold rings used to fill otherwise-empty space behind a focal
 // element (the intro screen's CTA, and now reused behind every onboarding step). Sized
 // via `size` (outer ring diameter) so a step with less vertical room can use a smaller
 // instance than the intro screen's hero-sized one.
 export default function GoldAura({ size = 260, children }: { size?: number; children?: React.ReactNode }) {
+  const reduceMotion = useReducedMotion();
   const pulse = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -17,29 +20,14 @@ export default function GoldAura({ size = 260, children }: { size?: number; chil
         Animated.timing(pulse, { toValue: 0, duration: 2600, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
       ])
     );
-    let cancelled = false;
-    let running = false;
-    const apply = (reduceMotion: boolean) => {
-      if (cancelled || running === !reduceMotion) return;
-      running = !reduceMotion;
-      if (reduceMotion) {
-        loop.stop();
-        pulse.setValue(0);
-      } else {
-        // A stopped loop stays finished until reset (Animated's loop keeps an
-        // isFinished flag), so reset before every (re)start.
-        loop.reset();
-        loop.start();
-      }
-    };
-    AccessibilityInfo.isReduceMotionEnabled().catch(() => false).then(apply);
-    const sub = AccessibilityInfo.addEventListener("reduceMotionChanged", apply);
-    return () => {
-      cancelled = true;
-      sub.remove();
-      loop.stop();
-    };
-  }, [pulse]);
+    if (reduceMotion) {
+      pulse.setValue(0);
+      return;
+    }
+    loop.reset();
+    loop.start();
+    return () => loop.stop();
+  }, [pulse, reduceMotion]);
 
   const outerScale = pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.12] });
   const outerOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.55, 1] });

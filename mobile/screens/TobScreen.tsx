@@ -10,7 +10,7 @@ import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { to24HourString } from "../lib/zodiac";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
+import { RADIUS, SPACE, SURFACE, TINT } from "../theme/tokens";
 
 export default function TobScreen({
   hour,
@@ -199,8 +199,8 @@ const styles = StyleSheet.create({
     borderColor: SURFACE.hairline,
   },
   periodButtonActive: {
-    backgroundColor: "rgba(111,169,139,0.12)",
-    borderColor: "rgba(111,169,139,0.4)",
+    backgroundColor: TINT.gold12,
+    borderColor: TINT.gold40,
   },
   periodLabel: {
     fontFamily: FONTS.semibold,

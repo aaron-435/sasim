@@ -34,7 +34,7 @@ const ko: YearFortuneContent = {
   relations: {
     mirror: {
       headline: "같은 결의 해",
-      overview: "당신과 닮은 기운이 들어오는 해예요. 익숙한 흐름이라 편안하지만, 새로운 자극이 없으면 제자리걸음처럼 느껴질 수 있어요.",
+      overview: "당신과 닮은 기운이 들어오는 해예요. 익숙한 흐름이라 편안해요. 작은 새 시도를 하나 곁들이면 더 산뜻하게 지나가요.",
       wealth: "쓰던 방식 그대로도 무난하게 흘러가지만, 큰 변화는 기대하기 어려운 해예요.",
       love: "이미 익숙한 관계는 편안하게 유지되지만, 새로운 인연은 잘 안 보일 수 있어요.",
       career: "지금 하던 일을 꾸준히 이어가기 좋은 해예요. 큰 변화보다는 다지는 쪽이 유리해요.",
@@ -43,7 +43,7 @@ const ko: YearFortuneContent = {
     },
     selfNurturesOther: {
       headline: "쏟아내는 해",
-      overview: "내 기운을 밖으로 쏟아내는 해예요. 표현하고 만들어내는 힘이 강해지지만, 계속 내주기만 하면 지치기 쉬우니 회복하는 시간도 함께 챙기세요.",
+      overview: "내 기운을 밖으로 쏟아내는 해예요. 표현하고 만들어내는 힘이 강해지지만, 계속 내주기만 하면 기운이 줄어들 수 있으니 회복하는 시간도 함께 챙기세요.",
       wealth: "쓰는 흐름이 강해지는 해예요. 벌이도 있지만 지출도 늘어날 수 있으니 계획적으로 관리하세요.",
       love: "표현을 많이 하게 되는 해예요. 먼저 다가가는 쪽이 유리하지만, 너무 맞춰주기만 하면 지칠 수 있어요.",
       career: "아이디어를 실행하고 결과물을 만들어내기 좋은 해예요. 다만 무리하지 않게 페이스 조절이 필요해요.",
@@ -132,7 +132,7 @@ const en: YearFortuneContent = {
   relations: {
     mirror: {
       headline: "A year cut from the same cloth",
-      overview: "This year brings energy that mirrors your own. It's familiar and comfortable, but without a fresh push, it can start to feel like standing still.",
+      overview: "This year brings energy that mirrors your own. It's familiar and comfortable, and one small new thing keeps it feeling fresh.",
       wealth: "Sticking with what already works holds steady, but don't expect a big shift this year.",
       love: "Existing relationships stay comfortable, but new connections may be harder to spot.",
       career: "A good year to keep steadily building on what you're already doing rather than chasing something new.",
@@ -141,7 +141,7 @@ const en: YearFortuneContent = {
     },
     selfNurturesOther: {
       headline: "A year of pouring out",
-      overview: "Your own energy flows outward this year. Your ability to express and create gets stronger, but if you only ever give, you'll run on empty — make sure to recover too.",
+      overview: "Your own energy flows outward this year. Your ability to express and create gets stronger, but if you only ever give, your energy can run low — make sure to recover too.",
       wealth: "Spending picks up along with earning this year — plan deliberately so outflow doesn't outpace income.",
       love: "You'll find yourself expressing more. Reaching out first works in your favor, but don't wear yourself out trying to please.",
       career: "A good year for turning ideas into real output. Just pace yourself so you don't burn out.",
@@ -230,7 +230,7 @@ const es: YearFortuneContent = {
   relations: {
     mirror: {
       headline: "Un año en tu misma sintonía",
-      overview: "Este año trae una energía parecida a la tuya. Es familiar y cómodo, pero sin un nuevo impulso puede sentirse como estar siempre en el mismo sitio.",
+      overview: "Este año trae una energía parecida a la tuya. Es familiar y cómodo, y una pequeña novedad ayuda a mantenerlo fresco.",
       wealth: "Seguir con lo que ya funciona mantiene tus finanzas estables, pero no esperes un gran cambio este año.",
       love: "Los vínculos que ya tienes se mantienen cómodos, pero puede costar más reconocer las conexiones nuevas.",
       career: "Buen año para seguir avanzando con constancia en lo que ya haces, en vez de perseguir algo nuevo.",
@@ -239,7 +239,7 @@ const es: YearFortuneContent = {
     },
     selfNurturesOther: {
       headline: "Un año para dar de ti",
-      overview: "Tu energía fluye hacia fuera este año. Tu capacidad de expresarte y crear se fortalece, pero si solo das, acabarás sin fuerzas: reserva también tiempo para recuperarte.",
+      overview: "Tu energía fluye hacia fuera este año. Tu capacidad de expresarte y crear se fortalece, pero si solo das, tu energía puede bajar: reserva también tiempo para recuperarte.",
       wealth: "Los gastos suben al mismo tiempo que los ingresos este año: planifica con cuidado para que lo que sale no supere lo que entra.",
       love: "Este año te expresas más. Dar el primer paso juega a tu favor, pero no te agotes intentando complacer a todo el mundo.",
       career: "Buen año para convertir ideas en resultados reales. Dosifica tu ritmo para no quemarte.",

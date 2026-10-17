@@ -8,7 +8,7 @@ import { useStrings } from "../lib/i18n";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
+import { RADIUS, SPACE, SURFACE, TINT } from "../theme/tokens";
 
 export default function GenderScreen({
   isFemale,
@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
     borderColor: SURFACE.hairline,
   },
   optionActive: {
-    backgroundColor: "rgba(111,169,139,0.12)",
-    borderColor: "rgba(111,169,139,0.4)",
+    backgroundColor: TINT.gold12,
+    borderColor: TINT.gold40,
   },
   optionLabel: {
     fontFamily: FONTS.semibold,

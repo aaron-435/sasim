@@ -20,7 +20,7 @@ import { formatSajuTypeName } from "../lib/sajuTypeContent";
 import type { SajuType } from "../lib/sajuType";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
-import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
+import { ACCENT, RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import { FONTS } from "../theme/fonts";
 import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
@@ -272,12 +272,12 @@ export default function CompatibilityScreen({
                   </Text>
 
                   <View style={styles.shareDetailBlock}>
-                    <Text style={[styles.shareDetailLabel, { color: "#8FBF9E" }]}>{strings.compatibility.shareCardGoodPointLabel}</Text>
+                    <Text style={[styles.shareDetailLabel, { color: ACCENT.mint }]}>{strings.compatibility.shareCardGoodPointLabel}</Text>
                     <Text style={styles.shareDetailText}>{relationCopy.goodPoint}</Text>
                   </View>
 
                   <View style={styles.shareDetailBlock}>
-                    <Text style={[styles.shareDetailLabel, { color: "#D9A26C" }]}>{strings.compatibility.shareCardCautionLabel}</Text>
+                    <Text style={[styles.shareDetailLabel, { color: ACCENT.amber }]}>{strings.compatibility.shareCardCautionLabel}</Text>
                     <Text style={styles.shareDetailText}>{relationCopy.caution}</Text>
                   </View>
 

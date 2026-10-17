@@ -1,6 +1,7 @@
 import { memo, useEffect, useRef } from "react";
-import { AccessibilityInfo, Animated, Easing, StyleSheet, View } from "react-native";
+import { Animated, Easing, StyleSheet, View } from "react-native";
 import Text from "./AppText";
+import useReducedMotion from "../lib/useReducedMotion";
 import { COLORS } from "../theme/colors";
 import { FONTS } from "../theme/fonts";
 import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
@@ -22,37 +23,30 @@ export const ChatBubble = memo(function ChatBubble({ role, text }: { role: "bot"
 });
 
 export function TypingDots() {
+  const reduce = useReducedMotion();
   const anims = useRef([0, 1, 2].map(() => new Animated.Value(0.2))).current;
 
   useEffect(() => {
     // Reduce Motion: three steady dots instead of the pulsing loop.
-    let alive = true;
-    let loops: Animated.CompositeAnimation[] = [];
-    AccessibilityInfo.isReduceMotionEnabled()
-      .catch(() => false)
-      .then((reduce) => {
-        if (!alive) return;
-        if (reduce) {
-          anims.forEach((v) => v.setValue(0.6));
-          return;
-        }
-        loops = anims.map((v, i) =>
-          Animated.loop(
-            Animated.sequence([
-              Animated.delay(i * 150),
-              Animated.timing(v, { toValue: 1, duration: 400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-              Animated.timing(v, { toValue: 0.2, duration: 400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-              Animated.delay((2 - i) * 150),
-            ])
-          )
-        );
-        loops.forEach((l) => l.start());
-      });
+    if (reduce) {
+      anims.forEach((v) => v.setValue(0.6));
+      return;
+    }
+    const loops = anims.map((v, i) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay(i * 150),
+          Animated.timing(v, { toValue: 1, duration: 400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+          Animated.timing(v, { toValue: 0.2, duration: 400, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+          Animated.delay((2 - i) * 150),
+        ])
+      )
+    );
+    loops.forEach((l) => l.start());
     return () => {
-      alive = false;
       loops.forEach((l) => l.stop());
     };
-  }, [anims]);
+  }, [anims, reduce]);
 
   return (
     <View style={[styles.bubbleRow, styles.bubbleRowBot]}>

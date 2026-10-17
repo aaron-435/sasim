@@ -1,16 +1,14 @@
-import Lock from "lucide-react-native/icons/lock";
-import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, BackHandler, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import Text from "../components/AppText";
-import CalcSourceBadge from "../components/CalcSourceBadge";
 import ReportClosingPage from "../components/ReportClosingPage";
 import ReportPager, { type ReaderPage } from "../components/ReportPager";
 import ElementsLoader from "../components/motion/ElementsLoader";
 import PressableScale from "../components/motion/PressableScale";
-import Reveal from "../components/motion/Reveal";
+import ReportPaywall, { PaywallHeader } from "../components/ReportPaywall";
+import ReportCover, { coverElement, elementBackdropColor } from "../components/ReportCover";
 import type { OtherBirthPayload } from "../components/OtherBirthForm";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
@@ -301,6 +299,7 @@ export default function CompatReportScreen({
     free,
     paid,
     paywall: { price, purchasing, notice, onBuy: handleBuy },
+    selfElements,
     onShared: handleShared,
   });
   const lastPage = pageIndex === pages.length - 1;
@@ -314,6 +313,7 @@ export default function CompatReportScreen({
       // The paywall page has its own buttons near the edges.
       edgeTaps={!!paid || !lastPage}
       swipeHint={{ id: "compat", label: strings.reader.swipeHint }}
+      pageColors={pages.map((p) => (p.key === "cover" ? elementBackdropColor(coverElement(selfElements)) : COLORS.background))}
       reviewAtEnd={!!paid}
       footer={
         paid && lastPage ? (
@@ -338,9 +338,11 @@ function compatReaderPages({
   free,
   paid,
   paywall,
+  selfElements,
   onShared,
 }: {
   strings: Dictionary;
+  selfElements: Record<string, number> | null;
   nickname: string;
   otherLabel: string;
   fill: (text: string) => string;
@@ -381,7 +383,18 @@ function compatReaderPages({
 
   pages.unshift({
     key: "cover",
-    node: <CoverPage eyebrow={s.coverEyebrow} title={fill(free.title)} subtitle={fill(free.subtitle)} names={`${nickname} · ${otherLabel}`} />,
+    node: (
+      <ReportCover
+        kicker={s.coverEyebrow}
+        aboveTitle={`${nickname} · ${otherLabel}`}
+        title={fill(free.title)}
+        subtitle={fill(free.subtitle)}
+        // The pair's cover leans on the reader's own dominant element (the other person's chart is not kept here).
+        element={coverElement(selfElements)}
+        elements={selfElements}
+        seed={`${nickname}-${otherLabel}-compat`}
+      />
+    ),
   });
   return pages;
 }
@@ -391,35 +404,6 @@ function PageScroll({ children }: { children: React.ReactNode }) {
     <ScrollView style={pageStyles.scroll} contentContainerStyle={pageStyles.scrollContent} showsVerticalScrollIndicator={false}>
       {children}
     </ScrollView>
-  );
-}
-
-function CoverPage({ eyebrow, title, subtitle, names }: { eyebrow: string; title: string; subtitle: string; names: string }) {
-  return (
-    <View style={pageStyles.cover}>
-      <View style={pageStyles.brandRow}>
-        <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-        <Text style={pageStyles.brandLabel}>FATESAID</Text>
-      </View>
-      <Reveal index={0}>
-        <Text style={pageStyles.eyebrow}>{eyebrow}</Text>
-      </Reveal>
-      <View style={pageStyles.coverMid}>
-        <Reveal index={1}>
-          <Text style={pageStyles.coverName}>{names}</Text>
-          <Text style={pageStyles.coverTitle} accessibilityRole="header">
-            {title}
-          </Text>
-        </Reveal>
-        <Reveal index={2}>
-          <View style={pageStyles.coverRule} />
-          <Text style={pageStyles.coverSub}>{subtitle}</Text>
-        </Reveal>
-        <Reveal index={3} style={pageStyles.coverSource}>
-          <CalcSourceBadge align="start" />
-        </Reveal>
-      </View>
-    </View>
   );
 }
 
@@ -458,24 +442,17 @@ function PaywallPage({
   const locked = [s.lockedFriction, s.chapterRhythm, s.chapterClosing];
   return (
     <PageScroll>
-      <Text style={pageStyles.eyebrow}>{s.paywallEyebrow}</Text>
-      <Text style={pageStyles.title} accessibilityRole="header">
-        {s.paywallHeading}
-      </Text>
-      <Text style={pageStyles.paywallBody}>{s.paywallBody}</Text>
-      <View style={pageStyles.list}>
-        {locked.map((label, i) => (
-          <View key={label} style={[pageStyles.lockedRow, i > 0 && pageStyles.rowDivider]}>
-            <Lock size={16} strokeWidth={1.75} color={COLORS.gold} />
-            <Text style={pageStyles.lockedLabel}>{label}</Text>
-          </View>
-        ))}
-      </View>
-      <PressableScale style={[pageStyles.buyButton, purchasing && pageStyles.buttonDisabled]} onPress={onBuy} disabled={purchasing} accessibilityRole="button">
-        {purchasing ? <ActivityIndicator color={COLORS.ctaText} /> : <Text style={pageStyles.buyLabel}>{s.buyButton(price)}</Text>}
-      </PressableScale>
-      <Text style={pageStyles.oneTime}>{price ? s.oneTimeNote(otherLabel) : `${strings.yearReport.priceAtCheckout} ${s.oneTimeNote(otherLabel)}`}</Text>
-      {notice && <Text style={pageStyles.notice}>{notice}</Text>}
+      <PaywallHeader eyebrow={s.paywallEyebrow} title={s.paywallHeading} body={s.paywallBody} />
+      <ReportPaywall
+        lockedLabels={locked}
+        moreLabel={strings.report.paywallMoreChapters}
+        buyLabel={s.buyButton(price)}
+        onBuy={onBuy}
+        purchasing={purchasing}
+        busy={purchasing}
+        oneTimeNote={price ? s.oneTimeNote(otherLabel) : `${strings.yearReport.priceAtCheckout} ${s.oneTimeNote(otherLabel)}`}
+        notice={notice}
+      />
       <Text style={pageStyles.disclaimer}>{s.noVerdictNote}</Text>
     </PageScroll>
   );
@@ -490,7 +467,7 @@ const styles = StyleSheet.create({
   centerText: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.subheadline, textAlign: "center" },
   retryButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: SPACE.md },
   retryLabel: { fontFamily: FONTS.semibold, fontSize: 14, color: COLORS.gold },
-  homeButton: { marginHorizontal: SPACE.xl, marginBottom: SPACE.lg, marginTop: SPACE.sm, borderWidth: 1, borderColor: SURFACE.hairline, borderRadius: RADIUS.sm, paddingVertical: SPACE.lg, alignItems: "center" },
+  homeButton: { marginHorizontal: SPACE.xl, marginBottom: SPACE.lg, marginTop: SPACE.sm, backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, paddingVertical: SPACE.lg, alignItems: "center", minHeight: 48, justifyContent: "center", ...SHADOW.raised },
   homeButtonLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.headline },
 });
 
@@ -501,25 +478,6 @@ const pageStyles = StyleSheet.create({
   title: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, lineHeight: 33, color: COLORS.headline, marginBottom: SPACE.lg },
   body: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 25, color: COLORS.headline, marginBottom: SPACE.lg },
 
-  cover: { flex: 1, paddingHorizontal: SPACE.xl, paddingTop: SPACE.xl, paddingBottom: SPACE.xl },
-  coverMid: { flex: 1, justifyContent: "flex-start", paddingTop: "16%" },
-  coverName: { fontFamily: FONTS.medium, fontSize: 13, color: COLORS.subheadline, marginBottom: SPACE.lg },
-  coverTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 32, lineHeight: 40, color: COLORS.headline },
-  coverRule: { width: 30, height: 1, backgroundColor: COLORS.gold, marginVertical: SPACE.lg },
-  coverSub: { fontFamily: FONTS.regular, fontSize: 15, lineHeight: 23, color: COLORS.subheadline },
-  coverSource: { marginTop: SPACE.xl },
-  brandRow: { flexDirection: "row", alignItems: "center", gap: SPACE.sm, marginBottom: SPACE.lg },
-  brandLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 3, color: COLORS.gold, textTransform: "uppercase" },
 
-  paywallBody: { fontFamily: FONTS.regular, fontSize: 14.5, lineHeight: 22, color: COLORS.subheadline, marginBottom: SPACE.lg },
-  list: { backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
-  rowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: SURFACE.hairline },
-  lockedRow: { flexDirection: "row", alignItems: "center", gap: SPACE.md, minHeight: 48, paddingHorizontal: SPACE.lg, paddingVertical: SPACE.md },
-  lockedLabel: { flex: 1, fontFamily: FONTS.medium, fontSize: 14.5, lineHeight: 20, color: COLORS.headline },
-  buyButton: { backgroundColor: COLORS.gold, borderRadius: RADIUS.sm, paddingVertical: SPACE.lg, alignItems: "center", marginTop: SPACE.xl, minHeight: 50, justifyContent: "center" },
-  buyLabel: { fontFamily: FONTS.semibold, fontSize: 14.5, color: COLORS.ctaText },
-  buttonDisabled: { opacity: 0.6 },
-  oneTime: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: SPACE.md },
-  notice: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.danger, textAlign: "center", marginTop: SPACE.sm },
   disclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.footer, marginTop: SPACE.xl },
 });

@@ -45,3 +45,35 @@ export const SHADOW = {
     elevation: 6,
   },
 } as const;
+
+// 2026-10-17: values that used to be hardcoded hex in screens. Celadon tints are the
+// COLORS.gold (#6FA98B) channel values at fixed alphas.
+export const TINT = {
+  gold12: "rgba(111,169,139,0.12)",
+  gold40: "rgba(111,169,139,0.4)",
+} as const;
+
+// Dim layer behind a bottom sheet / modal.
+export const SCRIM = "rgba(0,0,0,0.55)";
+
+// The report's "paper" pages (table of contents): ink on warm hanji.
+export const PAPER = {
+  bg: "#EFE7D8",
+  ink: "#22301F",
+  inkSoft: "#5C5237",
+  rule: "#B7A97D",
+} as const;
+
+// Secondary data-viz / label accents, kept clear of the red-orange range so a high number
+// reads as a tendency, not a warning. Independent of the brand palette like ELEMENT_COLORS.
+export const ACCENT = {
+  sky: "#7FA8D6",
+  sand: "#C2A86B",
+  lilac: "#9C8FBF",
+  sage: "#8FB09B",
+  clay: "#C1846A",
+  mint: "#8FBF9E",
+  amber: "#D9A26C",
+  // Lighter tint of the fire element, for text (the bar color is 3.6:1 as text).
+  coral: "#D9917A",
+} as const;

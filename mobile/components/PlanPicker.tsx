@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   saveBadgeText: {
     fontFamily: FONTS.medium,
-    fontSize: 11.5,
+    fontSize: 12,
     color: COLORS.gold,
   },
   trialLine: {

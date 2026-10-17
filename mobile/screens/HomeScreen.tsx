@@ -11,7 +11,7 @@ import Sparkles from "lucide-react-native/icons/sparkles";
 import Users from "lucide-react-native/icons/users";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef, useState } from "react";
-import { AccessibilityInfo, AppState, Animated, Easing, ScrollView, StyleSheet, View } from "react-native";
+import { AppState, Animated, Easing, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FourPillarsChart, { parseFourPillars } from "../components/FourPillarsChart";
@@ -41,7 +41,8 @@ import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
-import { FONTS } from "../theme/fonts";
+import { FONTS, koDisplay } from "../theme/fonts";
+import useReducedMotion from "../lib/useReducedMotion";
 
 // 2026-09-19 redesign (Impeccable critique of this screen, 25/40): Home used to be a
 // feature menu — seven same-size solid jade cards under a permanent philosophy essay,
@@ -227,26 +228,20 @@ export default function HomeScreen({
   // One authored moment: the hero settles into place. Everything
   // starts visible, so nothing is lost if an animation never runs, and Reduce Motion
   // (iOS) / Remove animations (Android) skips straight to the end state.
+  const reduceMotion = useReducedMotion();
   const heroSettle = useRef(new Animated.Value(0)).current;
   const heroPress = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    let cancelled = false;
-    AccessibilityInfo.isReduceMotionEnabled()
-      .catch(() => false)
-      .then((reduceMotion) => {
-        if (cancelled) return;
-        if (reduceMotion) {
-          heroSettle.setValue(1);
-          return;
-        }
-        Animated.timing(heroSettle, { toValue: 1, duration: 520, easing: Easing.out(Easing.exp), useNativeDriver: true }).start();
-      });
-    return () => {
-      cancelled = true;
-    };
+    if (reduceMotion) {
+      heroSettle.setValue(1);
+      return;
+    }
+    const run = Animated.timing(heroSettle, { toValue: 1, duration: 520, easing: Easing.out(Easing.exp), useNativeDriver: true });
+    run.start();
+    return () => run.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [reduceMotion]);
 
   function pressIn() {
     Animated.spring(heroPress, { toValue: 0.98, useNativeDriver: true, speed: 40, bounciness: 0 }).start();
@@ -697,10 +692,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.6,
     color: COLORS.headline,
   },
-  greetingKo: {
-    fontWeight: "700",
-    letterSpacing: -0.8,
-  },
+  greetingKo: koDisplay(-0.8),
   identityRow: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -832,9 +824,7 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
     marginBottom: SPACE.md,
   },
-  sectionTitleKo: {
-    fontWeight: "700",
-  },
+  sectionTitleKo: koDisplay(),
   tileGrid: {
     flexDirection: "row",
     flexWrap: "wrap",

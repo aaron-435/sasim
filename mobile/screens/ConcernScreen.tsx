@@ -9,7 +9,7 @@ import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
+import { RADIUS, SPACE, SURFACE, TINT } from "../theme/tokens";
 
 // 2026-09-19: 온보딩 마지막 단계 — "지금 가장 궁금한 것"을 가볍게 물어, 이후
 // ModuleSelectScreen이 추천 모듈을 보여줄 수 있게 한다(mobile/lib/userConcern.ts
@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
     gap: SPACE.xs,
   },
   optionActive: {
-    backgroundColor: "rgba(111,169,139,0.12)",
-    borderColor: "rgba(111,169,139,0.4)",
+    backgroundColor: TINT.gold12,
+    borderColor: TINT.gold40,
   },
   optionLabel: {
     fontFamily: FONTS.semibold,

@@ -16,6 +16,8 @@ import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
 import ElementMap from "../components/art/ElementMap";
 import ArtImage from "../components/ArtImage";
+import { elementArtKey } from "../components/ReportCover";
+import ReportPaywall, { PaywallHeader } from "../components/ReportPaywall";
 import type { ArtKey } from "../data/art/manifest";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useReducedMotion from "../lib/useReducedMotion";
@@ -34,37 +36,19 @@ import { getModuleById, moduleDisplayTitle, MODULES, type ModuleDefinition } fro
 import { exportReportPdf, pdfErrorMessage } from "../lib/reportPdf";
 import { reportPriceLabels, TOTAL_MODULES, type ReportPriceLabels } from "../lib/reportPricing";
 import { COLORS } from "../theme/colors";
-import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
+import { ACCENT, PAPER, RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import type { ChatExtract } from "./ChatScreen";
 import type { QuizDiagnosis } from "./QuizScreen";
-import { FONTS } from "../theme/fonts";
+import { FONTS, koDisplay } from "../theme/fonts";
 import { ELEMENT_COLORS } from "../lib/elements";
 
 // One source for element colours (lib/elements.ts); the quiz used to carry a drifted copy.
 const ELEMENT_COLOR = ELEMENT_COLORS;
 const ELEMENT_KEYS = ["wood", "fire", "earth", "metal", "water"] as const;
 
-/** The E-set art key for an element, or null when it can't be determined (page untouched). */
-function elementArtKey(element: string | null | undefined): ArtKey | null {
-  switch (element) {
-    case "wood":
-      return "element-wood";
-    case "fire":
-      return "element-fire";
-    case "earth":
-      return "element-earth";
-    case "metal":
-      return "element-metal";
-    case "water":
-      return "element-water";
-    default:
-      return null;
-  }
-}
 // Celadon-led, no red: a high share on a dimension (82% anxiety) is a tendency, not a warning.
-const DIMENSION_BAR_COLORS = [COLORS.gold, "#7FA8D6", "#C2A86B", "#9C8FBF", "#8FB09B"];
+const DIMENSION_BAR_COLORS = [COLORS.gold, ACCENT.sky, ACCENT.sand, ACCENT.lilac, ACCENT.sage];
 const DEFAULT_ELEMENTS: Record<string, number> = { fire: 20, earth: 20, wood: 20, metal: 20, water: 20 };
-const PAPER_BG = "#EFE7D8";
 
 /** The closing page's "test to try next": one the reader hasn't taken, from the same track as
  * this report when possible (the reason line says which). Null once every module is done. */
@@ -1159,7 +1143,10 @@ function CoverPage({
           importantForAccessibility="no-hide-descendants"
         >
           {coverArtKey ? (
-            <ArtImage artKey={coverArtKey} contentFit="cover" style={{ width: ring, height: ring }} fallback={coverDecor} />
+            // Dimmed like the shared cover (ReportCover) so the title keeps its contrast where it crosses the art.
+            <View style={pageStyles.coverArtDim}>
+              <ArtImage artKey={coverArtKey} contentFit="cover" style={{ width: ring, height: ring }} fallback={coverDecor} />
+            </View>
           ) : (
             coverDecor
           )}
@@ -1167,7 +1154,7 @@ function CoverPage({
       </View>
       <View style={pageStyles.brandRow}>
         <Sparkles size={12} strokeWidth={1.75} color={COLORS.gold} />
-        <Text style={pageStyles.brandLabel}>FATESAID</Text>
+        <Text style={pageStyles.brandLabel}>Fatesaid</Text>
       </View>
       <View style={pageStyles.coverMid}>
         <Reveal index={0}>
@@ -1231,7 +1218,7 @@ function TocPage({
               {e.label}
             </Text>
             <View style={pageStyles.tocDots} />
-            {e.locked ? <Lock size={12} strokeWidth={2} color="#5C5237" /> : <Text style={pageStyles.tocPage}>{String(e.pageNumber).padStart(2, "0")}</Text>}
+            {e.locked ? <Lock size={12} strokeWidth={2} color={PAPER.inkSoft} /> : <Text style={pageStyles.tocPage}>{String(e.pageNumber).padStart(2, "0")}</Text>}
           </PressableScale>
         ))}
       </View>
@@ -1367,7 +1354,7 @@ function ChatStoryPage({ chatExtract, strings }: { chatExtract: ChatExtract; str
       <Prose style={pageStyles.caseBody} text={strings.report.chatStoryIntro} />
       <View style={pageStyles.chatQuoteBox}>
         <View style={pageStyles.chatQuoteHeader}>
-          <BookOpen size={13} strokeWidth={2} color="#7FA8D6" />
+          <BookOpen size={13} strokeWidth={2} color={ACCENT.sky} />
           <Text style={pageStyles.chatQuoteLabel}>{strings.report.chatQuoteLabel}</Text>
         </View>
         <Text style={pageStyles.chatQuoteText}>&quot;{String(chatExtract.summary_quote || chatExtract.trigger_point || "")}&quot;</Text>
@@ -1518,7 +1505,7 @@ function BreatherPage({
 }
 
 function CardPage({ kind, indexLabel, title, body }: { kind: "jade" | "warm" | "blue"; indexLabel: string; title: string; body: string }) {
-  const color = kind === "jade" ? COLORS.gold : kind === "warm" ? "#C1846A" : "#7FA8D6";
+  const color = kind === "jade" ? COLORS.gold : kind === "warm" ? ACCENT.clay : ACCENT.sky;
   return (
     <PageShell>
       <CenteredBody>
@@ -1532,7 +1519,7 @@ function CardPage({ kind, indexLabel, title, body }: { kind: "jade" | "warm" | "
 
 function FitPage({ kind, label, body }: { kind: "good" | "bad"; label: string; body: string }) {
   // Lighter tints than the element bar colors (#4E8368 / #C1503B were 3.8 / 3.6:1 as text).
-  const color = kind === "good" ? COLORS.gold : "#D9917A";
+  const color = kind === "good" ? COLORS.gold : ACCENT.coral;
   return (
     <PageShell>
       <View style={pageStyles.elemMid}>
@@ -1575,18 +1562,18 @@ function UnlockingPage({ strings, failed, onRetry }: { strings: Dictionary; fail
   return (
     <PageShell>
       <View style={pageStyles.paywallMid}>
-        <View style={pageStyles.paywallCard}>
+        <View style={pageStyles.unlockCard}>
           {failed ? (
             <>
-              <Text style={pageStyles.paywallBody}>{strings.report.unlockFailed}</Text>
-              <PressableScale onPress={onRetry} style={pageStyles.paywallRestoreButton} accessibilityRole="button" haptic="none">
-                <Text style={pageStyles.paywallRestoreLabel}>{strings.common.retryLabel}</Text>
+              <Text style={pageStyles.unlockBody}>{strings.report.unlockFailed}</Text>
+              <PressableScale onPress={onRetry} style={pageStyles.unlockRetryButton} accessibilityRole="button" haptic="none">
+                <Text style={pageStyles.unlockRetryLabel}>{strings.common.retryLabel}</Text>
               </PressableScale>
             </>
           ) : (
             <>
               <ActivityIndicator color={COLORS.gold} />
-              <Text style={pageStyles.paywallBody}>{strings.report.unlocking}</Text>
+              <Text style={pageStyles.unlockBody}>{strings.report.unlocking}</Text>
             </>
           )}
         </View>
@@ -1629,66 +1616,34 @@ function PaywallPage({
   const busy = purchasing || restoring;
   return (
     <PageShell>
-      {/* Scrolls only when the card outgrows the page (small phones, large text); on a
-          375×812 screen everything fits and the buy button sits in the first view. */}
+      {/* Scrolls only when the content outgrows the page (small phones, large text). The chapter
+          list is cut to five rows (+N more) so on a 375x812 screen the buy button sits in the first view. */}
       <ScrollView style={pageStyles.paywallScroll} contentContainerStyle={pageStyles.paywallMid} showsVerticalScrollIndicator={false}>
-        <View style={pageStyles.paywallCard}>
-          <Lock size={20} strokeWidth={1.75} color={COLORS.gold} />
-          <Text style={pageStyles.paywallTitle} accessibilityRole="header">{strings.report.paywallTitle}</Text>
-          <Text style={pageStyles.paywallBody}>{strings.report.paywallBody}</Text>
-          {/* The closing page (takeaway, next test, PDF) sits past the lock, so name it here. */}
-          <Text style={pageStyles.paywallExtras}>{strings.report.paywallExtras}</Text>
-          <Text style={pageStyles.paywallLockedNote}>{strings.report.paywallLockedNote(lockedCount, totalCount)}</Text>
-          {lockedChapters.length > 0 && (
-            <View style={pageStyles.paywallChapterList}>
-              {lockedChapters.map((label, i) => (
-                <View key={label} style={[pageStyles.paywallChapterRow, i > 0 && pageStyles.paywallChapterDivider]}>
-                  <Lock size={13} strokeWidth={1.75} color={COLORS.gold} />
-                  <Text style={pageStyles.paywallChapterLabel} numberOfLines={1}>
-                    {label}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          )}
-          {!!decadePreviewLine && <Text style={pageStyles.paywallDecadePreview}>{decadePreviewLine}</Text>}
-
-          <PressableScale
-            style={[pageStyles.paywallBuyButton, busy && pageStyles.paywallButtonDisabled]}
-            onPress={onBuyModule}
-            disabled={busy}
-            accessibilityRole="button"
-            accessibilityLabel={strings.report.paywallBuyLabel(prices.module)}
-            accessibilityState={{ disabled: busy, busy: purchasing }}
-          >
-            {purchasing ? <ActivityIndicator color={COLORS.background} /> : <Text style={pageStyles.paywallBuyButtonLabel}>{strings.report.paywallBuyLabel(prices.module)}</Text>}
-          </PressableScale>
-
-          <Text style={pageStyles.paywallOneTime}>{strings.report.paywallOneTimeNote}</Text>
-
-          {ownedCount < TOTAL_MODULES && (
-            <PressableScale
-              style={[pageStyles.paywallBundleButton, busy && pageStyles.paywallButtonDisabled]}
-              onPress={onBuyBundle}
-              disabled={busy}
-              accessibilityRole="button"
-              accessibilityState={{ disabled: busy }}
-            >
-              <Text style={pageStyles.paywallBundleButtonLabel}>{strings.report.paywallBundleBuyLabel(TOTAL_MODULES, prices.bundle)}</Text>
-              <Text style={pageStyles.paywallBundleSub}>
-                {ownedCount === 0
-                  ? strings.report.paywallBundleSub(prices.fullTotal, prices.discountPercent)
-                  : strings.report.paywallBundleSubOwned(ownedCount, prices.fullTotal)}
-              </Text>
-            </PressableScale>
-          )}
-
-          <PressableScale onPress={onRestore} disabled={busy} style={pageStyles.paywallRestoreButton} accessibilityRole="button" haptic="none">
-            <Text style={pageStyles.paywallRestoreLabel}>{restoring ? strings.report.paywallRestoring : strings.report.paywallRestoreLabel}</Text>
-          </PressableScale>
-
-          {!!purchaseNotice && <Text style={pageStyles.paywallNotice}>{purchaseNotice}</Text>}
-        </View>
+        {/* The closing page (takeaway, next test, PDF) sits past the lock, so name it here. */}
+        <PaywallHeader title={strings.report.paywallTitle} body={strings.report.paywallBody} extras={strings.report.paywallExtras} />
+        <ReportPaywall
+          lockedNote={strings.report.paywallLockedNote(lockedCount, totalCount)}
+          lockedLabels={lockedChapters}
+          maxVisible={5}
+          moreLabel={strings.report.paywallMoreChapters}
+          detailLine={decadePreviewLine}
+          buyLabel={strings.report.paywallBuyLabel(prices.module)}
+          onBuy={onBuyModule}
+          purchasing={purchasing}
+          busy={busy}
+          oneTimeNote={strings.report.paywallOneTimeNote}
+          secondary={
+            ownedCount < TOTAL_MODULES
+              ? {
+                  label: strings.report.paywallBundleBuyLabel(TOTAL_MODULES, prices.bundle),
+                  sub: ownedCount === 0 ? strings.report.paywallBundleSub(prices.fullTotal, prices.discountPercent) : strings.report.paywallBundleSubOwned(ownedCount, prices.fullTotal),
+                  onPress: onBuyBundle,
+                }
+              : undefined
+          }
+          restore={{ label: restoring ? strings.report.paywallRestoring : strings.report.paywallRestoreLabel, onPress: onRestore }}
+          notice={purchaseNotice}
+        />
         <Text style={pageStyles.paywallDisclaimer}>{strings.report.disclaimer1}</Text>
       </ScrollView>
     </PageShell>
@@ -1713,21 +1668,21 @@ const pageStyles = StyleSheet.create({
   shell: { flex: 1, paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xl },
   // Transparent: the pager's backdrop shows through so element pages can tint it (ReportPager pageColors).
   shellDark: { backgroundColor: "transparent" },
-  shellPaper: { backgroundColor: PAPER_BG },
+  shellPaper: { backgroundColor: PAPER.bg },
 
   brandRow: { flexDirection: "row", alignItems: "center", gap: SPACE.sm, marginBottom: SPACE.lg },
-  brandLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 3, color: COLORS.gold, textTransform: "uppercase" },
+  brandLabel: { fontFamily: FONTS.bold, fontSize: 13, letterSpacing: 0.4, color: COLORS.gold },
 
   // Sentence case, like the fortune screen: these labels run to 40+ characters ("What you actually answered · …").
   eyebrow: { fontFamily: FONTS.semibold, fontSize: 13, letterSpacing: 0.2, color: COLORS.gold, marginBottom: SPACE.lg },
-  eyebrowInk: { color: "#5C5237" },
+  eyebrowInk: { color: PAPER.inkSoft },
 
   pageFoot: { marginTop: "auto", flexDirection: "row", justifyContent: "space-between" },
   pageFootText: { fontFamily: FONTS.semibold, fontSize: 12, letterSpacing: 0.2, color: COLORS.footer },
 
   coverMid: { flex: 1, justifyContent: "flex-start", paddingTop: "18%" },
   coverTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 40, lineHeight: 48, letterSpacing: -0.8, color: COLORS.headline, marginBottom: SPACE.xs },
-  coverTitleKo: { fontWeight: "700", letterSpacing: -1 },
+  coverTitleKo: koDisplay(-1),
   coverTitle2: { fontFamily: FONTS.displayItalic, fontVariant: ["lining-nums"], fontSize: 22, lineHeight: 30, color: COLORS.footer, marginTop: SPACE.md },
   coverRule: { width: 48, height: 1, backgroundColor: COLORS.gold, marginVertical: SPACE.lg },
   coverSub: { fontFamily: FONTS.semibold, fontSize: 15, letterSpacing: 0.3, color: COLORS.headline },
@@ -1735,17 +1690,18 @@ const pageStyles = StyleSheet.create({
   coverDecorClip: { overflow: "hidden" },
   // Low enough that petals crossing the title never compete with it.
   coverMapDim: { opacity: 0.2 },
+  coverArtDim: { opacity: 0.5 },
   coverRings: { position: "absolute" },
 
-  tocEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: "#5C5237", marginTop: SPACE.xl, marginBottom: SPACE.md },
-  tocTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 24, lineHeight: 31, color: "#22301F", marginBottom: SPACE.xl },
+  tocEyebrow: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: PAPER.inkSoft, marginTop: SPACE.xl, marginBottom: SPACE.md },
+  tocTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 24, lineHeight: 31, color: PAPER.ink, marginBottom: SPACE.xl },
   // Rows carry their own vertical padding (plus hitSlop) so each is a ~44pt target, not 16pt text.
   tocList: { gap: 0 },
   tocRow: { flexDirection: "row", alignItems: "baseline", gap: SPACE.sm, paddingVertical: SPACE.sm },
-  tocIdx: { fontFamily: FONTS.semibold, fontSize: 12, color: "#5C5237", width: 18 },
-  tocName: { fontFamily: FONTS.semibold, fontSize: 13, color: "#22301F", flexShrink: 1 },
-  tocDots: { flex: 1, borderBottomWidth: 1, borderBottomColor: "#B7A97D", borderStyle: "dotted", marginBottom: SPACE.xs },
-  tocPage: { fontFamily: FONTS.semibold, fontSize: 12, color: "#5C5237" },
+  tocIdx: { fontFamily: FONTS.semibold, fontSize: 12, color: PAPER.inkSoft, width: 18 },
+  tocName: { fontFamily: FONTS.semibold, fontSize: 13, color: PAPER.ink, flexShrink: 1 },
+  tocDots: { flex: 1, borderBottomWidth: 1, borderBottomColor: PAPER.rule, borderStyle: "dotted", marginBottom: SPACE.xs },
+  tocPage: { fontFamily: FONTS.semibold, fontSize: 12, color: PAPER.inkSoft },
 
   narrativeMid: { flex: 1, justifyContent: "flex-start", paddingTop: "16%" },
   narrativeBody: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 19, lineHeight: 31, color: COLORS.headline },
@@ -1818,7 +1774,7 @@ const pageStyles = StyleSheet.create({
 
   chatQuoteBox: { backgroundColor: "rgba(62,110,160,0.08)", borderWidth: 1, borderColor: "rgba(62,110,160,0.35)", borderRadius: RADIUS.sm, padding: SPACE.lg, marginVertical: SPACE.lg },
   chatQuoteHeader: { flexDirection: "row", alignItems: "center", gap: SPACE.sm, marginBottom: SPACE.sm },
-  chatQuoteLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: "#7FA8D6" },
+  chatQuoteLabel: { fontFamily: FONTS.bold, fontSize: 12, letterSpacing: 0.2, color: ACCENT.sky },
   chatQuoteText: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 15, lineHeight: 24, color: COLORS.headline },
 
   breatherLabelBox: {
@@ -1849,25 +1805,9 @@ const pageStyles = StyleSheet.create({
 
   paywallScroll: { flex: 1 },
   paywallMid: { flexGrow: 1, justifyContent: "center", paddingVertical: SPACE.xs },
-  paywallCard: { alignItems: "center", backgroundColor: "rgba(111,169,139,0.06)", borderWidth: 1, borderColor: "rgba(111,169,139,0.3)", borderRadius: RADIUS.md, paddingHorizontal: SPACE.xl, paddingVertical: SPACE.xl, gap: SPACE.sm, width: "100%" },
-  paywallChapterList: { alignSelf: "stretch", borderTopWidth: 1, borderBottomWidth: 1, borderColor: "rgba(111,169,139,0.18)", marginBottom: SPACE.xs },
-  paywallChapterRow: { flexDirection: "row", alignItems: "center", gap: SPACE.md, minHeight: 30, paddingHorizontal: SPACE.xs },
-  paywallChapterDivider: { borderTopWidth: 1, borderTopColor: "rgba(111,169,139,0.1)" },
-  paywallChapterLabel: { flex: 1, fontFamily: FONTS.medium, fontSize: 13, color: COLORS.headline },
-  paywallTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 19, color: COLORS.headline, textAlign: "center", marginTop: SPACE.xs },
-  paywallBody: { fontFamily: FONTS.regular, fontSize: 13, lineHeight: 21, color: COLORS.headline, textAlign: "center" },
-  paywallExtras: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.subheadline, textAlign: "center", marginTop: SPACE.xs },
-  paywallButtonDisabled: { opacity: 0.6 },
-  paywallBuyButton: { width: "100%", backgroundColor: COLORS.gold, borderRadius: RADIUS.sm, paddingVertical: SPACE.lg, alignItems: "center", marginTop: SPACE.sm },
-  paywallBuyButtonLabel: { fontFamily: FONTS.bold, fontSize: 14, color: COLORS.background },
-  paywallOneTime: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.footer, textAlign: "center" },
-  paywallBundleButton: { width: "100%", borderWidth: 1, borderColor: "rgba(111,169,139,0.4)", borderRadius: RADIUS.sm, paddingVertical: SPACE.md, alignItems: "center", gap: SPACE.xs },
-  paywallBundleButtonLabel: { fontFamily: FONTS.bold, fontSize: 13, color: COLORS.headline },
-  paywallBundleSub: { fontFamily: FONTS.regular, fontSize: 12, color: COLORS.subheadline, textAlign: "center" },
-  paywallLockedNote: { fontFamily: FONTS.semibold, fontSize: 12.5, color: COLORS.gold, textAlign: "center" },
-  paywallDecadePreview: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 19, color: COLORS.headline, textAlign: "center" },
-  paywallRestoreButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: SPACE.sm },
+  unlockCard: { alignItems: "center", backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, paddingHorizontal: SPACE.xl, paddingVertical: SPACE.xl, gap: SPACE.sm, width: "100%", ...SHADOW.raised },
+  unlockBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: COLORS.headline, textAlign: "center" },
+  unlockRetryButton: { minHeight: 44, justifyContent: "center", paddingHorizontal: SPACE.sm },
+  unlockRetryLabel: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.gold, textDecorationLine: "underline" },
   paywallDisclaimer: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.subheadline, textAlign: "center", marginTop: SPACE.lg, paddingHorizontal: SPACE.sm },
-  paywallRestoreLabel: { fontFamily: FONTS.semibold, fontSize: 12, color: COLORS.subheadline, marginTop: SPACE.xs, textDecorationLine: "underline" },
-  paywallNotice: { fontFamily: FONTS.regular, fontSize: 12, lineHeight: 17, color: COLORS.danger, textAlign: "center", marginTop: SPACE.xs },
 });

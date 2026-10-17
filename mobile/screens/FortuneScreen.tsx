@@ -10,7 +10,7 @@ import Coins from "lucide-react-native/icons/coins";
 import Heart from "lucide-react-native/icons/heart";
 import Share2 from "lucide-react-native/icons/share-2";
 import Sparkles from "lucide-react-native/icons/sparkles";
-import { AccessibilityInfo, ActivityIndicator, Animated, Easing, Linking, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Animated, Easing, Linking, ScrollView, StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Reanimated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import Text from "../components/AppText";
@@ -43,7 +43,7 @@ import { COLORS } from "../theme/colors";
 import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import Reveal from "../components/motion/Reveal";
 import { readableColumn } from "../theme/layout";
-import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE, koDisplay } from "../theme/fonts";
 import { SPRING } from "../theme/motion";
 import TextShareCard, { shareCardImage } from "../components/TextShareCard";
 import FeedbackRow from "../components/FeedbackRow";
@@ -461,25 +461,18 @@ export default function FortuneScreen({
 
   useEffect(() => {
     if (!revealed) return;
-    let cancelled = false;
-    AccessibilityInfo.isReduceMotionEnabled()
-      .catch(() => false)
-      .then((reduceMotion) => {
-        if (cancelled) return;
-        if (reduceMotion) {
-          sectionAnims.forEach((anim) => anim.setValue(1));
-          return;
-        }
-        Animated.stagger(
-          80,
-          sectionAnims.map((anim) => Animated.timing(anim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true })),
-        ).start();
-      });
-    return () => {
-      cancelled = true;
-    };
+    if (reduceMotion) {
+      sectionAnims.forEach((anim) => anim.setValue(1));
+      return;
+    }
+    const run = Animated.stagger(
+      80,
+      sectionAnims.map((anim) => Animated.timing(anim, { toValue: 1, duration: 420, easing: Easing.out(Easing.cubic), useNativeDriver: true })),
+    );
+    run.start();
+    return () => run.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [revealed]);
+  }, [revealed, reduceMotion]);
 
   function sectionStyle(index: number) {
     const anim = sectionAnims[index];
@@ -1145,7 +1138,7 @@ const styles = StyleSheet.create({
   backButton: { flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", padding: SPACE.sm, marginLeft: -SPACE.sm, marginBottom: SPACE.md, minHeight: 44 },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 32, lineHeight: 40, letterSpacing: -0.6, color: COLORS.headline, marginBottom: SPACE.lg },
-  headingKo: { fontWeight: "700", letterSpacing: -0.8 },
+  headingKo: koDisplay(-0.8),
   shareRow: { flexDirection: "row", alignItems: "center", gap: SPACE.sm, alignSelf: "flex-start", minHeight: 44, marginTop: SPACE.sm },
   shareLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.gold },
   freeReadingCard: { marginBottom: SPACE.lg, gap: SPACE.sm },
@@ -1257,7 +1250,7 @@ const styles = StyleSheet.create({
   heroWaveToday: { width: "auto", alignSelf: "stretch", marginHorizontal: -SPACE.xl, marginTop: -SPACE.xl, marginBottom: SPACE.md },
   heroKickerToday: { fontFamily: FONTS.medium, fontSize: 12, letterSpacing: 1.2, color: COLORS.subheadline },
   heroRhythmToday: { fontFamily: FONTS.display, fontSize: 44, lineHeight: 50, letterSpacing: -1, color: COLORS.headline, marginTop: SPACE.sm },
-  heroRhythmTodayKo: { fontWeight: "700", letterSpacing: -1.2 },
+  heroRhythmTodayKo: koDisplay(-1.2),
   heroHeadlineToday: { borderLeftWidth: 3, borderLeftColor: COLORS.gold, paddingLeft: SPACE.lg, color: COLORS.headline },
   heroHeadlineTodayItalic: { fontFamily: FONTS.displayItalic, fontSize: 20, lineHeight: 28 },
   heroHeadlineTodayKo: { fontSize: 18, lineHeight: 28, fontWeight: "600" },

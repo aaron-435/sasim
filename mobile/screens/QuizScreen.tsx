@@ -25,6 +25,7 @@ import {
   type ProfileClassification,
   type QuizAnswerRecord,
 } from "../lib/quiz/quizProfile";
+import { clearQuizProgress, loadQuizProgress, saveQuizProgress } from "../lib/quizProgressStorage";
 import useReducedMotion from "../lib/useReducedMotion";
 import { COLORS } from "../theme/colors";
 import { EASING } from "../theme/motion";
@@ -90,6 +91,34 @@ export default function QuizScreen({
   const questionOpacity = useSharedValue(0);
   const questionX = useSharedValue(0);
   const fillX = useSharedValue(0);
+
+  // Resume: answers saved by an earlier, unfinished run of this module (same language).
+  // `loaded` keeps question 1 from flashing before the saved position is applied.
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    loadQuizProgress(moduleDef.id, locale).then((saved) => {
+      if (cancelled) return;
+      const valid = saved.length > 0 && saved.length < questions.length && saved.every((a, i) => a.qId === questions[i]?.id);
+      if (valid) {
+        setAnswers(saved);
+        setIndex(saved.length);
+      }
+      setLoaded(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [moduleDef.id, locale, questions]);
+
+  useEffect(() => {
+    if (!loaded || done) return;
+    if (answers.length > 0) saveQuizProgress(moduleDef.id, locale, answers);
+  }, [answers, loaded, done, moduleDef.id, locale]);
+
+  useEffect(() => {
+    if (done) clearQuizProgress(moduleDef.id);
+  }, [done, moduleDef.id]);
 
   const current = questions[index];
   const progress = done ? 1 : index / questions.length;
@@ -170,6 +199,7 @@ export default function QuizScreen({
   }
 
   function handleRestart() {
+    clearQuizProgress(moduleDef.id);
     setIndex(0);
     setAnswers([]);
     setSliderValue(5);
@@ -223,6 +253,8 @@ export default function QuizScreen({
     }
     onComplete(diagnosis);
   }
+
+  if (!loaded) return <SafeAreaView style={styles.root} />;
 
   if (done && diagnosis) {
     const dominantElement = diagnosis.dominantElement;

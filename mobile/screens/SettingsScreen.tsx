@@ -285,7 +285,7 @@ export default function SettingsScreen({
             <Text style={styles.resetLabel}>{strings.settings.resetButton}</Text>
           </PressableScale>
 
-          <Text style={styles.copyright}>© 2026 Studio Aron</Text>
+          <Text style={styles.copyright}>© 2026 Studio Aaron</Text>
         </Reveal>
       </ScrollView>
     </SafeAreaView>

@@ -3,7 +3,7 @@ import ArrowRight from "lucide-react-native/icons/arrow-right";
 import ChevronDown from "lucide-react-native/icons/chevron-down";
 import ChevronUp from "lucide-react-native/icons/chevron-up";
 import Sparkles from "lucide-react-native/icons/sparkles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import ModuleArt from "../components/ModuleArt";
@@ -12,11 +12,12 @@ import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
 import { useLocale, useStrings } from "../lib/i18n";
 import { MODULES, moduleDisplayTitle, type ModuleDefinition } from "../lib/quiz/modules";
+import { loadAllQuizProgress } from "../lib/quizProgressStorage";
 import type { Track } from "../lib/userConcern";
 import { COLORS } from "../theme/colors";
 import { readableColumn } from "../theme/layout";
 import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
-import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
+import { FONTS, MAX_FONT_SCALE, koDisplay } from "../theme/fonts";
 
 // Ported from components/ModuleSelect.jsx — picks which of the 30-question modules (12 since 2026-10-06)
 // to run. Same list web uses (lib/modules.ts, copied verbatim into mobile/lib/quiz/).
@@ -44,6 +45,18 @@ export default function ModuleSelectScreen({
   const { locale } = useLocale();
   const [showAll, setShowAll] = useState(false);
   const t = strings.moduleSelect;
+  // moduleId -> questions already answered (unfinished runs), so a card can say "continue".
+  const [progress, setProgress] = useState<Record<string, number>>({});
+  useEffect(() => {
+    let cancelled = false;
+    loadAllQuizProgress(MODULES.map((m) => m.id), locale).then((p) => {
+      if (!cancelled) setProgress(p);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [locale]);
+  const metaOf = (id: string) => (progress[id] ? t.resumeMeta(progress[id] + 1) : t.meta);
 
   const recommendedIds = RECOMMENDED_IDS[preferredTrack ?? "none"];
   const recommended = recommendedIds
@@ -89,14 +102,14 @@ export default function ModuleSelectScreen({
               onPress={() => onSelect(featured.id)}
               pressedScale={0.97}
               accessibilityRole="button"
-              accessibilityLabel={`${titleOf(featured)}. ${t.blurbs[featured.id] ?? ""} ${t.meta}`}
+              accessibilityLabel={`${titleOf(featured)}. ${t.blurbs[featured.id] ?? ""} ${metaOf(featured.id)}`}
             >
               <ModuleArt moduleId={featured.id} size="large" style={styles.featuredArt} />
               <View style={styles.featuredBody}>
                 <View style={styles.featuredText}>
                   <Text style={styles.featuredTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{titleOf(featured)}</Text>
                   <Text style={styles.featuredBlurb} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.blurbs[featured.id]}</Text>
-                  <Text style={styles.featuredMeta} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.meta}</Text>
+                  <Text style={styles.featuredMeta} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{metaOf(featured.id)}</Text>
                 </View>
                 <ArrowRight size={18} strokeWidth={2.25} color={COLORS.gold} />
               </View>
@@ -113,13 +126,13 @@ export default function ModuleSelectScreen({
                   onPress={() => onSelect(m.id)}
                   pressedScale={0.97}
                   accessibilityRole="button"
-                  accessibilityLabel={`${titleOf(m)}. ${t.blurbs[m.id] ?? ""} ${t.meta}`}
+                  accessibilityLabel={`${titleOf(m)}. ${t.blurbs[m.id] ?? ""} ${metaOf(m.id)}`}
                 >
                   <ModuleArt moduleId={m.id} size="small" style={styles.halfArt} />
                   <View style={styles.halfBody}>
                     <Text style={styles.halfTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{titleOf(m)}</Text>
                     <Text style={styles.halfBlurb} numberOfLines={2} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.blurbs[m.id]}</Text>
-                    <Text style={styles.halfMeta} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.meta}</Text>
+                    <Text style={styles.halfMeta} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{metaOf(m.id)}</Text>
                   </View>
                 </PressableScale>
               </Reveal>
@@ -157,12 +170,13 @@ export default function ModuleSelectScreen({
                     onPress={() => onSelect(m.id)}
                     pressedScale={0.97}
                     accessibilityRole="button"
-                    accessibilityLabel={`${titleOf(m)}. ${t.blurbs[m.id] ?? ""}`}
+                    accessibilityLabel={`${titleOf(m)}. ${t.blurbs[m.id] ?? ""}${progress[m.id] ? ` ${t.resumeMeta(progress[m.id] + 1)}` : ""}`}
                   >
                     <ModuleArt moduleId={m.id} size="small" style={styles.gridArt} />
                     <View style={styles.gridBody}>
                       <Text style={styles.gridTitle} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{titleOf(m)}</Text>
                       <Text style={styles.gridBlurb} numberOfLines={2} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.blurbs[m.id]}</Text>
+                      {progress[m.id] ? <Text style={styles.halfMeta} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{t.resumeMeta(progress[m.id] + 1)}</Text> : null}
                     </View>
                   </PressableScale>
                 </Reveal>
@@ -225,10 +239,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.6,
     color: COLORS.headline,
   },
-  headingKo: {
-    fontWeight: "700",
-    letterSpacing: -0.8,
-  },
+  headingKo: koDisplay(-0.8),
   sectionTitle: {
     fontFamily: FONTS.semibold,
     fontSize: 15,
