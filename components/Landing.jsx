@@ -26,6 +26,8 @@ export default function Landing({ onStart }) {
   const t = useStrings();
   const { locale, setLocale } = useLocale();
   const l = t.landing;
+  // The type card carries its own continue button; while it is open the sticky bar would sit on its bottom text.
+  const [cardShown, setCardShown] = React.useState(false);
 
   React.useEffect(() => {
     trackLandingView();
@@ -59,7 +61,7 @@ export default function Landing({ onStart }) {
         .lp-header { display: flex; align-items: center; justify-content: space-between; padding-top: 22px; gap: 12px; flex-wrap: wrap; }
         .lp-brand { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: 0.16em; color: #6FA98B; text-transform: uppercase; }
         .lp-langs { display: flex; gap: 6px; }
-        .lp-lang { background: transparent; border: 1px solid #26332B; color: #9C9277; border-radius: 999px; padding: 6px 12px; font-size: 12px; cursor: pointer; min-height: 32px; }
+        .lp-lang { background: transparent; border: 1px solid #26332B; color: #9C9277; border-radius: 999px; padding: 6px 14px; font-size: 13px; cursor: pointer; min-height: 44px; min-width: 44px; }
         .lp-lang[aria-pressed="true"] { background: rgba(111,169,139,0.14); border-color: rgba(111,169,139,0.4); color: #6FA98B; }
         .lp-hero { padding: 72px 0 56px; max-width: 720px; }
         .lp-h1 { font-size: clamp(34px, 6.4vw, 56px); line-height: 1.12; margin: 0; }
@@ -74,7 +76,7 @@ export default function Landing({ onStart }) {
         .lp-card { background: rgba(255,255,255,0.03); border: 1px solid #26332B; border-radius: 16px; padding: 22px; }
         .lp-card h3 { margin: 0 0 8px; font-size: 17px; font-weight: 600; color: #D9C9A3; }
         .lp-card p { margin: 0; font-size: 14.5px; line-height: 1.65; color: #9C9277; }
-        .lp-link { color: #6FA98B; text-decoration: underline; }
+        .lp-link { color: #6FA98B; text-decoration: underline; display: inline-block; padding: 14px 4px; margin: -14px -4px; }
         .lp-small { font-size: 13px; color: #9C9277; margin: 16px 0 0; }
         .lp-pages { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
         .lp-page { background: #16261d; border: 1px solid #26332B; border-radius: 14px; padding: 20px; min-height: 280px; position: relative; overflow: hidden; }
@@ -99,11 +101,11 @@ export default function Landing({ onStart }) {
         .lp-faq p { margin: 10px 0 0; font-size: 14.5px; line-height: 1.7; color: #9C9277; max-width: 680px; }
         .lp-bottom { text-align: left; }
         .lp-legal { font-size: 12px; line-height: 1.8; color: #9C9277; margin: 20px 0 0; }
-        .lp-legal a { color: #9C9277; text-decoration: underline; }
+        .lp-legal a { color: #9C9277; text-decoration: underline; display: inline-block; padding: 12px 4px; margin: -12px -4px; }
         .lp-copy { font-size: 12px; color: #756B54; margin: 28px 0 0; }
         .lp-sticky { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 22px calc(12px + env(safe-area-inset-bottom)); background: rgba(18,32,25,0.94); border-top: 1px solid #26332B; display: none; z-index: 20; }
         .lp-sticky .lp-cta { width: 100%; margin: 0; }
-        @media (max-width: 640px) { .lp-sticky { display: block; } .lp-hero { padding: 44px 0 40px; } }
+        @media (max-width: 640px) { .lp-sticky { display: block; } .lp-sticky[data-hidden="true"] { display: none; } .lp-hero { padding: 44px 0 40px; } }
         .lp-root button:focus-visible, .lp-root a:focus-visible, .lp-root summary:focus-visible { outline: 2px solid #6FA98B; outline-offset: 3px; }
       ` }} />
 
@@ -133,7 +135,7 @@ export default function Landing({ onStart }) {
           <p className="lp-trust">{l.trust}</p>
         </section>
 
-        <LandingTypeCard t={t} locale={locale} onContinue={() => start("type_card")} />
+        <LandingTypeCard t={t} locale={locale} onContinue={() => start("type_card")} onRevealChange={setCardShown} />
 
         <section className="lp-section" aria-labelledby="lp-features">
           <h2 id="lp-features" className="lp-serif lp-h2">{l.featuresTitle}</h2>
@@ -205,11 +207,11 @@ export default function Landing({ onStart }) {
           <p className="lp-note">{l.ctaNote}</p>
           {legalNotice}
           <p className="lp-small">{l.appNote}</p>
-          <p className="lp-copy">© 2026 Studio Aron</p>
+          <p className="lp-copy">© 2026 Studio Aaron</p>
         </section>
       </div>
 
-      <div className="lp-sticky">
+      <div className="lp-sticky" data-hidden={cardShown}>
         <button type="button" className="lp-cta" onClick={() => start("sticky")}>
           {l.cta} <ArrowRight size={18} strokeWidth={2.25} aria-hidden="true" />
         </button>

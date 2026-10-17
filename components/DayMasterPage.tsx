@@ -26,9 +26,9 @@ const CSS = `
   .dm-serif { font-family: 'Cormorant Garamond', 'Noto Sans KR', serif; font-weight: 500; }
   .dm-wrap { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 16px; }
   .dm-header { display: flex; align-items: center; justify-content: space-between; padding-top: 22px; gap: 12px; flex-wrap: wrap; }
-  .dm-brand { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: 0.16em; color: #6FA98B; text-transform: uppercase; text-decoration: none; min-height: 32px; }
+  .dm-brand { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: 0.16em; color: #6FA98B; text-transform: uppercase; text-decoration: none; min-height: 44px; }
   .dm-langs { display: flex; gap: 6px; }
-  .dm-lang { border: 1px solid #26332B; color: #9C9277; border-radius: 999px; padding: 6px 12px; font-size: 12px; min-height: 32px; display: inline-flex; align-items: center; text-decoration: none; }
+  .dm-lang { border: 1px solid #26332B; color: #9C9277; border-radius: 999px; padding: 6px 12px; font-size: 12px; min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; text-decoration: none; }
   .dm-lang[aria-current="page"] { background: rgba(111,169,139,0.14); border-color: rgba(111,169,139,0.4); color: #6FA98B; }
   .dm-crumb { margin: 36px 0 0; font-size: 13px; }
   .dm-crumb a { color: #6FA98B; text-decoration: none; }
@@ -45,7 +45,7 @@ const CSS = `
   .dm-card strong { font-size: 17px; font-weight: 600; }
   .dm-card span { font-size: 13px; color: #9C9277; }
   .dm-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-  .dm-link { border: 1px solid #26332B; border-radius: 999px; padding: 8px 14px; font-size: 14px; color: #D9C9A3; text-decoration: none; min-height: 40px; display: inline-flex; align-items: center; }
+  .dm-link { border: 1px solid #26332B; border-radius: 999px; padding: 8px 14px; font-size: 14px; color: #D9C9A3; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
   .dm-box { margin-top: 36px; padding: 20px; border-radius: 16px; background: rgba(111,169,139,0.08); border: 1px solid rgba(111,169,139,0.25); }
   .dm-box h2 { margin: 0; font-size: 18px; font-weight: 600; }
   .dm-box p { margin: 8px 0 0; font-size: 14.5px; line-height: 1.7; color: #9C9277; }
@@ -60,7 +60,7 @@ function Shell({ locale, langHref, children }: { locale: Locale; langHref: (l: L
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
       <div className="dm-wrap">
         <header className="dm-header">
-          <a className="dm-brand" href="/"><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
+          <a className="dm-brand" href={locale === "en" ? "/" : `/?lang=${locale}`}><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
           <nav className="dm-langs" aria-label={t.landing.langLabel}>
             {LOCALES.map((code) => (
               <a key={code} className="dm-lang" href={langHref(code)} hrefLang={code} aria-current={code === locale ? "page" : undefined}>
@@ -73,7 +73,7 @@ function Shell({ locale, langHref, children }: { locale: Locale; langHref: (l: L
         <section className="dm-box" aria-labelledby="dm-app-title">
           <h2 id="dm-app-title">{t.calculator.appTitle}</h2>
           <p>{t.calculator.appBody}</p>
-          <a className="dm-cta" href="/">{t.calculator.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
+          <a className="dm-cta" href={locale === "en" ? "/" : `/?lang=${locale}`}>{t.calculator.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
         </section>
       </div>
     </main>

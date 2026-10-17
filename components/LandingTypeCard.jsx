@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import QuickBirthForm, { fetchQuickSaju } from "@/components/QuickBirthForm";
 import { formatSajuTypeName, getTypePieces } from "@/lib/sajuTypeContent";
 import { logEvent } from "@/lib/analytics";
+import { saveLandingBirth, clearLandingBirth } from "@/lib/landingBirth";
 
 /**
  * LandingTypeCard — the landing's "first wow" (SPEC 2026-10-05 §2): a birth date alone gives
@@ -15,7 +16,7 @@ import { logEvent } from "@/lib/analytics";
  * The celebrity list is ~2,000 lines of data, so it's loaded only once a card is shown
  * instead of weighing on every landing visit.
  */
-export default function LandingTypeCard({ t, locale, onContinue }) {
+export default function LandingTypeCard({ t, locale, onContinue, onRevealChange }) {
   const c = t.typeCard;
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState(null);
@@ -23,6 +24,12 @@ export default function LandingTypeCard({ t, locale, onContinue }) {
   const [celebs, setCelebs] = React.useState([]);
   const [celebModule, setCelebModule] = React.useState(null);
   const resultRef = React.useRef(null);
+
+  // Lets the landing hide its sticky CTA while the card (which has its own) is on screen.
+  React.useEffect(() => {
+    onRevealChange?.(Boolean(type));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
 
   React.useEffect(() => {
     if (!type) return;
@@ -48,6 +55,7 @@ export default function LandingTypeCard({ t, locale, onContinue }) {
       const result = await fetchQuickSaju(dob);
       if (!result?.sajuType) throw new Error("no type");
       setType(result.sajuType);
+      saveLandingBirth(dob); // onboarding picks this up so it does not ask for the date again
       logEvent("type_reveal_view", { surface: "landing", kind: result.sajuType.code }, locale);
       requestAnimationFrame(() => resultRef.current?.focus());
     } catch {
@@ -60,6 +68,7 @@ export default function LandingTypeCard({ t, locale, onContinue }) {
   const reset = () => {
     setType(null);
     setError(null);
+    clearLandingBirth();
   };
 
   const pieces = type ? getTypePieces(locale, type) : null;
@@ -70,6 +79,7 @@ export default function LandingTypeCard({ t, locale, onContinue }) {
         .tc-wrap { max-width: 640px; }
         .tc-body { font-size: 15px; line-height: 1.7; color: #9C9277; margin: -12px 0 22px; }
         .tc-card { background: #16261d; border: 1px solid rgba(111,169,139,0.35); border-radius: 18px; padding: 26px 22px; }
+        .tc-card { scroll-margin-bottom: 24px; }
         .tc-card:focus { outline: none; }
         .tc-card:focus-visible { outline: 2px solid #6FA98B; outline-offset: 3px; }
         .tc-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #6FA98B; margin: 0; }

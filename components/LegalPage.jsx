@@ -16,8 +16,13 @@ import { getDictionary } from "@/lib/i18n";
  * param and passes it straight down; getDictionary() is a plain
  * function, so this stays a normal Server Component.
  */
-export default function LegalPage({ title, updatedAt, locale = "ko", children }) {
+const LANG_LABELS = { ko: "한국어", en: "English", es: "Español" };
+
+export default function LegalPage({ title, updatedAt, locale = "ko", path = "/privacy", children }) {
   const t = getDictionary(locale);
+  // Same URL rule as lib/legalMeta.ts: ko is the bare path, en/es carry ?lang=.
+  const urlFor = (l) => (l === "ko" ? path : `${path}?lang=${l}`);
+  const homeHref = locale === "en" ? "/" : `/?lang=${locale}`;
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#122019", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `
@@ -31,16 +36,27 @@ export default function LegalPage({ title, updatedAt, locale = "ko", children })
         .lg-root li { font-size: 14px; line-height: 1.8; color: #C4BCA0; margin-bottom: 6px; }
         .lg-root strong { color: #D9C9A3; font-weight: 700; }
         .lg-root a { color: #6FA98B; }
-        .lg-back:focus-visible, .lg-root a:focus-visible { outline: 2px solid #6FA98B; outline-offset: 2px; }
+        .lg-back { min-height: 44px; }
+        .lg-langs { display: flex; gap: 4px; margin: 0 0 20px; }
+        .lg-lang { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 0 12px; border-radius: 999px; border: 1px solid #26332B; color: #C4BCA0 !important; font-size: 13px; text-decoration: none; }
+        .lg-lang[aria-current="page"] { border-color: #6FA98B; color: #D9C9A3 !important; background: rgba(111,169,139,0.1); }
+        .lg-back:focus-visible, .lg-lang:focus-visible, .lg-root a:focus-visible { outline: 2px solid #6FA98B; outline-offset: 2px; }
       ` }} />
       <div className="lg-root" style={{ width: "100%", maxWidth: "640px", padding: "40px 24px 80px" }}>
-        <Link href="/" className="lg-back" style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "#756B54", fontSize: "13px", textDecoration: "none", marginBottom: "28px" }}>
+        <Link href={homeHref} className="lg-back" style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "#756B54", fontSize: "13px", textDecoration: "none", marginBottom: "8px" }}>
           <ArrowLeft size={14} strokeWidth={2} /> {t.legal.backLink}
         </Link>
+        <nav className="lg-langs" aria-label="Language">
+          {Object.keys(LANG_LABELS).map((l) => (
+            <Link key={l} href={urlFor(l)} lang={l} hrefLang={l} className="lg-lang" aria-current={l === locale ? "page" : undefined}>
+              {LANG_LABELS[l]}
+            </Link>
+          ))}
+        </nav>
         <h1 className="lg-serif" style={{ fontSize: "28px", fontWeight: 600, color: "#D9C9A3", margin: "0 0 6px" }}>{title}</h1>
         <p style={{ fontSize: "12px", color: "#756B54", margin: "0 0 32px" }}>{t.legal.effectiveDatePrefix} {updatedAt}</p>
         {children}
-        <p style={{ fontSize: "12px", color: "#756B54", margin: "40px 0 0" }}>© 2026 Studio Aron</p>
+        <p style={{ fontSize: "12px", color: "#756B54", margin: "40px 0 0" }}>© 2026 Studio Aaron</p>
       </div>
     </div>
   );

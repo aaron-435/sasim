@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { DayMasterArticlePage } from "@/components/DayMasterPage";
-import { requestLocale } from "@/lib/seoArticles/requestLocale";
+import { explicitLocale, requestLocale } from "@/lib/seoArticles/requestLocale";
 import { articlePath, getArticle } from "@/lib/seoArticles";
 
 // One Day Master, one language per page (SPEC C1). Unknown or unpublished slugs are 404.
@@ -12,7 +12,7 @@ export function generateMetadata({ params, searchParams }: Props): Metadata {
   const locale = requestLocale(searchParams?.lang);
   const article = getArticle(params.type, locale);
   if (!article) return {};
-  const path = articlePath(params.type, locale);
+  const path = articlePath(params.type, explicitLocale(searchParams?.lang)); // see app/day-master/page.tsx
   return {
     title: article.metaTitle,
     description: article.description,

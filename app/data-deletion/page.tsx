@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { legalMetadata } from "@/lib/legalMeta";
 import LegalPage from "@/components/LegalPage";
 import { getDictionary, LOCALES, type Locale } from "@/lib/i18n";
 
@@ -49,9 +51,9 @@ const BODY: Record<Locale, { intro: string; stepsHeading: string; steps: string[
 const CONTACT_EMAIL = "435deed@gmail.com";
 const UPDATED_AT = "2026-09-14";
 
-export const metadata = {
-  title: "Fatesaid — Data Deletion",
-};
+export function generateMetadata({ searchParams }: { searchParams?: { lang?: string } }): Metadata {
+  return legalMetadata("/data-deletion", searchParams?.lang);
+}
 
 export default function DataDeletionPage({ searchParams }: { searchParams?: { lang?: string } }) {
   const locale: Locale = (LOCALES as string[]).includes(searchParams?.lang ?? "") ? (searchParams!.lang as Locale) : "ko";
@@ -59,7 +61,7 @@ export default function DataDeletionPage({ searchParams }: { searchParams?: { la
   const body = BODY[locale];
 
   return (
-    <LegalPage title={TITLE[locale]} updatedAt={UPDATED_AT} locale={locale}>
+    <LegalPage title={TITLE[locale]} updatedAt={UPDATED_AT} locale={locale} path="/data-deletion">
       <p>{body.intro}</p>
       <h2>{body.stepsHeading}</h2>
       <ul>

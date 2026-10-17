@@ -117,9 +117,9 @@ export default function InviteAccept({ code, locale, state, senderName }) {
         .iv-serif { font-family: 'Cormorant Garamond', 'Noto Sans KR', serif; font-weight: 500; }
         .iv-wrap { width: 100%; max-width: 560px; margin: 0 auto; padding: 0 16px; }
         .iv-header { display: flex; align-items: center; justify-content: space-between; padding-top: 22px; gap: 12px; flex-wrap: wrap; }
-        .iv-brand { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: 0.16em; color: #6FA98B; text-transform: uppercase; text-decoration: none; min-height: 32px; }
+        .iv-brand { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: 0.16em; color: #6FA98B; text-transform: uppercase; text-decoration: none; min-height: 44px; }
         .iv-langs { display: flex; gap: 6px; }
-        .iv-lang { border: 1px solid #26332B; color: #9C9277; border-radius: 999px; padding: 6px 12px; font-size: 12px; min-height: 32px; display: inline-flex; align-items: center; text-decoration: none; }
+        .iv-lang { border: 1px solid #26332B; color: #9C9277; border-radius: 999px; padding: 6px 12px; font-size: 12px; min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; text-decoration: none; }
         .iv-lang[aria-current="page"] { background: rgba(111,169,139,0.14); border-color: rgba(111,169,139,0.4); color: #6FA98B; }
         .iv-eyebrow { font-size: 13px; font-weight: 700; color: #6FA98B; margin: 44px 0 0; }
         .iv-h1 { font-size: clamp(32px, 7vw, 46px); line-height: 1.14; margin: 8px 0 0; }
@@ -145,7 +145,7 @@ export default function InviteAccept({ code, locale, state, senderName }) {
       ` }} />
       <div className="iv-wrap">
         <header className="iv-header">
-          <a className="iv-brand" href="/"><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
+          <a className="iv-brand" href={locale === "en" ? "/" : `/?lang=${locale}`}><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
           <nav className="iv-langs" aria-label={t.landing.langLabel}>
             {LOCALES.map((l) => (
               <a key={l} className="iv-lang" href={`/c/${code}?lang=${l}`} hrefLang={l} aria-current={l === locale ? "page" : undefined}>
@@ -181,7 +181,7 @@ export default function InviteAccept({ code, locale, state, senderName }) {
         <section className="iv-app" aria-labelledby="iv-app-title">
           <h2 id="iv-app-title">{c.appTitle}</h2>
           <p>{c.appBody}</p>
-          <a className="iv-cta" href="/">{t.calculator.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
+          <a className="iv-cta" href={locale === "en" ? "/" : `/?lang=${locale}`}>{t.calculator.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
         </section>
       </div>
     </main>

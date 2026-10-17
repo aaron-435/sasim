@@ -6,6 +6,7 @@ import LoadingReveal from "./LoadingReveal";
 import ErrorNotice from "./ErrorNotice";
 import { useStrings, useLocale, LOCALES } from "@/lib/i18n";
 import { dobFieldOrder, dobSeparator } from "@/lib/dobOrder";
+import { loadLandingBirth } from "@/lib/landingBirth";
 
 const LOCALE_LABELS = { ko: "한국어", en: "English", es: "Español" };
 
@@ -136,9 +137,14 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
 
   const [nickname, setNickname] = useState("");
   const [isFemale, setIsFemale] = useState(null);
-  const [dobYear, setDobYear] = useState("");
-  const [dobMonth, setDobMonth] = useState("");
-  const [dobDay, setDobDay] = useState("");
+  // The landing's type card leaves the birth date in sessionStorage (lib/landingBirth.ts). If it is
+  // there, the dob step is skipped and the tob step shows the date with a "Change" button instead.
+  // Read once on mount: this wizard only renders client-side after the landing's CTA click.
+  const [landingDob] = useState(() => (typeof window === "undefined" ? null : loadLandingBirth()));
+  const [dobPrefilled, setDobPrefilled] = useState(Boolean(landingDob));
+  const [dobYear, setDobYear] = useState(landingDob ? String(landingDob.year) : "");
+  const [dobMonth, setDobMonth] = useState(landingDob ? String(landingDob.month).padStart(2, "0") : "");
+  const [dobDay, setDobDay] = useState(landingDob ? String(landingDob.day).padStart(2, "0") : "");
   const [timeUnknown, setTimeUnknown] = useState(false);
   const [hour12, setHour12] = useState("");
   const [minuteInput, setMinuteInput] = useState("");
@@ -147,6 +153,9 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
   const [selectedCity, setSelectedCity] = useState(null);
   const [cityResults, setCityResults] = useState([]);
   const [cityFocused, setCityFocused] = useState(false);
+  const cityInputRef = useRef(null);
+  const cityListRef = useRef(null);
+  const skipCityOpenRef = useRef(false);
   const [citySearching, setCitySearching] = useState(false);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
@@ -163,6 +172,7 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
   // Display order only (es: DD/MM/AAAA); state and the submitted ISO date stay year/month/day.
   const dobOrder = useMemo(() => dobFieldOrder(locale), [locale]);
 
+  const progressIds = dobPrefilled ? PROGRESS_STEP_IDS.filter((id) => id !== "dob") : PROGRESS_STEP_IDS;
   const dob = useMemo(() => toISODateString(dobYear, dobMonth, dobDay), [dobYear, dobMonth, dobDay]);
   const parsedDate = useMemo(() => {
     if (!dob) return null;
@@ -267,14 +277,26 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
   // accepted trade-off until there's a fix that's compatible with how App
   // Router owns browser history (e.g. driving it through next/navigation
   // instead of raw window.history).
-  const goNext = () => setStepIndex((i) => Math.min(i + 1, STEP_IDS.length - 1));
+  const DOB_INDEX = STEP_IDS.indexOf("dob");
+  const goNext = () =>
+    setStepIndex((i) => {
+      const next = Math.min(i + 1, STEP_IDS.length - 1);
+      return dobPrefilled && next === DOB_INDEX ? next + 1 : next;
+    });
   const goBack = () => {
     // With the landing page acting as the intro, the first question's "back" leaves the wizard.
     if (skipIntro && onExit && stepIndex <= 1) {
       onExit();
       return;
     }
-    setStepIndex((i) => Math.max(i - 1, 0));
+    setStepIndex((i) => {
+      const prev = Math.max(i - 1, 0);
+      return dobPrefilled && prev === DOB_INDEX ? prev - 1 : prev;
+    });
+  };
+  const changePrefilledDob = () => {
+    setDobPrefilled(false);
+    setStepIndex(DOB_INDEX);
   };
 
   const canProceed = {
@@ -287,6 +309,28 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
 
   const handleEnter = (e) => {
     if (e.key === "Enter" && canProceed) goNext();
+  };
+
+  const showCityList = cityFocused && (citySearching || cityResults.length > 0);
+  const pickCity = (c) => {
+    setSelectedCity(c);
+    setCityInput(`${c.cityDisplay}, ${c.countryDisplay}`);
+    setCityFocused(false);
+    skipCityOpenRef.current = true; // refocusing the input after a pick must not reopen the list
+    cityInputRef.current?.focus({ preventScroll: true });
+  };
+  // Keep the list open while focus moves between the input and the list's buttons; close when it leaves both.
+  const closeCityListUnlessInside = (e) => {
+    const next = e.relatedTarget;
+    if (next && (cityListRef.current?.contains(next) || next === cityInputRef.current)) return;
+    setCityFocused(false);
+  };
+  const onCityListKeyDown = (e) => {
+    const items = Array.from(cityListRef.current?.querySelectorAll("button") ?? []);
+    const i = items.indexOf(document.activeElement);
+    if (e.key === "ArrowDown") { e.preventDefault(); items[Math.min(i + 1, items.length - 1)]?.focus(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); if (i <= 0) cityInputRef.current?.focus(); else items[i - 1]?.focus(); }
+    else if (e.key === "Escape") { setCityFocused(false); cityInputRef.current?.focus(); }
   };
 
   if (loading) return <LoadingReveal />;
@@ -317,6 +361,9 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
         @keyframes obFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         .ob-root button:focus-visible, .ob-root input:focus-visible, .ob-root a:focus-visible { outline: 2px solid #6FA98B; outline-offset: 2px; }
         .ob-cta { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; }
+        .ob-city-item { width: 100%; min-height: 44px; padding: 11px 14px; font-size: 14px; color: #C4BCA0; background: transparent; border: none; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .ob-city-item:hover, .ob-city-item:focus-visible { background: rgba(255,255,255,0.06); }
+        .ob-city-item:focus-visible { outline: 2px solid #6FA98B; outline-offset: -2px; }
         .ob-back { background: none; border: none; color: #7C8A82; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 8px; margin: -8px 0 0 -8px; font-size: 13px; }
       ` }} />
 
@@ -328,14 +375,14 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
                 <ArrowLeft size={16} strokeWidth={2} /> {t.onboarding.backButton}
               </button>
               <span className="ob-mono" style={{ fontSize: "11px", color: "#6E7A72", letterSpacing: "0.08em" }}>
-                {t.onboarding.stepOf(PROGRESS_STEP_IDS.indexOf(stepId) + 1, PROGRESS_STEP_IDS.length)}
+                {t.onboarding.stepOf(progressIds.indexOf(stepId) + 1, progressIds.length)}
               </span>
             </div>
             <div style={{ display: "flex", gap: "4px" }}>
-              {PROGRESS_STEP_IDS.map((id, i) => (
+              {progressIds.map((id, i) => (
                 <div key={id} style={{
                   flex: 1, height: "3px", borderRadius: "2px",
-                  background: i <= PROGRESS_STEP_IDS.indexOf(stepId) ? "#6FA98B" : "#26332B",
+                  background: i <= progressIds.indexOf(stepId) ? "#6FA98B" : "#26332B",
                   transition: "background 0.25s ease",
                 }} />
               ))}
@@ -502,14 +549,29 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
             <div style={{ marginTop: "6vh" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#D9C9A3", margin: 0 }}>{t.onboarding.labelTob}</h2>
-                <button type="button" onClick={() => {
+                <button type="button" aria-pressed={timeUnknown} onClick={() => {
                   setTimeUnknown((v) => !v);
                   if (!timeUnknown) { setHour12(""); setMinuteInput(""); setPeriod(null); }
                 }}
-                  style={{ background: "none", border: "none", color: timeUnknown ? "#6FA98B" : "#756B54", fontSize: "12.5px", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px", padding: "6px 4px" }}>
+                  style={{ background: "none", border: "none", color: timeUnknown ? "#6FA98B" : "#756B54", fontSize: "12.5px", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px", padding: "6px 4px", minHeight: "44px", minWidth: "44px" }}>
                   <HelpCircle size={13} strokeWidth={1.75} /> {t.onboarding.unknownTime}
                 </button>
               </div>
+
+              {dobPrefilled && (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px", marginTop: "14px", fontSize: "13px", color: "#9C9277" }}>
+                  <span>
+                    {t.onboarding.labelDob}:{" "}
+                    <span className="ob-mono" style={{ color: "#D9C9A3" }}>
+                      {dobOrder.map((f) => (f === "year" ? dobYear : f === "month" ? dobMonth : dobDay)).join(dobSeparator(locale).trim() || "-")}
+                    </span>
+                  </span>
+                  <button type="button" onClick={changePrefilledDob}
+                    style={{ background: "none", border: "none", color: "#6FA98B", textDecoration: "underline", fontSize: "13px", cursor: "pointer", minHeight: "44px", minWidth: "44px", padding: "0 6px" }}>
+                    {t.onboarding.dobChange}
+                  </button>
+                </div>
+              )}
 
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "24px", opacity: timeUnknown ? 0.35 : 1 }}>
                 <div style={{ position: "relative", flex: 1 }}>
@@ -560,24 +622,28 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
               <h2 className="ob-serif" style={{ fontSize: "26px", fontWeight: 500, color: "#D9C9A3", margin: 0 }}>{t.onboarding.labelCity}</h2>
               <div style={{ position: "relative", marginTop: "24px" }}>
                 <MapPin size={17} strokeWidth={1.75} className="ob-field-icon" />
-                <input type="text" className="ob-input" autoFocus placeholder={t.onboarding.cityPlaceholder} value={cityInput}
+                <input ref={cityInputRef} type="text" className="ob-input" autoFocus placeholder={t.onboarding.cityPlaceholder} value={cityInput}
                   onChange={(e) => { setCityInput(e.target.value); setSelectedCity(null); }}
-                  onFocus={() => setCityFocused(true)}
-                  onBlur={() => setTimeout(() => setCityFocused(false), 120)} />
+                  onFocus={() => { if (skipCityOpenRef.current) skipCityOpenRef.current = false; else setCityFocused(true); }}
+                  onBlur={closeCityListUnlessInside}
+                  onKeyDown={(e) => {
+                    if (e.key === "ArrowDown" && showCityList) { e.preventDefault(); cityListRef.current?.querySelector("button")?.focus(); }
+                    else if (e.key === "Escape") setCityFocused(false);
+                  }} />
               </div>
-              {cityFocused && (citySearching || cityResults.length > 0) && (
-                <div className="ob-fade-in" style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, background: "#14221A", border: "1px solid #26332B", borderRadius: "10px", overflow: "hidden", zIndex: 10, maxHeight: "260px", overflowY: "auto" }}>
+              {showCityList && (
+                <div ref={cityListRef} role="group" aria-label={t.onboarding.labelCity}
+                  className="ob-fade-in" onBlur={closeCityListUnlessInside} onKeyDown={onCityListKeyDown}
+                  onMouseDown={(e) => e.preventDefault()}
+                  style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, background: "#14221A", border: "1px solid #26332B", borderRadius: "10px", overflow: "hidden", zIndex: 10, maxHeight: "260px", overflowY: "auto" }}>
                   {citySearching && cityResults.length === 0 ? (
                     <div style={{ padding: "12px 14px", fontSize: "13px", color: "#756B54" }}>{t.onboarding.citySearching}</div>
                   ) : (
                     cityResults.map((c) => (
-                      <div key={c.id} onMouseDown={() => { setSelectedCity(c); setCityInput(`${c.cityDisplay}, ${c.countryDisplay}`); setCityFocused(false); }}
-                        style={{ padding: "11px 14px", fontSize: "14px", color: "#C4BCA0", cursor: "pointer", display: "flex", justifyContent: "space-between" }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.04)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                      <button key={c.id} type="button" className="ob-city-item" onClick={() => pickCity(c)}>
                         <span>{c.cityDisplay}</span>
                         <span style={{ color: "#756B54", fontSize: "12px" }}>{c.countryDisplay}</span>
-                      </div>
+                      </button>
                     ))
                   )}
                 </div>

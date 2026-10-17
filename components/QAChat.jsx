@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Sparkles, ShieldCheck, Copy, Check } from "lucide-react";
+import Link from "next/link";
+import { Sparkles, ShieldCheck, Copy, Check, ArrowRight } from "lucide-react";
 import ErrorNotice from "./ErrorNotice";
 import QASubcategoryPage from "./QASubcategoryPage";
 import QAQuestionPage from "./QAQuestionPage";
@@ -75,6 +76,8 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
   const [retryQuestion, setRetryQuestion] = useState(null);
   const [copied, setCopied] = useState(false);
   const [verifyCode, setVerifyCode] = useState(null);
+  // Server said "no more answers" (403 free cap / 429 daily cap): end the flow honestly instead of offering a retry.
+  const [limitHit, setLimitHit] = useState(null); // null | "daily_limit" | "quota"
   const scrollRef = useRef(null);
   const mountedRef = useRef(true);
   const greetedRef = useRef(false);
@@ -159,6 +162,13 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
 
       if (!res.ok) {
         setMessages((m) => m.slice(0, -1)); // drop the "잠시만 기다려주세요" placeholder
+        if (json.code === "daily_limit" || json.code === "quota") {
+          // Retrying can't help; say so (message is already in the visitor's language) and show next steps.
+          pushBot(json.error || t.qa.errorDefault);
+          setLimitHit(json.code);
+          setBusy(false);
+          return;
+        }
         const kind = res.status === 429 || res.status === 503 ? "network" : "server";
         setErrorText({ kind, message: json.error || t.qa.errorDefault });
         setRetryQuestion(questionText);
@@ -248,7 +258,12 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
     return <QAQuestionPage subcategory={activeSubcategory} onBack={handleBackFromQuestions} onSelect={handleSelectQuestion} />;
   }
 
-  const done = answeredCount >= FREE_QUESTIONS && !busy;
+  const done = (answeredCount >= FREE_QUESTIONS || !!limitHit) && !busy;
+  const langQuery = locale === "en" ? "" : `?lang=${locale}`;
+  const nextLinks = [
+    { href: `/saju-calculator${langQuery}`, label: t.qa.nextStepsCalculator },
+    { href: `/day-master${langQuery}`, label: t.qa.nextStepsDayMaster },
+  ];
 
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#122019", display: "flex", justifyContent: "center" }}>
@@ -271,6 +286,9 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
         }
         .qa-option-btn:last-child { margin-bottom: 0; }
         .qa-option-btn:hover { border-color: #6FA98B; background: rgba(111,169,139,0.06); }
+        .qa-next-link { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; padding: 10px 14px; border-radius: 10px; border: 1px solid #26332B; color: #6FA98B; font-size: 13.5px; font-weight: 600; text-decoration: none; background: rgba(111,169,139,0.06); }
+        .qa-next-link:hover { border-color: #6FA98B; }
+        .qa-root a:focus-visible,
         .qa-root button:focus-visible, .qa-root input:focus-visible { outline: 2px solid #6FA98B; outline-offset: 2px; }
       ` }} />
 
@@ -328,7 +346,7 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
           {done && (
             <div className="qa-fade" style={{ textAlign: "center", marginTop: "16px" }}>
               <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#756B54", background: "rgba(255,255,255,0.03)", border: "1px solid #26332B", borderRadius: "999px", padding: "6px 12px", marginBottom: "12px" }}>
-                <ShieldCheck size={12} /> {t.qa.doneBadge}
+                <ShieldCheck size={12} /> {limitHit === "daily_limit" ? t.qa.limitBadge : t.qa.doneBadge}
               </div>
               {verifyCode && (
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "center" }}>
@@ -349,6 +367,17 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
                   </div>
                 </div>
               )}
+              <div style={{ marginTop: "18px", textAlign: "left", background: "rgba(255,255,255,0.03)", border: "1px solid #26332B", borderRadius: "14px", padding: "16px" }}>
+                <p style={{ margin: 0, fontSize: "13.5px", fontWeight: 700, color: "#D9C9A3" }}>{t.qa.nextStepsHeading}</p>
+                <p style={{ margin: "6px 0 10px", fontSize: "13px", lineHeight: 1.6, color: "#C4BCA0" }}>{t.qa.nextStepsBody}</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {nextLinks.map((l) => (
+                    <Link key={l.href} href={l.href} className="qa-next-link">
+                      {l.label} <ArrowRight size={14} aria-hidden="true" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>

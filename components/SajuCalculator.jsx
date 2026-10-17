@@ -88,9 +88,9 @@ export default function SajuCalculator({ locale }) {
         .sc-serif { font-family: 'Cormorant Garamond', 'Noto Sans KR', serif; font-weight: 500; }
         .sc-wrap { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 16px; }
         .sc-header { display: flex; align-items: center; justify-content: space-between; padding-top: 22px; gap: 12px; flex-wrap: wrap; }
-        .sc-brand { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: 0.16em; color: #6FA98B; text-transform: uppercase; text-decoration: none; min-height: 32px; }
+        .sc-brand { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: 0.16em; color: #6FA98B; text-transform: uppercase; text-decoration: none; min-height: 44px; }
         .sc-langs { display: flex; gap: 6px; }
-        .sc-lang { border: 1px solid #26332B; color: #9C9277; border-radius: 999px; padding: 6px 12px; font-size: 12px; min-height: 32px; display: inline-flex; align-items: center; text-decoration: none; }
+        .sc-lang { border: 1px solid #26332B; color: #9C9277; border-radius: 999px; padding: 6px 12px; font-size: 12px; min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; text-decoration: none; }
         .sc-lang[aria-current="page"] { background: rgba(111,169,139,0.14); border-color: rgba(111,169,139,0.4); color: #6FA98B; }
         .sc-h1 { font-size: clamp(34px, 6.4vw, 52px); line-height: 1.12; margin: 48px 0 0; }
         .sc-lead { font-size: 16.5px; line-height: 1.7; color: #9C9277; margin: 16px 0 28px; }
@@ -127,7 +127,7 @@ export default function SajuCalculator({ locale }) {
       ` }} />
       <div className="sc-wrap">
         <header className="sc-header">
-          <a className="sc-brand" href="/"><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
+          <a className="sc-brand" href={locale === "en" ? "/" : `/?lang=${locale}`}><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
           <nav className="sc-langs" aria-label={t.landing.langLabel}>
             {LOCALES.map((code) => (
               <a key={code} className="sc-lang" href={code === "en" ? "/saju-calculator" : `/saju-calculator?lang=${code}`} hrefLang={code} aria-current={code === locale ? "page" : undefined}>
@@ -217,7 +217,7 @@ export default function SajuCalculator({ locale }) {
         <section className="sc-app" aria-labelledby="sc-app-title">
           <h2 id="sc-app-title">{c.appTitle}</h2>
           <p>{c.appBody}</p>
-          <a className="sc-cta" href="/">{c.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
+          <a className="sc-cta" href={locale === "en" ? "/" : `/?lang=${locale}`}>{c.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
         </section>
 
         <section className="sc-section" aria-labelledby="sc-how">

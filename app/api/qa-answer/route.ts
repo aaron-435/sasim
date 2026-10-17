@@ -19,7 +19,8 @@
  *
  * Response body:
  *   { lines: string[] }  or  { error: string } with a non-200 status
- *   (403 specifically means the free-question cap was hit)
+ *   (403 = the free-question cap was hit, 429 = request caps, see LIMIT_MESSAGES; both carry a `code`:
+ *   "quota" | "burst" | "daily_limit" and a message in the request's `locale`)
  *
  * "그 사람에 대해 묻기" (2026-10-05, subscribers only): add the optional
  *   { other: { birthYear, birthMonth, birthDay, birthHour?, birthMinute?,
@@ -38,8 +39,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { getPersonQAAnswer, getQAAnswer } from "@/lib/qaChat";
-import type { Locale } from "@/lib/i18n/types";
-import { rateLimitOrResponse } from "@/lib/rateLimit";
+import { LOCALES, type Locale } from "@/lib/i18n/types";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { isQaQuotaExceeded, type QaPlatform } from "@/lib/qaQuota";
 import { checkEntitlement } from "@/lib/revenuecat";
 import { calculateSaju, SazuApiError } from "@/lib/sazu";
@@ -195,15 +196,65 @@ async function answerAboutPerson(body: QAAnswerRequestBody, other: OtherPersonIn
   }
 }
 
-export async function POST(req: NextRequest) {
-  const limited = rateLimitOrResponse(req, "qa-answer", 20, 10 * 60 * 1000, "요청이 많아 잠시 후 다시 시도해주세요.");
-  if (limited) return limited;
+/**
+ * Request caps (W1, 2026-10-17). Layered on top of the per-session free-question cap in
+ * lib/qaQuota.ts, which a caller could dodge by inventing a new sessionId for every call:
+ *   - burst:   20 requests / 10 min per IP (unchanged)
+ *   - daily:   web 12 / 24 h per IP (a real visitor gets 2 free answers, so this leaves room for a
+ *              shared Wi-Fi/NAT); mobile 60 / 24 h per IP (paid users may ask up to 10 a day and several
+ *              can share a carrier NAT)
+ *   - session: 10 / 24 h per sessionId (generous next to the lifetime 2, bounds a retry loop)
+ * Like lib/rateLimit.ts this is in-memory per serverless instance: a backstop, not a hard guarantee.
+ * Messages are returned in the caller's language with a machine-readable `code` the client keys on.
+ */
+const DAILY_MS = 24 * 60 * 60 * 1000;
+const IP_DAILY_LIMIT = { web: 12, mobile: 60 } as const;
+const SESSION_DAILY_LIMIT = 10;
 
+const LIMIT_MESSAGES: Record<Locale, { burst: string; daily: string; quota: string }> = {
+  ko: {
+    burst: "요청이 한꺼번에 많이 들어왔어요. 몇 분 뒤에 다시 시도해 주세요.",
+    daily: "오늘 이 연결에서 받을 수 있는 무료 답변을 모두 썼어요. 내일 다시 시도해 주세요.",
+    quota: "무료 질문을 모두 사용했어요.",
+  },
+  en: {
+    burst: "There are a lot of requests at once. Please wait a few minutes and try again.",
+    daily: "This connection has used all of today's free answers. Please try again tomorrow.",
+    quota: "You've used all your free questions.",
+  },
+  es: {
+    burst: "Hay muchas solicitudes a la vez. Espera unos minutos y vuelve a intentarlo.",
+    daily: "Esta conexión ya usó todas las respuestas gratuitas de hoy. Vuelve a intentarlo mañana.",
+    quota: "Has usado todas tus preguntas gratuitas.",
+  },
+};
+
+function limitResponse(code: "burst" | "daily_limit" | "quota", locale: Locale, status: number, retryAfter?: number) {
+  const m = LIMIT_MESSAGES[locale];
+  const error = code === "burst" ? m.burst : code === "daily_limit" ? m.daily : m.quota;
+  return NextResponse.json(
+    { error, code },
+    { status, headers: retryAfter ? { "Retry-After": String(retryAfter) } : undefined }
+  );
+}
+
+export async function POST(req: NextRequest) {
   let body: QAAnswerRequestBody;
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
+  }
+
+  const limitLocale: Locale = body?.locale && (LOCALES as string[]).includes(body.locale) ? body.locale : "ko";
+  const ip = getClientIp(req);
+  const burst = checkRateLimit(`qa-answer:${ip}`, 20, 10 * 60 * 1000);
+  if (!burst.allowed) return limitResponse("burst", limitLocale, 429, burst.retryAfterSeconds);
+  const ipDaily = checkRateLimit(`qa-answer-day:${ip}`, body?.platform === "mobile" ? IP_DAILY_LIMIT.mobile : IP_DAILY_LIMIT.web, DAILY_MS);
+  if (!ipDaily.allowed) return limitResponse("daily_limit", limitLocale, 429, ipDaily.retryAfterSeconds);
+  if (typeof body?.sessionId === "string" && body.sessionId) {
+    const sess = checkRateLimit(`qa-answer-sess:${body.sessionId}`, SESSION_DAILY_LIMIT, DAILY_MS);
+    if (!sess.allowed) return limitResponse("daily_limit", limitLocale, 429, sess.retryAfterSeconds);
   }
 
   if (body?.other) return answerAboutPerson(body, body.other);
@@ -223,7 +274,7 @@ export async function POST(req: NextRequest) {
   // paid cap so a subscriber's 2nd question isn't refused now that usage rows actually save
   // (ensureSession, 2026-10-07). Web keeps its lifetime free cap.
   if (await isQaQuotaExceeded(sessionId, resolvedPlatform, resolvedPlatform === "mobile")) {
-    return NextResponse.json({ error: "무료 질문 한도를 모두 사용했어요." }, { status: 403 });
+    return limitResponse("quota", limitLocale, 403);
   }
 
   try {

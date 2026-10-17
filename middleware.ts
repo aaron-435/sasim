@@ -1,5 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { LOCALES } from "@/lib/i18n/types";
 import { LANDING_HEADER, LOCALE_COOKIE, LOCALE_HEADER, resolveLocale } from "@/lib/i18n/serverLocale";
+
+const LEGAL_PATHS = ["/privacy", "/terms", "/data-deletion"];
 
 /**
  * Adds a permissive CORS header to every /api/* response and answers the
@@ -22,6 +25,16 @@ export function middleware(request: NextRequest) {
   // (layout has no access to searchParams). The page resolves it again itself for the body.
   // The Day Master articles (/day-master…) resolve the same way so their <html lang> is right too.
   const path = request.nextUrl.pathname;
+  // Legal pages and the calculator render outside AppFlow and read only `?lang=` (legal falls back to
+  // ko, calculator to en), so <html lang> must follow the same rule or it disagrees with the body.
+  if (LEGAL_PATHS.includes(path) || path === "/saju-calculator") {
+    const lang = request.nextUrl.searchParams.get("lang");
+    const valid = lang && (LOCALES as string[]).includes(lang);
+    const locale = valid ? lang : path === "/saju-calculator" ? "en" : "ko";
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set(LOCALE_HEADER, locale);
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
   if (path === "/" || path === "/day-master" || path.startsWith("/day-master/")) {
     const locale = resolveLocale({
       lang: request.nextUrl.searchParams.get("lang"),
@@ -54,5 +67,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/day-master", "/day-master/:path*", "/api/:path*"],
+  matcher: ["/", "/privacy", "/terms", "/data-deletion", "/saju-calculator", "/day-master", "/day-master/:path*", "/api/:path*"],
 };

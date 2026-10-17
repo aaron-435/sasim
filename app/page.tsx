@@ -23,10 +23,10 @@ export function generateMetadata({ searchParams }: Props): Metadata {
   // canonical/hreflang for "/" are emitted by app/layout.tsx: Next drops the query of "/?lang="
   // when it resolves metadata alternates for the root path.
   return {
-    title: meta.siteTitle,
+    title: meta.landingTitle,
     description: meta.siteDescription,
-    openGraph: { title: meta.siteTitle, description: meta.siteDescription, type: "website", images: ["/opengraph-image"] },
-    twitter: { card: "summary_large_image", title: meta.siteTitle, description: meta.siteDescription, images: ["/opengraph-image"] },
+    openGraph: { title: meta.landingTitle, description: meta.siteDescription, type: "website", images: ["/opengraph-image"] },
+    twitter: { card: "summary_large_image", title: meta.landingTitle, description: meta.siteDescription, images: ["/opengraph-image"] },
   };
 }
 
