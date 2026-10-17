@@ -130,7 +130,7 @@ export default function SajuCalculator({ locale }) {
           <a className="sc-brand" href={locale === "en" ? "/" : `/?lang=${locale}`}><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
           <nav className="sc-langs" aria-label={t.landing.langLabel}>
             {LOCALES.map((code) => (
-              <a key={code} className="sc-lang" href={code === "en" ? "/saju-calculator" : `/saju-calculator?lang=${code}`} hrefLang={code} aria-current={code === locale ? "page" : undefined}>
+              <a key={code} className="sc-lang" href={`/saju-calculator?lang=${code}`} hrefLang={code} aria-current={code === locale ? "page" : undefined}>
                 {LOCALE_LABELS[code]}
               </a>
             ))}

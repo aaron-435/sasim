@@ -1,8 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { LOCALES } from "@/lib/i18n/types";
 import { LANDING_HEADER, LOCALE_COOKIE, LOCALE_HEADER, resolveLocale } from "@/lib/i18n/serverLocale";
-
-const LEGAL_PATHS = ["/privacy", "/terms", "/data-deletion"];
 
 /**
  * Adds a permissive CORS header to every /api/* response and answers the
@@ -21,21 +18,11 @@ const LEGAL_PATHS = ["/privacy", "/terms", "/data-deletion"];
  * applied in the first place.
  */
 export function middleware(request: NextRequest) {
-  // Landing page ("/"): resolve the language once here so app/layout.tsx can set <html lang>
-  // (layout has no access to searchParams). The page resolves it again itself for the body.
-  // The Day Master articles (/day-master…) resolve the same way so their <html lang> is right too.
   const path = request.nextUrl.pathname;
-  // Legal pages and the calculator render outside AppFlow and read only `?lang=` (legal falls back to
-  // ko, calculator to en), so <html lang> must follow the same rule or it disagrees with the body.
-  if (LEGAL_PATHS.includes(path) || path === "/saju-calculator") {
-    const lang = request.nextUrl.searchParams.get("lang");
-    const valid = lang && (LOCALES as string[]).includes(lang);
-    const locale = valid ? lang : path === "/saju-calculator" ? "en" : "ko";
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set(LOCALE_HEADER, locale);
-    return NextResponse.next({ request: { headers: requestHeaders } });
-  }
-  if (path === "/" || path === "/day-master" || path.startsWith("/day-master/")) {
+  // Every page route (landing, day-master, calculator, legal, unknown URLs -> 404) resolves the language
+  // the same way, once, here: ?lang= -> cookie -> Accept-Language -> en. app/layout.tsx reads the header for
+  // <html lang>; pages resolve again for their body with the same helper, so the two always agree.
+  if (!path.startsWith("/api/")) {
     const locale = resolveLocale({
       lang: request.nextUrl.searchParams.get("lang"),
       cookie: request.cookies.get(LOCALE_COOKIE)?.value,
@@ -44,10 +31,9 @@ export function middleware(request: NextRequest) {
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set(LOCALE_HEADER, locale);
     if (path === "/") requestHeaders.set(LANDING_HEADER, "1");
-    const response = NextResponse.next({ request: { headers: requestHeaders } });
     // No Vary here: Next overwrites it, and the page is sent "private, no-store" (it reads
     // headers/cookies), so shared caches never keep one language's HTML for another visitor.
-    return response;
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   if (request.method === "OPTIONS") {
@@ -67,5 +53,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/privacy", "/terms", "/data-deletion", "/saju-calculator", "/day-master", "/day-master/:path*", "/api/:path*"],
+  matcher: ["/((?!_next/|.*\\..*).*)"],
 };

@@ -94,7 +94,7 @@ export default function Landing({ onStart }) {
         .lp-step-n { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(111,169,139,0.5); color: #6FA98B; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
         .lp-faq details { border-top: 1px solid #26332B; padding: 16px 0; }
         .lp-faq details:last-child { border-bottom: 1px solid #26332B; }
-        .lp-faq summary { cursor: pointer; font-size: 16px; font-weight: 600; color: #D9C9A3; list-style: none; min-height: 32px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .lp-faq summary { cursor: pointer; font-size: 16px; font-weight: 600; color: #D9C9A3; list-style: none; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
         .lp-faq summary::-webkit-details-marker { display: none; }
         .lp-faq summary::after { content: "+"; color: #6FA98B; font-size: 22px; line-height: 1; }
         .lp-faq details[open] summary::after { content: "−"; }

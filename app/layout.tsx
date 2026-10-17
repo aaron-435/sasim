@@ -43,10 +43,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Only "/" and /day-master… get the header from middleware; every other route keeps its old default (ko).
+  // middleware sets it for every page route (incl. unknown URLs); en is only a safety fallback.
   const requested = headers().get(LOCALE_HEADER);
   const isLanding = headers().get(LANDING_HEADER) === "1";
-  const lang: Locale = (LOCALES as string[]).includes(requested ?? "") ? (requested as Locale) : "ko";
+  const lang: Locale = (LOCALES as string[]).includes(requested ?? "") ? (requested as Locale) : "en";
   const origin = "https://www.fatesaidapp.com";
   const landingUrl = (l: Locale) => (l === "en" ? `${origin}/` : `${origin}/?lang=${l}`);
   return (

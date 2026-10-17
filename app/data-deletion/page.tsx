@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { legalMetadata } from "@/lib/legalMeta";
+import { legalLocale, legalMetadata } from "@/lib/legalMeta";
 import LegalPage from "@/components/LegalPage";
-import { getDictionary, LOCALES, type Locale } from "@/lib/i18n";
+import { getDictionary, type Locale } from "@/lib/i18n";
 
 const TITLE: Record<Locale, string> = {
   ko: "데이터 삭제 요청",
@@ -56,7 +56,7 @@ export function generateMetadata({ searchParams }: { searchParams?: { lang?: str
 }
 
 export default function DataDeletionPage({ searchParams }: { searchParams?: { lang?: string } }) {
-  const locale: Locale = (LOCALES as string[]).includes(searchParams?.lang ?? "") ? (searchParams!.lang as Locale) : "ko";
+  const locale: Locale = legalLocale(searchParams?.lang);
   const t = getDictionary(locale);
   const body = BODY[locale];
 

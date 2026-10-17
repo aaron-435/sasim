@@ -156,6 +156,7 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
   const cityInputRef = useRef(null);
   const cityListRef = useRef(null);
   const skipCityOpenRef = useRef(false);
+  const cityActiveIdxRef = useRef(null); // index of the list option that last held focus (null = focus is not in the list)
   const [citySearching, setCitySearching] = useState(false);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
@@ -311,11 +312,23 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
     if (e.key === "Enter" && canProceed) goNext();
   };
 
+  // Results can re-render while an option is focused (a slower search response lands after ArrowDown); the
+  // focused button is then replaced and the browser drops focus to <body>. Put it back on the same row.
+  useEffect(() => {
+    const idx = cityActiveIdxRef.current;
+    if (idx === null || document.activeElement !== document.body) return;
+    const items = Array.from(cityListRef.current?.querySelectorAll("button") ?? []);
+    const target = items[Math.min(idx, items.length - 1)];
+    if (target) { cityActiveIdxRef.current = items.indexOf(target); target.focus({ preventScroll: true }); }
+    else cityInputRef.current?.focus({ preventScroll: true });
+  }, [cityResults, citySearching]);
+
   const showCityList = cityFocused && (citySearching || cityResults.length > 0);
   const pickCity = (c) => {
     setSelectedCity(c);
     setCityInput(`${c.cityDisplay}, ${c.countryDisplay}`);
     setCityFocused(false);
+    cityActiveIdxRef.current = null;
     skipCityOpenRef.current = true; // refocusing the input after a pick must not reopen the list
     cityInputRef.current?.focus({ preventScroll: true });
   };
@@ -323,6 +336,9 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
   const closeCityListUnlessInside = (e) => {
     const next = e.relatedTarget;
     if (next && (cityListRef.current?.contains(next) || next === cityInputRef.current)) return;
+    // relatedTarget is null when the focused button is unmounted by a re-render; keep the list open then.
+    if (!next && cityActiveIdxRef.current !== null && !e.target.isConnected) return;
+    cityActiveIdxRef.current = null;
     setCityFocused(false);
   };
   const onCityListKeyDown = (e) => {
@@ -364,7 +380,7 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
         .ob-city-item { width: 100%; min-height: 44px; padding: 11px 14px; font-size: 14px; color: #C4BCA0; background: transparent; border: none; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         .ob-city-item:hover, .ob-city-item:focus-visible { background: rgba(255,255,255,0.06); }
         .ob-city-item:focus-visible { outline: 2px solid #6FA98B; outline-offset: -2px; }
-        .ob-back { background: none; border: none; color: #7C8A82; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 8px; margin: -8px 0 0 -8px; font-size: 13px; }
+        .ob-back { background: none; border: none; color: #7C8A82; cursor: pointer; display: flex; align-items: center; gap: 4px; min-height: 44px; min-width: 44px; padding: 8px 12px 8px 8px; margin: -16px 0 0 -8px; font-size: 13px; }
       ` }} />
 
       <div className="ob-root" style={{ width: "100%", maxWidth: "460px", padding: "40px 22px 64px", display: "flex", flexDirection: "column" }}>
@@ -624,7 +640,7 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
                 <MapPin size={17} strokeWidth={1.75} className="ob-field-icon" />
                 <input ref={cityInputRef} type="text" className="ob-input" autoFocus placeholder={t.onboarding.cityPlaceholder} value={cityInput}
                   onChange={(e) => { setCityInput(e.target.value); setSelectedCity(null); }}
-                  onFocus={() => { if (skipCityOpenRef.current) skipCityOpenRef.current = false; else setCityFocused(true); }}
+                  onFocus={() => { cityActiveIdxRef.current = null; if (skipCityOpenRef.current) skipCityOpenRef.current = false; else setCityFocused(true); }}
                   onBlur={closeCityListUnlessInside}
                   onKeyDown={(e) => {
                     if (e.key === "ArrowDown" && showCityList) { e.preventDefault(); cityListRef.current?.querySelector("button")?.focus(); }
@@ -640,7 +656,7 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
                     <div style={{ padding: "12px 14px", fontSize: "13px", color: "#756B54" }}>{t.onboarding.citySearching}</div>
                   ) : (
                     cityResults.map((c) => (
-                      <button key={c.id} type="button" className="ob-city-item" onClick={() => pickCity(c)}>
+                      <button key={c.id} type="button" className="ob-city-item" onClick={() => pickCity(c)} onFocus={(e) => { cityActiveIdxRef.current = Array.from(cityListRef.current?.querySelectorAll("button") ?? []).indexOf(e.currentTarget); }}>
                         <span>{c.cityDisplay}</span>
                         <span style={{ color: "#756B54", fontSize: "12px" }}>{c.countryDisplay}</span>
                       </button>

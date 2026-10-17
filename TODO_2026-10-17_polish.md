@@ -56,3 +56,4 @@ SPEC: `SPEC_2026-10-17_polish.md`. 한 번에 한 항목(`/work`). 웹(W)을 먼
 - `ReportPager.tsx:77` 스크롤 값 JS 스레드 쓰기(주석은 UI 스레드라고 되어 있음).
 - 데스크톱 1280px 랜딩 우측 절반 비어 있음(DESIGN_VARIANCE 6 대비 밋밋함).
 - 스페인어 "mapa natal"은 서양 점성술 용어로 읽힐 수 있음.
+- 챗 응답에는 독자 성별 표지(ocupado/cansado 등) 후처리 검사가 없음. 리포트의 `ES_GENDERED_READER`처럼 챗에도 걸지 검토(로직 변경이라 별도 항목). 2026-10-17 es 샘플 6턴에서 "te mantienes ocupado", "llegas cansado" 각 1회 확인.

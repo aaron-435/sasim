@@ -20,8 +20,9 @@ const LANG_LABELS = { ko: "한국어", en: "English", es: "Español" };
 
 export default function LegalPage({ title, updatedAt, locale = "ko", path = "/privacy", children }) {
   const t = getDictionary(locale);
-  // Same URL rule as lib/legalMeta.ts: ko is the bare path, en/es carry ?lang=.
-  const urlFor = (l) => (l === "ko" ? path : `${path}?lang=${l}`);
+  // The switcher always names the language explicitly, otherwise a bare "en" link would be re-resolved
+  // from cookie / Accept-Language and could land on another language.
+  const urlFor = (l) => `${path}?lang=${l}`;
   const homeHref = locale === "en" ? "/" : `/?lang=${locale}`;
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#122019", display: "flex", justifyContent: "center" }}>
@@ -36,6 +37,7 @@ export default function LegalPage({ title, updatedAt, locale = "ko", path = "/pr
         .lg-root li { font-size: 14px; line-height: 1.8; color: #C4BCA0; margin-bottom: 6px; }
         .lg-root strong { color: #D9C9A3; font-weight: 700; }
         .lg-root a { color: #6FA98B; }
+        .lg-root a[href^="mailto:"] { display: inline-flex; align-items: center; min-height: 44px; }
         .lg-back { min-height: 44px; }
         .lg-langs { display: flex; gap: 4px; margin: 0 0 20px; }
         .lg-lang { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 0 12px; border-radius: 999px; border: 1px solid #26332B; color: #C4BCA0 !important; font-size: 13px; text-decoration: none; }

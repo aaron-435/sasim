@@ -30,8 +30,8 @@ const CSS = `
   .dm-langs { display: flex; gap: 6px; }
   .dm-lang { border: 1px solid #26332B; color: #9C9277; border-radius: 999px; padding: 6px 12px; font-size: 12px; min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; text-decoration: none; }
   .dm-lang[aria-current="page"] { background: rgba(111,169,139,0.14); border-color: rgba(111,169,139,0.4); color: #6FA98B; }
-  .dm-crumb { margin: 36px 0 0; font-size: 13px; }
-  .dm-crumb a { color: #6FA98B; text-decoration: none; }
+  .dm-crumb { margin: 24px 0 0; font-size: 13px; }
+  .dm-crumb a { color: #6FA98B; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; }
   .dm-h1 { font-size: clamp(34px, 6.4vw, 52px); line-height: 1.12; margin: 14px 0 0; }
   .dm-lead { font-size: 16.5px; line-height: 1.75; color: #9C9277; margin: 16px 0 0; }
   .dm-section { margin-top: 36px; padding-top: 28px; border-top: 1px solid #26332B; }
@@ -53,6 +53,11 @@ const CSS = `
   .dm-root a:focus-visible { outline: 2px solid #6FA98B; outline-offset: 3px; }
 `;
 
+// A bare path means English in the sitemap, but a visitor clicking "EN" must get English even with a ko cookie / Accept-Language.
+function explicitLang(path: string, l: Locale): string {
+  return path.includes("?") ? path : `${path}?lang=${l}`;
+}
+
 function Shell({ locale, langHref, children }: { locale: Locale; langHref: (l: Locale) => string; children: React.ReactNode }) {
   const t = getDictionary(locale);
   return (
@@ -63,7 +68,7 @@ function Shell({ locale, langHref, children }: { locale: Locale; langHref: (l: L
           <a className="dm-brand" href={locale === "en" ? "/" : `/?lang=${locale}`}><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
           <nav className="dm-langs" aria-label={t.landing.langLabel}>
             {LOCALES.map((code) => (
-              <a key={code} className="dm-lang" href={langHref(code)} hrefLang={code} aria-current={code === locale ? "page" : undefined}>
+              <a key={code} className="dm-lang" href={explicitLang(langHref(code), code)} hrefLang={code} aria-current={code === locale ? "page" : undefined}>
                 {LOCALE_LABELS[code]}
               </a>
             ))}
@@ -145,7 +150,7 @@ export function DayMasterArticlePage({ slug, locale }: { slug: string; locale: L
         <h2 id="dm-langs" className="dm-serif dm-h2">{ui.readLanguages}</h2>
         <div className="dm-links">
           {LOCALES.filter((l) => l !== locale).map((l) => (
-            <a key={l} className="dm-link" href={articlePath(slug, l)} hrefLang={l}>{LOCALE_LABELS[l]}</a>
+            <a key={l} className="dm-link" href={explicitLang(articlePath(slug, l), l)} hrefLang={l}>{LOCALE_LABELS[l]}</a>
           ))}
         </div>
       </section>
