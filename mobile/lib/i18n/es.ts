@@ -588,6 +588,8 @@ export const es: typeof ko = {
     finishEarlyButton: "Terminar",
     checkpointContinueButton: "Quiero seguir hablando",
     checkpointFinishButton: "Terminemos aquí",
+    writeOwnChoice: "Lo escribo yo",
+    choicesA11y: "Opciones de respuesta",
   },
 
   qa: {

@@ -15,7 +15,14 @@
  * ------------------------------------------------------------------
  */
 
-import type { ChatSetNumber } from "./modulePlaybooks";
+import { CHAT_SET_THEMES, type ChatSetNumber, type ModuleChatSets } from "./modulePlaybooks";
+import {
+  SET_ANSWER_MAX,
+  selectAllSetQuizAnswers,
+  type SetHistoryMessage,
+  type SetPacket,
+  type SetQuizAnswer,
+} from "./chatSets";
 
 export const TOTAL_TURNS_V3 = 22;
 export const CHECKPOINT_TURN_V3 = 9;
@@ -103,4 +110,126 @@ export function limitCheckpointLinesV3(lines: string[]): string[] {
   }
   if (q < 0 || q >= lines.length - 3) return lines.slice(-3);
   return lines.slice(q, q + 3);
+}
+
+// ── 보기 탭 구분과 세트 재료 (2026-10-20, 작업 17: 묶음→추출 필드→세트 카드) ──
+// v1·v2 함수는 건드리지 않고, 아래만 새로 둔다.
+
+/** v3 세트별 시작 턴. 9턴(체크포인트)이 세트 2와 3 사이를 가른다. */
+const CHOICE_SET_START_V3: Record<ChatSetNumber, number> = { 1: 1, 2: 5, 3: 10, 4: 14, 5: 18 };
+
+const CHOICE_SETS_V3: readonly ChatSetNumber[] = [1, 2, 3, 4, 5];
+
+/**
+ * 앱이 body 최상위로 보낸 choicePicks(보기를 탭해서 답한 봇 턴 번호)를 정제한다.
+ * 클라이언트가 보낸 값이므로 믿지 않는다: 정수 1~22만, 중복 제거, 최대 22개, 그 밖은 버린다.
+ * 배열이 아니면 빈 배열.
+ */
+export function sanitizeChoicePicks(raw: unknown): number[] {
+  if (!Array.isArray(raw)) return [];
+  const out: number[] = [];
+  for (const v of raw) {
+    if (out.length >= TOTAL_TURNS_V3) break;
+    if (typeof v !== "number" || !Number.isInteger(v)) continue;
+    if (v < 1 || v > TOTAL_TURNS_V3) continue;
+    if (out.includes(v)) continue;
+    out.push(v);
+  }
+  return out;
+}
+
+/** v2 buildSetPackets와 같은 규칙: k번째 봇 메시지 바로 뒤 첫 사용자 메시지가 k턴 답이다. */
+function collectAnswerByTurn(history: readonly SetHistoryMessage[]): Map<number, string> {
+  const answerByTurn = new Map<number, string>();
+  let botTurn = 0;
+  for (const msg of history) {
+    if (msg.role === "assistant") {
+      botTurn += 1;
+      continue;
+    }
+    if (msg.role !== "user" || botTurn === 0 || answerByTurn.has(botTurn)) continue;
+    const text = typeof msg.content === "string" ? msg.content.replace(/\s+/g, " ").trim().slice(0, SET_ANSWER_MAX) : "";
+    if (text) answerByTurn.set(botTurn, text);
+  }
+  return answerByTurn;
+}
+
+/**
+ * v3 대화 기록 → 세트 재료 묶음 5개. v2 buildSetPackets와 같은 방식으로 답을 모은 뒤
+ * v3 번호표로 나눈다: 세트 1 = 1–4턴, 2 = 5–8, 3 = 10–13, 4 = 14–17, 5 = 18–21.
+ * 9턴 체크포인트 답은 어느 세트에도 넣지 않는다. 세트마다 A묶음 턴(시작, 시작+1) 답은
+ * opening_answers, B묶음 턴(시작+2, 시작+3) 답은 module_answers다. 세트 5는 module_answers에
+ * 20턴 답만, perspective_answer에 21턴 답을 넣는다. 보기를 탭한 턴(picks)의 답은 위 배열에
+ * 넣지 않고 picked_choices(턴 순서)에 넣는다. 직접 쓴 말이 하나라도 있으면 has_chat이 true,
+ * 보기만 있으면 has_chat이 false다. quiz는 v2와 같이 selectAllSetQuizAnswers로 고른다.
+ * 세트 5의 21턴 답이 보기 탭이면 perspective_answer에 그 문구를 그대로 넣고(마무리 문장이 그 말에
+ * 기대므로) picked_choices에도 넣는다.
+ */
+export function buildSetPacketsV3(
+  history: readonly SetHistoryMessage[],
+  chatSets: ModuleChatSets,
+  answers: readonly SetQuizAnswer[],
+  picks: readonly number[] = []
+): SetPacket[] {
+  const answerByTurn = collectAnswerByTurn(history);
+  const picked = new Set(picks);
+  const quizzes = selectAllSetQuizAnswers(chatSets, answers);
+  return CHOICE_SETS_V3.map((set) => {
+    const start = CHOICE_SET_START_V3[set];
+    const opening: string[] = [];
+    const moduleAnswers: string[] = [];
+    const pickedChoices: string[] = [];
+    const put = (turn: number, target: string[]): void => {
+      const text = answerByTurn.get(turn);
+      if (!text) return;
+      if (picked.has(turn)) pickedChoices.push(text);
+      else target.push(text);
+    };
+    put(start, opening);
+    put(start + 1, opening);
+    put(start + 2, moduleAnswers);
+    // 세트 5의 B묶음은 20턴(관점 전환 장면) + 21턴(건넬 말)이라 21턴은 perspective_answer가 받는다.
+    if (set !== 5) put(start + 3, moduleAnswers);
+    const q = quizzes[set - 1];
+    const packet: SetPacket = {
+      set,
+      theme: CHAT_SET_THEMES[set].key,
+      quiz: q ? { id: q.qId, dimension: q.dimension, prompt: q.prompt, label: q.label, score: q.score } : null,
+      opening_answers: opening,
+      module_answers: moduleAnswers,
+      has_chat: opening.length + moduleAnswers.length > 0,
+      picked_choices: pickedChoices,
+    };
+    if (set === 5) {
+      const turn21 = start + 3;
+      packet.perspective_answer = answerByTurn.get(turn21) ?? null;
+      if (packet.perspective_answer) {
+        if (picked.has(turn21)) pickedChoices.push(packet.perspective_answer);
+        else packet.has_chat = true;
+      }
+    }
+    return packet;
+  });
+}
+
+/** 묶음→필드 매핑 한 건. A2 턴 답(a2)과 바로 앞 A1 턴 답(a1, 없으면 null). */
+export interface ChoiceFieldPick {
+  field: string;
+  a1: string | null;
+  a2: string;
+}
+
+/**
+ * CHOICE_FIELD_BY_TURN에 따라 필드별 "묶음 답" 목록을 만든다. 답이 없는 필드는 건너뛴다.
+ * 보기 탭인지 직접 쓴 말인지는 가리지 않고 해당 턴의 사용자 답 원문을 쓴다.
+ */
+export function buildChoiceFieldPicks(history: readonly SetHistoryMessage[]): ChoiceFieldPick[] {
+  const answerByTurn = collectAnswerByTurn(history);
+  const out: ChoiceFieldPick[] = [];
+  for (const turn of Object.keys(CHOICE_FIELD_BY_TURN).map(Number).sort((a, b) => a - b)) {
+    const a2 = answerByTurn.get(turn);
+    if (!a2) continue;
+    out.push({ field: CHOICE_FIELD_BY_TURN[turn], a1: answerByTurn.get(turn - 1) ?? null, a2 });
+  }
+  return out;
 }

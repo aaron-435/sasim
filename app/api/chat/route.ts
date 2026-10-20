@@ -7,7 +7,7 @@
  * Keeps OPENAI_API_KEY server-side only.
  *
  * Request body:
- *   { turnNumber, sessionStartedAt, context: ChatSessionContext, history: ChatMessage[], formulation?: ChatFormulation }
+ *   { turnNumber, sessionStartedAt, context: ChatSessionContext, history: ChatMessage[], formulation?: ChatFormulation, choicePicks?: number[] }
  *   formulation is the previous response's hidden memo, echoed back unchanged by the app (TODO Q1-c).
  *   context.flowVersion === 2 + context.quizAnswers (30문항) → 5세트 25턴 흐름(TODO 4). 없으면 20턴 흐름 그대로.
  *
@@ -26,6 +26,7 @@ import type { ChatSessionContext } from "@/lib/chatPrompts";
 import { chatFlowVersion, sanitizeFormulation } from "@/lib/chatPrompts";
 import { isFinalTurn } from "@/lib/chatPrompts";
 import { sanitizeQuizAnswers } from "@/lib/chatSets";
+import { sanitizeChoicePicks } from "@/lib/chatChoices";
 import { ensureSession, getSupabaseAdmin } from "@/lib/supabase";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
 
@@ -36,6 +37,8 @@ interface ChatRequestBody {
   history?: ChatMessage[];
   sessionId?: string;
   formulation?: unknown;
+  /** 2026-10-20 (작업 17): 보기를 탭해서 답한 봇 턴 번호. history는 건드리지 않는다. */
+  choicePicks?: unknown;
 }
 
 async function saveChatSession(sessionId: string | undefined, transcript: ChatMessage[], extract: unknown) {
@@ -60,7 +63,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { turnNumber, sessionStartedAt, context: rawContext, history, sessionId, formulation } = body ?? {};
+  const { turnNumber, sessionStartedAt, context: rawContext, history, sessionId, formulation, choicePicks: rawChoicePicks } = body ?? {};
+  // 2026-10-20 (작업 17): 클라이언트가 보낸 보기 탭 목록이라 정제해서 쓴다. history에는 필드를 더하지 않는다.
+  const choicePicks = sanitizeChoicePicks(rawChoicePicks);
 
   if (!turnNumber || !rawContext || !Array.isArray(history)) {
     return NextResponse.json({ error: "turnNumber, context, history는 필수입니다." }, { status: 400 });
@@ -89,7 +94,9 @@ export async function POST(req: NextRequest) {
       // 추출 프롬프트는 한 턴 = 한 메시지 단위로 트랜스크립트를 읽으므로,
       // 화면에 여러 버블로 나뉘어 보이는 lines를 다시 한 줄로 합쳐서 전달한다.
       const fullTranscript: ChatMessage[] = [...history, { role: "assistant", content: lines.join(" ") }];
-      const extract = attachSetPackets(await extractChatSummary(fullTranscript, context, sessionId), fullTranscript, context);
+      // 2026-10-20 (작업 17): extractChatSummary는 v3 묶음 답을 fullTranscript에서 직접 뽑아
+      // 추출 프롬프트와 빈 필드 채우기에 쓴다. attachSetPackets에는 정제한 choicePicks를 넘긴다.
+      const extract = attachSetPackets(await extractChatSummary(fullTranscript, context, sessionId), fullTranscript, context, choicePicks);
       await saveChatSession(sessionId, fullTranscript, extract);
       return NextResponse.json({ lines, extract });
     }

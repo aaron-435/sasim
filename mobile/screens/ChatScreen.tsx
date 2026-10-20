@@ -20,6 +20,7 @@ import Reveal from "../components/motion/Reveal";
 import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
+import { getChatFlow, setNumberForTurnV3 } from "../lib/chatFlow";
 import { useLocale, useStrings } from "../lib/i18n";
 import { findTopAnswers, findTopAnswersOverall } from "../lib/quiz/quizProfile";
 import type { QuizDiagnosis } from "./QuizScreen";
@@ -36,14 +37,14 @@ import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 // which of the five sets the user is in instead. The server keeps its own time budget.
 // 2026-10-02: the app always sends flowVersion 2 (5 sets × 5 turns), so these mirror
 // TOTAL_TURNS_V2 / TIME_LIMIT_MINUTES_V2, not the 20/20 the web chat still uses.
-const FLOW_VERSION = 2;
-const TOTAL_TURNS = 25;
+// 2026-10-20: FLOW_VERSION / TOTAL_TURNS / CHECKPOINT_TURN now come from
+// lib/chatFlow.ts (dev-only `?chat=3` switch for the flowVersion 3 prototype);
+// TURNS_PER_SET stays 5 for the v2 header math, v3 uses setNumberForTurnV3.
 const TURNS_PER_SET = 5;
 // The server still wraps a v2 chat up at 30 minutes and starts steering toward it at 27
 // (lib/chatPrompts.ts buildTimeNoticeV2). From that point the header says so in words, so the
 // ending isn't a surprise; no countdown, no warning colour.
 const WRAP_UP_SECONDS = 27 * 60;
-const CHECKPOINT_TURN = 10;
 const EARLY_FINISH_SECONDS = 7 * 60;
 
 type Message = { role: "bot" | "user"; text: string };
@@ -76,6 +77,16 @@ export default function ChatScreen({
   const [done, setDone] = useState(false);
   const [checkpointDismissed, setCheckpointDismissed] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  // 2026-10-20: v3 answer options for the last bot turn. Read once per mount so the
+  // flow can't flip mid-conversation if the URL changes.
+  const flow = useRef(getChatFlow()).current;
+  const FLOW_VERSION = flow.flowVersion;
+  const TOTAL_TURNS = flow.totalTurns;
+  const CHECKPOINT_TURN = flow.checkpointTurn;
+  const [choices, setChoices] = useState<string[] | null>(null);
+  const [ownInputOpen, setOwnInputOpen] = useState(false);
+  const choicePicksRef = useRef<number[]>([]);
+  const inputRef = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
   const sessionStartedAt = useRef(Date.now()).current;
   const doneRef = useRef(false);
@@ -132,6 +143,9 @@ export default function ChatScreen({
     async (nextTurn: number, apiHistory: HistoryEntry[]) => {
       setIsTyping(true);
       setErrorText(null);
+      // 2026-10-20: a new turn in flight hides the old options until its own reply lands.
+      setChoices(null);
+      setOwnInputOpen(false);
 
       const activeDimension = quizDiagnosis.classification.activeDimensions[0] ?? null;
       const headlineAnswerRaw = activeDimension ? findTopAnswers(quizDiagnosis.answers, activeDimension, 1)[0] : null;
@@ -176,6 +190,10 @@ export default function ChatScreen({
             history: apiHistory,
             sessionId,
             formulation: formulationRef.current,
+            // 2026-10-20: bot turn numbers answered by tapping a choice chip
+            // (deduped, ascending). Top-level on purpose — the server forwards
+            // history to OpenAI untouched. Always [] on v2.
+            choicePicks: choicePicksRef.current,
           }),
         });
         const json = await res.json();
@@ -209,13 +227,26 @@ export default function ChatScreen({
         turnHistoryRef.current = [...apiHistory, { role: "assistant", content: lines.join(" ") }];
         formulationRef.current = json.formulation ?? undefined;
         setTurn(nextTurn);
+        // 2026-10-20: v3 answer options, shown only after the last bot bubble is
+        // out. 2–3 strings or nothing; none on the checkpoint turn (its two
+        // buttons are the options) — closing and error turns return above.
+        const rawChoices: unknown = json.choices;
+        setChoices(
+          nextTurn === CHECKPOINT_TURN ||
+            !Array.isArray(rawChoices) ||
+            rawChoices.length < 2 ||
+            rawChoices.length > 3 ||
+            !rawChoices.every((c): c is string => typeof c === "string")
+            ? null
+            : rawChoices
+        );
       } catch {
         if (!mountedRef.current) return;
         setIsTyping(false);
         setErrorText(strings.chat.errorNetwork);
       }
     },
-    [quizDiagnosis, onComplete, revealLines, sessionStartedAt, sessionId, strings, locale]
+    [quizDiagnosis, onComplete, revealLines, sessionStartedAt, sessionId, strings, locale, FLOW_VERSION, TOTAL_TURNS, CHECKPOINT_TURN]
   );
 
   useEffect(() => {
@@ -236,6 +267,9 @@ export default function ChatScreen({
     setMessages((m) => [...m, { role: "user", text }]);
     const nextHistory: HistoryEntry[] = [...turnHistoryRef.current, { role: "user", content: text }];
     turnHistoryRef.current = nextHistory;
+    // 2026-10-20: typed answers clear the chips without recording a pick.
+    setChoices(null);
+    setOwnInputOpen(false);
     requestNextTurn(turn + 1, nextHistory);
   }
 
@@ -273,11 +307,38 @@ export default function ChatScreen({
     requestNextTurn(TOTAL_TURNS, turnHistoryRef.current);
   }
 
+  // 2026-10-20: v3 choice tap — same shape as handleContinueAtCheckpoint: the
+  // tapped phrase becomes the user's bubble and the next turn is requested.
+  // Records the answered bot turn so the server knows which turns were taps.
+  function handleChoicePick(choice: string) {
+    if (isTyping || doneRef.current) return;
+    Keyboard.dismiss();
+    setMessages((m) => [...m, { role: "user", text: choice }]);
+    const nextHistory: HistoryEntry[] = [...turnHistoryRef.current, { role: "user", content: choice }];
+    turnHistoryRef.current = nextHistory;
+    if (!choicePicksRef.current.includes(turn)) {
+      choicePicksRef.current = [...choicePicksRef.current, turn].sort((a, b) => a - b);
+    }
+    setChoices(null);
+    setOwnInputOpen(false);
+    requestNextTurn(turn + 1, nextHistory);
+  }
+
+  // 2026-10-20: folds the chips away and focuses the text input instead.
+  function handleWriteOwn() {
+    if (isTyping || doneRef.current) return;
+    setOwnInputOpen(true);
+    inputRef.current?.focus();
+  }
+
   const elapsedSeconds = Math.max(0, Math.floor((now - sessionStartedAt) / 1000));
-  const totalSets = TOTAL_TURNS / TURNS_PER_SET;
+  // 2026-10-20: v2 math untouched; v3 has 4-turn sets (see chatFlow.ts).
+  const totalSets = FLOW_VERSION === 3 ? 5 : TOTAL_TURNS / TURNS_PER_SET;
   const wrappingUp = elapsedSeconds >= WRAP_UP_SECONDS;
-  const currentSet = Math.min(totalSets, Math.max(1, Math.ceil(Math.max(turn, 1) / TURNS_PER_SET)));
+  const currentSet =
+    FLOW_VERSION === 3 ? setNumberForTurnV3(turn) : Math.min(totalSets, Math.max(1, Math.ceil(Math.max(turn, 1) / TURNS_PER_SET)));
   const showCheckpoint = turn === CHECKPOINT_TURN && !checkpointDismissed && !done && !isTyping && !errorText;
+  const showChoices = choices !== null && !ownInputOpen && !isTyping && !done && !errorText && !showCheckpoint;
   const canFinishEarly =
     !done && !isTyping && !errorText && !showCheckpoint && (turn > CHECKPOINT_TURN || elapsedSeconds >= EARLY_FINISH_SECONDS);
   // Stays on screen while the bot is still writing (sending is blocked until it finishes): removing it
@@ -344,6 +405,26 @@ export default function ChatScreen({
           )}
         </ScrollView>
 
+        {showChoices && choices && (
+          <Reveal index={1} style={styles.choiceRow}>
+            <View style={styles.choiceChips} accessible accessibilityLabel={strings.chat.choicesA11y}>
+              {choices.map((choice) => (
+                <PressableScale key={choice} style={styles.choiceChip} onPress={() => handleChoicePick(choice)} accessibilityRole="button">
+                  <Text style={styles.choiceChipLabel}>{choice}</Text>
+                </PressableScale>
+              ))}
+              <PressableScale
+                style={[styles.choiceChip, styles.choiceChipOwn]}
+                onPress={handleWriteOwn}
+                accessibilityRole="button"
+                accessibilityLabel={strings.chat.writeOwnChoice}
+              >
+                <Text style={styles.choiceChipLabel}>{strings.chat.writeOwnChoice}</Text>
+              </PressableScale>
+            </View>
+          </Reveal>
+        )}
+
         {showCheckpoint && (
           <Reveal index={1} style={styles.checkpointRow}>
             <PressableScale style={styles.checkpointButtonSecondary} onPress={handleWrapUpAtCheckpoint} accessibilityRole="button">
@@ -358,6 +439,7 @@ export default function ChatScreen({
         {showTextInput && (
           <Reveal index={1} style={styles.inputRow}>
             <TextInput
+              ref={inputRef}
               style={styles.input}
               value={input}
               onChangeText={setInput}
@@ -511,6 +593,38 @@ const styles = StyleSheet.create({
     paddingVertical: SPACE.md,
   },
   checkpointButtonSecondaryLabel: {
+    fontFamily: FONTS.medium,
+    fontSize: 13.5,
+    color: COLORS.headline,
+  },
+  // 2026-10-20: v3 answer-option chips — same tone as checkpointButtonSecondary.
+  choiceRow: {
+    paddingHorizontal: SPACE.lg,
+    paddingTop: SPACE.md,
+    paddingBottom: SPACE.xl,
+    borderTopWidth: 1,
+    borderTopColor: SURFACE.hairline,
+  },
+  choiceChips: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: SPACE.sm,
+  },
+  choiceChip: {
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 44,
+    backgroundColor: "rgba(255,255,255,0.03)",
+    borderWidth: 1,
+    borderColor: SURFACE.hairline,
+    borderRadius: RADIUS.pill,
+    paddingVertical: SPACE.sm,
+    paddingHorizontal: SPACE.lg,
+  },
+  choiceChipOwn: {
+    borderStyle: "dashed",
+  },
+  choiceChipLabel: {
     fontFamily: FONTS.medium,
     fontSize: 13.5,
     color: COLORS.headline,

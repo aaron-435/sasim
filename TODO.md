@@ -32,17 +32,19 @@
 
 ## 앱
 
-- [ ] 4. 보기 탭 UI
+- [x] 4. 보기 탭 UI
   - 선행: 2
   - 변경: `mobile/screens/ChatScreen.tsx`에 마지막 봇 말풍선 아래 보기 칩, "직접 쓸게요"(입력창 포커스), 탭하면 그 문구가 사용자 말풍선으로 들어가 다음 턴을 요청하는 처리를 더한다. 개발용 스위치로만 flowVersion 3을 보낸다. 칩 등장 모션은 동작 줄이기를 따른다. 문구는 i18n 키로.
   - QA: mobile tsc 통과. `mobile-web` 미리보기(mobile 프리셋)에서 탭 → 말풍선 → 다음 턴 흐름과 "직접 쓸게요"를 확인하고 스크린샷을 남긴다. 네이티브 전용 동작은 못 본다고 적는다.
+  - QA: mobile tsc(스택 옵션) → exit 0. mobile-web 미리보기(`?qa=pro&persona=jisoo&lang=ko&chat=3`, 375x812)에서 `/api/chat`을 브라우저 안 가짜 응답으로 바꿔(서버가 아직 프로덕션이라 v3 없음) 확인: 1턴 요청 `flowVersion:3, choicePicks:[]` → 칩 3개+점선 "직접 쓸게요" 표시 → "일하는 중" 탭 → 사용자 말풍선, 2턴 요청 `choicePicks:[1]` → "직접 쓸게요"로 칩 접힘+입력창 포커스 → 직접 타이핑해 전송하면 3턴 요청의 `choicePicks`가 `[1]` 그대로(직접 쓴 답은 기록 안 됨). 스크린샷 확인. 못 본 것: 9턴 체크포인트 버튼, 실제 서버 보기, 네이티브, 동작 줄이기 켠 상태(기존 `Reveal`이 처리). muse 기여자 모델(작업 16), 변경 uncommitted.
 
 ## 리포트 연결
 
-- [ ] 5. 묶음 → 추출 필드 → 세트 카드
+- [x] 5. 묶음 → 추출 필드 → 세트 카드
   - 선행: 3
   - 변경: 묶음에서 정해진 값이 추출 결과(`ChatExtract`)와 `set_packets`에 들어가게 한다. 인용(자유 서술)이 없는 세트는 퀴즈 답과 보기 문구로 카드를 만든다. `lib/reportSets.ts`가 빈 인용을 허용하는지 확인하고, 약하면 세트당 선택 입력 한 줄을 추가하는 안을 `발견 사항`에 적는다.
   - QA: 루트 tsc 통과. 시뮬 대화 결과를 `gen-qa-fixtures`(또는 동등 경로)로 리포트까지 돌려 세트 카드 5장이 비지 않는지 확인.
+  - QA: `npx tsc --noEmit` → exit 0. 스크래치 `packets-v3-test.mts`(27건)·`extract-v3-test.mts`(7건) → ALL PASS. v1·v2 프롬프트 덤프(module3 ko 10턴·en 3턴)를 변경 전(git stash)과 `cmp` → 동일. 스크래치 `cards-v3-test.mts`: 가짜 22턴 전부 보기 탭 → `resolveReportSets`·`describeCardSlots`·`describeSetPackets`가 세트 5개 모두 `picked_choices` 4개로 카드 슬롯 5개를 만들고 "보기" 근거 줄 20개 생성. **LLM 리포트 생성(`gen-qa-fixtures`)은 돌리지 않음** — v3 시뮬 대화가 TODO 6에서 생기므로 거기서 실제 리포트까지 확인한다. muse 표준 모델(작업 17), 변경 uncommitted.
 
 ## 검증과 판정
 
@@ -60,3 +62,6 @@
 (작업 중 발견한 것만 여기에 적고, 해당 항목 diff에는 넣지 않는다.)
 - TODO 3에서 할 것: `ChatFlowVersion` 타입에 3 추가, `getChatReply`의 `sanitizeChoices` `suppress`에 9턴 체크포인트 조건 추가(지금은 마지막 턴만 억제), v3 프롬프트가 모델에게 JSON `choices` 키를 쓰게 지시. 보기 위기 억제는 응답에 위기 안내 번호(1393·988 등)가 있는지로 판정한다.
 - TODO 3 후속: v3 프롬프트의 예시 대화·절대 규칙·기법 절은 v2 것을 재사용해 v2 턴 번호(25·10·6·16·21)가 남아 있다. sim-chat(TODO 6)에서 모델이 헷갈리면 `TECHNIQUES_BODY_V3` 분리. 모듈 5 등 묶음 없는 모듈은 flowVersion 3을 보내도 v1로 떨어진다.
+- TODO 5에서 정한 것: 보기를 탭한 턴 번호를 앱이 요청 body 최상위 `choicePicks`로 보낸다(history에 필드를 더하면 OpenAI로 그대로 가서). 서버는 보기만 쓴 세트를 `has_chat:false` + `picked_choices`로 두고 리포트 카드는 인용 칸을 비운 채 검사 답 + 고른 보기로 해설한다. 묶음 필드는 모델 추출을 우선하고 빈 필드만 `"A1 / A2"`로 채운다(SPEC의 "묶음 값 우선"을 프롬프트 지시 + 빈칸 보충으로 구현). 보기만으로 카드 해설이 얇으면 세트 끝 선택 입력 한 줄을 추가하는 안은 TODO 6 결과를 보고 판단.
+- TODO 5 위험: 한 문장 필드(`trigger_point` 등)가 `"퇴근 뒤 / 일의 양"`처럼 짧게 채워질 수 있다. 리포트 프롬프트가 이걸 문장으로 취급하는지는 실제 리포트에서 확인 필요(TODO 6).
+- 진행 중 muse 작업 16·17을 병렬로 돌렸더니 같은 파일을 서로 겹쳐 고치는 일이 있었다(최종 상태는 tsc·테스트 통과). 다음부터 같은 지시서를 두 번 실행하지 않는다.

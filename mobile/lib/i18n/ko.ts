@@ -615,6 +615,8 @@ export const ko = {
     finishEarlyButton: "마무리할게요",
     checkpointContinueButton: "조금 더 이야기할게요",
     checkpointFinishButton: "여기서 마무리할게요",
+    writeOwnChoice: "직접 쓸게요",
+    choicesA11y: "답 보기",
   },
 
   qa: {

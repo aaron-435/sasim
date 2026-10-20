@@ -588,6 +588,8 @@ export const en: typeof ko = {
     finishEarlyButton: "Wrap up",
     checkpointContinueButton: "I'd like to keep going",
     checkpointFinishButton: "Let's wrap up here",
+    writeOwnChoice: "I'll write it",
+    choicesA11y: "Answer options",
   },
 
   qa: {

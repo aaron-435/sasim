@@ -33,7 +33,12 @@ import {
 } from "./chatPrompts";
 import { getModuleChatSets, getModulePlaybook, PERSPECTIVE_SHIFT_LEAD } from "./modulePlaybooks";
 import { buildSetPackets, selectSetQuizAnswer, type SetPacket } from "./chatSets";
-import { limitCheckpointLinesV3, PERSPECTIVE_LEAD_TURN_V3 } from "./chatChoices";
+import {
+  buildChoiceFieldPicks,
+  buildSetPacketsV3,
+  limitCheckpointLinesV3,
+  PERSPECTIVE_LEAD_TURN_V3,
+} from "./chatChoices";
 import type { Locale } from "./i18n/types";
 import { logLlmUsage } from "./llmUsage";
 import { stripHanja } from "./reportQuality";
@@ -461,7 +466,10 @@ export async function getChatReply(params: {
 
 export async function extractChatSummary(transcript: ChatMessage[], context: ChatSessionContext, sessionId?: string): Promise<ChatExtract> {
   const playbook = getModulePlaybook(context.moduleId);
-  const { system, user } = buildExtractionPrompt(transcript, context);
+  // 2026-10-20 (작업 17): v3이면 추출 프롬프트에 묶음 답을 넘긴다. v1·v2는 기존 호출 그대로다.
+  const flow = chatFlowVersion(context);
+  const choiceFieldPicks = flow === 3 ? buildChoiceFieldPicks(transcript) : undefined;
+  const { system, user } = buildExtractionPrompt(transcript, context, choiceFieldPicks);
 
   const completion = await client.chat.completions.create({
     model: EXTRACT_MODEL,
@@ -487,7 +495,7 @@ export async function extractChatSummary(transcript: ChatMessage[], context: Cha
   if (!raw) throw new Error("OpenAI가 빈 추출 응답을 반환했습니다.");
 
   const parsed = JSON.parse(raw);
-  return {
+  const base: ChatExtract = {
     primary_concern: parsed.primary_concern ?? "",
     emotional_state: parsed.emotional_state ?? "",
     trigger_point: parsed.trigger_point ?? "",
@@ -503,15 +511,74 @@ export async function extractChatSummary(transcript: ChatMessage[], context: Cha
       module_fields: Object.fromEntries(playbook.extractFields.map((f) => [f.key, nullableText(parsed.module_fields?.[f.key])])),
     }),
   };
+  // 2026-10-20 (작업 17): v3이면 묶음에서 정해진 값을 빈 필드에 채운다. v1·v2는 그대로 둔다.
+  return flow === 3 ? applyChoicePicksToExtract(base, transcript) : base;
+}
+
+// 2026-10-20 (작업 17): buildChoiceFieldPicks로 얻은 묶음 답을 ChatExtract 빈 칸에 채운다(순수 함수).
+// 모델이 null이나 빈 문자열로 둔 필드에만 "a1 / a2"(a1이 없으면 a2)를 넣고, 모델이 이미 채운 값은
+// 덮어쓰지 않는다(우선권은 추출 프롬프트의 묶음 답 블록이 준다). emotional_state는 한 단어 필드라 a2만 넣는다.
+const CHOICE_PICK_TOP_FIELDS = [
+  "trigger_point",
+  "emotional_state",
+  "repeat_pattern",
+  "core_fear_or_meaning",
+  "coping",
+  "relational",
+  "desired_change",
+] as const;
+
+const CHOICE_PICK_MODULE_FIELDS = ["demand_drain", "resource_left"] as const;
+
+export function applyChoicePicksToExtract(extract: ChatExtract, history: readonly ChatMessage[]): ChatExtract {
+  const picks = buildChoiceFieldPicks(history);
+  if (picks.length === 0) return extract;
+  const byField = new Map(picks.map((p) => [p.field, p]));
+  const isEmpty = (v: unknown): boolean => v == null || (typeof v === "string" && !v.trim());
+  const fill = (field: string): string | null => {
+    const p = byField.get(field);
+    if (!p) return null;
+    if (field === "emotional_state") return p.a2;
+    return p.a1 ? `${p.a1} / ${p.a2}` : p.a2;
+  };
+  const next: ChatExtract = { ...extract };
+  const record = next as unknown as Record<string, unknown>;
+  for (const field of CHOICE_PICK_TOP_FIELDS) {
+    if (!isEmpty(record[field])) continue;
+    const value = fill(field);
+    if (value) record[field] = value;
+  }
+  const moduleFields = { ...(next.module_fields ?? {}) };
+  let touched = false;
+  for (const field of CHOICE_PICK_MODULE_FIELDS) {
+    if (!isEmpty(moduleFields[field])) continue;
+    const value = fill(field);
+    if (value) {
+      moduleFields[field] = value;
+      touched = true;
+    }
+  }
+  if (touched) next.module_fields = moduleFields;
+  return next;
 }
 
 /**
  * 5세트 흐름의 마지막 턴 extract에 세트 재료 묶음을 붙인다. 20턴 흐름이면 extract를 그대로 돌려준다.
  * transcript는 마지막 봇 응답까지 포함한 대화 전문(app/api/chat/route.ts의 fullTranscript).
+ * 2026-10-20 (작업 17): v3이면 buildSetPacketsV3를 쓴다. picks는 정제된 choicePicks(선택 인자)다.
  */
-export function attachSetPackets(extract: ChatExtract, transcript: ChatMessage[], context: ChatSessionContext): ChatExtract {
+export function attachSetPackets(
+  extract: ChatExtract,
+  transcript: ChatMessage[],
+  context: ChatSessionContext,
+  picks: readonly number[] = []
+): ChatExtract {
   const chatSets = getModuleChatSets(context.moduleId);
-  if (chatFlowVersion(context) !== 2 || !chatSets) return extract;
+  const flow = chatFlowVersion(context);
+  if (flow === 3 && chatSets) {
+    return { ...extract, set_packets: buildSetPacketsV3(transcript, chatSets, context.quizAnswers ?? [], picks) };
+  }
+  if (flow !== 2 || !chatSets) return extract;
   return { ...extract, set_packets: buildSetPackets(transcript, chatSets, context.quizAnswers ?? []) };
 }
 

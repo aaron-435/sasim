@@ -227,6 +227,8 @@ export interface SetPacket {
   has_chat: boolean;
   /** 세트 5만: 24턴 관점 전환 질문에 대한 답 원문. 없으면 null. */
   perspective_answer?: string | null;
+  /** 2026-10-20 (작업 17, v3만 씀): 보기를 탭해서 답한 턴의 사용자 답 원문(턴 순서). 직접 쓴 말과 구분용. */
+  picked_choices?: string[];
 }
 
 /**

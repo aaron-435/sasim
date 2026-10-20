@@ -83,10 +83,18 @@ export function resolveReportSets(
     if (!r) return packet;
     const opening = clipList(r.opening_answers, 2);
     const moduleAnswers = clipList(r.module_answers, 3);
-    const out: SetPacket = { ...packet, opening_answers: opening, module_answers: moduleAnswers, has_chat: opening.length + moduleAnswers.length > 0 };
+    // 2026-10-20 (작업 17): v3 세트 패킷의 picked_choices(보기를 탭한 답)도 정제해 넣는다.
+    const picked = clipList(r.picked_choices, 4);
+    const out: SetPacket = { ...packet, opening_answers: opening, module_answers: moduleAnswers, picked_choices: picked, has_chat: opening.length + moduleAnswers.length > 0 };
     if (packet.set === 5) {
       out.perspective_answer = clip(r.perspective_answer, SET_ANSWER_MAX) || null;
       if (out.perspective_answer) out.has_chat = true;
+    }
+    // 2026-10-20 (작업 17): 고른 보기만 있는 세트는 대화 없음으로 둔다. 세트 5의 관점 답이 고른 보기와
+    // 같은 문구면 직접 쓴 말이 아니므로 has_chat을 세우지 않는다.
+    const perspectiveIsPicked = !!out.perspective_answer && picked.includes(out.perspective_answer);
+    if (picked.length > 0 && opening.length === 0 && moduleAnswers.length === 0 && (!out.perspective_answer || perspectiveIsPicked)) {
+      out.has_chat = false;
     }
     return out;
   });
@@ -155,7 +163,13 @@ export function describeCardSlots(sets: ReportSetsInput, moduleId: string | unde
     const theme = CHAT_SET_THEMES[n];
     const quiz = chatSets ? cardQuizFor(chatSets, n, sets.quizAnswers) : null;
     const answer = quiz ? `"${quiz.label}"` : "(없음)";
-    const chat = p?.has_chat ? `대화 있음 — quote는 세트 ${n}의 답 원문에서만` : "대화 없음 — quote는 빈 문자열, note는 이 검사 답 하나로만";
+    // 2026-10-20 (작업 17): 대화는 없지만 고른 보기가 있으면 note 재료에 보기를 더한다. 보기가 없으면 기존 문구 그대로다.
+    const pickedCount = p?.picked_choices?.length ?? 0;
+    const chat = p?.has_chat
+      ? `대화 있음 — quote는 세트 ${n}의 답 원문에서만`
+      : pickedCount > 0
+        ? "대화 없음 — quote는 빈 문자열, note는 이 검사 답 하나와 사용자가 고른 보기(이름 붙여 '고른 보기')로만"
+        : "대화 없음 — quote는 빈 문자열, note는 이 검사 답 하나로만";
     return `세트 ${n} · ${theme.name} 카드. 이 카드의 '검사에서 고른 답': ${answer}. ${chat}`;
   });
 }
@@ -168,14 +182,28 @@ export function describeSetPackets(sets: ReportSetsInput, moduleId: string | und
     const quiz = chatSets ? cardQuizFor(chatSets, n, sets.quizAnswers) : null;
     const quizLine = quiz ? `"${quiz.prompt}" → "${quiz.label}" (${Math.round(quiz.score * 10) / 10}점)` : "(없음)";
     const lines = [`### 세트 ${n} · ${theme.name} (${theme.description})`, `- 카드의 '검사에서 고른 답': ${quizLine}`];
+    // 2026-10-20 (작업 17): 고른 보기는 카드 해설의 근거로 쓰되, 사용자가 직접 한 말처럼 인용하지 않는다.
+    const pickedLines = (p?.picked_choices ?? []).map((t) => `- 사용자가 고른 보기(직접 쓴 말이 아님): "${t}"`);
     if (!p?.has_chat) {
       const cands = chatSets ? candidateAnswers(chatSets, n, sets.quizAnswers).sort((a, b) => b.score - a.score) : [];
-      lines.push(`- 대화 없음 — 이 세트의 근거는 아래 후보 문항 답(점수 높은 순)만 쓴다. 이 세트의 말을 지어내지 않는다.`);
+      if (pickedLines.length > 0) {
+        lines.push(`- 대화 없음 — 이 세트의 근거는 아래 후보 문항 답(점수 높은 순)과 사용자가 고른 보기를 쓴다. 이 세트의 말을 지어내지 않는다.`);
+      } else {
+        lines.push(`- 대화 없음 — 이 세트의 근거는 아래 후보 문항 답(점수 높은 순)만 쓴다. 이 세트의 말을 지어내지 않는다.`);
+      }
       if (cands.length) lines.push(...cands.map((a) => `  - "${a.prompt}" → "${a.label}" (${Math.round(a.score * 10) / 10}점)`));
+      if (pickedLines.length > 0) {
+        lines.push(...pickedLines);
+        lines.push(`- 위 보기는 카드 해설의 근거로 쓰되, 사용자가 직접 한 말처럼 인용하지 않는다.`);
+      }
     } else {
       p.opening_answers.forEach((t, i) => lines.push(`- ${i === 0 ? "①" : "②"} 답 원문: "${t}"`));
       p.module_answers.forEach((t, i) => lines.push(`- ${["③", "④", "⑤"][i]} 답 원문: "${t}"`));
       if (n === 5) lines.push(`- 24턴 관점 전환 답 원문(closing 재료, 카드 인용에는 쓰지 않음): ${p.perspective_answer ? `"${p.perspective_answer}"` : "(없음)"}`);
+      if (pickedLines.length > 0) {
+        lines.push(...pickedLines);
+        lines.push(`- 위 보기는 카드 해설의 근거로 쓰되, 사용자가 직접 한 말처럼 인용하지 않는다.`);
+      }
     }
     return lines.join("\n");
   }).join("\n\n");

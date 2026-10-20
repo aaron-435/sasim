@@ -62,6 +62,7 @@ import {
   TOTAL_TURNS_V3,
   CHECKPOINT_TURN_V3,
   PERSPECTIVE_LEAD_TURN_V3,
+  type ChoiceFieldPick,
   type ChoiceTurnRole,
 } from "./chatChoices";
 import { CRISIS_RESOURCES, ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
@@ -1468,9 +1469,24 @@ export interface ExtractionMessage {
  *   - Neither field may quote the transcript verbatim — both must be freshly
  *     composed synthesis, not copy-paste.
  */
+// 2026-10-20 (작업 17): v3 추출 프롬프트 끝에 붙는 "사용자가 고른 묶음 답(우선 근거)" 블록.
+// v3일 때 묶음 답이 하나라도 있을 때만 붙고, 그 밖(v1·v2, 답 없음)은 빈 문자열이라 기존 출력이 그대로다.
+function buildChoiceFieldBlock(context: ChatSessionContext, choiceFieldPicks: readonly ChoiceFieldPick[] | undefined): string {
+  if (chatFlowVersion(context) !== 3 || !choiceFieldPicks || choiceFieldPicks.length === 0) return "";
+  const lines = choiceFieldPicks.map((p) =>
+    p.a1 ? `${p.field}: A1 "${p.a1}" → A2 "${p.a2}"` : `${p.field}: A2 "${p.a2}"`
+  );
+  return `
+## 사용자가 고른 묶음 답(우선 근거)
+${lines.join("\n")}
+이 필드는 사용자가 고른 보기나 직접 쓴 말로 이미 정해져 있다. 이 값을 바꾸거나 뒤집지 말고 한 문장으로 풀어 쓴다. 새 감정·이유를 지어 붙이지 않는다. 고른 보기 문구 그대로를 따옴표로 인용하지는 않아도 된다.`;
+}
+
 export function buildExtractionPrompt(
   transcript: ExtractionMessage[],
-  context: ChatSessionContext
+  context: ChatSessionContext,
+  /** 2026-10-20 (작업 17): v3일 때만 쓰는 묶음 답. 없으면 v1·v2와 같은 출력이다. */
+  choiceFieldPicks?: readonly ChoiceFieldPick[]
 ): { system: string; user: string } {
   const locale: Locale = context.locale ?? "ko";
   const elementsLine = (Object.keys(context.sajuElements) as ElementKey[])
@@ -1512,7 +1528,7 @@ null로 표시된 필드는 대화에 근거가 없으면 문자열 "null"이 �
 - 사주 오행 분포: ${elementsLine} (우세 원소: ${ELEMENT_LABEL[locale][context.dominantSajuElement]})
 - 심리테스트 결과: ${context.psychTestType}
 - 심리테스트 서술: ${context.psychTestSummary || "(없음)"}
-`.trim();
+${buildChoiceFieldBlock(context, choiceFieldPicks)}`.trim();
 
   const user = transcript.map((m) => `${m.role === "user" ? "유저" : "챗봇"}: ${m.content}`).join("\n");
 
