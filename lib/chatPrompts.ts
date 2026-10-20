@@ -35,6 +35,7 @@ import type { Locale } from "./i18n/types";
 import {
   CHAT_SET_THEMES,
   getModuleChatSets,
+  getModuleChoiceBundles,
   getModulePlaybook,
   PERSPECTIVE_SHIFT_LEAD,
   PLAYBOOK_STAGE_TURNS,
@@ -43,6 +44,7 @@ import {
   type ChatSetQuestion,
   type ForcedChoiceAxis,
   type ModuleChatSets,
+  type ModuleChoiceBundles,
   type ModulePlaybook,
   type PlaybookStage,
 } from "./modulePlaybooks";
@@ -55,6 +57,13 @@ import {
   type SetQuizAnswer,
   type SetTurnRole,
 } from "./chatSets";
+import {
+  getChoiceTurnRole,
+  TOTAL_TURNS_V3,
+  CHECKPOINT_TURN_V3,
+  PERSPECTIVE_LEAD_TURN_V3,
+  type ChoiceTurnRole,
+} from "./chatChoices";
 import { CRISIS_RESOURCES, ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 
 export type Track = "romance" | "career";
@@ -697,6 +706,8 @@ lines는 2~5개의 짧은 메신저 메시지 배열이다(개수는 응답마�
  */
 export function isFinalTurn(turnNumber: number, elapsedMinutes: number, flowVersion: ChatFlowVersion = 1): boolean {
   if (flowVersion === 2) return elapsedMinutes >= TIME_LIMIT_MINUTES_V2 || turnNumber >= TOTAL_TURNS_V2;
+  // 2026-10-20: v3(22턴)도 30분 제한을 쓴다.
+  if (flowVersion === 3) return elapsedMinutes >= TIME_LIMIT_MINUTES_V2 || turnNumber >= TOTAL_TURNS_V3;
   return elapsedMinutes >= TIME_LIMIT_MINUTES || turnNumber >= TOTAL_TURNS;
 }
 
@@ -729,6 +740,8 @@ export function buildChatSystemPrompt(
 ): string {
   // 2026-10-02 (TODO 4): flowVersion 2 요청만 5세트 흐름. 그 밖에는 아래 20턴 흐름 그대로.
   if (chatFlowVersion(context) === 2) return buildChatSystemPromptV2(turnNumber, context, elapsedMinutes, formulation);
+  // 2026-10-20: flowVersion 3 요청은 선택지 분기형 흐름. v1·v2 분기는 그대로 둔다.
+  if (chatFlowVersion(context) === 3) return buildChatSystemPromptV3(turnNumber, context, elapsedMinutes, formulation);
   const locale: Locale = context.locale ?? "ko";
   const effectiveTurn = isFinalTurn(turnNumber, elapsedMinutes) ? TOTAL_TURNS : Math.max(1, turnNumber);
   // moduleId가 없거나(웹, 구버전 앱) 모르는 id면 플레이북이 없어 예전 공통 지침을 그대로 쓴다.
@@ -819,16 +832,27 @@ const RECAP_TURNS_V2 = [6, 16, 21] as const;
 const CONTRADICTION_SETS_V2: readonly ChatSetNumber[] = [3, 4];
 const CONTRADICTION_POSITION_V2 = 3;
 
-export type ChatFlowVersion = 1 | 2;
+export type ChatFlowVersion = 1 | 2 | 3;
 
 /**
  * 이 요청을 5세트 흐름으로 처리할지. flowVersion 2 + 퀴즈 답 1개 이상 + 세트 데이터가 있는 moduleId일
- * 때만 2다. 하나라도 빠지면(구버전 앱, 웹, 잘못된 요청) 20턴 흐름으로 그대로 동작한다.
+ * 때만 2다. flowVersion 3 + 퀴즈 답 + 세트 데이터 + 묶음 데이터면 3이다. 하나라도 빠지면(구버전 앱, 웹,
+ * 잘못된 요청) 20턴 흐름으로 그대로 동작한다.
  */
 export function chatFlowVersion(context: ChatSessionContext): ChatFlowVersion {
-  return context.flowVersion === 2 && (context.quizAnswers?.length ?? 0) > 0 && getModuleChatSets(context.moduleId)
-    ? 2
-    : 1;
+  if (context.flowVersion === 2 && (context.quizAnswers?.length ?? 0) > 0 && getModuleChatSets(context.moduleId)) {
+    return 2;
+  }
+  // 2026-10-20: flowVersion 3(선택지 분기형). 묶음 데이터가 없는 모듈은 아래로 떨어져 v2 조건(≠2라 1)을 따른다.
+  if (
+    context.flowVersion === 3 &&
+    (context.quizAnswers?.length ?? 0) > 0 &&
+    getModuleChatSets(context.moduleId) &&
+    getModuleChoiceBundles(context.moduleId)
+  ) {
+    return 3;
+  }
+  return 1;
 }
 
 // 예시 대화의 ⑥ 설명만 5세트 흐름에 맞게 바꾼다(숨고르기 턴이 없다). 대화 문장은 같다.
@@ -1211,6 +1235,213 @@ ${timeNotice ? `\n${timeNotice}` : ""}
 ${setAnswersBlock}
 
 ${OUTPUT_FORMAT}
+${outputLanguageDirective(locale, LINES_ARRAY_DESCRIPTION)}
+`.trim();
+}
+
+// ── 선택지 분기형 22턴 흐름 (flowVersion 3, 2026-10-20) ─────────────────────
+// 설계: CHOICE_CHAT_DESIGN.md, SPEC.md(2026-10-20). 턴 → 묶음·단계·필드 매핑은
+// lib/chatChoices.ts(순수 함수), 묶음별 보기 재료는 lib/modulePlaybooks.ts의
+// MODULE_CHOICE_BUNDLES. 조립은 buildChatSystemPromptV2를 거울처럼 따른다.
+// v1·v2 함수는 시그니처·출력을 유지하고, v3이 다른 것만 새 함수·새 상수로 둔다.
+
+function buildTimeNoticeV3(elapsedMinutes: number): string {
+  if (elapsedMinutes >= TIME_LIMIT_MINUTES_V2) {
+    return `현재 대화 시작 후 ${TIME_LIMIT_MINUTES_V2}분 이상 경과했습니다. 지금까지 나온 정보로 요약하고 대화를 종료하세요 (${TOTAL_TURNS_V3}번째 응답 지침으로 전환됨).`;
+  }
+  if (elapsedMinutes >= TIME_LIMIT_MINUTES_V2 - 3) {
+    return `현재 대화 시작 후 ${elapsedMinutes}분 경과했습니다. 남은 질문을 압축해서 이번 또는 다음 응답에서 마무리 단계로 들어가세요.`;
+  }
+  return "";
+}
+
+/** 선택지 분기형 흐름에서 이번 턴의 역할. 시간 초과면 마무리 턴으로 당긴다(isFinalTurn과 같은 판단). */
+export function effectiveChoiceTurnRole(turnNumber: number, elapsedMinutes: number): ChoiceTurnRole {
+  return getChoiceTurnRole(isFinalTurn(turnNumber, elapsedMinutes, 3) ? TOTAL_TURNS_V3 : turnNumber);
+}
+
+// 2026-10-20: v3 출력 형식. 기존 OUTPUT_FORMAT은 건드리지 않고 choices 키를 더한 새 상수다.
+const OUTPUT_FORMAT_V3 = `
+## 출력 형식 (매 응답 공통 — 반드시 지킬 것)
+반드시 아래 JSON 형식으로만 응답하라 (다른 텍스트나 코드 블록 표시 없이 JSON 객체 하나만):
+{"formulation": {"hypothesis": "...", "evidence": ["..."], "contradiction": "..." 또는 null, "next_move": "narrow"}, "lines": ["첫 번째 메시지", "두 번째 메시지", "..."], "choices": ["보기1", "보기2"]}
+formulation은 사용자에게 보이지 않는 상담사 메모다. lines보다 먼저 쓴다:
+- hypothesis: 사용자의 직전 답까지 반영한, 이 사람에 대한 지금의 핵심 가설 한 문장(한국어). 사용자가 한 말에서만 세운다. 아직 재료가 없으면(1번째 응답) null.
+- evidence: 그 가설의 근거가 된 사용자 발언을 원문 그대로 짧게, 최대 3개.
+- contradiction: 사용자의 두 말 사이에서 짚어 볼 만한 어긋남 한 줄(한국어), 없으면 null.
+- next_move: 다음 응답에서 둘 수 — "narrow"(가설을 한 겹 좁힘), "contradiction"(모순 짚기), "recheck"(가설 재확인), "reframe"(자책 리프레이밍) 중 하나.
+lines는 2~5개의 짧은 메신저 메시지 배열이다(개수는 응답마다 내용에 맞게 달라진다). 각 항목은 마크다운, 코드, 중괄호 등 구조화된 표시를 포함하지 않는
+순수 대화체 문장이어야 한다. lines에는 formulation의 문장을 옮겨 적지 않는다.
+choices는 사용자가 탭할 수 있는 보기 2~3개의 배열이다(각 24자 이내, 서로 중복 없음). "직접 쓸게요"는 앱이 붙이므로 choices에 쓰지 않는다. 보기를 쓰지 않는 턴(체크포인트·마무리·위기 대응)에는 "choices": []로 둔다.
+`.trim();
+
+// 2026-10-20: v3 마무리(22턴). v2 마무리를 재사용하되 턴 번호와 관점 전환 언급만 v3에 맞춘다.
+const CLOSING_INSTRUCTION_V3 =
+  CLOSING_INSTRUCTION_V2.replace(
+    `지금은 ${TOTAL_TURNS_V2}번째(마지막) 응답입니다`,
+    `지금은 ${TOTAL_TURNS_V3}번째(마지막) 응답입니다`
+  )
+    .replace(
+      "마지막 질문(관점 전환)에 답했다면 그 답도 한 구절 담는다.",
+      "21턴에 건넨 말도 한 구절 담는다."
+    ) + " 이번 턴에는 choices를 쓰지 않는다.";
+
+// 2026-10-20: v3 묶음 A의 첫 질문(A1) 인용. v2 인용 지시를 빌려 쓰되 질문 방향은 묶음 의도가 정한다.
+function buildChoiceQuoteInstruction(
+  turn: number,
+  set: ChatSetNumber,
+  chatSets: ModuleChatSets,
+  answers: readonly SetQuizAnswer[],
+  locale: Locale
+): string {
+  const chatSet = chatSets.sets[set - 1];
+  const pseudoRole: SetTurnRole = { turn, kind: "set", set, position: 1, recapSets: [], greeting: turn === 1 };
+  const base = buildOpeningQuoteInstruction(pseudoRole, chatSet, selectSetQuizAnswer(chatSets, set, answers), chatSets, locale);
+  return `${base}\n(이번 흐름에서 위 지시는 인용의 방식에만 쓴다 — 직접 인용하기, 인용 틀 바꾸기, 생략 금지, 자책이 있으면 인용 앞 반영 줄에 다르게 보는 한 줄. 무엇을 물을지는 위가 아니라 위 "이번 턴의 묶음" 의도를 따른다. 위 지시의 "열린 질문으로"는 "위 묶음의 질문 + choices에 보기 2~3개"로 읽는다 — 질문 문장은 lines 마지막 줄에, 보기는 choices에 쓴다.)`;
+}
+
+function buildChoiceTurnInstruction(
+  role: ChoiceTurnRole,
+  bundles: ModuleChoiceBundles,
+  chatSets: ModuleChatSets,
+  answers: readonly SetQuizAnswer[],
+  locale: Locale
+): string {
+  const set = role.set as ChatSetNumber;
+  const chatSet = chatSets.sets[set - 1];
+  const stepName = `${role.bundle}${role.step}`;
+  const parts: string[] = [
+    `지금은 ${role.turn}번째 응답입니다 (${setLabel(set)}, 묶음 ${role.bundle}의 ${role.step}번째 질문 — ${stepName}). 이 세트가 보는 장면: ${chatSet.focus}.`,
+  ];
+
+  if (role.greeting) {
+    parts.push(
+      `대화의 첫 응답이다. 사용자는 방금 30문항 심리테스트를 막 끝냈다. 따뜻하게 인사 한두 줄을 건네고, 방금 나온 심리테스트 결과(아래 "심리테스트 결과")를 "아까 [유형]이 나왔던데" 정도로 아주 가볍게 한 번만 스친다 — 그게 무슨 뜻인지 설명하거나 해석하지 않는다(규칙 2). 인사 뒤에 열린 질문을 따로 두지 않고 곧바로 아래 ${stepName} 질문으로 대화를 연다.`
+    );
+  }
+
+  // 설계 3절 공통 규칙 — 모든 보기 턴에 그대로 둔다.
+  parts.push(
+    role.greeting
+      ? `이번 응답의 모양: 인사 한두 줄 + 질문 한 줄이다(최대 3줄). 인사 뒤에 열린 질문을 따로 두지 않고 이번 턴의 질문 하나만 마지막 줄에 둔다(규칙 3). 질문은 lines에 쓰고, 보기는 lines가 아니라 JSON의 choices에 2~3개 쓴다(각 24자 이내, 중복 없음). "직접 쓸게요"는 네가 쓰지 않는다 — 앱이 마지막에 붙인다. 보기는 질문으로 내미는 후보이며, 사용자가 말하지 않은 감정·이유를 단정하지 않는다(규칙 5). 조언·처방 보기("쉬세요", "도움을 청하세요" 류)는 쓰지 않는다(규칙 4). 건강·사고·재난 예측과 단정적 부정 예측은 보기에도 쓰지 않는다. 위기 신호가 있으면 규칙 0이 이 지침보다 우선이며, 그 응답에는 choices를 쓰지 않는다.`
+      : `이번 응답의 모양: 반영 한 줄 + 질문 한 줄이 기본이다(최대 3줄). 첫 줄에는 사용자가 방금 고른 보기 문구(또는 직접 쓴 문장)를 살려 짧게 받고, 마지막 줄에 이번 턴의 질문 하나만 둔다(규칙 3). 질문은 lines에 쓰고, 보기는 lines가 아니라 JSON의 choices에 2~3개 쓴다(각 24자 이내, 중복 없음). "직접 쓸게요"는 네가 쓰지 않는다 — 앱이 마지막에 붙인다. 보기는 질문으로 내미는 후보이며, 사용자가 말하지 않은 감정·이유를 단정하지 않는다(규칙 5). 조언·처방 보기("쉬세요", "도움을 청하세요" 류)는 쓰지 않는다(규칙 4). 건강·사고·재난 예측과 단정적 부정 예측은 보기에도 쓰지 않는다. 위기 신호가 있으면 규칙 0이 이 지침보다 우선이며, 그 응답에는 choices를 쓰지 않는다.`
+  );
+
+  const step = bundles.turns[role.turn];
+  if (step) {
+    const bundleLines = [
+      `이번 턴의 묶음 — 의도: ${step.intent}`,
+      `보기 재료(아래 문구를 사용자 표현에 맞게 다듬어 choices에 2~3개로 쓴다. 뜻을 바꾸지 않는다): ${step.options.map((o) => `"${o}"`).join(" / ")}`,
+    ];
+    if (step.branching) bundleLines.push(`갈래별 보기: ${step.branching}`);
+    if (role.step === 2) {
+      bundleLines.push(
+        `이번 턴은 ${role.bundle}2다 — 직전에 고른 쪽에 맞는 보기를 쓴다. 사용자가 "직접 쓸게요"로 문장을 썼으면 그 문장을 재료로 같은 위치의 질문을 이어 간다(갈래별 보기가 있으면 그 문장에 가장 가까운 쪽을 따른다).`
+      );
+    }
+    parts.push(bundleLines.join("\n"));
+  }
+
+  if (role.bundle === "A" && role.step === 1) {
+    parts.push(buildChoiceQuoteInstruction(role.turn, set, chatSets, answers, locale));
+  }
+
+  if (role.turn === PERSPECTIVE_LEAD_TURN_V3) {
+    parts.push(
+      `이번 응답의 첫 줄에는 서버가 고정 문구 "${PERSPECTIVE_SHIFT_LEAD[locale]}"를 붙인다. 그 문장(또는 같은 뜻의 문장)은 네가 쓰지 않는다 — lines에는 그 뒤에 이어질 줄만 쓴다. 고정 문구 바로 뒤에 오므로 직전 답을 길게 받지 않는다. 첫날의 나 장면 한두 줄 뒤에 위 묶음의 질문을 묻고, 보기는 choices에 쓴다.`
+    );
+  }
+
+  return parts.join("\n");
+}
+
+function buildCheckpointInstructionV3(): string {
+  return `지금은 ${CHECKPOINT_TURN_V3}번째 응답입니다 (짧은 정리 + 중간 점검) — 대화를 끝내는 턴이 아니라, 사용자에게 계속할지 선택권을 주는 턴입니다.
+${setLabel(1)}과 ${setLabel(2)}까지 들은 것을 정리한다. 이번 응답은 3줄 이내, 약 100~120자로 쓴다. 줄의 순서를 지킨다:
+① 지금까지 사용자가 고르거나 쓴 문구 2~3개를 엮어, 들은 대로 짧게 분석해 본 느낌 한 줄. 재료는 사용자가 고르거나 쓴 문구뿐이다 — 새 감정·이유를 만들지 않는다(규칙 5).
+② 정정 허락과 인정을 합친 한 줄(다르게 들렸다면 계속하면서 고쳐 줘도 된다는 뜻). 따로 인정 줄을 두지 않는다. "자세한 풀이는 리포트에서" 한마디는 넣어도 되지만 이 2줄 안에서만 쓴다.
+③ 계속할지 여기서 마무리할지 묻는 질문 한 줄. 두 선택지를 같은 무게로 쓰고, 계속 쪽에만 이유를 붙이지 않는다.
+부정 예측과 페이월 언급은 쓰지 않는다. 이번 턴에는 choices를 쓰지 않는다 — 앱이 계속/마무리 두 버튼을 보여 준다.`;
+}
+
+function buildChatSystemPromptV3(
+  turnNumber: number,
+  context: ChatSessionContext,
+  elapsedMinutes: number,
+  formulation: ChatFormulation | undefined
+): string {
+  const locale: Locale = context.locale ?? "ko";
+  const playbook = getModulePlaybook(context.moduleId);
+  const chatSets = getModuleChatSets(context.moduleId);
+  const bundles = getModuleChoiceBundles(context.moduleId);
+  // chatFlowVersion()이 3일 때만 여기 온다 — 묶음 데이터가 있으면 세트 데이터·플레이북도 있다.
+  if (!playbook || !chatSets || !bundles) throw new Error(`선택지 묶음 데이터 없음: ${context.moduleId}`);
+  const answers = context.quizAnswers ?? [];
+  const role = effectiveChoiceTurnRole(turnNumber, elapsedMinutes);
+
+  const instruction =
+    role.kind === "closing"
+      ? CLOSING_INSTRUCTION_V3
+      : role.kind === "checkpoint"
+        ? buildCheckpointInstructionV3()
+        : buildChoiceTurnInstruction(role, bundles, chatSets, answers, locale);
+
+  const quoteTurn = role.kind === "set" && role.bundle === "A" && role.step === 1;
+  const reframeCheck = `\n\n(먼저 확인: 사용자의 직전 발화에 스스로를 깎아내리는 말이 있으면 기법 ⑦이 위 지침보다 우선한다${
+    quoteTurn
+      ? " — 단, 이번 턴은 테스트 답 인용 턴이라 인용이 최우선이다. 자책을 다르게 볼 수 있는 한 줄은 인용 앞 반영 줄에 넣고, 질문은 위 지시대로 한다."
+      : role.kind === "closing"
+        ? " — 이번 턴은 마지막 정리라, 요약 안에 그 자책을 다르게 볼 수 있는 한 줄을 평서문으로 넣는다."
+        : role.kind === "checkpoint"
+          ? " — 이번 턴은 중간 점검이니, 지금까지를 인정하는 줄에 그 자책을 다르게 볼 수 있는 한 줄을 넣고 계속할지 묻는 질문은 그대로 둔다."
+          : role.turn === PERSPECTIVE_LEAD_TURN_V3
+            ? " — 이번 턴은 고정 문구 뒤의 관점 전환 질문이 유일한 질문이다. 자책은 위 지시처럼 장면 안에서 다르게 보게 한다."
+            : ". 이번 응답의 유일한 질문을 반박형 리프레이밍 질문으로 쓴다. 단, 직전 상담사 응답이 이미 반박형 질문(\"정말 ~라면 ~할까요?\" 류)이었으면 또 쓰지 않는다 — 다르게 보는 한 줄만 반영 줄에 넣고, 질문은 위 지침대로 한다."
+  })`;
+  const safetyCheck =
+    "(가장 먼저 확인: 사용자의 직전 발화에 위기 신호 — 자해·자살, 사라지고 싶다, '내가 없어지면 편할 것', 수단을 모음, 높은 곳에 서 있었음, 작별 — 가 있으면 규칙 0이 아래 모든 지시보다 우선한다.)\n";
+  const bodyLocationReminder =
+    "\n\n(주의: 몸 감각의 \"위치\"(가슴/배/목/머리 등)는 어떤 턴에서도 직접 묻지 않는다 — 사용자가 스스로 먼저 말한 위치는 반영해도 되지만, 위치를 질문으로 만들지 않는다. 규칙 6 참고.)";
+  const timeNotice = buildTimeNoticeV3(elapsedMinutes);
+
+  // 입력값에는 이번 세트 후보 문항의 답만 넣는다(30문항 전부 아님). 인용할 문항은 위 지시에 따로 있다.
+  const setAnswers = role.kind === "set" && role.set ? setCandidateAnswers(chatSets.sets[role.set - 1], answers) : [];
+  const setAnswersBlock = setAnswers.length
+    ? `- 이번 세트와 관련된 테스트 답(앞머리 재진술·모순 짚기의 재료로만 쓴다. 인용은 위 지시가 정한 문항만):\n${setAnswers.map((a) => `  - ${formatQuizAnswer(a)}`).join("\n")}`
+    : "";
+
+  const elementsLine = (Object.keys(context.sajuElements) as ElementKey[])
+    .map((k) => `${ELEMENT_LABEL[locale][k]} ${Math.round(context.sajuElements[k])}%`)
+    .join(", ");
+
+  return `
+너는 "Fatesaid"의 무료 AI 상담 챗봇이다. 실제 상담사처럼 따뜻하게, 사용자의 이야기를 다각도로
+부드럽게 끌어낸다. 사주와 심리테스트 결과의 "해설"은 리포트의 몫이고, 챗봇의 몫은 오직 이번 대화에서만 나올 수
+있는 구체적인 이야기를 듣는 것이다.
+
+${EXAMPLE_DIALOGUE_V2}${buildExampleGuard(locale)}
+
+${buildAbsoluteRules(locale, true)}
+
+${buildTechniquesSection(playbook, locale, TECHNIQUES_BODY_V2)}
+
+${buildModuleLensSection(playbook)}
+
+## 이번 상담의 흐름
+대화는 다섯 세트로 이어진다: ${([1, 2, 3, 4, 5] as ChatSetNumber[]).map(setLabel).join(" → ")}. 세트 하나는 묶음 A(2턴)와 묶음 B(2턴)다. 묶음 안에서는 갈래 고르기(1단계 질문) 뒤에 고른 쪽을 한 겹 더 묻는 질문(2단계)을 하고, 묶음이 끝나면 그 묶음이 정하는 것이 정해진다. 질문 문장은 lines의 마지막 줄에 쓰고, 보기는 choices에 2~3개 쓴다(아래 출력 형식). ${CHECKPOINT_TURN_V3}번째 응답은 지금까지를 짧게 정리하고 계속할지 묻는 체크포인트, ${PERSPECTIVE_LEAD_TURN_V3}번째 응답은 서버 고정 문구 뒤에 오는 관점 전환 질문, ${TOTAL_TURNS_V3}번째 응답은 마지막 정리다. 지금 묶음의 것만 묻고, 다음 묶음·다음 세트의 주제를 앞당겨 묻지 않는다.
+${formulation ? `\n${buildFormulationSection(formulation, true)}\n` : ""}
+## 지금 해야 할 일
+(아래는 이번 턴의 안내다. 규칙 7 — 사용자의 직전 발화가 우선이고, 이미 나온 재료는 다시 묻지 않는다.)
+${safetyCheck}${instruction}${reframeCheck}${bodyLocationReminder}
+${timeNotice ? `\n${timeNotice}` : ""}
+
+## 이번 세션 입력값
+- 사주 오행 분포: ${elementsLine} (우세 원소: ${ELEMENT_LABEL[locale][context.dominantSajuElement]})
+- 심리테스트 결과: ${context.psychTestType}
+- 심리테스트 서술: ${context.psychTestSummary || "(없음)"}
+${setAnswersBlock}
+
+${OUTPUT_FORMAT_V3}
 ${outputLanguageDirective(locale, LINES_ARRAY_DESCRIPTION)}
 `.trim();
 }

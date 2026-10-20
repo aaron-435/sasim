@@ -23,6 +23,7 @@ import {
   buildChatSystemPrompt,
   buildExtractionPrompt,
   chatFlowVersion,
+  effectiveChoiceTurnRole,
   effectiveSetTurnRole,
   isFinalTurn,
   sanitizeFormulation,
@@ -32,6 +33,7 @@ import {
 } from "./chatPrompts";
 import { getModuleChatSets, getModulePlaybook, PERSPECTIVE_SHIFT_LEAD } from "./modulePlaybooks";
 import { buildSetPackets, selectSetQuizAnswer, type SetPacket } from "./chatSets";
+import { limitCheckpointLinesV3, PERSPECTIVE_LEAD_TURN_V3 } from "./chatChoices";
 import type { Locale } from "./i18n/types";
 import { logLlmUsage } from "./llmUsage";
 import { stripHanja } from "./reportQuality";
@@ -353,9 +355,17 @@ export async function getChatReply(params: {
   // 2026-10-04 (시뮬레이션 q-1005-fix): 세트 ① 턴에서 자책 받기 등에 밀려 테스트 답 인용이 통째로 빠진 응답이 나왔다
   // (es 16턴). 인용할 답이 정해진 턴인데 응답에 그 답이 없으면 한 번만 다시 요청하고, 두 번째는 그대로 받는다.
   const quoteRole = chatFlowVersion(params.context) === 2 ? effectiveSetTurnRole(params.turnNumber, elapsedMinutes) : null;
-  const quoteSets = quoteRole?.kind === "set" && quoteRole.position === 1 && quoteRole.set ? getModuleChatSets(params.context.moduleId) : undefined;
+  // 2026-10-20: v3 A1 턴(1·5·10·14·18)도 인용이 빠지면 한 번 다시 요청한다 — v2와 같은 방식.
+  const choiceQuoteRole = chatFlowVersion(params.context) === 3 ? effectiveChoiceTurnRole(params.turnNumber, elapsedMinutes) : null;
+  const quoteSetNumber =
+    quoteRole?.kind === "set" && quoteRole.position === 1
+      ? quoteRole.set
+      : choiceQuoteRole?.kind === "set" && choiceQuoteRole.bundle === "A" && choiceQuoteRole.step === 1
+        ? choiceQuoteRole.set
+        : null;
+  const quoteSets = quoteSetNumber ? getModuleChatSets(params.context.moduleId) : undefined;
   const expectedQuote =
-    quoteRole?.set && quoteSets ? selectSetQuizAnswer(quoteSets, quoteRole.set, params.context.quizAnswers ?? [])?.label ?? null : null;
+    quoteSetNumber && quoteSets ? selectSetQuizAnswer(quoteSets, quoteSetNumber, params.context.quizAnswers ?? [])?.label ?? null : null;
   let quoteRetryNote = "";
   // 2026-10-05 (시뮬레이션 채점 t7): 기법 ⑦은 모델이 직전 발화를 보고 자책인지 스스로 판단했는데, 자책 직후에도
   // 세트 질문으로 넘어가는 일이 잦았다. 사용자 직전 말에서 자책 표현을 코드로 찾아 그 턴 지시에 명시한다.
@@ -419,19 +429,28 @@ export async function getChatReply(params: {
   const flow = chatFlowVersion(params.context);
   const locale = params.context.locale ?? "ko";
   const role = flow === 2 ? effectiveSetTurnRole(params.turnNumber, elapsedMinutes) : null;
+  // 2026-10-20: v3 턴 역할 — 20턴 고정 문구·9턴 줄 수 제한·체크포인트 보기 억제에 쓴다.
+  const choiceRole = flow === 3 ? effectiveChoiceTurnRole(params.turnNumber, elapsedMinutes) : null;
+  // 2026-10-20: v3 체크포인트 줄 수 제한은 위기 안내 응답에 적용하지 않는다(limitCheckpointLinesV3는 순수 함수라 호출부에서 건너뛴다).
+  const limitChoiceCheckpoint =
+    choiceRole?.kind === "checkpoint" && !oneQuestion.some((line) => CRISIS_LINE_PATTERN.test(line));
   const lines = isFinalTurn(params.turnNumber, elapsedMinutes, flow)
     ? ensureClosingLineLast(oneQuestion, locale)
-    : role?.kind === "perspective"
+    : choiceRole?.turn === PERSPECTIVE_LEAD_TURN_V3
       ? prependPerspectiveLead(oneQuestion, locale)
-      : role?.kind === "checkpoint"
-        ? ensureRecapRecheck(oneQuestion, role.turn, null, locale)
-        : oneQuestion;
+      : limitChoiceCheckpoint
+        ? limitCheckpointLinesV3(oneQuestion)
+        : role?.kind === "perspective"
+          ? prependPerspectiveLead(oneQuestion, locale)
+          : role?.kind === "checkpoint"
+            ? ensureRecapRecheck(oneQuestion, role.turn, null, locale)
+            : oneQuestion;
   const formulation = sanitizeFormulation(parsed.formulation);
   const finalLines = params.context.locale === "ko" || !params.context.locale ? stripHanja(lines) : lines;
-  // 보기는 flowVersion 3 요청만 받는다. 체크포인트 턴 억제는 v3 턴 번호표가 생기는 TODO 3에서 suppress에 더한다.
+  // 2026-10-20: 보기는 v3 흐름(flow === 3)일 때만 나가고, 마지막 턴·체크포인트 턴에는 억제한다(묶음 없는 모듈은 v1로 떨어져 보기가 없다).
   const choices =
-    params.context.flowVersion === 3
-      ? sanitizeChoices(parsed.choices, { suppress: isFinalTurn(params.turnNumber, elapsedMinutes, flow), lines: finalLines })
+    flow === 3
+      ? sanitizeChoices(parsed.choices, { suppress: isFinalTurn(params.turnNumber, elapsedMinutes, flow) || choiceRole?.kind === "checkpoint", lines: finalLines })
       : undefined;
   return {
     lines: finalLines,

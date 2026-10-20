@@ -24,10 +24,11 @@
   - QA: 루트 tsc 통과. 검증 함수에 대한 일회성 스크립트(스크래치 디렉터리)로 정상·초과·빈 값·위기 턴 입력 6건 이상을 돌려 기대 출력과 일치함을 확인.
   - QA: `npx tsc --noEmit` → 오류 없음(exit 0). 스크래치 `choices-test.mts`(tsx)로 `sanitizeChoices` 14건(정상 2·3개, 1개·4개, 빈 값, 25자, 24자 경계, 문장부호 중복, 비문자열, 배열 아님, undefined, suppress, 위기 줄 1393·988) → 전부 PASS.
 
-- [ ] 3. flowVersion 3 턴 지침과 모듈 3 묶음 데이터
+- [x] 3. flowVersion 3 턴 지침과 모듈 3 묶음 데이터
   - 선행: 1, 2
   - 변경: 새 순수 함수 파일 `lib/chatChoices.ts`(턴→역할, `chatSets.ts` 모양을 따름), `lib/modulePlaybooks.ts`에 모듈 3 묶음 데이터, `lib/chatPrompts.ts`에 v3 지침 조립. 위기 신호가 있으면 기존 안전 응답이 우선하도록 순서를 확인한다.
   - QA: 루트 tsc 통과. `buildChatSystemPrompt`를 v3·모듈 3으로 1~22턴 출력해 턴 번호표(TODO 1)와 역할이 일치함을 비교. v1·v2 프롬프트 출력이 변경 전후 동일함(`cmp`)을 확인.
+  - QA: `npx tsc --noEmit` → exit 0. `dump-chat-prompt --v3` module3 1~22턴 → 턴·세트·묶음·단계·필드가 번호표와 일치. v1(module1·3 legacy)·v2(module1·3 ko, module3 en) 덤프 5건 기준선과 `cmp` 동일. muse 기여자 모델(사용자 지정, task-15 브랜치, 변경 uncommitted).
 
 ## 앱
 
@@ -58,3 +59,4 @@
 ## 발견 사항
 (작업 중 발견한 것만 여기에 적고, 해당 항목 diff에는 넣지 않는다.)
 - TODO 3에서 할 것: `ChatFlowVersion` 타입에 3 추가, `getChatReply`의 `sanitizeChoices` `suppress`에 9턴 체크포인트 조건 추가(지금은 마지막 턴만 억제), v3 프롬프트가 모델에게 JSON `choices` 키를 쓰게 지시. 보기 위기 억제는 응답에 위기 안내 번호(1393·988 등)가 있는지로 판정한다.
+- TODO 3 후속: v3 프롬프트의 예시 대화·절대 규칙·기법 절은 v2 것을 재사용해 v2 턴 번호(25·10·6·16·21)가 남아 있다. sim-chat(TODO 6)에서 모델이 헷갈리면 `TECHNIQUES_BODY_V3` 분리. 모듈 5 등 묶음 없는 모듈은 flowVersion 3을 보내도 v1로 떨어진다.
