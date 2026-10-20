@@ -155,3 +155,88 @@ for i,h in enumerate(hooks,1):
     print(i, "FAIL "+m.group(0) if m else "ok", len(h))
 EOF
 ```
+
+## 8. 연간 리포트·Year Wrapped 소재 5개 (TODO 14번, 2026-10-20 초안)
+
+고정 형식(1장)은 그대로 쓴다: 훅 → 생일/화면 → 카드·화면 공개 → 풀이 → CTA. 달라지는 것은 **화면 소스가 앱**이라는 점뿐이다.
+
+제품 사실 근거(`WIKI.md` 3장): 신년 리포트는 표지 → 한눈에 보기 → 5개 영역 → 12개월(3개월씩 4쪽) → 실행 계획 → 마무리 순서이고, 구매 전에는 미리보기만 열린다. Year Wrapped는 무료이며 기기 날짜 12/1~1/31에만 홈에 "올해의 나" 카드가 보이고, 카드는 최대 5장(올해 나를 이끈 기운, 가장 흐름이 좋았던 달, 가장 많이 물은 주제, 올해의 한 문장, 다가오는 해)이다. 공유 카드는 사주 유형 카드와 영역별 9:16 카드가 있다.
+
+**제약 (먼저 읽기)**
+- 세 소재 모두 앱 화면이 필요하다. 웹에는 이 화면들이 없다. 스토어 공개 전에는 촬영·편집까지만 하고 게시는 하지 않는다(TODO 17번 결정 (a)).
+- Wrapped 화면은 기기 날짜가 12/1~1/31일 때만 홈에 나온다. 11월에 촬영하려면 날짜를 바꾸거나 개발용 모드가 필요한데, 어느 쪽이 되는지 이 세션에서는 확인하지 못했다(미확인, 사용자 확인).
+- 신년 리포트 미리보기에 잠긴 장 목록이 보인다. 영상은 잠기지 않은 쪽과 장 제목만 보여 주고, 부정적 문장이 페이월 바로 위에 오는 컷은 쓰지 않는다(압박 규칙). 가격·할인·"지금 사라" 류 말은 영상에 넣지 않는다.
+- 연도 숫자(2027)는 제품이 계산해 보여 준 화면에 나온 것만 읽는다. "내년은 ~할 것" 같은 문장은 쓰지 않는다.
+
+### 훅 5개 (1장 규칙 A~E로 점검, 아래 스크립트도 실행)
+
+| # | 훅 (자막 = 말) | 소재 | A | B | C | D | E | 결과 |
+|---|---|---|---|---|---|---|---|---|
+| 16 | This saju app lays out a whole year in twelve months. Here's the report. | 신년 리포트 | ○ | ○ | ○ | 12개월은 제품 사실 | ○ | 통과 |
+| 17 | Five life areas, twelve months, one action plan. A look inside a saju year report. | 신년 리포트 | ○ | ○ | ○ | 5·12는 제품 사실 | ○ | 통과 |
+| 18 | Year Wrapped, saju edition: five cards that look back at the year. | Year Wrapped | ○ | ○ | ○ | 5는 제품 사실 | ○ | 통과 |
+| 19 | In saju, every year has an element and an animal. The app names this one. | Year Wrapped | ○ | ○ | ○ | - | ○ | 통과 |
+| 20 | A saju card made to share, in a vertical frame. Here's how the set looks. | 공유 카드 | ○ | ○ | ○ | - | ○ | 통과 |
+
+### 대본 5개 (25~35초, 자막 = 말)
+
+**S1 · 훅 16 · 신년 리포트 훑어보기**
+| 구간 | 화면 | 말 |
+|---|---|---|
+| 0~2초 | 앱 리포트 표지(임의 생년월일) | 훅 16 그대로 |
+| 2~8초 | 한눈에 보기 쪽 | "This page sums up the year in one view." |
+| 8~20초 | 12개월 쪽을 천천히 넘김(3개월씩) | "The months come three at a time, four pages in all." |
+| 20~27초 | 실행 계획 쪽 | "It ends with a plan section." |
+| 27~32초 | 프로필 링크 화면 | "The app is linked in my bio." |
+
+**S2 · 훅 17 · 영역과 목차**
+| 구간 | 화면 | 말 |
+|---|---|---|
+| 0~2초 | 목차 화면 | 훅 17 그대로 |
+| 2~14초 | 5개 영역 쪽을 하나씩 | 화면에 적힌 영역 이름만 읽는다 |
+| 14~24초 | 목차의 잠긴 장 제목(잠금 아이콘) | "Some chapters open after you buy the report." (가격은 말하지 않는다) |
+| 24~32초 | 마지막 장 | "The app is linked in my bio." |
+
+**S3 · 훅 18 · Year Wrapped 다섯 장**
+| 구간 | 화면 | 말 |
+|---|---|---|
+| 0~2초 | Wrapped 첫 장 | 훅 18 그대로 |
+| 2~20초 | 카드를 한 장씩 넘김(1~4번째) | 카드에 적힌 문장만 읽는다. 3번째(가장 많이 물은 주제)는 기기에 기록이 없으면 건너뛰므로 촬영용 기기에 기록을 먼저 만든다 |
+| 20~28초 | 다가오는 해 카드 | "The last card looks at the year ahead." |
+| 28~32초 | 공유 버튼 | "Every card can be saved as an image." (공유 기능은 카드 화면 기준, 촬영 때 버튼 확인) |
+
+**S4 · 훅 19 · 올해 이름 카드**
+| 구간 | 화면 | 말 |
+|---|---|---|
+| 0~2초 | Wrapped의 "올해 나를 이끈 기운" 카드 | 훅 19 그대로 |
+| 2~14초 | 해 이름(오행 + 띠)과 리듬 이름 | "The card names the year by an element and an animal." 화면에 적힌 이름 그대로 |
+| 14~26초 | 같은 카드에서 과거형 한 줄 | 카드 문장을 그대로 읽는다. 풀이를 덧붙이지 않는다 |
+| 26~32초 | CTA | "Year Wrapped is free in the app." (앱 안에서 무료, 12/1~1/31 노출이라는 사실에 근거) |
+
+**S5 · 훅 20 · 공유 카드 세트**
+| 구간 | 화면 | 말 |
+|---|---|---|
+| 0~2초 | 공유 카드 화면 | 훅 20 그대로 |
+| 2~14초 | 유형 카드 → 영역 카드로 넘김. **유명인 이름 가림** | 카드에 적힌 유형 이름만 읽는다 |
+| 14~24초 | 공유 시트가 열리는 컷 | "Each card exports as an image." |
+| 24~32초 | CTA | "The app is linked in my bio." |
+
+공통: 얼굴 출연 컷은 훅 구간에만 쓰고 나머지는 화면 녹화. AI 음성이면 5장 표기. 캡션은 6장 틀을 그대로 쓰되 해시태그에 `#yearwrapped`를 추가해 볼 수 있다(노출 여부 미확인). 5개 모두 CTA는 스토어 공개 전에는 쓸 수 없다.
+
+### 새 훅 점검 스크립트
+
+```bash
+python3 - <<'EOF'
+import re
+hooks = """This saju app lays out a whole year in twelve months. Here's the report.
+Five life areas, twelve months, one action plan. A look inside a saju year report.
+Year Wrapped, saju edition: five cards that look back at the year.
+In saju, every year has an element and an animal. The app names this one.
+A saju card made to share, in a vertical frame. Here's how the set looks.""".split("\n")
+banned = r"accura|exact|proven|predict|fortune|money|bank|pay|wallet|invest|lucky|unlucky|doom|you are|you're|your |countdown|last chance|guarantee|will |worst|bad year|hurry|limited|only today|price|sale|\$"
+print(len(hooks), "hooks")
+for i,h in enumerate(hooks,16):
+    m = re.search(banned, h, re.I)
+    print(i, "FAIL "+m.group(0) if m else "ok", len(h))
+EOF
+```
