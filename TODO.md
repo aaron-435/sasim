@@ -58,7 +58,8 @@ SPEC: `SPEC.md` (= `MARKETING_SPEC.md`, 2026-10-16 결정 반영). 직전 UI 개
   - QA: `npx tsc --noEmit`(root), `ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit`(mobile), `/api/events`에 새 이름 POST 200·이전 이름 그대로 200·잘못된 속성 400을 로컬 서버로 확인.
   - 완료 근거(2026-10-20): 직접 구현(약 48줄, 위임보다 싸서). `kind`는 이미 허용 키라 이벤트 이름 4개만 추가. root `npx tsc --noEmit` 오류 0, mobile tsc(큰 스택) 오류 0, `parseEventBatch` 직접 호출(`npx tsx`)로 새 이름 4개·`purchase_start` 속성 kind 200, 기존 `paywall_view` 200, 모르는 속성(`birth`)·모르는 이름·날짜꼴 값 400. HTTP 라우트 경유 테스트는 하지 않음(검증은 파서까지). 앱 호출 지점은 기기에서 확인 안 함(user check: 빌드된 앱에서 `events`에 `app_open` 등이 들어오는지).
   - 구현 메모: `app_open`은 신규 `trackDaily`(로컬 날짜 키, 하루 1회, 시작 시+전경 복귀 시). `chat_start`는 오프너 시점, `chat_complete`의 `kind`는 full/early(마무리 버튼·체크포인트 마무리 시 early), `report_generate`는 `/api/report` 성공 후(저장본 재열기는 제외). 구매 `kind`는 intro price 0이면 trial, iOS에서 자격 없는 사용자는 trial로 과대 집계될 수 있음(RevenueCat 대시보드가 정본).
-- [ ] 11. 퍼널 리포트 스크립트 (10-b 이후. 그 전에는 페이월 노출률과 총량 비율만 출력)
+- [x] 11. 퍼널 리포트 스크립트 (10-b 이후. 그 전에는 페이월 노출률과 총량 비율만 출력)
+  - QA: `npx tsx --env-file=.env.local scripts/funnel-report.mts` → 오류 없이 실행, dev 이벤트를 보낸 anon 12개 제외 후 실제 앱 anon 25개라 100·200·300 코호트 모두 "표본 부족" 표시, `npx tsc --noEmit` → 오류 0. 코호트 출력(D1·D7·체험·유료 등)은 표본이 없어 실데이터로는 아직 검증 못 함(첫 100 설치 이후 확인 필요). 설치당 AI 비용은 anon과 연결 불가라 코호트 기간의 비용÷세션 수 근사(웹 포함).
   - 범위: `scripts/funnel-report.mts`. 첫 100·200·300 설치 코호트의 D1·D7, 체험 시작률, 설치→유료, 설치당 AI 비용(`llm_usage_log`)을 한 번에 출력. 읽기 전용, 개인정보·세션 id는 출력하지 않는다. `scripts/usage-report.mts` 방식 참고.
   - QA: `npx tsx --env-file=.env.local scripts/funnel-report.mts` 실행 결과(현재 설치가 거의 없어 표본 부족 표시 포함)와 `npx tsc --noEmit`.
 - [ ] 12. 증폭·중단 트리거를 `marketing/paid-plan.md`에 병합
