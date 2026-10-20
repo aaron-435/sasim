@@ -351,6 +351,7 @@ export default function ReportScreen({
         return;
       }
       setContent(json);
+      track("report_generate", { module: quizDiagnosis.moduleId });
       // Keep a local copy so the report can be reopened after leaving this screen.
       saveReport({ moduleId: quizDiagnosis.moduleId, moduleTitle: quizDiagnosis.moduleTitle, quizDiagnosis, chatExtract: chatExtract ?? null, content: json });
     } catch {

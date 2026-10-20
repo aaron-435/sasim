@@ -52,10 +52,12 @@ SPEC: `SPEC.md` (= `MARKETING_SPEC.md`, 2026-10-16 결정 반영). 직전 UI 개
   - 범위: 손익 시트가 가정으로 둔 값(D1·D7, 상담 1세트 완료율, 딥 리포트 생성률, 페이월 노출률, 체험 시작률, 구독 이탈)을 `events` 테이블과 RevenueCat으로 재려면 어떤 이벤트가 있는지 목록화. 없는 것은 "없음"으로 표시하고 추가가 필요한 이벤트와 규모(코드 몇 줄인지)를 적는다. 결과는 이 TODO의 "발견 사항"과 `marketing/funnel-gaps.md`.
   - QA: `grep -rn "type:" lib/eventSchema.ts` 등으로 이벤트 목록을 뽑아 필요 지표 7개와 1:1 표로 대조. 표에 빈칸 없음.
   - 완료(2026-10-19): `marketing/funnel-gaps.md` 1장에 필요 지표 9개와 1:1 대조표(빈칸 없음). QA 근거: `lib/eventSchema.ts`·`mobile/lib/analytics.ts`·`mobile/lib/purchases.ts` 직접 읽기, `grep -rhoE 'track\(...'`로 앱 발생 지점 집계, 운영 DB `events`·`sessions` 읽기 전용 조회(753행, dev 제외 539행·고유 anon 46). 결과: 지금 바로 잴 수 있는 것은 페이월 노출률뿐.
-- [ ] 10-b. 퍼널 이벤트 추가 (10번 결과, 코드 변경, 사용자 승인 후)
+- [x] 10-b. 퍼널 이벤트 추가 (코드 완료 2026-10-19·20, **미커밋·미배포**. 웹 배포 → 1.2.0 두 스토어 게시 뒤 앱 JS OTA 순서는 사용자 트리거)
   - 범위: `app_open`(하루 1회), `chat_start`/`chat_complete`(속성 kind), `report_generate`, 구매 이벤트의 `kind: trial|paid` 속성. 서버 허용 목록(`lib/eventSchema.ts`)과 앱 타입(`mobile/lib/analytics.ts`)을 같이 바꾼다. 상세 위치·규모는 `marketing/funnel-gaps.md` 3장. 개인정보 값은 넣지 않는다.
   - 배포 순서: 웹 먼저 배포 → 앱 JS OTA(네이티브 의존성 없음). 파일 3개 이상이면 CLAUDE.md 위임 절차(muse) 적용 가능.
   - QA: `npx tsc --noEmit`(root), `ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit`(mobile), `/api/events`에 새 이름 POST 200·이전 이름 그대로 200·잘못된 속성 400을 로컬 서버로 확인.
+  - 완료 근거(2026-10-20): 직접 구현(약 48줄, 위임보다 싸서). `kind`는 이미 허용 키라 이벤트 이름 4개만 추가. root `npx tsc --noEmit` 오류 0, mobile tsc(큰 스택) 오류 0, `parseEventBatch` 직접 호출(`npx tsx`)로 새 이름 4개·`purchase_start` 속성 kind 200, 기존 `paywall_view` 200, 모르는 속성(`birth`)·모르는 이름·날짜꼴 값 400. HTTP 라우트 경유 테스트는 하지 않음(검증은 파서까지). 앱 호출 지점은 기기에서 확인 안 함(user check: 빌드된 앱에서 `events`에 `app_open` 등이 들어오는지).
+  - 구현 메모: `app_open`은 신규 `trackDaily`(로컬 날짜 키, 하루 1회, 시작 시+전경 복귀 시). `chat_start`는 오프너 시점, `chat_complete`의 `kind`는 full/early(마무리 버튼·체크포인트 마무리 시 early), `report_generate`는 `/api/report` 성공 후(저장본 재열기는 제외). 구매 `kind`는 intro price 0이면 trial, iOS에서 자격 없는 사용자는 trial로 과대 집계될 수 있음(RevenueCat 대시보드가 정본).
 - [ ] 11. 퍼널 리포트 스크립트 (10-b 이후. 그 전에는 페이월 노출률과 총량 비율만 출력)
   - 범위: `scripts/funnel-report.mts`. 첫 100·200·300 설치 코호트의 D1·D7, 체험 시작률, 설치→유료, 설치당 AI 비용(`llm_usage_log`)을 한 번에 출력. 읽기 전용, 개인정보·세션 id는 출력하지 않는다. `scripts/usage-report.mts` 방식 참고.
   - QA: `npx tsx --env-file=.env.local scripts/funnel-report.mts` 실행 결과(현재 설치가 거의 없어 표본 부족 표시 포함)와 `npx tsc --noEmit`.

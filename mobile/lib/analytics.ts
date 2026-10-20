@@ -17,6 +17,10 @@ export type EventName =
   | "fortune_first_view"
   | "qa_ask"
   | "qa_limit_reached"
+  | "app_open"
+  | "chat_start"
+  | "chat_complete"
+  | "report_generate"
   | "paywall_view"
   | "purchase_start"
   | "purchase_success"
@@ -103,6 +107,20 @@ export async function trackOnce(name: EventName, props?: EventProps) {
     const key = ONCE_KEY_PREFIX + name;
     if (await AsyncStorage.getItem(key)) return;
     await AsyncStorage.setItem(key, "1");
+  } catch {
+    return;
+  }
+  track(name, props);
+}
+
+/** Records an event at most once per calendar day on this device (e.g. app_open for D1/D7 retention). */
+export async function trackDaily(name: EventName, props?: EventProps) {
+  try {
+    const key = ONCE_KEY_PREFIX + "daily_" + name;
+    const d = new Date();
+    const today = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+    if ((await AsyncStorage.getItem(key)) === today) return;
+    await AsyncStorage.setItem(key, today);
   } catch {
     return;
   }

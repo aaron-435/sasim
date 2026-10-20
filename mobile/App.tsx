@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { useFonts, Newsreader_500Medium, Newsreader_500Medium_Italic } from "@expo-google-fonts/newsreader";
 import { PlusJakartaSans_400Regular, PlusJakartaSans_500Medium, PlusJakartaSans_600SemiBold, PlusJakartaSans_700Bold } from "@expo-google-fonts/plus-jakarta-sans";
 import { useEffect, useRef, useState } from "react";
-import { BackHandler, Linking, Platform } from "react-native";
+import { AppState, BackHandler, Linking, Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ChatScreen, { type ChatExtract } from "./screens/ChatScreen";
@@ -38,7 +38,7 @@ import VerifyCodeScreen, { type VerifiedData } from "./screens/VerifyCodeScreen"
 import ScreenTransition, { type ScreenDirection } from "./components/motion/ScreenTransition";
 import * as Notifications from "expo-notifications";
 import { scheduleDecadeTransitionNotification } from "./lib/decadeNotification";
-import { setAnalyticsLocale, track } from "./lib/analytics";
+import { setAnalyticsLocale, track, trackDaily } from "./lib/analytics";
 import { DEFAULT_NOTIFICATION_PREFERENCE, getStoredNotificationPreference, setNotificationPreference } from "./lib/notificationPreference";
 import { applyNotificationPreference } from "./lib/routineNotification";
 import { clearSolarTermPreference, refreshSolarTermNotifications } from "./lib/solarTermNotification";
@@ -205,6 +205,15 @@ function AppContent() {
   useEffect(() => {
     setAnalyticsLocale(locale);
   }, [locale]);
+
+  // Once per day, when the app is opened or comes back to the foreground — the base for D1/D7.
+  useEffect(() => {
+    trackDaily("app_open");
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") trackDaily("app_open");
+    });
+    return () => sub.remove();
+  }, []);
 
   useEffect(() => {
     if (step && ONBOARDING_STEPS.has(step)) track("onboarding_step", { step });

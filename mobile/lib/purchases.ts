@@ -163,10 +163,13 @@ export type PurchaseOutcome = { status: "success"; transactionId?: string } | { 
 // events are recorded once, keyed by the store product id.
 async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseOutcome> {
   const product = pkg.product.identifier;
-  track("purchase_start", { product });
+  // Free intro price = trial. On iOS an ineligible user's intro is not free, so this can over-count
+  // trials slightly (RevenueCat's dashboard stays the source of truth).
+  const kind = pkg.product.introPrice?.price === 0 ? "trial" : "paid";
+  track("purchase_start", { product, kind });
   try {
     const { transaction } = await Purchases.purchasePackage(pkg);
-    track("purchase_success", { product });
+    track("purchase_success", { product, kind });
     flush();
     maybeRequestReview("purchase");
     return { status: "success", transactionId: transaction?.transactionIdentifier };

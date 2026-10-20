@@ -20,6 +20,11 @@ export const EVENT_NAMES = [
   "fortune_first_view",
   "qa_ask",
   "qa_limit_reached",
+  // funnel (added 2026-10-20: retention, chat completion, report generation)
+  "app_open",
+  "chat_start",
+  "chat_complete",
+  "report_generate",
   // money
   "paywall_view",
   "purchase_start",

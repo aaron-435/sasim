@@ -19,6 +19,7 @@ import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
 import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { API_BASE_URL } from "../config";
+import { track } from "../lib/analytics";
 import { useLocale, useStrings } from "../lib/i18n";
 import { findTopAnswers, findTopAnswersOverall } from "../lib/quiz/quizProfile";
 import type { QuizDiagnosis } from "./QuizScreen";
@@ -85,6 +86,8 @@ export default function ChatScreen({
   // so a retry resends the same memo.
   const formulationRef = useRef<unknown>(undefined);
   const mountedRef = useRef(true);
+  // Set when the user wraps up before the last turn (button or checkpoint), for the chat_complete kind.
+  const finishedEarlyRef = useRef(false);
   const openerFiredRef = useRef(false);
 
   useEffect(() => {
@@ -195,6 +198,8 @@ export default function ChatScreen({
           setTurn(nextTurn);
           doneRef.current = true;
           setDone(true);
+          // kind: full = ran to the last turn on its own, early = the user chose to wrap up before it.
+          track("chat_complete", { module: quizDiagnosis.moduleId, kind: nextTurn >= TOTAL_TURNS && !finishedEarlyRef.current ? "full" : "early" });
           onComplete(json.extract);
           return;
         }
@@ -216,6 +221,7 @@ export default function ChatScreen({
   useEffect(() => {
     if (openerFiredRef.current) return;
     openerFiredRef.current = true;
+    track("chat_start", { module: quizDiagnosis.moduleId });
     requestNextTurn(1, []);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -239,6 +245,7 @@ export default function ChatScreen({
 
   function handleFinishEarly() {
     if (isTyping || done) return;
+    finishedEarlyRef.current = true;
     requestNextTurn(TOTAL_TURNS, turnHistoryRef.current);
   }
 
@@ -262,6 +269,7 @@ export default function ChatScreen({
 
   function handleWrapUpAtCheckpoint() {
     if (isTyping || done) return;
+    finishedEarlyRef.current = true;
     requestNextTurn(TOTAL_TURNS, turnHistoryRef.current);
   }
 
