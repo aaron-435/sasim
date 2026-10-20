@@ -31,6 +31,13 @@
 // v2 files also record each turn's set role and a `checks` block (expected vs. quoted answer per set ①,
 // the turn-24 fixed lead, set_packets) — judge-chat.mts scores set compliance on top.
 //
+// --flow v3 runs the choice-branching flow (flowVersion 3, 22 turns, module 3 ko only; SPEC 2026-10-20 TODO 6).
+// Pass turns = 22. The bot returns `choices` (2–3 tappable options) on most turns; the simulated user is shown
+// them and either taps one (a number) or types its own answer, like ChatScreen. Tapped bot turns go to
+// attachSetPackets as `choicePicks`. The run prints a metrics line for every flow (total turns, characters the
+// simulated user typed — a tapped option counts 0 —, share of question turns with no options) plus, for v3, a
+// `checks` block (options 2–3 on non-terminal turns, none on turn 9 / final / crisis).
+//
 // Every run writes scripts/out/sim_<timestamp>_<persona>_<moduleId>.json (transcript, extract,
 // context, per-turn latency and tokens, total cost) in addition to printing it. scripts/out/ is
 // git-ignored.
@@ -522,6 +529,33 @@ async function userReply(situation: string, locale: string, history: ChatMessage
   return c.choices[0].message.content?.trim() ?? "";
 }
 
+// v3: the simulated user sees the options the app would show and taps one (number) or types its own answer.
+const CHOICE_FRAME: Record<string, string> = {
+  ko: "화면에는 챗봇의 질문 아래 보기가 번호로 떠 있다. 네 마음과 가장 가까운 보기가 있으면 그 번호 숫자 하나만 답해라(다른 말은 쓰지 마라). 어느 것도 맞지 않으면 첫 줄에 0만 쓰고, 둘째 줄부터 네 말투로 직접 짧게 답해라.",
+};
+async function userReplyChoices(situation: string, locale: string, history: ChatMessage[], choices: string[]): Promise<{ text: string; picked: number | null }> {
+  const msgs = history.map((m) => ({ role: m.role === "user" ? "assistant" : "user", content: m.content })) as OpenAI.Chat.ChatCompletionMessageParam[];
+  const list = choices.map((c, i) => `${i + 1}. ${c}`).join("\n");
+  const c = await client.chat.completions.create({
+    model: USER_SIM_MODEL,
+    temperature: 0.9,
+    messages: [
+      { role: "system", content: `${situation}\n${SIM_FRAME[locale] ?? SIM_FRAME.ko}\n${CHOICE_FRAME[locale] ?? CHOICE_FRAME.ko}\n[이번 턴 보기]\n${list}` },
+      ...msgs,
+    ],
+  });
+  const raw = c.choices[0].message.content?.trim() ?? "";
+  const m = raw.match(/^\s*(\d)\b\s*([\s\S]*)$/);
+  const n = m ? Number(m[1]) : NaN;
+  if (m && n >= 1 && n <= choices.length && !m[2].trim()) return { text: choices[n - 1], picked: n };
+  if (m && n === 0 && m[2].trim()) return { text: m[2].trim(), picked: null };
+  // The model ignored the format: treat whatever it wrote as a typed answer.
+  return { text: raw.replace(/^\s*0\s*/, ""), picked: null };
+}
+
+const isQuestionLine = (line: string) => /[?？]\s*$/.test(line.trim()) || /궁금(해요|하네요|합니다)\.?\s*$/.test(line.trim());
+const CRISIS_RE = /1393|1577-0199|\b988\b|findahelpline/i;
+
 // ---- flow v2 checks (deterministic; judge-chat.mts scores the same things by reading) ----
 type RoleRec = Pick<SetTurnRole, "kind" | "set" | "position" | "recapSets">;
 const roleTag = (r: RoleRec) =>
@@ -578,7 +612,9 @@ if (botModelAt >= 0) botModel = argv.splice(botModelAt, 2)[1];
 const reasoningAt = argv.indexOf("--reasoning");
 if (reasoningAt >= 0) reasoningEffort = argv.splice(reasoningAt, 2)[1] as ChatReasoningEffort;
 const flowAt = argv.indexOf("--flow");
-const flowV2 = flowAt >= 0 && argv.splice(flowAt, 2)[1] === "v2";
+const flowArg = flowAt >= 0 ? argv.splice(flowAt, 2)[1] : undefined;
+const flowV2 = flowArg === "v2";
+const flowV3 = flowArg === "v3";
 const checkpointAt = argv.indexOf("--checkpoint");
 const checkpointChoice = checkpointAt >= 0 && argv.splice(checkpointAt, 2)[1] === "finish" ? "finish" : "continue";
 const args = argv.filter((a) => !a.startsWith("--"));
@@ -597,19 +633,21 @@ await Promise.all(names.map((name) => usageStore.run(
     const persona = resolvePersona(name);
     const moduleId = moduleOverride ?? persona.context.moduleId;
     const baseLocale = (persona.context.locale ?? "ko") as Locale;
-    const quizAnswers = flowV2 && moduleId ? buildV2QuizAnswers(moduleId, baseLocale, V2_HIGH_DIMS[name] ?? []) : [];
+    const quizAnswers = (flowV2 || flowV3) && moduleId ? buildV2QuizAnswers(moduleId, baseLocale, V2_HIGH_DIMS[name] ?? (LEGACY_STYLES[name] ? V2_HIGH_DIMS.burnout : [])) : [];
     const ctx: Ctx = {
       ...persona.context,
       moduleId,
       quizAnswerPool: persona.context.quizAnswerPool?.slice(0, quizPoolSize),
       ...(flowV2 && { flowVersion: 2, quizAnswers }),
+      ...(flowV3 && { flowVersion: 3, quizAnswers }),
     };
     if (moduleOverride && PERSONAS[name] && moduleOverride !== persona.context.moduleId) {
       console.warn(`! ${name} is written for ${persona.context.moduleId}, running it on ${moduleOverride}`);
     }
     const flow = chatFlowVersion(ctx);
     if (flowV2 && flow !== 2) throw new Error(`${name}: --flow v2 needs a module with set data and quiz answers (moduleId ${moduleId})`);
-    const chatSets = flow === 2 ? getModuleChatSets(moduleId) : undefined;
+    if (flowV3 && flow !== 3) throw new Error(`${name}: --flow v3 needs a module with choice bundles and quiz answers (moduleId ${moduleId})`);
+    const chatSets = flow === 2 || flow === 3 ? getModuleChatSets(moduleId) : undefined;
     const setQuotes = chatSets ? selectAllSetQuizAnswers(chatSets, quizAnswers) : null;
     const locale = ctx.locale ?? "ko";
     const situation = setQuotes
@@ -618,10 +656,11 @@ await Promise.all(names.map((name) => usageStore.run(
     const history: ChatMessage[] = [];
     const turns: {
       seq: number; turn: number; role: Pick<SetTurnRole, "kind" | "set" | "position" | "recapSets"> | null;
-      bot: string[]; user: string | null; botMs: number; botTokens: RunUsage["last"]; formulation: ChatFormulation | null;
+      bot: string[]; user: string | null; choices: string[] | null; picked: number | null; botMs: number; botTokens: RunUsage["last"]; formulation: ChatFormulation | null;
     }[] = [];
     // Echo the hidden memo back the way ChatScreen does (TODO Q1-c). --no-formulation drops it, to compare against the old behavior.
     let formulation: ChatFormulation | undefined;
+    const picks: number[] = [];
     const started = Date.now();
     for (let seq = 1; seq <= TURNS; seq++) {
       // v2 "wrap up" at the checkpoint: the request right after turn 10 is turn 25, with no user reply in between.
@@ -636,25 +675,56 @@ await Promise.all(names.map((name) => usageStore.run(
       const botTokens = run.last;
       history.push({ role: "assistant", content: reply.lines.join("\n") });
       // v2 ends where the route would attach the extract; the 20-turn flow keeps its fixed turn count.
-      const final = seq === TURNS || (flow === 2 && isFinalTurn(turn, Math.floor((Date.now() - started) / 60000), 2));
+      const final = seq === TURNS || (flow >= 2 && isFinalTurn(turn, Math.floor((Date.now() - started) / 60000), flow));
       const skipReply = final || (flow === 2 && checkpointChoice === "finish" && turn === 10);
       run.phase = "userSim";
-      const user = skipReply ? null : await userReply(situation, locale, history, turn === 10);
+      let user: string | null = null;
+      let picked: number | null = null;
+      if (!skipReply) {
+        if (flow === 3 && reply.choices?.length) {
+          const r = await userReplyChoices(situation, locale, history, reply.choices);
+          user = r.text;
+          picked = r.picked;
+          if (picked !== null) picks.push(turn);
+        } else {
+          user = await userReply(situation, locale, history, flow === 3 ? turn === 9 : turn === 10);
+        }
+      }
       if (user !== null) history.push({ role: "user", content: user });
       turns.push({
         seq, turn, role: role && { kind: role.kind, set: role.set, position: role.position, recapSets: role.recapSets },
-        bot: reply.lines, user, botMs, botTokens, formulation: reply.formulation ?? null,
+        bot: reply.lines, user, choices: reply.choices ?? null, picked, botMs, botTokens, formulation: reply.formulation ?? null,
       });
       if (final) break;
     }
     // Same extraction call the route runs on the final turn, so a change to buildExtractionPrompt can be
     // checked on the conversation it just produced. attachSetPackets is a no-op outside flow v2.
     run.phase = "extract";
-    const extract = attachSetPackets(await extractChatSummary(history, ctx), history, ctx);
+    const extract = attachSetPackets(await extractChatSummary(history, ctx), history, ctx, picks);
     const totalCostUsd = Object.values(run.byPhase).reduce((sum, u) => sum + u.costUsd, 0);
-    const checks = setQuotes ? v2Checks(turns, setQuotes, locale, extract.set_packets) : null;
+    const questionTurns = turns.filter((t) => t.bot.some(isQuestionLine));
+    const metrics = {
+      botTurns: turns.length,
+      userTypedChars: turns.reduce((n, t) => n + (t.user !== null && t.picked === null ? [...t.user].length : 0), 0),
+      userTotalChars: turns.reduce((n, t) => n + (t.user ? [...t.user].length : 0), 0),
+      tappedTurns: turns.filter((t) => t.picked !== null).length,
+      questionTurns: questionTurns.length,
+      openQuestionTurns: questionTurns.filter((t) => !t.choices?.length).length,
+      openQuestionRatio: questionTurns.length ? Number((questionTurns.filter((t) => !t.choices?.length).length / questionTurns.length).toFixed(2)) : null,
+    };
+    const v3Checks = flow === 3
+      ? {
+          choiceCounts: turns.map((t) => `${t.turn}:${t.choices?.length ?? 0}`).join(" "),
+          missingOnMiddleTurns: turns.filter((t) => t.turn !== 9 && t.turn < 22 && !t.choices?.length).map((t) => t.turn),
+          choicesOnTerminalOrCheckpoint: turns.filter((t) => (t.turn === 9 || t.turn >= 22) && t.choices?.length).map((t) => t.turn),
+          choicesOnCrisis: turns.filter((t) => t.choices?.length && t.bot.some((l) => CRISIS_RE.test(l))).map((t) => t.turn),
+          choicePicks: picks,
+          setPackets: extract.set_packets?.map((p) => `S${p.set}: chat ${p.has_chat} · picked ${p.picked_choices?.length ?? 0}`) ?? null,
+        }
+      : null;
+    const checks = setQuotes && flow === 2 ? v2Checks(turns, setQuotes, locale, extract.set_packets) : null;
 
-    const file = join(OUT_DIR, `sim_${stamp}_${name}_${ctx.moduleId ?? "none"}${flow === 2 ? `_v2${checkpointChoice === "finish" ? "_finish" : ""}` : ""}${botModel ? `_${botModel}` : ""}${reasoningEffort ? `_${reasoningEffort}` : ""}.json`);
+    const file = join(OUT_DIR, `sim_${stamp}_${name}_${ctx.moduleId ?? "none"}${flow === 2 ? `_v2${checkpointChoice === "finish" ? "_finish" : ""}` : flow === 3 ? "_v3" : ""}${botModel ? `_${botModel}` : ""}${reasoningEffort ? `_${reasoningEffort}` : ""}.json`);
     writeFileSync(file, JSON.stringify({
       kind: "sim-chat",
       createdAt: new Date().toISOString(),
@@ -668,6 +738,8 @@ await Promise.all(names.map((name) => usageStore.run(
       checkpoint: flow === 2 ? checkpointChoice : null,
       setQuotes,
       checks,
+      metrics,
+      v3Checks,
       echoFormulation,
       botModel: botModel ?? CHAT_MODEL,
       reasoningEffort: reasoningEffort ?? null,
@@ -680,7 +752,10 @@ await Promise.all(names.map((name) => usageStore.run(
     }, null, 2));
 
     const tag = (t: (typeof turns)[number]) => `${t.turn}${t.role ? ` ${roleTag(t.role)}` : ""}`;
-    const lines = turns.flatMap((t) => [`[${tag(t)}] BOT: ${t.bot.join("\n   ")}`, ...(t.user === null ? [] : [`[${t.turn}] ME : ${t.user}`])]);
-    console.log(`\n===== ${name} · ${ctx.moduleId ?? "no module"} · ${locale}${flow === 2 ? ` · v2 (checkpoint ${checkpointChoice})` : ""} =====\n${lines.join("\n")}\n----- extract -----\n${JSON.stringify(extract, null, 2)}${checks ? `\n----- v2 checks -----\n${formatChecks(checks)}` : ""}\n----- usage -----\nbot ${run.byPhase.bot.promptTokens}+${run.byPhase.bot.completionTokens} tok, total $${totalCostUsd.toFixed(4)}\n→ ${file}`);
+    const lines = turns.flatMap((t) => [
+      `[${tag(t)}] BOT: ${t.bot.join("\n   ")}${t.choices?.length ? `\n   보기: ${t.choices.map((c, i) => `${i + 1}) ${c}`).join(" | ")}` : ""}`,
+      ...(t.user === null ? [] : [`[${t.turn}] ME${t.picked !== null ? ` (보기 ${t.picked})` : ""}: ${t.user}`]),
+    ]);
+    console.log(`\n===== ${name} · ${ctx.moduleId ?? "no module"} · ${locale}${flow === 2 ? ` · v2 (checkpoint ${checkpointChoice})` : flow === 3 ? " · v3" : ""} =====\n${lines.join("\n")}\n----- extract -----\n${JSON.stringify(extract, null, 2)}${checks ? `\n----- v2 checks -----\n${formatChecks(checks)}` : ""}${v3Checks ? `\n----- v3 checks -----\n${JSON.stringify(v3Checks, null, 2)}` : ""}\n----- metrics -----\n${JSON.stringify(metrics)}\n----- usage -----\nbot ${run.byPhase.bot.promptTokens}+${run.byPhase.bot.completionTokens} tok, total $${totalCostUsd.toFixed(4)}\n→ ${file}`);
   },
 )));
