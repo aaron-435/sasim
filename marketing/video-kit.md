@@ -336,7 +336,7 @@ EOF
 | C4 | How to read the five-element bar on a saju chart. | 튜토리얼형 | 계산기의 오행 막대 설명 |
 | C5 | A new solar term starts on {date}. Here's what the app's calendar marks. | 날짜 뉴스형(절기) | 앱 절기·운세 화면, {date}는 실제 값 |
 | C6 | A five-card year in review opens in the app on December 1. | 날짜 뉴스형(Wrapped) | Wrapped 카드 5장 훑기 (12/1~1/31은 WIKI 3장 사실) |
-| C7 | Birth date in, type card out. Fifteen seconds. | 15초형 | 입력 → 카드 공개 |
+| C7 | Birth date in, type card out. Under fifteen seconds. | 10~15초형 | 입력 → 카드 공개 |
 | C8 | An attachment test result screen, in fifteen seconds. | 15초형(A 변형) | 앱 결과 화면, 첫 컷 바로 결과 |
 
 사용 메모:
@@ -355,7 +355,7 @@ hooks = {
 "C4":"How to read the five-element bar on a saju chart.",
 "C5":"A new solar term starts on November 7. Here's what the app's calendar marks.",
 "C6":"A five-card year in review opens in the app on December 1.",
-"C7":"Birth date in, type card out. Fifteen seconds.",
+"C7":"Birth date in, type card out. Under fifteen seconds.",
 "C8":"An attachment test result screen, in fifteen seconds.",
 }
 banned = r"accura|exact|proven|predict|fortune|money|bank|pay|wallet|invest|lucky|unlucky|doom|\byou\b|your|you're|countdown|last chance|diagnos|disorder|therap|treat|cure|heal|will |price|\$|limited|guarantee|right|wrong|only|hurry|ends|miss"

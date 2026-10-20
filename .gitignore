@@ -46,3 +46,6 @@ next-env.d.ts
 
 # AI 그림 원본(후보정 전)
 /art-inbox/
+marketing/video/
+marketing/tts-samples/*.mp3
+marketing/tts-samples/*.m4a
