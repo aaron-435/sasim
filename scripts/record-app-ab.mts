@@ -1,7 +1,7 @@
 /**
- * "Experiment" hook for a test result (A-form, marketing/video-kit.md): the same burnout test
- * answered with the lowest option every time, then the highest, shown as two results and a
- * side-by-side comparison. Records the mobile-web build (Expo web, :8082) through a CDP
+ * "Experiment" hook for a test result (A-form, marketing/video-kit.md): the same psych test
+ * answered several different ways, shown as the results and a side-by-side comparison (config
+ * per script key in CONFIGS below). Records the mobile-web build (Expo web, :8082) through a CDP
  * screencast at 1080x1920 (same approach as record-web.mts), burns the voiceover in as
  * highlighted, pop-in captions and muxes the TTS audio.
  *
@@ -16,8 +16,46 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync, readdirSync } from "nod
 import { homedir } from "node:os";
 import path from "node:path";
 
-const [key, persona = "jordan"] = process.argv.slice(2);
+type Pattern = "L" | "H" | "HL" | "LH"; // lowest / highest / high-then-low / low-then-high (switch after Q15)
+interface Config {
+  persona: string;
+  test: string; // test title as shown in the list
+  runs: { pattern: Pattern; badge: string; label: string }[];
+  runAt: number[]; // sentence index at which each run starts (narration beat), same length as runs
+  compare: RegExp; // sentence that brings the side-by-side comparison in
+  highlight: string[];
+}
+const CONFIGS: Record<string, Config> = {
+  A3x: {
+    persona: "jordan",
+    test: "Burnout",
+    runs: [
+      { pattern: "L", badge: "Lowest option every time", label: "Lowest" },
+      { pattern: "H", badge: "Highest option every time", label: "Highest" },
+    ],
+    runAt: [0, 0],
+    compare: /^One says/,
+    highlight: ["lowest", "highest", "Steady Pace", "Full Burnout", "Two different results"],
+  },
+  A1x: {
+    persona: "mia",
+    test: "Love & Attachment",
+    runs: [
+      { pattern: "L", badge: "Lowest every time", label: "Lowest" },
+      { pattern: "HL", badge: "High, then low", label: "High → low" },
+      { pattern: "LH", badge: "Low, then high", label: "Low → high" },
+      { pattern: "H", badge: "Highest every time", label: "Highest" },
+    ],
+    runAt: [1, 2, 3, 4],
+    compare: /^Four different/,
+    highlight: ["Secure", "Anxious-Preoccupied", "Dismissive-Avoidant", "Fearful-Avoidant", "Four different results"],
+  },
+};
+const [key, personaArg] = process.argv.slice(2);
 if (!key) throw new Error("usage: record-app-ab.mts <scriptKey> [persona]");
+const cfg = CONFIGS[key];
+if (!cfg) throw new Error(`no config for ${key} (add it to CONFIGS)`);
+const persona = personaArg ?? cfg.persona;
 const base = process.env.BASE_URL ?? "http://localhost:8082";
 if (!/^https?:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/.test(base)) throw new Error("record against localhost only");
 
@@ -41,11 +79,9 @@ const starts = sentences.map((s) => {
   acc += s.length;
   return t;
 });
-// sentence indices of the story beats
-const iTwo = sentences.findIndex((s) => /^Two different/.test(s));
-const iCompare = sentences.findIndex((s) => /^One says/.test(s));
-if (iTwo < 0 || iCompare < 0) throw new Error("script needs 'Two different...' and 'One says...' sentences");
-const HIGHLIGHT = ["lowest", "highest", "Steady Pace", "Full Burnout", "Two different results"];
+const iCompare = sentences.findIndex((s) => cfg.compare.test(s));
+if (iCompare < 0) throw new Error("script has no sentence matching the compare marker");
+const HIGHLIGHT = cfg.highlight;
 
 const fontB64 = readFileSync(path.join(root, "mobile/node_modules/@expo-google-fonts/plus-jakarta-sans/700Bold/PlusJakartaSans_700Bold.ttf")).toString("base64");
 const outDir = path.join(root, "marketing/video");
@@ -88,6 +124,10 @@ await page.addStyleTag({
   #rec-cmp figure { margin: 0; width: 250px; }
   #rec-cmp figcaption { font: 700 18px/1 "PJS", system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase;
     color: #9ADBB8; text-align: center; margin-bottom: 12px; }
+  #rec-cmp.grid { flex-wrap: wrap; align-content: flex-start; gap: 10px 12px; padding: 13% 18px 0; }
+  #rec-cmp.grid figure { width: 240px; }
+  #rec-cmp.grid img { width: 240px; height: 190px; }
+  #rec-cmp.grid figcaption { font-size: 15px; margin-bottom: 8px; }
   #rec-cmp img { width: 250px; height: 330px; object-fit: cover; object-position: top; border-radius: 14px; border: 1px solid #26332B; }`,
 });
 await page.evaluate(() => {
@@ -123,28 +163,28 @@ const repaint = () =>
     requestAnimationFrame(() => requestAnimationFrame(() => { e.style.transform = "translateX(-50%)"; r(); }));
   }));
 
-type Mode = "low" | "high";
-async function answer(i: number, mode: Mode, pause: number) {
+const high = (i: number, pattern: Pattern) => pattern === "H" || (pattern === "HL" && i <= 15) || (pattern === "LH" && i > 15);
+async function answer(i: number, pattern: Pattern, pause: number) {
   await page.getByText(new RegExp(`^${i} / 30$`)).waitFor({ timeout: 5000 });
+  const hi = high(i, pattern);
   const slider = page.locator('[role="slider"]');
   if (await slider.count()) {
     const bx = (await slider.boundingBox())!;
-    await page.mouse.click(mode === "low" ? bx.x + 6 : bx.x + bx.width - 6, bx.y + bx.height / 2);
+    await page.mouse.click(hi ? bx.x + bx.width - 6 : bx.x + 6, bx.y + bx.height / 2);
     if (pause) await page.waitForTimeout(pause);
     await page.getByText("Next", { exact: true }).click();
   } else {
     const opts = page.locator('button:not([aria-label="Back"])').filter({ hasNotText: /^Next$/ });
-    await opts.nth(mode === "low" ? 0 : (await opts.count()) - 1).click();
+    await opts.nth(hi ? (await opts.count()) - 1 : 0).click();
     if (pause) await page.waitForTimeout(pause);
     const next = page.getByText("Next", { exact: true });
     if (await next.count()) await next.click().catch(() => {});
   }
 }
 
-// Pre-roll (off-camera): open the burnout test so the first filmed frame is already a question.
+// Pre-roll (off-camera): open the test list so the first filmed frame is already app UI.
 await page.getByText("Choose a test").click();
-await page.getByText("Burnout", { exact: true }).first().click();
-await page.getByText(/^1 \/ 30$/).waitFor();
+await page.getByText(cfg.test, { exact: true }).first().waitFor();
 await cdp.send("Page.startScreencast", { format: "jpeg", quality: 92, maxWidth: 1080, maxHeight: 1920, everyNthFrame: 1 });
 await page.waitForTimeout(300);
 capturing = true;
@@ -155,13 +195,25 @@ const at = async (sec: number) => {
   if (wait > 0) await page.waitForTimeout(wait);
 };
 
+// Captions follow the narration on their own timer (video time), whatever the page is doing.
+let capIdx = -1;
+const capTimer = setInterval(() => {
+  const t = elapsed() / 1000;
+  let idx = 0;
+  for (let i = 0; i < starts.length; i++) if (starts[i] <= t) idx = i;
+  if (idx !== capIdx) {
+    capIdx = idx;
+    void caption(sentences[idx]).catch(() => {});
+  }
+}, 40);
+
 // One run: two questions on camera, then a jump cut (rest answered off-camera) to the result.
-async function run(mode: Mode, label: string, qPause: number) {
+async function run(pattern: Pattern, label: string, qPause: number) {
   await badge(label);
-  for (let i = 1; i <= 2; i++) await answer(i, mode, qPause);
+  for (let i = 1; i <= 2; i++) await answer(i, pattern, qPause);
   capturing = false;
   const pauseStart = Date.now();
-  for (let i = 3; i <= 30; i++) await answer(i, mode, 0);
+  for (let i = 3; i <= 30; i++) await answer(i, pattern, 0);
   await page.getByText("Your first blueprint is ready").waitFor({ timeout: 8000 });
   await page.waitForTimeout(600); // let the result animation settle before filming
   pausedTotal += Date.now() - pauseStart;
@@ -181,30 +233,36 @@ async function shot() {
   return img;
 }
 
-const HOLD = 1100; // ms each result stays on screen
-await caption(sentences[0]);
-await run("low", "Lowest option every time", 300);
-await page.waitForTimeout(HOLD);
-const imgLow = await shot();
-await page.getByText("Retake").click();
-await page.getByText(/^1 \/ 30$/).waitFor();
-await run("high", "Highest option every time", 300);
-await page.waitForTimeout(HOLD);
-const imgHigh = await shot();
-await badge(null);
-for (let i = 1; i < sentences.length; i++) {
-  await at(starts[i]);
-  await caption(sentences[i]);
-  if (i === iCompare) {
-    await page.evaluate(([a, b]) => {
-      const el = document.createElement("div");
-      el.id = "rec-cmp";
-      el.innerHTML = `<figure><figcaption>Lowest</figcaption><img src="${a}"></figure><figure><figcaption>Highest</figcaption><img src="${b}"></figure>`;
-      document.body.appendChild(el);
-    }, [imgLow, imgHigh]);
+const HOLD = 1000; // ms each result stays on screen
+const imgs: string[] = [];
+for (let k = 0; k < cfg.runs.length; k++) {
+  const r = cfg.runs[k];
+  const startSec = starts[cfg.runAt[k]];
+  if (k === 0) {
+    // click the test tile just before the first run begins, so Q1 appears with the narration beat
+    await at(Math.max(0.5, startSec - 0.7));
+    await page.getByText(cfg.test, { exact: true }).first().click();
+    await page.getByText(/^1 \/ 30$/).waitFor();
+  } else {
+    await page.getByText("Retake").click();
+    await page.getByText(/^1 \/ 30$/).waitFor();
   }
+  await at(startSec);
+  await run(r.pattern, r.badge, 280);
+  await page.waitForTimeout(HOLD);
+  imgs.push(await shot());
 }
+await badge(null);
+await at(starts[iCompare]);
+await page.evaluate(([list, labels]) => {
+  const el = document.createElement("div");
+  el.id = "rec-cmp";
+  el.className = list.length > 2 ? "grid" : "row";
+  el.innerHTML = list.map((src, i) => `<figure><figcaption>${labels[i]}</figcaption><img src="${src}"></figure>`).join("");
+  document.body.appendChild(el);
+}, [imgs, cfg.runs.map((r) => r.label)] as [string[], string[]]);
 await at(duration + 0.6);
+clearInterval(capTimer);
 await cdp.send("Page.stopScreencast");
 const tEnd = Date.now() - pausedTotal;
 await ctx.close();
