@@ -240,3 +240,127 @@ for i,h in enumerate(hooks,16):
     print(i, "FAIL "+m.group(0) if m else "ok", len(h))
 EOF
 ```
+
+## 9. A/B 시험: 심리 훅(A) 8개 vs 유형 카드 훅(B) 8개 (2026-10-20 초안, 근거 `psychology-angle.md`)
+
+목적: 첫 4주에 두 형식을 8개씩 올려 어느 쪽이 조회·저장·프로필 클릭이 큰지 비교한다. 둘 다 같은 규칙(1장 규칙, 2장 점검 열 A~E)을 지킨다. 승자 기준은 SPEC 그대로(상위 영상이 중앙값 대비 5배 이상). 같은 계정·같은 주에 번갈아 올려 요일·시간 영향을 줄인다(A1 B1 A2 B2 ...). 모두 **스토어 공개 뒤 게시**(17번 결정).
+
+### B형: 유형 카드 (기존 1장 형식 그대로)
+화면은 웹 랜딩·계산기 녹화(지금도 촬영 가능). 훅 8개 중 6개는 2장 훅 재사용, 2개는 "맞혀 보기" 새 훅(Co-Star의 반복 형식 참고).
+
+| # | 훅 (자막 = 말) | 출처 |
+|---|---|---|
+| B1 | This free tool turns one birth date into one of 50 saju types. | 2장 훅 1 |
+| B2 | This is what a saju type card looks like. | 훅 4 |
+| B3 | Saju has something called a Day Master. This app finds it from a birthday. | 훅 7 |
+| B4 | Ten Day Masters, fifty saju types. Here's how a birthday lands on one. | 훅 8 |
+| B5 | I typed three birthdays into a Korean saju app. Here are the cards. | 훅 10 |
+| B6 | Two birth dates in, one relationship name out. A look at saju compatibility. | 훅 14 |
+| B7 | Guess the saju type from a birth date, then see the card. | 새 훅 |
+| B8 | Three birthdays, three guesses. Which card did the app pick? | 새 훅 |
+
+B7·B8 대본 요지: 임의 생년월일을 화면에 보여 주고 "나는 ○○ 유형일 것 같다"고 말한 뒤 카드를 공개해 맞는지 확인한다. **"맞았다/틀렸다"는 내 추측에 대한 말이고 앱의 정확도 주장이 아니다.** "정확" 표현을 쓰지 않는다. 카드의 유명인 이름은 가린다.
+
+### A형: 심리 주제 훅 (새 형식)
+고정 형식(25~35초): **훅(주제 질문) → 앱 화면 녹화: 30문항 검사 일부 → 결과 유형 → 상담 대화 한 장면 → CTA.** 훅은 앱의 12개 검사 모듈 이름에 맞춘다(돈 모듈은 규칙상 제외). 화면은 **앱 화면**(시뮬레이터 또는 실기기)이라 스토어 공개 전에는 촬영만 하고 게시는 공개 뒤.
+
+A형 추가 규칙(1장에 더해):
+- 훅에 "you/your"로 시작하거나 보는 사람의 감정·관계 상태를 단정하지 않는다. 주제를 이름으로만 부르고 질문은 "앱이 어떻게 나누는지"로 건다. 예: ✕ "Do you text him first?" ○ "Anxious or avoidant? Here's how an attachment test sorts it."
+- 진단 느낌 금지(불안장애·치료·진단 단어 없음). "attachment tendencies", "pattern", "self-reflection"까지만.
+- 결과 화면에서 읽는 것은 앱에 실제 뜬 유형 이름과 한 줄만. 상담 대화 장면은 사용자 답이 아니라 앱이 **묻는 질문**을 보여 준다(개인정보 방지, 가상 답 사용 시 "sample" 표기).
+- 위기 표현·자해 관련 화면은 절대 촬영하지 않는다.
+
+| # | 훅 (자막 = 말) | 모듈 | 화면 |
+|---|---|---|---|
+| A1 | Anxious or avoidant? Here's how a 30-question attachment test sorts it. | 1 연애·애착 | 검사 문항 3개 넘기기 → 결과 유형 |
+| A2 | An attachment test and a saju chart, in one app. Here's what the result looks like. | 1 연애·애착 | 결과 유형 → 사주 유형 카드 |
+| A3 | Exhaustion, cynicism, low energy: how a burnout test breaks it into three parts. | 3 번아웃 | 결과 차원 3개 |
+| A4 | The mask test: image management, concealment, social fatigue. Here's the result screen. | 4 가면 | 결과 화면 |
+| A5 | Overstimulation, aesthetic sensitivity, a low sensory threshold: a sensitivity test, in 30 questions. | 7 예민함 | 문항 → 결과 |
+| A6 | Racing mind, tense body, restless dreams: how a sleep test sorts them. | 8 수면 | 결과 화면 |
+| A7 | Distractibility, hyperfocus, impulsivity: a focus test that ends in a 25-turn conversation. | 10 몰입 | 문항 → 대화 질문 장면 |
+| A8 | A family-of-origin test, then a conversation that asks about it. Here's how it flows. | 9 원가족 | 결과 → 대화 질문 장면 |
+
+사용 메모:
+- "30-question", "25-turn conversation"은 제품 사실(WIKI 3장). 앱 문항 수·대화 길이가 바뀌면 훅 수치도 고친다.
+- 훅 이름은 앱의 모듈 부제(`mobile/lib/quiz/modules.ts` 영어 문구)에서 가져왔다. 앱 문구와 어긋나지 않게 촬영 전에 화면을 확인한다.
+- 캡션 틀은 6장 그대로, 해시태그만 A형은 `#attachmentstyle #selfdiscovery #personalitytest`를 앞에 두고 `#saju`는 마지막(첫 2주 성과 후 조정). 캡션 설명 줄은 "Self-reflection tool, not medical or psychological advice."를 유지.
+- 프로필 문구 후보(결정 필요): 앱 한 줄 이름이 정해지기 전까지는 6장 틀을 쓴다.
+
+### 점검 (A~E, 인라인 + 스크립트)
+```bash
+python3 - <<'EOF'
+import re
+hooks = {
+"B1":"This free tool turns one birth date into one of 50 saju types.",
+"B2":"This is what a saju type card looks like.",
+"B3":"Saju has something called a Day Master. This app finds it from a birthday.",
+"B4":"Ten Day Masters, fifty saju types. Here's how a birthday lands on one.",
+"B5":"I typed three birthdays into a Korean saju app. Here are the cards.",
+"B6":"Two birth dates in, one relationship name out. A look at saju compatibility.",
+"B7":"Guess the saju type from a birth date, then see the card.",
+"B8":"Three birthdays, three guesses. Which card did the app pick?",
+"A1":"Anxious or avoidant? Here's how a 30-question attachment test sorts it.",
+"A2":"An attachment test and a saju chart, in one app. Here's what the result looks like.",
+"A3":"Exhaustion, cynicism, low energy: how a burnout test breaks it into three parts.",
+"A4":"The mask test: image management, concealment, social fatigue. Here's the result screen.",
+"A5":"Overstimulation, aesthetic sensitivity, a low sensory threshold: a sensitivity test, in 30 questions.",
+"A6":"Racing mind, tense body, restless dreams: how a sleep test sorts them.",
+"A7":"Distractibility, hyperfocus, impulsivity: a focus test that ends in a 25-turn conversation.",
+"A8":"A family-of-origin test, then a conversation that asks about it. Here's how it flows.",
+}
+banned = r"accura|exact|proven|predict|fortune|money|bank|pay|wallet|invest|lucky|unlucky|doom|\byou\b|your|you're|countdown|last chance|diagnos|disorder|therap|treat|cure|heal|will |price|\$|limited|guarantee|right|wrong"
+for k,h in hooks.items():
+    m = re.search(banned, h, re.I)
+    print(k, "FAIL "+m.group(0) if m else "ok", len(h))
+EOF
+```
+
+## 10. 새 구조 반영: C형 8개와 형식 규칙 (2026-10-20 초안, 근거 `reference-videos.md`·`hook-analysis.md`)
+
+참고 영상(Olively·The Pattern 등)에서 가져온 구조를 A·B 형식 위에 얹는다. 아래 구조 규칙은 **A·B·C 모든 영상에 적용**하고, C형 8개는 A/B 시험과 같은 4주에 번갈아 섞어 올린다(A B C 순환). 모두 스토어 공개 뒤 게시. 규칙(1장·9장)은 그대로.
+
+### 형식 규칙 5개 (참고 영상에서)
+1. **첫 컷은 앱 화면.** 0초부터 실제 UI(검사 문항, 결과 화면, 유형 카드)를 보인다. 설명용 인물 컷을 앞에 두지 않는다. 얼굴 출연 영상은 1~2초만 얼굴, 바로 화면.
+2. **전/후 컷은 실제 UI 변화만.** 예: 오행 막대가 채워지는 순간, 결과 차원 막대가 나오는 순간, 질문 → 대화 화면. **가짜 점수·가짜 변화 수치를 만들지 않는다**(Olively의 8/10→4/10 같은 점수 연출은 따라 하지 않음, 정확도·우열 주장 금지).
+3. **앱 이름은 영상 후반에 자막으로 한 번.** CTA 구간 전이라도 훅에는 앱 이름을 넣지 않는다. 마지막 CTA는 기존대로 프로필 링크 안내.
+4. **길이는 두 가지 시험**: 기존 25~35초와 15초 안팎(훅 2초 + 화면 10초 + CTA 3초). C형 중 2개가 15초 변형.
+5. **날짜는 실제 날짜만.** 절기 날짜는 앱의 24절기 데이터(`/api/solarTerms`)에서 가져와 촬영 시점에 확인한 값만 쓴다. "곧 사라진다/마지막 기회" 같은 표현 금지(압박 규칙), 그냥 날짜와 사실만.
+
+### C형 훅 8개
+| # | 훅 (자막 = 말) | 구조 | 화면 |
+|---|---|---|---|
+| C1 | Day Master types, part 1 of 10: the first one on the card. | 연재(10편, 일간 10개는 제품 사실) | 해당 일간 유형 카드 → 설명 |
+| C2 | A saju type card lists three things: a name, a one-line summary, and a five-element bar. | 목록형 | 카드 → 막대 순서로 하이라이트 |
+| C3 | Same app, two modules, two result screens. | 비교형(결과 화면만) | 모듈 두 개의 결과 화면 나란히 |
+| C4 | How to read the five-element bar on a saju chart. | 튜토리얼형 | 계산기의 오행 막대 설명 |
+| C5 | A new solar term starts on {date}. Here's what the app's calendar marks. | 날짜 뉴스형(절기) | 앱 절기·운세 화면, {date}는 실제 값 |
+| C6 | A five-card year in review opens in the app on December 1. | 날짜 뉴스형(Wrapped) | Wrapped 카드 5장 훑기 (12/1~1/31은 WIKI 3장 사실) |
+| C7 | Birth date in, type card out. Fifteen seconds. | 15초형 | 입력 → 카드 공개 |
+| C8 | An attachment test result screen, in fifteen seconds. | 15초형(A 변형) | 앱 결과 화면, 첫 컷 바로 결과 |
+
+사용 메모:
+- C5의 `{date}`는 대본 확정 때 실제 날짜로 바꾼다. 스크립트의 "November 7"은 `upcomingSolarTerms`(자체 엔진)로 확인한 입동(2026-11-07 09:51 UTC)이다. 다른 절기는 같은 함수로 날짜를 뽑아 쓴다(예: 소설 11-22, 대설 12-07, 동지 12-21 UTC 기준, 시간대에 따라 하루 어긋날 수 있어 영상에는 촬영 기준 시간대를 쓴다).
+- C6은 Wrapped가 홈에 노출되는 기간(기기 날짜 12/1~1/31)에만 촬영·게시가 의미 있다. 11월 촬영은 기기 날짜 변경 가능 여부 확인이 필요(TODO 14번 사용자 확인).
+- C1은 10편을 연달아 올릴 필요는 없고 주 1편씩 이어도 된다. 시리즈 번호는 영상 첫 자막과 설명란에 같이 적는다.
+- 점검 스크립트는 정규식 + 사람 읽기. 훅이 사실만 말하는지는 촬영 전에 화면과 대조한다.
+
+```bash
+python3 - <<'EOF'
+import re
+hooks = {
+"C1":"Day Master types, part 1 of 10: the first one on the card.",
+"C2":"A saju type card lists three things: a name, a one-line summary, and a five-element bar.",
+"C3":"Same app, two modules, two result screens.",
+"C4":"How to read the five-element bar on a saju chart.",
+"C5":"A new solar term starts on November 7. Here's what the app's calendar marks.",
+"C6":"A five-card year in review opens in the app on December 1.",
+"C7":"Birth date in, type card out. Fifteen seconds.",
+"C8":"An attachment test result screen, in fifteen seconds.",
+}
+banned = r"accura|exact|proven|predict|fortune|money|bank|pay|wallet|invest|lucky|unlucky|doom|\byou\b|your|you're|countdown|last chance|diagnos|disorder|therap|treat|cure|heal|will |price|\$|limited|guarantee|right|wrong|only|hurry|ends|miss"
+for k,h in hooks.items():
+    m = re.search(banned, h, re.I)
+    print(k, "FAIL "+m.group(0) if m else "ok", len(h))
+EOF
+```
