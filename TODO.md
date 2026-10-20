@@ -18,10 +18,11 @@
 
 ## 서버
 
-- [ ] 2. `choices` 응답 필드와 검증
+- [x] 2. `choices` 응답 필드와 검증
   - 선행: 1
   - 변경: `lib/chat.ts`의 응답 타입·파서에 `choices?: string[]`를 더하고, 개수 2~3·길이 24자·중복·위기/마무리 턴 제거 규칙을 검증 함수로 둔다(어기면 `choices`만 버림). `app/api/chat/route.ts`가 그대로 내려 보낸다.
   - QA: 루트 tsc 통과. 검증 함수에 대한 일회성 스크립트(스크래치 디렉터리)로 정상·초과·빈 값·위기 턴 입력 6건 이상을 돌려 기대 출력과 일치함을 확인.
+  - QA: `npx tsc --noEmit` → 오류 없음(exit 0). 스크래치 `choices-test.mts`(tsx)로 `sanitizeChoices` 14건(정상 2·3개, 1개·4개, 빈 값, 25자, 24자 경계, 문장부호 중복, 비문자열, 배열 아님, undefined, suppress, 위기 줄 1393·988) → 전부 PASS.
 
 - [ ] 3. flowVersion 3 턴 지침과 모듈 3 묶음 데이터
   - 선행: 1, 2
@@ -56,3 +57,4 @@
 
 ## 발견 사항
 (작업 중 발견한 것만 여기에 적고, 해당 항목 diff에는 넣지 않는다.)
+- TODO 3에서 할 것: `ChatFlowVersion` 타입에 3 추가, `getChatReply`의 `sanitizeChoices` `suppress`에 9턴 체크포인트 조건 추가(지금은 마지막 턴만 억제), v3 프롬프트가 모델에게 JSON `choices` 키를 쓰게 지시. 보기 위기 억제는 응답에 위기 안내 번호(1393·988 등)가 있는지로 판정한다.

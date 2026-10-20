@@ -107,6 +107,33 @@ export interface ChatReply {
   lines: string[];
   /** Hidden counselor memo (TODO Q1-c). The route passes it to the app, which echoes it back next turn; never shown or persisted. */
   formulation?: ChatFormulation;
+  /** flowVersion 3 (선택지 분기형): 탭할 수 있는 보기 2~3개. 검증을 통과한 것만 담기고, 없으면 열린 질문이다. */
+  choices?: string[];
+}
+
+export const CHOICES_MIN = 2;
+export const CHOICES_MAX = 3;
+export const CHOICE_MAX_CHARS = 24;
+
+/**
+ * flowVersion 3 보기 검증(SPEC 2026-10-20). 개수 2~3, 각 24자 이내, 중복 없음이고, 마지막 응답·체크포인트·위기 턴에는 없다.
+ * 어느 하나라도 어기면 보기 전체를 버리고 undefined를 돌려준다(응답은 막지 않고 열린 질문으로 간다).
+ * 앞뒤 공백과 감싸는 따옴표는 걷어 내고, 마지막 "직접 쓸게요"는 앱이 붙이므로 모델이 쓴 것은 여기서 버리지 않고 중복·길이만 본다.
+ */
+export function sanitizeChoices(
+  raw: unknown,
+  opts: { suppress: boolean; lines: string[] }
+): string[] | undefined {
+  if (opts.suppress) return undefined;
+  if (opts.lines.some((line) => CRISIS_LINE_PATTERN.test(line))) return undefined;
+  if (!Array.isArray(raw)) return undefined;
+  if (raw.some((c) => typeof c !== "string")) return undefined;
+  const cleaned = (raw as string[]).map((c) => c.trim().replace(/^["'“”‘’]+|["'“”‘’]+$/g, "").trim());
+  if (cleaned.length < CHOICES_MIN || cleaned.length > CHOICES_MAX) return undefined;
+  if (cleaned.some((c) => !c || Array.from(c).length > CHOICE_MAX_CHARS)) return undefined;
+  const seen = new Set(cleaned.map((c) => c.replace(/[\s.,!?~]/g, "").toLowerCase()));
+  if (seen.size !== cleaned.length) return undefined;
+  return cleaned;
 }
 
 // A line counts as "asking a question" if it ends in ? or in a no-"?"
@@ -337,7 +364,7 @@ export async function getChatReply(params: {
   const selfBlameNote = selfBlame
     ? `\n\n[이번 턴 확인] 사용자의 직전 말에 자책이 있다: "${selfBlame}". 기법 ⑦을 이번 응답에서 반드시 한다 — 그 자책을 그대로 받아 적거나 "그렇지 않아요"로 덮지 말고, 그 행동이나 반응을 다르게 볼 수 있는 한 줄을 응답 앞쪽에 둔다. 위 "먼저 확인" 지시대로, 질문을 반박형으로 쓸지 그 한 줄만 둘지는 이번 턴 종류(인용 턴·점검·마지막)와 직전 응답을 보고 정한다.`
     : "";
-  let parsed: { lines?: unknown; formulation?: unknown } = {};
+  let parsed: { lines?: unknown; formulation?: unknown; choices?: unknown } = {};
   let rawLines: string[] = [];
   for (let attempt = 0; ; attempt++) {
     const completion = await client.chat.completions.create({
@@ -400,9 +427,16 @@ export async function getChatReply(params: {
         ? ensureRecapRecheck(oneQuestion, role.turn, null, locale)
         : oneQuestion;
   const formulation = sanitizeFormulation(parsed.formulation);
+  const finalLines = params.context.locale === "ko" || !params.context.locale ? stripHanja(lines) : lines;
+  // 보기는 flowVersion 3 요청만 받는다. 체크포인트 턴 억제는 v3 턴 번호표가 생기는 TODO 3에서 suppress에 더한다.
+  const choices =
+    params.context.flowVersion === 3
+      ? sanitizeChoices(parsed.choices, { suppress: isFinalTurn(params.turnNumber, elapsedMinutes, flow), lines: finalLines })
+      : undefined;
   return {
-    lines: params.context.locale === "ko" || !params.context.locale ? stripHanja(lines) : lines,
+    lines: finalLines,
     ...(formulation && { formulation }),
+    ...(choices && { choices }),
   };
 }
 

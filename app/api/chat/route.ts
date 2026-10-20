@@ -12,7 +12,7 @@
  *   context.flowVersion === 2 + context.quizAnswers (30문항) → 5세트 25턴 흐름(TODO 4). 없으면 20턴 흐름 그대로.
  *
  * Response body:
- *   { lines: string[], formulation?: ChatFormulation }  — formulation is never shown or saved; the app keeps it for the next request
+ *   { lines: string[], formulation?: ChatFormulation, choices?: string[] }  — choices(보기 2~3개)는 flowVersion 3에서만, 검증 통과 시에만. formulation is never shown or saved; the app keeps it for the next request
  *   { lines, extract: ChatExtract }  — only when isFinalTurn() is true (turnNumber >= TOTAL_TURNS, or the client jumped straight there via the CHECKPOINT_TURN early-finish path)
  *     5세트 흐름이면 extract.set_packets(세트 재료 묶음 5개)가 붙는다.
  *   or { error: string } with a non-200 status
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const resolvedStartedAt = sessionStartedAt ?? Date.now();
-    const { lines, formulation: nextFormulation } = await getChatReply({
+    const { lines, formulation: nextFormulation, choices } = await getChatReply({
       turnNumber,
       history,
       context,
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ lines, extract });
     }
 
-    return NextResponse.json({ lines, ...(nextFormulation && { formulation: nextFormulation }) });
+    return NextResponse.json({ lines, ...(nextFormulation && { formulation: nextFormulation }), ...(choices && { choices }) });
   } catch (err) {
     if (err instanceof OpenAI.APIError) {
       if (err.status === 401) {
