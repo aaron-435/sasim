@@ -29,7 +29,9 @@ if (!text) throw new Error(`no script ${key}`);
 const mp3 = readdirSync(tts).find((f) => f.startsWith(`${key}_`) && f.endsWith(".mp3"));
 if (!mp3) throw new Error(`no mp3 for ${key}; run marketing/tts-samples/generate.py ${key}`);
 const audio = path.join(tts, mp3);
-const duration = Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", audio]).toString());
+// Voiceover is sped up a bit more in the mux step (short-form pacing); captions follow the sped-up length.
+const TEMPO = Number(process.env.TEMPO ?? 1.12);
+const duration = Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", audio]).toString()) / TEMPO;
 
 // Sentence timing: proportional to character count over the audio length (approximate).
 const sentences = text.split(/(?<=[.?!])\s+/);
@@ -106,9 +108,9 @@ for (let i = 0; i < sentences.length; i++) {
     typed = true;
     void (async () => {
       await inputs.first().click();
-      await page.keyboard.type(m, { delay: 220 });
-      await page.keyboard.type(d, { delay: 220 });
-      await page.keyboard.type(y, { delay: 220 });
+      await page.keyboard.type(m, { delay: 110 });
+      await page.keyboard.type(d, { delay: 110 });
+      await page.keyboard.type(y, { delay: 110 });
     })();
   }
   if (i === submitIdx && !submitted) {
@@ -135,7 +137,7 @@ writeFileSync(listFile, list);
 const out = path.join(outDir, `${key}.mp4`);
 execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", listFile, "-i", audio, "-map", "0:v", "-map", "1:a",
   "-vf", "fps=30,scale=1080:1920:flags=lanczos,format=yuv420p", "-c:v", "libx264", "-crf", "18", "-preset", "medium",
-  "-c:a", "aac", "-b:a", "160k", "-shortest", out], { stdio: "inherit" });
+  "-af", `atempo=${TEMPO}`, "-c:a", "aac", "-b:a", "160k", "-shortest", out], { stdio: "inherit" });
 renameSync(out, out);
 rmSync(tmp, { recursive: true, force: true });
 console.log("ok", out, `${duration.toFixed(1)}s audio, ${sentences.length} captions`);

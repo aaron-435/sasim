@@ -14,7 +14,7 @@ if not key:
     sys.exit("OPENAI_API_KEY 없음")
 
 VOICE = "marin"
-INSTRUCTIONS = "Calm, warm, conversational narrator for a short social video. Natural pace, clear articulation, not salesy."
+INSTRUCTIONS = "Upbeat, brisk narrator for a short social video. Speak noticeably fast, no long pauses between sentences, clear articulation, not salesy."
 scripts = json.loads((here / "scripts.json").read_text())
 names = sys.argv[1:] or list(scripts)
 for name in names:
