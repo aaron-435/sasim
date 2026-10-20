@@ -1,9 +1,9 @@
-# 마케팅 인수 메모 (2026-10-20)
+# 마케팅 인수 메모 (2026-10-20, 같은 날 두 번째 세션 반영)
 
 새 세션 시작용. 읽는 순서: 이 파일 → `SPEC.md`(= `MARKETING_SPEC.md`) → `TODO.md`(진행 상태) → `WIKI.md`. 스토어·앱 상태는 `HANDOFF_2026-10-17.md`, 이전 마케팅 인수는 `HANDOFF_MARKETING_2026-10-16.md`. 필요할 때만 `marketing/` 아래 문서와 `UNIT_ECONOMICS.xlsx`.
 
 ## 한 줄 상태
-영어권 마케팅은 제작 키트까지 끝났고(TODO 1~9), 2026-10-19에 "홍보 전 실측 체계"를 새로 정했다(TODO C 섹션 10~17). 스토어 공개 전이라 게시와 유료 집행은 없다(사용자 결정 17번 (a)).
+영어권 마케팅은 제작 키트(TODO 1~9)와 측정·게이트(10~14)가 끝났고, 2026-10-20에 **조사(경쟁·인접 앱)와 영상 자동 제작 파이프라인**(TODO 18)까지 만들었다. 스토어 공개 전이라 게시와 유료 집행은 없다(사용자 결정 17번 (a)). 두 스토어 1.2.0은 아직 심사 중.
 
 ## 이번 세션(2026-10-19)에서 끝낸 것
 - 예측 분석: 낙관·비관·중립 예측가 3명이 reference class forecasting으로 2라운드 진행, 합의 도출. 검증 보조 에이전트 2개(수치 사실검증, 영어권 사주 수요 조사).
@@ -11,6 +11,41 @@
 - 손익 시트 `UNIT_ECONOMICS.xlsx` (5탭: 입력 / 사용자당 / 90일 시나리오 / CPI 민감도 / 500만원 목표).
 - `TODO.md`에 C 섹션(10~17)과 사용자 확인 항목(사·아·자) 추가. 10번 완료, 17번 결정 기록.
 - `marketing/funnel-gaps.md`: 퍼널 이벤트 점검 결과.
+
+## 2026-10-20 세션에서 끝낸 것 (모두 커밋됨, `main` 최신 `f638313`, 푸시는 `d1312dc`까지)
+- **웹 배포**: 퍼널 이벤트 포함 `3c99663`까지 `origin/main`에 푸시, Vercel `success`, `/api/events`에 `app_open` 200 확인. 남은 것은 두 스토어 게시 뒤 앱 JS OTA(사용자 트리거).
+- **조사 문서 (`marketing/`)**: `demand-check.md`(Google Trends·틱톡 해시태그 조회수, 사 항목 일부 반영), `competitors.md`(영어·스페인어 사주 계정 프로필 실측), `adjacent-apps.md`·`psychology-angle.md`(Co-Star·The Pattern·Finch·Olively 등 인접 앱, 유튜브·인스타 훑어보기), `hook-analysis.md`(훅 유형 비교), `reference-videos.md`(참고 영상 분석과 링크).
+- **제작 문서**: `video-kit.md` 9~10장(A형 심리 훅 8·B형 유형 카드 8·C형 구조 8 = 훅 24개, 형식 규칙 5개), `ai-production.md`(AI 제작 방식·TTS 결정), `tts-samples/scripts.json`(대본 7개: B1·C7·A3·C5·C1·A3x·A1x).
+- **자동 제작 파이프라인 (코드)**: `marketing/tts-samples/generate.py`(OpenAI gpt-4o-mini-tts, marin → mp3), `scripts/record-web.mts`(웹 랜딩 유형 카드 녹화), `scripts/record-app.mts`(앱 검사 결과, mobile-web), `scripts/record-app-ab.mts`(실험형: 같은 검사를 여러 방식으로 답하고 결과 비교, `CONFIGS`에 설정 추가). 모두 CDP 화면 캡처 1080×1920 + 자막 HTML 오버레이 + ffmpeg 합성, 음성 1.12배속. 결과 mp4는 `marketing/video/`(git 무시).
+- **시험 영상**: B1(13초)·C7(9초)·A3(17초)·A3x(15초, 실험형)·A1x(27초, 애착 4결과). 사용자 확인 단계, 게시 안 함.
+- `UNIT_ECONOMICS.xlsx` 입력 탭 C9·C11 설명만 갱신(값 그대로).
+
+## 이번 세션 결정
+- 주 4~5개 유지(하루 4개 안 함), 직접 촬영 주 1회, 나머지는 화면 녹화 + AI 음성. 프로그램 렌더링 도구(Remotion·HyperFrames)는 보류.
+- **AI 음성은 OpenAI gpt-4o-mini-tts**(tts-1-hd보다 싸다고 판단, 가격 근거는 `ai-production.md` 7-c). 설명란에 `Voiceover is AI-generated.` 필수.
+- 훅은 "보는 사람 상태를 짐작하지 않는" 방식: 실험형("I answered ... every time")이 A형 기본. 설명형 A3는 훅이 약하다는 지적으로 A3x·A1x로 대체.
+- **AI 인물이 "삶이 바뀌었다" 후기를 말하게 하는 영상은 만들지 않는다**(가짜 후기, `PRODUCT.md` 규칙). 힉스필드 API는 비용만 조사(영상 생성 초당 약 $0.08, 2~3초 클립 $1~2 안팎, 립싱크 요금 미확인). 하려면 후기가 아닌 반응 대사 + AI 표기, API 키·$5 충전은 사용자.
+
+## 열린 문제·확인 필요
+- **앱 결과 문구**: 번아웃 최고점 결과 설명이 "classic 'full burnout syndrome'"이고, 애착 결과 문구가 2인칭("You tend to...")이다. 진단 느낌·개인 특성 짐작 규칙과 충돌 가능, 앱 문구 수정 여부는 별도 결정.
+- **웹 랜딩 유형 카드에는 오행 막대가 없다**(훅 C2·C4와 B 대본의 "five-element bar"는 `/saju-calculator` 화면 기준). B1·C7 대본은 카드에 맞게 고쳤고 나머지 훅은 촬영 전에 화면과 대조.
+- 영상은 mobile-web 웹 렌더링이라 네이티브와 다를 수 있다. 광고에 쓰기 전 시뮬레이터 화면과 비교. 카드에 "Fatesaid"(스토어 이름은 "Fate Said") 표기 불일치.
+- 웹 카드 문구에 "The app is coming soon..." 가 나온다 → 공개 전에는 게시 금지, 공개 후 7번 항목에서 문구 교체.
+- 앱 앞 15문항은 불안, 뒤 15문항은 회피 문항(`module1Attachment.ts`). A1x 영상이 이 구조에 의존한다. 문항 순서가 바뀌면 영상 설정(`HL`/`LH`)도 확인.
+- 녹화 스크립트는 첫 실행이 한 번 시간 초과로 실패한 적 있음(원인 미확인, 재실행 성공).
+- **TTS 샘플 mp3·영상은 git에서 제외**(`.gitignore`). 다시 만들려면 `generate.py`와 위 스크립트로.
+- 힉스필드·가짜 후기 건과 별개로, 시딩 크리에이터 후기 요구 금지 등 `marketing/seeding-kit.md` 규칙은 그대로.
+
+## 환경 상태 (새 세션 시작 시 확인)
+- 미리보기 서버: `work-dev`(3000), `mobile-web`(8082)가 켜져 있을 수 있음. 필요 없으면 `preview_stop`.
+- 새로 설치: `playwright`(devDependency, `package.json`·lock 커밋됨), `ffmpeg`(brew, 자막 필터 없는 빌드라 자막은 HTML 오버레이), Playwright ffmpeg 구성요소. 녹화는 기존 Chromium 빌드(1243) 경로를 직접 지정해 씀.
+- 크롬(Claude in Chrome)에 틱톡·유튜브·인스타·MiniMax·App Store Connect 탭이 열려 있음. MiniMax 크레딧 약 9,170(샘플 몇 개 생성, 미사용 권장 — OpenAI TTS로 결정).
+- 지출: OpenAI TTS 샘플 몇 개(합계 약 $0.1 미만), MiniMax 크레딧 일부.
+
+## 다음 한 걸음 (제안)
+1. 두 스토어 1.2.0 승인 확인(Play는 승인 뒤 직접 게시) → 앱 JS OTA → 7번(웹 링크 교체) → A·B·C 영상 첫 게시와 계정 개설(사용자).
+2. 그 전에 같은 `record-app-ab` 형식으로 모듈 영상을 늘리거나(`CONFIGS`에 수면·몰입·가면 추가), 시뮬레이터 화면과 비교해 네이티브 컷 필요 여부 판단.
+3. 사 항목(손익 시트 노란 칸)과 틱톡 계정 개설은 사용자 실행.
 
 ## 핵심 수치 (모두 추정, 출처 표시된 것만 확인됨)
 - **90일 합의(승인 후)**: 설치 P50 400~600 (P10 약 60, P90 3천~8천), 설치→구독 약 1~1.5%, MRR P50 $25~50, 리포트 매출 약 $60. 가장 흔한 결과는 "조용한 90일". 영상 하나가 터질 확률은 약 10%(가정, 출처 없음).
@@ -26,7 +61,7 @@
 - 압박 규칙·정확도 표현 금지 등 `PRODUCT.md` 원칙은 그대로.
 
 ## 지금 할 일 (TODO.md 기준)
-1. **10-b 퍼널 이벤트 추가** (사용자 승인 후): `app_open`(하루 1회), `chat_start`/`chat_complete`, `report_generate`, 구매 이벤트의 `kind: trial|paid`. 웹 `lib/eventSchema.ts` 먼저 배포, 그다음 앱 JS OTA. 위치·규모는 `marketing/funnel-gaps.md` 3장. 파일 3개 이상이라 CLAUDE.md 위임 절차(muse) 적용 가능.
+1. ~~10-b 퍼널 이벤트 추가~~ 완료·푸시됨 (2026-10-20, 앱 JS OTA만 남음). 원래 설명: (사용자 승인 후): `app_open`(하루 1회), `chat_start`/`chat_complete`, `report_generate`, 구매 이벤트의 `kind: trial|paid`. 웹 `lib/eventSchema.ts` 먼저 배포, 그다음 앱 JS OTA. 위치·규모는 `marketing/funnel-gaps.md` 3장. 파일 3개 이상이라 CLAUDE.md 위임 절차(muse) 적용 가능.
 2. 11 퍼널 리포트 스크립트, 12 증폭·중단 트리거를 `paid-plan.md`에 병합, 13 게이트 판단표 `marketing/gates.md`, 14 연간 리포트·Year Wrapped 영상 소재 5개(12/1 전, 11월 중), 15 손익 시트 실측 교체 루틴(스토어 공개 뒤).
 3. 사용자 결정 대기: 16 구독 가격 $7.99 vs $9.99(별도 SPEC 필요).
 4. 사용자 확인: 사 손익 시트 노란 칸(연간 리포트 가격, 스토어 수수료 실제율, RevenueCat 요금제, 서버 월 고정비, 환율), 아 영어권 사주 수요를 Google Trends·틱톡에서 직접 확인, 자 1.2.0 두 스토어 승인·게시 알려 주기.
@@ -45,4 +80,4 @@
 - 외부 자료를 바꿔 쓴 곳은 없다. 예측가 에이전트의 수치는 모두 `UNIT_ECONOMICS.xlsx`와 이 메모에 추정으로 표시했다.
 
 ## 커밋 상태
-아무것도 커밋하지 않았다(사용자 트리거). 변경: `TODO.md` 수정, `marketing/funnel-gaps.md`·`UNIT_ECONOMICS.xlsx`·이 파일 신규. 커밋 메시지는 항목 끝에 제안한다.
+작업 트리 깨끗(이 파일만 수정 중). 최신 커밋 `f638313`. `origin/main`에는 `d1312dc`까지 푸시, 그 이후 커밋 6개(`bc1e99a`~`f638313`: 인접 앱 조사, 영상 스크립트 등)는 **미푸시**(푸시는 사용자 트리거). TODO.md 18번 완료 기록 포함.
