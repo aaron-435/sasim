@@ -13,7 +13,7 @@ export const FREE_REACTION_POOL: readonly string[] = [
   "그렇게 적어 둘게요.",
   "좋아요, 이어 갈게요.",
   "그랬군요.",
-  "받았어요.",
+  "네, 잘 읽었어요.",
   "네, 기억해 둘게요.",
 ];
 

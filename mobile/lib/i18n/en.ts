@@ -590,7 +590,6 @@ export const en: typeof ko = {
     checkpointFinishButton: "Let's wrap up here",
     writeOwnChoice: "I'll write it",
     skipAnswer: "Skip",
-    closingProgress: ["Looking through your birth chart.", "Sorting the answers you chose in the test.", "Weaving what you shared into one picture."],
     choicesA11y: "Answer options",
   },
 

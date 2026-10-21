@@ -189,6 +189,9 @@ type PageDef = {
 // prototype). Each atomic idea (one strength, one element reading, one quote) now gets its
 // own full screen instead of being bundled into a long scroll — this is also what makes the
 // report substantially longer without padding: more real content units, not denser text.
+// Minimum time the report loading screen stays up (the usual generation takes longer anyway).
+const REPORT_MIN_LOADING_MS = 20000;
+
 export default function ReportScreen({
   nickname,
   elements,
@@ -328,6 +331,7 @@ export default function ReportScreen({
     // after 175s (the server stops at 180s) instead of spinning forever.
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 175_000);
+    const startedAt = Date.now();
     try {
       // Sent so the server can confirm a purchase and include the paid half right away; without
       // one (or if it can't confirm) that half comes back sealed instead.
@@ -350,6 +354,11 @@ export default function ReportScreen({
         setErrorText(res.status === 429 ? strings.report.errorRateLimited : strings.report.errorDefault);
         return;
       }
+      // A fast response would make the report pop out right after the chat ends — keep the loading
+      // screen up for a minimum so the writing reads as real work (2026-10-21).
+      const wait = REPORT_MIN_LOADING_MS - (Date.now() - startedAt);
+      if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+      if (!mountedRef.current) return;
       setContent(json);
       track("report_generate", { module: quizDiagnosis.moduleId });
       // Keep a local copy so the report can be reopened after leaving this screen.

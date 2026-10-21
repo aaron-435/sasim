@@ -617,7 +617,6 @@ export const ko = {
     checkpointFinishButton: "여기서 마무리할게요",
     writeOwnChoice: "직접 쓸게요",
     skipAnswer: "건너뛰기",
-    closingProgress: ["사주 원국을 살펴보고 있어요.", "검사에서 고른 답을 정리하고 있어요.", "나눠 주신 이야기를 하나로 엮고 있어요."],
     choicesA11y: "답 보기",
   },
 

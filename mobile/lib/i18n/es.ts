@@ -590,7 +590,6 @@ export const es: typeof ko = {
     checkpointFinishButton: "Terminemos aquí",
     writeOwnChoice: "Lo escribo yo",
     skipAnswer: "Omitir",
-    closingProgress: ["Revisando tu carta natal.", "Ordenando las respuestas que elegiste en el test.", "Uniendo lo que compartiste en una sola imagen."],
     choicesA11y: "Opciones de respuesta",
   },
 

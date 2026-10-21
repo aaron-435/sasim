@@ -47,10 +47,8 @@ const TURNS_PER_SET = 5;
 const WRAP_UP_SECONDS = 27 * 60;
 const EARLY_FINISH_SECONDS = 7 * 60;
 // v4 history placeholder for the skipped checkpoint turn (never shown).
-// v4: minimum time on the closing message before handing over to the report.
-const CLOSING_MIN_MS = 20000;
-// v4: gap between the progress lines shown while the report is being prepared.
-const CLOSING_STEP_MS = 5000;
+// v4: how long the closing thank-you line stays before the report screen takes over.
+const CLOSING_PAUSE_MS = 2500;
 const CHECKPOINT_SKIP_STUB = "(체크포인트 생략)";
 
 type Message = { role: "bot" | "user"; text: string };
@@ -231,23 +229,13 @@ export default function ChatScreen({
         // by one before the report, which read as a delay with nothing to do. The closing turn
         // (the one that carries `extract`) now hands over immediately.
         if (json.extract && FLOW_VERSION === 4) {
-          // 2026-10-21: v4 shows the closing lines (thanks + "writing the report") and then waits
-          // on purpose so the report doesn't appear to pop out of nowhere.
-          const closingStartedAt = Date.now();
+          // 2026-10-21: v4 keeps the chat's goodbye to one short thank-you line, then hands over to
+          // the report screen, whose loading animation carries the wait.
           doneRef.current = true;
           setDone(true);
-          await revealLines(lines);
+          await revealLines(lines.slice(-1));
           if (!mountedRef.current) return;
-          for (const line of strings.chat.closingProgress) {
-            setIsTyping(true);
-            await new Promise((r) => setTimeout(r, CLOSING_STEP_MS));
-            if (!mountedRef.current) return;
-            setIsTyping(false);
-            setMessages((m) => [...m, { role: "bot", text: line }]);
-          }
-          setIsTyping(true);
-          const remaining = CLOSING_MIN_MS - (Date.now() - closingStartedAt);
-          if (remaining > 0) await new Promise((r) => setTimeout(r, remaining));
+          await new Promise((r) => setTimeout(r, CLOSING_PAUSE_MS));
           if (!mountedRef.current) return;
           setIsTyping(false);
           turnHistoryRef.current = [...apiHistory, { role: "assistant", content: lines.join(" ") }];
