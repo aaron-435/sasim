@@ -2214,7 +2214,7 @@ const MODULE7_SETS: ModuleChatSets = {
       focus: "깊이 감동하는 쪽",
       candidates: ["A2", "A4", "A6", "A9", "A5"],
       fallbackQuestion: {
-        ko: "최근에 무언가가 마음 깊이 와닿았던 순간이 있었다면, 어떤 거였어요?",
+        ko: "최근에 무언가가 마음 깊이 남았던 순간이 있었다면, 어떤 거였어요?",
         en: "Was there a recent moment when something moved you deeply? What was it?",
         es: "¿Hubo hace poco algún momento en que algo te llegó muy hondo? ¿Qué fue?",
       },
@@ -3038,7 +3038,7 @@ export interface ModuleChoiceBundles {
 const MODULE3_CHOICE_BUNDLES: ModuleChoiceBundles = {
   turns: {
     1: {
-      intent: "퀴즈 답이 가장 와닿았던 순간이 출근 전인지, 일하는 중인지, 퇴근 뒤인지 고르게 한다.",
+      intent: "퀴즈 답이 가장 크게 느껴졌던 순간이 출근 전인지, 일하는 중인지, 퇴근 뒤인지 고르게 한다.",
       options: ["출근 전이에요", "일하는 중이에요", "퇴근 뒤예요"],
     },
     2: {
