@@ -58,6 +58,27 @@ export const CHOICE_FIELD_BY_TURN: Record<number, string> = {
   21: "perspective_answer",
 };
 
+/**
+ * 모듈 전용 추출 필드(`module_fields`)를 채우는 턴. CHOICE_FIELD_BY_TURN의 8·13턴은 모듈 3 이름이라
+ * 모듈마다 이 표로 대신한다(2026-10-21, TODO 8). 키는 lib/modulePlaybooks.ts의 `extractFields`와 같아야 한다.
+ * 보기 턴에서 그 필드를 직접 묻지 않는 키(모듈 8 arousal_type, 모듈 9 role_carryover, 모듈 11 permission_needed,
+ * 모듈 12 unfinished_goodbye)는 일부러 뺐다: 말한 글이 있으면 추출 모델이, 없으면 null로 둔다.
+ */
+export const CHOICE_MODULE_FIELD_TURNS: Record<string, Record<string, number>> = {
+  module1: { attachment_alarm: 2, protest_or_deactivate: 8 },
+  module2: { money_script: 11, money_loop: 8 },
+  module3: { demand_drain: 8, resource_left: 13 },
+  module4: { stage_front: 2, stage_back: 13 },
+  module5: { pre_start_thought: 2, move_condition: 13 },
+  module6: { anger_underneath: 4, crossed_line: 11 },
+  module7: { drain_stimulus: 2, charge_stimulus: 13 },
+  module8: { night_replay: 2 },
+  module9: { family_role: 6 },
+  module10: { focus_on: 8, focus_off: 2 },
+  module11: { swallowed_line: 2 },
+  module12: { anchor_in_new: 19 },
+};
+
 /** 세트별 시작 턴. 세트는 4턴씩(A1·A2·B1·B2), 9턴(체크포인트)이 사이를 가른다. */
 const CHOICE_SET_START: Record<ChatSetNumber, number> = { 1: 1, 2: 5, 3: 10, 4: 14, 5: 18 };
 
@@ -223,16 +244,23 @@ export interface ChoiceFieldPick {
 }
 
 /**
- * CHOICE_FIELD_BY_TURN에 따라 필드별 "묶음 답" 목록을 만든다. 답이 없는 필드는 건너뛴다.
+ * 필드별 "묶음 답" 목록을 만든다. 답이 없는 필드는 건너뛴다. 공통 필드는 CHOICE_FIELD_BY_TURN을 따르되
+ * 모듈 3 이름인 8·13턴은 빼고, 모듈 전용 필드는 CHOICE_MODULE_FIELD_TURNS를 따른다(moduleId가 없으면 모듈 3).
  * 보기 탭인지 직접 쓴 말인지는 가리지 않고 해당 턴의 사용자 답 원문을 쓴다.
  */
-export function buildChoiceFieldPicks(history: readonly SetHistoryMessage[]): ChoiceFieldPick[] {
+export function buildChoiceFieldPicks(history: readonly SetHistoryMessage[], moduleId?: string | null): ChoiceFieldPick[] {
   const answerByTurn = collectAnswerByTurn(history);
+  const entries: Array<[number, string]> = Object.entries(CHOICE_FIELD_BY_TURN)
+    .map(([turn, field]): [number, string] => [Number(turn), field])
+    .filter(([turn]) => turn !== 8 && turn !== 13);
+  const moduleTurns = CHOICE_MODULE_FIELD_TURNS[moduleId ?? "module3"] ?? {};
+  for (const [field, turn] of Object.entries(moduleTurns)) entries.push([turn, field]);
+  entries.sort((a, b) => a[0] - b[0]);
   const out: ChoiceFieldPick[] = [];
-  for (const turn of Object.keys(CHOICE_FIELD_BY_TURN).map(Number).sort((a, b) => a - b)) {
+  for (const [turn, field] of entries) {
     const a2 = answerByTurn.get(turn);
     if (!a2) continue;
-    out.push({ field: CHOICE_FIELD_BY_TURN[turn], a1: answerByTurn.get(turn - 1) ?? null, a2 });
+    out.push({ field, a1: answerByTurn.get(turn - 1) ?? null, a2 });
   }
   return out;
 }

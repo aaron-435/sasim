@@ -37,6 +37,7 @@ import {
   buildChoiceFieldPicks,
   buildSetPacketsV3,
   CHOICE_FIELD_BY_TURN,
+  CHOICE_MODULE_FIELD_TURNS,
   getChoiceTurnRole,
   limitCheckpointLinesV3,
   PERSPECTIVE_LEAD_TURN_V3,
@@ -518,7 +519,7 @@ export async function extractChatSummary(transcript: ChatMessage[], context: Cha
   // 2026-10-20 (작업 17): v3이면 추출 프롬프트에 묶음 답을 넘긴다. v1·v2는 기존 호출 그대로다.
   // 2026-10-21: v4도 v3와 같은 경로다.
   const flow = chatFlowVersion(context);
-  const choiceFieldPicks = flow >= 3 ? buildChoiceFieldPicks(transcript) : undefined;
+  const choiceFieldPicks = flow >= 3 ? buildChoiceFieldPicks(transcript, context.moduleId) : undefined;
   const { system, user } = buildExtractionPrompt(transcript, context, choiceFieldPicks);
 
   const completion = await client.chat.completions.create({
@@ -564,7 +565,7 @@ export async function extractChatSummary(transcript: ChatMessage[], context: Cha
   // 2026-10-20 (작업 17): v3이면 묶음에서 정해진 값을 빈 필드에 채운다. v1·v2는 그대로 둔다.
   // 2026-10-21: v4도 같은 경로다. 스크립트를 넘기면 보기를 탭한 턴은 답 원문 대신 gist로 채운다.
   return flow >= 3
-    ? applyChoicePicksToExtract(base, transcript, [], flow === 4 ? getModuleScript(context.moduleId) : undefined)
+    ? applyChoicePicksToExtract(base, transcript, [], flow === 4 ? getModuleScript(context.moduleId) : undefined, context.moduleId)
     : base;
 }
 
@@ -581,8 +582,6 @@ const CHOICE_PICK_TOP_FIELDS = [
   "desired_change",
 ] as const;
 
-const CHOICE_PICK_MODULE_FIELDS = ["demand_drain", "resource_left"] as const;
-
 export function applyChoicePicksToExtract(
   extract: ChatExtract,
   history: readonly ChatMessage[],
@@ -590,12 +589,16 @@ export function applyChoicePicksToExtract(
   choicePicks: readonly number[] = [],
   /** 2026-10-21 (작업 04): v4 스크립트. 있으면 보기를 탭한 턴은 답 원문 대신 gist로 채운다. */
   script?: ModuleScript,
+  /** 2026-10-21 (TODO 8): 모듈 전용 필드(module_fields) 이름이 모듈마다 다르므로 모듈 id가 필요하다. */
+  moduleId?: string | null,
 ): ChatExtract {
-  const picks = buildChoiceFieldPicks(history);
+  const picks = buildChoiceFieldPicks(history, moduleId);
   if (picks.length === 0) return extract;
   const byField = new Map(picks.map((p) => [p.field, p]));
   const pickedTurns = new Set(choicePicks);
-  const turnByField = new Map(Object.entries(CHOICE_FIELD_BY_TURN).map(([turn, field]) => [field, Number(turn)]));
+  const turnByField = new Map<string, number>(Object.entries(CHOICE_FIELD_BY_TURN).map(([turn, field]) => [field, Number(turn)]));
+  const moduleFieldTurns = CHOICE_MODULE_FIELD_TURNS[moduleId ?? "module3"] ?? {};
+  for (const [field, turn] of Object.entries(moduleFieldTurns)) turnByField.set(field, turn);
   // v4: 그 턴 답이 보기 탭이면 그 보기 gist만 쓴다(a1/a2 형식 대신). 직접 쓴 글은 기존 그대로.
   const gistForTapped = (field: string, a2: string): string | null => {
     if (!script) return null;
@@ -625,7 +628,7 @@ export function applyChoicePicksToExtract(
   }
   const moduleFields = { ...(next.module_fields ?? {}) };
   let touched = false;
-  for (const field of CHOICE_PICK_MODULE_FIELDS) {
+  for (const field of Object.keys(moduleFieldTurns)) {
     if (!isEmpty(moduleFields[field])) continue;
     const value = fill(field);
     if (value) {

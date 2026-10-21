@@ -55,10 +55,12 @@
 
 ## 리포트와 마감
 
-- [ ] 8. 추출·리포트 연결 확인 (12개 모듈)
+- [x] 8. 추출·리포트 연결 확인 (12개 모듈)
   - 선행: 2, 4~7
   - 변경: 모듈별 묶음→필드 매핑이 플레이북 필드와 맞는지, `set_packets`가 12개 모듈에서 나오는지 확인하고 모자란 곳만 고친다.
   - QA: 루트 tsc 통과. 스크래치 스크립트로 모듈 3개 이상(번아웃 + 2개) 보기만으로 끝까지 간 대화 → `resolveReportSets`·카드 슬롯 5개 비지 않음 확인. 가능하면 LLM 리포트 1건을 `extract`를 받는 작은 스크립트로 생성해 카드 5장 확인(발견 사항의 기존 메모 참고).
+  - 변경: 서버가 모듈 전용 필드를 모듈 3 키(`demand_drain`·`resource_left`)로만 채워서, 다른 모듈에서는 엉뚱한 키가 `module_fields`에 들어가고 정작 플레이북 키는 비었다. `lib/chatChoices.ts`에 `CHOICE_MODULE_FIELD_TURNS`(모듈별 필드 키 → 채우는 턴)를 추가하고 `buildChoiceFieldPicks`·`lib/chat.ts`의 `applyChoicePicksToExtract`가 `moduleId`로 이 표를 쓰게 했다. 모듈 3 결과는 그대로.
+  - QA: `npx tsc --noEmit` → 통과, `npx eslint lib/chat.ts lib/chatChoices.ts` → 통과. 임시 스크립트(삭제함, OpenAI 미사용)로 12개 모듈을 보기만 / 한 턴 직접 입력 섞기로 22턴 완주시킨 뒤 `applyChoicePicksToExtract` → `attachSetPackets` → `resolveReportSets` → `describeCardSlots`: 12개 모듈 전부 공통 7필드 채움, 모듈 필드는 매핑한 키만 채워지고(엉뚱한 키 0), 세트 패킷 5개와 카드 슬롯 5개 모두 '검사에서 고른 답' 있음. 보기만 쓴 세트는 `has_chat:false` + `picked_choices`. LLM 리포트 생성은 비용 때문에 하지 않았다(리포트 생성 경로는 이번 변경과 무관). 미커밋(브랜치 task-v4-engine).
 
 - [ ] 9. (user check) 직접 해 보고 판정
   - 선행: 3, 8
@@ -71,6 +73,8 @@
 
 ## 발견 사항
 (작업 중 발견한 것만 여기에 적고, 해당 항목 diff에는 넣지 않는다.)
+- 8번: 보기 턴이 직접 묻지 않아 비는 모듈 필드: 모듈 8 `arousal_type`, 모듈 9 `role_carryover`, 모듈 11 `permission_needed`, 모듈 12 `unfinished_goodbye`. 직접 쓴 글이 있으면 추출 모델이 채우고 없으면 null이다(리포트는 null 필드를 건너뛰는지 9번 판정 때 한 번 볼 것).
+- 8번: 21턴을 건너뛰거나 보기만 쓴 사람은 세트 대화가 비어 리포트 카드 인용 칸이 빈다(이월 메모와 같음, 9번 판정 뒤 결정).
 - 5번: 승인된 모듈 3의 T16 첫 반응("먼저 꺼내는 쪽에 속해요.")이 14자라 새 린트의 15자 하한에 걸린다(`check-choice-scripts.mts module3`). 문구는 건드리지 않았으니 12모듈 검수 때 고칠지 정한다.
 - 5번: 8턴(`demand_drain`)·13턴(`resource_left`) 등 번호표 필드가 모듈 3 이름 그대로 고정이다(`CHOICE_FIELD_BY_TURN`). 모듈 5~7은 이 턴을 모듈 의미(5: 시작을 막는 것·움직이게 한 조건, 6: 가라앉는 시간·털어놓을 곳, 7: 과부하 날·충전 자극)로 썼으니, 8번에서 플레이북 `extractFields`/`module_fields`와 매핑을 맞춰야 한다.
 - 5번: 체크포인트·마무리 틀이 gist를 문장에 넣는 구조라 "~이 나오고"처럼 gist가 명사구여야 자연스럽다. 모듈 5~7은 17턴 등 몇 곳을 명사형으로 맞췄지만 "아직 없음이고"류가 남아 있다. 12모듈 문구 검수 때 틀을 모듈별로 다듬는다.
