@@ -8,10 +8,16 @@
 
 import type { ModuleScript } from "./types";
 import { MODULE3_SCRIPT } from "./module3";
+import { MODULE5_SCRIPT } from "./module5";
+import { MODULE6_SCRIPT } from "./module6";
+import { MODULE7_SCRIPT } from "./module7";
 
-/** 모듈별 고정 스크립트. 지금은 모듈 3만 있다. */
+/** 모듈별 고정 스크립트. 지금은 모듈 3·5·6·7이 있다. */
 const MODULE_SCRIPTS: Partial<Record<string, ModuleScript>> = {
   module3: MODULE3_SCRIPT,
+  module5: MODULE5_SCRIPT,
+  module6: MODULE6_SCRIPT,
+  module7: MODULE7_SCRIPT,
 };
 
 /** 스크립트가 없는 모듈이나 알 수 없는 id면 undefined(호출부는 v2로 떨어진다). */
