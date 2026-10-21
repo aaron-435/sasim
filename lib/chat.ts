@@ -492,8 +492,9 @@ export async function getChatReplyV4(params: {
     const plainContext = { ...params.context };
     delete plainContext.flowVersion;
     const safeTurn = params.turnNumber >= 22 ? params.turnNumber : Math.min(params.turnNumber, 19);
-    const { choices: _dropped, ...rest } = await getChatReply({ ...params, turnNumber: safeTurn, context: plainContext });
-    return rest;
+    const reply = await getChatReply({ ...params, turnNumber: safeTurn, context: plainContext });
+    delete reply.choices;
+    return reply;
   }
   const script = getModuleScript(params.context.moduleId);
   if (!script) {
