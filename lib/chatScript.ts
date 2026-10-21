@@ -179,7 +179,9 @@ export function buildScriptReply({ script, turnNumber, history, quoteLabel }: Bu
   if (!turn) throw new Error(`고정 스크립트 턴 없음: ${script.moduleId} ${turnNumber}턴`);
   const lines: string[] = [];
   if (turnNumber > 1) {
-    const reaction = reactionForAnswer(script, turnNumber - 1, answerByTurn, turnNumber, prevFirstLine);
+    // 9턴 체크포인트가 없는 흐름(앱이 9턴을 건너뜀)은 10턴이 8턴 답의 반응을 받는다.
+    const prevTurn = turnNumber === 10 && !script.turns[9] ? 8 : turnNumber - 1;
+    const reaction = reactionForAnswer(script, prevTurn, answerByTurn, turnNumber, prevFirstLine);
     if (reaction) lines.push(reaction);
   }
   if (turnNumber === 20) lines.push(PERSPECTIVE_LEAD_LINE);

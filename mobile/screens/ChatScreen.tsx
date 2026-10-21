@@ -46,6 +46,8 @@ const TURNS_PER_SET = 5;
 // ending isn't a surprise; no countdown, no warning colour.
 const WRAP_UP_SECONDS = 27 * 60;
 const EARLY_FINISH_SECONDS = 7 * 60;
+// v4 history placeholder for the skipped checkpoint turn (never shown).
+const CHECKPOINT_SKIP_STUB = "(체크포인트 생략)";
 
 type Message = { role: "bot" | "user"; text: string };
 type HistoryEntry = { role: "user" | "assistant"; content: string };
@@ -142,7 +144,19 @@ export default function ChatScreen({
   }, []);
 
   const requestNextTurn = useCallback(
-    async (nextTurn: number, apiHistory: HistoryEntry[]) => {
+    async (requestedTurn: number, requestedHistory: HistoryEntry[]) => {
+      // 2026-10-21: v4 has no checkpoint pause. Turn 9 is skipped by sending the history as if a
+      // blank turn 9 had been answered, so the server's turn numbering (answers, picks) stays intact.
+      let nextTurn = requestedTurn;
+      let apiHistory = requestedHistory;
+      if (FLOW_VERSION === 4 && nextTurn === CHECKPOINT_TURN) {
+        nextTurn = CHECKPOINT_TURN + 1;
+        apiHistory = [
+          ...apiHistory,
+          { role: "assistant", content: CHECKPOINT_SKIP_STUB },
+          { role: "user", content: SKIP_ANSWER_TEXT },
+        ];
+      }
       setIsTyping(true);
       setErrorText(null);
       // 2026-10-20: a new turn in flight hides the old options until its own reply lands.
@@ -357,7 +371,10 @@ export default function ChatScreen({
   const showChoices = choices !== null && !ownInputOpen && !isTyping && !done && !errorText && !showCheckpoint;
   const showSkip = inputOnly && !isTyping && !done && !errorText && !showCheckpoint;
   const canFinishEarly =
-    !done && !isTyping && !errorText && !showCheckpoint && (turn > CHECKPOINT_TURN || elapsedSeconds >= EARLY_FINISH_SECONDS);
+    !done && !isTyping && !errorText && !showCheckpoint && (turn > CHECKPOINT_TURN || (FLOW_VERSION < 4 && elapsedSeconds >= EARLY_FINISH_SECONDS));
+  // 2026-10-21: v4 taps are fast, so the checkpoint offers only "continue"; the top-right
+  // "마무리할게요" (canFinishEarly) takes over as the way out, from turn 10 on.
+  const checkpointCanFinish = FLOW_VERSION < 4;
   // Stays on screen while the bot is still writing (sending is blocked until it finishes): removing it
   // for every bubble made the input row flicker away and back several times per reply.
   const showTextInput = !done && !errorText && !showCheckpoint;
@@ -444,9 +461,11 @@ export default function ChatScreen({
 
         {showCheckpoint && (
           <Reveal index={1} style={styles.checkpointRow}>
-            <PressableScale style={styles.checkpointButtonSecondary} onPress={handleWrapUpAtCheckpoint} accessibilityRole="button">
-              <Text style={styles.checkpointButtonSecondaryLabel}>{strings.chat.checkpointFinishButton}</Text>
-            </PressableScale>
+            {checkpointCanFinish && (
+              <PressableScale style={styles.checkpointButtonSecondary} onPress={handleWrapUpAtCheckpoint} accessibilityRole="button">
+                <Text style={styles.checkpointButtonSecondaryLabel}>{strings.chat.checkpointFinishButton}</Text>
+              </PressableScale>
+            )}
             <PressableScale style={styles.checkpointButtonPrimary} onPress={handleContinueAtCheckpoint} accessibilityRole="button">
               <Text style={styles.checkpointButtonPrimaryLabel}>{strings.chat.checkpointContinueButton}</Text>
             </PressableScale>
