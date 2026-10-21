@@ -47,6 +47,10 @@ const TURNS_PER_SET = 5;
 const WRAP_UP_SECONDS = 27 * 60;
 const EARLY_FINISH_SECONDS = 7 * 60;
 // v4 history placeholder for the skipped checkpoint turn (never shown).
+// v4: minimum time on the closing message before handing over to the report.
+const CLOSING_MIN_MS = 20000;
+// v4: gap between the progress lines shown while the report is being prepared.
+const CLOSING_STEP_MS = 5000;
 const CHECKPOINT_SKIP_STUB = "(체크포인트 생략)";
 
 type Message = { role: "bot" | "user"; text: string };
@@ -226,6 +230,33 @@ export default function ChatScreen({
         // 2026-10-12 device test: after "여기서 마무리할게요" the closing lines were typed out one
         // by one before the report, which read as a delay with nothing to do. The closing turn
         // (the one that carries `extract`) now hands over immediately.
+        if (json.extract && FLOW_VERSION === 4) {
+          // 2026-10-21: v4 shows the closing lines (thanks + "writing the report") and then waits
+          // on purpose so the report doesn't appear to pop out of nowhere.
+          const closingStartedAt = Date.now();
+          doneRef.current = true;
+          setDone(true);
+          await revealLines(lines);
+          if (!mountedRef.current) return;
+          for (const line of strings.chat.closingProgress) {
+            setIsTyping(true);
+            await new Promise((r) => setTimeout(r, CLOSING_STEP_MS));
+            if (!mountedRef.current) return;
+            setIsTyping(false);
+            setMessages((m) => [...m, { role: "bot", text: line }]);
+          }
+          setIsTyping(true);
+          const remaining = CLOSING_MIN_MS - (Date.now() - closingStartedAt);
+          if (remaining > 0) await new Promise((r) => setTimeout(r, remaining));
+          if (!mountedRef.current) return;
+          setIsTyping(false);
+          turnHistoryRef.current = [...apiHistory, { role: "assistant", content: lines.join(" ") }];
+          formulationRef.current = json.formulation ?? undefined;
+          setTurn(nextTurn);
+          track("chat_complete", { module: quizDiagnosis.moduleId, kind: nextTurn >= TOTAL_TURNS && !finishedEarlyRef.current ? "full" : "early" });
+          onComplete(json.extract);
+          return;
+        }
         if (json.extract) {
           setIsTyping(false);
           turnHistoryRef.current = [...apiHistory, { role: "assistant", content: lines.join(" ") }];

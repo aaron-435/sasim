@@ -28,3 +28,9 @@ export const FREE_GIST = "직접 들려준 말";
 
 /** 21턴을 건너뛴 사용자의 메시지. 앱(건너뛰기)이 이 문자열을 그대로 보낸다. */
 export const SKIP_ANSWER_TEXT = "(건너뜀)";
+
+/** 1턴 맨 앞에 붙는 인사. 질문이 아니고, 차분히 답해 달라는 부탁만 담는다. */
+export const GREETING_LINES: readonly string[] = [
+  "안녕하세요. 지금부터 검사 결과를 바탕으로 이야기를 나눠 볼게요.",
+  "정확한 결과를 위해 천천히, 차분하게 생각하고 답해 주세요.",
+];

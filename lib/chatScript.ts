@@ -10,6 +10,7 @@
 import {
   FREE_GIST,
   FREE_REACTION_POOL,
+  GREETING_LINES,
   PERSPECTIVE_LEAD_LINE,
   QUOTE_LINE_TEMPLATE,
   SKIP_ANSWER_TEXT,
@@ -177,7 +178,7 @@ export function buildScriptReply({ script, turnNumber, history, quoteLabel }: Bu
   // 보기 턴(1~8, 10~21). 반응 줄 + 20턴 고정 문구 + 인용 줄 + 질문.
   const turn = script.turns[turnNumber];
   if (!turn) throw new Error(`고정 스크립트 턴 없음: ${script.moduleId} ${turnNumber}턴`);
-  const lines: string[] = [];
+  const lines: string[] = turnNumber === 1 ? [...GREETING_LINES] : [];
   if (turnNumber > 1) {
     // 9턴 체크포인트가 없는 흐름(앱이 9턴을 건너뜀)은 10턴이 8턴 답의 반응을 받는다.
     const prevTurn = turnNumber === 10 && !script.turns[9] ? 8 : turnNumber - 1;
