@@ -20,7 +20,7 @@ import Reveal from "../components/motion/Reveal";
 import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { API_BASE_URL } from "../config";
 import { track } from "../lib/analytics";
-import { getChatFlow, setNumberForTurnV3 } from "../lib/chatFlow";
+import { getChatFlow, setNumberForTurnV3, SKIP_ANSWER_TEXT } from "../lib/chatFlow";
 import { useLocale, useStrings } from "../lib/i18n";
 import { findTopAnswers, findTopAnswersOverall } from "../lib/quiz/quizProfile";
 import type { QuizDiagnosis } from "./QuizScreen";
@@ -85,6 +85,8 @@ export default function ChatScreen({
   const CHECKPOINT_TURN = flow.checkpointTurn;
   const [choices, setChoices] = useState<string[] | null>(null);
   const [ownInputOpen, setOwnInputOpen] = useState(false);
+  // 2026-10-21: v4 turn 21 — server sets `inputOnly`; input box + a small skip link, no chips.
+  const [inputOnly, setInputOnly] = useState(false);
   const choicePicksRef = useRef<number[]>([]);
   const inputRef = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
@@ -146,6 +148,7 @@ export default function ChatScreen({
       // 2026-10-20: a new turn in flight hides the old options until its own reply lands.
       setChoices(null);
       setOwnInputOpen(false);
+      setInputOnly(false);
 
       const activeDimension = quizDiagnosis.classification.activeDimensions[0] ?? null;
       const headlineAnswerRaw = activeDimension ? findTopAnswers(quizDiagnosis.answers, activeDimension, 1)[0] : null;
@@ -231,6 +234,7 @@ export default function ChatScreen({
         // out. 2–3 strings or nothing; none on the checkpoint turn (its two
         // buttons are the options) — closing and error turns return above.
         const rawChoices: unknown = json.choices;
+        setInputOnly(FLOW_VERSION === 4 && json.inputOnly === true);
         setChoices(
           nextTurn === CHECKPOINT_TURN ||
             !Array.isArray(rawChoices) ||
@@ -324,6 +328,18 @@ export default function ChatScreen({
     requestNextTurn(turn + 1, nextHistory);
   }
 
+  // 2026-10-21: skip on the input-only turn — sends the sentinel the server expects.
+  function handleSkip() {
+    if (isTyping || doneRef.current) return;
+    Keyboard.dismiss();
+    setInput("");
+    setMessages((m) => [...m, { role: "user", text: strings.chat.skipAnswer }]);
+    const nextHistory: HistoryEntry[] = [...turnHistoryRef.current, { role: "user", content: SKIP_ANSWER_TEXT }];
+    turnHistoryRef.current = nextHistory;
+    setInputOnly(false);
+    requestNextTurn(turn + 1, nextHistory);
+  }
+
   // 2026-10-20: folds the chips away and focuses the text input instead.
   function handleWriteOwn() {
     if (isTyping || doneRef.current) return;
@@ -333,12 +349,13 @@ export default function ChatScreen({
 
   const elapsedSeconds = Math.max(0, Math.floor((now - sessionStartedAt) / 1000));
   // 2026-10-20: v2 math untouched; v3 has 4-turn sets (see chatFlow.ts).
-  const totalSets = FLOW_VERSION === 3 ? 5 : TOTAL_TURNS / TURNS_PER_SET;
+  const totalSets = FLOW_VERSION >= 3 ? 5 : TOTAL_TURNS / TURNS_PER_SET;
   const wrappingUp = elapsedSeconds >= WRAP_UP_SECONDS;
   const currentSet =
-    FLOW_VERSION === 3 ? setNumberForTurnV3(turn) : Math.min(totalSets, Math.max(1, Math.ceil(Math.max(turn, 1) / TURNS_PER_SET)));
+    FLOW_VERSION >= 3 ? setNumberForTurnV3(turn) : Math.min(totalSets, Math.max(1, Math.ceil(Math.max(turn, 1) / TURNS_PER_SET)));
   const showCheckpoint = turn === CHECKPOINT_TURN && !checkpointDismissed && !done && !isTyping && !errorText;
   const showChoices = choices !== null && !ownInputOpen && !isTyping && !done && !errorText && !showCheckpoint;
+  const showSkip = inputOnly && !isTyping && !done && !errorText && !showCheckpoint;
   const canFinishEarly =
     !done && !isTyping && !errorText && !showCheckpoint && (turn > CHECKPOINT_TURN || elapsedSeconds >= EARLY_FINISH_SECONDS);
   // Stays on screen while the bot is still writing (sending is blocked until it finishes): removing it
@@ -434,6 +451,14 @@ export default function ChatScreen({
               <Text style={styles.checkpointButtonPrimaryLabel}>{strings.chat.checkpointContinueButton}</Text>
             </PressableScale>
           </Reveal>
+        )}
+
+        {showSkip && (
+          <View style={styles.skipRow}>
+            <PressableScale onPress={handleSkip} hitSlop={8} accessibilityRole="button" accessibilityLabel={strings.chat.skipAnswer}>
+              <Text style={styles.skipLabel}>{strings.chat.skipAnswer}</Text>
+            </PressableScale>
+          </View>
         )}
 
         {showTextInput && (
@@ -620,6 +645,17 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.pill,
     paddingVertical: SPACE.sm,
     paddingHorizontal: SPACE.lg,
+  },
+  skipRow: {
+    alignItems: "flex-end",
+    paddingHorizontal: SPACE.lg,
+    paddingTop: SPACE.sm,
+  },
+  skipLabel: {
+    fontFamily: FONTS.medium,
+    fontSize: 13,
+    color: COLORS.subheadline,
+    textDecorationLine: "underline",
   },
   choiceChipOwn: {
     borderStyle: "dashed",

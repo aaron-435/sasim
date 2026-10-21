@@ -6,18 +6,26 @@ import { Platform } from "react-native";
 // so release/OTA bundles and native builds never change. URL only — nothing
 // is stored in localStorage.
 export interface ChatFlowConfig {
-  flowVersion: 2 | 3;
+  flowVersion: 2 | 3 | 4;
   totalTurns: 25 | 22;
   checkpointTurn: 10 | 9;
 }
 
 const V2: ChatFlowConfig = { flowVersion: 2, totalTurns: 25, checkpointTurn: 10 };
 const V3: ChatFlowConfig = { flowVersion: 3, totalTurns: 22, checkpointTurn: 9 };
+// 2026-10-21: fixed-script choice chat (flowVersion 4, SPEC 2026-10-21). Same 22-turn shape
+// as v3; `?chat=4` is the dev-only switch. Server falls back to v2 if the module has no script.
+const V4: ChatFlowConfig = { flowVersion: 4, totalTurns: 22, checkpointTurn: 9 };
+
+// Sent as the user message when they skip the input-only turn (21). Must match the server's
+// SKIP_ANSWER_TEXT in lib/choiceScripts/common.ts.
+export const SKIP_ANSWER_TEXT = "(건너뜀)";
 
 export function getChatFlow(): ChatFlowConfig {
   if (!__DEV__ || Platform.OS !== "web") return V2;
   try {
-    return new URLSearchParams(window.location.search).get("chat") === "3" ? V3 : V2;
+    const chat = new URLSearchParams(window.location.search).get("chat");
+    return chat === "4" ? V4 : chat === "3" ? V3 : V2;
   } catch {
     return V2;
   }
