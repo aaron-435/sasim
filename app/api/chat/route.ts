@@ -12,7 +12,7 @@
  *   context.flowVersion === 2 + context.quizAnswers (30문항) → 5세트 25턴 흐름(TODO 4). 없으면 20턴 흐름 그대로.
  *
  * Response body:
- *   { lines: string[], formulation?: ChatFormulation, choices?: string[] }  — choices(보기 2~3개)는 flowVersion 3에서만, 검증 통과 시에만. formulation is never shown or saved; the app keeps it for the next request
+ *   { lines: string[], formulation?: ChatFormulation, choices?: string[], inputOnly?: boolean }  — choices(보기 2~3개)는 flowVersion 3에서만, 검증 통과 시에만. inputOnly는 flowVersion 4의 21턴(직접 입력만)에만. formulation is never shown or saved; the app keeps it for the next request
  *   { lines, extract: ChatExtract }  — only when isFinalTurn() is true (turnNumber >= TOTAL_TURNS, or the client jumped straight there via the CHECKPOINT_TURN early-finish path)
  *     5세트 흐름이면 extract.set_packets(세트 재료 묶음 5개)가 붙는다.
  *   or { error: string } with a non-200 status
@@ -21,7 +21,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import { attachSetPackets, getChatReply, extractChatSummary, type ChatMessage } from "@/lib/chat";
+import { attachSetPackets, getChatReply, getChatReplyV4, extractChatSummary, type ChatMessage } from "@/lib/chat";
 import type { ChatSessionContext } from "@/lib/chatPrompts";
 import { chatFlowVersion, sanitizeFormulation } from "@/lib/chatPrompts";
 import { isFinalTurn } from "@/lib/chatPrompts";
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const resolvedStartedAt = sessionStartedAt ?? Date.now();
-    const { lines, formulation: nextFormulation, choices } = await getChatReply({
+    const replyParams = {
       turnNumber,
       history,
       context,
@@ -83,7 +83,10 @@ export async function POST(req: NextRequest) {
       sessionId,
       // Client-supplied, so it goes through the same length caps and whitelist as the model's output.
       formulation: sanitizeFormulation(formulation),
-    });
+    };
+    // 2026-10-21 (작업 04): flow 4는 모델 없이 고정 스크립트로 응답한다. inputOnly는 그대로 실어 보낸다.
+    const { lines, formulation: nextFormulation, choices, inputOnly } =
+      chatFlowVersion(context) === 4 ? await getChatReplyV4(replyParams) : await getChatReply(replyParams);
 
     // A slow typer who blows past the time limit gets the closing message on
     // their *next* reply (see isFinalTurn's docstring) — so this must check
@@ -101,7 +104,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ lines, extract });
     }
 
-    return NextResponse.json({ lines, ...(nextFormulation && { formulation: nextFormulation }), ...(choices && { choices }) });
+    return NextResponse.json({
+      lines,
+      ...(nextFormulation && { formulation: nextFormulation }),
+      ...(choices && { choices }),
+      ...(inputOnly && { inputOnly }),
+    });
   } catch (err) {
     if (err instanceof OpenAI.APIError) {
       if (err.status === 401) {

@@ -65,6 +65,7 @@ import {
   type ChoiceFieldPick,
   type ChoiceTurnRole,
 } from "./chatChoices";
+import { getModuleScript } from "./choiceScripts/index";
 import { CRISIS_RESOURCES, ELEMENT_LABEL, FIELD_LANGUAGE_NAME, outputLanguageDirective } from "./promptLocale";
 
 export type Track = "romance" | "career";
@@ -707,8 +708,8 @@ lines는 2~5개의 짧은 메신저 메시지 배열이다(개수는 응답마�
  */
 export function isFinalTurn(turnNumber: number, elapsedMinutes: number, flowVersion: ChatFlowVersion = 1): boolean {
   if (flowVersion === 2) return elapsedMinutes >= TIME_LIMIT_MINUTES_V2 || turnNumber >= TOTAL_TURNS_V2;
-  // 2026-10-20: v3(22턴)도 30분 제한을 쓴다.
-  if (flowVersion === 3) return elapsedMinutes >= TIME_LIMIT_MINUTES_V2 || turnNumber >= TOTAL_TURNS_V3;
+  // 2026-10-20: v3(22턴)도 30분 제한을 쓴다. 2026-10-21: v4도 v3와 같다.
+  if (flowVersion === 3 || flowVersion === 4) return elapsedMinutes >= TIME_LIMIT_MINUTES_V2 || turnNumber >= TOTAL_TURNS_V3;
   return elapsedMinutes >= TIME_LIMIT_MINUTES || turnNumber >= TOTAL_TURNS;
 }
 
@@ -833,15 +834,28 @@ const RECAP_TURNS_V2 = [6, 16, 21] as const;
 const CONTRADICTION_SETS_V2: readonly ChatSetNumber[] = [3, 4];
 const CONTRADICTION_POSITION_V2 = 3;
 
-export type ChatFlowVersion = 1 | 2 | 3;
+export type ChatFlowVersion = 1 | 2 | 3 | 4;
 
 /**
  * 이 요청을 5세트 흐름으로 처리할지. flowVersion 2 + 퀴즈 답 1개 이상 + 세트 데이터가 있는 moduleId일
- * 때만 2다. flowVersion 3 + 퀴즈 답 + 세트 데이터 + 묶음 데이터면 3이다. 하나라도 빠지면(구버전 앱, 웹,
- * 잘못된 요청) 20턴 흐름으로 그대로 동작한다.
+ * 때만 2다. flowVersion 3 + 퀴즈 답 + 세트 데이터 + 묶음 데이터면 3이다. flowVersion 4 + 퀴즈 답 +
+ * 세트 데이터 + 고정 스크립트 + 한국어면 4다. 4를 요청했는데 조건을 못 맞추면 flowVersion을 2로 간주해
+ * 아래 v2 판정을 그대로 따른다. 하나라도 빠지면(구버전 앱, 웹, 잘못된 요청) 20턴 흐름으로 그대로 동작한다.
  */
 export function chatFlowVersion(context: ChatSessionContext): ChatFlowVersion {
-  if (context.flowVersion === 2 && (context.quizAnswers?.length ?? 0) > 0 && getModuleChatSets(context.moduleId)) {
+  // 2026-10-21: flowVersion 4(고정 스크립트). 12개 모듈 전부 한국어만이라 locale이 ko일 때만 4다.
+  if (
+    context.flowVersion === 4 &&
+    (context.quizAnswers?.length ?? 0) > 0 &&
+    (context.locale ?? "ko") === "ko" &&
+    getModuleChatSets(context.moduleId) &&
+    getModuleScript(context.moduleId)
+  ) {
+    return 4;
+  }
+  // 4를 요청했는데 스크립트가 없으면 2로 간주한다(스크립트 없는 모듈·언어는 v2로 떨어진다).
+  const v2request = context.flowVersion === 4 ? 2 : context.flowVersion;
+  if (v2request === 2 && (context.quizAnswers?.length ?? 0) > 0 && getModuleChatSets(context.moduleId)) {
     return 2;
   }
   // 2026-10-20: flowVersion 3(선택지 분기형). 묶음 데이터가 없는 모듈은 아래로 떨어져 v2 조건(≠2라 1)을 따른다.
@@ -1472,7 +1486,8 @@ export interface ExtractionMessage {
 // 2026-10-20 (작업 17): v3 추출 프롬프트 끝에 붙는 "사용자가 고른 묶음 답(우선 근거)" 블록.
 // v3일 때 묶음 답이 하나라도 있을 때만 붙고, 그 밖(v1·v2, 답 없음)은 빈 문자열이라 기존 출력이 그대로다.
 function buildChoiceFieldBlock(context: ChatSessionContext, choiceFieldPicks: readonly ChoiceFieldPick[] | undefined): string {
-  if (chatFlowVersion(context) !== 3 || !choiceFieldPicks || choiceFieldPicks.length === 0) return "";
+  // 2026-10-21: v4도 묶음 답 블록을 쓴다(v1·v2 출력은 그대로다).
+  if (chatFlowVersion(context) < 3 || !choiceFieldPicks || choiceFieldPicks.length === 0) return "";
   const lines = choiceFieldPicks.map((p) =>
     p.a1 ? `${p.field}: A1 "${p.a1}" → A2 "${p.a2}"` : `${p.field}: A2 "${p.a2}"`
   );

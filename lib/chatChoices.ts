@@ -16,6 +16,7 @@
  */
 
 import { CHAT_SET_THEMES, type ChatSetNumber, type ModuleChatSets } from "./modulePlaybooks";
+import { SKIP_ANSWER_TEXT } from "./choiceScripts/common";
 import {
   SET_ANSWER_MAX,
   selectAllSetQuizAnswers,
@@ -202,7 +203,9 @@ export function buildSetPacketsV3(
     };
     if (set === 5) {
       const turn21 = start + 3;
-      packet.perspective_answer = answerByTurn.get(turn21) ?? null;
+      // 2026-10-21 (작업 04): 21턴 건너뜀은 답이 없는 것으로 친다.
+      const raw21 = answerByTurn.get(turn21);
+      packet.perspective_answer = raw21 && raw21 !== SKIP_ANSWER_TEXT ? raw21 : null;
       if (packet.perspective_answer) {
         if (picked.has(turn21)) pickedChoices.push(packet.perspective_answer);
         else packet.has_chat = true;

@@ -36,9 +36,15 @@ import { buildSetPackets, selectSetQuizAnswer, type SetPacket } from "./chatSets
 import {
   buildChoiceFieldPicks,
   buildSetPacketsV3,
+  CHOICE_FIELD_BY_TURN,
+  getChoiceTurnRole,
   limitCheckpointLinesV3,
   PERSPECTIVE_LEAD_TURN_V3,
 } from "./chatChoices";
+import { JOURNAL_CRISIS_PATTERN } from "./journal";
+import { buildScriptReply, normalizeAnswerText } from "./chatScript";
+import { getModuleScript } from "./choiceScripts/index";
+import type { ModuleScript } from "./choiceScripts/types";
 import type { Locale } from "./i18n/types";
 import { logLlmUsage } from "./llmUsage";
 import { stripHanja } from "./reportQuality";
@@ -116,6 +122,8 @@ export interface ChatReply {
   formulation?: ChatFormulation;
   /** flowVersion 3 (선택지 분기형): 탭할 수 있는 보기 2~3개. 검증을 통과한 것만 담기고, 없으면 열린 질문이다. */
   choices?: string[];
+  /** flowVersion 4 (고정 스크립트): 보기 없이 직접 입력만 받는 턴(21턴)에 true. */
+  inputOnly?: boolean;
 }
 
 export const CHOICES_MIN = 2;
@@ -464,11 +472,52 @@ export async function getChatReply(params: {
   };
 }
 
+// 2026-10-21 (작업 04): flowVersion 4(고정 스크립트) 응답. getChatReply와 같은 params를
+// 받지만 모델을 부르지 않고 buildScriptReply로 조립한다. 직접 쓴 글에 위기 표현이 있으면
+// 그 턴만 기존 안전 응답(모델)을 내고 스크립트는 멈춘다 — flowVersion을 뺀 context라
+// v1 프롬프트의 규칙 0이 그대로 돈다. 시간 초과로 앞당긴 마무리는 22턴으로 당겨 만든다.
+/** 퀴즈 답을 인용 줄로 끼우는 턴(스크립트 turn.quote와 같다). */
+const SCRIPT_QUOTE_TURNS = [1, 5, 10, 14, 18];
+
+export async function getChatReplyV4(params: {
+  turnNumber: number;
+  history: ChatMessage[];
+  context: ChatSessionContext;
+  sessionStartedAt: number;
+  sessionId?: string;
+  formulation?: ChatFormulation;
+}): Promise<ChatReply> {
+  const lastUser = [...params.history].reverse().find((m) => m.role === "user")?.content ?? "";
+  if (typeof lastUser === "string" && JOURNAL_CRISIS_PATTERN.test(lastUser)) {
+    const plainContext = { ...params.context };
+    delete plainContext.flowVersion;
+    const safeTurn = params.turnNumber >= 22 ? params.turnNumber : Math.min(params.turnNumber, 19);
+    const { choices: _dropped, ...rest } = await getChatReply({ ...params, turnNumber: safeTurn, context: plainContext });
+    return rest;
+  }
+  const script = getModuleScript(params.context.moduleId);
+  if (!script) {
+    const plainContext = { ...params.context };
+    delete plainContext.flowVersion;
+    return getChatReply({ ...params, context: plainContext });
+  }
+  const elapsedMinutes = Math.floor((Date.now() - params.sessionStartedAt) / 60000);
+  const effectiveTurn = isFinalTurn(params.turnNumber, elapsedMinutes, 4) ? 22 : params.turnNumber;
+  const role = getChoiceTurnRole(effectiveTurn);
+  const chatSets = getModuleChatSets(params.context.moduleId);
+  const quoteLabel =
+    chatSets && role.set && SCRIPT_QUOTE_TURNS.includes(effectiveTurn)
+      ? (selectSetQuizAnswer(chatSets, role.set, params.context.quizAnswers ?? [])?.label ?? null)
+      : null;
+  return buildScriptReply({ script, turnNumber: effectiveTurn, history: params.history, quoteLabel });
+}
+
 export async function extractChatSummary(transcript: ChatMessage[], context: ChatSessionContext, sessionId?: string): Promise<ChatExtract> {
   const playbook = getModulePlaybook(context.moduleId);
   // 2026-10-20 (작업 17): v3이면 추출 프롬프트에 묶음 답을 넘긴다. v1·v2는 기존 호출 그대로다.
+  // 2026-10-21: v4도 v3와 같은 경로다.
   const flow = chatFlowVersion(context);
-  const choiceFieldPicks = flow === 3 ? buildChoiceFieldPicks(transcript) : undefined;
+  const choiceFieldPicks = flow >= 3 ? buildChoiceFieldPicks(transcript) : undefined;
   const { system, user } = buildExtractionPrompt(transcript, context, choiceFieldPicks);
 
   const completion = await client.chat.completions.create({
@@ -512,7 +561,10 @@ export async function extractChatSummary(transcript: ChatMessage[], context: Cha
     }),
   };
   // 2026-10-20 (작업 17): v3이면 묶음에서 정해진 값을 빈 필드에 채운다. v1·v2는 그대로 둔다.
-  return flow === 3 ? applyChoicePicksToExtract(base, transcript) : base;
+  // 2026-10-21: v4도 같은 경로다. 스크립트를 넘기면 보기를 탭한 턴은 답 원문 대신 gist로 채운다.
+  return flow >= 3
+    ? applyChoicePicksToExtract(base, transcript, [], flow === 4 ? getModuleScript(context.moduleId) : undefined)
+    : base;
 }
 
 // 2026-10-20 (작업 17): buildChoiceFieldPicks로 얻은 묶음 답을 ChatExtract 빈 칸에 채운다(순수 함수).
@@ -530,14 +582,36 @@ const CHOICE_PICK_TOP_FIELDS = [
 
 const CHOICE_PICK_MODULE_FIELDS = ["demand_drain", "resource_left"] as const;
 
-export function applyChoicePicksToExtract(extract: ChatExtract, history: readonly ChatMessage[]): ChatExtract {
+export function applyChoicePicksToExtract(
+  extract: ChatExtract,
+  history: readonly ChatMessage[],
+  /** 2026-10-21 (작업 04): 정제된 choicePicks(선택 인자). 비어 있으면 history 답으로 판정한다. */
+  choicePicks: readonly number[] = [],
+  /** 2026-10-21 (작업 04): v4 스크립트. 있으면 보기를 탭한 턴은 답 원문 대신 gist로 채운다. */
+  script?: ModuleScript,
+): ChatExtract {
   const picks = buildChoiceFieldPicks(history);
   if (picks.length === 0) return extract;
   const byField = new Map(picks.map((p) => [p.field, p]));
+  const pickedTurns = new Set(choicePicks);
+  const turnByField = new Map(Object.entries(CHOICE_FIELD_BY_TURN).map(([turn, field]) => [field, Number(turn)]));
+  // v4: 그 턴 답이 보기 탭이면 그 보기 gist만 쓴다(a1/a2 형식 대신). 직접 쓴 글은 기존 그대로.
+  const gistForTapped = (field: string, a2: string): string | null => {
+    if (!script) return null;
+    const turn = turnByField.get(field);
+    if (turn === undefined) return null;
+    if (pickedTurns.size > 0 && !pickedTurns.has(turn)) return null;
+    const options = script.turns[turn]?.options;
+    if (!options || options.length === 0) return null;
+    const norm = normalizeAnswerText(a2);
+    return options.find((o) => normalizeAnswerText(o.text) === norm)?.gist ?? null;
+  };
   const isEmpty = (v: unknown): boolean => v == null || (typeof v === "string" && !v.trim());
   const fill = (field: string): string | null => {
     const p = byField.get(field);
     if (!p) return null;
+    const gist = gistForTapped(field, p.a2);
+    if (gist) return gist;
     if (field === "emotional_state") return p.a2;
     return p.a1 ? `${p.a1} / ${p.a2}` : p.a2;
   };
@@ -575,7 +649,8 @@ export function attachSetPackets(
 ): ChatExtract {
   const chatSets = getModuleChatSets(context.moduleId);
   const flow = chatFlowVersion(context);
-  if (flow === 3 && chatSets) {
+  // 2026-10-21: v4도 v3 번호표로 묶는다.
+  if (flow >= 3 && chatSets) {
     return { ...extract, set_packets: buildSetPacketsV3(transcript, chatSets, context.quizAnswers ?? [], picks) };
   }
   if (flow !== 2 || !chatSets) return extract;
