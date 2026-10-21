@@ -17,6 +17,7 @@ export const MODULE1_SCRIPT: ModuleScript = {
       turn: 1,
       quote: true,
       question: "그 마음이 가장 크게 일어나는 건 어떤 순간이에요?",
+      questionNoQuote: "가까운 관계에서 마음이 가장 크게 흔들리는 건 어떤 순간이에요?",
       options: [
         o("답장이 늦을 때예요", "기다리는 시간에 마음이 먼저 움직이는 쪽이에요.", "답장이 늦을 때"),
         o("말투가 달라졌을 때예요", "글자에 실린 온도 차를 놓치지 않는 편이에요.", "말투가 달라질 때"),
@@ -53,6 +54,7 @@ export const MODULE1_SCRIPT: ModuleScript = {
       turn: 5,
       quote: true,
       question: "이런 흐름은 예전 관계에서도 있었어요, 이번이 처음이에요?",
+      questionNoQuote: "가까운 관계에서 마음이 흔들리는 일은 예전에도 있었어요, 이번이 처음이에요?",
       options: [
         o("예전에도 있었어요", "처음 겪는 일이 아니라는 점이 눈에 띄어요.", "예전에도 있던 흐름"),
         o("이번이 처음이에요", "이번 관계에서 새로 생긴 흐름이라는 얘기예요.", "이번에 처음 생긴 흐름"),
@@ -88,6 +90,7 @@ export const MODULE1_SCRIPT: ModuleScript = {
       turn: 10,
       quote: true,
       question: "사랑받으려면 이래야 한다는 생각은 어디서 왔다고 느껴요?",
+      questionNoQuote: "사랑받으려면 어때야 한다는 생각이 있다면, 어디서 왔다고 느껴요?",
       options: [
         o("예전 연애에서요", "지난 관계에서 익힌 규칙에 가까운 얘기예요.", "예전 연애"),
         o("어릴 때부터요", "오래전 기억까지 닿아 있는 규칙이군요.", "어릴 때의 기억"),

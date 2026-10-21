@@ -20,6 +20,8 @@ export interface ScriptTurn {
   question: string;
   /** true면 질문 위에 `검사에서 "{label}"라고 답하셨어요.` 인용 줄을 둔다(1·5·10·14·18턴). */
   quote?: boolean;
+  /** 인용할 퀴즈 답이 없을 때 쓰는 질문. 인용 줄에 기대지 않고 단독으로 말이 되어야 한다. 없으면 `question`을 쓴다. */
+  questionNoQuote?: string;
   /** 보기 2~3개. 없으면 직접 입력 전용 턴(21턴). */
   options?: ScriptOption[];
 }

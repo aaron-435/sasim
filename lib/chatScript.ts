@@ -187,7 +187,8 @@ export function buildScriptReply({ script, turnNumber, history, quoteLabel }: Bu
   }
   if (turnNumber === 20) lines.push(PERSPECTIVE_LEAD_LINE);
   if (turn.quote && quoteLabel) lines.push(QUOTE_LINE_TEMPLATE.replace("{label}", quoteLabel));
-  lines.push(turn.question);
+  const quoted = Boolean(turn.quote && quoteLabel);
+  lines.push(turn.quote && !quoted && turn.questionNoQuote ? turn.questionNoQuote : turn.question);
   if (!turn.options || turn.options.length === 0) return { lines, inputOnly: true };
   return { lines, choices: turn.options.map((o) => o.text) };
 }

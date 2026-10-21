@@ -18,6 +18,7 @@ export const MODULE4_SCRIPT: ModuleScript = {
       turn: 1,
       quote: true,
       question: "그 모습이 가장 자주 나오는 자리는 어디예요?",
+      questionNoQuote: "상대에 맞춰 내 모습을 바꾸는 일은 어떤 자리에서 가장 자주 있어요?",
       options: [
         o("일터나 학교에서요", "맡은 역할이 분명한 자리에서 먼저 켜지는 쪽이에요.", "일터나 학교"),
         o("모임이나 친구들 사이에서요", "분위기를 맞추는 일이 필요한 자리가 앞에 와요.", "모임이나 친구들 사이"),

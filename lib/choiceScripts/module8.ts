@@ -52,6 +52,7 @@ export const MODULE8_SCRIPT: ModuleScript = {
       turn: 5,
       quote: true,
       question: "이런 밤은 전에도 있었어요?",
+      questionNoQuote: "잠들기 어려운 밤은 전에도 있었어요?",
       options: [
         o("오래전부터 그랬어요", "오랜 시간 같이 지내 온 밤이에요.", "오래된 밤"),
         o("요즘 들어 생겼어요", "최근에 달라진 밤이라는 얘기.", "최근 생긴 밤"),

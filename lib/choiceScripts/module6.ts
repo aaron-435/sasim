@@ -16,6 +16,7 @@ export const MODULE6_SCRIPT: ModuleScript = {
       turn: 1,
       quote: true,
       question: "그 화가 가장 자주 올라오는 건 어떤 사람 앞에서예요?",
+      questionNoQuote: "화가 가장 자주 올라오는 건 어떤 사람 앞에서예요?",
       options: [
         o("일터 사람들 앞이에요", "일하는 자리에서 먼저 올라오는 쪽이에요.", "일터 사람"),
         o("가까운 사람 앞이에요", "곁에 있는 사람 앞에서 더 자주 나오는 편.", "가까운 사람"),
@@ -52,6 +53,7 @@ export const MODULE6_SCRIPT: ModuleScript = {
       turn: 5,
       quote: true,
       question: "같은 상황이 전에도 있었어요, 이번이 처음이에요?",
+      questionNoQuote: "화가 올라오는 상황은 전에도 있었어요, 이번이 처음이에요?",
       options: [
         o("전에도 있었어요", "한 번이 아니라 이어져 온 장면이네요.", "되풀이된 일"),
         o("이번이 처음이에요", "이번에 비로소 생긴 일이라는 얘기예요.", "처음 겪은 일"),

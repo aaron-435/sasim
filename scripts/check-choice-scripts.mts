@@ -146,6 +146,13 @@ function checkModule(moduleId: string) {
     const q = turn.question ?? "";
     checkText(moduleId, `T${t}`, q, "질문");
     if ((q.match(/[?？]/g) ?? []).length !== 1) err(moduleId, `T${t}`, `질문의 물음표가 1개가 아님: "${q}"`);
+    if (turn.questionNoQuote !== undefined) {
+      const nq = turn.questionNoQuote;
+      checkText(moduleId, `T${t}`, nq, "인용 없는 질문");
+      if ((nq.match(/[?？]/g) ?? []).length !== 1) err(moduleId, `T${t}`, `인용 없는 질문의 물음표가 1개가 아님: "${nq}"`);
+      if (/^(그|이런|그런|같은)\s/.test(nq)) err(moduleId, `T${t}`, `인용 없는 질문이 앞 문장에 기댐: "${nq}"`);
+      if (!turn.quote) err(moduleId, `T${t}`, "quote가 아닌 턴에 인용 없는 질문이 있음");
+    }
     if (QUOTE_TURNS.includes(t) !== !!turn.quote) err(moduleId, `T${t}`, `quote 표시가 인용 턴 목록(1·5·10·14·18)과 다름`);
 
     if (t === 21) {

@@ -16,6 +16,7 @@ export const MODULE7_SCRIPT: ModuleScript = {
       turn: 1,
       quote: true,
       question: "그런 감각이 가장 크게 오는 곳은 어디예요?",
+      questionNoQuote: "예민하게 느껴지는 감각이 가장 크게 오는 곳은 어디예요?",
       options: [
         o("사람 많은 곳이에요", "여러 사람이 있는 자리에서 먼저 커지는 쪽이에요.", "사람 많은 곳"),
         o("일하는 공간이에요", "하루를 보내는 일터에서 크게 느껴지는 편.", "일하는 공간"),
@@ -52,6 +53,7 @@ export const MODULE7_SCRIPT: ModuleScript = {
       turn: 5,
       quote: true,
       question: "이런 감각은 어릴 때부터 있었어요, 커서 생겼어요?",
+      questionNoQuote: "예민한 감각은 어릴 때부터 있었어요, 커서 생겼어요?",
       options: [
         o("어릴 때부터 있었어요", "오래전부터 같이 지내 온 감각이에요.", "어릴 때부터 있던 감각"),
         o("커서 생겼어요", "자라면서 뚜렷해진 감각이라는 얘기.", "자라면서 생긴 감각"),

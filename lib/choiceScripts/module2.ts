@@ -18,6 +18,7 @@ export const MODULE2_SCRIPT: ModuleScript = {
       turn: 1,
       quote: true,
       question: "그 마음이 가장 크게 올라오는 건 어떤 순간이에요?",
+      questionNoQuote: "돈 때문에 마음이 가장 크게 움직이는 건 어떤 순간이에요?",
       options: [
         o("결제하기 직전이에요", "버튼을 누르기 직전의 짧은 틈이 중심이에요.", "결제 직전"),
         o("잔고를 확인할 때예요", "숫자를 마주하는 순간에 마음이 움직이는 쪽.", "잔고를 확인할 때"),
@@ -54,6 +55,7 @@ export const MODULE2_SCRIPT: ModuleScript = {
       turn: 5,
       quote: true,
       question: "돈에 대한 이런 마음은 오래전부터 있었어요, 요즘 커졌어요?",
+      questionNoQuote: "돈에 대한 마음은 오래전부터 있었어요, 요즘 커졌어요?",
       options: [
         o("오래전부터 있었어요", "오래 같이 지내 온 마음이라는 얘기예요.", "오래된 마음"),
         o("요즘 커졌어요", "근래 들어 존재감이 커진 변화로 보여요.", "요즘 커진 마음"),

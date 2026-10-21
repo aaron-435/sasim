@@ -14,6 +14,7 @@ export const MODULE3_SCRIPT: ModuleScript = {
       turn: 1,
       quote: true,
       question: "그 말이 가장 크게 느껴지는 건 하루 중 언제예요?",
+      questionNoQuote: "일하다 지치는 느낌이 가장 크게 오는 건 하루 중 언제예요?",
       options: [
         o("출근하기 전이에요", "하루가 열리기도 전에 느껴지는 쪽이에요.", "출근 전"),
         o("일하는 한가운데예요", "한창 일하는 중에 올라오는 쪽이군요.", "일하는 중"),
@@ -50,6 +51,7 @@ export const MODULE3_SCRIPT: ModuleScript = {
       turn: 5,
       quote: true,
       question: "이런 시기가 전에도 있었어요, 이번이 처음이에요?",
+      questionNoQuote: "일에 지친 시기가 전에도 있었어요, 이번이 처음이에요?",
       options: [
         o("전에도 있었어요", "처음이 아니라는 점이 눈에 들어와요.", "이전에도 있던 시기"),
         o("이번이 처음이에요", "이번에 비로소 생긴 변화라는 얘기예요.", "처음 겪는 시기"),
@@ -85,6 +87,7 @@ export const MODULE3_SCRIPT: ModuleScript = {
       turn: 10,
       quote: true,
       question: '"쉬면 안 된다"는 느낌은 어디서 나와요?',
+      questionNoQuote: "쉬는 걸 막는 마음이 있다면, 어디서 나오는 것 같아요?",
       options: [
         o("내 안에서 나와요", "스스로 정한 기준일 때가 많다는 뜻이에요.", "내 안"),
         o("주변 눈치에서 나와요", "바깥의 시선이 기준이 된 쪽.", "주변 눈치"),

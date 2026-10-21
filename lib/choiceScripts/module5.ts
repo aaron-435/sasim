@@ -15,6 +15,7 @@ export const MODULE5_SCRIPT: ModuleScript = {
       turn: 1,
       quote: true,
       question: "그 모습이 가장 자주 나오는 건 어떤 종류의 일이에요?",
+      questionNoQuote: "일을 미루는 모습이 가장 자주 나오는 건 어떤 종류의 일이에요?",
       options: [
         o("서류·정리 같은 잡무예요", "해야 하는 줄 알면서 쌓이는 잡무가 앞에 나왔어요.", "잡무"),
         o("평가받는 공부나 일이에요", "결과가 눈에 보이는 일일수록 앞에 서는 쪽이에요.", "평가받는 일"),
@@ -51,6 +52,7 @@ export const MODULE5_SCRIPT: ModuleScript = {
       turn: 5,
       quote: true,
       question: "이런 모습은 오래전부터 있었어요, 요즘 커졌어요?",
+      questionNoQuote: "일을 미루는 모습은 오래전부터 있었어요, 요즘 커졌어요?",
       options: [
         o("오래전부터 있었어요", "오래 같이 지내 온 습관이라는 얘기예요.", "오래된 습관"),
         o("요즘 커졌어요", "근래 들어 두드러지기 시작한 변화로 보여요.", "최근에 커진 것"),
@@ -86,6 +88,7 @@ export const MODULE5_SCRIPT: ModuleScript = {
       turn: 10,
       quote: true,
       question: "그 기준은 누가 정한 것에 더 가까워요?",
+      questionNoQuote: "해야 한다고 느끼는 기준은 누가 정한 것에 더 가까워요?",
       options: [
         o("내가 정했어요", "스스로 세운 눈금이라는 얘기예요.", "내가 정한 기준"),
         o("남이 기대한다고 느껴요", "바깥의 기대가 기준이 된 쪽이에요.", "남의 기대"),
@@ -157,6 +160,7 @@ export const MODULE5_SCRIPT: ModuleScript = {
       turn: 18,
       quote: true,
       question: "그런 모습이 조금 더 자주 나온다면 어떤 일에서였으면 해요?",
+      questionNoQuote: "해야 할 일을 시작하는 모습이 조금 더 자주 나온다면 어떤 일에서였으면 해요?",
       options: [
         o("일이나 공부에서요", "해야 하는 일 쪽이 먼저 떠오르는군요.", "일이나 공부"),
         o("사람과 얽힌 일에서요", "사람 사이의 일에서 먼저 바라는 쪽이에요.", "사람과 얽힌 일"),
