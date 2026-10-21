@@ -7,7 +7,10 @@
  */
 
 import type { ModuleScript } from "./types";
+import { MODULE1_SCRIPT } from "./module1";
+import { MODULE2_SCRIPT } from "./module2";
 import { MODULE3_SCRIPT } from "./module3";
+import { MODULE4_SCRIPT } from "./module4";
 import { MODULE5_SCRIPT } from "./module5";
 import { MODULE6_SCRIPT } from "./module6";
 import { MODULE7_SCRIPT } from "./module7";
@@ -17,9 +20,12 @@ import { MODULE10_SCRIPT } from "./module10";
 import { MODULE11_SCRIPT } from "./module11";
 import { MODULE12_SCRIPT } from "./module12";
 
-/** 모듈별 고정 스크립트. 지금은 모듈 3·5·6·7·8·9·10이 있다. */
+/** 모듈별 고정 스크립트. 12개 모듈 모두 있다. */
 const MODULE_SCRIPTS: Partial<Record<string, ModuleScript>> = {
+  module1: MODULE1_SCRIPT,
+  module2: MODULE2_SCRIPT,
   module3: MODULE3_SCRIPT,
+  module4: MODULE4_SCRIPT,
   module5: MODULE5_SCRIPT,
   module6: MODULE6_SCRIPT,
   module7: MODULE7_SCRIPT,
