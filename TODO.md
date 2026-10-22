@@ -75,6 +75,7 @@
   - 선행: 9
   - 변경: 판정이 좋으면 앱의 기본 `flowVersion`을 4로(스크립트 있는 모듈·ko만), 아니면 개발 스위치로만 둔다. 기본값을 바꾸면 OTA가 필요하다. `eas update`는 사용자가 한다.
   - 결정(2026-10-22): 기본값 전환. `mobile/lib/chatFlow.ts`의 `getChatFlow(locale)`이 ko면 V4, en/es는 V2(개발 웹 `?chat=2/3/4`로 덮어쓰기), `ChatScreen`이 locale을 넘김. QA: mobile tsc(스택 옵션) → 오류 없음. 네이티브·mobile-web 화면 확인은 안 했다(분기 한 줄 변경, 서버는 이미 배포됨). **(사용자 확인)** OTA 후 ko 기기에서 챗 22턴 흐름 확인, en 기기는 25턴 그대로인지 확인. 배포 `eas update`는 사용자 실행(서버 배포는 이미 완료). 미커밋.
+  - 추가(2026-10-22): 영어·스페인어도 v4로 전환. `lib/choiceScripts/{en,es}/module1~12.ts`(12×2), 엔진 언어별 고정 문구(`getScriptCommon`), `getModuleScript(id, locale)`, `getChatFlow`는 전 언어 V4. Opus 검수(영어·스페인어 각 12모듈) 반영. QA: `LOCALE=en|es npx tsx scripts/check-choice-scripts.mts` 오류 0, 로컬 서버에서 3언어×12모듈×21턴이 서버 응답=로컬 엔진 일치, mobile-web(`?lang=en|es`)에서 모듈 3 챗 직접 확인(영어 22턴, 스페인어 21턴). 스페인어 퀴즈 인용 줄 ¿? 짝 버그 수정(6c5b232). **(사용자 확인)** 영어·스페인어 반응 줄 느낌(원어민 검수 아님), OTA 후 en/es 기기 실기 확인. `eas update`는 앱스토어 승인 뒤 사용자 실행.
 
 ## 발견 사항
 (작업 중 발견한 것만 여기에 적고, 해당 항목 diff에는 넣지 않는다.)
