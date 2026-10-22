@@ -843,13 +843,12 @@ export type ChatFlowVersion = 1 | 2 | 3 | 4;
  * 아래 v2 판정을 그대로 따른다. 하나라도 빠지면(구버전 앱, 웹, 잘못된 요청) 20턴 흐름으로 그대로 동작한다.
  */
 export function chatFlowVersion(context: ChatSessionContext): ChatFlowVersion {
-  // 2026-10-21: flowVersion 4(고정 스크립트). 12개 모듈 전부 한국어만이라 locale이 ko일 때만 4다.
+  // 2026-10-21: flowVersion 4(고정 스크립트). 2026-10-22: 언어별 스크립트(ko/en/es)가 있는 모듈만 4다.
   if (
     context.flowVersion === 4 &&
     (context.quizAnswers?.length ?? 0) > 0 &&
-    (context.locale ?? "ko") === "ko" &&
     getModuleChatSets(context.moduleId) &&
-    getModuleScript(context.moduleId)
+    getModuleScript(context.moduleId, context.locale ?? "ko")
   ) {
     return 4;
   }

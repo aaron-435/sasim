@@ -7,15 +7,7 @@
  * ------------------------------------------------------------------
  */
 
-import {
-  FREE_GIST,
-  FREE_REACTION_POOL,
-  GREETING_LINES,
-  PERSPECTIVE_LEAD_LINE,
-  QUOTE_LINE_TEMPLATE,
-  QUOTE_LINE_WITH_PROMPT_TEMPLATE,
-  SKIP_ANSWER_TEXT,
-} from "./choiceScripts/common";
+import { getScriptCommon, SKIP_ANSWER_TEXT, type ScriptCommon } from "./choiceScripts/common";
 import type { ModuleScript } from "./choiceScripts/types";
 
 /** buildScriptReply가 읽는 대화 기록 한 줄. */
@@ -71,8 +63,15 @@ function fillGistTemplate(template: string, gistByTurn: (turn: number) => string
   });
 }
 
+/** 스페인어 틀에 gist를 끼우면 생기는 "a el"·"de el"을 "al"·"del"로 줄인다. 다른 언어는 그대로. */
+function contractSpanish(text: string, locale: string): string {
+  return locale === "es" ? text.replace(/\ba el\b/g, "al").replace(/\bde el\b/g, "del") : text;
+}
+
 /** 끝 어미 두 음절(마침표 제외, 예: "군요"). 반응 끝맺음 반복 검사와 같은 기준이다. */
-function endingOf(line: string): string {
+function endingOf(line: string, locale: string): string {
+  // 끝맺음 반복 회피는 한국어 어미 기준이다. en/es는 구분하지 않는다.
+  if (locale !== "ko") return "";
   return Array.from(line)
     .filter((ch) => ch >= "가" && ch <= "힣")
     .slice(-2)
@@ -84,11 +83,12 @@ function endingOf(line: string): string {
  * 풀에 있으면 그 줄을 피하고, 끝 어미가 같은 줄(예: "군요"끼리)도 피한 뒤
  * 나머지에서 턴 번호와 답 길이로 결정적으로 고른다.
  */
-function pickFreeReaction(answer: string, turnNumber: number, prevBotFirstLine: string): string {
-  const prevIndex = FREE_REACTION_POOL.indexOf(prevBotFirstLine);
-  const prevEnding = endingOf(prevBotFirstLine);
-  const candidates = FREE_REACTION_POOL.filter((line, i) => i !== prevIndex && endingOf(line) !== prevEnding);
-  const pool = candidates.length > 0 ? candidates : [...FREE_REACTION_POOL];
+function pickFreeReaction(common: ScriptCommon, locale: string, answer: string, turnNumber: number, prevBotFirstLine: string): string {
+  const reactionPool = common.freeReactionPool;
+  const prevIndex = reactionPool.indexOf(prevBotFirstLine);
+  const prevEnding = endingOf(prevBotFirstLine, locale);
+  const candidates = reactionPool.filter((line, i) => i !== prevIndex && (prevEnding === "" || endingOf(line, locale) !== prevEnding));
+  const pool = candidates.length > 0 ? candidates : [...reactionPool];
   return pool[(turnNumber + answer.length) % pool.length];
 }
 
@@ -102,14 +102,21 @@ function lastBotFirstLine(history: readonly ScriptHistoryMessage[]): string {
   return "";
 }
 
-/** 반응 줄이 없는 턴의 질문 앞에 붙는 이음말. */
-const CONNECTIVE = "그럼";
+/** 이음말 뒤에 붙는 질문의 첫 글자를 소문자로(한국어는 그대로). 영어 "I"로 시작하면 둔다. */
+function joinConnective(connective: string, question: string, locale: string): string {
+  if (locale === "ko") return `${connective} ${question}`;
+  const keep = /^(I\b|¿?[A-ZÁÉÍÓÚÑ]{2})/.test(question);
+  const first = keep ? question : question.replace(/^(¿?)(\S)/, (_m, q: string, c: string) => q + c.toLowerCase());
+  return `${connective} ${first}`;
+}
 
 /**
  * 앞 턴 답에 대한 반응 줄. 홀수 턴 보기와 일치하면 그 보기의 reaction(답 인용),
  * 짝수 턴 보기면 없음, 직접 쓴 글이면 고정 풀에서 고른다. 건너뜀·빈 답이면 없음.
  */
 function reactionForAnswer(
+  common: ScriptCommon,
+  locale: string,
   script: ModuleScript,
   prevTurn: number,
   answerByTurn: Map<number, string>,
@@ -122,17 +129,17 @@ function reactionForAnswer(
   const picked = options?.find((o) => normalizeAnswerText(o.text) === answer);
   // 홀수 턴 보기만 답을 되받는 인용 반응을 쓰고, 짝수 턴 보기는 반응 줄 없이 다음 질문이 "그럼"으로 이어진다(2026-10-22 결정).
   if (picked) return prevTurn % 2 === 1 ? picked.reaction : null;
-  return pickFreeReaction(answer, turnNumber, prevFirstLine);
+  return pickFreeReaction(common, locale, answer, turnNumber, prevFirstLine);
 }
 
 /** N턴 답의 gist. 보기와 일치하면 그 보기 gist, 아니면 FREE_GIST. */
-function gistForTurn(script: ModuleScript, answerByTurn: Map<number, string>, turn: number): string {
+function gistForTurn(common: ScriptCommon, script: ModuleScript, answerByTurn: Map<number, string>, turn: number): string {
   const answer = answerByTurn.get(turn);
   if (answer && answer !== SKIP_ANSWER_TEXT) {
     const picked = script.turns[turn]?.options?.find((o) => normalizeAnswerText(o.text) === answer);
     if (picked) return picked.gist;
   }
-  return FREE_GIST;
+  return common.freeGist;
 }
 
 export interface BuildScriptReplyParams {
@@ -143,6 +150,8 @@ export interface BuildScriptReplyParams {
   quoteLabel?: string | null;
   /** 그 퀴즈 문항의 질문 문구. 있으면 인용 줄에 문항도 넣는다. */
   quotePrompt?: string | null;
+  /** "ko"(기본) | "en" | "es". 고정 문구와 한국어 전용 처리(조사·어미)를 고른다. */
+  locale?: string | null;
 }
 
 export interface ScriptReply {
@@ -156,17 +165,19 @@ export interface ScriptReply {
  * 그 밖(1~8, 10~21)은 반응 줄 + 인용·고정 문구 + 질문이다. 22턴 전에
  * 마무리로 당겨진 경우에도 답이 없는 턴의 gist는 FREE_GIST로 채운다.
  */
-export function buildScriptReply({ script, turnNumber, history, quoteLabel, quotePrompt }: BuildScriptReplyParams): ScriptReply {
+export function buildScriptReply({ script, turnNumber, history, quoteLabel, quotePrompt, locale: rawLocale }: BuildScriptReplyParams): ScriptReply {
+  const locale = rawLocale === "en" || rawLocale === "es" ? rawLocale : "ko";
+  const common = getScriptCommon(locale);
   const answerByTurn = collectAnswerByTurn(history);
   const prevFirstLine = lastBotFirstLine(history);
-  const gistByTurn = (turn: number): string => gistForTurn(script, answerByTurn, turn);
+  const gistByTurn = (turn: number): string => gistForTurn(common, script, answerByTurn, turn);
 
   // 22턴 이상: 마무리. 반응 줄(21턴) + 정리 3줄 + 관점 줄(실제 글 있을 때만) + 안내 줄.
   if (turnNumber >= 22) {
     const lines: string[] = [];
-    const reaction = reactionForAnswer(script, 21, answerByTurn, turnNumber, prevFirstLine);
+    const reaction = reactionForAnswer(common, locale, script, 21, answerByTurn, turnNumber, prevFirstLine);
     if (reaction) lines.push(reaction);
-    for (const template of script.closing.summary) lines.push(fillGistTemplate(template, gistByTurn));
+    for (const template of script.closing.summary) lines.push(contractSpanish(fillGistTemplate(template, gistByTurn), locale));
     const answer21 = answerByTurn.get(21);
     if (answer21 && answer21 !== SKIP_ANSWER_TEXT) lines.push(script.closing.perspectiveLine);
     lines.push(script.closing.finalLine);
@@ -176,37 +187,38 @@ export function buildScriptReply({ script, turnNumber, history, quoteLabel, quot
   // 9턴: 체크포인트. 반응 줄(8턴) + 틀 3줄. 보기는 앱 두 버튼이 맡는다.
   if (turnNumber === 9) {
     const lines: string[] = [];
-    const reaction = reactionForAnswer(script, 8, answerByTurn, turnNumber, prevFirstLine);
+    const reaction = reactionForAnswer(common, locale, script, 8, answerByTurn, turnNumber, prevFirstLine);
     if (reaction) lines.push(reaction);
-    for (const template of script.checkpoint) lines.push(fillGistTemplate(template, gistByTurn));
+    for (const template of script.checkpoint) lines.push(contractSpanish(fillGistTemplate(template, gistByTurn), locale));
     return { lines };
   }
 
   // 보기 턴(1~8, 10~21). 반응 줄 + 20턴 고정 문구 + 인용 줄 + 질문.
   const turn = script.turns[turnNumber];
   if (!turn) throw new Error(`고정 스크립트 턴 없음: ${script.moduleId} ${turnNumber}턴`);
-  const lines: string[] = turnNumber === 1 ? [...GREETING_LINES] : [];
+  const lines: string[] = turnNumber === 1 ? [...common.greeting] : [];
   if (turnNumber > 1) {
     // 9턴 체크포인트가 없는 흐름(앱이 9턴을 건너뜀)은 10턴이 8턴 답의 반응을 받는다.
     const prevTurn = turnNumber === 10 && !script.turns[9] ? 8 : turnNumber - 1;
-    const reaction = reactionForAnswer(script, prevTurn, answerByTurn, turnNumber, prevFirstLine);
+    const reaction = reactionForAnswer(common, locale, script, prevTurn, answerByTurn, turnNumber, prevFirstLine);
     if (reaction) lines.push(reaction);
   }
-  if (turnNumber === 20) lines.push(PERSPECTIVE_LEAD_LINE);
+  if (turnNumber === 20) lines.push(common.perspectiveLead);
   if (turn.quote && quoteLabel) {
-    const prompt = (quotePrompt ?? "").trim().replace(/[?？.。]+$/, "").trim();
+    const rawPrompt = (quotePrompt ?? "").trim();
+    const prompt = rawPrompt.replace(/[?？.。]+$/, "").trim();
     // 문항이 문장으로 끝맺지 않은 토막("일하다가", "아침에 눈을 뜨면")이면 문항 표기 없이 한 따옴표로 이어 붙인다.
-    const isFragment = prompt !== "" && !/(다|요|까|죠|니)$/.test(prompt);
+    const isFragment = prompt !== "" && (locale === "ko" ? !/(다|요|까|죠|니)$/.test(prompt) : !/[?？]$/.test(rawPrompt));
     lines.push(
       prompt && !isFragment
-        ? QUOTE_LINE_WITH_PROMPT_TEMPLATE.replace("{prompt}", prompt).replace("{label}", quoteLabel)
-        : QUOTE_LINE_TEMPLATE.replace("{label}", prompt ? `${prompt} ${quoteLabel}` : quoteLabel),
+        ? common.quoteLineWithPrompt.replace("{prompt}", prompt).replace("{label}", quoteLabel)
+        : common.quoteLine.replace("{label}", prompt ? `${prompt} ${quoteLabel}` : quoteLabel),
     );
   }
   const quoted = Boolean(turn.quote && quoteLabel);
   let question = turn.quote && !quoted && turn.questionNoQuote ? turn.questionNoQuote : turn.question;
   // 반응 줄이 없는 턴(짝수 턴 보기 뒤)은 질문 앞에 "그럼"을 붙여 이어 간다. 인용 줄이 앞서는 턴과 21턴(직접 입력)은 제외.
-  if (turnNumber > 1 && turnNumber !== 21 && lines.length === 0 && !quoted) question = `${CONNECTIVE} ${question}`;
+  if (turnNumber > 1 && turnNumber !== 21 && lines.length === 0 && !quoted) question = joinConnective(common.connective, question, locale);
   lines.push(question);
   if (!turn.options || turn.options.length === 0) return { lines, inputOnly: true };
   return { lines, choices: turn.options.map((o) => o.text) };

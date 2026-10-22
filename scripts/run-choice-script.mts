@@ -20,14 +20,15 @@ import { sanitizeQuizAnswers, selectSetQuizAnswer, type SetQuizAnswer } from "..
 import { getModuleChatSets } from "../lib/modulePlaybooks.ts";
 import { getLocalizedQuestions, getModuleById } from "../mobile/lib/quiz/modules.ts";
 
-const MODULE_ID = "module3";
+const MODULE_ID = process.env.MODULE_ID ?? "module3";
+const LOCALE = process.env.LOCALE ?? "ko";
 const QUOTE_TURNS = [1, 5, 10, 14, 18];
 
 /** dump-chat-prompt.mts와 같은 방식: 첫 차원이 강한 사람의 30문항 답. */
 function buildQuizAnswers(): SetQuizAnswer[] {
   const quiz = getModuleById(MODULE_ID);
   if (!quiz) throw new Error(`퀴즈 없음: ${MODULE_ID}`);
-  const questions = getLocalizedQuestions(quiz, "ko");
+  const questions = getLocalizedQuestions(quiz, LOCALE as "ko" | "en" | "es");
   const firstDim = questions[0]?.dimension;
   let hi = 0;
   let lo = 0;
@@ -40,7 +41,7 @@ function buildQuizAnswers(): SetQuizAnswer[] {
   });
 }
 
-const script = getModuleScript(MODULE_ID);
+const script = getModuleScript(MODULE_ID, LOCALE);
 if (!script) throw new Error(`스크립트 없음: ${MODULE_ID}`);
 const chatSets = getModuleChatSets(MODULE_ID);
 if (!chatSets) throw new Error(`세트 없음: ${MODULE_ID}`);
@@ -83,7 +84,7 @@ for (const { name, answer } of SCENARIOS) {
   const history: ScriptHistoryMessage[] = [];
   for (let turn = 1; turn <= 22; turn++) {
     const quoteLabel = quoteLabelFor(turn);
-    const reply = buildScriptReply({ script, turnNumber: turn, history, quoteLabel, quotePrompt: quotePromptFor(turn) });
+    const reply = buildScriptReply({ script, turnNumber: turn, history, quoteLabel, quotePrompt: quotePromptFor(turn), locale: LOCALE });
     console.log(`\n[T${turn}]`);
     reply.lines.forEach((line, i) => console.log(`  ${i + 1}. ${line}`));
     if (reply.choices) console.log(`  choices: ${reply.choices.map((c) => `"${c}"`).join(" / ")}`);

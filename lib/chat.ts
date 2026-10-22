@@ -497,7 +497,7 @@ export async function getChatReplyV4(params: {
     delete reply.choices;
     return reply;
   }
-  const script = getModuleScript(params.context.moduleId);
+  const script = getModuleScript(params.context.moduleId, params.context.locale);
   if (!script) {
     const plainContext = { ...params.context };
     delete plainContext.flowVersion;
@@ -517,6 +517,7 @@ export async function getChatReplyV4(params: {
     history: params.history,
     quoteLabel: quoted?.label ?? null,
     quotePrompt: quoted?.prompt ?? null,
+    locale: params.context.locale,
   });
 }
 
@@ -571,7 +572,7 @@ export async function extractChatSummary(transcript: ChatMessage[], context: Cha
   // 2026-10-20 (작업 17): v3이면 묶음에서 정해진 값을 빈 필드에 채운다. v1·v2는 그대로 둔다.
   // 2026-10-21: v4도 같은 경로다. 스크립트를 넘기면 보기를 탭한 턴은 답 원문 대신 gist로 채운다.
   return flow >= 3
-    ? applyChoicePicksToExtract(base, transcript, [], flow === 4 ? getModuleScript(context.moduleId) : undefined, context.moduleId)
+    ? applyChoicePicksToExtract(base, transcript, [], flow === 4 ? getModuleScript(context.moduleId, context.locale) : undefined, context.moduleId)
     : base;
 }
 

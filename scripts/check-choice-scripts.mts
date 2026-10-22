@@ -4,6 +4,7 @@
  * 고정 스크립트(flowVersion 4) 문구 데이터 린트. OpenAI를 쓰지 않는다.
  *
  *   npx tsx scripts/check-choice-scripts.mts [module5 module6 ...]
+ *   LOCALE=en|es npx tsx scripts/check-choice-scripts.mts   (영어·스페인어: 길이 기준과 금지어를 언어에 맞춰 바꾼다)
  *
  * 인자가 없으면 스크립트가 있는 모든 모듈을 검사한다. 오류가 있으면 종료 코드 1.
  * 검사: 턴 구성(1~8, 10~21), 인용 턴 위치, 질문 물음표 1개, 보기 2~3개·24자·중복,
@@ -21,13 +22,15 @@ const ALL_MODULE_IDS = Array.from({ length: 12 }, (_, i) => `module${i + 1}`);
 const CHOICE_TURNS = [...Array.from({ length: 8 }, (_, i) => i + 1), ...Array.from({ length: 12 }, (_, i) => i + 10)];
 const QUOTE_TURNS = [1, 5, 10, 14, 18];
 const GIST_REQUIRED_TURNS = [2, 4, 6, 8, 11, 13, 15, 17, 19];
-const MAX_OPTION_LEN = 24;
-const REACTION_MIN = 15;
-const REACTION_MAX = 40;
-const SIMILARITY_LIMIT = 0.5;
+const LOCALE = process.env.LOCALE ?? "ko";
+const IS_KO = LOCALE === "ko";
+const MAX_OPTION_LEN = IS_KO ? 24 : 44;
+const REACTION_MIN = IS_KO ? 15 : 20;
+const REACTION_MAX = IS_KO ? 40 : 95;
+const SIMILARITY_LIMIT = IS_KO ? 0.5 : 1.01; // en/es 반응은 답을 되받는 같은 틀이라 겹치는 게 설계다. 모듈 안 완전 동일 반응은 별도 검사가 잡는다.
 
 /** 위로 공식·칭찬·조언·처방·감정 단정·건강/사고/재난 예측 표현. */
-const BANNED_PATTERNS: Array<[RegExp, string]> = [
+const BANNED_PATTERNS_KO: Array<[RegExp, string]> = [
   [/힘드셨|힘들었겠|힘들겠|고생.*(했|많)/, "위로 공식"],
   [/충분히 그럴|괜찮아요|괜찮을|그럴 수 있/, "위로 공식"],
   [/그런 날이 있|누구나|다들 그래|흔한 일/, "일반화"],
@@ -38,11 +41,33 @@ const BANNED_PATTERNS: Array<[RegExp, string]> = [
   [/분명히|틀림없이|확실히/, "단정"],
 ];
 
+const BANNED_PATTERNS_EN: Array<[RegExp, string]> = [
+  [/must have been|that must be|sounds (so )?hard|i'm sorry|it'?s (completely )?(okay|ok|normal|understandable)|of course you/i, "comfort formula"],
+  [/everyone (has|does|feels)|we all|happens to everyone|a common thing/i, "generalization"],
+  [/\b(great|amazing|wonderful|impressive|proud of you|well done)\b/i, "praise"],
+  [/\byou should\b|i (suggest|recommend)|it'?s (best|better) to|\bconsider\b/i, "advice"],
+  [/\b(health|doctor|hospital|illness|depress|insomnia|accident|disaster|death)\b/i, "health/accident/disaster"],
+  [/\byou('ll| will) (soon|lose|get worse)|\bsoon (you|it)\b/i, "prediction"],
+  [/\b(definitely|certainly|obviously)\b/i, "assertion"],
+];
+const BANNED_PATTERNS_ES: Array<[RegExp, string]> = [
+  [/debe haber sido|debió de ser|lo lamento|es normal|es comprensible|es totalmente|claro que/i, "fórmula de consuelo"],
+  [/todo el mundo|a todos nos|nos pasa a todos|es algo común/i, "generalización"],
+  [/\b(genial|increíble|maravilloso|impresionante|orgulloso|bien hecho)\b/i, "elogio"],
+  [/\bdeberías\b|\bintenta\b|te (sugiero|recomiendo)|es mejor|\bconsidera\b/i, "consejo"],
+  [/\b(salud|médico|hospital|enfermedad|depresión|insomnio|accidente|desastre|muerte)\b/i, "salud/accidente/desastre"],
+  [/\bpronto (te|vas|todo)|\bvas a (perder|empeorar)/i, "predicción"],
+  [/\b(seguro que|sin duda|obviamente|definitivamente)\b/i, "afirmación"],
+];
+const BANNED_PATTERNS = IS_KO ? BANNED_PATTERNS_KO : LOCALE === "en" ? BANNED_PATTERNS_EN : BANNED_PATTERNS_ES;
+
 /** 위기 신호 표현. 보기·반응·gist에는 나오면 안 된다. */
-const CRISIS_PATTERN = /자살|자해|죽고|죽을|죽고 싶|사라지고 싶|끝내고 싶|목숨|유서|극단/;
+const CRISIS_PATTERN = IS_KO
+  ? /자살|자해|죽고|죽을|죽고 싶|사라지고 싶|끝내고 싶|목숨|유서|극단/
+  : /suicid|kill (myself|me)|self[- ]?harm|want to die|end (my life|it all)|matarme|quitarme la vida|hacerme daño|autolesi|quiero morir|acabar con todo/i;
 
 /** 보기 문구를 앵무새처럼 되받는 표현. */
-const PARROT_PATTERN = /하셨군요|하셨네요|라고 하셨/;
+const PARROT_PATTERN = IS_KO ? /하셨군요|하셨네요|라고 하셨/ : /^\u0000$/;
 
 let errors = 0;
 let warnings = 0;
@@ -59,7 +84,7 @@ const strip = (s: string) => s.replace(/[\s.!?…"'’”]+$/g, "");
 /** 끝 두 글자. 반응 끝맺음 비교용. */
 const ending = (s: string) => strip(s).slice(-2);
 const bigrams = (s: string): Set<string> => {
-  const t = s.replace(/[^가-힣a-zA-Z0-9]/g, "");
+  const t = s.replace(/[^가-힣a-zA-Z0-9áéíóúñüÁÉÍÓÚÑÜ]/g, "");
   const out = new Set<string>();
   for (let i = 0; i < t.length - 1; i++) out.add(t.slice(i, i + 2));
   return out;
@@ -128,7 +153,7 @@ function checkTemplates(moduleId: string, script: ModuleScript) {
 }
 
 function checkModule(moduleId: string) {
-  const script = getModuleScript(moduleId);
+  const script = getModuleScript(moduleId, LOCALE);
   if (!script) {
     console.log(`- ${moduleId}: 스크립트 없음(건너뜀)`);
     return;
@@ -171,7 +196,7 @@ function checkModule(moduleId: string) {
     for (let i = 0; i < opts.length; i++) {
       for (let j = i + 1; j < opts.length; j++) {
         const s = similarity(opts[i].reaction, opts[j].reaction);
-        if (t % 2 === 1 && s >= 0.9) err(moduleId, `T${t}`, `보기${i + 1}·${j + 1} 반응이 너무 비슷함(${s.toFixed(2)}): "${opts[i].reaction}" / "${opts[j].reaction}"`);
+        if (IS_KO && t % 2 === 1 && s >= 0.9) err(moduleId, `T${t}`, `보기${i + 1}·${j + 1} 반응이 너무 비슷함(${s.toFixed(2)}): "${opts[i].reaction}" / "${opts[j].reaction}"`);
         if (opts[i].gist.trim() && opts[i].gist === opts[j].gist) err(moduleId, `T${t}`, "다른 보기에 같은 gist");
       }
     }
@@ -214,7 +239,7 @@ function checkModule(moduleId: string) {
     }
   }
   for (const [e, n] of counts) {
-    if (total && n / total > 0.25) warn(moduleId, "끝맺음", `반응 끝 "${e}"가 ${n}/${total}개(편중)`);
+    if (IS_KO && total && n / total > 0.25) warn(moduleId, "끝맺음", `반응 끝 "${e}"가 ${n}/${total}개(편중)`);
   }
 
   checkTemplates(moduleId, script);
@@ -222,7 +247,7 @@ function checkModule(moduleId: string) {
 
 const args = process.argv.slice(2);
 const targets = args.length ? args : ALL_MODULE_IDS;
-console.log(`고정 스크립트 린트: ${targets.join(", ")}`);
+console.log(`고정 스크립트 린트(${LOCALE}): ${targets.join(", ")}`);
 for (const id of targets) checkModule(id);
 console.log(`\n오류 ${errors}개, 경고 ${warnings}개`);
 process.exit(errors > 0 ? 1 : 0);
