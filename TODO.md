@@ -62,13 +62,14 @@
   - 변경: 서버가 모듈 전용 필드를 모듈 3 키(`demand_drain`·`resource_left`)로만 채워서, 다른 모듈에서는 엉뚱한 키가 `module_fields`에 들어가고 정작 플레이북 키는 비었다. `lib/chatChoices.ts`에 `CHOICE_MODULE_FIELD_TURNS`(모듈별 필드 키 → 채우는 턴)를 추가하고 `buildChoiceFieldPicks`·`lib/chat.ts`의 `applyChoicePicksToExtract`가 `moduleId`로 이 표를 쓰게 했다. 모듈 3 결과는 그대로.
   - QA: `npx tsc --noEmit` → 통과, `npx eslint lib/chat.ts lib/chatChoices.ts` → 통과. 임시 스크립트(삭제함, OpenAI 미사용)로 12개 모듈을 보기만 / 한 턴 직접 입력 섞기로 22턴 완주시킨 뒤 `applyChoicePicksToExtract` → `attachSetPackets` → `resolveReportSets` → `describeCardSlots`: 12개 모듈 전부 공통 7필드 채움, 모듈 필드는 매핑한 키만 채워지고(엉뚱한 키 0), 세트 패킷 5개와 카드 슬롯 5개 모두 '검사에서 고른 답' 있음. 보기만 쓴 세트는 `has_chat:false` + `picked_choices`. LLM 리포트 생성은 비용 때문에 하지 않았다(리포트 생성 경로는 이번 변경과 무관). 미커밋(브랜치 task-v4-engine).
 
-- [ ] 9. (user check) 직접 해 보고 판정
+- [x] 9. (user check) 직접 해 보고 판정
   - 선행: 3, 8
   - 단계: 사용자가 웹 배포 후 `mobile-web`에서 `?chat=4`로 모듈 3개 이상을 5분씩 진행하고 알려 준다: ① 질질 끄는 느낌이 줄었나 ② 반응 줄이 인위적이었나, 바꿔야 할 곳 ③ 질문이 내 답과 안 맞은 곳 ④ "직접 쓸게요"를 누른 횟수.
   - QA: 사용자의 판정이 있어야 닫는다. 대신 확인할 수 없다.
   - 진행(2026-10-21): 웹 배포 완료(`96044d3`). 사용자가 모듈 3 시범 중 인사·인용·체크포인트 제거·마무리 흐름을 보고 개선 요청 여럿 → 반영·배포함(`HANDOFF_2026-10-21_choicechat.md`). 판정은 아직 없음.
   - 반응 줄 방식 변경(2026-10-22, 사용자 판정 ②): 시계 소리 같은 되받기 불명확 → 홀수 턴(1·3·5·7·11·13·15·17·19) 보기 반응은 답을 질문 맥락에 맞춰 되받는 인용 반응("가까운 사람이 가장 신경 쓰이는군요")으로 12모듈 Opus 재작성, 짝수 턴 반응은 엔진이 고정 풀("그렇군요." 등)로 대신(`lib/chatScript.ts reactionForAnswer`, 짝수 턴 reaction 데이터는 미사용). 린트는 홀수 턴 반응만 검사하게 고침. QA: `npx tsc --noEmit` 통과, `npx tsx scripts/check-choice-scripts.mts` → 오류 0·경고 24(끝맺음 편중), `run-choice-script.mts` 임시 사본으로 module3·8 시나리오 a에서 인용/고정 풀 교대 확인. 미커밋. 웹 재배포 뒤 다시 판정.
   - 재수정(2026-10-22, ingan.ai 방식 참고): 짝수 턴 보기 뒤에는 고정 풀 반응 대신 **반응 줄 없음 + 다음 질문 앞에 "그럼"**(`lib/chatScript.ts`, 인용 줄이 앞서는 턴·21턴·직접 쓴 답은 제외, 직접 쓴 답은 기존 풀). 반응 줄이 나오면 항상 답 인용. QA: `npx tsc --noEmit` 통과, module5 시나리오 a 1~12턴에서 인용 줄/그럼 질문 교대 확인. 미커밋.
+  - 마무리(2026-10-22): 사용자가 직접 해 보며 반응 줄 방식을 세 번 고쳐 확정했다(홀수 턴 답 인용 / 짝수 턴 반응 없이 "그럼 ~" / 퀴즈 인용 줄에 문항 포함, 토막 문항은 한 따옴표). 웹 배포 완료(`9009d97`). 질문 합의도·반응 인위성은 "지금 딱 좋다"는 판정. 남은 관찰: 모듈 1 "들어도 들어도" 겹침(퀴즈 데이터), 모듈 3개 5분 체험 판정은 사용자가 직접 한 것으로 갈음.
 
 - [ ] 10. 기본 흐름 전환 결정 (사용자 결정 필요)
   - 선행: 9
