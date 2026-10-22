@@ -61,7 +61,7 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
       options: [
         o("Cambió mi trabajo", "Coincide con una época en que se movió un gran eje de la vida.", "una época en que cambió el trabajo"),
         o("Cambió una relación", "Un cambio por el lado de las personas llegó a la noche.", "una época en que cambió una relación"),
-        o("Nada en particular", "La noche estaba ahí antes que cualquier razón.", "ningún detonante que recuerdes"),
+        o("Nada en particular", "La noche estaba ahí antes que cualquier razón.", "un comienzo sin causa clara"),
       ],
     },
     7: {
@@ -74,7 +74,7 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
     },
     8: {
       turn: 8,
-      question: "Cuando te acuestas para dormir, ¿qué sigues posponiendo?",
+      question: "Cuando ya estás en la cama, ¿qué te hace seguir retrasando el sueño?",
       options: [
         o("Terminar lo que me queda", "Lo que no terminaste te sigue hasta la cama.", "terminar lo que queda"),
         o("Ver un poco más de vídeos", "El tiempo en pantalla alarga la noche.", "ver vídeos"),
@@ -96,7 +96,7 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
       options: [
         o("Sí, me da pena perder la noche", "Hay veces en que no quieres dormir porque te da pena perder la noche.", "no querer perder la noche"),
         o("Sí, no quiero que acabe el día", "Hay veces en que no quieres dormir porque no quieres que acabe el día.", "no querer que acabe el día"),
-        o("No, eso no me pasa", "No sientes reparo en dormir cuando estás cansado.", "casi nunca"),
+        o("No, eso no me pasa", "No sientes reparo en dormir cuando estás cansado.", "nada en especial"),
       ],
     },
     12: {
@@ -110,11 +110,11 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
     },
     13: {
       turn: 13,
-      question: "¿Cuándo te sientes un poco más tranquilo, incluso ahora?",
+      question: "¿Qué te da un poco de calma, incluso ahora?",
       options: [
-        o("Después de lavarme con agua caliente", "Después de lavarte con agua caliente te sientes un poco más tranquilo.", "lavarte con agua caliente"),
-        o("Al oír sonidos tranquilos", "Al oír sonidos tranquilos te sientes un poco más tranquilo.", "los sonidos tranquilos"),
-        o("Cuando bajo las luces", "Cuando bajas las luces te sientes un poco más tranquilo.", "la luz tenue"),
+        o("Después de una ducha o un baño caliente", "Después de lavarte con agua caliente, llega un poco de calma.", "lavarte con agua caliente"),
+        o("Al oír sonidos tranquilos", "Al oír sonidos tranquilos, llega un poco de calma.", "los sonidos tranquilos"),
+        o("Cuando bajo las luces", "Cuando bajas las luces, llega un poco de calma.", "la luz tenue"),
       ],
     },
     14: {
@@ -132,7 +132,7 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
       options: [
         o("Miro el reloj a cada rato", "Al intentar dormir, miras el reloj a cada rato.", "mirar el reloj"),
         o("Dejo algún sonido puesto", "Al intentar dormir, dejas algún sonido puesto.", "dejar algún sonido puesto"),
-        o("Aún no tengo un método", "Todavía no has fijado una forma de dormirte.", "ningún método fijo"),
+        o("Aún no tengo un método", "Todavía no has fijado una forma de dormirte.", "no tener aún un método fijo"),
       ],
     },
     16: {
@@ -173,11 +173,11 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "Esta noche, cuando apague la luz y me acueste, ¿cómo crees que estaré?",
+      question: "Esta noche, cuando apagues la luz y te acuestes, ¿cómo crees que estarás?",
       options: [
-        o("Agotado", "Acostarte con el peso del día encima.", "estar agotado"),
+        o("Sin energía", "Acostarte con el peso del día encima.", "estar agotado"),
         o("Con la cabeza llena", "Parece una cabeza que sigue ocupada.", "tener la cabeza llena"),
-        o("Ojalá tranquilo", "La escena que deseas fue la primera en venir.", "desear estar tranquilo"),
+        o("Ojalá en calma", "La escena que deseas fue la primera en venir.", "desear estar tranquilo"),
       ],
     },
     21: {
@@ -193,10 +193,10 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
   closing: {
     summary: [
       "Lo primero que se reproduce al apagar la luz es {g2}, tu ánimo entonces se parece a {g4}, y lo que empezó a desordenar tu sueño fue {g6}.",
-      "El sentimiento que retiene la noche es {g11}, y lo que te tranquiliza un poco aun ahora es {g13}.",
-      "Para dormirte, lo tuyo es {g15}, quienes lo saben son {g17}, y una noche más fácil empieza por {g19}.",
+      "Lo que te retiene en la noche: {g11}, y lo que te da un poco de calma aun ahora es {g13}.",
+      "Para dormirte, lo tuyo es {g15}; quién lo sabe: {g17}; y una noche más fácil empieza por {g19}.",
     ],
-    perspectiveLine: "Lo que le dijiste al tú de esta noche también lo guardo, con tus palabras.",
+    perspectiveLine: "Lo que le dijiste a tu yo de esta noche también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
   },
 };

@@ -70,8 +70,8 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       turn: 7,
       question: "¿Por qué sientes el trabajo tan pesado?",
       options: [
-        o("Hay demasiado", "Entonces pesa porque hay demasiado.", "la cantidad"),
-        o("No le veo sentido", "Entonces pesa porque cuesta verle el sentido.", "el sentido"),
+        o("Hay demasiado", "Pesa porque hay demasiado.", "la cantidad"),
+        o("No le veo sentido", "Pesa porque cuesta verle el sentido.", "el sentido"),
       ],
     },
     8: {
@@ -80,7 +80,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       options: [
         o("La cantidad de trabajo", "El montón que no deja de crecer es la mayor fuga.", "la cantidad de trabajo"),
         o("Gestionar emociones", "Gastar sentimientos es lo que más se lleva.", "gestionar emociones"),
-        o("Que nada salga como quiero", "Lo que queda fuera de mi mano es lo que más se lleva.", "que nada salga como quiero"),
+        o("Que nada salga como quiero", "Lo que queda fuera de mi mano es lo que más se lleva.", "que nada salga como quieres"),
       ],
     },
     10: {
@@ -97,9 +97,9 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       turn: 11,
       question: "Si esa sensación desapareciera, ¿qué es lo que más te preocuparía?",
       options: [
-        o("Quedarme atrás", "Quedarte atrás es lo que más te preocupa.", "quedarte atrás"),
-        o("Volverme inútil", "Volverte inútil es lo que más te preocupa.", "volverte inútil"),
-        o("No lo sé", "Lo que más te preocupa aún no está claro.", "algo que todavía no tiene palabras"),
+        o("Quedarme atrás", "Quedarte atrás es lo que más te preocupa.", "el miedo a quedarte atrás"),
+        o("Volverme inútil", "Volverte inútil es lo que más te preocupa.", "el miedo a volverte inútil"),
+        o("No lo sé", "Lo que más te preocupa aún no está claro.", "una preocupación que todavía no tiene palabras"),
       ],
     },
     12: {
@@ -117,7 +117,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       options: [
         o("La gente cercana", "Aun ahora, la gente cercana te recarga un poco.", "la gente cercana"),
         o("El tiempo a solas", "Aun ahora, el tiempo a solas te recarga un poco.", "el tiempo a solas"),
-        o("Pequeños logros del trabajo", "Aun ahora, los pequeños logros del trabajo te recargan un poco.", "los pequeños logros del trabajo"),
+        o("Pequeños logros del trabajo", "Aun ahora, los pequeños logros del trabajo te recargan un poco.", "algún pequeño logro del trabajo"),
       ],
     },
     14: {
@@ -133,7 +133,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       turn: 15,
       question: "Cuando se cuelan los pensamientos del trabajo, ¿qué sueles hacer?",
       options: [
-        o("Los dejo estar", "Cuando se cuelan pensamientos del trabajo, sueles dejarlos estar.", "dejarlos estar"),
+        o("Los dejo estar", "Cuando se cuelan pensamientos del trabajo, sueles dejarlos estar.", "dejar estar esos pensamientos"),
         o("Reviso o lo resuelvo", "Cuando se cuelan pensamientos del trabajo, sueles revisar o resolver.", "revisar y resolver"),
         o("Me distraigo con otra cosa", "Cuando se cuelan pensamientos del trabajo, sueles distraerte con otra cosa.", "distraerte con otra cosa"),
       ],
@@ -150,9 +150,9 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       turn: 17,
       question: "¿Alguien se ha dado cuenta de cómo estás ahora?",
       options: [
-        o("Una o dos personas lo saben", "Una o dos personas se han dado cuenta de cómo estás.", "una o dos personas que se dan cuenta"),
-        o("Solo familia y amigos", "Solo la familia y los amigos saben cómo estás.", "que solo lo sepan los de fuera del trabajo"),
-        o("Nadie lo sabe", "Nadie se ha dado cuenta de cómo estás.", "que nadie lo sepa"),
+        o("Una o dos personas lo saben", "Una o dos personas se han dado cuenta de cómo estás.", "una o dos personas"),
+        o("Solo familia y amigos", "Solo la familia y los amigos saben cómo estás.", "solo gente de fuera del trabajo"),
+        o("Nadie lo sabe", "Nadie se ha dado cuenta de cómo estás.", "nadie"),
       ],
     },
     18: {
@@ -176,10 +176,10 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "¿Cómo era yo el día en que empecé este trabajo?",
+      question: "¿Cómo eras el día en que empezaste este trabajo?",
       options: [
-        o("Ilusionado", "Empezaste aquel día con ilusión.", "la ilusión"),
-        o("Nervioso", "Empezaste aquel día con nervios.", "los nervios"),
+        o("Con ilusión", "Empezaste aquel día con ilusión.", "la ilusión"),
+        o("Con nervios", "Empezaste aquel día con nervios.", "los nervios"),
         o("No lo recuerdo bien", "El recuerdo se ha alejado tanto como el tiempo.", "un recuerdo que se ha alejado"),
       ],
     },
@@ -197,9 +197,9 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
     summary: [
       "El peso de tu día empieza en {g2}, sigue hacia {g4}, y lo que más te quita es {g8}.",
       "Bajo la sensación de que no debes descansar está {g11}, y aun así {g13} te recarga un poco.",
-      "Tu forma de aguantar es {g15}, para pedir ayuda: {g17}, y cuando vuelva la energía empezarías por {g19}.",
+      "Tu forma de aguantar es {g15}; quién sabe cómo estás: {g17}; y cuando vuelva la energía empezarías por {g19}.",
     ],
-    perspectiveLine: "Lo que le dijiste al tú de aquel primer día también lo guardo, con tus palabras.",
+    perspectiveLine: "Lo que te dijiste a ti mismo aquel primer día también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
   },
 };

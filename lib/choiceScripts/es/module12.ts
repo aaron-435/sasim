@@ -12,7 +12,7 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
     1: {
       turn: 1,
       quote: true,
-      question: "¿Qué se acerca más al gran cambio que ha habido últimamente en tu vida?",
+      question: "¿Qué se acerca más a tu gran cambio reciente?",
       options: [
         o("Separarme de alguien", "El gran cambio de últimamente es separarte de alguien.", "separarte de alguien"),
         o("Cambió mi trabajo o mis estudios", "El gran cambio de últimamente va por el lado del trabajo o los estudios.", "un cambio de trabajo o de estudios"),
@@ -23,9 +23,9 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
       turn: 2,
       question: "Ese cambio, ¿lo elegiste tú?",
       options: [
-        o("Lo elegí yo", "Un camino que recorriste tras fijar tú la dirección.", "un cambio que elegiste"),
-        o("Me vino sin más", "Un camino recorrido siguiendo lo que llegó primero.", "un cambio que te vino sin más"),
-        o("Un poco de cada", "La parte que elegiste y la que llegó están mezcladas.", "un cambio con parte elegida y parte llegada"),
+        o("Lo elegí yo", "Un camino que recorriste tras fijar tú la dirección.", "algo que elegiste"),
+        o("Me vino sin más", "Un camino recorrido siguiendo lo que llegó primero.", "algo que te vino sin más"),
+        o("Un poco de cada", "La parte que elegiste y la que llegó están mezcladas.", "en parte elegido y en parte llegado"),
       ],
     },
     3: {
@@ -53,7 +53,7 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
       options: [
         o("A menudo", "Los pensamientos de cómo eran antes las cosas te vienen a menudo.", "pensamientos que vienen a menudo"),
         o("A veces", "Los pensamientos de cómo eran antes las cosas te vienen a veces.", "pensamientos que vienen a veces"),
-        o("Se asentaron antes de lo que esperaba", "Los pensamientos de cómo eran antes las cosas se asentaron antes de lo esperado.", "un sentimiento que se asentó pronto"),
+        o("Lo dejé atrás antes de lo esperado", "Lo de antes quedó atrás antes de lo que esperabas.", "algo que quedó atrás pronto"),
       ],
     },
     6: {
@@ -94,11 +94,11 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
     },
     11: {
       turn: 11,
-      question: "¿De quién se parece más ese listón?",
+      question: "¿De quién es, más bien, ese listón?",
       options: [
-        o("Mío", "Ese listón se parece más al tuyo.", "tu propio listón"),
-        o("De los demás", "Ese listón se parece más al de los demás.", "el de los demás"),
-        o("Una mezcla de los dos", "En ese listón se mezcla el tuyo con el de los demás.", "una mezcla del tuyo y el de los demás"),
+        o("Mío", "Ese listón es más bien tuyo.", "tu propio listón"),
+        o("De los demás", "Ese listón es más bien de los demás.", "el de los demás"),
+        o("Una mezcla de los dos", "En ese listón se mezclan el tuyo y el de los demás.", "una mezcla del tuyo y el de los demás"),
       ],
     },
     12: {
@@ -114,9 +114,9 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
       turn: 13,
       question: "¿Cómo se siente aferrarse mucho tiempo a algo que ya terminó?",
       options: [
-        o("Como debilidad", "Aferrarte mucho tiempo se siente como algo que viene de la debilidad.", "una sensación de debilidad"),
-        o("Como que importaba tanto", "Aferrarte mucho tiempo se siente como algo que viene de que importaba tanto.", "una sensación de que importaba tanto"),
-        o("No lo sé", "Todavía no sabes cómo se siente aferrarte mucho tiempo.", "una sensación que todavía no sabes"),
+        o("Como debilidad", "Sientes que aferrarte tanto tiempo viene de la debilidad.", "debilidad"),
+        o("Como que importaba tanto", "Sientes que aferrarte tanto tiempo es señal de lo mucho que importaba.", "señal de que importaba tanto"),
+        o("No lo sé", "Todavía no sabes cómo se siente aferrarte mucho tiempo.", "algo que todavía no sabes nombrar"),
       ],
     },
     14: {
@@ -125,7 +125,7 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
       question: "¿Cómo pasa el tiempo cuando lo siguiente aún no está decidido?",
       options: [
         o("Intento decidirlo rápido", "Eres de los que rellenan el hueco antes de que se alargue.", "intentar decidir rápido"),
-        o("Me quedo parado por ahora", "Una manera de recobrar el aliento antes de moverte.", "quedarte parado por ahora"),
+        o("Me quedo en pausa por ahora", "Una manera de recobrar el aliento antes de moverte.", "quedarte parado por ahora"),
         o("Día a día", "Un tiempo que fluye pasando un día cada vez.", "dejar pasar los días"),
       ],
     },
@@ -143,7 +143,7 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
       question: "¿Hay alguien que esté pasando por esta etapa contigo?",
       options: [
         o("Sí", "Hay a tu lado alguien que recorre el mismo camino.", "tener a alguien que lo pasa contigo"),
-        o("Casi estoy solo", "Estás recorriendo casi todo el camino solo.", "pasarlo casi a solas"),
+        o("Lo paso casi a solas", "Estás recorriendo casi todo el camino solo.", "pasarlo casi a solas"),
       ],
     },
     17: {
@@ -176,10 +176,10 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "El día en que aparezca esa escena, ¿cómo crees que me veré?",
+      question: "El día en que aparezca esa escena, ¿cómo crees que te verás?",
       options: [
         o("Respirando un poco mejor", "Una escena en la que el pecho se ensancha un palmo.", "respirar un poco mejor"),
-        o("Todavía extraño", "Una imagen en que la extrañeza se queda cerca un tiempo.", "seguir sintiéndote extraño"),
+        o("Aún con extrañeza", "Una imagen en que la extrañeza se queda cerca un tiempo.", "seguir sintiéndote extraño"),
         o("No lo veo claro", "El contorno de esa escena sigue borroso.", "una imagen todavía borrosa"),
       ],
     },
@@ -189,17 +189,17 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, lo que ha cambiado es {g2}, el primer sentimiento tras el cambio se parece a {g4}, y el tiempo libre suele ir a {g8}.",
+    "Por lo que me has contado, el cambio fue {g2}, el primer sentimiento tras él se parece a {g4}, y lo que sueles hacer con el tiempo libre es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
   closing: {
     summary: [
-      "El primer sentimiento tras el cambio se parecía a {g4}, y los pensamientos del pasado tienden a llegar {g6}.",
-      "El listón de lo rápido que se espera que te asientes es {g11}, y aferrarte a lo que terminó trae {g13}.",
+      "El primer sentimiento tras el cambio se parecía a {g4}, y el momento en que suelen llegar los pensamientos del pasado es {g6}.",
+      "El listón de lo rápido que se espera que te asientes es {g11}, y para ti aferrarte a lo que terminó es {g13}.",
       "En el tiempo sin decidir lo que más haces es {g15}, tu fuerza de ahora viene de {g17}, y querrías empezar a echar ancla en el sitio nuevo con {g19}.",
     ],
-    perspectiveLine: "Lo que le dijiste al tú de aquel último día también lo guardo, con tus palabras.",
+    perspectiveLine: "Lo que le dijiste a tu yo de aquel último día también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
   },
 };

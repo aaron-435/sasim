@@ -15,9 +15,9 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
       question: "¿En qué lugar aparece más a menudo esa faceta tuya?",
       questionNoQuote: "¿En qué tipo de lugar cambias más a menudo tu forma de ser según la otra persona?",
       options: [
-        o("En el trabajo o en clase", "Aparece más a menudo en el trabajo o en clase.", "en el trabajo o en clase"),
-        o("En grupos o entre amigos", "Aparece más a menudo en grupos o entre amigos.", "en grupos o entre amigos"),
-        o("Delante de la familia", "Aparece más a menudo delante de la familia.", "delante de la familia"),
+        o("En el trabajo o en clase", "Aparece más a menudo en el trabajo o en clase.", "el trabajo o la clase"),
+        o("En grupos o entre amigos", "Aparece más a menudo en grupos o entre amigos.", "los grupos o los amigos"),
+        o("Delante de la familia", "Aparece más a menudo delante de la familia.", "la familia"),
       ],
     },
     2: {
@@ -59,7 +59,7 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
       turn: 6,
       question: "¿Recuerdas cuándo empezaste a ajustarte así?",
       options: [
-        o("Desde pequeño", "Una manera que lleva mucho tiempo en el cuerpo.", "desde la infancia"),
+        o("Desde la infancia", "Una manera que lleva mucho tiempo en el cuerpo.", "desde la infancia"),
         o("Al hacerme adulto", "Un hábito que nació al cambiar los lugares.", "desde que eres adulto"),
         o("No lo sé", "Ha seguido sin un punto de partida claro.", "algo sin un comienzo claro"),
       ],
@@ -68,13 +68,13 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
       turn: 7,
       question: "¿Delante de quién se vuelve más gruesa tu máscara?",
       options: [
-        o("De gente que acabo de conocer", "La máscara es más gruesa ante gente que acabas de conocer.", "gente que acabas de conocer"),
-        o("De gente que conozco desde hace tiempo", "La máscara es más gruesa ante gente que conoces desde hace tiempo.", "gente que conoces desde hace tiempo"),
+        o("Ante gente que acabo de conocer", "La máscara es más gruesa ante gente que acabas de conocer.", "gente que acabas de conocer"),
+        o("Ante gente que conozco de hace tiempo", "La máscara es más gruesa ante gente que conoces desde hace tiempo.", "gente que conoces desde hace tiempo"),
       ],
     },
     8: {
       turn: 8,
-      question: "Cuando se fija una quedada, ¿cómo reacciona tu ánimo?",
+      question: "Cuando se fija un plan con gente, ¿cómo reacciona tu ánimo?",
       options: [
         o("Me hace ilusión", "Primero está la ilusión de esperar ese día.", "la ilusión"),
         o("Ya me cansa", "Calcular de antemano la energía de ese día.", "el cansancio que llega antes de tiempo"),
@@ -151,7 +151,7 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
       question: "¿Hay ahora a tu lado alguien con quien puedas ser tú sin máscara?",
       options: [
         o("Una o dos personas", "Hay a tu lado una o dos personas con quienes puedes ser tú sin máscara.", "una o dos personas"),
-        o("Había, pero nos alejamos", "Había alguien así a tu lado, pero se ha alejado.", "alguien que estuvo"),
+        o("Había, pero nos alejamos", "Había alguien así a tu lado, pero se ha alejado.", "alguien que se alejó"),
         o("Todavía no", "Todavía no hay a tu lado nadie con quien ser tú sin máscara.", "nadie todavía"),
       ],
     },
@@ -161,17 +161,17 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
       question: "Si te quitaras un poco la máscara, ¿en qué lugar querrías empezar?",
       options: [
         o("Delante de la persona más cómoda", "Un deseo de soltarte primero en el lugar más seguro.", "delante de la persona más cómoda"),
-        o("Delante de la familia", "Querer dejarla primero con quien está cerca.", "delante de la familia"),
+        o("Delante de la familia", "Querer dejarla primero con quien está cerca.", "la familia"),
         o("En un escrito o un diario", "Una manera que viene a la mente: escribirlo primero a solas.", "en un escrito o un diario"),
       ],
     },
     19: {
       turn: 19,
-      question: "¿Cuál sería la versión más pequeña de dejarla ahí?",
+      question: "¿Cuál sería la forma más pequeña de quitártela ahí?",
       options: [
-        o("Sonreír menos por compromiso", "En lo más pequeño, es reducir las sonrisas forzadas.", "sonreír menos por compromiso"),
-        o("Decir una línea sincera", "En lo más pequeño, es decir una línea sincera.", "decir una línea sincera"),
-        o("Decir que estoy cansado", "En lo más pequeño, es decir que estás cansado.", "decir que estás cansado"),
+        o("Sonreír menos por compromiso", "Lo más pequeño sería sonreír menos por compromiso.", "sonreír menos por compromiso"),
+        o("Decir una línea sincera", "Lo más pequeño sería decir una línea sincera.", "decir una línea sincera"),
+        o("Decir que necesito descansar", "Lo más pequeño sería decir que necesitas descansar.", "decir que necesitas descansar"),
       ],
     },
     20: {
@@ -189,15 +189,15 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, la máscara es más gruesa {g1}, lo que más ajustas es {g2}, tras un encuentro te queda {g4} y cuando se fija una quedada lo primero es {g8}.",
+    "Por lo que me has contado, el lugar donde la máscara es más gruesa es {g1}, lo que más ajustas es {g2}, tras un encuentro te queda {g4} y cuando se fija un plan con gente, lo primero es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
   closing: {
     summary: [
-      "La máscara es más gruesa {g1}, y tras un encuentro lo que te queda es {g4}.",
+      "El lugar donde la máscara es más gruesa es {g1}, y tras un encuentro lo que te queda es {g4}.",
       "Lo que protege la máscara es {g11}, y delante de alguien con quien eres tú sin máscara, lo que cambia es esto: {g13}.",
-      "En los días que ocultas lo que sientes, te recuperas con {g14}, a tu lado hay {g17}, y querrías empezar por {g19}.",
+      "En los días que ocultas lo que sientes, te recuperas con {g14}; alguien con quien ser tú sin máscara: {g17}; y querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que le dijiste a la persona de al lado en ese mismo lugar también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",

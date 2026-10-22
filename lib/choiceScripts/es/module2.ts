@@ -69,8 +69,8 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
       turn: 7,
       question: "Después de compararte, ¿hacia dónde se inclina tu ánimo?",
       options: [
-        o("Me impaciento", "Después de compararte, se inclina hacia la impaciencia.", "la impaciencia"),
-        o("Me encojo", "Después de compararte, se inclina hacia encogerte.", "encogerte"),
+        o("Me impaciento", "Después de compararte, te entra impaciencia.", "la impaciencia"),
+        o("Me encojo", "Después de compararte, tiendes a encogerte.", "encogerte"),
         o("Casi no cambia nada", "Después de compararte, casi nada cambia en tu ánimo.", "que casi nada cambie"),
       ],
     },
@@ -78,15 +78,15 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
       turn: 8,
       question: "En un día en que crece la preocupación por el dinero, ¿hacia dónde se mueve tu cartera?",
       options: [
-        o("Se cierra más", "Cuanto mayor la preocupación, más firme el cierre.", "ahorrar más"),
-        o("Más bien se abre", "Soltar la ansiedad gastando.", "gastar más en cambio"),
-        o("Casi no cambia", "La preocupación y la cartera van por separado.", "que nada cambie"),
+        o("Se cierra más", "Cuanto mayor la preocupación, más firme el cierre.", "que se cierra más"),
+        o("Más bien se abre", "Soltar la ansiedad gastando.", "que se abre más"),
+        o("Casi no cambia", "La preocupación y la cartera van por separado.", "que no cambia"),
       ],
     },
     10: {
       turn: 10,
       quote: true,
-      question: "De pequeño, ¿qué ambiente había en casa cuando se hablaba de dinero?",
+      question: "En tu infancia, ¿qué ambiente había en casa cuando se hablaba de dinero?",
       options: [
         o("Era un tema frecuente", "Una casa donde el dinero llegaba a la mesa.", "un tema frecuente"),
         o("Se evitaba en silencio", "Un tema que tenía presencia por no decirse.", "un tema que se evitaba"),
@@ -97,16 +97,16 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
       turn: 11,
       question: "Si completaras de golpe «El dinero es, al final, ___», ¿qué te viene primero?",
       options: [
-        o("La seguridad que me protege", "Entonces el dinero es, al final, la seguridad que te protege.", "la seguridad"),
-        o("La libertad de vivir con holgura", "Entonces el dinero es, al final, la libertad de vivir con holgura.", "la libertad"),
-        o("La vara con la que me miden", "Entonces el dinero es, al final, la vara con la que te miden.", "una vara para medirte"),
+        o("La seguridad que me protege", "Así que, al final, el dinero es la seguridad que te protege.", "la seguridad"),
+        o("La libertad de vivir con holgura", "Así que, al final, el dinero es la libertad de vivir con holgura.", "la libertad"),
+        o("La vara con la que me miden", "Así que, al final, el dinero es la vara con la que te miden.", "una vara para medirte"),
       ],
     },
     12: {
       turn: 12,
       question: "Si tuvieras dinero de sobra, ¿hacia dónde crees que iría tu ánimo?",
       options: [
-        o("Estaría tranquilo", "Una imagen en la que el número se vuelve alivio.", "una imagen de tranquilidad"),
+        o("Estaría en calma", "Una imagen en la que el número se vuelve alivio.", "una imagen de tranquilidad"),
         o("Aparecerían otras preocupaciones", "Una imagen en la que la preocupación solo cambia de sitio.", "una imagen en la que aparecen otras preocupaciones"),
         o("No lo sé", "Quizá una imagen que nunca has dibujado.", "una imagen todavía sin dibujar"),
       ],
@@ -191,15 +191,15 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, lo que más pesa con el dinero parece ser {g2}, después de pagar se parece a {g4}, y en los días de más preocupación lo primero es {g8}.",
+    "Por lo que me has contado, lo que más pesa con el dinero parece ser {g2}, lo que queda después de pagar se parece a {g4}, y en los días de más preocupación, lo que pasa con tu cartera es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
   closing: {
     summary: [
-      "Lo que más pesa con el dinero es {g2}, y después de pagar se parece a {g4}.",
+      "Lo que más pesa con el dinero es {g2}, y lo que queda lo que queda después de pagar se parece a {g4}.",
       "En el hueco de «El dinero es, al final, ___» pusiste {g11}, y lo que has mantenido con constancia es {g13}.",
-      "Cuando sube la preocupación es {g15}, con quien más incómodo resulta hablar de dinero es {g17}, y querrías empezar por {g19}.",
+      "Lo que haces cuando sube la preocupación es {g15}, con quien más incómodo resulta hablar de dinero es {g17}, y querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que le dirías a esa persona con su primera nómina también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",

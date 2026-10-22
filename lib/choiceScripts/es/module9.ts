@@ -23,9 +23,9 @@ export const MODULE9_SCRIPT_ES: ModuleScript = {
       turn: 2,
       question: "En esos momentos, ¿de qué lado estás sobre todo?",
       options: [
-        o("Del que habla", "Llevar la conversación es tu parte.", "quien habla"),
-        o("Del que escucha", "Estar donde los oídos se mantienen abiertos.", "quien escucha"),
-        o("Del que media entre unos y otros", "Un lugar en el que vas y vienes coordinando.", "quien media entre unos y otros"),
+        o("Del que habla", "Llevar la conversación es tu parte.", "el de quien habla"),
+        o("Del que escucha", "Estar donde los oídos se mantienen abiertos.", "el de quien escucha"),
+        o("Del que media entre unos y otros", "Un lugar en el que vas y vienes coordinando.", "el de quien media entre unos y otros"),
       ],
     },
     3: {
@@ -49,9 +49,9 @@ export const MODULE9_SCRIPT_ES: ModuleScript = {
     5: {
       turn: 5,
       quote: true,
-      question: "Tu lugar actual en la familia, ¿es el mismo desde pequeño o llegó al crecer?",
+      question: "Tu lugar actual en la familia, ¿es el mismo desde la infancia o llegó al crecer?",
       options: [
-        o("Desde pequeño", "Tu lugar actual en la familia es el mismo desde pequeño.", "desde la infancia"),
+        o("Desde la infancia", "Tu lugar actual en la familia es el mismo desde la infancia.", "desde la infancia"),
         o("Llegó al crecer", "Tu lugar actual en la familia llegó al crecer.", "desde que creciste"),
       ],
     },
@@ -59,9 +59,9 @@ export const MODULE9_SCRIPT_ES: ModuleScript = {
       turn: 6,
       question: "Si pusieras nombre a tu lugar en la familia, ¿cuál se acerca más?",
       options: [
-        o("El mediador", "El nombre de quien se ponía entre las peleas.", "el mediador"),
-        o("El protector", "El nombre de quien cuida a alguien.", "el protector"),
-        o("El niño callado", "Se ve el tiempo que pasaste bajando la voz.", "el niño callado"),
+        o("Quien media", "El nombre de quien se ponía entre las peleas.", "el de quien media"),
+        o("Quien protege", "El nombre de quien cuida a alguien.", "el de quien protege"),
+        o("Quien calla", "Se ve el tiempo que pasaste bajando la voz.", "el de quien calla"),
       ],
     },
     7: {
@@ -95,8 +95,8 @@ export const MODULE9_SCRIPT_ES: ModuleScript = {
       turn: 11,
       question: "¿Cómo crees que se sentiría dejar ese lugar?",
       options: [
-        o("La familia se tambalearía", "Si dejas el lugar, la familia podría tambalearse.", "la sensación de que la familia se tambalearía"),
-        o("Dejaría de hacer falta", "Si dejas el lugar, podrías dejar de hacer falta.", "la sensación de que dejarías de hacer falta"),
+        o("La familia se tambalearía", "Sientes que, si lo dejas, la familia se tambalearía.", "la sensación de que la familia se tambalearía"),
+        o("Dejaría de hacer falta", "Sientes que, si lo dejas, dejarías de hacer falta.", "la sensación de que dejarías de hacer falta"),
         o("No lo sé", "No sabes cómo se sentiría dejarlo.", "algo que todavía no sabes"),
       ],
     },
@@ -133,7 +133,7 @@ export const MODULE9_SCRIPT_ES: ModuleScript = {
       question: "¿Cómo ajustas esa distancia?",
       options: [
         o("Regulo cuánto contactamos", "Para ajustar la distancia, regulas cuánto contactas.", "regular cuánto contactas"),
-        o("Reduzco el tiempo que nos vemos", "Para ajustar la distancia, reduces el tiempo que os veis.", "reducir el tiempo que os veis"),
+        o("Reduzco el tiempo que nos vemos", "Para ajustar la distancia, reduces el tiempo de verse.", "reducir el tiempo juntos"),
         o("Me cuesta ajustarla", "Ajustar la distancia con la familia te cuesta.", "que cueste ajustarla"),
       ],
     },
@@ -176,10 +176,10 @@ export const MODULE9_SCRIPT_ES: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "¿Cómo crees que era yo de niño en ese lugar?",
+      question: "¿Cómo crees que eras en ese lugar en tu infancia?",
       options: [
         o("Muy formal, como un adulto", "Un niño que estaba como un adulto.", "estar muy formal"),
-        o("Callado, atento al ambiente", "Se ve el tiempo pasado leyendo el aire.", "estar callado, atento al ambiente"),
+        o("En silencio, leyendo el ambiente", "Se ve el tiempo pasado leyendo el aire.", "estar callado, atento al ambiente"),
         o("No lo recuerdo bien", "Tanto como se ha alejado el recuerdo, así ha pasado el tiempo.", "un recuerdo que se ha alejado"),
       ],
     },
@@ -189,17 +189,17 @@ export const MODULE9_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, en los momentos en familia estás como {g2}, lo que queda después es sobre todo {g4}, y cuando surgía un conflicto estabas {g8}.",
+    "Por lo que me has contado, en los momentos en familia tu papel es {g2}, lo que queda después es sobre todo {g4}, y cuando surgía un conflicto tu sitio era {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
   closing: {
     summary: [
-      "Tu lugar en la familia ha sido {g6}, cuando surgía un conflicto estabas {g8}, y lo que quedaba después era {g4}.",
-      "Dejar ese lugar traería {g11}, y aun así {g13} te alivia un poco.",
-      "Para ajustar la distancia, lo tuyo es {g15}, quienes te han reconocido son {g17}, y si pudieras ser tú sin perder el vínculo, querrías empezar por {g19}.",
+      "Tu lugar en la familia ha sido {g6}, cuando surgía un conflicto tu sitio era {g8}, y lo que quedaba después era {g4}.",
+      "Al imaginar que dejas ese lugar, aparece {g11}, y aun así {g13} te alivia un poco.",
+      "Para ajustar la distancia, lo tuyo es {g15}; quién te ha reconocido: {g17}; y si pudieras ser tú sin perder el vínculo, querrías empezar por {g19}.",
     ],
-    perspectiveLine: "Lo que le dijiste al niño que fuiste también lo guardo, con tus palabras.",
+    perspectiveLine: "Lo que le dijiste a quien eras en la infancia también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
   },
 };

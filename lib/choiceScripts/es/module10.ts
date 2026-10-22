@@ -66,10 +66,10 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
     },
     7: {
       turn: 7,
-      question: "Una vez absorto, ¿qué se parece más a ti?",
+      question: "Cuando algo te absorbe, ¿qué se parece más a ti?",
       options: [
-        o("Pierdo la noción del tiempo", "Una vez absorto, pierdes la noción del tiempo.", "tan hondo que pierdes la noción del tiempo"),
-        o("Vuelvo a la realidad de vez en cuando", "Aun absorto, vuelves a la realidad de vez en cuando.", "yendo y viniendo con la realidad"),
+        o("Pierdo la noción del tiempo", "Cuando algo te absorbe, pierdes la noción del tiempo.", "tan hondo que pierdes la noción del tiempo"),
+        o("Vuelvo a la realidad de vez en cuando", "Aunque algo te absorba, vuelves a la realidad de vez en cuando.", "yendo y viniendo con la realidad"),
       ],
     },
     8: {
@@ -95,9 +95,9 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
       turn: 11,
       question: "¿Cómo te cambiaron esas palabras?",
       options: [
-        o("Empecé a dudar de mí", "Al oírlo, empezaste a dudar de ti.", "la duda sobre ti mismo"),
-        o("Me esforcé más en disimularlo", "Al oírlo, te esforzaste más en disimularlo.", "esforzarte más en disimularlo"),
-        o("No cambió mucho", "Aun después de oírlo, no cambió mucho.", "ningún cambio"),
+        o("Empecé a dudar de mí", "Al oírlo, empezaste a dudar de ti.", "la duda sobre ti"),
+        o("Me esforcé más en disimularlo", "Al oírlo, te esforzaste más en disimularlo.", "el esfuerzo por disimularlo"),
+        o("No cambió mucho", "Aun después de oírlo, no cambió mucho.", "poco cambio"),
       ],
     },
     12: {
@@ -111,7 +111,7 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
     },
     13: {
       turn: 13,
-      question: "¿Qué dificultad tenía esa tarea entonces?",
+      question: "Esa tarea, ¿era fácil o difícil para ti?",
       options: [
         o("Fácil", "La tarea era más bien fácil.", "una tarea fácil"),
         o("Justo lo bastante difícil", "La tarea era justo lo bastante difícil.", "una tarea justo lo bastante difícil"),
@@ -133,7 +133,7 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
       options: [
         o("Cambiar de sitio o de entorno", "Cambiar de sitio o de entorno es lo que más usas.", "cambiar de sitio o de entorno"),
         o("Dividir el tiempo con un temporizador", "Dividir el tiempo con un temporizador es lo que más usas.", "dividir el tiempo con un temporizador"),
-        o("Aún no he fijado ninguno", "Todavía no has fijado un método que uses a menudo.", "ningún método fijo"),
+        o("Aún no he fijado ninguno", "Todavía no has fijado un método que uses a menudo.", "no tener aún un método fijo"),
       ],
     },
     16: {
@@ -170,15 +170,15 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
       options: [
         o("Apagar una notificación", "Apagar una notificación es el comienzo más pequeño.", "apagar una notificación"),
         o("Abrir una sola cosa cada vez", "Abrir una sola cosa cada vez es el comienzo más pequeño.", "abrir una sola cosa cada vez"),
-        o("Reservar un hueco para el flow", "Reservar un hueco para el flow es el comienzo más pequeño.", "reservar un hueco para el flow"),
+        o("Reservar un rato sin interrupciones", "Reservar un rato sin interrupciones es el comienzo más pequeño.", "reservar un rato sin interrupciones"),
       ],
     },
     20: {
       turn: 20,
-      question: "Cuando estaba absorto y el tiempo se me iba, ¿cómo era yo?",
+      question: "Cuando algo te absorbía y se te iba el tiempo, ¿cómo eras?",
       options: [
         o("Con los ojos brillantes", "La luz estaba encendida hasta poder verse.", "unos ojos brillantes"),
-        o("Muy callado", "Entrando hondo sin hacer ruido.", "estar muy callado"),
+        o("En silencio total", "Entrando hondo sin hacer ruido.", "estar muy callado"),
         o("No lo recuerdo bien", "La escena se ha desdibujado, pero el tiempo permanece.", "un recuerdo borroso"),
       ],
     },
@@ -195,8 +195,8 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
   closing: {
     summary: [
       "Lo que primero se lleva tu atención es {g2}, al dispersarte tu ánimo se parece a {g4}, y el punto donde se queda a medias es {g6}.",
-      "Ante las palabras «no se concentra» estaba {g11}, y la condición del flow es {g13}.",
-      "Para concentrarte, lo tuyo es {g15}, las personas con quienes el ritmo encaja son {g17}, y un comienzo a tu medida empieza por {g19}.",
+      "Lo que dejaron en ti las palabras «no se concentra» fue {g11}, y lo que te ayuda a sumergirte es {g13}.",
+      "Para concentrarte, lo tuyo es {g15}; con quién encaja tu ritmo: {g17}; y un comienzo a tu medida empieza por {g19}.",
     ],
     perspectiveLine: "Lo que dijo el tú de entonces también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",

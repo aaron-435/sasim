@@ -41,7 +41,7 @@ export const MODULE7_SCRIPT_ES: ModuleScript = {
       turn: 4,
       question: "Cuando te acercas a tu límite, ¿qué se parece más a cómo eres?",
       options: [
-        o("Abrumado y en blanco", "La entrada desborda y te apagas un momento.", "quedarte en blanco"),
+        o("Abrumado y en blanco", "La entrada desborda y te apagas un momento.", "el quedarte en blanco"),
         o("Irritable", "La reacción sale con aspereza.", "la irritabilidad"),
         o("Con ganas de irme de ahí", "El deseo de poner distancia va por delante.", "las ganas de irte"),
       ],
@@ -49,10 +49,10 @@ export const MODULE7_SCRIPT_ES: ModuleScript = {
     5: {
       turn: 5,
       quote: true,
-      question: "Estas sensaciones, ¿las tienes desde pequeño o aparecieron al crecer?",
-      questionNoQuote: "Tu sensibilidad aguda, ¿la tienes desde pequeño o apareció al crecer?",
+      question: "Estas sensaciones, ¿las tienes desde la infancia o aparecieron al crecer?",
+      questionNoQuote: "Tu sensibilidad aguda, ¿la tienes desde la infancia o apareció al crecer?",
       options: [
-        o("Desde pequeño", "Estas sensaciones están desde que eras pequeño.", "una sensibilidad desde la infancia"),
+        o("Desde la infancia", "Estas sensaciones están desde que eras pequeño.", "una sensibilidad desde la infancia"),
         o("Aparecieron al crecer", "Estas sensaciones aparecieron al crecer.", "una sensibilidad que llegó al crecer"),
       ],
     },
@@ -96,7 +96,7 @@ export const MODULE7_SCRIPT_ES: ModuleScript = {
       question: "Cuando lo oíste, ¿hacia dónde se inclinó tu ánimo?",
       options: [
         o("Me dolió", "Te dolió al oírlo en aquel momento.", "el dolor"),
-        o("Pensé: será verdad", "Lo oíste y pensaste: será verdad.", "tomarlo con calma"),
+        o("Lo dejé pasar sin más", "Lo oíste y lo dejaste pasar sin más.", "la calma de dejarlo pasar"),
         o("No lo sé", "No sabes cómo te sentiste entonces.", "algo que todavía no tiene palabras"),
       ],
     },
@@ -133,7 +133,7 @@ export const MODULE7_SCRIPT_ES: ModuleScript = {
       options: [
         o("Salir un momento", "Para reducir el estímulo, sales un momento.", "salir un momento"),
         o("Usar algo como auriculares", "Para reducir el estímulo, usas algo como auriculares.", "usar una herramienta"),
-        o("Nada en particular", "No tienes nada en particular para reducir el estímulo.", "ningún método fijo"),
+        o("Nada en particular", "No tienes nada en particular para reducir el estímulo.", "no tener aún un método fijo"),
       ],
     },
     16: {
@@ -174,16 +174,16 @@ export const MODULE7_SCRIPT_ES: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "El día en que ese niño oyó por primera vez «eres demasiado sensible», ¿cómo crees que estaba?",
+      question: "Aquel día de tu infancia en que oíste por primera vez «eres demasiado sensible», ¿cómo crees que estabas?",
       options: [
-        o("Callado", "Un niño que se guardó las palabras sin hacer ruido.", "estar callado"),
-        o("Dolido", "Una escena en la que se ve dónde cayeron las palabras.", "verse dolido"),
+        o("En silencio", "Un niño que se guardó las palabras sin hacer ruido.", "estar callado"),
+        o("Con dolor", "Una escena en la que se ve dónde cayeron las palabras.", "verse dolido"),
         o("No lo recuerdo", "Tanto como se ha alejado el recuerdo, así ha pasado el tiempo.", "un recuerdo que se ha alejado"),
       ],
     },
     21: {
       turn: 21,
-      question: "¿Hay algo que el tú de hoy quiera decirle a ese niño?",
+      question: "¿Hay algo que quieras decirle a tu yo de la infancia?",
     },
   },
   checkpoint: [
@@ -194,10 +194,10 @@ export const MODULE7_SCRIPT_ES: ModuleScript = {
   closing: {
     summary: [
       "Lo primero que entra es {g2}, cerca de tu límite aparece {g4}, y volver a ti lleva {g6}.",
-      "Ante la palabra «sensible» estaba {g11}, y lo que te recarga ahora es {g13}.",
-      "En un lugar difícil, lo tuyo es {g15}, quienes te entienden son {g17}, y querrías empezar por {g19}.",
+      "Lo que hubo en ti ante la palabra «sensible» fue {g11}, y lo que te recarga ahora es {g13}.",
+      "En un lugar difícil, lo tuyo es {g15}; quién te entiende: {g17}; y querrías empezar por {g19}.",
     ],
-    perspectiveLine: "Lo que le dijiste a ese niño también lo guardo, con tus palabras.",
+    perspectiveLine: "Lo que le dijiste a tu yo de la infancia también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
   },
 };

@@ -24,7 +24,7 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
       turn: 2,
       question: "¿En qué tipo de momento sube más el enfado?",
       options: [
-        o("Su tono o su actitud", "Engancharte más en cómo se dice que en lo que se dice.", "el tono y la actitud del otro"),
+        o("Cuando veo su tono o su actitud", "Engancharte más en cómo se dice que en lo que se dice.", "el tono y la actitud del otro"),
         o("Que se rompa una promesa", "El momento en que algo acordado se tuerce se queda grande.", "una promesa rota"),
         o("Que ignoren lo que digo", "La escena de palabras que no llegan está por delante.", "que ignoren lo que dices"),
       ],
@@ -102,7 +102,7 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
     12: {
       turn: 12,
-      question: "De pequeño, ¿cómo era el enfado en casa?",
+      question: "En tu infancia, ¿cómo era el enfado en casa?",
       options: [
         o("Algo que se podía mostrar", "Un ambiente en que se permitía expresarlo.", "algo que se podía mostrar"),
         o("Algo que había que aguantar", "Un entorno donde contenerlo era lo habitual.", "algo que había que aguantar"),
@@ -113,9 +113,9 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
       turn: 13,
       question: "¿Hay alguien con quien puedas desahogarte?",
       options: [
-        o("Sí, alguien con quien es fácil", "Hay una persona fácil con quien desahogarte.", "alguien con quien es fácil desahogarte"),
-        o("Elijo un poco con quién", "Al desahogarte, eliges un poco a la persona.", "desahogarte con unos pocos elegidos"),
-        o("Nadie en particular", "No hay realmente nadie con quien desahogarte.", "nadie con quien desahogarte"),
+        o("Sí, alguien con quien es fácil", "Hay alguien con quien te resulta fácil desahogarte.", "alguien con quien es fácil"),
+        o("Elijo un poco con quién", "Al desahogarte, eliges un poco a la persona.", "unas pocas personas que eliges"),
+        o("Nadie en particular", "No hay realmente nadie con quien desahogarte.", "nadie en particular"),
       ],
     },
     14: {
@@ -149,8 +149,8 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
       turn: 17,
       question: "Cuando pusiste el enfado en palabras, ¿cómo reaccionó el otro?",
       options: [
-        o("Lo acogió", "Cuando lo dijiste, lo acogió.", "que lo acogió"),
-        o("Fue una discusión mayor", "Cuando lo dijiste, acabó en una discusión mayor.", "que fue una discusión mayor"),
+        o("Lo acogió", "Cuando lo dijiste, la otra persona lo recibió bien.", "que lo recibieron bien"),
+        o("Fue una discusión mayor", "Cuando lo dijiste, acabó en una discusión más fuerte.", "una discusión más fuerte"),
         o("Casi nunca lo he dicho", "Casi nunca has puesto el enfado en palabras.", "que casi nunca lo has dicho"),
       ],
     },
@@ -188,15 +188,15 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, el enfado sube con {g2}, debajo está {g4}, y tarda en calmarse {g8}.",
+    "Por lo que me has contado, el enfado sube con {g2}, debajo está {g4}, y el tiempo que tarda en calmarse: {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
   closing: {
     summary: [
-      "Tu enfado sube con {g2}, debajo está {g4}, y tardó en calmarse {g8}.",
-      "La línea que tocó fue {g11}, y aun así a tu lado queda {g13}.",
-      "Para calmarte, lo tuyo es {g15}, al ponerlo en palabras viste {g17}, y si trazaras una línea sería algo como {g19}.",
+      "Tu enfado sube con {g2}, debajo está {g4}, y el tiempo que tardó en calmarse: {g8}.",
+      "La línea que se cruzó fue {g11}, y con quién desahogarte: {g13}.",
+      "Para calmarte, lo tuyo es {g15}; al ponerlo en palabras, lo que pasó fue: {g17}; y si trazaras una línea sería algo como {g19}.",
     ],
     perspectiveLine: "Lo que dijo el tú de la mañana siguiente también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",

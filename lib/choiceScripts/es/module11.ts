@@ -68,7 +68,7 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
       turn: 7,
       question: "Cuando alguien te dice que lo hiciste bien, ¿qué haces primero?",
       options: [
-        o("Lo acepto agradecido", "Cuando te dicen que lo hiciste bien, lo aceptas agradecido.", "aceptarlo con gratitud"),
+        o("Lo acepto y doy las gracias", "Cuando te dicen que lo hiciste bien, lo aceptas con gratitud.", "aceptarlo con gratitud"),
         o("Le quito importancia", "Cuando te dicen que lo hiciste bien, primero le quitas importancia.", "quitarle importancia primero"),
       ],
     },
@@ -86,8 +86,8 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
       quote: true,
       question: "Cuando dijiste lo que querías, ¿qué tipo de respuesta te llegó con más frecuencia?",
       options: [
-        o("Me la aceptaron", "Hay un recuerdo de palabras que llegaron a su sitio.", "que te lo aceptaran"),
-        o("Me la dejaron pasar", "Quedan palabras que pasaron sin llegar.", "que te lo dejaran pasar"),
+        o("Lo aceptaron", "Hay un recuerdo de palabras que llegaron a su sitio.", "que te lo aceptaran"),
+        o("Lo dejaron pasar", "Quedan palabras que pasaron sin llegar.", "que te lo dejaran pasar"),
         o("Se rieron de mí", "Una escena que volvió convertida en risa se queda mucho.", "que se rieran de ti"),
       ],
     },
@@ -95,9 +95,9 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
       turn: 11,
       question: "Si mostraras lo que quieres, ¿cómo crees que se vería?",
       options: [
-        o("Egoísta", "Si mostraras lo que quieres, podría verse egoísta.", "el miedo a parecer egoísta"),
-        o("Raro", "Si mostraras lo que quieres, podría resultar raro.", "el miedo a que se ponga raro"),
-        o("Nada del otro mundo", "Aunque mostraras lo que quieres, podría no ser para tanto.", "la sensación de que no sería para tanto"),
+        o("Egoísta", "Sientes que se vería egoísta.", "el miedo a parecer egoísta"),
+        o("Raro", "Sientes que resultaría raro.", "el miedo a que resulte raro"),
+        o("Nada del otro mundo", "Sientes que no sería para tanto.", "la sensación de que no sería para tanto"),
       ],
     },
     12: {
@@ -132,9 +132,9 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
       turn: 15,
       question: "¿Adónde suele ir el sentimiento que te tragaste?",
       options: [
-        o("Se olvida", "Un sentimiento tragado suele olvidarse.", "olvidarse"),
-        o("Lo lleno yo a solas", "Un sentimiento tragado suele llenarse a solas.", "llenarlo a solas"),
-        o("Estalla más tarde", "Un sentimiento tragado suele estallar más tarde.", "estallar más tarde"),
+        o("Se olvida", "Un sentimiento tragado suele olvidarse.", "que se olvide"),
+        o("Lo digiero a solas", "El sentimiento tragado sueles digerirlo a solas.", "digerirlo a solas"),
+        o("Estalla más tarde", "Un sentimiento tragado suele estallar más tarde.", "que estalle más tarde"),
       ],
     },
     16: {
@@ -175,16 +175,16 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "El día en que te diste ese permiso, ¿cómo crees que me vería?",
+      question: "El día en que te des ese permiso, ¿cómo crees que te verás?",
       options: [
-        o("Mucho más ligero", "Una figura con una capa de carga menos en los hombros.", "sentirte mucho más ligero"),
-        o("Un poco raro", "Una escena de encontrarte con una cara que nunca habías visto.", "sentirte un poco raro"),
+        o("Con mucho menos peso", "Una figura con una capa de carga menos en los hombros.", "sentirte mucho más ligero"),
+        o("Con algo de extrañeza", "Una escena de encontrarte con una cara que nunca habías visto.", "sentirte un poco raro"),
         o("No lo veo claro", "Esa escena sigue borrosa por ahora.", "una imagen todavía borrosa"),
       ],
     },
     21: {
       turn: 21,
-      question: "Si el niño que fuiste, el que decía lo que quería sin reparos, pudiera decirte algo ahora, ¿qué sería?",
+      question: "Si tu yo de la infancia, el que decía lo que quería sin reparos, pudiera decirte algo ahora, ¿qué sería?",
     },
   },
   checkpoint: [
@@ -195,10 +195,10 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
   closing: {
     summary: [
       "Lo que te tragaste hace poco es {g2}, después tu ánimo se parece a {g4}, y donde más te lo tragas es {g6}.",
-      "Mostrar lo que quieres trae {g11}, y para el sentimiento tragado lo tuyo es {g15}.",
-      "Las personas con quienes puedes hablar a gusto son {g17}, y el pequeño permiso que te darías empieza por {g19}.",
+      "Mostrar lo que quieres trae {g11}, y con el sentimiento tragado lo que suele pasar es {g15}.",
+      "Con quién puedes decir a gusto lo que quieres: {g17}; y el pequeño permiso que te darías empieza por {g19}.",
     ],
-    perspectiveLine: "Lo que dijo el niño que fuiste también lo guardo, con tus palabras.",
+    perspectiveLine: "Lo que dijo tu yo de la infancia también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
   },
 };
