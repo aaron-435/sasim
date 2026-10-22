@@ -112,11 +112,11 @@ export const MODULE12_SCRIPT_EN: ModuleScript = {
     },
     13: {
       turn: 13,
-      question: "How does it feel to hold on to something that has ended for a long time?",
+      question: "How do you feel about holding on to something that's over for a long time?",
       options: [
-        o("Like it's weakness", "Holding on for long feels like it comes from weakness.", "a feeling of weakness"),
-        o("Like it mattered that much", "Holding on for long feels like it's because it mattered that much.", "a feeling that it mattered that much"),
-        o("I'm not sure", "You don't yet know how holding on for long feels.", "a feeling you don't know yet"),
+        o("Like it's weakness", "Holding on for long feels like it comes from weakness.", "weakness"),
+        o("Like it mattered that much", "Holding on for long feels like it's because it mattered that much.", "a sign it mattered that much"),
+        o("I'm not sure", "You don't yet know how holding on for long feels.", "something you can't name yet"),
       ],
     },
     14: {
@@ -176,7 +176,7 @@ export const MODULE12_SCRIPT_EN: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "On the day that scene appears, what do you think I'd look like?",
+      question: "On the day that scene appears, what do you think you'd look like?",
       options: [
         o("Breathing a little easier", "A scene where the chest opens up a hand's width.", "breathing a little easier"),
         o("Still unfamiliar", "A picture where strangeness stays near for a while.", "still feeling unfamiliar"),
@@ -185,7 +185,7 @@ export const MODULE12_SCRIPT_EN: ModuleScript = {
     },
     21: {
       turn: 21,
-      question: "Is there something the you of today would like to say to the you of that last day at the old place?",
+      question: "Is there something you'd like to say to yourself on that last day at the old place?",
     },
   },
   checkpoint: [
@@ -195,11 +195,11 @@ export const MODULE12_SCRIPT_EN: ModuleScript = {
   ],
   closing: {
     summary: [
-      "The first feeling after the change was close to {g4}, and thoughts of the past tend to come {g6}.",
-      "The standard for how fast you're expected to settle in is {g11}, and holding on to what ended brings {g13}.",
+      "The first feeling after the change was close to {g4}, and as for when thoughts of the past come, it's {g6}.",
+      "The standard for how fast you're expected to settle in is {g11}, and holding on to what ended feels like {g13} to you.",
       "In the undecided time, what you most often do is {g15}, your strength right now comes from {g17}, and you'd like to start dropping anchor in the new place with {g19}.",
     ],
-    perspectiveLine: "I'll also keep what you said to the you of that last day, in your own words.",
+    perspectiveLine: "I'll also keep the words you wrote to yourself on that last day, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

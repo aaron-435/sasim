@@ -97,8 +97,8 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
       turn: 11,
       question: "If that feeling went away, what would worry you most?",
       options: [
-        o("Falling behind", "Falling behind is what worries you most.", "falling behind"),
-        o("Becoming useless", "Becoming useless is what worries you most.", "becoming useless"),
+        o("Falling behind", "Falling behind is what worries you most.", "the worry of falling behind"),
+        o("Becoming useless", "Becoming useless is what worries you most.", "the worry of becoming useless"),
         o("I'm not sure", "What worries you most isn't clear yet.", "something not yet put into words"),
       ],
     },
@@ -176,7 +176,7 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "What was I like on the day I first started this work?",
+      question: "What were you like on the day you first started this work?",
       options: [
         o("Excited", "You started that day with excitement.", "excitement"),
         o("Nervous", "You started that day nervous.", "nervousness"),
@@ -185,7 +185,7 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
     },
     21: {
       turn: 21,
-      question: "If the you of today could say one thing to the you of that day, what would it be?",
+      question: "If you could say one thing to yourself on that first day, what would it be?",
     },
   },
   checkpoint: [
@@ -196,10 +196,10 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
   closing: {
     summary: [
       "The weight of your day starts with {g2}, runs toward {g4}, and what drains you most is {g8}.",
-      "Underneath the feeling that you mustn't rest sits {g11}, and still {g13} refills you a little.",
-      "Your way of holding on is {g15}, for help it's {g17}, and once your energy returns, you'd start with {g19}.",
+      "Underneath the feeling that you mustn't rest sits {g11}, and you still get a little refill from {g13}.",
+      "When work thoughts cut in, it's {g15}; as for who's noticed how you are, it's {g17}; and once your energy returns, you'd start with {g19}.",
     ],
-    perspectiveLine: "I'll keep what you said to the you of that first day with the rest, in your own words.",
+    perspectiveLine: "I'll also keep the words you wrote to yourself on that first day, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

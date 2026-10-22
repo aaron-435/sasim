@@ -27,7 +27,7 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
       options: [
         o("They must be busy", "You tend to look for the reason in their situation first.", "the thought that they must be busy"),
         o("Did I do something wrong?", "The first arrow points back at yourself.", "the thought that you did something wrong"),
-        o("Nothing really comes up", "Not having a story attach is an answer too.", "nothing really coming up"),
+        o("Nothing really comes up", "Not having a story attach is an answer too.", "nothing in particular"),
       ],
     },
     3: {
@@ -86,8 +86,8 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
     10: {
       turn: 10,
       quote: true,
-      question: "Where do you feel that idea of what you have to be to be loved came from?",
-      questionNoQuote: "If you have an idea of what you must be to be loved, where do you feel it came from?",
+      question: "Where do you think your sense of what it takes to be loved came from?",
+      questionNoQuote: "If you have a sense of what it takes to be loved, where do you think it came from?",
       options: [
         o("From a past relationship", "Closer to a rule learned in a past relationship.", "a past relationship"),
         o("From childhood", "A rule that reaches back to old memories.", "a memory from childhood"),
@@ -98,9 +98,9 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
       turn: 11,
       question: "To be loved, I have to ___. What's the closest way to fill in the blank?",
       options: [
-        o("be good to them", "So to be loved, you have to be good to them.", "the belief that you have to be good to them"),
-        o("put up with things", "So to be loved, you have to put up with things.", "the belief that you have to put up with things"),
-        o("be someone they need", "So to be loved, you have to be someone they need.", "the belief that you have to be someone they need"),
+        o("be good to them", "So the sense is that to be loved, you have to be good to them.", "the belief that you have to be good to them"),
+        o("put up with things", "So the sense is that to be loved, you have to put up with things.", "the belief that you have to put up with things"),
+        o("be someone they need", "So the sense is that to be loved, you have to be someone they need.", "the belief that you have to be someone they need"),
       ],
     },
     12: {
@@ -118,7 +118,7 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
       options: [
         o("When I hear it said", "You feel loved when you hear it in words.", "hearing it in words"),
         o("When I see it in actions", "You feel loved when you see it in actions.", "seeing it in actions"),
-        o("When they're simply beside me", "You feel loved when they're simply beside you.", "being together beside each other"),
+        o("When they're simply beside me", "You feel loved when they're simply beside you.", "having them beside you"),
       ],
     },
     14: {
@@ -151,7 +151,7 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
     },
     17: {
       turn: 17,
-      question: "When I'm like that, what does the other person usually do?",
+      question: "When you're like that, what does the other person usually do?",
       options: [
         o("Come to me first", "At those times, they usually come to you first.", "coming to you first"),
         o("Wait for me", "At those times, they usually wait for you.", "waiting for you"),
@@ -179,7 +179,7 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "When I start my next love and my inner alarm goes off, what do you think I'll look like?",
+      question: "When you start your next relationship and your inner alarm goes off, what do you think you'll be like?",
       options: [
         o("Taking a moment to breathe", "A picture with a beat before moving.", "taking a moment to breathe"),
         o("Still checking first", "A picture where today's way carries on.", "checking first"),
@@ -188,7 +188,7 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
     },
     21: {
       turn: 21,
-      question: "Is there one thing the you of today really wants to say to the you of that moment?",
+      question: "If you could say one thing to yourself in that moment, what would it be?",
     },
   },
   checkpoint: [
@@ -202,7 +202,7 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
       "After a fight, {g8} comes first, and to be loved you carry {g11}.",
       "You feel loved through {g13}, when you're uneasy it's {g15}, what the other person does at those times is {g17}, and you'd like to start with {g19}.",
     ],
-    perspectiveLine: "I'll also keep what you said to the you who starts the next love, in your own words.",
+    perspectiveLine: "I'll also keep the words you wrote to the you who starts the next love, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

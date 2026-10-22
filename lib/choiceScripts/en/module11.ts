@@ -50,9 +50,9 @@ export const MODULE11_SCRIPT_EN: ModuleScript = {
       quote: true,
       question: "How often do you say things like \"whatever\" or \"I'm fine\"?",
       options: [
-        o("Often", "You're on the side that often says \"whatever\" or \"I'm fine.\"", "saying it often"),
-        o("Sometimes", "You're on the side that sometimes says \"whatever\" or \"I'm fine.\"", "saying it sometimes"),
-        o("Hardly ever", "You're on the side that hardly ever says \"whatever\" or \"I'm fine.\"", "hardly ever saying it"),
+        o("Often", "So you often say \"whatever\" or \"I'm fine.\"", "saying it often"),
+        o("Sometimes", "So you sometimes say \"whatever\" or \"I'm fine.\"", "saying it sometimes"),
+        o("Hardly ever", "So you hardly ever say \"whatever\" or \"I'm fine.\"", "hardly ever saying it"),
       ],
     },
     6: {
@@ -95,8 +95,8 @@ export const MODULE11_SCRIPT_EN: ModuleScript = {
       turn: 11,
       question: "If you showed what you want, how do you think it would look?",
       options: [
-        o("Selfish", "If you showed what you want, it might look selfish.", "the worry of looking selfish"),
-        o("Awkward", "If you showed what you want, it might feel awkward.", "the worry of it getting awkward"),
+        o("Selfish", "So it feels like showing what you want might look selfish.", "the worry of looking selfish"),
+        o("Awkward", "So it feels like showing what you want might get awkward.", "the worry of it getting awkward"),
         o("No big deal", "Even if you showed what you want, it might be no big deal.", "a sense that it'd be no big deal"),
       ],
     },
@@ -133,7 +133,7 @@ export const MODULE11_SCRIPT_EN: ModuleScript = {
       question: "Where does the swallowed feeling usually go?",
       options: [
         o("It gets forgotten", "A swallowed feeling usually gets forgotten.", "getting forgotten"),
-        o("I fill it in alone", "A swallowed feeling usually gets filled in alone.", "filling it in alone"),
+        o("I settle it on my own", "So a swallowed feeling is usually something you settle on your own.", "settling it on your own"),
         o("It bursts out later", "A swallowed feeling usually bursts out later.", "bursting out later"),
       ],
     },
@@ -175,7 +175,7 @@ export const MODULE11_SCRIPT_EN: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "On the day you gave yourself that permission, what do you think I'd look like?",
+      question: "On the day you gave yourself that permission, what do you think you'd look like?",
       options: [
         o("Much lighter", "A figure with one layer of load off the shoulders.", "feeling much lighter"),
         o("A little unfamiliar", "A scene of facing a face you've never seen.", "feeling a little unfamiliar"),
@@ -196,9 +196,9 @@ export const MODULE11_SCRIPT_EN: ModuleScript = {
     summary: [
       "What you swallowed recently is {g2}, afterward your mind is close to {g4}, and where you mostly swallow is {g6}.",
       "Showing what you want brings {g11}, and for the swallowed feeling it's {g15}.",
-      "The people you can speak comfortably with are {g17}, and the small permission you'd give yourself starts with {g19}.",
+      "As for someone you can easily tell what you want, it's {g17}, and the small permission you'd give yourself starts with {g19}.",
     ],
-    perspectiveLine: "I'll also keep what the child you once were said, in your own words.",
+    perspectiveLine: "I'll also keep the words you wrote as the child you once were, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

@@ -17,7 +17,7 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
       options: [
         o("Crowded places", "The sensations come on strongest in crowded places.", "crowded places"),
         o("Where I work", "The sensations come on strongest in the space where you work.", "the workspace"),
-        o("Even somewhere comfortable like home", "The sensations come on strong even in somewhere comfortable like home.", "comfortable places"),
+        o("Even somewhere comfortable like home", "So they come on strong even somewhere comfortable, like home.", "comfortable places"),
       ],
     },
     2: {
@@ -96,7 +96,7 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
       question: "When you heard that, which way did your heart lean?",
       options: [
         o("It hurt", "It hurt when you heard it.", "hurt"),
-        o("I just thought, maybe so", "You heard it and just thought, maybe so.", "taking it calmly"),
+        o("I just thought, maybe so", "You heard it and just thought, maybe so.", "calm acceptance"),
         o("I'm not sure", "You're not sure how you felt back then.", "something not yet put into words"),
       ],
     },
@@ -174,7 +174,7 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "On the day that child first heard \"you're too sensitive,\" what do you think they looked like?",
+      question: "Think back to the first time someone said you were \"too sensitive.\" What do you think you looked like then?",
       options: [
         o("Quiet", "A child who took the words in without a sound.", "being quiet"),
         o("Hurt", "A scene where you can see where the words landed.", "looking hurt"),
@@ -183,7 +183,7 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
     },
     21: {
       turn: 21,
-      question: "Is there something the you of today would like to say to that child?",
+      question: "Is there something you'd like to say to yourself back then?",
     },
   },
   checkpoint: [
@@ -194,10 +194,10 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
   closing: {
     summary: [
       "What comes in first is {g2}, near your limit {g4} shows up, and coming back takes {g6}.",
-      "In front of the word \"sensitive\" there was {g11}, and what refills you now is {g13}.",
-      "In a hard setting it's {g15}, the people who understand are {g17}, and you'd like to start with {g19}.",
+      "When you heard the word \"sensitive,\" what you felt was {g11}, and what recharges you now is {g13}.",
+      "In a hard setting it's {g15}; as for who understands you, it's {g17}; and you'd like to start with {g19}.",
     ],
-    perspectiveLine: "I'll also keep what you said to that child, in your own words.",
+    perspectiveLine: "I'll also keep the words you wrote to yourself back then, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

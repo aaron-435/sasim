@@ -33,8 +33,8 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
       turn: 3,
       question: "Right before paying, which is closer to you?",
       options: [
-        o("I pause and weigh it", "Right before paying, you're on the side that pauses and weighs it.", "pausing once"),
-        o("I pay now, think later", "Right before paying, you're on the side that pays first and thinks later.", "paying first"),
+        o("I pause and weigh it", "So right before paying, you pause and weigh it.", "pausing once"),
+        o("I pay now, think later", "So right before paying, you pay first and think later.", "paying first"),
       ],
     },
     4: {
@@ -80,7 +80,7 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
       options: [
         o("It shuts tighter", "The bigger the worry, the tighter the lock.", "saving more"),
         o("It actually opens", "Working off the anxiety by spending.", "spending more instead"),
-        o("No real change", "Worry and wallet move separately.", "nothing changing"),
+        o("No real change", "Worry and wallet move separately.", "carrying on as usual"),
       ],
     },
     10: {
@@ -97,9 +97,9 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
       turn: 11,
       question: "If you filled in 'Money is, in the end, ___' right away, what comes to mind first?",
       options: [
-        o("The safety that protects me", "So money is, in the end, the safety that protects you.", "safety"),
-        o("The freedom that makes life easier", "So money is, in the end, the freedom that makes life easier.", "freedom"),
-        o("The yardstick I'm measured by", "So money is, in the end, the yardstick you're measured by.", "a yardstick for yourself"),
+        o("The safety that protects me", "So to you, money is, in the end, the safety that protects you.", "safety"),
+        o("The freedom that makes life easier", "So to you, money is, in the end, the freedom that makes life easier.", "freedom"),
+        o("The yardstick I'm measured by", "So to you, money is, in the end, the yardstick you're measured by.", "a yardstick for yourself"),
       ],
     },
     12: {
@@ -191,7 +191,7 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
     },
   },
   checkpoint: [
-    "From what you've told me, what weighs most around money looks like {g2}, after paying it's close to {g4}, and on days the worry grows {g8} comes first.",
+    "From what you've told me, what weighs most around money looks like {g2}, after paying it's close to {g4}, and on days the worry grows, {g8} comes first.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
@@ -201,7 +201,7 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
       "In the blank of 'Money is, in the end, ___' you put {g11}, and what you've kept steadily is {g13}.",
       "When worry rises it's {g15}, the person it's most uncomfortable to talk to is {g17}, and you'd like to start with {g19}.",
     ],
-    perspectiveLine: "I'll also keep what you'd tell the person with their first paycheck, in your own words.",
+    perspectiveLine: "I'll also keep the words you wrote to the person with their first paycheck, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

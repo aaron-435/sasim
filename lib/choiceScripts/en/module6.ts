@@ -22,7 +22,7 @@ export const MODULE6_SCRIPT_EN: ModuleScript = {
     },
     2: {
       turn: 2,
-      question: "What kind of moment does anger most often rise in?",
+      question: "What usually sets the anger off?",
       options: [
         o("Their tone or attitude", "Snagging more on how it's delivered than on what's said.", "the other person's tone and attitude"),
         o("A promise being broken", "The moment something agreed on goes off track stays big.", "a broken promise"),
@@ -31,7 +31,7 @@ export const MODULE6_SCRIPT_EN: ModuleScript = {
     },
     3: {
       turn: 3,
-      question: "In that moment, does the anger rise right then or later?",
+      question: "When that happens, does the anger come up right away or later?",
       options: [
         o("Right there on the spot", "The anger rises right on the spot.", "right on the spot"),
         o("Much later, after the fact", "The anger only rises much later, after the fact.", "later, after the fact"),
@@ -149,9 +149,9 @@ export const MODULE6_SCRIPT_EN: ModuleScript = {
       turn: 17,
       question: "When you put your anger into words, how did the other person respond?",
       options: [
-        o("They took it in", "When you said it, they took it in.", "they took it in"),
-        o("It became a bigger fight", "When you said it, it turned into a bigger fight.", "it became a bigger fight"),
-        o("I've hardly ever said it", "You've hardly ever put anger into words.", "you've hardly ever said it"),
+        o("They took it in", "When you said it, they took it in.", "taken in"),
+        o("It became a bigger fight", "When you said it, it turned into a bigger fight.", "a bigger fight"),
+        o("I've hardly ever said it", "You've hardly ever put anger into words.", "something you've hardly done"),
       ],
     },
     18: {
@@ -195,10 +195,10 @@ export const MODULE6_SCRIPT_EN: ModuleScript = {
   closing: {
     summary: [
       "Your anger rises with {g2}, underneath it there's {g4}, and it took {g8} to settle.",
-      "The line it touched was {g11}, and still {g13} remains beside you.",
-      "To calm down it's {g15}, when you put it into words: {g17}, and if you drew a line it would be closer to {g19}.",
+      "The line it touched was {g11}, and as for someone to vent to, it's {g13}.",
+      "To calm down it's {g15}; when you've put it into words, it's been {g17}; and if you drew a line, it would be closer to {g19}.",
     ],
-    perspectiveLine: "I'll also keep what the you of the next morning said, in your own words.",
+    perspectiveLine: "I'll also keep the words you wrote as the you of the next morning, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

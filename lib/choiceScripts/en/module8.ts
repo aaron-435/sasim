@@ -38,7 +38,7 @@ export const MODULE8_SCRIPT_EN: ModuleScript = {
     },
     4: {
       turn: 4,
-      question: "In that moment, which is closer to your heart?",
+      question: "In that moment, what's the feeling closest to?",
       options: [
         o("Restlessness", "Tilting toward not being able to stay still.", "restlessness"),
         o("Anxiety", "The heart has already gone ahead to what's coming.", "anxiety"),
@@ -48,7 +48,7 @@ export const MODULE8_SCRIPT_EN: ModuleScript = {
     5: {
       turn: 5,
       quote: true,
-      question: "Have you had nights like this before?",
+      question: "Have nights like this been around a long time, or did they start recently?",
       questionNoQuote: "Have you had nights when it's hard to fall asleep before?",
       options: [
         o("For a long time", "These nights have been there a long time.", "nights that go way back"),
@@ -68,13 +68,13 @@ export const MODULE8_SCRIPT_EN: ModuleScript = {
       turn: 7,
       question: "Do you feel that night is the most \"your own\" time of the day?",
       options: [
-        o("Yes, night is my time", "You feel night is the most your own time of the day.", "night as your own time"),
+        o("Yes, night is my time", "So night feels like the time that's most your own.", "night as your own time"),
         o("No, I don't feel that", "You don't feel night is your own time.", "not setting the night apart"),
       ],
     },
     8: {
       turn: 8,
-      question: "When you lie down to sleep, what do you still put off?",
+      question: "Even after you lie down, what keeps you putting off sleep?",
       options: [
         o("Finishing leftover work", "Unfinished work follows you to the bed.", "finishing the leftover work"),
         o("Watching a bit more video", "Time on a screen stretches the night.", "watching videos"),
@@ -96,7 +96,7 @@ export const MODULE8_SCRIPT_EN: ModuleScript = {
       options: [
         o("Yes, I hate wasting the night", "There are times you don't want to sleep because you hate wasting the night.", "not wanting to waste the night"),
         o("Yes, I hate the day ending", "There are times you don't want to sleep because you hate the day ending.", "not wanting the day to end"),
-        o("No, not really", "You don't feel unwilling to sleep when tired.", "mostly not"),
+        o("No, not really", "So when you're tired, you don't usually fight sleep.", "no real pull to stay up"),
       ],
     },
     12: {
@@ -173,7 +173,7 @@ export const MODULE8_SCRIPT_EN: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "Tonight, when I turn off the lights and lie down, what do you think I'll be like?",
+      question: "Tonight, when you turn off the lights and lie down, what do you think you'll be like?",
       options: [
         o("Worn out", "Lying down carrying the day's weight.", "being worn out"),
         o("Full of thoughts", "It looks like a head that's still busy.", "being full of thoughts"),
@@ -182,7 +182,7 @@ export const MODULE8_SCRIPT_EN: ModuleScript = {
     },
     21: {
       turn: 21,
-      question: "Is there something the you of now would like to hand ahead to the you of tonight?",
+      question: "Is there something you'd like to tell yourself ahead of tonight?",
     },
   },
   checkpoint: [
@@ -194,9 +194,9 @@ export const MODULE8_SCRIPT_EN: ModuleScript = {
     summary: [
       "What plays first after the lights go out is {g2}, your heart then is close to {g4}, and what started your sleep coming apart was {g6}.",
       "The feeling that holds on to the night is {g11}, and what eases you a little even now is {g13}.",
-      "To fall asleep you rely on {g15}, the people who know are {g17}, and an easier night starts with {g19}.",
+      "When you're trying to sleep it's {g15}; as for who knows, it's {g17}; and an easier night starts with {g19}.",
     ],
-    perspectiveLine: "I'll also keep what you said to the you of tonight, in your own words.",
+    perspectiveLine: "I'll also keep the words you wrote for yourself tonight, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

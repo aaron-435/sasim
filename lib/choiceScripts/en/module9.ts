@@ -23,9 +23,9 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
       turn: 2,
       question: "In those moments, which side are you mostly on?",
       options: [
-        o("The talking side", "Leading the conversation is your share.", "the talking side"),
-        o("The listening side", "Standing where the ears stay open.", "the listening side"),
-        o("The one smoothing things in between", "A spot where you go back and forth coordinating.", "the one smoothing things in between"),
+        o("The talking side", "Leading the conversation is your share.", "doing the talking"),
+        o("The listening side", "Standing where the ears stay open.", "doing the listening"),
+        o("The one smoothing things in between", "A spot where you go back and forth coordinating.", "smoothing things over in between"),
       ],
     },
     3: {
@@ -49,7 +49,7 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
     5: {
       turn: 5,
       quote: true,
-      question: "Has your place in your family now been the same since you were young, or did it come as you grew up?",
+      question: "Has your place in the family been the same since you were young, or did it take shape as you grew up?",
       options: [
         o("Since I was young", "Your place in the family now has been the same since you were young.", "since childhood"),
         o("It came as I grew up", "Your place in the family now came as you grew up.", "since growing up"),
@@ -95,8 +95,8 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
       turn: 11,
       question: "How do you think it would feel to put that place down?",
       options: [
-        o("The family would get shaky", "If you put the place down, the family might get shaky.", "a feeling that the family would get shaky"),
-        o("I'd stop being needed", "If you put the place down, you might stop being needed.", "a feeling that you'd stop being needed"),
+        o("The family would get shaky", "So it feels like the family might get shaky if you put it down.", "a feeling that the family would get shaky"),
+        o("I'd stop being needed", "So it feels like you might stop being needed if you put it down.", "a feeling that you'd stop being needed"),
         o("I'm not sure", "You're not sure how it would feel to put it down.", "something you don't know yet"),
       ],
     },
@@ -132,7 +132,7 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
       turn: 15,
       question: "How do you adjust that distance?",
       options: [
-        o("I adjust how often we contact", "To adjust the distance, you adjust how often you reach out.", "adjusting how often you contact"),
+        o("I adjust how often we're in touch", "To adjust the distance, you adjust how often you reach out.", "adjusting how often you're in touch"),
         o("I cut down the time we meet", "To adjust the distance, you cut down the time you meet.", "cutting down the time you meet"),
         o("It's hard to adjust", "Adjusting the distance with family is hard.", "finding it hard to adjust"),
       ],
@@ -176,7 +176,7 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "What do you think I was like in that place as a child?",
+      question: "What do you think you were like in that place as a child?",
       options: [
         o("Standing dignified", "A child standing like a grown-up.", "standing dignified"),
         o("Quietly watching moods", "You can see the time spent reading the air.", "quietly watching moods"),
@@ -185,21 +185,21 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
     },
     21: {
       turn: 21,
-      question: "Is there something the you of today would like to say to the you of back then?",
+      question: "Is there something you'd like to say to yourself back then?",
     },
   },
   checkpoint: [
-    "From what you've told me, in family moments you stand as {g2}, what's left afterward is mostly {g4}, and when conflict came up you were {g8}.",
+    "From what you've told me, in family conversations your role is {g2}, what's left afterward is mostly {g4}, and when conflict came up, your spot was {g8}.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
   closing: {
     summary: [
       "Your place in the family has been {g6}, when conflict came up you were {g8}, and what was left afterward was {g4}.",
-      "Putting that place down brings {g11}, and still {g13} eases you a little.",
-      "To adjust the distance you rely on {g15}, those who recognized you are {g17}, and if you could stay connected and be yourself, you'd like to start with {g19}.",
+      "When you imagine putting that place down, there's {g11}, and {g13} still eases you a little.",
+      "For adjusting the distance it's {g15}; as for who has noticed the role you play, it's {g17}; and if you could stay connected and be yourself, you'd like to start with {g19}.",
     ],
-    perspectiveLine: "I'll also keep what you said to the child you were, in your own words.",
+    perspectiveLine: "I'll also keep the words you wrote to the child you were, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

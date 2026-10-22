@@ -49,10 +49,10 @@ export const MODULE4_SCRIPT_EN: ModuleScript = {
     5: {
       turn: 5,
       quote: true,
-      question: "Do you feel your self changes depending on who you meet?",
+      question: "Do you feel you change depending on who you're with?",
       options: [
-        o("Quite a lot", "Your self changes quite a lot depending on who you meet.", "a self that changes a lot"),
-        o("Only a little", "Even with different people, your self changes only a little.", "a self that changes only a little"),
+        o("Quite a lot", "So you change quite a lot depending on who you're with.", "a self that changes a lot"),
+        o("Only a little", "So you change only a little, even with different people.", "a self that changes only a little"),
       ],
     },
     6: {
@@ -150,7 +150,7 @@ export const MODULE4_SCRIPT_EN: ModuleScript = {
       turn: 17,
       question: "Is there someone near you now that you can be unmasked with?",
       options: [
-        o("One or two people", "There are one or two people near you you can be unmasked with.", "one or two people"),
+        o("One or two people", "So there are one or two people near you who you can drop the mask with.", "one or two people"),
         o("There was, but we drifted", "Someone like that was near you, but has drifted away.", "someone who used to be there"),
         o("Not yet", "There's no one yet near you to be unmasked with.", "no one yet"),
       ],
@@ -189,17 +189,17 @@ export const MODULE4_SCRIPT_EN: ModuleScript = {
     },
   },
   checkpoint: [
-    "From what you've told me, the mask gets thickest {g1}, what you adjust most is {g2}, after a gathering {g4} is what stays, and when plans are made {g8} comes first.",
+    "From what you've told me, where the mask gets thickest is {g1}, what you adjust most is {g2}, after a gathering what stays is {g4}, and when plans are made, {g8} comes first.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
   closing: {
     summary: [
-      "The mask gets thickest {g1}, and after a gathering what stays is {g4}.",
+      "Where the mask gets thickest is {g1}, and after a gathering what stays is {g4}.",
       "What the mask protects is {g11}, and in front of someone you can be unmasked with, what changes is {g13}.",
-      "On the days you hide, you recover through {g14}, the people beside you are {g17}, and you'd like to start with {g19}.",
+      "On the days you hide, you recover through {g14}; as for someone you can drop the mask with, it's {g17}; and you'd like to start with {g19}.",
     ],
-    perspectiveLine: "I'll also keep what you said to the person next to you in that same setting, in your own words.",
+    perspectiveLine: "I'll also keep the words you wrote to the person next to you in that same setting, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

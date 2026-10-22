@@ -32,8 +32,8 @@ export const MODULE10_SCRIPT_EN: ModuleScript = {
       turn: 3,
       question: "Which is harder: starting, or keeping going?",
       options: [
-        o("Starting is harder", "The starting side is harder.", "starting"),
-        o("Keeping going is harder", "The keeping-going side is harder.", "keeping going"),
+        o("Starting is harder", "So starting is the harder part.", "starting"),
+        o("Keeping going is harder", "So keeping going is the harder part.", "keeping going"),
       ],
     },
     4: {
@@ -50,9 +50,9 @@ export const MODULE10_SCRIPT_EN: ModuleScript = {
       quote: true,
       question: "Has something new you started ever fizzled out?",
       options: [
-        o("Often", "You're on the side where started things have often fizzled out.", "something that happened often"),
-        o("Sometimes", "You're on the side where started things sometimes fizzle out.", "something that happened sometimes"),
-        o("Hardly ever", "You're on the side where started things hardly ever fizzle out.", "something that hardly ever happened"),
+        o("Often", "So things you start have often fizzled out.", "something that happened often"),
+        o("Sometimes", "So things you start sometimes fizzle out.", "something that happened sometimes"),
+        o("Hardly ever", "So things you start hardly ever fizzle out.", "something that hardly ever happened"),
       ],
     },
     6: {
@@ -76,9 +76,9 @@ export const MODULE10_SCRIPT_EN: ModuleScript = {
       turn: 8,
       question: "If you picked one moment when your focus switches on, what is it?",
       options: [
-        o("When a deadline is close", "The closer the time limit, the more speed picks up.", "a deadline ahead"),
-        o("When I learn something new", "There's a moment when curiosity catches fire.", "the moment you learn something new"),
-        o("When someone is watching", "The gaze beside you acts as a switch.", "someone's gaze"),
+        o("When a deadline is close", "The closer the time limit, the more speed picks up.", "a deadline closing in"),
+        o("When I learn something new", "There's a moment when curiosity catches fire.", "learning something new"),
+        o("When someone is watching", "The gaze beside you acts as a switch.", "someone watching"),
       ],
     },
     10: {
@@ -97,7 +97,7 @@ export const MODULE10_SCRIPT_EN: ModuleScript = {
       options: [
         o("I started doubting myself", "Hearing that made you doubt yourself.", "doubt about yourself"),
         o("I tried harder to hide it", "Hearing that made you try harder to hide it.", "trying harder to hide it"),
-        o("It didn't change much", "Even after hearing that, not much changed.", "no change"),
+        o("It didn't change much", "Even after hearing that, not much changed.", "not much change"),
       ],
     },
     12: {
@@ -175,7 +175,7 @@ export const MODULE10_SCRIPT_EN: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "When you were lost in something and time slipped by, what was I like?",
+      question: "When you were lost in something and time slipped by, what were you like?",
       options: [
         o("My eyes were shining", "The light was on enough to see.", "bright, shining eyes"),
         o("Very quiet", "Going deep without a sound.", "being very quiet"),
@@ -188,17 +188,17 @@ export const MODULE10_SCRIPT_EN: ModuleScript = {
     },
   },
   checkpoint: [
-    "From what you've told me, what pulls your attention first is {g2}, when it scatters your mind is close to {g4}, and your focus switches on at {g8}.",
+    "From what you've told me, what pulls your attention first is {g2}, when it scatters your mind is close to {g4}, and what switches your focus on is {g8}.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
   closing: {
     summary: [
       "What pulls your attention first is {g2}, when it scatters your mind is close to {g4}, and the point where things fizzle is {g6}.",
-      "In front of the words \"can't focus\" there was {g11}, and the condition for flow is {g13}.",
-      "To focus you rely on {g15}, the people whose rhythm fits are {g17}, and a start that fits your way begins with {g19}.",
+      "After hearing \"can't focus,\" it was {g11}, and the condition for flow is {g13}.",
+      "To focus it's mostly {g15}; as for people whose rhythm fits yours, it's {g17}; and a start that fits your way begins with {g19}.",
     ],
-    perspectiveLine: "I'll also keep what the you of back then said, in your own words.",
+    perspectiveLine: "I'll also keep the words you wrote as the you of back then, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

@@ -24,9 +24,9 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
       turn: 2,
       question: "Right before you were about to open that task, what thought flashed by?",
       options: [
-        o("I have to do it well", "The standard stands up before you even start.", "the thought that you have to do it well"),
-        o("I don't want to do it now", "The not-wanting speaks up first.", "not wanting to do it"),
-        o("I don't know where to begin", "You stall at not finding the first square.", "not knowing where to begin"),
+        o("I have to do it well", "The standard stands up before you even start.", "the thought \"I have to do it well\""),
+        o("I don't want to do it now", "The not-wanting speaks up first.", "the thought \"I don't want to do this now\""),
+        o("I don't know where to begin", "You stall at not finding the first square.", "the thought \"where do I even begin\""),
       ],
     },
     3: {
@@ -96,8 +96,8 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
       turn: 11,
       question: "When the result falls short of the standard, what bothers you most?",
       options: [
-        o("Being judged as bad at the work", "Being judged as bad at the work is what bothers you most.", "a low opinion of the work"),
-        o("Being judged as bad myself", "Being judged as bad yourself is what bothers you most.", "a low opinion of yourself"),
+        o("Being judged as bad at the work", "Being judged as bad at the work is what bothers you most.", "the fear of the work being judged poorly"),
+        o("Being judged as bad myself", "Being judged as bad yourself is what bothers you most.", "the fear of being judged poorly yourself"),
         o("I'm not sure yet", "What bothers you most isn't clear yet.", "something not yet put into words"),
       ],
     },
@@ -189,7 +189,7 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
     },
   },
   checkpoint: [
-    "From what you've told me, right before starting {g2} flashes by, your mind then is close to {g4}, and what blocks you the hardest is {g8}.",
+    "From what you've told me, right before starting, {g2} flashes by, your mind then is close to {g4}, and what blocks you the hardest is {g8}.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
@@ -197,9 +197,9 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
     summary: [
       "Right before starting, {g2} flashes by, and underneath it what blocks you the hardest is {g8}.",
       "Beneath the standard sits {g11}, and what got you moving was {g13}.",
-      "When things pile up it's {g15}, the people who know are {g17}, and you'd like to start with {g19}.",
+      "When things pile up it's {g15}; as for who knows, it's {g17}; and you'd like to start with {g19}.",
     ],
-    perspectiveLine: "I'll also keep what the you of a year from now said, in your own words.",
+    perspectiveLine: "I'll also keep the words you wrote as the you of a year from now, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };
