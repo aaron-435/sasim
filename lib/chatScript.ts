@@ -101,9 +101,12 @@ function lastBotFirstLine(history: readonly ScriptHistoryMessage[]): string {
   return "";
 }
 
+/** 반응 줄이 없는 턴의 질문 앞에 붙는 이음말. */
+const CONNECTIVE = "그럼";
+
 /**
- * 앞 턴 답에 대한 반응 줄. 보기와 정확히 일치하면 그 보기의 reaction,
- * 직접 쓴 글이면 고정 풀에서 고른다. 건너뜀·빈 답이면 없음.
+ * 앞 턴 답에 대한 반응 줄. 홀수 턴 보기와 일치하면 그 보기의 reaction(답 인용),
+ * 짝수 턴 보기면 없음, 직접 쓴 글이면 고정 풀에서 고른다. 건너뜀·빈 답이면 없음.
  */
 function reactionForAnswer(
   script: ModuleScript,
@@ -116,8 +119,8 @@ function reactionForAnswer(
   if (!answer || answer === SKIP_ANSWER_TEXT) return null;
   const options = script.turns[prevTurn]?.options;
   const picked = options?.find((o) => normalizeAnswerText(o.text) === answer);
-  // 홀수 턴 보기만 답을 되받는 인용 반응을 쓰고, 짝수 턴은 고정 풀로 받는다(2026-10-22 결정).
-  if (picked && prevTurn % 2 === 1) return picked.reaction;
+  // 홀수 턴 보기만 답을 되받는 인용 반응을 쓰고, 짝수 턴 보기는 반응 줄 없이 다음 질문이 "그럼"으로 이어진다(2026-10-22 결정).
+  if (picked) return prevTurn % 2 === 1 ? picked.reaction : null;
   return pickFreeReaction(answer, turnNumber, prevFirstLine);
 }
 
@@ -189,7 +192,10 @@ export function buildScriptReply({ script, turnNumber, history, quoteLabel }: Bu
   if (turnNumber === 20) lines.push(PERSPECTIVE_LEAD_LINE);
   if (turn.quote && quoteLabel) lines.push(QUOTE_LINE_TEMPLATE.replace("{label}", quoteLabel));
   const quoted = Boolean(turn.quote && quoteLabel);
-  lines.push(turn.quote && !quoted && turn.questionNoQuote ? turn.questionNoQuote : turn.question);
+  let question = turn.quote && !quoted && turn.questionNoQuote ? turn.questionNoQuote : turn.question;
+  // 반응 줄이 없는 턴(짝수 턴 보기 뒤)은 질문 앞에 "그럼"을 붙여 이어 간다. 인용 줄이 앞서는 턴과 21턴(직접 입력)은 제외.
+  if (turnNumber > 1 && turnNumber !== 21 && lines.length === 0 && !quoted) question = `${CONNECTIVE} ${question}`;
+  lines.push(question);
   if (!turn.options || turn.options.length === 0) return { lines, inputOnly: true };
   return { lines, choices: turn.options.map((o) => o.text) };
 }
