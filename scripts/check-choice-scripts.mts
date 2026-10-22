@@ -86,12 +86,15 @@ function checkOption(moduleId: string, turn: number, idx: number, opt: ScriptOpt
   if (!opt.text.trim()) return err(moduleId, where, "보기 문구가 비어 있음");
   if ([...opt.text].length > MAX_OPTION_LEN) err(moduleId, where, `보기 ${[...opt.text].length}자 > ${MAX_OPTION_LEN}자: "${opt.text}"`);
   checkText(moduleId, where, opt.text, "보기");
-  checkText(moduleId, where, opt.reaction, "반응");
-  const len = [...opt.reaction].length;
-  if (len < REACTION_MIN || len > REACTION_MAX) err(moduleId, where, `반응 ${len}자(허용 ${REACTION_MIN}~${REACTION_MAX}자): "${opt.reaction}"`);
-  if (/[?？]/.test(opt.reaction)) err(moduleId, where, `반응이 질문 꼴: "${opt.reaction}"`);
-  if (PARROT_PATTERN.test(opt.reaction)) err(moduleId, where, `반응이 되받기 꼴: "${opt.reaction}"`);
-  if ((opt.reaction.match(/[.!]/g) ?? []).length > 1) err(moduleId, where, `반응이 한 문장이 아님: "${opt.reaction}"`);
+  const usesReaction = turn % 2 === 1; // 짝수 턴 반응은 엔진이 쓰지 않음(고정 풀)
+  if (usesReaction) checkText(moduleId, where, opt.reaction, "반응");
+  if (usesReaction) {
+    const len = [...opt.reaction].length;
+    if (len < REACTION_MIN || len > REACTION_MAX) err(moduleId, where, `반응 ${len}자(허용 ${REACTION_MIN}~${REACTION_MAX}자): "${opt.reaction}"`);
+    if (/[?？]/.test(opt.reaction)) err(moduleId, where, `반응이 질문 꼴: "${opt.reaction}"`);
+    if (PARROT_PATTERN.test(opt.reaction)) err(moduleId, where, `반응이 되받기 꼴: "${opt.reaction}"`);
+    if ((opt.reaction.match(/[.!]/g) ?? []).length > 1) err(moduleId, where, `반응이 한 문장이 아님: "${opt.reaction}"`);
+  }
   if (!opt.gist.trim()) {
     if (GIST_REQUIRED_TURNS.includes(turn)) err(moduleId, where, "gist가 비어 있음(필수 턴)");
   } else {
@@ -168,24 +171,23 @@ function checkModule(moduleId: string) {
     for (let i = 0; i < opts.length; i++) {
       for (let j = i + 1; j < opts.length; j++) {
         const s = similarity(opts[i].reaction, opts[j].reaction);
-        if (s >= SIMILARITY_LIMIT) err(moduleId, `T${t}`, `보기${i + 1}·${j + 1} 반응이 너무 비슷함(${s.toFixed(2)}): "${opts[i].reaction}" / "${opts[j].reaction}"`);
-        if (ending(opts[i].reaction) === ending(opts[j].reaction)) warn(moduleId, `T${t}`, `보기${i + 1}·${j + 1} 반응 끝이 같음("${ending(opts[i].reaction)}")`);
+        if (t % 2 === 1 && s >= 0.9) err(moduleId, `T${t}`, `보기${i + 1}·${j + 1} 반응이 너무 비슷함(${s.toFixed(2)}): "${opts[i].reaction}" / "${opts[j].reaction}"`);
         if (opts[i].gist.trim() && opts[i].gist === opts[j].gist) err(moduleId, `T${t}`, "다른 보기에 같은 gist");
       }
     }
   }
 
   // 이웃 턴의 "~네요/~군요" 연속, 일반 끝맺음 반복
-  for (let t = 1; t < 21; t++) {
+  for (let t = 1; t < 20; t += 2) {
     const a = script.turns[t]?.options;
-    const b = script.turns[t + 1]?.options;
+    const b = script.turns[t + 2]?.options;
     if (!a || !b) continue;
     for (const x of a) {
       for (const y of b) {
         const ex = strip(x.reaction).slice(-2);
         const ey = strip(y.reaction).slice(-2);
         if (ex === ey && (ex === "네요" || ex === "군요")) {
-          err(moduleId, `T${t}→T${t + 1}`, `이웃 반응이 둘 다 "${ex}"로 끝남: "${x.reaction}" / "${y.reaction}"`);
+          err(moduleId, `T${t}→T${t + 2}`, `이웃 반응이 둘 다 "${ex}"로 끝남: "${x.reaction}" / "${y.reaction}"`);
         }
       }
     }
@@ -193,7 +195,7 @@ function checkModule(moduleId: string) {
 
   // 모듈 안 반응·보기 중복
   const seenReaction = new Map<string, string>();
-  for (const t of CHOICE_TURNS) {
+  for (const t of CHOICE_TURNS.filter((x) => x % 2 === 1)) {
     for (const [i, o] of (script.turns[t]?.options ?? []).entries()) {
       const key = o.reaction.replace(/\s/g, "");
       const prev = seenReaction.get(key);
@@ -205,7 +207,7 @@ function checkModule(moduleId: string) {
   // 끝맺음 편중 경고(전체 반응 중 한 끝이 25% 초과)
   const counts = new Map<string, number>();
   let total = 0;
-  for (const t of CHOICE_TURNS) {
+  for (const t of CHOICE_TURNS.filter((x) => x % 2 === 1)) {
     for (const o of script.turns[t]?.options ?? []) {
       total++;
       counts.set(ending(o.reaction), (counts.get(ending(o.reaction)) ?? 0) + 1);

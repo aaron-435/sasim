@@ -116,7 +116,8 @@ function reactionForAnswer(
   if (!answer || answer === SKIP_ANSWER_TEXT) return null;
   const options = script.turns[prevTurn]?.options;
   const picked = options?.find((o) => normalizeAnswerText(o.text) === answer);
-  if (picked) return picked.reaction;
+  // 홀수 턴 보기만 답을 되받는 인용 반응을 쓰고, 짝수 턴은 고정 풀로 받는다(2026-10-22 결정).
+  if (picked && prevTurn % 2 === 1) return picked.reaction;
   return pickFreeReaction(answer, turnNumber, prevFirstLine);
 }
 
