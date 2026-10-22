@@ -206,7 +206,8 @@ export function buildScriptReply({ script, turnNumber, history, quoteLabel, quot
   if (turnNumber === 20) lines.push(common.perspectiveLead);
   if (turn.quote && quoteLabel) {
     const rawPrompt = (quotePrompt ?? "").trim();
-    const prompt = rawPrompt.replace(/[?？.。]+$/, "").trim();
+    // 스페인어 문항에 여는 ¿가 들어 있으면 끝의 ?를 떼면 짝이 깨지므로 그대로 둔다.
+    const prompt = locale === "es" && rawPrompt.includes("¿") ? rawPrompt : rawPrompt.replace(/[?？.。]+$/, "").trim();
     // 문항이 문장으로 끝맺지 않은 토막("일하다가", "아침에 눈을 뜨면")이면 문항 표기 없이 한 따옴표로 이어 붙인다.
     const isFragment = prompt !== "" && (locale === "ko" ? !/(다|요|까|죠|니)$/.test(prompt) : !/[?？]$/.test(rawPrompt));
     lines.push(
