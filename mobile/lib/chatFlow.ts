@@ -21,13 +21,16 @@ const V4: ChatFlowConfig = { flowVersion: 4, totalTurns: 22, checkpointTurn: 9 }
 // SKIP_ANSWER_TEXT in lib/choiceScripts/common.ts.
 export const SKIP_ANSWER_TEXT = "(건너뜀)";
 
-export function getChatFlow(): ChatFlowConfig {
-  if (!__DEV__ || Platform.OS !== "web") return V2;
+// 2026-10-22: v4 is the default for Korean (all 12 modules have scripts); en/es stay on v2 until
+// their scripts exist. Dev web escape hatches: `?chat=2` forces v2, `?chat=3` the v3 prototype.
+export function getChatFlow(locale: string): ChatFlowConfig {
+  const base = locale === "ko" ? V4 : V2;
+  if (!__DEV__ || Platform.OS !== "web") return base;
   try {
     const chat = new URLSearchParams(window.location.search).get("chat");
-    return chat === "4" ? V4 : chat === "3" ? V3 : V2;
+    return chat === "4" ? V4 : chat === "3" ? V3 : chat === "2" ? V2 : base;
   } catch {
-    return V2;
+    return base;
   }
 }
 

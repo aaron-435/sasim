@@ -83,7 +83,7 @@ export default function ChatScreen({
   const [now, setNow] = useState(() => Date.now());
   // 2026-10-20: v3 answer options for the last bot turn. Read once per mount so the
   // flow can't flip mid-conversation if the URL changes.
-  const flow = useRef(getChatFlow()).current;
+  const flow = useRef(getChatFlow(locale)).current;
   const FLOW_VERSION = flow.flowVersion;
   const TOTAL_TURNS = flow.totalTurns;
   const CHECKPOINT_TURN = flow.checkpointTurn;
