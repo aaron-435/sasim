@@ -20,6 +20,9 @@ export const FREE_REACTION_POOL: readonly string[] = [
 /** 퀴즈 인용 턴의 인용 줄. `{label}`만 실제 퀴즈 답으로 바뀐다. */
 export const QUOTE_LINE_TEMPLATE = '검사에서 "{label}"라고 답하셨어요.';
 
+/** 문항 문구를 아는 인용 줄. `{prompt}`(끝의 물음표·마침표 제외)와 `{label}`이 바뀐다. */
+export const QUOTE_LINE_WITH_PROMPT_TEMPLATE = '검사에서 "{prompt}" 문항에 "{label}"라고 답하셨어요.';
+
 /** 20턴 맨 앞(반응 줄 다음, 질문 앞)에 붙는 고정 문구. */
 export const PERSPECTIVE_LEAD_LINE = "마지막으로 묻고 싶은 게 있어요.";
 

@@ -507,11 +507,17 @@ export async function getChatReplyV4(params: {
   const effectiveTurn = isFinalTurn(params.turnNumber, elapsedMinutes, 4) ? 22 : params.turnNumber;
   const role = getChoiceTurnRole(effectiveTurn);
   const chatSets = getModuleChatSets(params.context.moduleId);
-  const quoteLabel =
+  const quoted =
     chatSets && role.set && SCRIPT_QUOTE_TURNS.includes(effectiveTurn)
-      ? (selectSetQuizAnswer(chatSets, role.set, params.context.quizAnswers ?? [])?.label ?? null)
+      ? selectSetQuizAnswer(chatSets, role.set, params.context.quizAnswers ?? [])
       : null;
-  return buildScriptReply({ script, turnNumber: effectiveTurn, history: params.history, quoteLabel });
+  return buildScriptReply({
+    script,
+    turnNumber: effectiveTurn,
+    history: params.history,
+    quoteLabel: quoted?.label ?? null,
+    quotePrompt: quoted?.prompt ?? null,
+  });
 }
 
 export async function extractChatSummary(transcript: ChatMessage[], context: ChatSessionContext, sessionId?: string): Promise<ChatExtract> {

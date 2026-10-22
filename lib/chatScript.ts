@@ -13,6 +13,7 @@ import {
   GREETING_LINES,
   PERSPECTIVE_LEAD_LINE,
   QUOTE_LINE_TEMPLATE,
+  QUOTE_LINE_WITH_PROMPT_TEMPLATE,
   SKIP_ANSWER_TEXT,
 } from "./choiceScripts/common";
 import type { ModuleScript } from "./choiceScripts/types";
@@ -140,6 +141,8 @@ export interface BuildScriptReplyParams {
   history: readonly ScriptHistoryMessage[];
   /** 퀴즈 인용 턴(1·5·10·14·18)의 실제 퀴즈 답. 없으면 인용 줄을 붙이지 않는다. */
   quoteLabel?: string | null;
+  /** 그 퀴즈 문항의 질문 문구. 있으면 인용 줄에 문항도 넣는다. */
+  quotePrompt?: string | null;
 }
 
 export interface ScriptReply {
@@ -153,7 +156,7 @@ export interface ScriptReply {
  * 그 밖(1~8, 10~21)은 반응 줄 + 인용·고정 문구 + 질문이다. 22턴 전에
  * 마무리로 당겨진 경우에도 답이 없는 턴의 gist는 FREE_GIST로 채운다.
  */
-export function buildScriptReply({ script, turnNumber, history, quoteLabel }: BuildScriptReplyParams): ScriptReply {
+export function buildScriptReply({ script, turnNumber, history, quoteLabel, quotePrompt }: BuildScriptReplyParams): ScriptReply {
   const answerByTurn = collectAnswerByTurn(history);
   const prevFirstLine = lastBotFirstLine(history);
   const gistByTurn = (turn: number): string => gistForTurn(script, answerByTurn, turn);
@@ -190,7 +193,12 @@ export function buildScriptReply({ script, turnNumber, history, quoteLabel }: Bu
     if (reaction) lines.push(reaction);
   }
   if (turnNumber === 20) lines.push(PERSPECTIVE_LEAD_LINE);
-  if (turn.quote && quoteLabel) lines.push(QUOTE_LINE_TEMPLATE.replace("{label}", quoteLabel));
+  if (turn.quote && quoteLabel) {
+    const prompt = (quotePrompt ?? "").trim().replace(/[?？.。]+$/, "").trim();
+    lines.push(
+      (prompt ? QUOTE_LINE_WITH_PROMPT_TEMPLATE.replace("{prompt}", prompt) : QUOTE_LINE_TEMPLATE).replace("{label}", quoteLabel),
+    );
+  }
   const quoted = Boolean(turn.quote && quoteLabel);
   let question = turn.quote && !quoted && turn.questionNoQuote ? turn.questionNoQuote : turn.question;
   // 반응 줄이 없는 턴(짝수 턴 보기 뒤)은 질문 앞에 "그럼"을 붙여 이어 간다. 인용 줄이 앞서는 턴과 21턴(직접 입력)은 제외.
