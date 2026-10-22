@@ -52,6 +52,11 @@ function quoteLabelFor(turn: number): string | null {
   if (!role.set || !QUOTE_TURNS.includes(turn)) return null;
   return selectSetQuizAnswer(chatSets!, role.set, quizAnswers)?.label ?? null;
 }
+function quotePromptFor(turn: number): string | null {
+  const role = getChoiceTurnRole(turn);
+  if (!role.set || !QUOTE_TURNS.includes(turn)) return null;
+  return selectSetQuizAnswer(chatSets!, role.set, quizAnswers)?.prompt ?? null;
+}
 
 // 시나리오별 사용자 답. null이면 사용자 메시지를 쌓지 않는다(9턴 체크포인트).
 type AnswerFn = (turn: number, firstOption: string | null) => string | null;
@@ -78,7 +83,7 @@ for (const { name, answer } of SCENARIOS) {
   const history: ScriptHistoryMessage[] = [];
   for (let turn = 1; turn <= 22; turn++) {
     const quoteLabel = quoteLabelFor(turn);
-    const reply = buildScriptReply({ script, turnNumber: turn, history, quoteLabel });
+    const reply = buildScriptReply({ script, turnNumber: turn, history, quoteLabel, quotePrompt: quotePromptFor(turn) });
     console.log(`\n[T${turn}]`);
     reply.lines.forEach((line, i) => console.log(`  ${i + 1}. ${line}`));
     if (reply.choices) console.log(`  choices: ${reply.choices.map((c) => `"${c}"`).join(" / ")}`);

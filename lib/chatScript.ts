@@ -195,8 +195,12 @@ export function buildScriptReply({ script, turnNumber, history, quoteLabel, quot
   if (turnNumber === 20) lines.push(PERSPECTIVE_LEAD_LINE);
   if (turn.quote && quoteLabel) {
     const prompt = (quotePrompt ?? "").trim().replace(/[?？.。]+$/, "").trim();
+    // 문항이 문장으로 끝맺지 않은 토막("일하다가", "아침에 눈을 뜨면")이면 문항 표기 없이 한 따옴표로 이어 붙인다.
+    const isFragment = prompt !== "" && !/(다|요|까|죠|니)$/.test(prompt);
     lines.push(
-      (prompt ? QUOTE_LINE_WITH_PROMPT_TEMPLATE.replace("{prompt}", prompt) : QUOTE_LINE_TEMPLATE).replace("{label}", quoteLabel),
+      prompt && !isFragment
+        ? QUOTE_LINE_WITH_PROMPT_TEMPLATE.replace("{prompt}", prompt).replace("{label}", quoteLabel)
+        : QUOTE_LINE_TEMPLATE.replace("{label}", prompt ? `${prompt} ${quoteLabel}` : quoteLabel),
     );
   }
   const quoted = Boolean(turn.quote && quoteLabel);
