@@ -1,4 +1,5 @@
 import type { Locale } from "@/lib/i18n/types";
+import { localizedPath } from "@/lib/i18n/paths";
 
 /** Chrome text shared by the article pages (the article bodies live in <type>.ts). */
 export const ARTICLE_UI: Record<
@@ -61,5 +62,5 @@ export const ARTICLE_UI: Record<
 export const LOCALE_LABELS: Record<Locale, string> = { ko: "한국어", en: "English", es: "Español" };
 
 export function calculatorPath(locale: Locale): string {
-  return locale === "en" ? "/saju-calculator" : `/saju-calculator?lang=${locale}`;
+  return localizedPath("/saju-calculator", locale);
 }

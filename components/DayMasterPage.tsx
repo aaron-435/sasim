@@ -13,6 +13,7 @@ import {
   publishedDayMasters,
   type DayMasterInfo,
 } from "@/lib/seoArticles";
+import { localizedPath } from "@/lib/i18n/paths";
 
 /**
  * Server-rendered shell for the /day-master pages (SPEC C1): same look as the calculator page
@@ -53,11 +54,6 @@ const CSS = `
   .dm-root a:focus-visible { outline: 2px solid #6FA98B; outline-offset: 3px; }
 `;
 
-// A bare path means English in the sitemap, but a visitor clicking "EN" must get English even with a ko cookie / Accept-Language.
-function explicitLang(path: string, l: Locale): string {
-  return path.includes("?") ? path : `${path}?lang=${l}`;
-}
-
 function Shell({ locale, langHref, children }: { locale: Locale; langHref: (l: Locale) => string; children: React.ReactNode }) {
   const t = getDictionary(locale);
   return (
@@ -65,10 +61,10 @@ function Shell({ locale, langHref, children }: { locale: Locale; langHref: (l: L
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
       <div className="dm-wrap">
         <header className="dm-header">
-          <a className="dm-brand" href={locale === "en" ? "/" : `/?lang=${locale}`}><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
+          <a className="dm-brand" href={localizedPath("/", locale)}><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
           <nav className="dm-langs" aria-label={t.landing.langLabel}>
             {LOCALES.map((code) => (
-              <a key={code} className="dm-lang" href={explicitLang(langHref(code), code)} hrefLang={code} aria-current={code === locale ? "page" : undefined}>
+              <a key={code} className="dm-lang" href={langHref(code)} hrefLang={code} aria-current={code === locale ? "page" : undefined}>
                 {LOCALE_LABELS[code]}
               </a>
             ))}
@@ -78,7 +74,7 @@ function Shell({ locale, langHref, children }: { locale: Locale; langHref: (l: L
         <section className="dm-box" aria-labelledby="dm-app-title">
           <h2 id="dm-app-title">{t.calculator.appTitle}</h2>
           <p>{t.calculator.appBody}</p>
-          <a className="dm-cta" href={locale === "en" ? "/" : `/?lang=${locale}`}>{t.calculator.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
+          <a className="dm-cta" href={localizedPath("/", locale)}>{t.calculator.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
         </section>
       </div>
     </main>
@@ -150,7 +146,7 @@ export function DayMasterArticlePage({ slug, locale }: { slug: string; locale: L
         <h2 id="dm-langs" className="dm-serif dm-h2">{ui.readLanguages}</h2>
         <div className="dm-links">
           {LOCALES.filter((l) => l !== locale).map((l) => (
-            <a key={l} className="dm-link" href={explicitLang(articlePath(slug, l), l)} hrefLang={l}>{LOCALE_LABELS[l]}</a>
+            <a key={l} className="dm-link" href={articlePath(slug, l)} hrefLang={l}>{LOCALE_LABELS[l]}</a>
           ))}
         </div>
       </section>

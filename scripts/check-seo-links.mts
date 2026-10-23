@@ -5,6 +5,7 @@ const BASE = (process.argv[2] ?? "http://localhost:3000").replace(/\/$/, "");
 const ORIGIN = "https://www.fatesaidapp.com";
 const SLUGS = ["oak", "vine", "sun", "flame", "mountain", "field", "steel", "gem", "ocean", "dew"];
 const LANGS = ["en", "ko", "es"];
+const localizedPath = (p: string, l: string) => (l === "en" ? p : `/${l}${p === "/" ? "" : p}`);
 
 const local = (u: string) => (u.startsWith(ORIGIN) ? BASE + u.slice(ORIGIN.length) : u);
 const decode = (s: string) => s.replace(/&amp;/g, "&");
@@ -23,7 +24,7 @@ const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => decode(m[1]));
 console.log(`sitemap: ${locs.length} URLs`);
 
 for (const slug of SLUGS) for (const l of LANGS) {
-  const want = `${ORIGIN}/day-master/${slug}${l === "en" ? "" : `?lang=${l}`}`;
+  const want = `${ORIGIN}${localizedPath(`/day-master/${slug}`, l)}`;
   if (!locs.includes(want)) fail(`sitemap missing ${want}`);
 }
 

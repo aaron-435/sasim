@@ -15,10 +15,14 @@
   - 기준선(현재 WARN): ① 39개 URL 모두 `private, no-cache, no-store` → TODO 3 ② JSON-LD 없는 페이지 9개(랜딩 3, 계산기 3, `/day-master` 목록 3) → TODO 4 ③ `/day-master/oak?lang=es`가 200(308 아님) → TODO 2. build 출력상 `/`, `/saju-calculator`, `/day-master`, `/day-master/[type]`, privacy 등 전부 `ƒ`(동적).
   - 한계: 응답 헤더·HTML 정적 검사만 한다(Google 리치 결과 테스트 대체 아님). `/privacy`·`/terms`는 sitemap에 없어 검사 밖.
 
-- [ ] 2. 언어 경로 전환 (결정 확정)
+- [x] 2. 언어 경로 전환 (결정 확정)
   - 선행: 1
   - 변경: `middleware.ts`(`/es`, `/ko` 접두 처리, `?lang=` → 308), `app/` 라우트 구조, `app/sitemap.ts`, hreflang·canonical, 내부 링크 헬퍼(`articlePath` 등), 모바일 앱이 여는 웹 URL이 있으면 호환 확인.
   - QA: check-seo 통과, `curl -I "/day-master/oak?lang=es"` → 308 `/es/day-master/oak`, 기존 `/` `/saju-calculator` 200.
+  - QA: `npx tsc --noEmit`, `npm run lint`, `npm run build` 통과 → `next start -p 3100`에서 `/day-master/oak?lang=es` 308 `/es/day-master/oak`, `/?lang=ko` 308 `/ko`, `/saju-calculator?lang=ko&utm_source=x` 308 `/ko/saju-calculator?utm_source=x`, `/en/day-master/oak` 308 `/day-master/oak`, `/es/...` `/ko` `/` `/saju-calculator` 200, `/es/nope` 404. `check-seo.mts` → 39 URL, FAIL 0, WARN 48(legacy 308 경고 사라짐, 남은 건 캐시·JSON-LD로 TODO 3·4). `check-seo-links.mts` → ALL OK.
+  - 구현: `lib/i18n/paths.ts`(`localizedPath`, `splitLocalePath`, `isLocalizedSeoPath`)가 규칙의 단일 출처. `middleware.ts`가 SEO 경로(`/`, `/saju-calculator`, `/day-master…`)의 `/ko`·`/es` 접두를 내부적으로 `?lang=`로 rewrite하고(페이지 코드는 그대로), `?lang=`·`/en/…`는 308. SEO 경로는 쿠키·Accept-Language를 더 보지 않아 URL 하나 = 언어 하나. 그 밖의 경로(법적 페이지, `/c`, `/p`, 404)는 예전 규칙 유지.
+  - 행동 변화(사용자 판단 필요): 예전엔 스페인어 브라우저로 `/`에 오면 스페인어로 보였지만, 이제 `/`는 항상 영어이고 스페인어는 `/es`다. 광고 링크는 `/es`로 걸어야 한다. 필요하면 `/` 한정 Accept-Language 리다이렉트를 따로 검토.
+  - 이어서 TODO 3: 지금은 rewrite가 `?lang=`를 만들어 페이지가 동적이다. `[locale]` 폴더 구조로 옮기면서 정적화.
 
 - [ ] 3. 캐시 가능 렌더로 전환
   - 선행: 2
@@ -43,5 +47,7 @@
   - Claude가 도울 수 있는 것: Chrome에서 화면을 같이 보며 안내.
 
 ## 발견 사항
+- (TODO 2) 법적 페이지(`/privacy`, `/terms`, `/data-deletion`)는 색인 가치가 낮고 앱이 `?lang=` URL로 링크하므로 접두 경로로 옮기지 않고 `?lang=` 유지로 결정. sitemap에도 계속 제외.
+- (TODO 2) `components/Landing.jsx`의 언어 버튼은 클라이언트 상태만 바꾸고 URL은 그대로다. `/`에서 스페인어를 눌러도 canonical은 영어 URL. TODO 3~5에서 `/es`로 이동하는 링크로 바꿀지 판단.
 - (TODO 1) `/privacy`, `/terms`, `/data-deletion`은 sitemap에 없고 canonical·JSON-LD 상태 미확인. 법적 페이지라 색인 필요성은 낮지만 TODO 2에서 경로 규칙을 정할 때 함께 결정.
 - (TODO 1) 중복 meta description 검사는 WARN으로만 둠(언어별 페이지는 설명이 같을 수 있어서).

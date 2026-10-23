@@ -3,6 +3,7 @@ import Link from "next/link";
 import { cookies, headers } from "next/headers";
 import { getDictionary, LOCALES, type Locale } from "@/lib/i18n";
 import { LOCALE_COOKIE, LOCALE_HEADER, resolveLocale } from "@/lib/i18n/serverLocale";
+import { localizedPath } from "@/lib/i18n/paths";
 
 // Unknown URLs: the language is resolved like every other public page (?lang= -> cookie ->
 // Accept-Language -> en). middleware.ts runs for unmatched paths too and sets the locale header
@@ -50,8 +51,7 @@ export function generateMetadata(): Metadata {
 export default function NotFound() {
   const locale = currentLocale();
   const c = COPY[locale];
-  const q = locale === "en" ? "" : `?lang=${locale}`;
-  return (
+    return (
     <main
       lang={locale}
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, padding: "0 24px", background: "#122019", color: "#D9C9A3", textAlign: "center" }}
@@ -59,8 +59,8 @@ export default function NotFound() {
       <h1 style={{ margin: 0, fontSize: 24, fontWeight: 600 }}>{c.title}</h1>
       <p style={{ margin: 0, fontSize: 14, color: "#C4BCA0" }}>{c.body}</p>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-        <Link href={`/${q}`} style={{ display: "inline-flex", alignItems: "center", minHeight: 44, padding: "0 18px", borderRadius: 999, border: "1px solid #6FA98B", color: "#6FA98B", textDecoration: "none", fontSize: 14 }}>{c.home}</Link>
-        <Link href={`/saju-calculator${q}`} style={{ display: "inline-flex", alignItems: "center", minHeight: 44, padding: "0 18px", borderRadius: 999, border: "1px solid #26332B", color: "#C4BCA0", textDecoration: "none", fontSize: 14 }}>{c.calc}</Link>
+        <Link href={localizedPath("/", locale)} style={{ display: "inline-flex", alignItems: "center", minHeight: 44, padding: "0 18px", borderRadius: 999, border: "1px solid #6FA98B", color: "#6FA98B", textDecoration: "none", fontSize: 14 }}>{c.home}</Link>
+        <Link href={localizedPath("/saju-calculator", locale)} style={{ display: "inline-flex", alignItems: "center", minHeight: 44, padding: "0 18px", borderRadius: 999, border: "1px solid #26332B", color: "#C4BCA0", textDecoration: "none", fontSize: 14 }}>{c.calc}</Link>
       </div>
     </main>
   );

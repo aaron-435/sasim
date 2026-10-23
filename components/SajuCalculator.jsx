@@ -5,6 +5,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import QuickBirthForm, { fetchQuickSaju } from "@/components/QuickBirthForm";
 import { getDictionary, LOCALES } from "@/lib/i18n";
 import { logEvent } from "@/lib/analytics";
+import { localizedPath } from "@/lib/i18n/paths";
 
 /**
  * SajuCalculator — the /saju-calculator tool (SPEC 2026-10-05 §2): birth date + optional hour
@@ -127,10 +128,10 @@ export default function SajuCalculator({ locale }) {
       ` }} />
       <div className="sc-wrap">
         <header className="sc-header">
-          <a className="sc-brand" href={locale === "en" ? "/" : `/?lang=${locale}`}><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
+          <a className="sc-brand" href={localizedPath("/", locale)}><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
           <nav className="sc-langs" aria-label={t.landing.langLabel}>
             {LOCALES.map((code) => (
-              <a key={code} className="sc-lang" href={`/saju-calculator?lang=${code}`} hrefLang={code} aria-current={code === locale ? "page" : undefined}>
+              <a key={code} className="sc-lang" href={localizedPath("/saju-calculator", code)} hrefLang={code} aria-current={code === locale ? "page" : undefined}>
                 {LOCALE_LABELS[code]}
               </a>
             ))}
@@ -217,7 +218,7 @@ export default function SajuCalculator({ locale }) {
         <section className="sc-app" aria-labelledby="sc-app-title">
           <h2 id="sc-app-title">{c.appTitle}</h2>
           <p>{c.appBody}</p>
-          <a className="sc-cta" href={locale === "en" ? "/" : `/?lang=${locale}`}>{c.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
+          <a className="sc-cta" href={localizedPath("/", locale)}>{c.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
         </section>
 
         <section className="sc-section" aria-labelledby="sc-how">

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getDictionary } from "@/lib/i18n";
+import { localizedPath } from "@/lib/i18n/paths";
 
 /**
  * LegalPage — shared chrome for /privacy and /terms. Full-width article
@@ -23,7 +24,7 @@ export default function LegalPage({ title, updatedAt, locale = "ko", path = "/pr
   // The switcher always names the language explicitly, otherwise a bare "en" link would be re-resolved
   // from cookie / Accept-Language and could land on another language.
   const urlFor = (l) => `${path}?lang=${l}`;
-  const homeHref = locale === "en" ? "/" : `/?lang=${locale}`;
+  const homeHref = localizedPath("/", locale);
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: "#122019", display: "flex", justifyContent: "center" }}>
       <style dangerouslySetInnerHTML={{ __html: `

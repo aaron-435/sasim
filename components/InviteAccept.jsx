@@ -6,6 +6,7 @@ import QuickBirthForm from "@/components/QuickBirthForm";
 import { getDictionary, LOCALES } from "@/lib/i18n";
 import { COMPATIBILITY_CONTENT } from "@/lib/compatibilityContent";
 import { logEvent } from "@/lib/analytics";
+import { localizedPath } from "@/lib/i18n/paths";
 
 /**
  * InviteAccept — the /c/<code> page (SPEC 2026-10-05 §6). A friend who got a link from the app
@@ -145,7 +146,7 @@ export default function InviteAccept({ code, locale, state, senderName }) {
       ` }} />
       <div className="iv-wrap">
         <header className="iv-header">
-          <a className="iv-brand" href={locale === "en" ? "/" : `/?lang=${locale}`}><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
+          <a className="iv-brand" href={localizedPath("/", locale)}><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
           <nav className="iv-langs" aria-label={t.landing.langLabel}>
             {LOCALES.map((l) => (
               <a key={l} className="iv-lang" href={`/c/${code}?lang=${l}`} hrefLang={l} aria-current={l === locale ? "page" : undefined}>
@@ -181,7 +182,7 @@ export default function InviteAccept({ code, locale, state, senderName }) {
         <section className="iv-app" aria-labelledby="iv-app-title">
           <h2 id="iv-app-title">{c.appTitle}</h2>
           <p>{c.appBody}</p>
-          <a className="iv-cta" href={locale === "en" ? "/" : `/?lang=${locale}`}>{t.calculator.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
+          <a className="iv-cta" href={localizedPath("/", locale)}>{t.calculator.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
         </section>
       </div>
     </main>

@@ -10,6 +10,7 @@ import questionBank from "@/lib/questionBank.json";
 import { useStrings, useLocale } from "@/lib/i18n";
 import { localizedText } from "@/lib/qaBankLocale";
 import { trackQaQuestionAsked, trackQaInstallPitchShown } from "@/lib/analytics";
+import { localizedPath } from "@/lib/i18n/paths";
 
 /**
  * QAChat — Yodha-inspired question-bank chat, replacing moduleSelect as
@@ -259,10 +260,9 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
   }
 
   const done = (answeredCount >= FREE_QUESTIONS || !!limitHit) && !busy;
-  const langQuery = locale === "en" ? "" : `?lang=${locale}`;
-  const nextLinks = [
-    { href: `/saju-calculator${langQuery}`, label: t.qa.nextStepsCalculator },
-    { href: `/day-master${langQuery}`, label: t.qa.nextStepsDayMaster },
+    const nextLinks = [
+    { href: localizedPath("/saju-calculator", locale), label: t.qa.nextStepsCalculator },
+    { href: localizedPath("/day-master", locale), label: t.qa.nextStepsDayMaster },
   ];
 
   return (

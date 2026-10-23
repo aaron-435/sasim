@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { LANDING_HEADER, LOCALE_COOKIE, LOCALE_HEADER, resolveLocale } from "@/lib/i18n/serverLocale";
+import { isLocalizedSeoPath, localizedPath, splitLocalePath } from "@/lib/i18n/paths";
+import { LOCALES } from "@/lib/i18n/types";
 
 /**
  * Adds a permissive CORS header to every /api/* response and answers the
@@ -19,18 +21,41 @@ import { LANDING_HEADER, LOCALE_COOKIE, LOCALE_HEADER, resolveLocale } from "@/l
  */
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  // Every page route (landing, day-master, calculator, legal, unknown URLs -> 404) resolves the language
-  // the same way, once, here: ?lang= -> cookie -> Accept-Language -> en. app/layout.tsx reads the header for
-  // <html lang>; pages resolve again for their body with the same helper, so the two always agree.
+  // app/layout.tsx reads the locale header for <html lang>; pages resolve again for their body.
   if (!path.startsWith("/api/")) {
-    const locale = resolveLocale({
-      lang: request.nextUrl.searchParams.get("lang"),
-      cookie: request.cookies.get(LOCALE_COOKIE)?.value,
-      acceptLanguage: request.headers.get("accept-language"),
-    });
+    // Public SEO pages carry the language in the path (English at the root, /ko and /es prefixed). The
+    // page below still reads ?lang=, so these URLs are rewritten to it internally and the URL is the single
+    // source of truth: no cookie or Accept-Language guess here, so one URL is always one language.
+    const split = splitLocalePath(path);
+    if (isLocalizedSeoPath(split.path)) {
+      const legacy = request.nextUrl.searchParams.get("lang");
+      // /en/... duplicates the root URL; old ?lang= URLs move to the path form. Both keep other query params.
+      if ((split.prefixed && split.locale === "en") || legacy !== null) {
+        const target = request.nextUrl.clone();
+        const wanted = legacy !== null && (LOCALES as string[]).includes(legacy) ? (legacy as (typeof LOCALES)[number]) : split.locale;
+        target.pathname = localizedPath(split.path, wanted);
+        target.searchParams.delete("lang");
+        return NextResponse.redirect(target, 308);
+      }
+      const rewritten = request.nextUrl.clone();
+      rewritten.pathname = split.path;
+      rewritten.searchParams.set("lang", split.locale);
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set(LOCALE_HEADER, split.locale);
+      if (split.path === "/") requestHeaders.set(LANDING_HEADER, "1");
+      return NextResponse.rewrite(rewritten, { request: { headers: requestHeaders } });
+    }
+    // Everything else (legal pages, invite links, unknown URLs -> 404): ?lang= -> cookie -> Accept-Language -> en.
+    // A /ko or /es prefix on a non-SEO path just picks the language of the 404 page.
+    const locale = split.prefixed
+      ? split.locale
+      : resolveLocale({
+          lang: request.nextUrl.searchParams.get("lang"),
+          cookie: request.cookies.get(LOCALE_COOKIE)?.value,
+          acceptLanguage: request.headers.get("accept-language"),
+        });
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set(LOCALE_HEADER, locale);
-    if (path === "/") requestHeaders.set(LANDING_HEADER, "1");
     // No Vary here: Next overwrites it, and the page is sent "private, no-store" (it reads
     // headers/cookies), so shared caches never keep one language's HTML for another visitor.
     return NextResponse.next({ request: { headers: requestHeaders } });

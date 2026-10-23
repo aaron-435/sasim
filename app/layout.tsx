@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { headers } from "next/headers";
 import { getDictionary, LOCALES, type Locale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/i18n/paths";
 import { LANDING_HEADER, LOCALE_HEADER } from "@/lib/i18n/serverLocale";
 import "./globals.css";
 
@@ -48,7 +49,7 @@ export default function RootLayout({
   const isLanding = headers().get(LANDING_HEADER) === "1";
   const lang: Locale = (LOCALES as string[]).includes(requested ?? "") ? (requested as Locale) : "en";
   const origin = "https://www.fatesaidapp.com";
-  const landingUrl = (l: Locale) => (l === "en" ? `${origin}/` : `${origin}/?lang=${l}`);
+  const landingUrl = (l: Locale) => `${origin}${l === "en" ? "/" : localizedPath("/", l)}`;
   return (
     <html lang={lang}>
       {isLanding && (

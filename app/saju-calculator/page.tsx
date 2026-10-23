@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import SajuCalculator from "@/components/SajuCalculator";
 import { requestLocale } from "@/lib/seoArticles/requestLocale";
 import { getDictionary, LOCALES, type Locale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/i18n/paths";
 
 // Free "Saju / Four Pillars calculator" tool page (SPEC 2026-10-05 §2). Search visitors are
 // mostly English-speaking, so a visit without `?lang=` follows cookie / Accept-Language (English fallback); `?lang=ko|es` serve the
@@ -21,13 +22,13 @@ export function generateMetadata({ searchParams }: Props): Metadata {
   const locale = pickLocale(searchParams?.lang);
   const c = getDictionary(locale).calculator;
   const canon = canonicalLocale(searchParams?.lang);
-  const path = canon === "en" ? "/saju-calculator" : `/saju-calculator?lang=${canon}`;
+  const path = localizedPath("/saju-calculator", canon);
   return {
     title: c.metaTitle,
     description: c.metaDescription,
     alternates: {
       canonical: path,
-      languages: { en: "/saju-calculator", ko: "/saju-calculator?lang=ko", es: "/saju-calculator?lang=es", "x-default": "/saju-calculator" },
+      languages: { en: localizedPath("/saju-calculator", "en"), ko: localizedPath("/saju-calculator", "ko"), es: localizedPath("/saju-calculator", "es"), "x-default": localizedPath("/saju-calculator", "en") },
     },
     // A page-level openGraph replaces the root one, so the shared preview image is named again here.
     openGraph: { title: c.metaTitle, description: c.metaDescription, url: path, type: "website", images: ["/opengraph-image"] },

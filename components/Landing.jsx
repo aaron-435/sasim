@@ -5,6 +5,7 @@ import { ArrowRight, Lock, Sparkles } from "lucide-react";
 import { useStrings, useLocale, LOCALES } from "@/lib/i18n";
 import { trackLandingCtaClick, trackLandingView } from "@/lib/analytics";
 import LandingTypeCard from "@/components/LandingTypeCard";
+import { localizedPath } from "@/lib/i18n/paths";
 
 /**
  * Landing — the first thing an ad visitor sees (added 2026-09-19). Web's job is lead-gen:
@@ -148,7 +149,7 @@ export default function Landing({ onStart }) {
             ))}
           </div>
           <p className="lp-small">{l.featuresAppNote}</p>
-          <p className="lp-small"><a className="lp-link" href={locale === "en" ? "/saju-calculator" : `/saju-calculator?lang=${locale}`}>{l.calculatorLink}</a></p>
+          <p className="lp-small"><a className="lp-link" href={localizedPath("/saju-calculator", locale)}>{l.calculatorLink}</a></p>
         </section>
 
         <section className="lp-section" aria-labelledby="lp-sample">

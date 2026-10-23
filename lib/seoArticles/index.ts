@@ -1,5 +1,6 @@
 import type { Locale } from "@/lib/i18n/types";
 import { LOCALES } from "@/lib/i18n/types";
+import { localizedPath } from "@/lib/i18n/paths";
 import { SAJU_TYPE_CONTENT } from "@/lib/sajuTypeContent";
 import type { ArchetypeKey } from "@/lib/sajuType";
 import type { ArticleSet, DayMasterArticle } from "./types";
@@ -81,11 +82,11 @@ export function publishedDayMasters(): DayMasterInfo[] {
 }
 
 export function articlePath(slug: string, locale: Locale): string {
-  return locale === "en" ? `/day-master/${slug}` : `/day-master/${slug}?lang=${locale}`;
+  return localizedPath(`/day-master/${slug}`, locale);
 }
 
 export function listPath(locale: Locale): string {
-  return locale === "en" ? "/day-master" : `/day-master?lang=${locale}`;
+  return localizedPath("/day-master", locale);
 }
 
 export { LOCALES };
