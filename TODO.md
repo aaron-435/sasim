@@ -57,7 +57,8 @@
 - [ ] 7. Search Console 등록 (user check: 1주 뒤 색인 상태만 남음)
   - 사용자 단계: 도메인 속성 추가 → DNS TXT 확인 → `https://www.fatesaidapp.com/sitemap.xml` 제출 → 색인 상태 1주 뒤 확인.
   - 2026-10-23 완료: 도메인 속성 `fatesaidapp.com`은 이미 확인돼 있었음. 푸시 후 운영 sitemap 47개 URL(`/guides` 포함) 확인(curl) → Chrome에서 sitemap 제출, 상태 "성공"·발견된 페이지 47개. URL 검사로 `/`(이미 색인됨, 재요청), `/guides`·`/es`(색인 안 됨, "발견됨") 색인 생성 요청 3건 모두 "색인 생성 요청됨".
-  - (사용자 확인) 2026-10-30쯤: Search Console → 페이지 → 색인 생성에서 색인된 페이지 수와 제외 사유 확인(`/guides`, `/es/guides` 포함). 배포 후 Rich Results Test로 랜딩·계산기·일간 상세 JSON-LD 오류 0 확인(TODO 4).
+  - Rich Results Test (2026-10-23, Chrome에서 운영 URL 3개): 랜딩 `/` = 소프트웨어 앱 유효 1개, 계산기 `/saju-calculator` = 탐색경로 유효 1 + 소프트웨어 앱 유효 1, 일간 상세 `/day-master/oak` = 글 유효 1 + 탐색경로 유효 1. **오류 0**, 심각하지 않은 경고(선택 항목)만: 소프트웨어 앱 `aggregateRating` 없음(실제 평점이 없어 넣지 않음), 글 `image` 없음, 글 author `url` 없음. TODO 4의 JSON-LD 확인 완료. 필요하면 별도 항목으로 글 `image`·author `url` 추가.
+  - (사용자 확인) 2026-10-30쯤: Search Console → 페이지 → 색인 생성에서 색인된 페이지 수와 제외 사유 확인(`/guides`, `/es/guides` 포함).
 
 ## 발견 사항
 - (TODO 6) `/guides`로 가는 내부 링크가 아직 없다(sitemap에만 있음). 랜딩 하단·`/day-master` 목록·일간 글에서 링크를 거는 건 글이 늘 때(두 번째 묶음) 함께.
