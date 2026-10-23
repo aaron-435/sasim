@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import AppFlow from "@/components/AppFlow";
+import JsonLd from "@/components/JsonLd";
+import { faqLd, mobileApplicationLd, organizationLd, webSiteLd } from "@/lib/jsonLd";
 import { getDictionary, LOCALES, LocaleProvider, type Locale } from "@/lib/i18n";
 import { localizedPath } from "@/lib/i18n/paths";
 
@@ -25,8 +27,10 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 export default function Home({ params }: Props) {
+  const dict = getDictionary(params.locale);
   return (
     <LocaleProvider initialLocale={params.locale}>
+      <JsonLd data={[organizationLd(), webSiteLd(params.locale), mobileApplicationLd({ description: dict.meta.siteDescription, locale: params.locale }), faqLd(dict.landing.faq)]} />
       <AppFlow />
     </LocaleProvider>
   );

@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import JsonLd from "@/components/JsonLd";
 import { DayMasterListPage } from "@/components/DayMasterPage";
 import type { Locale } from "@/lib/i18n";
 import { ARTICLE_UI } from "@/lib/seoArticles/ui";
-import { listPath } from "@/lib/seoArticles";
+import { archetypeName, articlePath, listPath, publishedDayMasters } from "@/lib/seoArticles";
+import { breadcrumbLd, itemListLd } from "@/lib/jsonLd";
+import { getDictionary } from "@/lib/i18n";
+import { localizedPath } from "@/lib/i18n/paths";
 
 // Index of the Day Master articles (SPEC C1). One prerendered page per language; the language is the path segment.
 
@@ -25,5 +29,17 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 export default function DayMasterIndex({ params }: Props) {
-  return <DayMasterListPage locale={params.locale} />;
+  const locale = params.locale;
+  const ui = ARTICLE_UI[locale];
+  return (
+    <>
+      <JsonLd
+        data={[
+          breadcrumbLd([{ name: getDictionary(locale).common.brand, path: localizedPath("/", locale) }, { name: ui.listTitle, path: listPath(locale) }]),
+          itemListLd(publishedDayMasters().map((d) => ({ name: archetypeName(d.slug, locale), path: articlePath(d.slug, locale) }))),
+        ]}
+      />
+      <DayMasterListPage locale={locale} />
+    </>
+  );
 }

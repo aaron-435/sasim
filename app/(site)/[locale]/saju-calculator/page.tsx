@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import JsonLd from "@/components/JsonLd";
 import SajuCalculator from "@/components/SajuCalculator";
+import { breadcrumbLd, webApplicationLd } from "@/lib/jsonLd";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { localizedPath } from "@/lib/i18n/paths";
 
@@ -26,5 +28,18 @@ export function generateMetadata({ params }: Props): Metadata {
 }
 
 export default function SajuCalculatorPage({ params }: Props) {
-  return <SajuCalculator locale={params.locale} />;
+  const locale = params.locale;
+  const dict = getDictionary(locale);
+  const path = localizedPath("/saju-calculator", locale);
+  return (
+    <>
+      <JsonLd
+        data={[
+          webApplicationLd({ name: dict.calculator.title, description: dict.calculator.metaDescription, path, locale }),
+          breadcrumbLd([{ name: dict.common.brand, path: localizedPath("/", locale) }, { name: dict.calculator.title, path }]),
+        ]}
+      />
+      <SajuCalculator locale={locale} />
+    </>
+  );
 }

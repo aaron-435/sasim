@@ -33,9 +33,12 @@
   - 사이트맵 변경: 영어 랜딩 URL을 슬래시 없는 `https://www.fatesaidapp.com`으로(Next가 canonical을 그렇게 출력).
   - 한계: 404 `<title>`은 `(site)` 쪽에서 영어 고정("Fatesaid", noindex). 404 meta description은 빠짐. `requestLocale`은 법적 페이지 메타(`lib/legalMeta.ts`)만 씀.
 
-- [ ] 4. JSON-LD 보강
+- [x] 4. JSON-LD 보강
   - 변경: 랜딩(Organization, MobileApplication), 계산기(WebApplication), 일간 상세(BreadcrumbList 추가). 공통 헬퍼 `lib/jsonLd.ts`.
   - QA: check-seo의 JSON-LD 검사 통과, 스키마 검사에서 오류 0.
+  - QA: `npx tsc --noEmit`, `npm run lint`, `npm run build` 통과 → `next start -p 3100` + `check-seo.mts` → 39 URL, FAIL 0, WARN 0(JSON-LD 경고 사라짐). curl로 확인한 타입: 랜딩 `/`·`/es` = Organization·WebSite·MobileApplication·FAQPage, 계산기 = WebApplication·BreadcrumbList, `/day-master` = BreadcrumbList·ItemList, 일간 상세 = Article·BreadcrumbList.
+  - 구현: `lib/jsonLd.ts`(빌더), `components/JsonLd.tsx`(`<` 이스케이프 렌더). MobileApplication은 Android만(`operatingSystem: "Android"`, `installUrl`=Play 링크), iOS 승인 뒤 추가. FAQPage는 랜딩에 실제로 보이는 FAQ(`landing.faq`)만 사용. Organization `logo`는 쓸 만한 공개 이미지 URL이 없어 뺌.
+  - 한계: check-seo는 구조(파싱, @context/@type)만 본다. Google 리치 결과 테스트는 (사용자 확인) 배포 후 `https://search.google.com/test/rich-results`에 랜딩·계산기·일간 상세 URL을 넣어 오류 0인지 확인.
 
 - [ ] 5. 앱 설치 링크 (Android 먼저)
   - 변경: `lib/i18n/{en,ko,es}.ts`의 "coming soon" 문구에서 Android를 Play 링크로, iOS는 유지. 설치 버튼 컴포넌트(웹 랜딩, 일간 상세, 계산기).

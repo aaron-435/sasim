@@ -14,6 +14,8 @@ import {
   type DayMasterInfo,
 } from "@/lib/seoArticles";
 import { localizedPath } from "@/lib/i18n/paths";
+import JsonLd from "@/components/JsonLd";
+import { breadcrumbLd } from "@/lib/jsonLd";
 
 /**
  * Server-rendered shell for the /day-master pages (SPEC C1): same look as the calculator page
@@ -106,7 +108,16 @@ export function DayMasterArticlePage({ slug, locale }: { slug: string; locale: L
 
   return (
     <Shell locale={locale} langHref={(l) => articlePath(slug, l)}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+      <JsonLd
+        data={[
+          jsonLd,
+          breadcrumbLd([
+            { name: getDictionary(locale).common.brand, path: localizedPath("/", locale) },
+            { name: ui.listTitle, path: listPath(locale) },
+            { name: article.h1, path: articlePath(slug, locale) },
+          ]),
+        ]}
+      />
       <article>
         <p className="dm-crumb"><a href={listPath(locale)}>{ui.backToList}</a></p>
         <h1 className="dm-serif dm-h1">{article.h1}</h1>
