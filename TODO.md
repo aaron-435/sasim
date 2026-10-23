@@ -54,9 +54,10 @@
   - 구현: `SEO_CONTENT_PLAN.md`(주제 10개 + 목표 검색어, 3개 작성). 새 경로 `/guides`, `/guides/<slug>`: `lib/seoGuides/`, `components/GuidePage.tsx`, `app/(site)/[locale]/guides/`. `lib/i18n/paths.ts`에 `/guides` 추가, sitemap은 글이 있는 언어(en/es)만 URL·hreflang에 넣음(ko 없음). `DayMasterPage`의 `Shell`을 export하고 언어 버튼 목록을 선택 인자로 만듦. 첫 3개: 오행 궁합, 사주 vs 점성술, 사주 네 기둥 읽는 법(en/es).
   - (사용자 확인) 6개 글(en/es)의 문구가 압박 마케팅 규칙(나쁜 궁합 판정·예측·공포 소구 없음)에 맞는지, 스페인어 어투(tú/ustedes) 읽기. 글 본문은 모델이 쓴 것이라 사실 확인(천간합 5쌍, 상생·상극, 조합 수 "50만 개 이상" = 60×12×60×12)도 한 번 봐 주세요.
 
-- [ ] 7. Search Console 등록 (user check)
+- [ ] 7. Search Console 등록 (user check: 1주 뒤 색인 상태만 남음)
   - 사용자 단계: 도메인 속성 추가 → DNS TXT 확인 → `https://www.fatesaidapp.com/sitemap.xml` 제출 → 색인 상태 1주 뒤 확인.
-  - Claude가 도울 수 있는 것: Chrome에서 화면을 같이 보며 안내.
+  - 2026-10-23 완료: 도메인 속성 `fatesaidapp.com`은 이미 확인돼 있었음. 푸시 후 운영 sitemap 47개 URL(`/guides` 포함) 확인(curl) → Chrome에서 sitemap 제출, 상태 "성공"·발견된 페이지 47개. URL 검사로 `/`(이미 색인됨, 재요청), `/guides`·`/es`(색인 안 됨, "발견됨") 색인 생성 요청 3건 모두 "색인 생성 요청됨".
+  - (사용자 확인) 2026-10-30쯤: Search Console → 페이지 → 색인 생성에서 색인된 페이지 수와 제외 사유 확인(`/guides`, `/es/guides` 포함). 배포 후 Rich Results Test로 랜딩·계산기·일간 상세 JSON-LD 오류 0 확인(TODO 4).
 
 ## 발견 사항
 - (TODO 6) `/guides`로 가는 내부 링크가 아직 없다(sitemap에만 있음). 랜딩 하단·`/day-master` 목록·일간 글에서 링크를 거는 건 글이 늘 때(두 번째 묶음) 함께.
