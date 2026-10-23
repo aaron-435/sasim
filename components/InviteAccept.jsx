@@ -1,5 +1,6 @@
 "use client";
 
+import AppInstall from "@/components/AppInstall";
 import React from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import QuickBirthForm from "@/components/QuickBirthForm";
@@ -182,6 +183,7 @@ export default function InviteAccept({ code, locale, state, senderName }) {
         <section className="iv-app" aria-labelledby="iv-app-title">
           <h2 id="iv-app-title">{c.appTitle}</h2>
           <p>{c.appBody}</p>
+          <AppInstall t={t} />
           <a className="iv-cta" href={localizedPath("/", locale)}>{t.calculator.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
         </section>
       </div>

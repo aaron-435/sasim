@@ -40,10 +40,12 @@
   - 구현: `lib/jsonLd.ts`(빌더), `components/JsonLd.tsx`(`<` 이스케이프 렌더). MobileApplication은 Android만(`operatingSystem: "Android"`, `installUrl`=Play 링크), iOS 승인 뒤 추가. FAQPage는 랜딩에 실제로 보이는 FAQ(`landing.faq`)만 사용. Organization `logo`는 쓸 만한 공개 이미지 URL이 없어 뺌.
   - 한계: check-seo는 구조(파싱, @context/@type)만 본다. Google 리치 결과 테스트는 (사용자 확인) 배포 후 `https://search.google.com/test/rich-results`에 랜딩·계산기·일간 상세 URL을 넣어 오류 0인지 확인.
 
-- [ ] 5. 앱 설치 링크 (Android 먼저)
+- [x] 5. 앱 설치 링크 (Android 먼저)
   - 변경: `lib/i18n/{en,ko,es}.ts`의 "coming soon" 문구에서 Android를 Play 링크로, iOS는 유지. 설치 버튼 컴포넌트(웹 랜딩, 일간 상세, 계산기).
   - QA: 세 언어 렌더 확인(mobile 프리셋 스크린샷), 링크 `https://play.google.com/store/apps/details?id=com.fatesaid.app` 응답 확인.
-  - (user check) iOS 승인 후 App Store 링크 교체와 Smart App Banner는 별도 항목으로 이어서.
+  - QA: `npx tsc --noEmit`, `npm run lint`, `npm run build` 통과 → `next start -p 3100`에서 `/` `/ko` `/es` `/saju-calculator` `/es/saju-calculator` `/ko/day-master/oak` HTML에 Play 링크와 언어별 버튼 문구(Get it on Google Play / Google Play에서 받기 / Disponible en Google Play) 확인, Play URL curl 200, `check-seo.mts` → 39 URL, FAIL 0, WARN 0. (mobile 프리셋 스크린샷은 찍지 않음: HTML 출력과 빌드로만 확인)
+  - 구현: 공용 `components/AppInstall.tsx`(Play 버튼 + "iOS는 곧" 한 줄)를 랜딩 하단, 유형 카드, 계산기, 일간 상세, 초대, Q&A 완료 화면(가짜 점선 배지 대체)에 넣음. i18n `common.playCta`·`iosSoon` 추가, `appNote`·`appComingSoonLabel` 삭제, `appBody`의 "곧 iOS와 Android" 문장 삭제. Q&A의 인증번호 안내·"앱은 아직 출시 전" 문구도 출시 사실에 맞게 고침.
+  - (user check) 눈으로 확인: 모바일 폭에서 버튼 모양(초록 버튼, 계산기·랜딩 하단). iOS 승인 후 App Store 링크 교체와 Smart App Banner는 별도 항목으로 이어서.
 
 - [ ] 6. 콘텐츠 설계와 첫 묶음 (주제 계열 확정, 8~10개 en/es 우선)
   - 변경: 주제 목록 + 페이지당 목표 검색어를 `SEO_CONTENT_PLAN.md`에 정리, 첫 3개 페이지(en/es) 작성, `lib/seoArticles` 형식 재사용 또는 확장.

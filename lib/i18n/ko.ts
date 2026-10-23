@@ -26,6 +26,8 @@
 
 export const ko = {
   common: {
+    playCta: "Google Play에서 받기",
+    iosSoon: "iOS는 곧 나와요.",
     brand: "Fatesaid",
     errorTitleNetwork: "연결이 원활하지 않아요",
     errorTitleServer: "문제가 발생했어요",
@@ -146,12 +148,11 @@ export const ko = {
     // 앱 없이 방문한 사용자에게 "설치하러 가기" 버튼(당시엔 href="#")을 보여주는
     // 상태였음. "지금 설치" 대신 "코드를 저장해두면 앱 출시 후 이어진다"는
     // 톤으로 바꿔서, 앱이 나오기 전까지도 문구가 거짓이 되지 않도록 함.
-    installPitch: "무료로 준비된 질문은 여기까지예요. 아래 번호를 저장해두시면, 앱이 나온 뒤 이어서 질문하실 수 있어요!",
-    codeMessage: (code: string) => `아래 인증번호를 저장해두세요: ${code}\n앱 출시 후 이 번호를 입력하면 지금까지 작성한 정보가 그대로 이어집니다!`,
+    installPitch: "무료로 준비된 질문은 여기까지예요. 아래 번호를 저장해두시면, 앱을 설치해 입력하시면 이어서 질문하실 수 있어요!",
+    codeMessage: (code: string) => `아래 인증번호를 저장해두세요: ${code}\n앱에서 이 번호를 입력하면 지금까지 작성한 정보가 그대로 이어집니다!`,
     codeErrorFallback: "인증번호 발급에 문제가 생겼어요. 잠시 후 다시 시도해주세요.",
-    appComingSoonLabel: "앱 출시 준비 중이에요",
-    nextStepsHeading: "앱을 기다리는 동안",
-    nextStepsBody: "앱은 아직 출시 전이고, 따로 받는 대기 신청도 없어요. 그동안 직접 둘러볼 수 있는 곳이에요:",
+    nextStepsHeading: "둘러볼 만한 곳",
+    nextStepsBody: "직접 둘러볼 수 있는 곳이에요:",
     nextStepsCalculator: "무료 사주 계산기",
     nextStepsDayMaster: "일간 10가지 알아보기",
     doneBadge: "무료 질문을 모두 사용했어요",
@@ -221,7 +222,6 @@ export const ko = {
       { q: "무료인가요?", a: "내 사주 결과와 첫 질문 2개는 무료예요. 더 깊은 리포트와 매일의 운세는 앱에서 열려요." },
       { q: "제 정보는 어떻게 쓰이나요?", a: "가입 없이 이용하고, 개인정보처리방침에 따라 보관하고 삭제할 수 있어요. 이 서비스는 예측이나 진단이 아니라 자기이해를 돕는 읽을거리예요." },
     ],
-    appNote: "앱은 곧 iOS와 Android에서 만나요.",
     bottomTitle: "내 리듬, 지금 확인해 볼까요",
   },
   typeCard: {
@@ -241,7 +241,7 @@ export const ko = {
     celebrityBirthYear: (year: number) => `${year}년생`,
     noTimeNote: "태어난 시간 없이 계산했어요. 시간과 도시를 넣으면 '지금 나를 이끄는 기운'이 달라질 수 있어요.",
     appTitle: "전체 원국은 앱에서",
-    appBody: "네 기둥 그림, 매일의 리듬, 나만의 심층 리포트는 앱에서 열려요. 앱은 곧 iOS와 Android에서 만나요.",
+    appBody: "네 기둥 그림, 매일의 리듬, 나만의 심층 리포트는 앱에서 열려요.",
     continueCta: "시간과 도시까지 넣고 자세히 보기",
     again: "다른 생년월일로 보기",
   },
@@ -269,7 +269,7 @@ export const ko = {
     howTitle: "어떻게 계산하나요",
     howBody: "한국천문연구원 천문 데이터로 절기 경계를 잡고, 태어난 연·월·일·시를 각각 천간과 지지 한 쌍으로 바꿔 여덟 글자를 만들어요. 오행 분포는 그 여덟 글자가 목·화·토·금·수 중 어디에 속하는지 센 비율이에요.",
     appTitle: "풀이와 매일의 흐름은 앱에서",
-    appBody: "사주 유형, 매일의 리듬, 심리테스트와 함께 읽는 심층 리포트는 앱에서 열려요. 앱은 곧 iOS와 Android에서 만나요.",
+    appBody: "사주 유형, 매일의 리듬, 심리테스트와 함께 읽는 심층 리포트는 앱에서 열려요.",
     homeCta: "Fatesaid 홈으로",
   },
   invite: {
@@ -292,7 +292,7 @@ export const ko = {
     sentNote: (name: string) => `${name}님 앱에도 이 결과가 전해졌어요.`,
     sentNoteNoName: "링크를 보낸 사람의 앱에도 이 결과가 전해졌어요.",
     appTitle: "서로에게 주는 것과 부딪히기 쉬운 지점은 앱에서",
-    appBody: "Fatesaid 앱에서는 내 사주 유형, 오늘의 흐름, 두 사람을 더 깊게 읽는 궁합 리포트를 볼 수 있어요. 앱은 곧 iOS와 Android에 나와요.",
+    appBody: "Fatesaid 앱에서는 내 사주 유형, 오늘의 흐름, 두 사람을 더 깊게 읽는 궁합 리포트를 볼 수 있어요.",
     expiredTitle: "기간이 지난 링크예요",
     expiredBody: "초대 링크는 30일 동안만 열려요. 링크를 보낸 사람에게 새 링크를 부탁해 보세요.",
     answeredTitle: "이미 답이 온 링크예요",

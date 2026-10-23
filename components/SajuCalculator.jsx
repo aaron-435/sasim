@@ -1,5 +1,6 @@
 "use client";
 
+import AppInstall from "@/components/AppInstall";
 import React from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import QuickBirthForm, { fetchQuickSaju } from "@/components/QuickBirthForm";
@@ -218,6 +219,7 @@ export default function SajuCalculator({ locale }) {
         <section className="sc-app" aria-labelledby="sc-app-title">
           <h2 id="sc-app-title">{c.appTitle}</h2>
           <p>{c.appBody}</p>
+          <AppInstall t={t} />
           <a className="sc-cta" href={localizedPath("/", locale)}>{c.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
         </section>
 

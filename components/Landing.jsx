@@ -1,5 +1,6 @@
 "use client";
 
+import AppInstall from "@/components/AppInstall";
 import React from "react";
 import { ArrowRight, Lock, Sparkles } from "lucide-react";
 import { useStrings, useLocale, LOCALES } from "@/lib/i18n";
@@ -207,7 +208,7 @@ export default function Landing({ onStart }) {
           </button>
           <p className="lp-note">{l.ctaNote}</p>
           {legalNotice}
-          <p className="lp-small">{l.appNote}</p>
+          <AppInstall t={t} align="center" />
           <p className="lp-copy">© 2026 Studio Aaron</p>
         </section>
       </div>

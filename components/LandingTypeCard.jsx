@@ -1,5 +1,6 @@
 "use client";
 
+import AppInstall from "@/components/AppInstall";
 import React from "react";
 import { ArrowRight } from "lucide-react";
 import QuickBirthForm, { fetchQuickSaju } from "@/components/QuickBirthForm";
@@ -143,6 +144,7 @@ export default function LandingTypeCard({ t, locale, onContinue, onRevealChange 
             <div className="tc-app">
               <h3>{c.appTitle}</h3>
               <p>{c.appBody}</p>
+              <AppInstall t={t} />
             </div>
 
             <div className="tc-actions">

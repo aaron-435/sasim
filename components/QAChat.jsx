@@ -1,5 +1,6 @@
 "use client";
 
+import AppInstall from "@/components/AppInstall";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Sparkles, ShieldCheck, Copy, Check, ArrowRight } from "lucide-react";
@@ -355,16 +356,7 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
                     <span className="qa-mono" style={{ fontSize: "20px", fontWeight: 700, color: "#6FA98B", letterSpacing: "0.1em" }}>{verifyCode}</span>
                     {copied ? <Check size={15} color="#6FA98B" /> : <Copy size={15} color="#6FA98B" />}
                   </button>
-                  {/* 앱스토어 링크가 실제로 생기면 이 배지를 클릭 가능한 <a> 버튼으로 교체할 것 —
-                      그 전까지는 존재하지 않는 링크를 가리키는 가짜 CTA를 보여주지 않는다. */}
-                  <div style={{
-                    display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px",
-                    width: "100%", padding: "14px", borderRadius: "12px",
-                    background: "rgba(255,255,255,0.03)", border: "1px dashed #26332B", color: "#7C8A82",
-                    fontSize: "13.5px", fontWeight: 600,
-                  }}>
-                    {t.qa.appComingSoonLabel}
-                  </div>
+                  <AppInstall t={t} align="center" />
                 </div>
               )}
               <div style={{ marginTop: "18px", textAlign: "left", background: "rgba(255,255,255,0.03)", border: "1px solid #26332B", borderRadius: "14px", padding: "16px" }}>

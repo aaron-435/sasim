@@ -1,3 +1,4 @@
+import AppInstall from "@/components/AppInstall";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { getDictionary, LOCALES, type Locale } from "@/lib/i18n";
 import { ARTICLE_UI, LOCALE_LABELS, calculatorPath } from "@/lib/seoArticles/ui";
@@ -76,6 +77,7 @@ function Shell({ locale, langHref, children }: { locale: Locale; langHref: (l: L
         <section className="dm-box" aria-labelledby="dm-app-title">
           <h2 id="dm-app-title">{t.calculator.appTitle}</h2>
           <p>{t.calculator.appBody}</p>
+          <AppInstall t={t} />
           <a className="dm-cta" href={localizedPath("/", locale)}>{t.calculator.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
         </section>
       </div>
