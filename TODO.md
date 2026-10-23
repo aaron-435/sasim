@@ -24,10 +24,14 @@
   - 행동 변화(사용자 판단 필요): 예전엔 스페인어 브라우저로 `/`에 오면 스페인어로 보였지만, 이제 `/`는 항상 영어이고 스페인어는 `/es`다. 광고 링크는 `/es`로 걸어야 한다. 필요하면 `/` 한정 Accept-Language 리다이렉트를 따로 검토.
   - 이어서 TODO 3: 지금은 rewrite가 `?lang=`를 만들어 페이지가 동적이다. `[locale]` 폴더 구조로 옮기면서 정적화.
 
-- [ ] 3. 캐시 가능 렌더로 전환
+- [x] 3. 캐시 가능 렌더로 전환
   - 선행: 2
   - 변경: 언어를 경로에서 읽어 `headers()`·`cookies()` 의존을 제거(`app/layout.tsx`의 `LOCALE_HEADER`, 랜딩 여부 헤더). 정적/ISR 대상 확인.
   - QA: build 출력에서 해당 라우트가 `●`/`○`(정적·SSG)로 나오고, `curl -I`에 `no-store`가 없다.
+  - QA: `npm run lint`, `npx tsc --noEmit`, `npm run build` 통과 → build 출력에서 `/[locale]`, `/[locale]/saju-calculator`, `/[locale]/day-master`, `/[locale]/day-master/[type]`가 `●`(SSG, 40개 HTML 생성). `next start -p 3100`에서 `/` `/ko` `/es` `/saju-calculator` `/es/saju-calculator` `/day-master` `/ko/day-master/oak` 모두 200 + `Cache-Control: s-maxage=31536000, stale-while-revalidate`(no-store 아님). `?lang=`·`/en/` 308 유지, `/es/nope`·`/nope`·`/es/day-master/nope` 404(언어별 문구), `/privacy` 동적 유지. `check-seo.mts` → 39 URL, FAIL 0, WARN 9(캐시 경고 사라짐, 남은 건 JSON-LD로 TODO 4). `check-seo-links.mts` → ALL OK.
+  - 구현: 루트 레이아웃을 `app/(site)/[locale]/layout.tsx`(정적)와 `app/(legal)/layout.tsx`(동적)로 나눔. 공용 틀 `components/RootShell.tsx`(기존 `app/layout.tsx` 이동). 페이지는 `searchParams` 대신 `params.locale`을 받고 랜딩 canonical·hreflang은 이제 페이지 `generateMetadata`에서 낸다(`LANDING_HEADER` 제거). middleware는 `?lang=` 대신 경로 rewrite. 404는 `(site)` 쪽이 `headers()`를 쓰면 모든 페이지가 동적이 되므로 `components/NotFoundView.tsx`(클라이언트, URL 접두로 언어 결정)를 씀. 미등록 URL은 `app/(legal)/[...slug]/page.tsx`가 404로 보냄(루트 레이아웃이 둘이면 `app/not-found`가 안 쓰임).
+  - 사이트맵 변경: 영어 랜딩 URL을 슬래시 없는 `https://www.fatesaidapp.com`으로(Next가 canonical을 그렇게 출력).
+  - 한계: 404 `<title>`은 `(site)` 쪽에서 영어 고정("Fatesaid", noindex). 404 meta description은 빠짐. `requestLocale`은 법적 페이지 메타(`lib/legalMeta.ts`)만 씀.
 
 - [ ] 4. JSON-LD 보강
   - 변경: 랜딩(Organization, MobileApplication), 계산기(WebApplication), 일간 상세(BreadcrumbList 추가). 공통 헬퍼 `lib/jsonLd.ts`.

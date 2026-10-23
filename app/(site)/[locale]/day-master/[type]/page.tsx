@@ -1,18 +1,24 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { DayMasterArticlePage } from "@/components/DayMasterPage";
-import { explicitLocale, requestLocale } from "@/lib/seoArticles/requestLocale";
-import { articlePath, getArticle } from "@/lib/seoArticles";
+import type { Locale } from "@/lib/i18n";
+import { articlePath, getArticle, publishedDayMasters } from "@/lib/seoArticles";
 
-// One Day Master, one language per page (SPEC C1). Unknown or unpublished slugs are 404.
+// One Day Master, one language per page (SPEC C1), prerendered. Unknown or unpublished slugs are 404.
 
-type Props = { params: { type: string }; searchParams?: { lang?: string } };
+export const dynamicParams = false;
 
-export function generateMetadata({ params, searchParams }: Props): Metadata {
-  const locale = requestLocale(searchParams?.lang);
+export function generateStaticParams() {
+  return publishedDayMasters().map((d) => ({ type: d.slug }));
+}
+
+type Props = { params: { locale: Locale; type: string } };
+
+export function generateMetadata({ params }: Props): Metadata {
+  const locale = params.locale;
   const article = getArticle(params.type, locale);
   if (!article) return {};
-  const path = articlePath(params.type, explicitLocale(searchParams?.lang)); // see app/day-master/page.tsx
+  const path = articlePath(params.type, locale);
   return {
     title: article.metaTitle,
     description: article.description,
@@ -30,8 +36,8 @@ export function generateMetadata({ params, searchParams }: Props): Metadata {
   };
 }
 
-export default function DayMasterArticle({ params, searchParams }: Props) {
-  const locale = requestLocale(searchParams?.lang);
+export default function DayMasterArticle({ params }: Props) {
+  const locale = params.locale;
   if (!getArticle(params.type, locale)) notFound();
   return <DayMasterArticlePage slug={params.type} locale={locale} />;
 }

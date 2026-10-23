@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { LANDING_HEADER, LOCALE_COOKIE, LOCALE_HEADER, resolveLocale } from "@/lib/i18n/serverLocale";
+import { LOCALE_COOKIE, LOCALE_HEADER, resolveLocale } from "@/lib/i18n/serverLocale";
 import { isLocalizedSeoPath, localizedPath, splitLocalePath } from "@/lib/i18n/paths";
 import { LOCALES } from "@/lib/i18n/types";
 
@@ -21,10 +21,11 @@ import { LOCALES } from "@/lib/i18n/types";
  */
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  // app/layout.tsx reads the locale header for <html lang>; pages resolve again for their body.
+  // app/(legal)/layout.tsx reads the locale header for <html lang>; pages resolve again for their body.
   if (!path.startsWith("/api/")) {
     // Public SEO pages carry the language in the path (English at the root, /ko and /es prefixed). The
-    // page below still reads ?lang=, so these URLs are rewritten to it internally and the URL is the single
+    // routes live under app/(site)/[locale] (prerendered), so every such URL is rewritten to /<locale>/<path>
+    // internally (English too: / -> /en) and the URL is the single
     // source of truth: no cookie or Accept-Language guess here, so one URL is always one language.
     const split = splitLocalePath(path);
     if (isLocalizedSeoPath(split.path)) {
@@ -38,11 +39,10 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(target, 308);
       }
       const rewritten = request.nextUrl.clone();
-      rewritten.pathname = split.path;
-      rewritten.searchParams.set("lang", split.locale);
+      rewritten.pathname = split.path === "/" ? `/${split.locale}` : `/${split.locale}${split.path}`;
+      // Only the 404 page reads this (an unknown slug renders inside the locale layout).
       const requestHeaders = new Headers(request.headers);
       requestHeaders.set(LOCALE_HEADER, split.locale);
-      if (split.path === "/") requestHeaders.set(LANDING_HEADER, "1");
       return NextResponse.rewrite(rewritten, { request: { headers: requestHeaders } });
     }
     // Everything else (legal pages, invite links, unknown URLs -> 404): ?lang= -> cookie -> Accept-Language -> en.
