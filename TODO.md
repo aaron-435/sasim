@@ -47,15 +47,20 @@
   - 구현: 공용 `components/AppInstall.tsx`(Play 버튼 + "iOS는 곧" 한 줄)를 랜딩 하단, 유형 카드, 계산기, 일간 상세, 초대, Q&A 완료 화면(가짜 점선 배지 대체)에 넣음. i18n `common.playCta`·`iosSoon` 추가, `appNote`·`appComingSoonLabel` 삭제, `appBody`의 "곧 iOS와 Android" 문장 삭제. Q&A의 인증번호 안내·"앱은 아직 출시 전" 문구도 출시 사실에 맞게 고침.
   - (user check) 눈으로 확인: 모바일 폭에서 버튼 모양(초록 버튼, 계산기·랜딩 하단). iOS 승인 후 App Store 링크 교체와 Smart App Banner는 별도 항목으로 이어서.
 
-- [ ] 6. 콘텐츠 설계와 첫 묶음 (주제 계열 확정, 8~10개 en/es 우선)
+- [x] 6. 콘텐츠 설계와 첫 묶음 (주제 계열 확정, 8~10개 en/es 우선)
   - 변경: 주제 목록 + 페이지당 목표 검색어를 `SEO_CONTENT_PLAN.md`에 정리, 첫 3개 페이지(en/es) 작성, `lib/seoArticles` 형식 재사용 또는 확장.
   - QA: check-seo 통과, 새 페이지가 sitemap에 있다. 압박 마케팅 규칙 위반 문구 없음(사용자 확인).
+  - QA: `npx tsc --noEmit`, `npm run lint`, `npm run build` 통과(`/[locale]/guides`, `/[locale]/guides/[slug]` `●` 정적) → `next start -p 3100` + `check-seo.mts` → 47 URL, FAIL 0, WARN 0. `check-seo-links.mts` → ALL OK. sitemap에 guides URL 포함, `/guides` `/es/guides` 200, `/ko/guides` 404, `/guides?lang=es` 308 `/es/guides`, Cache-Control `s-maxage=31536000`.
+  - 구현: `SEO_CONTENT_PLAN.md`(주제 10개 + 목표 검색어, 3개 작성). 새 경로 `/guides`, `/guides/<slug>`: `lib/seoGuides/`, `components/GuidePage.tsx`, `app/(site)/[locale]/guides/`. `lib/i18n/paths.ts`에 `/guides` 추가, sitemap은 글이 있는 언어(en/es)만 URL·hreflang에 넣음(ko 없음). `DayMasterPage`의 `Shell`을 export하고 언어 버튼 목록을 선택 인자로 만듦. 첫 3개: 오행 궁합, 사주 vs 점성술, 사주 네 기둥 읽는 법(en/es).
+  - (사용자 확인) 6개 글(en/es)의 문구가 압박 마케팅 규칙(나쁜 궁합 판정·예측·공포 소구 없음)에 맞는지, 스페인어 어투(tú/ustedes) 읽기. 글 본문은 모델이 쓴 것이라 사실 확인(천간합 5쌍, 상생·상극, 조합 수 "50만 개 이상" = 60×12×60×12)도 한 번 봐 주세요.
 
 - [ ] 7. Search Console 등록 (user check)
   - 사용자 단계: 도메인 속성 추가 → DNS TXT 확인 → `https://www.fatesaidapp.com/sitemap.xml` 제출 → 색인 상태 1주 뒤 확인.
   - Claude가 도울 수 있는 것: Chrome에서 화면을 같이 보며 안내.
 
 ## 발견 사항
+- (TODO 6) `/guides`로 가는 내부 링크가 아직 없다(sitemap에만 있음). 랜딩 하단·`/day-master` 목록·일간 글에서 링크를 거는 건 글이 늘 때(두 번째 묶음) 함께.
+- (TODO 6) 가이드 Article JSON-LD는 일간 글처럼 `datePublished` 없음. 필요하면 별도 항목.
 - (TODO 2) 법적 페이지(`/privacy`, `/terms`, `/data-deletion`)는 색인 가치가 낮고 앱이 `?lang=` URL로 링크하므로 접두 경로로 옮기지 않고 `?lang=` 유지로 결정. sitemap에도 계속 제외.
 - (TODO 2) `components/Landing.jsx`의 언어 버튼은 클라이언트 상태만 바꾸고 URL은 그대로다. `/`에서 스페인어를 눌러도 canonical은 영어 URL. TODO 3~5에서 `/es`로 이동하는 링크로 바꿀지 판단.
 - (TODO 1) `/privacy`, `/terms`, `/data-deletion`은 sitemap에 없고 canonical·JSON-LD 상태 미확인. 법적 페이지라 색인 필요성은 낮지만 TODO 2에서 경로 규칙을 정할 때 함께 결정.

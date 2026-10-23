@@ -14,7 +14,7 @@ import { LOCALES, type Locale } from "./types";
 
 /** Unprefixed paths that live under the language prefix. */
 export function isLocalizedSeoPath(path: string): boolean {
-  return path === "/" || path === "/saju-calculator" || path === "/day-master" || path.startsWith("/day-master/");
+  return path === "/" || path === "/saju-calculator" || path === "/day-master" || path.startsWith("/day-master/") || path === "/guides" || path.startsWith("/guides/");
 }
 
 /** `localizedPath("/day-master", "es")` -> `/es/day-master`; the landing is `/es`; English is unchanged. */

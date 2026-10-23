@@ -57,7 +57,7 @@ const CSS = `
   .dm-root a:focus-visible { outline: 2px solid #6FA98B; outline-offset: 3px; }
 `;
 
-function Shell({ locale, langHref, children }: { locale: Locale; langHref: (l: Locale) => string; children: React.ReactNode }) {
+export function Shell({ locale, langHref, locales = LOCALES, children }: { locale: Locale; langHref: (l: Locale) => string; locales?: readonly Locale[]; children: React.ReactNode }) {
   const t = getDictionary(locale);
   return (
     <main className="dm-root" lang={locale}>
@@ -66,7 +66,7 @@ function Shell({ locale, langHref, children }: { locale: Locale; langHref: (l: L
         <header className="dm-header">
           <a className="dm-brand" href={localizedPath("/", locale)}><Sparkles size={13} strokeWidth={1.75} aria-hidden="true" />{t.common.brand}</a>
           <nav className="dm-langs" aria-label={t.landing.langLabel}>
-            {LOCALES.map((code) => (
+            {locales.map((code) => (
               <a key={code} className="dm-lang" href={langHref(code)} hrefLang={code} aria-current={code === locale ? "page" : undefined}>
                 {LOCALE_LABELS[code]}
               </a>
