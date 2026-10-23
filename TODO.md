@@ -7,9 +7,13 @@
 - 웹만 건드린다. 커밋·푸시·배포는 사용자가 한다. 문구는 Opus가 쓴다.
 - 3개 파일 이상 반복 구현은 muse(표준 모델)에 위임, 메인이 검수.
 
-- [ ] 1. SEO 현황 점검 스크립트
+- [x] 1. SEO 현황 점검 스크립트
   - 변경: `scripts/check-seo.mts`(새 파일). 빌드된 서버를 띄워 모든 공개 URL의 title, description, canonical, hreflang 상호성, JSON-LD 유효성, `Cache-Control`, sitemap 일치를 출력한다. 이후 모든 항목의 QA 기준선이 된다.
   - QA: `npm run build && npx next start` 후 `npx tsx scripts/check-seo.mts` → 현재 상태의 실패 목록을 읽고 TODO에 기록.
+  - QA: `npm run build` 통과 → `next start -p 3100` + `npx tsx scripts/check-seo.mts http://localhost:3100` → 39 URL, FAIL 0, WARN 49. 서버를 내리면 종료 코드 1(접속 실패를 잡음). `npx tsc --noEmit` 오류 없음.
+  - 사용법: 인자는 baseUrl(기본 3000). FAIL = 구조 오류(title·description·canonical 자기 참조·`<html lang>`·hreflang 페이지=sitemap 일치와 상호성·JSON-LD 파싱·robots Sitemap 줄). WARN = 이후 항목이 해결할 알려진 빈틈(캐시, JSON-LD 없음, `?lang=` 308, 중복 description).
+  - 기준선(현재 WARN): ① 39개 URL 모두 `private, no-cache, no-store` → TODO 3 ② JSON-LD 없는 페이지 9개(랜딩 3, 계산기 3, `/day-master` 목록 3) → TODO 4 ③ `/day-master/oak?lang=es`가 200(308 아님) → TODO 2. build 출력상 `/`, `/saju-calculator`, `/day-master`, `/day-master/[type]`, privacy 등 전부 `ƒ`(동적).
+  - 한계: 응답 헤더·HTML 정적 검사만 한다(Google 리치 결과 테스트 대체 아님). `/privacy`·`/terms`는 sitemap에 없어 검사 밖.
 
 - [ ] 2. 언어 경로 전환 (결정 확정)
   - 선행: 1
@@ -39,4 +43,5 @@
   - Claude가 도울 수 있는 것: Chrome에서 화면을 같이 보며 안내.
 
 ## 발견 사항
-(작업 중 기록)
+- (TODO 1) `/privacy`, `/terms`, `/data-deletion`은 sitemap에 없고 canonical·JSON-LD 상태 미확인. 법적 페이지라 색인 필요성은 낮지만 TODO 2에서 경로 규칙을 정할 때 함께 결정.
+- (TODO 1) 중복 meta description 검사는 WARN으로만 둠(언어별 페이지는 설명이 같을 수 있어서).
