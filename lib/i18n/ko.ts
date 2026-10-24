@@ -210,7 +210,7 @@ export const ko = {
     sampleTitle: "리포트는 이렇게 생겼어요",
     sampleNote: "예시를 위한 가상 인물의 샘플이에요. 실제 사용자의 결과가 아니에요.",
     samplePage1Label: "어느 밤의 장면",
-    samplePage1Body: "퇴근길 지하철에서 휴대폰을 켰다 끄기를 반복한다. 할 일은 분명한데 손이 먼저 움직이지 않는다. 지수님의 요즘은 이런 모습이지 않으신가요.",
+    samplePage1Body: "퇴근길 지하철에서 휴대폰을 켰다 끄기를 반복한다. 할 일은 분명한데 손이 먼저 움직이지 않는다. 지수님의 요즘도 이런 모습은 아닌가요.",
     samplePage2Label: "나의 오행",
     samplePage3Label: "강점과 약점",
     samplePage3Locked: "앱에서 열려요",

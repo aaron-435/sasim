@@ -24,7 +24,7 @@ export const MODULE4_SCRIPT_EN: ModuleScript = {
       turn: 2,
       question: "In that setting, what do you adjust the most?",
       options: [
-        o("My expression", "The face moves to fit the situation first.", "your expression"),
+        o("My expression", "Your face shifts to fit the situation first.", "your expression"),
         o("My tone", "Adjusting the warmth of your voice.", "your tone"),
         o("My opinion", "Putting your own thoughts a step back.", "your opinion"),
       ],
@@ -39,7 +39,7 @@ export const MODULE4_SCRIPT_EN: ModuleScript = {
     },
     4: {
       turn: 4,
-      question: "Right after it ends, which is closer to what stays in your heart?",
+      question: "Right after it ends, which is closer to what stays with you inside?",
       options: [
         o("Fatigue", "The trace of spent energy sits at the center.", "fatigue"),
         o("Loneliness", "An empty space is left where the laughter passed.", "loneliness"),
@@ -78,7 +78,7 @@ export const MODULE4_SCRIPT_EN: ModuleScript = {
       options: [
         o("I look forward to it", "Looking forward to the day comes first.", "looking forward to it"),
         o("I'm already tired", "Calculating that day's energy in advance.", "tiredness that arrives early"),
-        o("I only know once the day comes", "Some feelings aren't decided in advance.", "a feeling that only shows up on the day"),
+        o("I only know once the day comes", "Some feelings aren't decided in advance.", "a feeling that waits for the day"),
       ],
     },
     10: {
@@ -86,14 +86,14 @@ export const MODULE4_SCRIPT_EN: ModuleScript = {
       quote: true,
       question: "What do you feel would happen if you took the mask off?",
       options: [
-        o("People would be disappointed", "The worry of falling short of expectations is in front.", "a worry about disappointing people"),
-        o("People would drift away", "A worry that the distance in the relationship would change.", "a worry about drifting apart"),
+        o("People would be disappointed", "Falling short of expectations is what comes to mind first.", "the sense that people would be disappointed"),
+        o("People would drift away", "What comes to mind is the distance between you changing.", "the sense that people would drift away"),
         o("Probably nothing much", "A picture where taking it off changes little.", "the thought that nothing much would happen"),
       ],
     },
     11: {
       turn: 11,
-      question: "Right now, what does the mask protect, in your sense?",
+      question: "Right now, what do you feel your mask is protecting?",
       options: [
         o("Myself", "The mask is protecting you right now.", "yourself"),
         o("The relationship", "The mask is protecting the relationship right now.", "the relationship"),
@@ -111,7 +111,7 @@ export const MODULE4_SCRIPT_EN: ModuleScript = {
     },
     13: {
       turn: 13,
-      question: "In front of someone you can be unmasked with, what changes?",
+      question: "In front of someone you can take the mask off with, what changes?",
       options: [
         o("Words come easily", "In front of them, words come easily.", "words coming easily"),
         o("My face relaxes", "In front of them, your face relaxes.", "a relaxed face"),
@@ -124,8 +124,8 @@ export const MODULE4_SCRIPT_EN: ModuleScript = {
       question: "On a day you hid how you really felt, how do you tend to recover?",
       options: [
         o("Time alone", "Recharging in the quiet.", "time alone"),
-        o("One comfortable person", "One person who makes you feel at ease is the charger.", "one comfortable person"),
-        o("Sleep or rest", "Setting things right by lying down.", "sleep and rest"),
+        o("One comfortable person", "The person you feel at ease with is where you recover.", "one comfortable person"),
+        o("Sleep or rest", "Putting yourself back together by lying down.", "sleep and rest"),
       ],
     },
     15: {
@@ -142,17 +142,17 @@ export const MODULE4_SCRIPT_EN: ModuleScript = {
       question: "On a day you're wearing the mask, how would it feel if someone noticed how you are?",
       options: [
         o("It'd be welcome", "There's a wish to be noticed.", "a wish to be noticed"),
-        o("It'd feel like a burden", "A careful side toward being looked into.", "the burden of being looked into"),
-        o("It'd feel like being found out", "Closer to the feeling of something hidden coming out.", "a feeling of being found out"),
+        o("It'd feel like a burden", "A wariness about being looked into.", "the burden of being looked into"),
+        o("It'd feel like being found out", "More like something hidden being brought out.", "a feeling of being found out"),
       ],
     },
     17: {
       turn: 17,
-      question: "Is there someone near you now that you can be unmasked with?",
+      question: "Is there someone near you now that you can take the mask off with?",
       options: [
-        o("One or two people", "So there are one or two people near you who you can drop the mask with.", "one or two people"),
-        o("There was, but we drifted", "Someone like that was near you, but has drifted away.", "someone who used to be there"),
-        o("Not yet", "There's no one yet near you to be unmasked with.", "no one yet"),
+        o("One or two people", "There are one or two people near you you can drop the mask with.", "one or two people"),
+        o("There was, but we drifted", "Someone like that was near you, but has drifted away.", "someone who drifted away"),
+        o("Not yet", "There's no one near you yet to take the mask off with.", "no one yet"),
       ],
     },
     18: {
@@ -176,7 +176,7 @@ export const MODULE4_SCRIPT_EN: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "Someone next to you is smiling exactly the same way in the same setting. What do you think their face is like?",
+      question: "Someone next to you is smiling exactly the same way in that setting. How do you imagine they are doing underneath?",
       options: [
         o("Worn out", "A picture where the fatigue behind the smile catches your eye.", "a worn-out face"),
         o("At ease", "Someone for whom the setting comes naturally.", "an at-ease face"),
@@ -189,15 +189,15 @@ export const MODULE4_SCRIPT_EN: ModuleScript = {
     },
   },
   checkpoint: [
-    "From what you've told me, where the mask gets thickest is {g1}, what you adjust most is {g2}, after a gathering what stays is {g4}, and when plans are made, {g8} comes first.",
+    "From what you've told me, where the mask gets thickest is {g1}, what you adjust most is {g2}, after a gathering what stays is {g4}, and when a plan gets made, you described {g8}.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
   closing: {
     summary: [
       "Where the mask gets thickest is {g1}, and after a gathering what stays is {g4}.",
-      "What the mask protects is {g11}, and in front of someone you can be unmasked with, what changes is {g13}.",
-      "On the days you hide, you recover through {g14}; as for someone you can drop the mask with, it's {g17}; and you'd like to start with {g19}.",
+      "What your mask protects is {g11}. In front of someone you can take it off with, what changes is {g13}.",
+      "After a day of hiding, you recover with {g14}. As for someone you can drop the mask with: {g17}. And the smallest way to start putting it down is {g19}.",
     ],
     perspectiveLine: "I'll also keep the words you wrote to the person next to you in that same setting, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",

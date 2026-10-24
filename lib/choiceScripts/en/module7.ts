@@ -24,9 +24,9 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
       turn: 2,
       question: "At those times, what comes in first?",
       options: [
-        o("Sound or light", "The stimulation coming through the senses is at the front.", "sound or light"),
-        o("Smell or touch", "What touches the body comes first.", "smell or touch"),
-        o("The mood of the people", "Reading the energy carried in the air first.", "the mood of the people"),
+        o("Sound or light", "What comes in through the senses gets there first.", "sound or light"),
+        o("Smell or touch", "What reaches the body arrives first.", "smell or touch"),
+        o("The mood of the people", "You pick up on the people's mood before anything else.", "the mood of the people"),
       ],
     },
     3: {
@@ -41,9 +41,9 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
       turn: 4,
       question: "As you near your limit, which is closer to how you show up?",
       options: [
-        o("Overwhelmed and blank", "Input overflows and you switch off for a moment.", "going blank"),
-        o("Irritable", "The reaction comes out edgy.", "irritability"),
-        o("Wanting to get out of there", "The wish to put distance in front.", "the urge to get away"),
+        o("Overwhelmed and blank", "Too much comes in and you go blank for a moment.", "going blank"),
+        o("Irritable", "It comes out with an edge.", "irritability"),
+        o("Wanting to get out of there", "The wish for distance comes first.", "the urge to get away"),
       ],
     },
     5: {
@@ -62,7 +62,7 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
       options: [
         o("A few hours", "You settle back relatively quickly.", "a few hours"),
         o("About a day", "It takes getting through a night to settle.", "about a day"),
-        o("More than two days", "A body that needs plenty of time to recover.", "more than two days"),
+        o("More than two days", "Your body needs real time to recover.", "more than two days"),
       ],
     },
     7: {
@@ -104,8 +104,8 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
       turn: 12,
       question: "What do you notice before other people do?",
       options: [
-        o("Shifts in the mood", "Feeling the moment the air changes first.", "shifts in the mood"),
-        o("People's expressions", "There's something you read from faces first.", "people's expressions"),
+        o("Shifts in the mood", "You feel the moment the mood changes before others do.", "shifts in the mood"),
+        o("People's expressions", "You read faces before anything else.", "people's expressions"),
         o("Small details", "Small differences catch your eye first.", "small details"),
       ],
     },
@@ -123,8 +123,8 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
       quote: true,
       question: "When you know a setting will be too much, what do you do?",
       options: [
-        o("I tend to avoid it ahead of time", "Picking out heavy settings in advance.", "avoiding it ahead of time"),
-        o("I go and get through it", "Going and adjusting as you go.", "going and getting through it"),
+        o("I tend to avoid it ahead of time", "You pick out heavy settings in advance.", "avoiding it ahead of time"),
+        o("I go and get through it", "You go and adjust as you go.", "going and getting through it"),
       ],
     },
     15: {
@@ -132,15 +132,15 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
       question: "What do you usually do to reduce the stimulation?",
       options: [
         o("Step away for a moment", "To reduce stimulation, you step away for a moment.", "stepping away for a moment"),
-        o("Use something like earbuds", "To reduce stimulation, you use something like earbuds.", "using a tool"),
-        o("Nothing in particular", "There's nothing in particular for reducing stimulation.", "no set method"),
+        o("Use something like earbuds", "To reduce stimulation, you use something like earbuds.", "using something like earbuds"),
+        o("Nothing in particular", "There's nothing in particular for reducing stimulation.", "having no set method yet"),
       ],
     },
     16: {
       turn: 16,
       question: "Do you explain your sensitivities to the people around you?",
       options: [
-        o("I explain if needed", "Putting it into words when it's needed.", "explaining when needed"),
+        o("I explain if needed", "You put it into words when it's needed.", "explaining when needed"),
         o("I've given up explaining", "There was a time you chose silence over explaining.", "giving up on explaining"),
       ],
     },
@@ -149,7 +149,7 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
       question: "Is there someone who understands your sensitivities?",
       options: [
         o("One or two people", "There are one or two people who understand your sensitivities.", "one or two people"),
-        o("Only my family", "Only your family knows your sensitivities.", "only family"),
+        o("Only my family", "Only your family knows your sensitivities.", "only your family"),
         o("Not yet", "Nobody understands your sensitivities yet.", "no one yet"),
       ],
     },
@@ -158,8 +158,8 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
       quote: true,
       question: "If your day fit your sensitivities, what would change first?",
       options: [
-        o("How the morning starts", "A picture where the way the day opens changes first.", "how the morning starts"),
-        o("The space I stay in", "The shape of where you stay changes first.", "the space you stay in"),
+        o("How the morning starts", "The way the day opens changes first.", "how the morning starts"),
+        o("The space I stay in", "The place you stay in changes first.", "the space you stay in"),
         o("How I meet people", "How you meet people is the first thing that comes to mind.", "how you meet people"),
       ],
     },
@@ -174,11 +174,11 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "Think back to the first time someone said you were \"too sensitive.\" What do you think you looked like then?",
+      question: "If you picture the first time someone called you \"too sensitive,\" what do you think you looked like?",
       options: [
-        o("Quiet", "A child who took the words in without a sound.", "being quiet"),
-        o("Hurt", "A scene where you can see where the words landed.", "looking hurt"),
-        o("I can't remember", "As far as the memory has moved, that's how much time has passed.", "a memory that has faded"),
+        o("Quiet", "Taking the words in without a sound.", "being quiet"),
+        o("Hurt", "You can see where the words landed.", "looking hurt"),
+        o("I can't remember", "That memory has faded with time.", "a memory that has faded"),
       ],
     },
     21: {
@@ -187,15 +187,15 @@ export const MODULE7_SCRIPT_EN: ModuleScript = {
     },
   },
   checkpoint: [
-    "From what you've told me, what comes in first is {g2}, near your limit {g4} shows up, and overload comes after {g8}.",
+    "From what you've told me, {g2} reaches you first, near your limit it shows up as {g4}, and the overload tends to follow {g8}.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
   closing: {
     summary: [
-      "What comes in first is {g2}, near your limit {g4} shows up, and coming back takes {g6}.",
-      "When you heard the word \"sensitive,\" what you felt was {g11}, and what recharges you now is {g13}.",
-      "In a hard setting it's {g15}; as for who understands you, it's {g17}; and you'd like to start with {g19}.",
+      "What reaches you first is {g2}, near your limit it shows up as {g4}, and coming back takes {g6}.",
+      "Hearing the word \"sensitive\" left you with {g11}, and what helps you recharge now is {g13}.",
+      "Your way of easing the stimulation is {g15}. As for who understands your sensitivities, the answer is {g17}. And the smallest start you picked is {g19}.",
     ],
     perspectiveLine: "I'll also keep the words you wrote to yourself back then, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",

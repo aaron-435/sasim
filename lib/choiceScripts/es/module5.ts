@@ -26,7 +26,7 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
       options: [
         o("Tengo que hacerlo bien", "El listón se levanta antes de empezar.", "la idea de que hay que hacerlo bien"),
         o("Ahora no me apetece", "Primero habla la falta de ganas.", "la falta de ganas"),
-        o("No sé por dónde empezar", "Te quedas parado al no encontrar la primera casilla.", "la duda de por dónde empezar"),
+        o("No sé por dónde empezar", "Te quedas quieto al no ver cuál es el primer paso.", "la duda de por dónde empezar"),
       ],
     },
     3: {
@@ -58,7 +58,7 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
     },
     6: {
       turn: 6,
-      question: "¿Dónde sueles pararte?",
+      question: "¿En qué punto sueles pararte?",
       options: [
         o("Al empezar", "El primer paso es el que más pesa.", "al empezar"),
         o("A mitad", "Empiezas, pero te paras en medio.", "a mitad"),
@@ -67,7 +67,7 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
     },
     7: {
       turn: 7,
-      question: "Cuando tienes que elegir, ¿hacia dónde vas?",
+      question: "Cuando tienes que elegir, ¿hacia qué lado tiendes?",
       options: [
         o("Lo pienso tanto que se me pasa el momento", "Cuando tienes que elegir, lo piensas tanto que se te pasa el momento.", "elegir durante demasiado tiempo"),
         o("Elijo rápido y me arrepiento", "Cuando tienes que elegir, eliges rápido y luego te arrepientes.", "elegir rápido"),
@@ -77,7 +77,7 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
       turn: 8,
       question: "¿Qué te frena con más fuerza a la hora de empezar?",
       options: [
-        o("El miedo a equivocarme", "La preocupación por los errores está en el freno.", "el miedo a equivocarte"),
+        o("El miedo a equivocarme", "La preocupación por los errores pisa el freno.", "el miedo a equivocarte"),
         o("Un listón demasiado alto", "La vista va muy por delante de la mano.", "un listón alto"),
         o("Demasiadas opciones", "Tantas ramas que no puedes agarrarte a una.", "demasiadas opciones"),
       ],
@@ -85,10 +85,10 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
     10: {
       turn: 10,
       quote: true,
-      question: "¿Quién se parece más a quien puso ese listón?",
-      questionNoQuote: "¿Quién se parece más a quien puso el listón que sientes que debes alcanzar?",
+      question: "¿Quién dirías que puso ese listón?",
+      questionNoQuote: "¿Quién dirías que puso el listón que sientes que debes alcanzar?",
       options: [
-        o("Lo puse yo", "Una marca que te hiciste tú mismo.", "un listón que pusiste tú"),
+        o("Lo puse yo", "Una marca que te pusiste tú.", "un listón que pusiste tú"),
         o("Siento que lo esperan los demás", "Las expectativas de fuera se volvieron el listón.", "las expectativas de los demás"),
       ],
     },
@@ -112,19 +112,19 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
     },
     13: {
       turn: 13,
-      question: "¿Qué fue lo que acabó poniéndote en marcha?",
+      question: "Cuando por fin te pones en marcha, ¿qué suele ser lo que te mueve?",
       options: [
-        o("Una fecha límite encima", "Al final, una fecha límite encima te puso en marcha.", "una fecha límite"),
-        o("Alguien a mi lado", "Al final, alguien a tu lado te puso en marcha.", "alguien a tu lado"),
-        o("Partirlo en trozos diminutos", "Al final, partirlo en trozos diminutos te puso en marcha.", "partirlo en trozos"),
+        o("Una fecha límite encima", "Lo que te pone en marcha al final es una fecha límite encima.", "una fecha límite"),
+        o("Alguien a mi lado", "Lo que te pone en marcha al final es alguien a tu lado.", "alguien a tu lado"),
+        o("Partirlo en trozos diminutos", "Lo que te pone en marcha al final es partirlo en trozos diminutos.", "partirlo en trozos"),
       ],
     },
     14: {
       turn: 14,
       quote: true,
-      question: "El día que sacas por fin algo que habías dejado, ¿cómo te sientes?",
+      question: "El día que terminas por fin algo que habías dejado, ¿cómo te sientes?",
       options: [
-        o("Me quito un peso", "Un día en que te sientes más ligero tanto como has terminado.", "el alivio"),
+        o("Me quito un peso", "Sientes que el peso se aligera a medida que terminas.", "el alivio"),
         o("Me quito un peso, pero me lo reprocho", "Aunque ya terminó, el tiempo perdido te pesa.", "el reproche que queda pese al alivio"),
       ],
     },
@@ -142,7 +142,7 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
       question: "¿Sueles contar a quienes te rodean que lo estás dejando?",
       options: [
         o("Suelo decirlo", "Eres de los que avisan con antelación.", "avisar con antelación"),
-        o("Procuro que no se note", "Sueles dejar que no se note por fuera.", "ocultarlo"),
+        o("Procuro que no se note", "Sueles procurar que no se note por fuera.", "ocultarlo"),
       ],
     },
     17: {
@@ -161,8 +161,8 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
       questionNoQuote: "Si empezar lo que tienes que hacer pasara un poco más a menudo, ¿en qué tipo de tarea te gustaría?",
       options: [
         o("En el trabajo o el estudio", "Lo primero que viene es lo que tienes que hacer.", "el trabajo o el estudio"),
-        o("En asuntos con otras personas", "Querer primero en los asuntos entre personas.", "los asuntos con otras personas"),
-        o("En cosas para mí", "Querer primero en lo que haces por ti.", "las cosas para ti"),
+        o("En asuntos con otras personas", "Querer notarlo antes en los asuntos con otras personas.", "los asuntos con otras personas"),
+        o("En cosas para mí", "Querer notarlo antes en lo que haces por ti.", "las cosas para ti"),
       ],
     },
     19: {
@@ -179,7 +179,7 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
       question: "Dentro de un año, si esa tarea ya está hecha, ¿cómo te ves?",
       options: [
         o("Con alivio y ligereza", "Una imagen de haber dejado la carga.", "la ligereza"),
-        o("Como si nada", "Una imagen en la que se pierde en un día cualquiera.", "seguir como si nada"),
+        o("Como si nada", "Una imagen en la que se diluye en un día cualquiera.", "seguir como si nada"),
         o("No lo veo claro", "Una imagen aún borrosa también es una respuesta.", "una imagen todavía borrosa"),
       ],
     },
@@ -196,8 +196,8 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
   closing: {
     summary: [
       "Justo antes de empezar te cruza {g2}, y debajo, lo que más te frena es {g8}.",
-      "Bajo el listón está {g11}, y lo que te puso en marcha fue {g13}.",
-      "Cuando se acumula, lo tuyo es {g15}; quién lo sabe: {g17}; y querrías empezar por {g19}.",
+      "Bajo el listón está {g11}, y lo que suele ponerte en marcha es {g13}.",
+      "Cuando se acumulan las tareas, lo tuyo es {g15}. Quién lo sabe: {g17}. Y querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que dijo el tú de dentro de un año también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",

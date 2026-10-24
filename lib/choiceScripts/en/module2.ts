@@ -24,9 +24,9 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
       turn: 2,
       question: "In that moment, what weighs on you the most?",
       options: [
-        o("The amount I'm spending", "How much you spend is the first gate for your mind.", "the amount spent"),
+        o("The amount I'm spending", "The amount you spend is what your mind checks first.", "the amount spent"),
         o("The balance left", "The number that's left is what catches your eye first.", "the balance left"),
-        o("The version of me who spends", "The gaze on yourself spending comes before the money.", "the version of you who spends"),
+        o("The version of me who spends", "How you see yourself as a spender comes before the money.", "the version of you who spends"),
       ],
     },
     3: {
@@ -43,7 +43,7 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
       options: [
         o("Relief", "There's a side that exhales after settling something.", "relief"),
         o("Guilt", "One corner of the mind gets heavy after spending.", "guilt"),
-        o("A letdown", "A feeling of emptiness lingers even after filling something.", "a letdown"),
+        o("A letdown", "A hollow feeling stays even after the payment is done.", "a letdown"),
       ],
     },
     5: {
@@ -67,7 +67,7 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
     },
     7: {
       turn: 7,
-      question: "After comparing, which way does your mind lean?",
+      question: "If you do compare yourself, which way does your mind lean afterward?",
       options: [
         o("Impatient", "After comparing, it leans toward impatience.", "impatience"),
         o("Shrunken", "After comparing, it leans toward shrinking back.", "shrinking back"),
@@ -78,8 +78,8 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
       turn: 8,
       question: "On a day when money worry grows, which way does your wallet move?",
       options: [
-        o("It shuts tighter", "The bigger the worry, the tighter the lock.", "saving more"),
-        o("It actually opens", "Working off the anxiety by spending.", "spending more instead"),
+        o("It shuts tighter", "The bigger the worry, the tighter the wallet.", "saving more"),
+        o("It actually opens", "Spending it off when the worry grows.", "spending more instead"),
         o("No real change", "Worry and wallet move separately.", "carrying on as usual"),
       ],
     },
@@ -89,7 +89,7 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
       question: "What was the mood around money talk at home when you were young?",
       options: [
         o("It came up often", "A home where money talk reached the table.", "a topic that came up often"),
-        o("It was quietly avoided", "A topic that had presence by not being spoken.", "a topic that was avoided"),
+        o("It was quietly avoided", "A topic that stayed present by going unspoken.", "a topic that was avoided"),
         o("I don't remember well", "Some scenes stay without being clear.", "something blurry in memory"),
       ],
     },
@@ -99,7 +99,7 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
       options: [
         o("The safety that protects me", "So to you, money is, in the end, the safety that protects you.", "safety"),
         o("The freedom that makes life easier", "So to you, money is, in the end, the freedom that makes life easier.", "freedom"),
-        o("The yardstick I'm measured by", "So to you, money is, in the end, the yardstick you're measured by.", "a yardstick for yourself"),
+        o("The yardstick I'm measured by", "So to you, money is, in the end, the yardstick you're measured by.", "a yardstick for measuring yourself"),
       ],
     },
     12: {
@@ -163,7 +163,7 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
       question: "If you were at peace with money, what would your payday look like?",
       options: [
         o("A quick check, then move on", "A picture of glancing at one number calmly and moving on.", "a quick check and moving on"),
-        o("A small gift to myself", "A picture where my own share comes first.", "a small gift to yourself"),
+        o("A small gift to myself", "A picture where your own share comes first.", "a small gift to yourself"),
         o("Sharing with someone", "The scene of sharing with someone close comes first.", "sharing with someone"),
       ],
     },
@@ -180,9 +180,9 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
       turn: 20,
       question: "If someone who just got their first paycheck were in front of you, what would you feel first?",
       options: [
-        o("Warmth", "Welcoming someone just starting out comes first.", "warmth"),
-        o("Worry", "Someone whose rules haven't set yet stays on your mind.", "worry"),
-        o("Envy", "You can see the first thrill up close.", "envy"),
+        o("Warmth", "A welcome for someone just starting out comes first.", "warmth"),
+        o("Worry", "You keep thinking about how they're still shaping their own rules.", "worry"),
+        o("Envy", "Their first thrill is what stands out to you.", "envy"),
       ],
     },
     21: {
@@ -191,15 +191,15 @@ export const MODULE2_SCRIPT_EN: ModuleScript = {
     },
   },
   checkpoint: [
-    "From what you've told me, what weighs most around money looks like {g2}, after paying it's close to {g4}, and on days the worry grows, {g8} comes first.",
+    "From what you've told me, what weighs most around money is {g2}; after paying, the feeling is close to {g4}; and on days when the worry grows, your wallet tends toward {g8}.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
   closing: {
     summary: [
-      "What weighs most around money is {g2}, and after paying it's close to {g4}.",
-      "In the blank of 'Money is, in the end, ___' you put {g11}, and what you've kept steadily is {g13}.",
-      "When worry rises it's {g15}, the person it's most uncomfortable to talk to is {g17}, and you'd like to start with {g19}.",
+      "What weighs most around money is {g2}, and after paying the feeling is close to {g4}.",
+      "In the blank of 'Money is, in the end, ___' you put {g11}, and what you've kept up steadily is {g13}.",
+      "When worry rises, you turn to {g15}; the person it's most uncomfortable to talk to about money is {g17}; and the step you'd start with is {g19}.",
     ],
     perspectiveLine: "I'll also keep the words you wrote to the person with their first paycheck, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",

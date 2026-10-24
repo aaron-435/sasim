@@ -25,8 +25,8 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
       turn: 2,
       question: "What takes up the biggest share of that weight?",
       options: [
-        o("The sheer amount of work", "The amount alone is what catches first.", "the amount of work"),
-        o("The people", "The weight comes more from people than from the work.", "people"),
+        o("The sheer amount of work", "The sheer amount is what stands out first.", "the volume of work"),
+        o("The people", "The weight comes more from people than from the work.", "the people around you"),
         o("I can't pick just one", "Not fitting into one thing is an answer too.", "several things piling up"),
       ],
     },
@@ -42,7 +42,7 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
       turn: 4,
       question: "If you had to name this state in one word, which is closest?",
       options: [
-        o("Listlessness", "Tilted toward not being able to get motivated.", "listlessness"),
+        o("Listlessness", "Leaning toward not being able to get going.", "listlessness"),
         o("Irritation", "The edgier side is out in front.", "irritation"),
         o("Emptiness", "A hollow feeling sits at the center.", "emptiness"),
       ],
@@ -59,7 +59,7 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
     },
     6: {
       turn: 6,
-      question: "When you think back on those stretches, what comes to mind first?",
+      question: "When you think of the hardest stretch at work so far, what comes to mind first?",
       options: [
         o("Work piled up", "The scene of stacked deadlines comes first.", "a time when work piled up"),
         o("People were hard", "Relationships sit up front in that memory.", "a time when people were hard"),
@@ -78,9 +78,9 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
       turn: 8,
       question: "What drains your energy the most?",
       options: [
-        o("The amount of work", "The pile that keeps growing is the biggest leak.", "the amount of work"),
-        o("Handling emotions", "Spending feelings takes the most.", "handling emotions"),
-        o("Things not going my way", "What's out of my hands takes the most.", "things not going your way"),
+        o("The amount of work", "The pile that keeps growing is the biggest leak.", "keeping up with the pile of work"),
+        o("Handling emotions", "Managing feelings takes the most.", "handling emotions"),
+        o("Things not going my way", "What's out of your hands takes the most.", "things not going your way"),
       ],
     },
     10: {
@@ -90,7 +90,7 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
       questionNoQuote: "If something stops you from resting, where do you think it comes from?",
       options: [
         o("From inside me", "Often it's a standard you set yourself.", "inside you"),
-        o("From worrying about others", "An outside gaze has become the standard.", "worrying about others"),
+        o("From worrying about others", "Other people's eyes have become the standard.", "worrying about others"),
       ],
     },
     11: {
@@ -107,17 +107,17 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
       question: "What did you like about this work when you first took it on?",
       options: [
         o("The work itself", "The joy that came from the work itself.", "the work itself"),
-        o("Seeing myself do it well", "The sense of getting it done was the strength.", "doing it well"),
-        o("Feeling recognized", "The response from outside was the strength.", "recognition"),
+        o("Seeing myself do it well", "Seeing yourself do it well was the draw.", "doing it well"),
+        o("Feeling recognized", "Recognition from others was the draw.", "recognition"),
       ],
     },
     13: {
       turn: 13,
-      question: "Is there anything that still refills you, even a little?",
+      question: "Is there anything that still gives you a little energy, even now?",
       options: [
-        o("People close to me", "Even now, people close to you refill you a little.", "people close to you"),
-        o("Time alone", "Even now, time alone refills you a little.", "time alone"),
-        o("Small wins at work", "Even now, small wins at work refill you a little.", "small wins at work"),
+        o("People close to me", "Even now, people close to you give you a little energy.", "people close to you"),
+        o("Time alone", "Even now, time alone gives you a little energy.", "time alone"),
+        o("Small wins at work", "Even now, small wins at work give you a little energy.", "small wins at work"),
       ],
     },
     14: {
@@ -125,34 +125,34 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
       quote: true,
       question: "How do you spend your days off?",
       options: [
-        o("I actually rest", "Rest time turns into real rest.", "days off that really rest"),
+        o("I actually rest", "Your days off turn into real rest.", "days off that really rest"),
         o("Work stays on my mind", "The body rests, the mind stays at work.", "work staying on your mind while resting"),
       ],
     },
     15: {
       turn: 15,
-      question: "When thoughts of work cut in, what do you usually do?",
+      question: "If thoughts of work come up while you're resting, what do you usually do?",
       options: [
-        o("Just let them be", "When work thoughts cut in, you usually let them be.", "letting them be"),
-        o("Check or deal with it", "When work thoughts cut in, you usually check or deal with it.", "checking and dealing with it"),
-        o("Turn to something else", "When work thoughts cut in, you usually turn to something else.", "turning to something else"),
+        o("Just let them be", "When work thoughts come up, you usually let them be.", "letting them be"),
+        o("Check or deal with it", "When work thoughts come up, you usually check or deal with it.", "checking and dealing with it"),
+        o("Turn to something else", "When work thoughts come up, you usually turn to something else.", "turning to something else"),
       ],
     },
     16: {
       turn: 16,
-      question: "When things are hard, how do you ask for help?",
+      question: "When things get hard, which is closer to how you handle asking for help?",
       options: [
         o("I tend to say so", "You're on the side that speaks up first.", "speaking up"),
-        o("I carry it alone to the end", "On the side that carries it alone to the end.", "carrying it alone"),
+        o("I carry it alone to the end", "You're on the side that carries it alone to the end.", "carrying it alone"),
       ],
     },
     17: {
       turn: 17,
-      question: "Has anyone noticed how you're doing now?",
+      question: "Who knows how you're doing right now?",
       options: [
-        o("One or two people know", "One or two people have noticed how you are now.", "one or two people noticing"),
-        o("Only family and friends", "Only family and friends know how you are now.", "only people outside work knowing"),
-        o("Nobody knows", "Nobody has noticed how you are now.", "nobody knowing"),
+        o("One or two people know", "One or two people know how you're doing now.", "one or two people"),
+        o("Only family and friends", "Only family and friends know how you're doing now.", "only family and friends"),
+        o("Nobody knows", "Nobody knows how you're doing now.", "nobody"),
       ],
     },
     18: {
@@ -160,14 +160,14 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
       quote: true,
       question: "If your energy came back, what would you want to do first?",
       options: [
-        o("Do my work properly", "Wanting to go back to work first.", "work"),
+        o("Do my work properly", "Getting back to the work comes first.", "work"),
         o("See people", "The heart goes to people first.", "people"),
         o("Take care of myself", "Time spent on yourself comes first.", "taking care of yourself"),
       ],
     },
     19: {
       turn: 19,
-      question: "What would the smallest version of starting that look like?",
+      question: "What would be the smallest first step toward getting your energy back?",
       options: [
         o("A ten-minute walk", "The smallest start is a ten-minute walk.", "a ten-minute walk"),
         o("Doing something I used to love", "The smallest start is going back to something you used to love.", "going back to something you loved"),
@@ -179,8 +179,8 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
       question: "What were you like on the day you first started this work?",
       options: [
         o("Excited", "You started that day with excitement.", "excitement"),
-        o("Nervous", "You started that day nervous.", "nervousness"),
-        o("I can't really remember", "The memory has gone as far back as the time has.", "the memory having faded"),
+        o("Nervous", "You started that day feeling nervous.", "nervousness"),
+        o("I can't really remember", "That day has faded with time.", "the memory having faded"),
       ],
     },
     21: {
@@ -189,15 +189,15 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
     },
   },
   checkpoint: [
-    "From what you've told me, the biggest share looks like {g2}, the kind of exhaustion like {g4}, and what drains you most like {g8}.",
+    "From what you've told me, the heaviest part of your days is {g2}; the exhaustion feels like {g4}; and what drains you most is {g8}.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
   closing: {
     summary: [
-      "The weight of your day starts with {g2}, runs toward {g4}, and what drains you most is {g8}.",
-      "Underneath the feeling that you mustn't rest sits {g11}, and you still get a little refill from {g13}.",
-      "When work thoughts cut in, it's {g15}; as for who's noticed how you are, it's {g17}; and once your energy returns, you'd start with {g19}.",
+      "What weighs on your days most is {g2}. The exhaustion feels like {g4}, and what drains you most is {g8}.",
+      "Underneath your trouble resting sits {g11}, and you still get a little energy from {g13}.",
+      "When work thoughts come up, your usual move is {g15}; as for who knows how you're doing, the answer is {g17}; and once your energy returns, you'd start with {g19}.",
     ],
     perspectiveLine: "I'll also keep the words you wrote to yourself on that first day, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",

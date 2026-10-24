@@ -24,17 +24,17 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
       turn: 2,
       question: "En ese momento, ¿qué te pesa más?",
       options: [
-        o("La cantidad que gasto", "Cuánto gastas es la primera puerta del ánimo.", "la cantidad gastada"),
-        o("El saldo que queda", "El número que queda es lo primero que te entra por los ojos.", "el saldo que queda"),
-        o("Verme a mí gastando", "La mirada sobre ti mismo gastando va por delante del dinero.", "verte a ti gastando"),
+        o("La cantidad que gasto", "Lo primero que mira tu ánimo es cuánto gastas.", "la cantidad gastada"),
+        o("El saldo que queda", "Lo primero que te llama la atención es el número que queda.", "el saldo que queda"),
+        o("Verme a mí gastando", "Cómo te ves a ti gastando pesa antes que el dinero.", "verte a ti gastando"),
       ],
     },
     3: {
       turn: 3,
       question: "Justo antes de pagar, ¿cuál se parece más a ti?",
       options: [
-        o("Paro y lo pienso", "Justo antes de pagar, eres de los que paran y lo piensan.", "parar un momento"),
-        o("Pago ya y lo pienso luego", "Justo antes de pagar, eres de los que pagan primero y piensan después.", "pagar primero"),
+        o("Paro y lo pienso", "Justo antes de pagar, sueles parar a pensarlo.", "parar un momento"),
+        o("Pago ya y lo pienso luego", "Justo antes de pagar, sueles pagar primero y pensar después.", "pagar primero"),
       ],
     },
     4: {
@@ -43,7 +43,7 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
       options: [
         o("Alivio", "Hay una parte que suelta el aire al resolver algo.", "el alivio"),
         o("Culpa", "Un rincón del ánimo se pone pesado después de gastar.", "la culpa"),
-        o("Un vacío", "Queda una sensación de hueco aunque hayas llenado algo.", "un vacío"),
+        o("Un vacío", "Queda una sensación de hueco incluso después de pagar.", "un vacío"),
       ],
     },
     5: {
@@ -67,7 +67,7 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
     },
     7: {
       turn: 7,
-      question: "Después de compararte, ¿hacia dónde se inclina tu ánimo?",
+      question: "Si te comparas, ¿hacia dónde se inclina tu ánimo después?",
       options: [
         o("Me impaciento", "Después de compararte, te entra impaciencia.", "la impaciencia"),
         o("Me encojo", "Después de compararte, tiendes a encogerte.", "encogerte"),
@@ -78,9 +78,9 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
       turn: 8,
       question: "En un día en que crece la preocupación por el dinero, ¿hacia dónde se mueve tu cartera?",
       options: [
-        o("Se cierra más", "Cuanto mayor la preocupación, más firme el cierre.", "que se cierra más"),
-        o("Más bien se abre", "Soltar la ansiedad gastando.", "que se abre más"),
-        o("Casi no cambia", "La preocupación y la cartera van por separado.", "que no cambia"),
+        o("Se cierra más", "Cuanto más preocupa el dinero, más se cierra la cartera.", "se cierra más"),
+        o("Más bien se abre", "Soltar la preocupación gastando.", "se abre más"),
+        o("Casi no cambia", "La preocupación y la cartera van por separado.", "no cambia"),
       ],
     },
     10: {
@@ -89,7 +89,7 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
       question: "En tu infancia, ¿qué ambiente había en casa cuando se hablaba de dinero?",
       options: [
         o("Era un tema frecuente", "Una casa donde el dinero llegaba a la mesa.", "un tema frecuente"),
-        o("Se evitaba en silencio", "Un tema que tenía presencia por no decirse.", "un tema que se evitaba"),
+        o("Se evitaba en silencio", "Un tema presente precisamente por no decirse.", "un tema que se evitaba"),
         o("No lo recuerdo bien", "Hay escenas que quedan sin ser claras.", "algo borroso en el recuerdo"),
       ],
     },
@@ -123,11 +123,11 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
     14: {
       turn: 14,
       quote: true,
-      question: "Cuando hablas de dinero, ¿cómo eres?",
+      question: "Cuando hablas de dinero, ¿cómo lo haces?",
       options: [
         o("Lo digo con naturalidad", "Puedes sacar los números como números.", "decirlo con naturalidad"),
         o("Doy rodeos", "Una manera de dar vueltas para no tocarlo directamente.", "dar rodeos"),
-        o("Ni lo saco", "Guardar el tema del todo.", "no sacarlo nunca"),
+        o("Ni lo saco", "Dejar el tema guardado del todo.", "no sacarlo nunca"),
       ],
     },
     15: {
@@ -152,9 +152,9 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
       turn: 17,
       question: "¿Con quién te resulta más incómodo hablar de dinero?",
       options: [
-        o("Con la familia", "Hablar de dinero con la familia es lo más incómodo.", "la familia"),
-        o("Con la pareja", "Hablar de dinero con la pareja es lo más incómodo.", "la pareja"),
-        o("Con amigos o compañeros", "Hablar de dinero con amigos o compañeros es lo más incómodo.", "amigos o compañeros"),
+        o("Con la familia", "Hablar de dinero con la familia es lo más incómodo.", "con la familia"),
+        o("Con la pareja", "Hablar de dinero con la pareja es lo más incómodo.", "con la pareja"),
+        o("Con amigos o compañeros", "Hablar de dinero con amigos o compañeros es lo más incómodo.", "con amigos o compañeros"),
       ],
     },
     18: {
@@ -163,7 +163,7 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
       question: "Si estuvieras en paz con el dinero, ¿cómo sería tu día de cobro?",
       options: [
         o("Miro rápido y sigo", "Una imagen de mirar un número con calma y seguir.", "mirar rápido y seguir"),
-        o("Me hago un pequeño regalo", "Una imagen donde mi parte va primero.", "hacerte un pequeño regalo"),
+        o("Me hago un pequeño regalo", "Una imagen donde tu parte va primero.", "hacerte un pequeño regalo"),
         o("Lo comparto con alguien", "Primero llega la escena de compartir con alguien cercano.", "compartir con alguien"),
       ],
     },
@@ -180,9 +180,9 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
       turn: 20,
       question: "Si tuvieras delante a alguien que acaba de cobrar su primera nómina, ¿qué sentirías primero?",
       options: [
-        o("Ternura", "Primero está la alegría de recibir a quien empieza.", "la ternura"),
-        o("Preocupación", "Alguien cuyas reglas aún no se han fijado se te queda en la mente.", "la preocupación"),
-        o("Envidia", "Se ve de cerca la ilusión de lo primero.", "la envidia"),
+        o("Ternura", "Primero está acoger con cariño a quien empieza.", "la ternura"),
+        o("Preocupación", "Te quedas pensando en alguien cuyas reglas aún no están fijadas.", "la preocupación"),
+        o("Envidia", "Lo que más ves es la ilusión de la primera vez.", "la envidia"),
       ],
     },
     21: {
@@ -191,15 +191,15 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, lo que más pesa con el dinero parece ser {g2}, lo que queda después de pagar se parece a {g4}, y en los días de más preocupación, lo que pasa con tu cartera es {g8}.",
+    "Por lo que me has contado, lo que más pesa con el dinero es {g2}; después de pagar lo que te queda es {g4}; y en los días de más preocupación, tu cartera {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
   closing: {
     summary: [
-      "Lo que más pesa con el dinero es {g2}, y lo que queda lo que queda después de pagar se parece a {g4}.",
+      "Lo que más pesa con el dinero es {g2}, y después de pagar te queda {g4}.",
       "En el hueco de «El dinero es, al final, ___» pusiste {g11}, y lo que has mantenido con constancia es {g13}.",
-      "Lo que haces cuando sube la preocupación es {g15}, con quien más incómodo resulta hablar de dinero es {g17}, y querrías empezar por {g19}.",
+      "Cuando sube la preocupación, sueles {g15}; hablar de dinero te resulta más incómodo {g17}; y querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que le dirías a esa persona con su primera nómina también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",

@@ -196,7 +196,7 @@ export const en: typeof ko = {
     faq: [
       { q: "Is it really calculated?", a: "Yes. We work out your four pillars from your birth date, time and city, including the time difference and longitude. An AI writes the reading, but the calculation itself is never made up." },
       { q: "Is it free?", a: "Your saju result and your first 2 questions are free. Deeper reports and the daily fortune open in the app." },
-      { q: "How is my information used?", a: "You use it without signing up, and it can be stored and deleted as described in the privacy policy. This is reading material for self-understanding, not prediction or diagnosis." },
+      { q: "How is my information used?", a: "You can use Fatesaid without signing up, and your information can be stored and deleted as described in the privacy policy. This is reading material for self-understanding, not prediction or diagnosis." },
     ],
     bottomTitle: "Ready to see your rhythm?",
   },

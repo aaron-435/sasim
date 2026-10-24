@@ -25,7 +25,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       turn: 2,
       question: "¿Qué parte de ese peso es la más grande?",
       options: [
-        o("La cantidad de trabajo", "Lo primero que choca es la cantidad en sí.", "la cantidad de trabajo"),
+        o("La cantidad de trabajo", "Lo primero que destaca es la cantidad en sí.", "la cantidad de trabajo"),
         o("Las personas", "El peso viene más de la gente que del trabajo.", "las personas"),
         o("No sabría elegir una", "No caber en una sola cosa también es una respuesta.", "varias cosas a la vez"),
       ],
@@ -42,7 +42,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       turn: 4,
       question: "Si tuvieras que resumir cómo estás en una palabra, ¿cuál se acerca más?",
       options: [
-        o("Desgana", "Inclinado hacia no encontrar ganas de nada.", "la desgana"),
+        o("Desgana", "Se inclina hacia no encontrar ganas de nada.", "la desgana"),
         o("Irritación", "Lo más áspero es lo que va por delante.", "la irritación"),
         o("Vacío", "Una sensación de hueco ocupa el centro.", "el vacío"),
       ],
@@ -59,11 +59,11 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
     },
     6: {
       turn: 6,
-      question: "Cuando piensas en esas etapas, ¿qué es lo primero que te viene a la cabeza?",
+      question: "Si piensas en la etapa más dura que has pasado en el trabajo, ¿qué es lo primero que te viene a la cabeza?",
       options: [
         o("Se acumuló el trabajo", "Primero aparece la escena de las tareas apiladas.", "un tiempo de trabajo acumulado"),
         o("Me costaba la gente", "La relación con las personas va por delante en ese recuerdo.", "un tiempo en que la gente costaba"),
-        o("Lo recuerdo borroso", "Hay tramos que se cruzan sin verlos bien.", "una etapa borrosa"),
+        o("Lo recuerdo borroso", "Hay tramos que se atraviesan sin verlos bien.", "una etapa borrosa"),
       ],
     },
     7: {
@@ -78,9 +78,9 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       turn: 8,
       question: "¿Qué es lo que más energía te quita?",
       options: [
-        o("La cantidad de trabajo", "El montón que no deja de crecer es la mayor fuga.", "la cantidad de trabajo"),
-        o("Gestionar emociones", "Gastar sentimientos es lo que más se lleva.", "gestionar emociones"),
-        o("Que nada salga como quiero", "Lo que queda fuera de mi mano es lo que más se lleva.", "que nada salga como quieres"),
+        o("La cantidad de trabajo", "El montón que no deja de crecer es la mayor fuga.", "el montón de trabajo que no para"),
+        o("Gestionar emociones", "Manejar lo que sientes es lo que más desgasta.", "gestionar emociones"),
+        o("Que nada salga como quiero", "Lo que queda fuera de tu mano es lo que más desgasta.", "que nada salga como quieres"),
       ],
     },
     10: {
@@ -89,7 +89,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       question: '¿De dónde viene la sensación de "no debo descansar"?',
       questionNoQuote: "Si algo te frena a la hora de descansar, ¿de dónde crees que viene?",
       options: [
-        o("De dentro de mí", "Muchas veces es una vara de medir que uno mismo se puso.", "de ti mismo"),
+        o("De dentro de mí", "Muchas veces es una vara de medir que te pusiste tú.", "de ti mismo"),
         o("De lo que pensarán los demás", "Una mirada de fuera se ha vuelto la vara de medir.", "lo que pensarán los demás"),
       ],
     },
@@ -107,17 +107,17 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       question: "¿Qué te gustaba de este trabajo cuando lo empezaste?",
       options: [
         o("El trabajo en sí", "El gusto que venía del trabajo mismo.", "el trabajo en sí"),
-        o("Verme hacerlo bien", "La sensación de haberlo logrado era la fuerza.", "hacerlo bien"),
-        o("Sentirme reconocido", "La respuesta que llegaba de fuera era la fuerza.", "el reconocimiento"),
+        o("Verme hacerlo bien", "Ver que lo lograbas era lo que más te atraía.", "hacerlo bien"),
+        o("Que me reconocieran", "El reconocimiento de fuera era lo que más te atraía.", "el reconocimiento"),
       ],
     },
     13: {
       turn: 13,
-      question: "¿Hay algo que todavía te recargue un poco, aunque sea poco?",
+      question: "¿Hay algo que todavía te dé un poco de energía, aunque sea poco?",
       options: [
-        o("La gente cercana", "Aun ahora, la gente cercana te recarga un poco.", "la gente cercana"),
-        o("El tiempo a solas", "Aun ahora, el tiempo a solas te recarga un poco.", "el tiempo a solas"),
-        o("Pequeños logros del trabajo", "Aun ahora, los pequeños logros del trabajo te recargan un poco.", "algún pequeño logro del trabajo"),
+        o("La gente cercana", "Aun ahora, la gente cercana te da un poco de energía.", "la gente cercana"),
+        o("El tiempo a solas", "Aun ahora, el tiempo a solas te da un poco de energía.", "el tiempo a solas"),
+        o("Pequeños logros del trabajo", "Aun ahora, los pequeños logros del trabajo te dan un poco de energía.", "algún pequeño logro del trabajo"),
       ],
     },
     14: {
@@ -131,28 +131,28 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
     },
     15: {
       turn: 15,
-      question: "Cuando se cuelan los pensamientos del trabajo, ¿qué sueles hacer?",
+      question: "Si se cuelan pensamientos del trabajo mientras descansas, ¿qué sueles hacer?",
       options: [
         o("Los dejo estar", "Cuando se cuelan pensamientos del trabajo, sueles dejarlos estar.", "dejar estar esos pensamientos"),
-        o("Reviso o lo resuelvo", "Cuando se cuelan pensamientos del trabajo, sueles revisar o resolver.", "revisar y resolver"),
+        o("Lo reviso o lo resuelvo", "Cuando se cuelan pensamientos del trabajo, sueles revisarlo o resolverlo.", "revisarlo o resolverlo"),
         o("Me distraigo con otra cosa", "Cuando se cuelan pensamientos del trabajo, sueles distraerte con otra cosa.", "distraerte con otra cosa"),
       ],
     },
     16: {
       turn: 16,
-      question: "Cuando lo pasas mal, ¿cómo pides ayuda?",
+      question: "Cuando lo pasas mal, ¿qué sueles hacer a la hora de pedir ayuda?",
       options: [
-        o("Suelo decirlo", "Eres de los que lo dicen primero.", "decirlo"),
-        o("Aguanto solo hasta el final", "De los que cargan solos hasta el final.", "cargar solo"),
+        o("Suelo decirlo", "Eres de quienes lo dicen primero.", "decirlo"),
+        o("Lo cargo sin ayuda hasta el final", "Eres de quienes cargan sin ayuda hasta el final.", "cargar sin ayuda"),
       ],
     },
     17: {
       turn: 17,
-      question: "¿Alguien se ha dado cuenta de cómo estás ahora?",
+      question: "¿Quién sabe cómo estás ahora?",
       options: [
-        o("Una o dos personas lo saben", "Una o dos personas se han dado cuenta de cómo estás.", "una o dos personas"),
-        o("Solo familia y amigos", "Solo la familia y los amigos saben cómo estás.", "solo gente de fuera del trabajo"),
-        o("Nadie lo sabe", "Nadie se ha dado cuenta de cómo estás.", "nadie"),
+        o("Una o dos personas lo saben", "Una o dos personas saben cómo estás.", "una o dos personas"),
+        o("Solo familia y amigos", "Solo la familia y los amigos saben cómo estás.", "solo familia y amigos"),
+        o("Nadie lo sabe", "Nadie sabe cómo estás.", "nadie"),
       ],
     },
     18: {
@@ -160,7 +160,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       quote: true,
       question: "Si te volviera la energía, ¿qué querrías hacer primero?",
       options: [
-        o("Hacer bien mi trabajo", "Querer volver primero al trabajo.", "el trabajo"),
+        o("Hacer bien mi trabajo", "Lo primero que te llama es volver al trabajo.", "el trabajo"),
         o("Ver a gente", "El ánimo se va primero hacia las personas.", "la gente"),
         o("Cuidarme", "El tiempo para ti va primero.", "cuidarte"),
       ],
@@ -180,7 +180,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       options: [
         o("Con ilusión", "Empezaste aquel día con ilusión.", "la ilusión"),
         o("Con nervios", "Empezaste aquel día con nervios.", "los nervios"),
-        o("No lo recuerdo bien", "El recuerdo se ha alejado tanto como el tiempo.", "un recuerdo que se ha alejado"),
+        o("No lo recuerdo bien", "Aquel día se ha ido borrando con el tiempo.", "un recuerdo que se ha alejado"),
       ],
     },
     21: {
@@ -189,15 +189,15 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, la parte más grande parece ser {g2}, el tipo de agotamiento se parece a {g4} y lo que más te quita parece ser {g8}.",
+    "Por lo que me has contado, lo que más pesa en tus días es {g2}; lo que sientes es, sobre todo, {g4}; y lo que más energía te quita es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
   closing: {
     summary: [
-      "El peso de tu día empieza en {g2}, sigue hacia {g4}, y lo que más te quita es {g8}.",
-      "Bajo la sensación de que no debes descansar está {g11}, y aun así {g13} te recarga un poco.",
-      "Tu forma de aguantar es {g15}; quién sabe cómo estás: {g17}; y cuando vuelva la energía empezarías por {g19}.",
+      "En tus días pesa sobre todo {g2}, lo que sientes es {g4} y lo que más energía te quita es {g8}.",
+      "Bajo tu dificultad para descansar está {g11}, y aun así {g13} te da un poco de energía.",
+      "Cuando se cuelan pensamientos del trabajo, lo que sueles hacer es {g15}; sobre quién sabe cómo estás, la respuesta es {g17}; y cuando vuelva la energía empezarías por {g19}.",
     ],
     perspectiveLine: "Lo que te dijiste a ti mismo aquel primer día también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",

@@ -34,7 +34,7 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
       question: "En ese momento, ¿el enfado sube enseguida o más tarde?",
       options: [
         o("Ahí mismo, al instante", "El enfado sube ahí mismo, al instante.", "ahí mismo"),
-        o("Mucho después, a posteriori", "El enfado solo sube mucho después, a posteriori.", "más tarde, a posteriori"),
+        o("Mucho después, a posteriori", "El enfado solo sube mucho después, ya pasado el momento.", "más tarde"),
       ],
     },
     4: {
@@ -42,7 +42,7 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
       question: "Si quitaras una capa a ese enfado, ¿qué habría debajo?",
       options: [
         o("Sensación de injusticia", "La sensación de que no fue justo está en el fondo.", "la sensación de injusticia"),
-        o("Dolor", "El lugar donde no volvió lo que esperabas.", "el dolor"),
+        o("Dolor", "Donde lo que esperabas no llegó de vuelta.", "el dolor"),
         o("Sentirme despreciado", "La sensación de que tu existencia se trató a la ligera.", "sentirte despreciado"),
       ],
     },
@@ -93,7 +93,7 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
     11: {
       turn: 11,
-      question: "¿Qué línea se cruzó en ese momento?",
+      question: "En un momento así, ¿qué línea sientes que se cruza?",
       options: [
         o("El respeto", "La línea que se cruzó fue el respeto.", "el respeto"),
         o("La justicia", "La línea que se cruzó fue la justicia.", "la justicia"),
@@ -147,10 +147,10 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
     17: {
       turn: 17,
-      question: "Cuando pusiste el enfado en palabras, ¿cómo reaccionó el otro?",
+      question: "Cuando has puesto el enfado en palabras, ¿cómo ha reaccionado el otro?",
       options: [
-        o("Lo acogió", "Cuando lo dijiste, la otra persona lo recibió bien.", "que lo recibieron bien"),
-        o("Fue una discusión mayor", "Cuando lo dijiste, acabó en una discusión más fuerte.", "una discusión más fuerte"),
+        o("Lo acogió", "Cuando lo dijiste, la otra persona lo recibió bien.", "que el otro lo recibió bien"),
+        o("Fue una discusión mayor", "Cuando lo dijiste, acabó en una discusión más fuerte.", "que acabó en una discusión más fuerte"),
         o("Casi nunca lo he dicho", "Casi nunca has puesto el enfado en palabras.", "que casi nunca lo has dicho"),
       ],
     },
@@ -169,8 +169,8 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
       question: "Si trazaras una línea con palabras, ¿qué frase se acercaría más?",
       options: [
         o("«Esto me incomoda»", "Si trazaras una línea, dirías que esto te incomoda.", "decir que te incomoda"),
-        o("«Para ahora, por favor»", "Si trazaras una línea, pedirías que paren por ahora.", "pedir que paren por ahora"),
-        o("«Luego lo hablamos»", "Si trazaras una línea, dirías que lo hablarán luego.", "decir que lo hablarán luego"),
+        o("«Para ahora, por favor»", "Si trazaras una línea, pedirías pararlo por ahora.", "pedir pararlo por ahora"),
+        o("«Luego lo hablamos»", "Si trazaras una línea, propondrías hablarlo luego.", "proponer hablarlo luego"),
       ],
     },
     20: {
@@ -188,15 +188,15 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, el enfado sube con {g2}, debajo está {g4}, y el tiempo que tarda en calmarse: {g8}.",
+    "Por lo que me has contado, el enfado sube con {g2}, debajo está {g4}, y tarda en calmarse {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
   closing: {
     summary: [
-      "Tu enfado sube con {g2}, debajo está {g4}, y el tiempo que tardó en calmarse: {g8}.",
+      "Tu enfado sube con {g2}, debajo está {g4}, y tardó en calmarse {g8}.",
       "La línea que se cruzó fue {g11}, y con quién desahogarte: {g13}.",
-      "Para calmarte, lo tuyo es {g15}; al ponerlo en palabras, lo que pasó fue: {g17}; y si trazaras una línea sería algo como {g19}.",
+      "Para calmarte, lo tuyo es {g15}. Al ponerlo en palabras, lo que ha pasado es {g17}. Y si trazaras una línea sería algo como {g19}.",
     ],
     perspectiveLine: "Lo que dijo el tú de la mañana siguiente también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",

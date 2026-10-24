@@ -22,11 +22,11 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
     },
     2: {
       turn: 2,
-      question: "Right before you were about to open that task, what thought flashed by?",
+      question: "Right before you open one of those tasks, what thought flashes by?",
       options: [
         o("I have to do it well", "The standard stands up before you even start.", "the thought \"I have to do it well\""),
         o("I don't want to do it now", "The not-wanting speaks up first.", "the thought \"I don't want to do this now\""),
-        o("I don't know where to begin", "You stall at not finding the first square.", "the thought \"where do I even begin\""),
+        o("I don't know where to begin", "You stall at not seeing where the first step is.", "the thought \"where do I even begin\""),
       ],
     },
     3: {
@@ -39,7 +39,7 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
     },
     4: {
       turn: 4,
-      question: "While you're putting it off, which is closer to your mind?",
+      question: "While you're putting it off, which is closer to what's on your mind?",
       options: [
         o("Restlessness", "The clock keeps ticking in your ears.", "restlessness"),
         o("Guilt", "The undone task stays in a corner of the mind.", "guilt"),
@@ -58,7 +58,7 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
     },
     6: {
       turn: 6,
-      question: "Where do you usually stall?",
+      question: "At what point do you usually stall?",
       options: [
         o("At the start", "The first step is the heaviest.", "at the start"),
         o("Partway through", "You start, but stop in the middle.", "partway through"),
@@ -75,7 +75,7 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
     },
     8: {
       turn: 8,
-      question: "What blocks you from starting the hardest?",
+      question: "What keeps you from starting the most?",
       options: [
         o("Fear of getting it wrong", "Worry about mistakes sits on the brake.", "fear of getting it wrong"),
         o("Standards that are too high", "Your eye sits far ahead of your hand.", "high standards"),
@@ -85,8 +85,8 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
     10: {
       turn: 10,
       quote: true,
-      question: "Who is closer to having set that standard?",
-      questionNoQuote: "Who is closer to having set the standard you feel you have to meet?",
+      question: "Who would you say set that standard?",
+      questionNoQuote: "Who would you say set the standard you feel you have to meet?",
       options: [
         o("I set it", "A measuring mark you made yourself.", "a standard you set"),
         o("I feel others expect it", "Outside expectations became the standard.", "others' expectations"),
@@ -96,8 +96,8 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
       turn: 11,
       question: "When the result falls short of the standard, what bothers you most?",
       options: [
-        o("Being judged as bad at the work", "Being judged as bad at the work is what bothers you most.", "the fear of the work being judged poorly"),
-        o("Being judged as bad myself", "Being judged as bad yourself is what bothers you most.", "the fear of being judged poorly yourself"),
+        o("Being judged as bad at the work", "Being judged as bad at the work is what bothers you most.", "the work being judged poorly"),
+        o("Being judged as bad myself", "Being judged as bad yourself is what bothers you most.", "being judged poorly yourself"),
         o("I'm not sure yet", "What bothers you most isn't clear yet.", "something not yet put into words"),
       ],
     },
@@ -112,11 +112,11 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
     },
     13: {
       turn: 13,
-      question: "What was it that finally got you moving?",
+      question: "When you do get moving, what usually gets you there?",
       options: [
-        o("A deadline closing in", "In the end, a deadline closing in got you moving.", "a deadline"),
-        o("Someone beside me", "In the end, someone beside you got you moving.", "someone beside you"),
-        o("Breaking it into tiny pieces", "In the end, breaking it into tiny pieces got you moving.", "breaking it into pieces"),
+        o("A deadline closing in", "What gets you moving in the end is a deadline closing in.", "a deadline"),
+        o("Someone beside me", "What gets you moving in the end is someone beside you.", "someone beside you"),
+        o("Breaking it into tiny pieces", "What gets you moving in the end is breaking it into tiny pieces.", "breaking it into pieces"),
       ],
     },
     14: {
@@ -124,7 +124,7 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
       quote: true,
       question: "On a day you knock out something you'd been putting off, how do you feel?",
       options: [
-        o("Relieved", "A day that feels lighter as much as you finished.", "relief"),
+        o("Relieved", "You feel lighter in step with what you finished.", "relief"),
         o("Relieved, but still blaming myself", "Even finished, the lost time weighs on you.", "self-blame that stays despite relief"),
       ],
     },
@@ -189,15 +189,15 @@ export const MODULE5_SCRIPT_EN: ModuleScript = {
     },
   },
   checkpoint: [
-    "From what you've told me, right before starting, {g2} flashes by, your mind then is close to {g4}, and what blocks you the hardest is {g8}.",
+    "From what you've told me, right before starting, {g2} flashes by, what's on your mind then is {g4}, and what holds you back most is {g8}.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
   closing: {
     summary: [
-      "Right before starting, {g2} flashes by, and underneath it what blocks you the hardest is {g8}.",
-      "Beneath the standard sits {g11}, and what got you moving was {g13}.",
-      "When things pile up it's {g15}; as for who knows, it's {g17}; and you'd like to start with {g19}.",
+      "Right before starting, {g2} flashes by, and underneath it what holds you back most is {g8}.",
+      "Beneath the standard sits {g11}, and what usually gets you moving is {g13}.",
+      "When things pile up, you tend toward {g15}. Who knows about it: {g17}. And the smallest start you described is {g19}.",
     ],
     perspectiveLine: "I'll also keep the words you wrote as the you of a year from now, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",

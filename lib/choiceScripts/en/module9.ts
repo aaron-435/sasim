@@ -21,11 +21,11 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
     },
     2: {
       turn: 2,
-      question: "In those moments, which side are you mostly on?",
+      question: "In those conversations, which side are you mostly on?",
       options: [
-        o("The talking side", "Leading the conversation is your share.", "doing the talking"),
-        o("The listening side", "Standing where the ears stay open.", "doing the listening"),
-        o("The one smoothing things in between", "A spot where you go back and forth coordinating.", "smoothing things over in between"),
+        o("The talking side", "You tend to lead the conversation.", "doing the talking"),
+        o("The listening side", "You tend to be the one listening.", "doing the listening"),
+        o("The one smoothing things in between", "You tend to go back and forth smoothing things over.", "smoothing things over in between"),
       ],
     },
     3: {
@@ -39,7 +39,7 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
     },
     4: {
       turn: 4,
-      question: "After the conversation ends, what's closest to what's left?",
+      question: "After the conversation ends, which is closest to what stays with you?",
       options: [
         o("Guilt", "A sense of owing something stays in a corner of the heart.", "guilt"),
         o("Hurt", "Words that didn't reach stay behind.", "hurt"),
@@ -51,17 +51,17 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
       quote: true,
       question: "Has your place in the family been the same since you were young, or did it take shape as you grew up?",
       options: [
-        o("Since I was young", "Your place in the family now has been the same since you were young.", "since childhood"),
-        o("It came as I grew up", "Your place in the family now came as you grew up.", "since growing up"),
+        o("Since I was young", "Your place in the family has been the same since you were young.", "since childhood"),
+        o("It came as I grew up", "Your place in the family came as you grew up.", "since growing up"),
       ],
     },
     6: {
       turn: 6,
       question: "If you named your place in the family, which is closest?",
       options: [
-        o("The mediator", "The name of the one who stood between the fights.", "the mediator"),
-        o("The protector", "The name attached to the one who keeps someone safe.", "the protector"),
-        o("The quiet child", "You can see the time spent keeping your voice down.", "the quiet child"),
+        o("The mediator", "The one who stood between the fights.", "the mediator"),
+        o("The protector", "The one who keeps someone safe.", "the protector"),
+        o("The quiet child", "Time spent keeping your voice down.", "the quiet child"),
       ],
     },
     7: {
@@ -76,9 +76,9 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
       turn: 8,
       question: "When conflict came up in the family, where were you?",
       options: [
-        o("In the middle, passing messages", "In the spot going between both sides' words.", "right in the middle"),
-        o("Beside one person, listening", "Where one person's story gathers.", "beside one person"),
-        o("A step away", "On the side watching from a distance.", "a step outside"),
+        o("In the middle, passing messages", "Right between both sides' words.", "right in the middle"),
+        o("Beside one person, listening", "Close to one person's side of the story.", "beside one person"),
+        o("A step away", "Watching from a little way off.", "a step away"),
       ],
     },
     10: {
@@ -95,8 +95,8 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
       turn: 11,
       question: "How do you think it would feel to put that place down?",
       options: [
-        o("The family would get shaky", "So it feels like the family might get shaky if you put it down.", "a feeling that the family would get shaky"),
-        o("I'd stop being needed", "So it feels like you might stop being needed if you put it down.", "a feeling that you'd stop being needed"),
+        o("The family would get shaky", "It feels like the family might get shaky if you put it down.", "a feeling that the family would get shaky"),
+        o("I'd stop being needed", "It feels like you might stop being needed if you put it down.", "a feeling that you'd stop being needed"),
         o("I'm not sure", "You're not sure how it would feel to put it down.", "something you don't know yet"),
       ],
     },
@@ -105,8 +105,8 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
       question: "Of what you've done in that place, what has had meaning for you?",
       options: [
         o("Seeing my family at ease", "You drew strength from seeing the people beside you at ease.", "seeing your family at ease"),
-        o("Feeling dependable", "A sense of having met the expectation remains.", "feeling dependable"),
-        o("I've never felt it was meaningful", "The share came before any meaning could be attached.", "not feeling any meaning"),
+        o("Feeling dependable", "The sense of having lived up to what was expected.", "feeling dependable"),
+        o("I've never felt it was meaningful", "The role came before you could attach any meaning to it.", "not feeling any meaning"),
       ],
     },
     13: {
@@ -114,18 +114,18 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
       question: "Even now, when are you a little at ease with your family?",
       options: [
         o("When we eat together", "Eating together with family is a moment of ease.", "eating together"),
-        o("When we're laughing and talking", "When laughing conversation goes back and forth, being with family is a little easier.", "laughing conversation"),
+        o("When we're laughing and talking", "Laughing and talking together makes being with family a little easier.", "laughing and talking together"),
         o("Only with one person", "Only with one person in the family are you a little at ease.", "time with one particular person"),
       ],
     },
     14: {
       turn: 14,
       quote: true,
-      question: "Where is the distance between you and your family right now?",
+      question: "How does the distance between you and your family feel right now?",
       options: [
-        o("Too close, and it's hard", "The closer it is, the wider the reach of your feelings.", "too close a distance"),
-        o("Too far, and it's hard", "The distance that opened weighs on you.", "too far a distance"),
-        o("It feels about right", "There's a sense that the current gap fits.", "a fitting distance"),
+        o("Too close, and it's hard", "Up close, everything reaches you more.", "too close a distance"),
+        o("Too far, and it's hard", "The distance that has opened up weighs on you.", "too far a distance"),
+        o("It feels about right", "The current gap seems to fit.", "a fitting distance"),
       ],
     },
     15: {
@@ -141,18 +141,18 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
       turn: 16,
       question: "Does that place in the family show up in other relationships too?",
       options: [
-        o("With friends or a partner too", "You stand in the same place in front of close people.", "relationships with friends or a partner"),
+        o("With friends or a partner too", "You take the same place with close friends or a partner too.", "relationships with friends or a partner"),
         o("At work too", "The same shape shows up at work.", "work"),
-        o("No, not elsewhere", "It's a place you use only within the family.", "only within the family"),
+        o("No, not elsewhere", "That place stays inside the family.", "only within the family"),
       ],
     },
     17: {
       turn: 17,
-      question: "Has anyone recognized the you in that place?",
+      question: "Has anyone acknowledged the part you've played there?",
       options: [
-        o("One or two people", "One or two people have recognized the you in that place.", "one or two people"),
-        o("Someone in my family", "Someone in your family has recognized the you in that place.", "one person in the family"),
-        o("Not yet", "No one has recognized the you in that place yet.", "no one yet"),
+        o("One or two people", "One or two people have acknowledged the part you've played there.", "one or two people"),
+        o("Someone in my family", "Someone in your family has acknowledged the part you've played there.", "one person in the family"),
+        o("Not yet", "No one has acknowledged the part you've played there yet.", "no one yet"),
       ],
     },
     18: {
@@ -160,9 +160,9 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
       quote: true,
       question: "If you could be yourself while staying connected to your family, what would change first?",
       options: [
-        o("How I stay in touch", "A picture where the way you stay connected changes first.", "how you stay in touch"),
-        o("The share I carry", "A scene where the size of the share changes first.", "the share you carry"),
-        o("The weight on my heart", "A picture where the weight on the heart eases first.", "the weight on your heart"),
+        o("How I stay in touch", "How you stay connected changes first.", "how you stay in touch"),
+        o("The share I carry", "The size of the share you carry changes first.", "the share you carry"),
+        o("The weight on my heart", "The weight on your heart eases first.", "the weight on your heart"),
       ],
     },
     19: {
@@ -176,11 +176,11 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "What do you think you were like in that place as a child?",
+      question: "Picture yourself when you first took up that place. What do you think you were like?",
       options: [
-        o("Standing dignified", "A child standing like a grown-up.", "standing dignified"),
-        o("Quietly watching moods", "You can see the time spent reading the air.", "quietly watching moods"),
-        o("I can't remember well", "As far as the memory has moved, that's how much time has passed.", "a memory that has faded"),
+        o("Standing dignified", "Carrying yourself like a grown-up.", "standing dignified"),
+        o("Quietly watching moods", "Time spent reading the mood.", "quietly watching moods"),
+        o("I can't remember well", "That memory has faded with time.", "a memory that has faded"),
       ],
     },
     21: {
@@ -189,17 +189,17 @@ export const MODULE9_SCRIPT_EN: ModuleScript = {
     },
   },
   checkpoint: [
-    "From what you've told me, in family conversations your role is {g2}, what's left afterward is mostly {g4}, and when conflict came up, your spot was {g8}.",
+    "From what you've told me, in those conversations your role is {g2}, what stays with you afterward is mostly {g4}, and when conflict came up, your spot was {g8}.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
   closing: {
     summary: [
-      "Your place in the family has been {g6}, when conflict came up you were {g8}, and what was left afterward was {g4}.",
-      "When you imagine putting that place down, there's {g11}, and {g13} still eases you a little.",
-      "For adjusting the distance it's {g15}; as for who has noticed the role you play, it's {g17}; and if you could stay connected and be yourself, you'd like to start with {g19}.",
+      "In the family you have been {g6}, when conflict came up your spot was {g8}, and what stayed with you afterward was {g4}.",
+      "When you imagine putting that place down, what comes up is {g11}, and {g13} still eases you a little.",
+      "Your way of adjusting the distance is {g15}. As for who has acknowledged your part, the answer is {g17}. And if you could stay connected and be yourself, you'd like to start with {g19}.",
     ],
-    perspectiveLine: "I'll also keep the words you wrote to the child you were, just as you wrote them.",
+    perspectiveLine: "I'll also keep the words you wrote to yourself back then, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

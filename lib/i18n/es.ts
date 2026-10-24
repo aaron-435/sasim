@@ -244,7 +244,7 @@ export const es: typeof ko = {
     elementNames: { wood: "Madera", fire: "Fuego", earth: "Tierra", metal: "Metal", water: "Agua" },
     cityNote: "Calculado con la hora de Seúl porque no indicaste ciudad, así que tu pilar de la hora puede variar según la longitud de tu ciudad. La app tiene en cuenta tu ciudad de nacimiento.",
     howTitle: "Cómo se calcula",
-    howBody: "Los límites entre los periodos solares salen de los datos del Instituto de Astronomía y Ciencias Espaciales de Corea. Tu año, mes, día y hora de nacimiento se convierten cada uno en un tronco celeste y una rama terrestre: ocho caracteres en total. El equilibrio de los cinco elementos es la proporción de esos ocho que pertenece a Madera, Fuego, Tierra, Metal y Agua.",
+    howBody: "Los límites entre los periodos solares provienen de los datos del Instituto de Astronomía y Ciencias Espaciales de Corea. Tu año, mes, día y hora de nacimiento se convierten cada uno en un tronco celeste y una rama terrestre: ocho caracteres en total. El equilibrio de los cinco elementos es la proporción de esos ocho que pertenece a Madera, Fuego, Tierra, Metal y Agua.",
     appTitle: "Las lecturas y tu ritmo diario están en la app",
     appBody: "Tu tipo de saju, tu ritmo diario y un Informe profundo que se lee junto con tests de personalidad se abren en la app.",
     homeCta: "Ir a Fatesaid",

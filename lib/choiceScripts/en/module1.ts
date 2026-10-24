@@ -43,7 +43,7 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
       question: "If you named that feeling in one word, which is closest?",
       options: [
         o("Anxiety", "Worry grows in the quiet gaps.", "anxiety"),
-        o("Hurt", "Your heart is caught on what it didn't receive.", "hurt"),
+        o("Hurt", "Hurt is the word that fits best.", "hurt"),
         o("Feeling stifled", "A sense of being held in place sits at the center.", "feeling stifled"),
       ],
     },
@@ -62,8 +62,8 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
       question: "When something hurts your feelings, what do you usually do?",
       options: [
         o("Put it into words", "You're on the side that puts feelings into words.", "putting it into words"),
-        o("Act like I'm fine", "Keeping the surface calm and holding it inside.", "acting like you're fine"),
-        o("Go quieter", "Making distance by speaking less.", "going quieter"),
+        o("Act like I'm fine", "Keeping the surface calm while the feeling stays inside.", "acting like you're fine"),
+        o("Go quieter", "Creating distance by saying less.", "going quieter"),
       ],
     },
     7: {
@@ -90,8 +90,8 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
       questionNoQuote: "If you have a sense of what it takes to be loved, where do you think it came from?",
       options: [
         o("From a past relationship", "Closer to a rule learned in a past relationship.", "a past relationship"),
-        o("From childhood", "A rule that reaches back to old memories.", "a memory from childhood"),
-        o("I'm not sure", "Following you around without a clear source.", "something with no clear source"),
+        o("From childhood", "A rule that reaches back to childhood memories.", "a memory from childhood"),
+        o("I'm not sure", "It follows you without a clear source.", "something with no clear source"),
       ],
     },
     11: {
@@ -128,16 +128,16 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
       options: [
         o("Work through it alone", "Giving yourself time to digest it alone first.", "working through it alone"),
         o("Tell someone", "Easing it by sharing it in words.", "telling someone"),
-        o("It depends", "Moving between the two paths depending on the situation.", "it depending on the moment"),
+        o("It depends", "Which way it goes shifts with the situation.", "it depending on the moment"),
       ],
     },
     15: {
       turn: 15,
-      question: "How do you mostly soothe that uneasy feeling?",
+      question: "When it's bothering you, how do you usually settle it?",
       options: [
-        o("Take time alone", "Taking time alone is mostly how you soothe it.", "time alone"),
-        o("Get reassurance from them", "Getting reassurance from them is mostly how you soothe it.", "reassurance from them"),
-        o("Throw myself into something else", "Throwing yourself into something else is mostly how you soothe it.", "throwing yourself into something else"),
+        o("Take time alone", "Taking time alone is mostly how you settle it.", "time alone"),
+        o("Get reassurance from them", "Getting reassurance from them is mostly how you settle it.", "reassurance from them"),
+        o("Throw myself into something else", "Throwing yourself into something else is mostly how you settle it.", "throwing yourself into something else"),
       ],
     },
     16: {
@@ -151,7 +151,7 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
     },
     17: {
       turn: 17,
-      question: "When you're like that, what does the other person usually do?",
+      question: "At those times, what does the other person usually do?",
       options: [
         o("Come to me first", "At those times, they usually come to you first.", "coming to you first"),
         o("Wait for me", "At those times, they usually wait for you.", "waiting for you"),
@@ -192,15 +192,15 @@ export const MODULE1_SCRIPT_EN: ModuleScript = {
     },
   },
   checkpoint: [
-    "From what you've told me, when a reply doesn't come your mind goes to {g2}, your feeling then is close to {g4}, and after a fight {g8} comes first.",
+    "From what you've told me, when a reply doesn't come, your mind goes to {g2}; the feeling then is close to {g4}; and after a fight, {g8} comes first.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
   closing: {
     summary: [
       "When a reply doesn't come, your mind goes to {g2}, and the feeling then is close to {g4}.",
-      "After a fight, {g8} comes first, and to be loved you carry {g11}.",
-      "You feel loved through {g13}, when you're uneasy it's {g15}, what the other person does at those times is {g17}, and you'd like to start with {g19}.",
+      "After a fight, {g8} comes first, and when it comes to being loved, you carry {g11}.",
+      "You feel loved through {g13}; what settles you when something bothers you is {g15}; at those times the other person's usual move is {g17}; and the step you'd start with is {g19}.",
     ],
     perspectiveLine: "I'll also keep the words you wrote to the you who starts the next love, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",

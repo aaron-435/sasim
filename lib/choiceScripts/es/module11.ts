@@ -14,35 +14,35 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
       quote: true,
       question: "Cuando las miradas de la gente se juntan en ti, ¿qué sueles hacer?",
       options: [
-        o("Me quedo donde estoy", "Cuando se juntan las miradas, te quedas donde estás.", "quedarte bajo la mirada"),
-        o("Me escabullo", "Cuando se juntan las miradas, te escabulles.", "escabullirte"),
-        o("Se lo paso a otro", "Cuando se juntan las miradas, se lo pasas a otro.", "pasárselo a otro"),
+        o("Me quedo donde estoy", "Cuando las miradas se dirigen a ti, te quedas donde estás.", "quedarte bajo la mirada"),
+        o("Me escabullo", "Cuando las miradas se dirigen a ti, te escabulles.", "escabullirte"),
+        o("Se lo paso a otro", "Cuando las miradas se dirigen a ti, le pasas el foco a otra persona.", "pasárselo a otro"),
       ],
     },
     2: {
       turn: 2,
-      question: "Hace poco, ¿qué tipo de palabras te tragaste justo antes de decirlas?",
+      question: "Piensa en una vez reciente en que te callaste justo antes de decir algo. ¿Qué era?",
       options: [
-        o("Mi opinión", "Una escena de un pensamiento que se detiene ante la boca.", "tu opinión"),
-        o("Una petición o un deseo", "Algo que querías, doblado hacia dentro.", "una petición o un deseo"),
-        o("Un rechazo", "Un «no» que dio la vuelta en la garganta.", "un rechazo"),
+        o("Mi opinión", "Un pensamiento que se detuvo justo en tus labios.", "tu opinión"),
+        o("Una petición o un deseo", "Algo que querías, guardado hacia dentro.", "una petición o un deseo"),
+        o("Un rechazo", "Un «no» que se quedó en la garganta.", "un rechazo"),
       ],
     },
     3: {
       turn: 3,
       question: "¿Qué relación tenías con las personas que estaban allí?",
       options: [
-        o("Cercana", "Las personas que estaban allí eran cercanas.", "una relación cercana"),
-        o("Apenas las conocía", "Las personas que estaban allí eran gente que apenas conocías.", "una relación de apenas conocerse"),
+        o("Cercana", "Las personas que estaban allí eran cercanas a ti.", "una relación cercana"),
+        o("Apenas las conocía", "Apenas conocías a las personas que estaban allí.", "apenas conocerse"),
       ],
     },
     4: {
       turn: 4,
-      question: "Después de tragártelo, ¿qué se acerca más a tu ánimo?",
+      question: "Después, ¿cuál de estos sentimientos se acerca más al tuyo?",
       options: [
         o("Agobio", "Se queda atrás una sensación de bloqueo.", "el agobio"),
-        o("Pena por lo que dejé pasar", "Volver a mirar lo que se te escapó.", "la pena por lo que dejaste pasar"),
-        o("Alivio", "Lo primero fue la sensación de soltar el aire.", "el alivio"),
+        o("Pena por lo que dejé pasar", "Sigues mirando atrás, a lo que se te escapó.", "la pena por lo que dejaste pasar"),
+        o("Alivio", "Lo primero fue soltar el aire.", "el alivio"),
       ],
     },
     5: {
@@ -50,18 +50,18 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
       quote: true,
       question: "¿Con qué frecuencia dices cosas como «lo que sea» o «da igual, estoy bien»?",
       options: [
-        o("A menudo", "Eres de los que dicen a menudo «lo que sea» o «estoy bien».", "decirlo a menudo"),
-        o("A veces", "Eres de los que a veces dicen «lo que sea» o «estoy bien».", "decirlo a veces"),
-        o("Casi nunca", "Eres de los que casi nunca dicen «lo que sea» o «estoy bien».", "casi nunca decirlo"),
+        o("A menudo", "A menudo dices «lo que sea» o «estoy bien».", "decirlo a menudo"),
+        o("A veces", "A veces dices «lo que sea» o «estoy bien».", "decirlo a veces"),
+        o("Casi nunca", "Casi nunca dices «lo que sea» o «estoy bien».", "casi nunca decirlo"),
       ],
     },
     6: {
       turn: 6,
-      question: "¿Dónde sueles acabar tragándote las palabras?",
+      question: "¿Dónde sueles acabar callándote lo que piensas?",
       options: [
         o("En grupo", "Cuanta más gente, más baja la voz.", "en grupo"),
-        o("Cara a cara, a solas con alguien", "Más bien las palabras se pliegan cuando sois solo dos.", "cara a cara"),
-        o("En el trabajo", "El trabajo es donde más te tragas.", "en el trabajo"),
+        o("Cara a cara, a solas con alguien", "Las palabras se repliegan más cuando sois solo dos.", "cara a cara"),
+        o("En el trabajo", "El trabajo es donde más te callas.", "en el trabajo"),
       ],
     },
     7: {
@@ -74,11 +74,11 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
     },
     8: {
       turn: 8,
-      question: "Justo antes de tragártelo, ¿qué te pasa primero por la cabeza?",
+      question: "Justo antes de callarte, ¿qué te pasa primero por la cabeza?",
       options: [
-        o("Destacar", "Lo primero que engancha es llamar la atención.", "el miedo a destacar"),
-        o("Equivocarme", "Pesar primero la posibilidad de que no sea la respuesta correcta.", "el miedo a equivocarte"),
-        o("Romper el ambiente", "Lo primero que entra en la vista es el tono del lugar.", "el miedo a romper el ambiente"),
+        o("Destacar", "Lo primero que te frena es llamar la atención.", "la idea de destacar"),
+        o("Equivocarme", "Primero pesas si es lo correcto.", "la idea de equivocarte"),
+        o("Romper el ambiente", "Lo primero que notas es el ambiente del lugar.", "la idea de romper el ambiente"),
       ],
     },
     10: {
@@ -86,36 +86,36 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
       quote: true,
       question: "Cuando dijiste lo que querías, ¿qué tipo de respuesta te llegó con más frecuencia?",
       options: [
-        o("Lo aceptaron", "Hay un recuerdo de palabras que llegaron a su sitio.", "que te lo aceptaran"),
-        o("Lo dejaron pasar", "Quedan palabras que pasaron sin llegar.", "que te lo dejaran pasar"),
-        o("Se rieron de mí", "Una escena que volvió convertida en risa se queda mucho.", "que se rieran de ti"),
+        o("Lo aceptaron", "Recuerdas palabras que llegaron a su sitio.", "que te lo aceptaran"),
+        o("Lo dejaron pasar", "Recuerdas palabras que pasaron sin llegar.", "que te lo dejaran pasar"),
+        o("Se rieron de mí", "Una respuesta de risa es de las que se quedan.", "que se rieran de ti"),
       ],
     },
     11: {
       turn: 11,
-      question: "Si mostraras lo que quieres, ¿cómo crees que se vería?",
+      question: "Si mostraras lo que quieres, ¿cómo crees que resultaría?",
       options: [
-        o("Egoísta", "Sientes que se vería egoísta.", "el miedo a parecer egoísta"),
-        o("Raro", "Sientes que resultaría raro.", "el miedo a que resulte raro"),
-        o("Nada del otro mundo", "Sientes que no sería para tanto.", "la sensación de que no sería para tanto"),
+        o("Egoísta", "Sientes que mostrar lo que quieres se vería egoísta.", "egoísta"),
+        o("Raro", "Sientes que mostrar lo que quieres resultaría raro.", "raro"),
+        o("Nada del otro mundo", "Sientes que mostrar lo que quieres no sería para tanto.", "nada del otro mundo"),
       ],
     },
     12: {
       turn: 12,
       question: "Cuando te miras en el espejo, ¿qué es lo primero que ves?",
       options: [
-        o("Lo que me gusta", "Un ojo que encuentra primero lo bueno.", "lo que te gusta"),
-        o("Lo que quiero arreglar", "Lo que hay que retocar te llama primero la atención.", "lo que quieres arreglar"),
-        o("Paso de largo", "Del lado de quien no se mira mucho rato.", "pasar de largo"),
+        o("Lo que me gusta", "Primero encuentras lo que te gusta.", "lo que te gusta"),
+        o("Lo que quiero arreglar", "Lo que quieres arreglar te llama primero la atención.", "lo que quieres arreglar"),
+        o("Paso de largo", "No sueles mirarte mucho rato.", "pasar de largo"),
       ],
     },
     13: {
       turn: 13,
-      question: "Cuando miras atrás lo que te tragaste, ¿qué se parece más a ti?",
+      question: "Cuando miras atrás lo que te callaste, ¿qué se acerca más a lo que sientes?",
       options: [
-        o("Me queda arrepentimiento", "Al mirar atrás lo que te tragaste, te queda arrepentimiento.", "el arrepentimiento"),
-        o("Más bien siento alivio", "Al mirar atrás lo que te tragaste, más bien sientes alivio.", "el alivio"),
-        o("Depende de la ocasión", "Al mirar atrás lo que te tragaste, tu ánimo cambia cada vez.", "un ánimo que cambia"),
+        o("Me queda arrepentimiento", "Al mirar atrás lo que te callaste, te queda arrepentimiento.", "el arrepentimiento"),
+        o("Más bien siento alivio", "Al mirar atrás lo que te callaste, más bien sientes alivio.", "el alivio"),
+        o("Depende de la ocasión", "Al mirar atrás lo que te callaste, lo que sientes cambia según el momento.", "un ánimo que cambia"),
       ],
     },
     14: {
@@ -123,18 +123,18 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
       quote: true,
       question: "Cuando surge un lugar desconocido o algo improvisado, ¿qué haces?",
       options: [
-        o("Voy hacia lo conocido", "Tu ánimo descansa al elegir un camino ya sabido.", "ir hacia lo conocido"),
-        o("Me dejo llevar por ahora", "Entregarte a la corriente y observar.", "dejarte llevar por ahora"),
-        o("Pruebo yo primero", "Dar un paso primero hacia lo desconocido.", "probar primero"),
+        o("Voy hacia lo conocido", "Encuentras tranquilidad en elegir un camino ya conocido.", "ir hacia lo conocido"),
+        o("Me dejo llevar por ahora", "Te dejas llevar por la corriente y observas.", "dejarte llevar por ahora"),
+        o("Pruebo yo primero", "Das tú el primer paso hacia lo desconocido.", "probar primero"),
       ],
     },
     15: {
       turn: 15,
-      question: "¿Adónde suele ir el sentimiento que te tragaste?",
+      question: "¿Adónde suele ir un sentimiento que te callaste?",
       options: [
-        o("Se olvida", "Un sentimiento tragado suele olvidarse.", "que se olvide"),
-        o("Lo digiero a solas", "El sentimiento tragado sueles digerirlo a solas.", "digerirlo a solas"),
-        o("Estalla más tarde", "Un sentimiento tragado suele estallar más tarde.", "que estalle más tarde"),
+        o("Se olvida", "Un sentimiento callado suele olvidarse.", "olvidado"),
+        o("Lo digiero a solas", "Un sentimiento callado sueles digerirlo a solas.", "digerido a solas"),
+        o("Estalla más tarde", "Un sentimiento callado suele estallar más tarde.", "estallando más tarde"),
       ],
     },
     16: {
@@ -142,7 +142,7 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
       question: "¿Cómo eres cuando estás a solas?",
       options: [
         o("Libre, casi cantando o bailando", "Hay un yo que se suelta cuando no hay nadie.", "la libertad cuando estás a solas"),
-        o("Cuidadoso incluso a solas", "Vigilarte aun sin ojos que te miren.", "ser cuidadoso incluso a solas"),
+        o("Con cuidado incluso a solas", "Te vigilas aun sin ojos que te miren.", "cuidarte incluso a solas"),
       ],
     },
     17: {
@@ -150,7 +150,7 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
       question: "¿Hay a tu lado alguien a quien puedas decirle con comodidad lo que quieres?",
       options: [
         o("Una o dos personas", "Hay una o dos personas a quienes puedes decirles con comodidad lo que quieres.", "una o dos personas"),
-        o("A veces, en ciertos momentos", "Hay momentos en que dices con comodidad lo que quieres.", "ciertos momentos de vez en cuando"),
+        o("A veces, en ciertos momentos", "Hay momentos en que dices con comodidad lo que quieres.", "solo ciertos momentos"),
         o("Todavía nadie", "Todavía no hay nadie a quien decirle con comodidad lo que quieres.", "nadie todavía"),
       ],
     },
@@ -159,9 +159,9 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
       quote: true,
       question: "¿Cuándo piensas «así sí que soy bastante yo»?",
       options: [
-        o("Cuando estoy a solas", "Ser tú es más nítido en el tiempo a solas.", "cuando estás a solas"),
-        o("Cuando estoy con alguien cómodo", "Un momento en que alguien a tu lado te suelta.", "cuando estás con alguien cómodo"),
-        o("Cuando me absorbe algo", "Del lado de quien se ve a sí mismo dentro de lo que tiene entre manos.", "cuando te absorbe algo"),
+        o("Cuando estoy a solas", "Ser tú se nota más cuando estás a solas.", "cuando estás a solas"),
+        o("Cuando estoy con alguien cómodo", "Alguien a tu lado te ayuda a soltarte.", "cuando estás con alguien cómodo"),
+        o("Cuando me absorbe algo", "Te ves más a ti en lo que tienes entre manos.", "cuando te absorbe algo"),
       ],
     },
     19: {
@@ -175,28 +175,28 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "El día en que te des ese permiso, ¿cómo crees que te verás?",
+      question: "El día en que te des ese permiso, ¿cómo te imaginas?",
       options: [
-        o("Con mucho menos peso", "Una figura con una capa de carga menos en los hombros.", "sentirte mucho más ligero"),
-        o("Con algo de extrañeza", "Una escena de encontrarte con una cara que nunca habías visto.", "sentirte un poco raro"),
-        o("No lo veo claro", "Esa escena sigue borrosa por ahora.", "una imagen todavía borrosa"),
+        o("Con mucho menos peso", "Una capa de peso menos en los hombros.", "sentir mucha más ligereza"),
+        o("Con algo de extrañeza", "Como encontrarte con una cara que no habías visto.", "sentir cierta extrañeza"),
+        o("No lo veo claro", "Esa imagen sigue borrosa por ahora.", "una imagen todavía borrosa"),
       ],
     },
     21: {
       turn: 21,
-      question: "Si tu yo de la infancia, el que decía lo que quería sin reparos, pudiera decirte algo ahora, ¿qué sería?",
+      question: "Si tu yo de la infancia pudiera decirte algo ahora, ¿qué sería?",
     },
   },
   checkpoint: [
-    "Por lo que me has contado, lo que te tragaste hace poco es {g2}, después tu ánimo se parece a {g4}, y justo antes de tragártelo te pasa primero por la cabeza {g8}.",
+    "Por lo que me has contado, lo que te callaste hace poco es {g2}, después el sentimiento que más se acerca al tuyo es {g4}, y justo antes de callarte lo primero que aparece es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
   closing: {
     summary: [
-      "Lo que te tragaste hace poco es {g2}, después tu ánimo se parece a {g4}, y donde más te lo tragas es {g6}.",
-      "Mostrar lo que quieres trae {g11}, y con el sentimiento tragado lo que suele pasar es {g15}.",
-      "Con quién puedes decir a gusto lo que quieres: {g17}; y el pequeño permiso que te darías empieza por {g19}.",
+      "Lo que te callaste hace poco es {g2}, después el sentimiento que más se acerca al tuyo es {g4}, y donde más te callas es {g6}.",
+      "Si mostraras lo que quieres, imaginas que resultaría {g11}, y un sentimiento callado suele acabar {g15}.",
+      "Para contarle a alguien lo que quieres: {g17}. El pequeño permiso que te darías empieza por {g19}.",
     ],
     perspectiveLine: "Lo que dijo tu yo de la infancia también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",

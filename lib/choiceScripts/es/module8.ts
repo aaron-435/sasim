@@ -38,30 +38,30 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
     },
     4: {
       turn: 4,
-      question: "En ese momento, ¿qué se acerca más a tu ánimo?",
+      question: "En ese momento, ¿qué se parece más a lo que sientes?",
       options: [
-        o("Inquietud", "Inclinado hacia no poder estar quieto.", "la inquietud"),
-        o("Ansiedad", "El ánimo ya se ha ido por delante a lo que viene.", "la ansiedad"),
-        o("Resentimiento", "Un lado donde queda una parte sin resolver.", "el resentimiento"),
+        o("Inquietud", "Más cerca de no poder quedarte quieto.", "la inquietud"),
+        o("Ansiedad", "Ya te adelantas a lo que viene.", "la ansiedad"),
+        o("Resentimiento", "Queda algo sin resolver.", "el resentimiento"),
       ],
     },
     5: {
       turn: 5,
       quote: true,
-      question: "¿Ya habías tenido noches así?",
-      questionNoQuote: "¿Ya habías tenido noches en que cuesta dormirse?",
+      question: "¿Estas noches vienen de hace mucho o empezaron hace poco?",
+      questionNoQuote: "¿Las noches en que cuesta dormirse vienen de hace mucho o empezaron hace poco?",
       options: [
-        o("Desde hace mucho", "Estas noches llevan mucho tiempo.", "noches que vienen de lejos"),
+        o("Desde hace mucho", "Llevas mucho tiempo pasando noches así.", "noches que vienen de lejos"),
         o("Empezaron hace poco", "Estas noches empezaron hace poco.", "noches que empezaron hace poco"),
       ],
     },
     6: {
       turn: 6,
-      question: "Cuando piensas en cuándo empezó a desordenarse tu sueño, ¿qué había?",
+      question: "¿Qué estaba pasando en tu vida cuando tu sueño empezó a desordenarse?",
       options: [
-        o("Cambió mi trabajo", "Coincide con una época en que se movió un gran eje de la vida.", "una época en que cambió el trabajo"),
-        o("Cambió una relación", "Un cambio por el lado de las personas llegó a la noche.", "una época en que cambió una relación"),
-        o("Nada en particular", "La noche estaba ahí antes que cualquier razón.", "un comienzo sin causa clara"),
+        o("Cambió mi trabajo", "Coincide con una época en que cambió algo grande en tu vida.", "un cambio en el trabajo"),
+        o("Cambió una relación", "Un cambio en una relación coincide con ello.", "un cambio en una relación"),
+        o("Nada en particular", "Empezó sin un motivo que puedas señalar.", "nada en particular"),
       ],
     },
     7: {
@@ -74,11 +74,11 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
     },
     8: {
       turn: 8,
-      question: "Cuando ya estás en la cama, ¿qué te hace seguir retrasando el sueño?",
+      question: "Si retrasas el sueño estando ya en la cama, ¿qué suele provocarlo?",
       options: [
         o("Terminar lo que me queda", "Lo que no terminaste te sigue hasta la cama.", "terminar lo que queda"),
         o("Ver un poco más de vídeos", "El tiempo en pantalla alarga la noche.", "ver vídeos"),
-        o("Los pensamientos que empiezan al tumbarme", "Saber de antemano lo que se abre al tumbarte.", "los pensamientos que empiezan al tumbarte"),
+        o("Los pensamientos que empiezan al tumbarme", "Ya sabes lo que se abre al tumbarte.", "los pensamientos que empiezan al tumbarte"),
       ],
     },
     10: {
@@ -87,32 +87,32 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
       question: "¿La tensión del día te acompaña hasta la noche?",
       options: [
         o("Casi todos los días", "La frontera entre día y noche es fina.", "la tensión del día que sigue cada día"),
-        o("Solo los días ajetreados", "Un patrón que sigue los días en que todo se junta.", "la tensión de los días ajetreados"),
+        o("Solo los días ajetreados", "Te acompaña los días en que todo se junta.", "la tensión de los días ajetreados"),
       ],
     },
     11: {
       turn: 11,
-      question: "¿Hay veces en que estás cansado pero no quieres dormirte?",
+      question: "¿Hay veces en que te entra el cansancio pero no quieres dormirte?",
       options: [
         o("Sí, me da pena perder la noche", "Hay veces en que no quieres dormir porque te da pena perder la noche.", "no querer perder la noche"),
         o("Sí, no quiero que acabe el día", "Hay veces en que no quieres dormir porque no quieres que acabe el día.", "no querer que acabe el día"),
-        o("No, eso no me pasa", "No sientes reparo en dormir cuando estás cansado.", "nada en especial"),
+        o("No, eso no me pasa", "Cuando te entra el cansancio, no sueles resistirte al sueño.", "no resistirte al sueño"),
       ],
     },
     12: {
       turn: 12,
       question: "En los días en que dormiste bien, ¿cómo fue el día?",
       options: [
-        o("Un día de mucho esfuerzo físico", "El cuerpo tiene que cansarse primero para tumbarte.", "un día de mucho uso del cuerpo"),
-        o("Un día en que me sentí ligero", "El sueño vino en los días en que la carga del ánimo bajó.", "un día de ánimo ligero"),
-        o("No recuerdo un día especial", "Todavía no se ha formado un criterio claro.", "ningún día que recuerdes"),
+        o("Un día de mucho esfuerzo físico", "Primero se cansa el cuerpo y luego te tumbas.", "un día de mucho uso del cuerpo"),
+        o("Un día en que me sentí ligero", "El sueño viene los días en que la carga del ánimo es más ligera.", "un día de ánimo ligero"),
+        o("No recuerdo un día especial", "Todavía no hay una señal clara.", "ningún día que recuerdes"),
       ],
     },
     13: {
       turn: 13,
       question: "¿Qué te da un poco de calma, incluso ahora?",
       options: [
-        o("Después de una ducha o un baño caliente", "Después de lavarte con agua caliente, llega un poco de calma.", "lavarte con agua caliente"),
+        o("Después de una ducha o un baño caliente", "Después de lavarte con agua caliente, llega un poco de calma.", "una ducha o un baño caliente"),
         o("Al oír sonidos tranquilos", "Al oír sonidos tranquilos, llega un poco de calma.", "los sonidos tranquilos"),
         o("Cuando bajo las luces", "Cuando bajas las luces, llega un poco de calma.", "la luz tenue"),
       ],
@@ -120,15 +120,15 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
     14: {
       turn: 14,
       quote: true,
-      question: "Cuando no llega el sueño, ¿te quedas tumbado o te levantas?",
+      question: "Cuando no llega el sueño, ¿te quedas en la cama o te levantas?",
       options: [
-        o("Me quedo tumbado esperando", "Una manera de mantener el sitio y esperar.", "quedarte tumbado esperando"),
-        o("Me levanto y hago algo", "Salir del sitio y aprovechar el rato.", "levantarte y hacer algo"),
+        o("Me quedo en la cama esperando", "Mantienes el sitio y esperas.", "quedarte en la cama esperando"),
+        o("Me levanto y hago algo", "Sales de la cama y aprovechas el rato.", "levantarte y hacer algo"),
       ],
     },
     15: {
       turn: 15,
-      question: "¿Qué usas más a menudo para dormirte?",
+      question: "¿Qué sueles hacer para intentar dormirte?",
       options: [
         o("Miro el reloj a cada rato", "Al intentar dormir, miras el reloj a cada rato.", "mirar el reloj"),
         o("Dejo algún sonido puesto", "Al intentar dormir, dejas algún sonido puesto.", "dejar algún sonido puesto"),
@@ -145,21 +145,21 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
     },
     17: {
       turn: 17,
-      question: "¿Hay alguien que sepa que tu sueño se ha desordenado?",
+      question: "¿Hay alguien que sepa de tus problemas para dormir?",
       options: [
-        o("Una o dos personas", "Una o dos personas saben que tu sueño se ha desordenado.", "una o dos personas"),
-        o("Solo una persona cercana", "Solo una persona cercana sabe que tu sueño se ha desordenado.", "una persona cercana"),
-        o("Nadie", "Nadie sabe que tu sueño se ha desordenado.", "nadie"),
+        o("Una o dos personas", "Una o dos personas saben de tus problemas para dormir.", "una o dos personas"),
+        o("Solo una persona cercana", "Solo una persona cercana sabe de tus problemas para dormir.", "una persona cercana"),
+        o("Nadie", "Nadie sabe de tus problemas para dormir.", "nadie"),
       ],
     },
     18: {
       turn: 18,
       quote: true,
-      question: "En una noche en que te duermes con facilidad, ¿qué cambiaría primero?",
+      question: "Si pudieras dormirte con facilidad, ¿qué cambiaría primero?",
       options: [
-        o("La hora a la que me acuesto", "Una imagen que empieza por la hora en que se cierra el día.", "la hora a la que te acuestas"),
-        o("Lo que hay en mi cabeza al acostarme", "Una escena donde la cabeza se calla primero al tumbarte.", "lo que hay en tu cabeza al acostarte"),
-        o("Cómo me levanto por la mañana", "Una imagen que empieza por la sensación al abrir los ojos.", "cómo te levantas por la mañana"),
+        o("La hora a la que me acuesto", "Empieza por la hora en que se cierra el día.", "la hora a la que te acuestas"),
+        o("Lo que hay en mi cabeza al acostarme", "La cabeza se calla primero al tumbarte.", "lo que hay en tu cabeza al acostarte"),
+        o("Cómo me levanto por la mañana", "Empieza por cómo te sientes al abrir los ojos.", "cómo te levantas por la mañana"),
       ],
     },
     19: {
@@ -182,21 +182,21 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
     },
     21: {
       turn: 21,
-      question: "¿Hay algo que el tú de ahora quiera dejarle dicho de antemano al tú de esta noche?",
+      question: "¿Hay algo que quieras dejarte dicho de antemano para esta noche?",
     },
   },
   checkpoint: [
-    "Por lo que me has contado, lo primero que se reproduce al apagar la luz es {g2}, tu ánimo entonces se parece a {g4}, y lo que te hace posponer el sueño parece ser {g8}.",
+    "Por lo que me has contado, lo primero que se reproduce al apagar la luz es {g2}, lo que sientes entonces se parece más a {g4}, y lo que te hace posponer el sueño es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
   closing: {
     summary: [
-      "Lo primero que se reproduce al apagar la luz es {g2}, tu ánimo entonces se parece a {g4}, y lo que empezó a desordenar tu sueño fue {g6}.",
-      "Lo que te retiene en la noche: {g11}, y lo que te da un poco de calma aun ahora es {g13}.",
-      "Para dormirte, lo tuyo es {g15}; quién lo sabe: {g17}; y una noche más fácil empieza por {g19}.",
+      "Lo primero que se reproduce al apagar la luz es {g2}, lo que sientes entonces se parece más a {g4}, y cuando tu sueño empezó a desordenarse, lo que había era {g6}.",
+      "Cuando te entra el cansancio, lo que cuentas es {g11}, y lo que te da un poco de calma aun ahora es {g13}.",
+      "Tu manera de intentar dormir es {g15}. En cuanto a quién sabe de tu sueño, dijiste: {g17}. Y una noche más fácil empieza por {g19}.",
     ],
-    perspectiveLine: "Lo que le dijiste a tu yo de esta noche también lo guardo, con tus palabras.",
+    perspectiveLine: "Lo que te dijiste para esta noche también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
   },
 };

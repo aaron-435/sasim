@@ -61,7 +61,7 @@ const sajuVsAstrology: GuideSet = {
         heading: "Qué mira cada uno",
         body: [
           "La astrología occidental se construye sobre el cielo. Sitúa el Sol, la Luna y los planetas en doce signos del zodiaco y doce casas, y tu «signo solar» sale únicamente de tu fecha de nacimiento. Mucha gente conoce solo esa parte.",
-          "El saju se construye sobre un calendario del tiempo. Convierte tu año, mes, día y hora de nacimiento en cuatro pilares, cada uno formado por un tronco celeste y una rama terrestre, ocho caracteres en total. Los troncos y las ramas llevan los cinco elementos (Madera, Fuego, Tierra, Metal y Agua), y el mapa se lee según cómo se equilibran.",
+          "El saju se construye sobre un calendario del tiempo. Convierte tu año, mes, día y hora de nacimiento en cuatro pilares, cada uno formado por un tronco celeste y una rama terrestre, ocho caracteres en total. Los troncos y las ramas contienen los cinco elementos (Madera, Fuego, Tierra, Metal y Agua), y el mapa se lee según cómo se equilibran.",
         ],
       },
       {

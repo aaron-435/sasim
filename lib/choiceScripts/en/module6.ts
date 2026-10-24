@@ -93,7 +93,7 @@ export const MODULE6_SCRIPT_EN: ModuleScript = {
     },
     11: {
       turn: 11,
-      question: "Which line was crossed in that moment?",
+      question: "In a moment like that, which line feels crossed?",
       options: [
         o("Respect", "The line that was crossed was respect.", "respect"),
         o("Fairness", "The line that was crossed was fairness.", "fairness"),
@@ -114,7 +114,7 @@ export const MODULE6_SCRIPT_EN: ModuleScript = {
       question: "Is there anyone you can vent your anger to?",
       options: [
         o("Yes, someone easy to talk to", "There's an easy person to vent to.", "someone easy to vent to"),
-        o("I'm a little selective", "When venting, you choose the person a bit.", "venting to a chosen few"),
+        o("I'm a little selective", "When venting, you choose the person a bit.", "a few chosen people to vent to"),
         o("Not really anyone", "There's not really anyone to vent to.", "no one to vent to"),
       ],
     },
@@ -147,11 +147,11 @@ export const MODULE6_SCRIPT_EN: ModuleScript = {
     },
     17: {
       turn: 17,
-      question: "When you put your anger into words, how did the other person respond?",
+      question: "When you've put your anger into words, how has the other person responded?",
       options: [
-        o("They took it in", "When you said it, they took it in.", "taken in"),
-        o("It became a bigger fight", "When you said it, it turned into a bigger fight.", "a bigger fight"),
-        o("I've hardly ever said it", "You've hardly ever put anger into words.", "something you've hardly done"),
+        o("They took it in", "When you said it, they took it in.", "the other person took it in"),
+        o("It became a bigger fight", "When you said it, it turned into a bigger fight.", "it turned into a bigger fight"),
+        o("I've hardly ever said it", "You've hardly ever put anger into words.", "you've hardly ever done it"),
       ],
     },
     18: {
@@ -188,15 +188,15 @@ export const MODULE6_SCRIPT_EN: ModuleScript = {
     },
   },
   checkpoint: [
-    "From what you've told me, the anger rises with {g2}, underneath it there's {g4}, and it takes {g8} to settle.",
+    "From what you've told me, the anger is set off by {g2}, underneath it there's {g4}, and it takes {g8} to settle.",
     "If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.",
     "Shall we keep talking a little more, or wrap up here?",
   ],
   closing: {
     summary: [
-      "Your anger rises with {g2}, underneath it there's {g4}, and it took {g8} to settle.",
-      "The line it touched was {g11}, and as for someone to vent to, it's {g13}.",
-      "To calm down it's {g15}; when you've put it into words, it's been {g17}; and if you drew a line, it would be closer to {g19}.",
+      "Your anger is set off by {g2}, underneath it there's {g4}, and it took {g8} to settle.",
+      "The line it touched was {g11}, and when it comes to venting, you have {g13}.",
+      "To calm down, you mostly turn to {g15}. As for putting it into words, {g17}. And if you drew a line, it would be closer to {g19}.",
     ],
     perspectiveLine: "I'll also keep the words you wrote as the you of the next morning, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",

@@ -27,7 +27,7 @@ export const MODULE1_SCRIPT_ES: ModuleScript = {
       options: [
         o("Tendrá mucho que hacer", "Sueles buscar primero la razón en la situación del otro.", "la idea de que tendrá mucho que hacer"),
         o("¿Habré hecho algo mal?", "La primera flecha apunta hacia ti.", "la idea de que hiciste algo mal"),
-        o("No me viene nada en particular", "Que no se pegue ninguna historia también es una respuesta.", "que no aparece nada en particular"),
+        o("No me viene nada en particular", "Que no se pegue ninguna historia también es una respuesta.", "nada en particular"),
       ],
     },
     3: {
@@ -61,7 +61,7 @@ export const MODULE1_SCRIPT_ES: ModuleScript = {
       turn: 6,
       question: "Cuando algo te duele, ¿qué sueles hacer?",
       options: [
-        o("Lo digo con palabras", "Eres de los que ponen el sentimiento en palabras.", "ponerlo en palabras"),
+        o("Lo digo con palabras", "Eres de quienes ponen lo que sienten en palabras.", "ponerlo en palabras"),
         o("Hago como si nada", "Dejar la superficie en calma y guardarlo dentro.", "hacer como si nada"),
         o("Hablo menos", "Crear distancia hablando menos.", "hablar menos"),
       ],
@@ -78,9 +78,9 @@ export const MODULE1_SCRIPT_ES: ModuleScript = {
       turn: 8,
       question: "Después de una discusión, ¿qué se parece más a lo que haces?",
       options: [
-        o("Escribo para comprobar", "Comprobar directamente en vez de dejarlo incierto.", "escribir para comprobar"),
-        o("Me tomo tiempo a solas para ordenarme", "Asegurar primero un espacio para ordenar el ánimo.", "tomarte tiempo a solas para ordenarte"),
-        o("Me mantengo ocupado", "Acallar la voz del ánimo con la rutina.", "mantenerte ocupado"),
+        o("Contacto para comprobar", "Comprobar directamente en vez de dejarlo en duda.", "contactar para comprobar"),
+        o("Me tomo tiempo a solas para ordenarme", "Hacerte primero un espacio para ordenar lo que sientes.", "tomarte tiempo a solas para ordenarte"),
+        o("Me ocupo con otras cosas", "Acallar lo que sientes con la rutina.", "ocuparte con otras cosas"),
       ],
     },
     10: {
@@ -116,9 +116,9 @@ export const MODULE1_SCRIPT_ES: ModuleScript = {
       turn: 13,
       question: "¿En qué tipo de momento sientes que te quieren?",
       options: [
-        o("Cuando me lo dicen", "Sientes el cariño cuando te lo dicen con palabras.", "oírlo con palabras"),
-        o("Cuando lo veo en hechos", "Sientes el cariño cuando lo ves en hechos.", "verlo en hechos"),
-        o("Cuando están a mi lado", "Sientes el cariño cuando están a tu lado.", "estar juntos, uno al lado del otro"),
+        o("Cuando me lo dicen", "Sientes el cariño cuando te lo dicen con palabras.", "oír el cariño en palabras"),
+        o("Cuando lo veo en hechos", "Sientes el cariño cuando lo ves en hechos.", "ver el cariño en hechos"),
+        o("Cuando están a mi lado", "Sientes el cariño cuando están a tu lado.", "tener al otro a tu lado"),
       ],
     },
     14: {
@@ -126,14 +126,14 @@ export const MODULE1_SCRIPT_ES: ModuleScript = {
       quote: true,
       question: "Cuando algo te incomoda por dentro, ¿qué sueles hacer?",
       options: [
-        o("Lo proceso a solas", "Dedicar primero un tiempo a digerirlo a solas.", "procesarlo a solas"),
+        o("Lo proceso a solas", "Darte primero un tiempo para digerirlo a solas.", "procesarlo a solas"),
         o("Se lo cuento a alguien", "Aliviarlo compartiéndolo con palabras.", "contárselo a alguien"),
         o("Depende del momento", "Moverte entre los dos caminos según la situación.", "que dependa del momento"),
       ],
     },
     15: {
       turn: 15,
-      question: "¿Cómo calmas principalmente esa incomodidad?",
+      question: "Cuando eso te incomoda, ¿cómo lo calmas sobre todo?",
       options: [
         o("Me doy tiempo a solas", "Sobre todo la calmas dándote tiempo a solas.", "tiempo a solas"),
         o("Busco que el otro me lo confirme", "Sobre todo la calmas buscando que el otro te lo confirme.", "la confirmación del otro"),
@@ -142,7 +142,7 @@ export const MODULE1_SCRIPT_ES: ModuleScript = {
     },
     16: {
       turn: 16,
-      question: "Cuando eso termina, ¿cómo queda la relación con el otro?",
+      question: "Después de hacer eso, ¿cómo queda la relación con el otro?",
       options: [
         o("Nos acercamos", "La distancia se acorta una vez resuelto.", "acercarnos"),
         o("Nos alejamos", "El ánimo se calma pero la distancia se abre.", "alejarnos"),
@@ -151,7 +151,7 @@ export const MODULE1_SCRIPT_ES: ModuleScript = {
     },
     17: {
       turn: 17,
-      question: "Cuando estás así, ¿qué suele hacer la otra persona?",
+      question: "En esos momentos, ¿qué suele hacer la otra persona?",
       options: [
         o("Se acerca primero", "En esos momentos suele acercarse primero.", "acercarse primero"),
         o("Espera", "En esos momentos suele esperarte.", "esperar"),
@@ -172,7 +172,7 @@ export const MODULE1_SCRIPT_ES: ModuleScript = {
       turn: 19,
       question: "¿Cuál es el paso más pequeño para acercarte a esa escena?",
       options: [
-        o("Decir mi dolor en una línea", "Decir el dolor en una línea es el paso más pequeño.", "decir el dolor en una línea"),
+        o("Decir mi dolor en una línea", "Decir el dolor en una línea es el paso más pequeño.", "decir tu dolor en una línea"),
         o("Esperar un día aunque tarde en responder", "Esperar un día aunque tarde en responder es el paso más pequeño.", "esperar un día"),
         o("Preguntar primero cómo está", "Preguntar primero cómo está es el paso más pequeño.", "preguntar primero cómo está"),
       ],
@@ -192,14 +192,14 @@ export const MODULE1_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, cuando no llega la respuesta lo primero que aparece es {g2}, lo que sientes entonces se parece a {g4}, y tras una discusión lo primero es {g8}.",
+    "Por lo que me has contado, cuando no llega la respuesta lo primero que aparece es {g2}; lo que sientes entonces es, más que nada, {g4}; y tras una discusión lo primero es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
   closing: {
     summary: [
-      "Cuando no llega la respuesta, lo primero que aparece es {g2}, y lo que sientes entonces se parece a {g4}.",
-      "Tras una discusión, lo primero es {g8}, y para que te quieran sientes que te acompaña {g11}.",
+      "Cuando no llega la respuesta, lo primero que aparece es {g2}, y lo que sientes entonces es, más que nada, {g4}.",
+      "Tras una discusión, lo primero es {g8}, y en cuanto a que te quieran, te acompaña {g11}.",
       "Lo que te hace sentir que te quieren es {g13}; lo que te calma cuando algo te incomoda es {g15}; lo que suele hacer el otro entonces es {g17}; y querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que le dijiste a quien empieza su próximo amor también lo guardo, con tus palabras.",
