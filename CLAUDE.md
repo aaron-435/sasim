@@ -67,17 +67,21 @@ Rules:
 | Chat prompts / logic | `npx tsx --env-file=.env.local scripts/sim-chat.mts [turns] [styles]` (calls OpenAI, costs money; keep turns low) | root |
 | Native UI | `mobile-web` preview, or iOS Simulator dev-client (see "Verifying UI") | |
 
-## 작업 분담 규칙 (Opus 기획 / Muse 코딩 / Haiku·Sonnet 검증)
-- 이 세션(Opus)은 기획, 설계, 최종 판단, 지시서 작성만 한다.
-- 3개 파일 이상 수정하거나 반복 구현이 필요한 코딩은 직접 하지 말고 muse에 위임한다. 한두 줄짜리 수정 등 작은 작업은 위임 비용이 더 크므로 직접 한다.
+## 작업 분담 규칙 (기획·판단 / Muse 코딩 / 교차 검증)
+- 이 세션은 기획, 설계, 최종 판단, 지시서 작성을 맡는다. 3개 파일 이상 수정하거나 반복 구현이 필요한 코딩은 muse에 위임하고, 한두 줄짜리 수정처럼 위임 비용이 더 큰 작은 작업은 직접 한다.
+- 사업 핵심 로직(채점 로직, 유료 콘텐츠 프롬프트, 결제)은 muse에 위임하지 않고 이 세션이 직접 다룬다. muse는 기여자 모델만 쓰고, 기여자 모델은 입출력이 Meta 모델 학습에 쓰이기 때문이다.
 - 위임 절차:
   1. `.agents/tasks/_template.md`를 복사해 `.agents/tasks/NN-제목.md` 지시서를 쓴다.
   2. `git switch -c task-NN` 으로 작업 브랜치를 만든다.
   3. 실행: `muse exec --model muse-spark-1.3-contributor --disable-approval --trust-workspace --max-model-steps 60 --prompt-file .agents/tasks/NN-제목.md`
   4. `git diff`로 결과를 확인한다.
   5. verifier-lite(Haiku)로 테스트, 빌드, 린트를 1차 점검한다.
-  6. 통과하면, 변경이 크거나 핵심 로직(결제, API 연동, 채점 로직 등)일 때만 verifier(Sonnet)로 리뷰한다.
+  6. 통과하면, 변경이 크거나 API 연동처럼 위험한 변경일 때만 verifier(Sonnet) 또는 Codex로 리뷰한다. 서로 다른 모델 계열이 리뷰해야 같은 실수를 놓치지 않는다.
   7. 문제가 있으면 지시서를 보강해 muse를 다시 실행한다. 같은 작업이 3회 실패하면 직접 수정하거나 사용자에게 보고한다.
-- muse exec의 종료 코드 0은 "작업을 끝냈다"는 뜻일 뿐 정답이라는 뜻이 아니다. 반드시 테스트 명령으로 확인한다.
-- 추론 강도는 기본값(high)을 쓰고 max는 쓰지 않는다.
-- 보안: `.env*`, 키 파일, 실제 사용자 데이터는 muse 작업에 쓰지 않는다. 기여자 모델(-contributor)은 입출력이 Meta 모델 학습에 쓰이므로, 사업 핵심 로직(채점 로직, 유료 콘텐츠 프롬프트 등)을 건드리는 작업은 `--model muse-spark-1.3`(표준)으로 실행한다.
+- 다른 AI 위임 (사용자는 이 세션에만 말하고, 이 세션이 직접 호출한다):
+  - Gemini: `agy -p "프롬프트" --mode plan --print-timeout 180s`. 긴 문서 읽기, 구글 검색 조사. 질문은 한 주제로 작게 쪼갠다(큰 질문은 3분 타임아웃으로 실패했다). 코드 수정은 맡기지 않고 `--dangerously-skip-permissions`는 쓰지 않는다. Google AI Plus라 한도가 작다.
+  - Codex: `codex exec -s read-only "프롬프트"`. 코드 리뷰와 교차 검증. ChatGPT 구독 로그인.
+  - Aside: `aside "작업"` (MCP도 이 프로젝트에 등록됨, 새 세션부터 로드). 로그인된 사이트의 읽기 작업부터 시킨다. 사용자가 먼저 로그인해 둬야 하고, 결제·게시·메시지 전송·설정 변경은 사용자 승인 후에만 한다.
+- 위임 결과는 위임받은 쪽의 보고가 아니라 diff와 테스트 출력으로 판단한다. `muse exec` 종료 코드 0은 작업을 끝냈다는 뜻일 뿐 정답이라는 뜻이 아니다.
+- 추론 강도는 기본값을 쓰고 max는 쓰지 않는다.
+- 보안: `.env*`, 키 파일, 실제 사용자 데이터, 사업 핵심 로직은 어떤 외부 AI에도 보내지 않는다. Gemini의 데이터 사용 동의는 해제된 상태여야 한다.
