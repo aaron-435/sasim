@@ -181,6 +181,7 @@ export const en: typeof ko = {
     ],
     featuresAppNote: "Some features are available in the app.",
     calculatorLink: "Try the free saju calculator →",
+    guidesLink: "Read the saju guides →",
     sampleTitle: "What a report looks like",
     sampleNote: "A sample from a fictional person, for illustration. Not a real user's result.",
     samplePage1Label: "A scene from one night",

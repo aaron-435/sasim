@@ -182,6 +182,7 @@ export const es: typeof ko = {
     ],
     featuresAppNote: "Algunas funciones están disponibles en la app.",
     calculatorLink: "Prueba la calculadora de saju gratis →",
+    guidesLink: "Lee las guías de saju →",
     sampleTitle: "Así es un informe",
     sampleNote: "Una muestra de una persona ficticia, solo de ejemplo. No es el resultado de un usuario real.",
     samplePage1Label: "Una escena de una noche",

@@ -226,6 +226,9 @@ export default function SajuCalculator({ locale }) {
         <section className="sc-section" aria-labelledby="sc-how">
           <h2 id="sc-how" className="sc-serif sc-h2">{c.howTitle}</h2>
           <p className="sc-text">{c.howBody}</p>
+          {t.landing.guidesLink && (
+            <p className="sc-text"><a href={localizedPath("/guides", locale)} style={{ color: "#6FA98B" }}>{t.landing.guidesLink}</a></p>
+          )}
         </section>
       </div>
     </main>

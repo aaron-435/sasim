@@ -15,6 +15,7 @@ import {
   type DayMasterInfo,
 } from "@/lib/seoArticles";
 import { localizedPath } from "@/lib/i18n/paths";
+import { GUIDES_UI, guidesIndexLocales, guidesListPath } from "@/lib/seoGuides";
 import JsonLd from "@/components/JsonLd";
 import { breadcrumbLd } from "@/lib/jsonLd";
 
@@ -74,6 +75,9 @@ export function Shell({ locale, langHref, locales = LOCALES, children }: { local
           </nav>
         </header>
         {children}
+        {guidesIndexLocales().includes(locale) && (
+          <p className="dm-crumb"><a href={guidesListPath(locale)}>{GUIDES_UI[locale]?.listTitle}</a></p>
+        )}
         <section className="dm-box" aria-labelledby="dm-app-title">
           <h2 id="dm-app-title">{t.calculator.appTitle}</h2>
           <p>{t.calculator.appBody}</p>

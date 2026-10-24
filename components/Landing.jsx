@@ -151,6 +151,7 @@ export default function Landing({ onStart }) {
           </div>
           <p className="lp-small">{l.featuresAppNote}</p>
           <p className="lp-small"><a className="lp-link" href={localizedPath("/saju-calculator", locale)}>{l.calculatorLink}</a></p>
+          {l.guidesLink && <p className="lp-small"><a className="lp-link" href={localizedPath("/guides", locale)}>{l.guidesLink}</a></p>}
         </section>
 
         <section className="lp-section" aria-labelledby="lp-sample">
