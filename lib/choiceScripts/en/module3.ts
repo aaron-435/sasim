@@ -78,7 +78,7 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
       turn: 8,
       question: "What drains your energy the most?",
       options: [
-        o("The amount of work", "The pile that keeps growing is the biggest leak.", "keeping up with the pile of work"),
+        o("The amount of work", "The pile that keeps growing is the biggest leak.", "a pile that keeps growing"),
         o("Handling emotions", "Managing feelings takes the most.", "handling emotions"),
         o("Things not going my way", "What's out of your hands takes the most.", "things not going your way"),
       ],

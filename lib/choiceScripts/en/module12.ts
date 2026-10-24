@@ -34,7 +34,7 @@ export const MODULE12_SCRIPT_EN: ModuleScript = {
       options: [
         o("When I was sorting through my things", "The change felt most real while sorting through your things.", "sorting through your things"),
         o("When I felt the gap in my routine", "It felt most real when you felt the gap in your routine.", "feeling the gap in your routine"),
-        o("The first time I went to the new place", "It felt most real the first time you went to the new place.", "the first day at the new place"),
+        o("The first day of my new everyday life", "It felt most real the first day of your new everyday life.", "the first day of the new everyday life"),
       ],
     },
     4: {

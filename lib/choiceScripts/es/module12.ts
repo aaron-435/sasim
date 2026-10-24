@@ -34,7 +34,7 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
       options: [
         o("Al recoger mis cosas", "El cambio se te hizo más real al recoger tus cosas.", "recoger tus cosas"),
         o("Al notar el vacío en mi rutina", "Se te hizo más real al notar el vacío en tu rutina.", "notar el vacío en tu rutina"),
-        o("La primera vez en el sitio nuevo", "Se te hizo más real la primera vez en el sitio nuevo.", "el primer día en el sitio nuevo"),
+        o("El primer día de mi nueva rutina", "Se te hizo más real el primer día de tu nueva rutina.", "el primer día de la nueva rutina"),
       ],
     },
     4: {
