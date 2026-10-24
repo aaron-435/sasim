@@ -167,7 +167,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
     },
     19: {
       turn: 19,
-      question: "¿Cómo sería la versión más pequeña de empezar eso?",
+      question: "¿Cuál sería el primer paso más pequeño para recuperar tu energía?",
       options: [
         o("Caminar diez minutos", "El comienzo más pequeño es caminar diez minutos.", "caminar diez minutos"),
         o("Retomar algo que me gustaba", "El comienzo más pequeño es retomar algo que te gustaba.", "retomar algo que te gustaba"),
@@ -196,8 +196,8 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
   closing: {
     summary: [
       "En tus días pesa sobre todo {g2}, lo que sientes es {g4} y lo que más energía te quita es {g8}.",
-      "Bajo tu dificultad para descansar está {g11}, y aun así {g13} te da un poco de energía.",
-      "Cuando se cuelan pensamientos del trabajo, lo que sueles hacer es {g15}; sobre quién sabe cómo estás, la respuesta es {g17}; y cuando vuelva la energía empezarías por {g19}.",
+      "Al imaginar que esa sensación se fuera, lo que aparece es {g11}, y aun así {g13} te da un poco de energía.",
+      "Cuando se cuelan pensamientos del trabajo, lo que sueles hacer es {g15}; sobre quién sabe cómo estás, la respuesta es {g17}; y el primer paso pequeño que elegiste para recuperar energía es {g19}.",
     ],
     perspectiveLine: "Lo que te dijiste a ti mismo aquel primer día también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",

@@ -196,8 +196,8 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
   closing: {
     summary: [
       "What weighs on your days most is {g2}. The exhaustion feels like {g4}, and what drains you most is {g8}.",
-      "Underneath your trouble resting sits {g11}, and you still get a little energy from {g13}.",
-      "When work thoughts come up, your usual move is {g15}; as for who knows how you're doing, the answer is {g17}; and once your energy returns, you'd start with {g19}.",
+      "When you picture that feeling gone, what comes up is {g11}, and you still get a little energy from {g13}.",
+      "When work thoughts come up, your usual move is {g15}; as for who knows how you're doing, the answer is {g17}; and the smallest first step you chose toward getting your energy back is {g19}.",
     ],
     perspectiveLine: "I'll also keep the words you wrote to yourself on that first day, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
