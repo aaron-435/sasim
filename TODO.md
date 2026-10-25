@@ -4,9 +4,10 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
 코드 위치: `scripts/reddit/*.mts`(진입점 `scripts/reddit/digest.mts`), 설정 `marketing/reddit/config.json`, 결과 `marketing/reddit/digest/`(git 무시), 상태 `marketing/reddit/state/`(git 무시).
 위임: 1~6은 muse 위임 가능. 7·8은 이 세션이 직접(엔진·프롬프트).
 
-- [ ] 1. 설정 파일과 뼈대
+- [x] 1. 설정 파일과 뼈대
   - 변경: `marketing/reddit/config.json`(감시 서브레딧 7곳 + 서브레딧별 메타: 링크 허용, AI 금지, 홍보 규칙 한 줄, 가중치 / 키워드 6개와 보조 키워드 `bazi` / 경쟁사 이름·도메인 5개 / 상위 N=10, 요청 간격 3초, 하루 요청 상한 200), `scripts/reddit/config.mts`(로드 + 형식 검증), `scripts/reddit/digest.mts`(인자 `--dry-run`, `--limit N` 파싱만), `package.json`에 `reddit:digest`, `reddit:utm` 스크립트, `.gitignore`에 `marketing/reddit/digest/`, `marketing/reddit/state/`.
   - QA: `npx tsc --noEmit` 오류 0, `npm run reddit:digest -- --dry-run`이 설정을 읽고 "config ok"와 서브레딧·키워드 개수를 출력하고 종료 코드 0. 설정에서 필수 키 하나를 지우면 종료 코드 1과 어떤 키인지 출력.
+  - QA: `npx tsc --noEmit` → exit 0. `.mts` 직접 검사 `npx tsc --noEmit --strict --target esnext --module esnext --moduleResolution bundler --allowImportingTsExtensions --skipLibCheck --types node scripts/reddit/*.mts` → exit 0. `npm run reddit:digest -- --dry-run` → "config ok: 7 subreddits, 6 keywords (+1 aux), 5 competitors", exit 0. `--config <weight 지운 사본>` → `config: "subreddits[2].weight" is missing` exit 1, `keywords` 지운 사본 → `config: "keywords" is missing` exit 1. `--limit x` → exit 1. (2026-10-25)
 
 - [ ] 2. 수집기 (읽기 전용, 느리게)
   - 선행: 1
@@ -58,3 +59,7 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - 각 항목 끝에 제안하는 커밋 메시지로 사용자가 커밋·푸시.
 
 ## 발견 사항
+
+- 루트 `tsconfig.json`의 `include`가 `**/*.ts`라서 `scripts/**/*.mts`는 `npx tsc --noEmit`에 안 잡힌다. 이 TODO의 tsc QA는 1번에 적은 `.mts` 직접 검사 명령을 같이 돌린다. (1번)
+- 경쟁사 도메인은 `getpalja.com`만 확인됨. K-Sajupalja, Starlit Alley, Youra, TKB_Studio는 이름·별칭만 넣었다. 도메인을 알게 되면 `config.json`에 추가. (1번)
+- `reddit:utm` 스크립트 항목은 넣었지만 `scripts/reddit/utm.mts`는 6번에서 만든다. 그 전엔 실행하면 파일 없음 오류. (1번)

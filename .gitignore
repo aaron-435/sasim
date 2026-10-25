@@ -49,3 +49,7 @@ next-env.d.ts
 marketing/video/
 marketing/tts-samples/*.mp3
 marketing/tts-samples/*.m4a
+
+# reddit listening output (digests, seen-post state)
+marketing/reddit/digest/
+marketing/reddit/state/
