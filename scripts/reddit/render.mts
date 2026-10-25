@@ -2,7 +2,8 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { join } from "node:path";
-import type { RedditPost, SourceStat } from "./collect.mts";
+import type { SourceStat } from "./collect.mts";
+import type { CompetitorHit } from "./competitors.mts";
 import type { Scored } from "./score.mts";
 
 export const DEFAULT_DIGEST_DIR = fileURLToPath(new URL("../../marketing/reddit/digest/", import.meta.url));
@@ -17,7 +18,7 @@ export type DigestInput = {
   cap: number;
   totalNew: number;
   top: Scored[];
-  competitors?: RedditPost[];
+  competitors?: CompetitorHit[];
   shadow?: { alert: string | null; lines: string[] };
 };
 
@@ -79,7 +80,7 @@ export function renderDigest(d: DigestInput): string {
     ...(d.top.length === 0 ? ["새 글 중 점수 있는 글 없음"] : d.top.flatMap((s, i) => [...(i > 0 ? [""] : []), ...topBlock(s, i, d.dryRun, d.generatedAt)])),
     "",
     "## 3. 경쟁사 언급",
-    ...sectionList(d.competitors?.map((p) => `- [r/${p.subreddit}] ${esc(p.title.trim()) || "(제목 없음)"} — ${p.permalink}`)),
+    ...sectionList(d.competitors?.map((h) => `- [r/${h.post.subreddit}] ${esc(h.post.title.trim()) || "(제목 없음)"} — ${h.matched.join(", ")} — ${h.post.permalink}`)),
     "",
     "## 4. 섀도 필터 점검",
     ...sectionList(d.shadow?.lines.map((l) => `- ${l}`)),

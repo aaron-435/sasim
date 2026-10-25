@@ -101,6 +101,7 @@ export async function collect(config: RedditConfig, fetcher: Fetcher, seen: Seen
   const targets = [
     ...config.subreddits.map((s) => ({ source: `sub:${s.name}`, path: `/r/${s.name}/new.json?limit=50&raw_json=1` })),
     ...config.keywords.map((k) => ({ source: `kw:${k}`, path: `/search.json?q=${encodeURIComponent(k)}&sort=new&t=week&limit=50&raw_json=1` })),
+    ...config.competitors.map((c) => ({ source: `comp:${c.name}`, path: `/search.json?q=${encodeURIComponent('"' + c.name + '"')}&sort=new&t=week&limit=25&raw_json=1` })),
   ];
   const start = fetcher.made;
   const byId = new Map<string, RedditPost>();

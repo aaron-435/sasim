@@ -30,15 +30,17 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA(오프라인 재채점): 아침 요약 `2026-10-25.md`의 상위 10개(제목 + 잘린 본문)를 새 규칙으로 다시 매김 → 사주 무관 5개(카지노, D&D, 해커톤, Scroll 2개) 모두 0점, `r/u_*` 바쯔 글 5.0→2.5, 남은 5개는 전부 점성·바쯔 글. 본문이 잘린 상태라 근사치.
   - 남은 것: 실레딧 dry-run 확인. 2026-10-25에는 하루 요청 상한 200을 다 써서(`today 200/200`, 13곳 중 4곳만 성공·새 글 0) 못 했다. 2026-10-26 이후 `npm run reddit:digest -- --dry-run` 1회 → 상위 10개 중 사주 무관 글 2개 이하면 `[x]`.
 
-- [ ] 4. 경쟁사 언급 모음
+- [x] 4. 경쟁사 언급 모음
   - 선행: 2
   - 변경: `scripts/reddit/competitors.mts`(설정의 이름·도메인을 제목·본문·URL에서 대소문자 무시로 찾음, 점수와 무관하게 전부), 사이트 검색에 경쟁사 이름 질의 추가(하루 상한 안에서), `render.mts`의 경쟁사 섹션.
   - QA: `npx tsx scripts/reddit/competitors.test.mts`(샘플 4개: "getpalja.com" 링크, "PAL:JA" 표기, 무관한 "pal" 단어는 미검출) 통과, dry-run 요약에 경쟁사 섹션이 있다(0건이면 "없음").
+  - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. `npx tsx scripts/reddit/competitors.test.mts` → "competitor tests: 13 passed" exit 0(getpalja.com 링크·PAL:JA 표기 검출, pal·palette·yourself 미검출, `starlit-alley` URL, 한 글 2개 경쟁사 설정 순서, `renderDigest` 0건 "없음"·히트 줄에 제목·이름·링크). `score.test.mts` 여전히 39 passed. 구현은 muse(지시서 22, 브랜치 task-22). 실레딧 dry-run은 오늘 상한 초과라 못 했고, 3a의 2026-10-26 dry-run에서 `comp:` 5곳 수집 통계와 섹션을 같이 본다. (2026-10-25)
 
-- [ ] 5. 섀도 필터 점검
+- [x] 5. 섀도 필터 점검
   - 선행: 1
   - 변경: `scripts/reddit/shadow.mts`(쿠키 없이 `/user/Ok_Mind_8887/about.json`·`/comments.json`, 최근 댓글 최대 10개의 퍼머링크 JSON에서 본문이 `[removed]`이거나 스레드에 없는지 확인. 결과: 계정 보임/없음(404), 댓글별 보임/숨김), 계정명은 설정에서. 요약 맨 위에 계정 안 보이면 경고.
   - QA: `npx tsx scripts/reddit/shadow.mts`가 현재 계정에 대해 "계정 보임, 댓글 0개"처럼 결과를 출력하고 종료 코드 0. 존재하지 않는 계정명을 인자로 주면 "계정 없음(404)".
+  - QA: `.mts` 직접 tsc → exit 0. 실레딧(하루 상한을 210으로 올린 임시 설정 사본 `--config`, 실제 설정은 그대로) `npx tsx scripts/reddit/shadow.mts` → "u/Ok_Mind_8887: 계정 보임, 최근 댓글 0개 중 숨김 0개" exit 0, `zz_no_such_user_8f3k2q9x` → "WARNING: … 안 보임(404). 섀도밴 의심" + "계정 없음(404)" exit 0. `.json`은 403이라 둘 다 RSS로 판정(계정당 요청 2회). 댓글 판정(`parseUserComments`·`judgeComment`)은 레딧 Atom 형식 샘플로 오프라인 확인만(보임/`[removed]`/스레드에 없음, JSON 중첩 replies). `about.json`은 비로그인 `.json`이 막혀 있고 RSS 대체가 없어 뺐다: 계정 판정은 댓글 목록의 404로 한다. 요약 연결(`shadowSummary` → `renderDigest`의 `shadow`)은 9번. 이 세션 직접 작성. (2026-10-25)
 
 - [ ] 6. UTM 링크 생성기
   - 선행: 1
@@ -80,3 +82,5 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
 - RSS 본문에 HTML 엔티티가 두 번 인코딩돼 남는다(`&#39;`, `&quot;`, `&amp;`). `collect.mts`의 `decodeEntities`를 한 번 더 돌리면 될 듯. 8번 메모 입력 품질에도 영향. (3번) → 3a로 옮김.
 - 하루 요청 상한 200은 한 번 실행(약 32회)보다 훨씬 크지만, 같은 날 개발 중 여러 번 돌리면 금방 찬다. 상한에 걸린 실행도 빈 요약 파일(`-2.md`)을 남긴다. 8·9번 QA는 하루에 몰지 말 것. (3a번)
 - 감시 서브레딧 `AstrologyCharts`의 서양 점성 질문(형제 궁합, 학교 고르기)이 감시 +2·질문 +1로 3.6점을 받아 상위에 든다. 사주 문맥이 없는 감시 서브레딧 글을 낮출지는 실제 답글 경험을 보고 판단. (3a번)
+- 섀도 점검의 댓글별 판정은 실제 댓글이 없어 실레딧에서 안 돌았다(AutoModerator 공개 피드는 빈 피드). 첫 댓글을 단 다음 날 `npx tsx scripts/reddit/shadow.mts`로 "보임" 1줄이 나오는지 확인. (5번)
+- 전체 실행 요청 수가 경쟁사 검색 5곳 + 섀도 2회 이상으로 약 40회로 는다. 7초 간격에서도 연속 요청 4번째에 RSS 429가 났다(5번 QA 중). (4·5번)

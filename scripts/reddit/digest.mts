@@ -6,6 +6,7 @@ import { Fetcher } from "./fetch.mts";
 import { collect } from "./collect.mts";
 import { loadRequests, loadSeen, saveRequests, saveSeen, todayLocal } from "./state.mts";
 import { rankPosts } from "./score.mts";
+import { findCompetitorMentions } from "./competitors.mts";
 import { renderDigest, writeDigest } from "./render.mts";
 
 export type DigestArgs = { dryRun: boolean; limit: number | null; configPath: string | undefined };
@@ -62,6 +63,7 @@ for (const s of stats) {
 }
 console.log(`total new posts: ${posts.length}, failed sources: ${stats.filter((s) => s.failed).length}, requests: ${requests} (today ${today.count}/${config.dailyRequestCap})`);
 const ranked = rankPosts(posts, config, Date.now());
+const competitorHits = findCompetitorMentions(posts, config.competitors);
 const top = ranked.slice(0, config.topN);
 const file = writeDigest(
   renderDigest({
@@ -74,6 +76,7 @@ const file = writeDigest(
     cap: config.dailyRequestCap,
     totalNew: posts.length,
     top,
+    competitors: competitorHits,
   }),
   todayLocal(),
 );
@@ -82,3 +85,4 @@ for (const p of posts) seen[p.id] = now;
 saveSeen(seen);
 saveRequests(today);
 console.log(`scored: ${ranked.length} posts > 0, top ${top.length} → ${file}`);
+console.log(`competitor mentions: ${competitorHits.length}`);
