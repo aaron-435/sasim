@@ -48,10 +48,11 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA: `npm run reddit:utm -- --sub ChineseZodiac --medium comment --content dm-intro` 출력이 위 URL과 정확히 같다. `--medium dm`처럼 post/comment 외 값은 종료 코드 1.
   - QA: `npm run -s reddit:utm -- --sub ChineseZodiac --medium comment --content dm-intro` → 기대 URL과 문자열 일치, exit 0. `--medium dm` → exit 1. `--sub Bazi_Astrology --content "Day Master Q" --path /saju-calculator` → `…/saju-calculator?…utm_campaign=bazi-astrology&utm_content=day-master-q` exit 0. 날짜형 `--content 1990-05-12`, `--path https://…`, `--sub` 누락 → 모두 exit 1. 값 검증은 웹과 같은 `cleanUtmValue`를 씀. `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. 이 세션 직접 작성. (2026-10-25)
 
-- [ ] 7. 출생 정보 추출과 사주 계산 (이 세션 직접)
+- [x] 7. 출생 정보 추출과 사주 계산 (이 세션 직접)
   - 선행: 1
   - 변경: `scripts/reddit/chart.mts`(LLM 구조화 추출: 연·월·일·시·분·도시·성별·음력 여부, JSON 스키마 강제 → 코드로 범위 검증 → `lib/worldCities.ts`로 도시 id 찾기 → `calculateManseryeok` 호출 → 4기둥·일간·오행 분포 요약 문자열. 시각 없음 = "시주 없음", 도시 못 찾음 = 표시, 음력 = 계산 생략, 성별 없음 = 대운 생략), 픽스처 `scripts/reddit/fixtures/chart-posts.json`(시각 있음/없음/도시 없음/음력 4개). 엔진 파일은 수정하지 않는다.
   - QA: `npx tsx --env-file=.env.local scripts/reddit/chart.test.mts`(LLM 추출은 픽스처의 기대 구조와 비교, 계산 결과는 같은 입력으로 엔진을 직접 부른 값과 일치) 통과. `npm run validate:manseryeok` 여전히 통과. OpenAI 호출 4회(비용 미미).
+  - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. `npx tsx --env-file=.env.local scripts/reddit/chart.test.mts` → "chart tests: 59 passed · OpenAI 4 calls, 1727+204 tokens, $0.0022" exit 0(오프라인: 2월 30일·미래 연도·본문에 없는 연도·시 25·분 61 거부, 시 없는 분 버림, 음력 30일 허용/31일 거부, 도시 찾기, 연도 없는 글은 LLM 미호출 / 온라인: 픽스처 4개 추출 필드 전부 일치, 3개의 4기둥·오행이 엔진 직접 호출과 일치, 시주 없음·도시 없음·성별 없음·음력 생략 표기). `npm run validate:manseryeok` → "All golden samples match". `score.test.mts` 39 passed. `lib/` 변경 없음(`git status`). 모델 `REDDIT_EXTRACT_MODEL`(기본 gpt-5.4-mini, JSON 스키마 strict). 도시 없음은 엔진 기본값(서울 KST)으로 근사하고 그 사실을 적는다. 이 세션 직접 작성. (2026-10-25)
 
 - [ ] 8. 답할 포인트 메모 (이 세션 직접)
   - 선행: 3, 3a, 7
@@ -85,4 +86,5 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
 - 하루 요청 상한 200은 한 번 실행(약 32회)보다 훨씬 크지만, 같은 날 개발 중 여러 번 돌리면 금방 찬다. 상한에 걸린 실행도 빈 요약 파일(`-2.md`)을 남긴다. 8·9번 QA는 하루에 몰지 말 것. (3a번)
 - 감시 서브레딧 `AstrologyCharts`의 서양 점성 질문(형제 궁합, 학교 고르기)이 감시 +2·질문 +1로 3.6점을 받아 상위에 든다. 사주 문맥이 없는 감시 서브레딧 글을 낮출지는 실제 답글 경험을 보고 판단. (3a번)
 - 섀도 점검의 댓글별 판정은 실제 댓글이 없어 실레딧에서 안 돌았다(AutoModerator 공개 피드는 빈 피드). 첫 댓글을 단 다음 날 `npx tsx scripts/reddit/shadow.mts`로 "보임" 1줄이 나오는지 확인. (5번)
+- 사주 계산은 글당 KASI 호출 1회가 더 든다(일주 조회). 레딧 하루 상한과는 별개지만 data.go.kr 일일 한도 안인지 9번 전체 실행 때 볼 것. 한 글에 여러 사람(궁합 질문)이 있으면 첫 사람만 계산한다. (7번)
 - 전체 실행 요청 수가 경쟁사 검색 5곳 + 섀도 2회 이상으로 약 40회로 는다. 7초 간격에서도 연속 요청 4번째에 RSS 429가 났다(5번 QA 중). (4·5번)
