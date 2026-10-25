@@ -4,7 +4,9 @@
 import { ConfigError, loadConfig } from "./config.mts";
 import { Fetcher } from "./fetch.mts";
 import { collect } from "./collect.mts";
-import { loadRequests, loadSeen, saveRequests, saveSeen } from "./state.mts";
+import { loadRequests, loadSeen, saveRequests, saveSeen, todayLocal } from "./state.mts";
+import { rankPosts } from "./score.mts";
+import { renderDigest, writeDigest } from "./render.mts";
 
 export type DigestArgs = { dryRun: boolean; limit: number | null; configPath: string | undefined };
 
@@ -59,7 +61,24 @@ for (const s of stats) {
   else console.log(`${s.source}  fetched ${s.fetched}  new ${s.fresh}${s.format === "rss" ? " (rss)" : ""}`);
 }
 console.log(`total new posts: ${posts.length}, failed sources: ${stats.filter((s) => s.failed).length}, requests: ${requests} (today ${today.count}/${config.dailyRequestCap})`);
+const ranked = rankPosts(posts, config, Date.now());
+const top = ranked.slice(0, config.topN);
+const file = writeDigest(
+  renderDigest({
+    date: todayLocal(),
+    generatedAt: new Date(),
+    dryRun: args.dryRun,
+    stats,
+    requests,
+    todayCount: today.count,
+    cap: config.dailyRequestCap,
+    totalNew: posts.length,
+    top,
+  }),
+  todayLocal(),
+);
 const now = new Date().toISOString();
 for (const p of posts) seen[p.id] = now;
 saveSeen(seen);
 saveRequests(today);
+console.log(`scored: ${ranked.length} posts > 0, top ${top.length} → ${file}`);

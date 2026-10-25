@@ -10,7 +10,7 @@ export type DayCount = { date: string; count: number };
 
 const SEEN_TTL_MS = 14 * 24 * 3600 * 1000;
 
-function todayLocal(): string {
+export function todayLocal(): string {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
