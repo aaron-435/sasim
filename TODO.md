@@ -42,10 +42,11 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA: `npx tsx scripts/reddit/shadow.mts`가 현재 계정에 대해 "계정 보임, 댓글 0개"처럼 결과를 출력하고 종료 코드 0. 존재하지 않는 계정명을 인자로 주면 "계정 없음(404)".
   - QA: `.mts` 직접 tsc → exit 0. 실레딧(하루 상한을 210으로 올린 임시 설정 사본 `--config`, 실제 설정은 그대로) `npx tsx scripts/reddit/shadow.mts` → "u/Ok_Mind_8887: 계정 보임, 최근 댓글 0개 중 숨김 0개" exit 0, `zz_no_such_user_8f3k2q9x` → "WARNING: … 안 보임(404). 섀도밴 의심" + "계정 없음(404)" exit 0. `.json`은 403이라 둘 다 RSS로 판정(계정당 요청 2회). 댓글 판정(`parseUserComments`·`judgeComment`)은 레딧 Atom 형식 샘플로 오프라인 확인만(보임/`[removed]`/스레드에 없음, JSON 중첩 replies). `about.json`은 비로그인 `.json`이 막혀 있고 RSS 대체가 없어 뺐다: 계정 판정은 댓글 목록의 404로 한다. 요약 연결(`shadowSummary` → `renderDigest`의 `shadow`)은 9번. 이 세션 직접 작성. (2026-10-25)
 
-- [ ] 6. UTM 링크 생성기
+- [x] 6. UTM 링크 생성기
   - 선행: 1
   - 변경: `scripts/reddit/utm.mts`(`npm run reddit:utm -- --sub ChineseZodiac --medium comment --content dm-intro` → `https://www.fatesaidapp.com/?utm_source=reddit&utm_medium=comment&utm_campaign=chinesezodiac&utm_content=dm-intro`, 경로 옵션 `--path /saju-calculator`, 값은 소문자·영숫자·하이픈만), 키 이름은 `lib/eventSchema.ts`의 `UTM_KEYS`를 import해서 씀.
   - QA: `npm run reddit:utm -- --sub ChineseZodiac --medium comment --content dm-intro` 출력이 위 URL과 정확히 같다. `--medium dm`처럼 post/comment 외 값은 종료 코드 1.
+  - QA: `npm run -s reddit:utm -- --sub ChineseZodiac --medium comment --content dm-intro` → 기대 URL과 문자열 일치, exit 0. `--medium dm` → exit 1. `--sub Bazi_Astrology --content "Day Master Q" --path /saju-calculator` → `…/saju-calculator?…utm_campaign=bazi-astrology&utm_content=day-master-q` exit 0. 날짜형 `--content 1990-05-12`, `--path https://…`, `--sub` 누락 → 모두 exit 1. 값 검증은 웹과 같은 `cleanUtmValue`를 씀. `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. 이 세션 직접 작성. (2026-10-25)
 
 - [ ] 7. 출생 정보 추출과 사주 계산 (이 세션 직접)
   - 선행: 1
@@ -77,7 +78,8 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
 - 경쟁사 도메인은 `getpalja.com`만 확인됨. K-Sajupalja, Starlit Alley, Youra, TKB_Studio는 이름·별칭만 넣었다. 도메인을 알게 되면 `config.json`에 추가. (1번)
 - 레딧은 지금 이 UA의 비로그인 `.json`을 항상 403으로 막는다. 수집은 사실상 RSS뿐이라 댓글 수가 없다(`numComments: null`) → 3번 점수화에서 댓글 수 가중치는 RSS 글이면 빼야 한다. (2번)
 - RSS도 3초 간격이면 429가 잦아 회당 13곳 중 5곳만 성공. `requestIntervalMs` 7000으로 올린 뒤 실측 13곳 중 9곳 성공, 실행 7분 40초, 요청 32회(3번 dry-run). 더 올릴지는 다음 실행들을 보고 판단. (2번, 3번에서 확인)
-- `reddit:utm` 스크립트 항목은 넣었지만 `scripts/reddit/utm.mts`는 6번에서 만든다. 그 전엔 실행하면 파일 없음 오류. (1번)
+- `reddit:utm` 스크립트 항목은 넣었지만 `scripts/reddit/utm.mts`는 6번에서 만든다. 그 전엔 실행하면 파일 없음 오류. (1번) → 6번에서 해결.
+- 웹 페이지는 `app/(site)/[locale]/` 아래라 `--path /saju-calculator`처럼 로캘 없는 경로는 로캘 리다이렉트를 거친다. 리다이렉트 뒤에도 `utm_*` 쿼리가 남는지 10번 확인 때 경로 링크로도 한 번 볼 것. (6번)
 - 점수 품질: `"four pillars"`가 사주와 무관한 글(카지노 스팸, 해커톤, D&D, 개인 프로필 `r/u_*`)에 걸려 실제 상위 10개 중 절반 이상이 잡음. 개선안: 감시 서브레딧 밖에서는 `four pillars`에 사주 문맥어(bazi·saju·astrology·zodiac·chart·element·day master 등)가 같이 있어야 가산, `r/u_*` 프로필 글은 감점. 키워드 외 가중치(키워드 +3, 생년월일 +3 등)가 지금 `score.mts`에 고정돼 있어 SPEC의 "규칙과 가중치는 설정 파일에" 와도 어긋난다 → 함께 `config.json`으로 옮기는 소항목 추천. (3번) → 3a로 옮김.
 - RSS 본문에 HTML 엔티티가 두 번 인코딩돼 남는다(`&#39;`, `&quot;`, `&amp;`). `collect.mts`의 `decodeEntities`를 한 번 더 돌리면 될 듯. 8번 메모 입력 품질에도 영향. (3번) → 3a로 옮김.
 - 하루 요청 상한 200은 한 번 실행(약 32회)보다 훨씬 크지만, 같은 날 개발 중 여러 번 돌리면 금방 찬다. 상한에 걸린 실행도 빈 요약 파일(`-2.md`)을 남긴다. 8·9번 QA는 하루에 몰지 말 것. (3a번)
