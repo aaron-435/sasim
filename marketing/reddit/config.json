@@ -10,6 +10,20 @@
   ],
   "keywords": ["saju", "\"four pillars\"", "\"day master\"", "\"korean astrology\"", "\"chinese astrology\"", "사주"],
   "auxKeywords": ["bazi"],
+  "scoring": {
+    "keywordPoints": 3,
+    "keywordMaxPoints": 6,
+    "auxPoints": 1,
+    "birthDatePoints": 3,
+    "birthTimePoints": 1,
+    "watchedPoints": 2,
+    "questionPoints": 1,
+    "age": { "fullHours": 24, "fadeHours": 168, "fadeTo": 0.3, "after": 0.2, "unknown": 0.5 },
+    "comments": { "bands": [{ "upTo": 0, "factor": 1.3 }, { "upTo": 3, "factor": 1.1 }, { "upTo": 10, "factor": 1.0 }], "over": 0.7 },
+    "contextKeywords": ["four pillars"],
+    "contextWords": ["bazi", "saju", "사주", "astrology", "zodiac", "horoscope", "chart", "element", "elements", "day master", "destiny", "fortune", "heavenly stem", "earthly branch", "luck pillar", "yin", "yang", "metaphysics"],
+    "profileMultiplier": 0.5
+  },
   "competitors": [
     { "name": "PAL:JA", "aliases": ["palja", "getpalja"], "domains": ["getpalja.com"] },
     { "name": "K-Sajupalja", "aliases": ["sajupalja"], "domains": [] },

@@ -59,7 +59,7 @@ function normalizeJson(data: unknown): Bare[] {
 }
 
 const NAMED: Record<string, string> = { lt: "<", gt: ">", quot: '"', apos: "'", amp: "&" };
-function decodeEntities(s: string): string {
+export function decodeEntities(s: string): string {
   return s.replace(/&(#x[0-9a-fA-F]+|#\d+|[a-zA-Z]+);/g, (m, e: string) => {
     if (e[0] === "#") {
       const n = e[1] === "x" || e[1] === "X" ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
@@ -74,7 +74,7 @@ function tag(xml: string, name: string): string {
   return m ? decodeEntities(m[1].trim()) : "";
 }
 
-function normalizeRss(xml: string): Bare[] {
+export function normalizeRss(xml: string): Bare[] {
   const out: Bare[] = [];
   for (const entry of xml.match(/<entry[\s>][\s\S]*?<\/entry>/g) ?? []) {
     const id = tag(entry, "id").replace(/^t3_/, "");
@@ -85,8 +85,8 @@ function normalizeRss(xml: string): Bare[] {
     out.push({
       id,
       subreddit: entry.match(/<category[^>]*term="([^"]+)"/)?.[1] ?? "",
-      title: tag(entry, "title").replace(/<[^>]*>/g, ""),
-      body: tag(entry, "content").replace(/<[^>]*>/g, ""),
+      title: decodeEntities(tag(entry, "title").replace(/<[^>]*>/g, "")),
+      body: decodeEntities(tag(entry, "content").replace(/<[^>]*>/g, "")),
       author: tag(entry.match(/<author[\s>][\s\S]*?<\/author>/)?.[0] ?? "", "name").replace(/^\/u\//, ""),
       createdUtc: Number.isFinite(t) ? Math.floor(t / 1000) : 0,
       numComments: null,

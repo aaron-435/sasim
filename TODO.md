@@ -2,7 +2,7 @@
 
 SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
 코드 위치: `scripts/reddit/*.mts`(진입점 `scripts/reddit/digest.mts`), 설정 `marketing/reddit/config.json`, 결과 `marketing/reddit/digest/`(git 무시), 상태 `marketing/reddit/state/`(git 무시).
-위임: 1~6은 muse 위임 가능. 7·8은 이 세션이 직접(엔진·프롬프트).
+위임: 1~6(3a 포함)은 muse 위임 가능. 7·8은 이 세션이 직접(엔진·프롬프트).
 
 - [x] 1. 설정 파일과 뼈대
   - 변경: `marketing/reddit/config.json`(감시 서브레딧 7곳 + 서브레딧별 메타: 링크 허용, AI 금지, 홍보 규칙 한 줄, 가중치 / 키워드 6개와 보조 키워드 `bazi` / 경쟁사 이름·도메인 5개 / 상위 N=10, 요청 간격 3초, 하루 요청 상한 200), `scripts/reddit/config.mts`(로드 + 형식 검증), `scripts/reddit/digest.mts`(인자 `--dry-run`, `--limit N` 파싱만), `package.json`에 `reddit:digest`, `reddit:utm` 스크립트, `.gitignore`에 `marketing/reddit/digest/`, `marketing/reddit/state/`.
@@ -20,6 +20,15 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - 변경: `scripts/reddit/score.mts`(키워드 일치, `bazi`는 다른 키워드와 함께일 때만 가산, 출생 정보 패턴(날짜·시각) 가산, 글 나이, 댓글 수 적을수록 가산, 서브레딧 가중치. 점수 근거 문자열 반환), `scripts/reddit/render.mts`(요약 마크다운: 수집 통계 → 상위 글 → 경쟁사 → 섀도 점검 자리. 메모·사주 칸은 비어 있으면 "(dry-run)").
   - QA: `npm run reddit:digest -- --dry-run` 후 `marketing/reddit/digest/<오늘>.md`가 생기고, 상위 글이 최대 10개, 각 글에 제목·퍼머링크·서브레딧·나이·댓글 수·점수 근거가 있다. `npx tsx scripts/reddit/score.test.mts`(고정 샘플 5개: bazi 단독 글은 0점 근처, saju+생년월일 글이 최상위)가 통과.
   - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. `npx tsx scripts/reddit/score.test.mts` → "score tests: 26 passed" exit 0. 실레딧 `npm run reddit:digest -- --dry-run` → exit 0, 13곳 중 9곳 성공(429 4곳은 요약 표에 실패로 기록), 새 글 87·점수 있는 글 84, `marketing/reddit/digest/2026-10-25.md`에 상위 10개(제목·링크·서브레딧·나이·댓글·점수 근거)와 섹션 4개. 같은 날 재실행은 `-2.md`로 따로 쓴다. 구현은 muse(지시서 20, 브랜치 task-20). (2026-10-25)
+
+- [ ] 3a. 점수 잡음 줄이기와 가중치 설정화
+  - 선행: 3
+  - 배경: 3번 실측에서 `"four pillars"`가 카지노 스팸·해커톤·D&D·개인 프로필(`r/u_*`) 글에 걸려 상위 10개 중 절반 이상이 잡음. 키워드 외 가중치가 `score.mts`에 고정돼 SPEC("규칙과 가중치는 설정 파일에")과 어긋남. RSS 본문에 HTML 엔티티가 두 번 인코딩돼 남음(`&#39;`, `&quot;`).
+  - 변경: `marketing/reddit/config.json`에 `scoring` 블록(키워드·보조 키워드·생년월일·시각·감시 서브레딧·질문 가산값, 나이·댓글 곱셈 구간, 문맥 필요 키워드 목록과 문맥어 목록, 프로필 글 곱셈) 추가 + `config.mts` 검증. `score.mts`가 설정값을 읽고, 감시 서브레딧 밖에서는 문맥 필요 키워드(`four pillars` 등)에 문맥어(bazi·saju·astrology·zodiac·chart·element·day master 등)가 같이 있어야 가산, `r/u_*` 글은 감점. `collect.mts` RSS 본문·제목 엔티티를 한 번 더 디코드.
+  - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` exit 0. `npx tsx scripts/reddit/score.test.mts` 통과(샘플 추가: 비감시 서브레딧의 "four pillars of healthcare" 글 0점, `r/u_*` 사주 글은 같은 내용의 감시 서브레딧 글보다 낮음, RSS 이중 인코딩 `&amp;#39;` → `'`). 설정에서 `scoring` 키 하나를 지우면 exit 1과 키 이름. 실레딧 dry-run 1회로 상위 10개 중 사주 무관 글이 2개 이하인지 직접 읽어 확인하고 결과를 여기 적는다.
+  - QA(코드): `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. `npx tsx scripts/reddit/score.test.mts` → "score tests: 39 passed" exit 0(기존 26개 점수 그대로). `--config <scoring.contextWords 지운 사본>` → `config: "scoring.contextWords" is missing` exit 1. 구현은 muse(지시서 21, 브랜치 task-21) + 이 세션이 한 줄 추가: 감시 서브레딧 밖에서 인정된 키워드가 없으면 생년월일·시각이 있어도 0점(카지노 스팸이 날짜·시각 +4로 남던 문제). (2026-10-25)
+  - QA(오프라인 재채점): 아침 요약 `2026-10-25.md`의 상위 10개(제목 + 잘린 본문)를 새 규칙으로 다시 매김 → 사주 무관 5개(카지노, D&D, 해커톤, Scroll 2개) 모두 0점, `r/u_*` 바쯔 글 5.0→2.5, 남은 5개는 전부 점성·바쯔 글. 본문이 잘린 상태라 근사치.
+  - 남은 것: 실레딧 dry-run 확인. 2026-10-25에는 하루 요청 상한 200을 다 써서(`today 200/200`, 13곳 중 4곳만 성공·새 글 0) 못 했다. 2026-10-26 이후 `npm run reddit:digest -- --dry-run` 1회 → 상위 10개 중 사주 무관 글 2개 이하면 `[x]`.
 
 - [ ] 4. 경쟁사 언급 모음
   - 선행: 2
@@ -42,7 +51,7 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA: `npx tsx --env-file=.env.local scripts/reddit/chart.test.mts`(LLM 추출은 픽스처의 기대 구조와 비교, 계산 결과는 같은 입력으로 엔진을 직접 부른 값과 일치) 통과. `npm run validate:manseryeok` 여전히 통과. OpenAI 호출 4회(비용 미미).
 
 - [ ] 8. 답할 포인트 메모 (이 세션 직접)
-  - 선행: 3, 7
+  - 선행: 3, 3a, 7
   - 변경: `scripts/reddit/memo.mts`(시스템 지시: 질문 요지 1줄 / 답할 포인트 2~3개 / 피할 것 / 서브레딧 규칙 주의. 완성 문단 금지, 앱·웹 이름·URL 금지, `PRODUCT.md` 원칙 반영(나쁜 날·궁합 없음, 건강·죽음·사고·재정 손실 예측 없음, 단정적 부정 예측 없음, 미성년 연애 없음). 사주 계산 결과가 있으면 그것만 근거로 쓰고 없는 차트 사실은 만들지 않음. 응답 후 검사기: URL·"Fatesaid"·경쟁사 이름·3문장 넘는 연속 문단이 있으면 메모에 경고 표시), 모델은 환경 변수 `REDDIT_MEMO_MODEL`(기본 기존 소형 모델), 사용량으로 비용 합산.
   - QA: `npm run reddit:digest -- --limit 3`(OpenAI 3~6회 호출) 후 요약 파일에 메모 3개, 맨 위에 LLM 비용, 검사기 경고 0개. 메모를 직접 읽어 완성 답글처럼 보이지 않는지 확인하고 결과를 여기 적는다.
 
@@ -67,5 +76,7 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
 - 레딧은 지금 이 UA의 비로그인 `.json`을 항상 403으로 막는다. 수집은 사실상 RSS뿐이라 댓글 수가 없다(`numComments: null`) → 3번 점수화에서 댓글 수 가중치는 RSS 글이면 빼야 한다. (2번)
 - RSS도 3초 간격이면 429가 잦아 회당 13곳 중 5곳만 성공. `requestIntervalMs` 7000으로 올린 뒤 실측 13곳 중 9곳 성공, 실행 7분 40초, 요청 32회(3번 dry-run). 더 올릴지는 다음 실행들을 보고 판단. (2번, 3번에서 확인)
 - `reddit:utm` 스크립트 항목은 넣었지만 `scripts/reddit/utm.mts`는 6번에서 만든다. 그 전엔 실행하면 파일 없음 오류. (1번)
-- 점수 품질: `"four pillars"`가 사주와 무관한 글(카지노 스팸, 해커톤, D&D, 개인 프로필 `r/u_*`)에 걸려 실제 상위 10개 중 절반 이상이 잡음. 개선안: 감시 서브레딧 밖에서는 `four pillars`에 사주 문맥어(bazi·saju·astrology·zodiac·chart·element·day master 등)가 같이 있어야 가산, `r/u_*` 프로필 글은 감점. 키워드 외 가중치(키워드 +3, 생년월일 +3 등)가 지금 `score.mts`에 고정돼 있어 SPEC의 "규칙과 가중치는 설정 파일에" 와도 어긋난다 → 함께 `config.json`으로 옮기는 소항목 추천. (3번)
-- RSS 본문에 HTML 엔티티가 두 번 인코딩돼 남는다(`&#39;`, `&quot;`, `&amp;`). `collect.mts`의 `decodeEntities`를 한 번 더 돌리면 될 듯. 8번 메모 입력 품질에도 영향. (3번)
+- 점수 품질: `"four pillars"`가 사주와 무관한 글(카지노 스팸, 해커톤, D&D, 개인 프로필 `r/u_*`)에 걸려 실제 상위 10개 중 절반 이상이 잡음. 개선안: 감시 서브레딧 밖에서는 `four pillars`에 사주 문맥어(bazi·saju·astrology·zodiac·chart·element·day master 등)가 같이 있어야 가산, `r/u_*` 프로필 글은 감점. 키워드 외 가중치(키워드 +3, 생년월일 +3 등)가 지금 `score.mts`에 고정돼 있어 SPEC의 "규칙과 가중치는 설정 파일에" 와도 어긋난다 → 함께 `config.json`으로 옮기는 소항목 추천. (3번) → 3a로 옮김.
+- RSS 본문에 HTML 엔티티가 두 번 인코딩돼 남는다(`&#39;`, `&quot;`, `&amp;`). `collect.mts`의 `decodeEntities`를 한 번 더 돌리면 될 듯. 8번 메모 입력 품질에도 영향. (3번) → 3a로 옮김.
+- 하루 요청 상한 200은 한 번 실행(약 32회)보다 훨씬 크지만, 같은 날 개발 중 여러 번 돌리면 금방 찬다. 상한에 걸린 실행도 빈 요약 파일(`-2.md`)을 남긴다. 8·9번 QA는 하루에 몰지 말 것. (3a번)
+- 감시 서브레딧 `AstrologyCharts`의 서양 점성 질문(형제 궁합, 학교 고르기)이 감시 +2·질문 +1로 3.6점을 받아 상위에 든다. 사주 문맥이 없는 감시 서브레딧 글을 낮출지는 실제 답글 경험을 보고 판단. (3a번)

@@ -1,7 +1,7 @@
 // Score unit checks without a framework: npx tsx scripts/reddit/score.test.mts
 import assert from "node:assert/strict";
-import { loadConfig } from "./config.mts";
-import type { RedditPost } from "./collect.mts";
+import { loadConfig, parseConfig } from "./config.mts";
+import { normalizeRss, type RedditPost } from "./collect.mts";
 import { detectBirth, rankPosts, scorePost } from "./score.mts";
 
 const config = loadConfig();
@@ -55,5 +55,52 @@ check(detectBirth("met a friend at 2pm yesterday").time === true, "2pm is a birt
 check(detectBirth("오전 3시에 태어났대").time === true, "오전 3시 is a birth time");
 check(detectBirth("born 1899-05-12, long ago").date === false, "year 1899 is out of range");
 check(detectBirth("due 2031-01-01, not yet").date === false, "year 2031 is out of range");
+
+const c1s = scorePost(post({ id: "c1", subreddit: "healthcare", title: "The four pillars of healthcare reform", body: "Policy, funding, staffing, access." }), config, NOW);
+check(c1s.score === 0, `healthcare four pillars scores 0, got ${c1s.score}`);
+check(c1s.reasons.some((r) => r.includes("문맥 없음")), "healthcare four pillars notes missing context");
+check(scorePost(post({ id: "c2", subreddit: "casino", title: "Four Pillars Casino bonus codes", body: "New codes this week." }), config, NOW).score === 0, "casino four pillars scores 0");
+check(scorePost(post({ id: "c2b", subreddit: "casino", title: "Four Pillars casino review?", body: "Tested since 2024-01-05, payouts at 14:30 daily." }), config, NOW).score === 0, "dates and times do not rescue a no-context four pillars post");
+check(scorePost(post({ id: "c3", subreddit: "Fantasy", title: "Four pillars of destiny — what is my day master?" }), config, NOW).score > 0, "fantasy four pillars with destiny context scores above 0");
+
+const pBase = { title: "Please read my saju day master", body: "Born 1994-03-08, what does it mean?", createdUtc: ago(1), numComments: 0 as const };
+const pProf = scorePost(post({ id: "p1", subreddit: "u_someone", ...pBase }), config, NOW);
+const pWatch = scorePost(post({ id: "p2", subreddit: "ChineseZodiac", ...pBase }), config, NOW);
+check(pProf.score > 0 && pProf.score < pWatch.score, `profile post scores lower, got ${pProf.score} vs ${pWatch.score}`);
+check(pProf.reasons.some((r) => r.includes("프로필 글")), "profile post reasons mention 프로필 글");
+check(scorePost(post({ id: "p3", subreddit: "u_someone", title: "The four pillars", body: "Just some notes." }), config, NOW).score === 0, "lone profile four pillars scores 0");
+
+const xml = `<feed><entry><id>t3_abc</id><title>I&amp;#39;m here</title><content>&lt;p&gt;It&amp;#39;s &amp;quot;fine&amp;quot;&lt;/p&gt;</content><category term="astrology"/><link href="/r/astrology/comments/abc/x/"/><published>2026-10-25T12:00:00Z</published></entry></feed>`;
+const rss = normalizeRss(xml);
+check(rss.length === 1 && rss[0].title === "I'm here", `rss title decodes, got ${JSON.stringify(rss[0]?.title)}`);
+check(rss[0]?.body === `It's "fine"`, `rss body decodes, got ${JSON.stringify(rss[0]?.body)}`);
+
+const noFade: any = JSON.parse(JSON.stringify(config));
+delete noFade.scoring.age.fadeTo;
+let m1 = "";
+try {
+  parseConfig(noFade);
+} catch (e) {
+  m1 = (e as Error).message;
+}
+check(m1.includes("scoring.age.fadeTo"), `missing fadeTo names key, got ${m1}`);
+const noScoring: any = JSON.parse(JSON.stringify(config));
+delete noScoring.scoring;
+let m2 = "";
+try {
+  parseConfig(noScoring);
+} catch (e) {
+  m2 = (e as Error).message;
+}
+check(m2.includes('"scoring" is missing'), `missing scoring names key, got ${m2}`);
+const flipped: any = JSON.parse(JSON.stringify(config));
+flipped.scoring.comments.bands.reverse();
+let m3 = "";
+try {
+  parseConfig(flipped);
+} catch (e) {
+  m3 = (e as Error).message;
+}
+check(m3.includes("bands"), `reversed bands throw, got ${m3}`);
 
 console.log(`score tests: ${n} passed`);

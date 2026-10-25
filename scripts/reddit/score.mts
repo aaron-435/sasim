@@ -1,6 +1,6 @@
 // Scores fresh Reddit posts for the morning digest: keyword relevance times subreddit, age and comment factors.
 import type { RedditPost } from "./collect.mts";
-import type { RedditConfig } from "./config.mts";
+import type { RedditConfig, ScoringAgeConfig, ScoringCommentsConfig } from "./config.mts";
 
 export type Scored = { post: RedditPost; score: number; reasons: string[]; birth: { date: boolean; time: boolean } };
 
@@ -54,12 +54,12 @@ export function detectBirth(text: string): { date: boolean; time: boolean } {
 
 const QUESTION_RE = /help|read\s+my|interpret|anyone|what\s+does|meaning/i;
 
-function ageFactor(createdUtc: number, now: number): number {
-  if (!createdUtc) return 0.5;
+function ageFactor(createdUtc: number, now: number, age: ScoringAgeConfig): number {
+  if (!createdUtc) return age.unknown;
   const h = Math.max(0, (now - createdUtc * 1000) / 3600000);
-  if (h <= 24) return 1.0;
-  if (h >= 168) return 0.2;
-  return 1 - ((h - 24) * 0.7) / 144;
+  if (h <= age.fullHours) return 1.0;
+  if (h >= age.fadeHours) return age.after;
+  return 1 - ((h - age.fullHours) * (1 - age.fadeTo)) / (age.fadeHours - age.fullHours);
 }
 
 function ageShort(createdUtc: number, now: number): string {
@@ -70,61 +70,83 @@ function ageShort(createdUtc: number, now: number): string {
   return h < 48 ? `${h}시간` : `${Math.floor(h / 24)}일`;
 }
 
-function commentFactor(n: number | null): number | null {
+function commentFactor(n: number | null, comments: ScoringCommentsConfig): number | null {
   if (n === null) return null;
-  if (n <= 0) return 1.3;
-  if (n <= 3) return 1.1;
-  if (n <= 10) return 1.0;
-  return 0.7;
+  for (const b of comments.bands) if (n <= b.upTo) return b.factor;
+  return comments.over;
 }
 
 export function scorePost(post: RedditPost, config: RedditConfig, now: number): Scored {
+  const sc = config.scoring;
   const text = `${post.title}\n${post.body}`;
   const lower = text.toLowerCase();
   const reasons: string[] = [];
   let rel = 0;
 
+  const watched = config.subreddits.find((s) => s.name.toLowerCase() === post.subreddit.toLowerCase());
   const matched = config.keywords.map(stripQuotes).filter((k) => k && hit(lower, k));
-  if (matched.length > 0) {
-    const pts = Math.min(matched.length * 3, 6);
-    rel += pts;
-    reasons.push(`키워드 ${matched.join(", ")} +${pts}`);
+  const ctxSet = new Set(sc.contextKeywords.map((k) => stripQuotes(k).toLowerCase()));
+  let recognized = matched;
+  let rejected: string[] = [];
+  if (!watched) {
+    const normal = matched.filter((k) => !ctxSet.has(k.toLowerCase()));
+    const ctx = matched.filter((k) => ctxSet.has(k.toLowerCase()));
+    if (ctx.length > 0) {
+      const ok = normal.length > 0 || sc.contextWords.some((w) => w && hit(lower, w));
+      if (ok) recognized = matched;
+      else {
+        recognized = normal;
+        rejected = ctx;
+      }
+    }
   }
+  if (recognized.length > 0) {
+    const pts = Math.min(recognized.length * sc.keywordPoints, sc.keywordMaxPoints);
+    rel += pts;
+    reasons.push(`키워드 ${recognized.join(", ")} +${pts}`);
+  }
+  for (const rej of rejected) reasons.push(`${rej} 문맥 없음(가산 없음)`);
   for (const aux of config.auxKeywords.map(stripQuotes).filter((k) => k && hit(lower, k))) {
-    if (matched.length > 0) {
-      rel += 1;
-      reasons.push(`${aux} +1`);
+    if (recognized.length > 0) {
+      rel += sc.auxPoints;
+      reasons.push(`${aux} +${sc.auxPoints}`);
     } else reasons.push(`${aux} 단독(가산 없음)`);
   }
   const birth = detectBirth(text);
+  // Outside watched subreddits a post only arrives via keyword search, so no recognized keyword means noise.
+  if (!watched && recognized.length === 0) return { post, score: 0, reasons, birth };
   if (birth.date) {
-    rel += 3;
-    reasons.push("생년월일 +3");
+    rel += sc.birthDatePoints;
+    reasons.push(`생년월일 +${sc.birthDatePoints}`);
   }
   if (birth.time) {
-    rel += 1;
-    reasons.push("출생 시각 +1");
+    rel += sc.birthTimePoints;
+    reasons.push(`출생 시각 +${sc.birthTimePoints}`);
   }
-  const watched = config.subreddits.find((s) => s.name.toLowerCase() === post.subreddit.toLowerCase());
   if (watched) {
-    rel += 2;
-    reasons.push("감시 서브레딧 +2");
+    rel += sc.watchedPoints;
+    reasons.push(`감시 서브레딧 +${sc.watchedPoints}`);
   }
   if (rel > 0 && (post.title.includes("?") || QUESTION_RE.test(text))) {
-    rel += 1;
-    reasons.push("질문 +1");
+    rel += sc.questionPoints;
+    reasons.push(`질문 +${sc.questionPoints}`);
   }
   if (rel === 0) return { post, score: 0, reasons, birth };
 
   const w = watched ? watched.weight : 1.0;
   reasons.push(watched ? `×${w.toFixed(1)} r/${post.subreddit}` : "×1.0");
-  const age = ageFactor(post.createdUtc, now);
+  const age = ageFactor(post.createdUtc, now, sc.age);
   reasons.push(`${ageShort(post.createdUtc, now)} ×${age.toFixed(1)}`);
-  const comments = commentFactor(post.numComments);
+  const comments = commentFactor(post.numComments, sc.comments);
   if (comments === null) reasons.push("댓글 수 없음(RSS, 제외)");
   else reasons.push(`댓글 ${post.numComments} ×${comments.toFixed(1)}`);
+  let profile = 1;
+  if (post.subreddit.toLowerCase().startsWith("u_")) {
+    profile = sc.profileMultiplier;
+    reasons.push(`프로필 글 ×${sc.profileMultiplier}`);
+  }
 
-  const score = Math.round(rel * w * age * (comments ?? 1) * 10) / 10;
+  const score = Math.round(rel * w * age * (comments ?? 1) * profile * 10) / 10;
   return { post, score, reasons, birth };
 }
 
