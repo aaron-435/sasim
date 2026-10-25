@@ -9,10 +9,11 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA: `npx tsc --noEmit` 오류 0, `npm run reddit:digest -- --dry-run`이 설정을 읽고 "config ok"와 서브레딧·키워드 개수를 출력하고 종료 코드 0. 설정에서 필수 키 하나를 지우면 종료 코드 1과 어떤 키인지 출력.
   - QA: `npx tsc --noEmit` → exit 0. `.mts` 직접 검사 `npx tsc --noEmit --strict --target esnext --module esnext --moduleResolution bundler --allowImportingTsExtensions --skipLibCheck --types node scripts/reddit/*.mts` → exit 0. `npm run reddit:digest -- --dry-run` → "config ok: 7 subreddits, 6 keywords (+1 aux), 5 competitors", exit 0. `--config <weight 지운 사본>` → `config: "subreddits[2].weight" is missing` exit 1, `keywords` 지운 사본 → `config: "keywords" is missing` exit 1. `--limit x` → exit 1. (2026-10-25)
 
-- [ ] 2. 수집기 (읽기 전용, 느리게)
+- [x] 2. 수집기 (읽기 전용, 느리게)
   - 선행: 1
   - 변경: `scripts/reddit/fetch.mts`(쿠키 없는 `fetch`, 식별 가능한 User-Agent, 요청 간격, 하루 상한, 429·403 지수 백오프 2회 후 포기하고 실패 기록, JSON 실패 시 `.rss` 대체), `scripts/reddit/collect.mts`(서브레딧 `/new.json`, 사이트 `/search.json?sort=new&t=week`, 글 정규화: id·서브레딧·제목·본문·작성자·작성 시각·댓글 수·퍼머링크), `scripts/reddit/state.mts`(본 글 id 저장, 14일 지나면 정리).
   - QA: `npm run reddit:digest -- --dry-run`을 두 번 연속 실행. 첫 실행 콘솔에 서브레딧 7곳·키워드 6개별 수집 수와 실패 수가 나오고, 두 번째 실행의 신규 글 수가 첫 실행보다 확연히 적다(이미 본 글 제외). 실행 중 429가 나와도 종료 코드 0.
+  - QA: tsc `.mts` 직접 검사·루트 `npx tsc --noEmit` → exit 0. 모의 서버(`REDDIT_BASE_URL=http://localhost:8765`, 429/403 응답) → 429는 6s·12s 백오프 후 RSS, 403은 바로 RSS, 403 뒤 출처는 JSON 생략, 쿠키 없음·UA 확인, 중복 id 합침, exit 0. 실레딧 연속 2회 → 13줄+total, 둘 다 exit 0, 두 번 다 성공한 출처는 새 글 0(ChineseZodiac 50→0, 50→0). 단 RSS 429로 회당 13곳 중 5곳만 성공(발견 사항 참고). (2026-10-25, 간격 3초 기준)
 
 - [ ] 3. 점수화와 dry-run 요약 파일
   - 선행: 2
@@ -62,4 +63,6 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
 
 - 루트 `tsconfig.json`의 `include`가 `**/*.ts`라서 `scripts/**/*.mts`는 `npx tsc --noEmit`에 안 잡힌다. 이 TODO의 tsc QA는 1번에 적은 `.mts` 직접 검사 명령을 같이 돌린다. (1번)
 - 경쟁사 도메인은 `getpalja.com`만 확인됨. K-Sajupalja, Starlit Alley, Youra, TKB_Studio는 이름·별칭만 넣었다. 도메인을 알게 되면 `config.json`에 추가. (1번)
+- 레딧은 지금 이 UA의 비로그인 `.json`을 항상 403으로 막는다. 수집은 사실상 RSS뿐이라 댓글 수가 없다(`numComments: null`) → 3번 점수화에서 댓글 수 가중치는 RSS 글이면 빼야 한다. (2번)
+- RSS도 3초 간격이면 429가 잦아 회당 13곳 중 5곳만 성공. `config.json` `requestIntervalMs`를 7000으로 올렸으나 **미검증**(오늘 요청 154/200 소진). 다음 세션 첫 dry-run에서 성공 곳 수를 확인하고, 그래도 낮으면 10000 이상으로. (2번)
 - `reddit:utm` 스크립트 항목은 넣었지만 `scripts/reddit/utm.mts`는 6번에서 만든다. 그 전엔 실행하면 파일 없음 오류. (1번)

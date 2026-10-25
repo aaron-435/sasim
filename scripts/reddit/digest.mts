@@ -2,6 +2,9 @@
 //   npm run reddit:digest -- [--dry-run] [--limit N] [--config path]
 // --dry-run: collect and score only, no LLM calls. --limit N: memo only the top N posts (default config.topN).
 import { ConfigError, loadConfig } from "./config.mts";
+import { Fetcher } from "./fetch.mts";
+import { collect } from "./collect.mts";
+import { loadRequests, loadSeen, saveRequests, saveSeen } from "./state.mts";
 
 export type DigestArgs = { dryRun: boolean; limit: number | null; configPath: string | undefined };
 
@@ -45,3 +48,18 @@ try {
 const limit = Math.min(args.limit ?? config.topN, config.topN);
 console.log(`config ok: ${config.subreddits.length} subreddits, ${config.keywords.length} keywords (+${config.auxKeywords.length} aux), ${config.competitors.length} competitors`);
 console.log(`mode: ${args.dryRun ? "dry-run (no LLM)" : "full"}, top ${limit}, interval ${config.requestIntervalMs}ms, cap ${config.dailyRequestCap} requests/day`);
+
+const failLabel = (f: { reason: string; status?: number }) => (f.reason === "http" ? `http ${f.status ?? "?"}` : f.reason);
+
+const seen = loadSeen();
+const today = loadRequests();
+const { posts, stats, requests } = await collect(config, new Fetcher(config, today), seen);
+for (const s of stats) {
+  if (s.failed) console.log(`${s.source}  FAILED (${failLabel(s.failed)})`);
+  else console.log(`${s.source}  fetched ${s.fetched}  new ${s.fresh}${s.format === "rss" ? " (rss)" : ""}`);
+}
+console.log(`total new posts: ${posts.length}, failed sources: ${stats.filter((s) => s.failed).length}, requests: ${requests} (today ${today.count}/${config.dailyRequestCap})`);
+const now = new Date().toISOString();
+for (const p of posts) seen[p.id] = now;
+saveSeen(seen);
+saveRequests(today);

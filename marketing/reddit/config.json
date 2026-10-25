@@ -19,6 +19,6 @@
   ],
   "account": "Ok_Mind_8887",
   "topN": 10,
-  "requestIntervalMs": 3000,
+  "requestIntervalMs": 7000,
   "dailyRequestCap": 200
 }
