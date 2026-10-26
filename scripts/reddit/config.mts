@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 export const DEFAULT_CONFIG_PATH = fileURLToPath(new URL("../../marketing/reddit/config.json", import.meta.url));
 
 export type SubredditMeta = { name: string; weight: number; linksAllowed: boolean; aiBanned: boolean; promoRule: string };
-export type Competitor = { name: string; aliases: string[]; domains: string[] };
+export type Competitor = { name: string; aliases: string[]; domains: string[]; accounts: string[]; subreddits: string[] };
 export type ScoringAgeConfig = { fullHours: number; fadeHours: number; fadeTo: number; after: number; unknown: number };
 export type CommentBand = { upTo: number; factor: number };
 export type ScoringCommentsConfig = { bands: CommentBand[]; over: number };
@@ -93,7 +93,13 @@ export function parseConfig(raw: unknown): RedditConfig {
   const competitors = arr(raw, "competitors", "competitors", true).map((c, i) => {
     const p = `competitors[${i}]`;
     if (!isObj(c)) throw new ConfigError(p, "must be an object");
-    return { name: str(c, "name", `${p}.name`), aliases: strArr(c, "aliases", `${p}.aliases`, true), domains: strArr(c, "domains", `${p}.domains`, true) };
+    return {
+      name: str(c, "name", `${p}.name`),
+      aliases: strArr(c, "aliases", `${p}.aliases`, true),
+      domains: strArr(c, "domains", `${p}.domains`, true),
+      accounts: strArr(c, "accounts", `${p}.accounts`, true),
+      subreddits: strArr(c, "subreddits", `${p}.subreddits`, true),
+    };
   });
   const names = new Set<string>();
   subreddits.forEach((s, i) => {

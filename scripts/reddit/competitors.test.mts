@@ -1,8 +1,8 @@
 // Competitor mention checks without a framework: npx tsx scripts/reddit/competitors.test.mts
 import assert from "node:assert/strict";
-import { loadConfig } from "./config.mts";
+import { loadConfig, parseConfig } from "./config.mts";
 import type { RedditPost } from "./collect.mts";
-import { findCompetitorMentions } from "./competitors.mts";
+import { competitorOwner, findCompetitorMentions } from "./competitors.mts";
 import { renderDigest, type DigestInput } from "./render.mts";
 
 const config = loadConfig();
@@ -70,10 +70,53 @@ const base: DigestInput = {
 const linesOf = (md: string) => md.split("\n");
 const empty = linesOf(renderDigest({ ...base, competitors: [] }));
 check(empty[empty.indexOf("## 3. 경쟁사 언급") + 1] === "없음", "empty competitors renders 없음");
-const one = linesOf(renderDigest({ ...base, competitors: [{ post: p2, matched: ["PAL:JA"] }] }));
+const one = linesOf(renderDigest({ ...base, competitors: [{ post: p2, matched: ["PAL:JA"], own: false }] }));
 const hitLine = one[one.indexOf("## 3. 경쟁사 언급") + 1] ?? "";
 check(hitLine.includes("Has anyone used PAL:JA?"), `hit line keeps title, got ${hitLine}`);
 check(hitLine.includes("PAL:JA"), `hit line names PAL:JA, got ${hitLine}`);
 check(hitLine.includes(p2.permalink), `hit line keeps permalink, got ${hitLine}`);
+
+const o1 = post({ id: "o1", title: "New feature is out", body: "Check our latest update today", author: "GetPalja" });
+check(competitorOwner(o1, competitors) === "PAL:JA", `author GetPalja owns for PAL:JA, got ${competitorOwner(o1, competitors)}`);
+const hO1 = findCompetitorMentions([o1], competitors);
+check(hO1.length === 1, "own post with no name mention is still a hit");
+check(hO1[0]?.own === true, "own post has own true");
+check(JSON.stringify(hO1[0]?.matched) === JSON.stringify(["PAL:JA"]), `own post matches PAL:JA, got ${JSON.stringify(hO1[0]?.matched)}`);
+
+const o2 = post({ id: "o2", subreddit: "youra_official", title: "Welcome to our channel", body: "Hello everyone" });
+check(competitorOwner(o2, competitors) === "Youra", `youra_official owns for Youra, got ${competitorOwner(o2, competitors)}`);
+const hO2 = findCompetitorMentions([o2], competitors);
+check(hO2.length === 1 && hO2[0]?.own === true, "official subreddit post has own true");
+
+const o3 = post({ id: "o3", title: "Try this", url: "https://getpalja.com/x" });
+check(competitorOwner(o3, competitors) === "PAL:JA", `getpalja.com link owns for PAL:JA, got ${competitorOwner(o3, competitors)}`);
+check(findCompetitorMentions([o3], competitors)[0]?.own === true, "link post has own true");
+
+const o4 = post({ id: "o4", title: "Question", body: "Has anyone tried getpalja.com?", author: "someuser" });
+check(competitorOwner(o4, competitors) === null, "body-only domain mention is not an own post");
+const hO4 = findCompetitorMentions([o4], competitors);
+check(hO4.length === 1 && hO4[0]?.own === false, "user question about a competitor is a mention with own false");
+check(JSON.stringify(hO4[0]?.matched) === JSON.stringify(["PAL:JA"]), `mention matches PAL:JA, got ${JSON.stringify(hO4[0]?.matched)}`);
+
+const o5 = post({ id: "o5", title: "Morning coffee", body: "Nice day today" });
+check(competitorOwner(o5, competitors) === null, "unrelated post has no owner");
+check(findCompetitorMentions([o5], competitors).length === 0, "unrelated post is not a hit");
+
+const ownLines = linesOf(renderDigest({ ...base, competitors: [{ post: o1, matched: ["PAL:JA"], own: true }] }));
+const ownLine = ownLines[ownLines.indexOf("## 3. 경쟁사 언급") + 1] ?? "";
+check(ownLine.includes("PAL:JA (자사 글)"), `own hit line marks 자사 글, got ${ownLine}`);
+const mentionLines = linesOf(renderDigest({ ...base, competitors: [{ post: o4, matched: ["PAL:JA"], own: false }] }));
+const mentionLine = mentionLines[mentionLines.indexOf("## 3. 경쟁사 언급") + 1] ?? "";
+check(!mentionLine.includes("(자사 글)"), `mention-only line has no 자사 글, got ${mentionLine}`);
+
+const noAccounts: any = JSON.parse(JSON.stringify(config));
+delete noAccounts.competitors[0].accounts;
+let mOwn = "";
+try {
+  parseConfig(noAccounts);
+} catch (e) {
+  mOwn = (e as Error).message;
+}
+check(mOwn.includes("competitors[0].accounts"), `missing accounts names key, got ${mOwn}`);
 
 console.log(`competitor tests: ${n} passed`);

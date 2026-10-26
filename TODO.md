@@ -30,11 +30,12 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA(오프라인 재채점): 아침 요약 `2026-10-25.md`의 상위 10개(제목 + 잘린 본문)를 새 규칙으로 다시 매김 → 사주 무관 5개(카지노, D&D, 해커톤, Scroll 2개) 모두 0점, `r/u_*` 바쯔 글 5.0→2.5, 남은 5개는 전부 점성·바쯔 글. 본문이 잘린 상태라 근사치.
   - QA(실레딧): npm run reddit:digest -- --dry-run → exit 0, 13곳 중 9곳 성공(429: AstrologyCharts, astrology, kw "four pillars", kw "korean astrology"), 새 글 62, 요청 45(today 45/200), 상위 10개 중 무관 0개(전부 바쯔·사주·중국 점성 글. 단 1~5위는 같은 작성자의 같은 글 크로스포스트 5개, 6·8위는 경쟁사 Youra·PAL:JA 자사 글). 주의: 잡음의 주 출처였던 kw "four pillars"가 429로 빠져 문맥 필터는 이번 실측에서 거의 안 거쳤다. (2026-10-26)
 
-- [ ] 3b. 크로스포스트 묶기와 경쟁사 자사 글 제외
+- [x] 3b. 크로스포스트 묶기와 경쟁사 자사 글 제외
   - 선행: 3a, 4
   - 배경: 2026-10-26 dry-run 상위 1~5위가 한 작성자가 같은 질문을 5개 서브레딧에 올린 글, 6·8위가 경쟁사(Youra·PAL:JA) 자사 글. 8번 메모가 상위 글마다 OpenAI를 부르므로 그대로면 같은 글에 메모 5개.
   - 변경: `score.mts`(또는 새 `dedupe.mts`)에서 같은 작성자 + 제목·본문 앞부분(정규화 후 앞 200자) 일치 글을 한 글로 묶는다. 대표는 점수 최고 글, 나머지 서브레딧·링크는 대표 글에 목록으로 붙이고 상위 N칸을 차지하지 않는다. `render.mts`는 대표 글 아래 "같은 글: r/A, r/B …" 한 줄. 경쟁사 자사 글(작성자가 설정의 경쟁사 계정이거나, 서브레딧이 경쟁사 서브레딧이거나, 본문이 경쟁사 도메인 링크를 홍보하는 글)은 상위에서 빼고 경쟁사 섹션에만 둔다. 경쟁사 계정·서브레딧 목록은 `config.json`의 `competitors[]`에 `accounts`·`subreddits` 필드로 추가 + `config.mts` 검증.
   - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` exit 0. `npx tsx scripts/reddit/score.test.mts` 통과(샘플 추가: 같은 작성자·같은 본문 3개 서브레딧 → 상위 1칸 + "같은 글" 2개, 작성자만 같고 본문이 다르면 따로, 경쟁사 서브레딧 글은 상위에 없고 경쟁사 섹션에 있음). `competitors.test.mts` 통과. 실레딧 dry-run은 하지 않고 `2026-10-26.md`의 상위 10개를 오프라인 재채점해 1~5위가 1칸으로, 6·8위가 빠지는지 확인(본문이 잘려 근사치). 실레딧 확인은 9번 전체 실행 때.
+  - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. `npx tsx scripts/reddit/score.test.mts` → "score tests: 52 passed" exit 0(크로스포스트 3개 → 1칸 + 같은 글 2개, 작성자만 같음·본문만 같음·작성자 없음은 따로, 짧은 본문은 제목 비교, 공백·구두점 차이는 묶음, "같은 글" 줄 렌더). `npx tsx scripts/reddit/competitors.test.mts` → "competitor tests: 29 passed" exit 0(작성자 getpalja·서브레딧 youra_official·링크 URL getpalja.com → 자사 글, 본문 속 도메인 언급만은 자사 아님, "(자사 글)" 렌더, `competitors[0].accounts` 빠지면 ConfigError). 오프라인 재채점(`2026-10-26.md` 상위 10개를 잘린 본문으로 재구성, 임시 스크립트) → 1~5위가 1칸(같은 글 r/Bazi_Astrology, r/chineseastrology, r/AskBazi, r/FengShui), 6·8위(Youra_Official·u/getpalja) 제외되고 경쟁사 섹션에 own=true, 상위 4개 남음. `score.mts` 점수 계산·`lib/` 변경 없음. 구현은 muse(지시서 23, 브랜치 task-23). 판단: SPEC 문구의 "본문이 경쟁사 도메인 링크를 홍보하는 글"은 링크 글의 대상 URL로만 판정했다. 본문 언급까지 빼면 "getpalja 써 본 사람?" 같은 답할 질문도 사라진다. (2026-10-26)
 
 - [x] 4. 경쟁사 언급 모음
   - 선행: 2

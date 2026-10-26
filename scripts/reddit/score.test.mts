@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import { loadConfig, parseConfig } from "./config.mts";
 import { normalizeRss, type RedditPost } from "./collect.mts";
 import { detectBirth, rankPosts, scorePost } from "./score.mts";
+import { groupCrossposts } from "./dedupe.mts";
+import { renderDigest, type DigestInput } from "./render.mts";
 
 const config = loadConfig();
 const NOW = Date.UTC(2026, 9, 25, 12, 0, 0);
@@ -102,5 +104,57 @@ try {
   m3 = (e as Error).message;
 }
 check(m3.includes("bands"), `reversed bands throw, got ${m3}`);
+
+const dupBody = "weak guy day master needs help please read my saju chart and tell me about my future luck";
+const d1 = post({ id: "d1", subreddit: "ChineseZodiac", title: "Can someone read my saju chart please?", body: dupBody, author: "dup", numComments: 0 });
+const d2 = post({ id: "d2", subreddit: "Bazi_Astrology", title: "Can someone read my saju chart for me?", body: dupBody, author: "dup", numComments: 5 });
+const d3 = post({ id: "d3", subreddit: "AskBazi", title: "Can someone read my saju chart today?", body: dupBody, author: "dup", numComments: 12 });
+const dupRanked = rankPosts([d3, d2, d1], config, NOW);
+check(dupRanked.map((s) => s.post.id).join(",") === "d1,d2,d3", `dup rank order is d1,d2,d3, got ${dupRanked.map((s) => s.post.id).join(",")}`);
+const dupGrouped = groupCrossposts(dupRanked);
+check(dupGrouped.length === 1, `same author and body folds to 1, got ${dupGrouped.length}`);
+check(dupGrouped[0]?.post.id === "d1", `representative is the top scorer, got ${dupGrouped[0]?.post.id}`);
+check(dupGrouped[0]?.crossposts.length === 2, `two crossposts folded, got ${dupGrouped[0]?.crossposts.length}`);
+check(dupGrouped[0]?.crossposts.map((p) => p.id).join(",") === "d2,d3", "crossposts keep ranked order");
+
+const e1 = post({ id: "e1", subreddit: "ChineseZodiac", title: "Career luck question?", body: "My saju day master is strong yang wood and I want to know about my career luck this year", author: "solo" });
+const e2 = post({ id: "e2", subreddit: "ChineseZodiac", title: "Winter chart question?", body: "Please interpret my four pillars chart born in winter with weak fire element thank you", author: "solo" });
+check(groupCrossposts(rankPosts([e1, e2], config, NOW)).length === 2, "same author with different bodies stays 2");
+
+const f1 = post({ id: "f1", subreddit: "ChineseZodiac", title: "Can someone read my saju chart please?", body: dupBody, author: "alice" });
+const f2 = post({ id: "f2", subreddit: "ChineseZodiac", title: "Can someone read my saju chart please?", body: dupBody, author: "bob" });
+check(groupCrossposts(rankPosts([f1, f2], config, NOW)).length === 2, "different authors with same body stay 2");
+
+const g1 = post({ id: "g1", subreddit: "ChineseZodiac", title: "Can someone read my saju chart please?", body: dupBody, author: "" });
+const g2 = post({ id: "g2", subreddit: "ChineseZodiac", title: "Can someone read my saju chart please?", body: dupBody, author: "" });
+const gGrouped = groupCrossposts(rankPosts([g1, g2], config, NOW));
+check(gGrouped.length === 2 && gGrouped.every((t) => t.crossposts.length === 0), "empty author never folds");
+
+const h1 = post({ id: "h1", subreddit: "ChineseZodiac", title: "Can someone read my saju chart please?", body: "", author: "titled" });
+const h2 = post({ id: "h2", subreddit: "Bazi_Astrology", title: "Can someone read my saju chart please?", body: "short", author: "titled" });
+check(groupCrossposts(rankPosts([h1, h2], config, NOW)).length === 1, "empty body falls back to title");
+const i1 = post({ id: "i1", subreddit: "ChineseZodiac", title: "Can someone read my saju chart please?", body: "", author: "titled" });
+const i2 = post({ id: "i2", subreddit: "ChineseZodiac", title: "Please read my saju day master chart", body: "", author: "titled" });
+check(groupCrossposts(rankPosts([i1, i2], config, NOW)).length === 2, "empty bodies with different titles stay 2");
+
+const j1 = post({ id: "j1", subreddit: "ChineseZodiac", title: "Saju reading request here please", body: "Weak Guy, Day Master! Needs help... please read my saju chart today?", author: "casey" });
+const j2 = post({ id: "j2", subreddit: "ChineseZodiac", title: "Saju reading request here thanks", body: "weak guy day master needs help please read my saju chart today", author: "casey" });
+check(groupCrossposts(rankPosts([j1, j2], config, NOW)).length === 1, "case and punctuation differences still fold");
+
+const digestBase: DigestInput = {
+  date: "2026-10-25",
+  generatedAt: new Date(Date.UTC(2026, 9, 25, 0, 0, 0)),
+  dryRun: true,
+  stats: [],
+  requests: 0,
+  todayCount: 0,
+  cap: 200,
+  totalNew: 0,
+  top: [],
+};
+const dupMd = renderDigest({ ...digestBase, top: dupGrouped });
+check(dupMd.includes("- 같은 글: r/Bazi_Astrology, r/AskBazi"), "crosspost line lists folded subs in order");
+const soloMd = renderDigest({ ...digestBase, top: groupCrossposts(rankPosts([s1], config, NOW)) });
+check(!soloMd.includes("같은 글"), "no crosspost line when crossposts is empty");
 
 console.log(`score tests: ${n} passed`);

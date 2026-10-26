@@ -25,11 +25,11 @@
     "profileMultiplier": 0.5
   },
   "competitors": [
-    { "name": "PAL:JA", "aliases": ["palja", "getpalja"], "domains": ["getpalja.com"] },
-    { "name": "K-Sajupalja", "aliases": ["sajupalja"], "domains": [] },
-    { "name": "Starlit Alley", "aliases": [], "domains": [] },
-    { "name": "Youra", "aliases": [], "domains": [] },
-    { "name": "TKB_Studio", "aliases": ["TKB Studio"], "domains": [] }
+    { "name": "PAL:JA", "aliases": ["palja", "getpalja"], "domains": ["getpalja.com"], "accounts": ["getpalja"], "subreddits": [] },
+    { "name": "K-Sajupalja", "aliases": ["sajupalja"], "domains": [], "accounts": [], "subreddits": [] },
+    { "name": "Starlit Alley", "aliases": [], "domains": [], "accounts": [], "subreddits": [] },
+    { "name": "Youra", "aliases": [], "domains": [], "accounts": [], "subreddits": ["Youra_Official"] },
+    { "name": "TKB_Studio", "aliases": ["TKB Studio"], "domains": [], "accounts": [], "subreddits": [] }
   ],
   "account": "Ok_Mind_8887",
   "topN": 10,

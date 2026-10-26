@@ -6,7 +6,8 @@ import { Fetcher } from "./fetch.mts";
 import { collect } from "./collect.mts";
 import { loadRequests, loadSeen, saveRequests, saveSeen, todayLocal } from "./state.mts";
 import { rankPosts } from "./score.mts";
-import { findCompetitorMentions } from "./competitors.mts";
+import { competitorOwner, findCompetitorMentions } from "./competitors.mts";
+import { groupCrossposts } from "./dedupe.mts";
 import { renderDigest, writeDigest } from "./render.mts";
 
 export type DigestArgs = { dryRun: boolean; limit: number | null; configPath: string | undefined };
@@ -64,7 +65,10 @@ for (const s of stats) {
 console.log(`total new posts: ${posts.length}, failed sources: ${stats.filter((s) => s.failed).length}, requests: ${requests} (today ${today.count}/${config.dailyRequestCap})`);
 const ranked = rankPosts(posts, config, Date.now());
 const competitorHits = findCompetitorMentions(posts, config.competitors);
-const top = ranked.slice(0, config.topN);
+const kept = ranked.filter((s) => competitorOwner(s.post, config.competitors) === null);
+const grouped = groupCrossposts(kept);
+const top = grouped.slice(0, config.topN);
+const folded = grouped.reduce((a, t) => a + t.crossposts.length, 0);
 const file = writeDigest(
   renderDigest({
     date: todayLocal(),
@@ -85,4 +89,5 @@ for (const p of posts) seen[p.id] = now;
 saveSeen(seen);
 saveRequests(today);
 console.log(`scored: ${ranked.length} posts > 0, top ${top.length} → ${file}`);
+console.log(`excluded competitor-own: ${ranked.length - kept.length}, crossposts folded: ${folded}`);
 console.log(`competitor mentions: ${competitorHits.length}`);

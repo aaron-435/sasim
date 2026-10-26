@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import type { SourceStat } from "./collect.mts";
 import type { CompetitorHit } from "./competitors.mts";
-import type { Scored } from "./score.mts";
+import type { TopPost } from "./dedupe.mts";
 
 export const DEFAULT_DIGEST_DIR = fileURLToPath(new URL("../../marketing/reddit/digest/", import.meta.url));
 
@@ -17,7 +17,7 @@ export type DigestInput = {
   todayCount: number;
   cap: number;
   totalNew: number;
-  top: Scored[];
+  top: TopPost[];
   competitors?: CompetitorHit[];
   shadow?: { alert: string | null; lines: string[] };
 };
@@ -44,13 +44,14 @@ function snippet(body: string): string {
   return esc(flat.length > 200 ? flat.slice(0, 200) + "…" : flat);
 }
 
-function topBlock(s: Scored, i: number, dryRun: boolean, at: Date): string[] {
+function topBlock(s: TopPost, i: number, dryRun: boolean, at: Date): string[] {
   const p = s.post;
   const comments = p.numComments === null ? "댓글 알 수 없음" : `댓글 ${p.numComments}`;
   return [
     `### ${i + 1}. ${esc(p.title.trim()) || "(제목 없음)"}`,
     `- r/${p.subreddit} · ${ageLabel(p.createdUtc, at)} · ${comments} · 작성자 ${p.author ? `u/${p.author}` : "모름"}`,
     `- 링크: ${p.permalink}`,
+    ...(s.crossposts.length > 0 ? [`- 같은 글: ${s.crossposts.map((c) => `r/${c.subreddit}`).join(", ")}`] : []),
     `- 점수 ${s.score.toFixed(1)} — ${s.reasons.join(" · ")}`,
     `- 본문: > ${snippet(p.body)}`,
     `- 메모: ${dryRun ? "(dry-run)" : "(미연결)"}`,
@@ -80,7 +81,7 @@ export function renderDigest(d: DigestInput): string {
     ...(d.top.length === 0 ? ["새 글 중 점수 있는 글 없음"] : d.top.flatMap((s, i) => [...(i > 0 ? [""] : []), ...topBlock(s, i, d.dryRun, d.generatedAt)])),
     "",
     "## 3. 경쟁사 언급",
-    ...sectionList(d.competitors?.map((h) => `- [r/${h.post.subreddit}] ${esc(h.post.title.trim()) || "(제목 없음)"} — ${h.matched.join(", ")} — ${h.post.permalink}`)),
+    ...sectionList(d.competitors?.map((h) => `- [r/${h.post.subreddit}] ${esc(h.post.title.trim()) || "(제목 없음)"} — ${h.matched.join(", ")}${h.own ? " (자사 글)" : ""} — ${h.post.permalink}`)),
     "",
     "## 4. 섀도 필터 점검",
     ...sectionList(d.shadow?.lines.map((l) => `- ${l}`)),
