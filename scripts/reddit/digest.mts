@@ -9,6 +9,9 @@ import { rankPosts } from "./score.mts";
 import { competitorOwner, findCompetitorMentions } from "./competitors.mts";
 import { groupCrossposts } from "./dedupe.mts";
 import { renderDigest, writeDigest } from "./render.mts";
+import OpenAI from "openai";
+import { chartForPost, emptyUsage, formatChart } from "./chart.mts";
+import { formatMemo, memoForPost, MEMO_MODEL } from "./memo.mts";
 
 export type DigestArgs = { dryRun: boolean; limit: number | null; configPath: string | undefined };
 
@@ -69,6 +72,30 @@ const kept = ranked.filter((s) => competitorOwner(s.post, config.competitors) ==
 const grouped = groupCrossposts(kept);
 const top = grouped.slice(0, config.topN);
 const folded = grouped.reduce((a, t) => a + t.crossposts.length, 0);
+
+// Full mode: chart (only when a birth year shows up) then memo, for the first `limit` top posts.
+const usage = emptyUsage();
+let notes: { memo: string; chart: string }[] | undefined;
+let memoWarnings = 0;
+if (!args.dryRun) {
+  const client = new OpenAI();
+  notes = [];
+  for (const [i, t] of top.slice(0, limit).entries()) {
+    const text = `${t.post.title.trim()}\n\n${t.post.body.trim()}`;
+    const chart = await chartForPost(text, client, usage);
+    const chartText = formatChart(chart);
+    let memo: string;
+    try {
+      const m = await memoForPost(t.post, config.subreddits.find((s) => s.name.toLowerCase() === t.post.subreddit.toLowerCase()), chart, chartText, config.competitors, client, usage);
+      memoWarnings += m.warnings.length;
+      memo = formatMemo(m);
+    } catch (err) {
+      memo = `메모 실패: ${(err as Error).message}`;
+    }
+    notes.push({ memo, chart: chartText });
+    console.log(`memo ${i + 1}/${Math.min(limit, top.length)}: ${chart.status} chart, OpenAI ${usage.calls} calls so far`);
+  }
+}
 const file = writeDigest(
   renderDigest({
     date: todayLocal(),
@@ -81,6 +108,8 @@ const file = writeDigest(
     totalNew: posts.length,
     top,
     competitors: competitorHits,
+    notes,
+    llm: args.dryRun ? undefined : { calls: usage.calls, costUsd: usage.costUsd },
   }),
   todayLocal(),
 );
@@ -91,3 +120,4 @@ saveRequests(today);
 console.log(`scored: ${ranked.length} posts > 0, top ${top.length} → ${file}`);
 console.log(`excluded competitor-own: ${ranked.length - kept.length}, crossposts folded: ${folded}`);
 console.log(`competitor mentions: ${competitorHits.length}`);
+if (!args.dryRun) console.log(`LLM: ${usage.calls} calls, ${usage.promptTokens}+${usage.completionTokens} tokens, $${usage.costUsd.toFixed(4)} (memo model ${MEMO_MODEL}), memo warnings: ${memoWarnings}`);

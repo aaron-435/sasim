@@ -62,10 +62,11 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA: `npx tsx --env-file=.env.local scripts/reddit/chart.test.mts`(LLM 추출은 픽스처의 기대 구조와 비교, 계산 결과는 같은 입력으로 엔진을 직접 부른 값과 일치) 통과. `npm run validate:manseryeok` 여전히 통과. OpenAI 호출 4회(비용 미미).
   - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. `npx tsx --env-file=.env.local scripts/reddit/chart.test.mts` → "chart tests: 59 passed · OpenAI 4 calls, 1727+204 tokens, $0.0022" exit 0(오프라인: 2월 30일·미래 연도·본문에 없는 연도·시 25·분 61 거부, 시 없는 분 버림, 음력 30일 허용/31일 거부, 도시 찾기, 연도 없는 글은 LLM 미호출 / 온라인: 픽스처 4개 추출 필드 전부 일치, 3개의 4기둥·오행이 엔진 직접 호출과 일치, 시주 없음·도시 없음·성별 없음·음력 생략 표기). `npm run validate:manseryeok` → "All golden samples match". `score.test.mts` 39 passed. `lib/` 변경 없음(`git status`). 모델 `REDDIT_EXTRACT_MODEL`(기본 gpt-5.4-mini, JSON 스키마 strict). 도시 없음은 엔진 기본값(서울 KST)으로 근사하고 그 사실을 적는다. 이 세션 직접 작성. (2026-10-25)
 
-- [ ] 8. 답할 포인트 메모 (이 세션 직접)
+- [x] 8. 답할 포인트 메모 (이 세션 직접)
   - 선행: 3, 3a, 3b, 7
   - 변경: `scripts/reddit/memo.mts`(시스템 지시: 질문 요지 1줄 / 답할 포인트 2~3개 / 피할 것 / 서브레딧 규칙 주의. 완성 문단 금지, 앱·웹 이름·URL 금지, `PRODUCT.md` 원칙 반영(나쁜 날·궁합 없음, 건강·죽음·사고·재정 손실 예측 없음, 단정적 부정 예측 없음, 미성년 연애 없음). 사주 계산 결과가 있으면 그것만 근거로 쓰고 없는 차트 사실은 만들지 않음. 응답 후 검사기: URL·"Fatesaid"·경쟁사 이름·3문장 넘는 연속 문단이 있으면 메모에 경고 표시), 모델은 환경 변수 `REDDIT_MEMO_MODEL`(기본 기존 소형 모델), 사용량으로 비용 합산.
   - QA: `npm run reddit:digest -- --limit 3`(OpenAI 3~6회 호출) 후 요약 파일에 메모 3개, 맨 위에 LLM 비용, 검사기 경고 0개. 메모를 직접 읽어 완성 답글처럼 보이지 않는지 확인하고 결과를 여기 적는다.
+  - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. `npx tsx scripts/reddit/memo.test.mts` → "memo tests: 27 passed" exit 0(URL·맨 도메인·Fatesaid·Fate Said·경쟁사 이름/별칭 검출, "pal" 미검출, 5문장 문단·인사말·포인트 1개/4개 경고, 서브레딧 규칙 줄, 차트 없으면 프롬프트가 차트 사실 금지, 렌더: 비용 헤더·메모 들여쓰기·`--limit 밖`·dry-run). `score.test.mts` 52·`competitors.test.mts` 29 그대로. 실레딧 `npm run reddit:digest -- --limit 3` → exit 0, 13곳+경쟁사 5곳 중 12곳 성공(429 6곳), 새 글 128, 요청 46(오늘 91/200), `marketing/reddit/digest/2026-10-26-2.md` 맨 위 "LLM 비용: $0.0057 (OpenAI 5회)"(추출 2 + 메모 3), 메모 3개, 검사기 경고 0. 직접 읽은 결과: 세 메모 모두 요지 1줄·포인트 3개·피할 것 3개의 메모 형태이고 그대로 붙여 넣을 문단·인사말·앱/URL 없음. 1번(1999-03-19, 시각·도시 없음) 메모의 차트 근거(庚 일간, 수 0, 卯·午)는 계산 결과와 일치, 2·3번은 차트 없음이라 "생년월일시를 받아야" 쪽으로 감. 건강·죽음 예측 금지가 피할 것에 들어감. 구현: `memo.mts`(새), `digest.mts`(상위 `--limit`개에 사주 → 메모 연결, 비용 합산), `render.mts`(사주·메모 칸, 비용 헤더), `chart.mts`(`addUsage`·`PRICES`·`samplingParams` 공유), `competitors.mts`(`termRe` export). 이 세션 직접 작성. (2026-10-26)
 
 - [ ] 9. 통합 실행과 사용법 문서
   - 선행: 3, 3b, 4, 5, 8
@@ -83,6 +84,7 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
 
 ## 발견 사항
 
+- 상위 글 품질(8번 실측): 2위가 사별·PTSD·자살 언급 글, 3위가 "생년월일 주면 봐 줄게" 식의 리딩 제공 글(답할 질문이 아님). 메모 자체는 안전했지만, 자살·자해 언급 글은 답할 대상에서 빼거나 "민감 글" 표시, 리딩 제공 글(`Tell me your`, `I'll read`)은 감점을 검토. 또 1·2위가 `AstrologyCharts`의 서양 점성 글이라 3a 발견 사항(감시 서브레딧 사주 문맥)이 다시 확인됨. 점수의 "생년월일 +3"이 2번 글에서는 추출기가 생년월일 없음으로 판정(사건 연도 "96"을 패턴이 잡은 듯). (8번)
 - 루트 `tsconfig.json`의 `include`가 `**/*.ts`라서 `scripts/**/*.mts`는 `npx tsc --noEmit`에 안 잡힌다. 이 TODO의 tsc QA는 1번에 적은 `.mts` 직접 검사 명령을 같이 돌린다. (1번)
 - 경쟁사 도메인은 `getpalja.com`만 확인됨. K-Sajupalja, Starlit Alley, Youra, TKB_Studio는 이름·별칭만 넣었다. 도메인을 알게 되면 `config.json`에 추가. (1번)
 - 레딧은 지금 이 UA의 비로그인 `.json`을 항상 403으로 막는다. 수집은 사실상 RSS뿐이라 댓글 수가 없다(`numComments: null`) → 3번 점수화에서 댓글 수 가중치는 RSS 글이면 빼야 한다. (2번)

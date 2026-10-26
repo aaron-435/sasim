@@ -7,7 +7,7 @@ export type CompetitorHit = { post: RedditPost; matched: string[]; own: boolean 
 const escRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // Literal term with alnum boundaries; inner whitespace flexes across spaces, hyphens and underscores.
-function termRe(term: string): RegExp | null {
+export function termRe(term: string): RegExp | null {
   if (!term.trim()) return null;
   const lit = escRe(term).replace(/\s+/g, "[\\s_-]+");
   return new RegExp(`(?<![A-Za-z0-9])${lit}(?![A-Za-z0-9])`, "i");

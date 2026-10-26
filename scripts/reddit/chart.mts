@@ -8,7 +8,7 @@ import { searchWorldCities, type WorldCity } from "../../lib/worldCities.ts";
 export const EXTRACT_MODEL = process.env.REDDIT_EXTRACT_MODEL || "gpt-5.4-mini";
 
 // USD per 1M tokens, same figures as scripts/sim-chat.mts
-const PRICES: Record<string, { input: number; output: number }> = {
+export const PRICES: Record<string, { input: number; output: number }> = {
   "gpt-5.4-mini": { input: 0.75, output: 4.5 },
   "gpt-5.4": { input: 2.5, output: 15 },
   "gpt-5.5": { input: 5, output: 30 },
@@ -17,6 +17,16 @@ const PRICES: Record<string, { input: number; output: number }> = {
 
 export type Usage = { calls: number; promptTokens: number; completionTokens: number; costUsd: number };
 export const emptyUsage = (): Usage => ({ calls: 0, promptTokens: 0, completionTokens: 0, costUsd: 0 });
+
+/** Adds one completion's tokens; cost turns NaN for a model missing from PRICES so it can't hide. */
+export function addUsage(usage: Usage, model: string, u: { prompt_tokens: number; completion_tokens: number } | undefined): void {
+  const price = PRICES[model];
+  usage.calls++;
+  if (!u) return;
+  usage.promptTokens += u.prompt_tokens;
+  usage.completionTokens += u.completion_tokens;
+  usage.costUsd += price ? (u.prompt_tokens * price.input + u.completion_tokens * price.output) / 1_000_000 : NaN;
+}
 
 export type BirthExtraction = {
   found: boolean;
@@ -60,7 +70,7 @@ Copy only what the post states. Never guess or fill in a missing value: use null
 - isLunar: true only if the post says the date is a lunar / 음력 / Chinese calendar date.
 - Ambiguous numeric dates like 05/06/1990: use month/day order only if the post makes it clear; otherwise found=false.`;
 
-function samplingParams(model: string): { temperature: number } | { reasoning_effort: "low" } {
+export function samplingParams(model: string): { temperature: number } | { reasoning_effort: "low" } {
   return /^gpt-5\.[56]/.test(model) ? { reasoning_effort: "low" } : { temperature: 0 };
 }
 
@@ -79,14 +89,7 @@ export async function extractBirth(
     ],
     response_format: { type: "json_schema", json_schema: { name: "birth", strict: true, schema: SCHEMA } },
   });
-  const u = completion.usage;
-  const price = PRICES[model];
-  usage.calls++;
-  if (u) {
-    usage.promptTokens += u.prompt_tokens;
-    usage.completionTokens += u.completion_tokens;
-    usage.costUsd += price ? (u.prompt_tokens * price.input + u.completion_tokens * price.output) / 1_000_000 : NaN;
-  }
+  addUsage(usage, model, completion.usage);
   return JSON.parse(completion.choices[0]?.message?.content ?? "{}") as BirthExtraction;
 }
 
