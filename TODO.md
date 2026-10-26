@@ -92,9 +92,11 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA: `npm run reddit:digest`(전체, OpenAI 10~20회) 종료 코드 0, 요약 파일에 네 섹션 모두 존재. 루트 `npx tsc --noEmit` 오류 0, `npm run lint` 통과. `git status`에 digest·state 파일이 안 보인다.
   - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0, `npm run lint` → "No ESLint warnings or errors". score 52·competitors 29·memo 27·collect ok 그대로. 실레딧 전체 `npx tsx --env-file=.env.local scripts/reddit/digest.mts`(= `npm run reddit:digest`) → exit 0, 출처 18곳 모두 성공, 요청 14(수집 11 + 섀도 3), 3분 34초, `marketing/reddit/digest/2026-10-26-4.md`에 맨 위 "LLM 비용: $0.0047 (OpenAI 4회) · 요청 14 · 실행 3분 34초"와 섹션 1~4 모두, 상위 4개 메모 4개, 검사기 경고 0, 경쟁사 3건(Youra). 섀도 점검은 429로 "확인 실패"가 요약 4번에 기록되고 프로세스는 계속(발견 사항). 같은 날 네 번째 실행이라 새 글이 7개뿐이어서 OpenAI는 기대(10~20회)보다 적은 4회. `git status`에 digest·state 없음. 변경: `digest.mts`(섀도 점검 연결, 실행 시간·요청 수 출력), `render.mts`(헤더에 실행 시간), `marketing/reddit/README.md`(새). 이 세션 직접 작성. (2026-10-26)
 
-- [ ] 10. UTM 유입 확인 (사용자 확인)
+- [x] 10. UTM 유입 확인 (사용자 확인)
   - 선행: 6
   - 절차: `npm run reddit:utm -- --sub test --medium post --content utm-check`로 만든 링크를 휴대폰 브라우저에서 연다 → 랜딩에서 아무 버튼이나 한 번 누른다 → 이 세션에 알리면 Supabase `events`에서 `utm_source=reddit`, `utm_content=utm-check` 이벤트를 조회해 확인(읽기 전용).
+  - 준비(2026-10-26): `npm run reddit:utm -- --sub test --medium post --content utm-check` → `https://www.fatesaidapp.com/?utm_source=reddit&utm_medium=post&utm_campaign=test&utm_content=utm-check`, exit 0. 조회 스크립트(세션 스크래치패드, 이벤트 이름·플랫폼·utm 4개만 출력) 기준선: 최근 2일 `props->>utm_source = reddit` 이벤트 0건. 사용자가 링크를 열고 버튼을 누른 뒤 다시 조회해 1건 이상 + `utm_content=utm-check`이면 `[x]`.
+  - QA: 사용자가 휴대폰으로 링크를 열고 버튼 클릭(2026-10-26) → 읽기 전용 events 조회 `npx tsx --env-file=.env.local <scratchpad>/utm-check.mts` → 2건: `site landing_view`, `site landing_cta_click`, 둘 다 utm_source=reddit, utm_medium=post, utm_campaign=test, utm_content=utm-check.
 
 - [ ] 11. 계정 준비와 커밋 (사용자 실행)
   - 레딧 프로필 표시 이름과 소개 설정(예: "Building a Korean saju app. Ask me about Four Pillars."). 사용자명은 바꿀 수 없음.
