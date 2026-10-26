@@ -15,7 +15,7 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA: `npm run reddit:digest -- --dry-run`을 두 번 연속 실행. 첫 실행 콘솔에 서브레딧 7곳·키워드 6개별 수집 수와 실패 수가 나오고, 두 번째 실행의 신규 글 수가 첫 실행보다 확연히 적다(이미 본 글 제외). 실행 중 429가 나와도 종료 코드 0.
   - QA: tsc `.mts` 직접 검사·루트 `npx tsc --noEmit` → exit 0. 모의 서버(`REDDIT_BASE_URL=http://localhost:8765`, 429/403 응답) → 429는 6s·12s 백오프 후 RSS, 403은 바로 RSS, 403 뒤 출처는 JSON 생략, 쿠키 없음·UA 확인, 중복 id 합침, exit 0. 실레딧 연속 2회 → 13줄+total, 둘 다 exit 0, 두 번 다 성공한 출처는 새 글 0(ChineseZodiac 50→0, 50→0). 단 RSS 429로 회당 13곳 중 5곳만 성공(발견 사항 참고). (2026-10-25, 간격 3초 기준)
 
-- [ ] 2a. 요청 묶기로 429 줄이기
+- [x] 2a. 요청 묶기로 429 줄이기
   - 선행: 2, 4 (9번보다 먼저)
   - 배경: 비로그인 요청은 레딧의 IP별 속도 한도에 걸린다. `Retry-After`·지수 백오프는 이미 있지만, 출처 18곳(서브레딧 7·키워드 6·경쟁사 5)을 하나씩 부르니 연속 요청이 쌓여 2026-10-26 실행에서 6곳이 429로 빠졌다(실행당 요청 약 46회, 7분대). 한도를 우회하지 않고(프록시·IP 교체 금지) 요청 수 자체를 줄인다.
   - 변경: `collect.mts`
@@ -28,6 +28,7 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA:
     - `.mts` 직접 tsc·루트 `npx tsc --noEmit` exit 0.
     - `score.test.mts`·`competitors.test.mts`·`memo.test.mts`가 그대로 통과한다.
+  - QA: `.mts` 직접 tsc → exit 0, 루트 `npx tsc --noEmit` → exit 0. `npx tsx scripts/reddit/collect.test.mts`(새, 오프라인 가짜 Fetcher) → "collect tests ok"(묶음 4요청, 출처별 재집계, Retry-After 90s>60s 대기, 2회차 성공/2회 후 실패 비고, 하루 상한 도달 시 재시도 생략, 설정 검증). score 52·competitors 29·memo 27 통과. 실레딧 `npm run reddit:digest -- --dry-run` → 출처 18곳 모두 성공(sub:astrology·경쟁사 묶음은 60초 뒤 재시도 1회차 성공), 요청 12회(이전 약 46회), 3분 16초, exit 0. 지터는 넣지 않음(선택 항목, `fetch.mts` 간격 규칙 유지). (2026-10-26)
     - 모의 서버(`REDDIT_BASE_URL`)로 합친 경로가 맞는지 확인한다(`+`로 이은 서브레딧, OR 검색). 합친 요청 하나가 429로 실패하면 속한 출처가 모두 실패로 표시되고 exit 0인지 본다.
     - 모의 서버에서 첫 요청은 429, 재시도 라운드에서는 200을 주게 해서 다음을 본다: 최종 성공, 비고 "재시도 1회차 성공", 대기 시간 준수(테스트에서는 짧은 값으로 바꿔 돌림). 계속 429면 2라운드 뒤 실패로 남고 exit 0인지 본다. 상한에 닿으면 재시도를 건너뛰는지도 본다.
     - 실레딧 `npm run reddit:digest -- --dry-run` 1회로 다음을 확인한다: 첫 바퀴 요청 수 12회 이하, 최종 실패 출처 0곳(재시도 포함), 요약 수집 통계에 서브레딧 7·키워드 6·경쟁사 5줄이 모두 있음, 재시도 라운드 수, 전체 실행 시간. 그날 첫 실행으로 돌린다.
@@ -100,6 +101,10 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - 각 항목 끝에 제안하는 커밋 메시지로 사용자가 커밋·푸시.
 
 ## 발견 사항
+
+- 묶은 서브레딧 RSS는 100개 상한이라 글 많은 `AstrologyCharts`가 69개를 차지하고 `ChineseZodiac` 2·`Bazi_Astrology` 1만 들어왔다(2a 실측). 하루 한 번 실행이면 사주 서브레딧 글이 밀려 빠질 수 있다 → `AstrologyCharts`도 `separateSubreddits`에 넣을지(요청 +1) 다음 실행들 보고 판단. (2a번)
+- `score.test.mts`(3곳)·`competitors.test.mts`(1곳)에 기존 `no-explicit-any` lint 오류가 있다. `npm run lint`가 scripts를 보는지에 따라 9번 완료 기준(lint 통과)에 걸릴 수 있음. (2a번)
+- `chart.test.mts`는 `OPENAI_API_KEY`가 있어야 돈다(유료). 키 없이 돌리면 OpenAI 생성자에서 바로 죽는다. (2a번)
 
 - 상위 글 품질(8번 실측): 2위가 사별·PTSD·자살 언급 글, 3위가 "생년월일 주면 봐 줄게" 식의 리딩 제공 글(답할 질문이 아님). 메모 자체는 안전했지만, 자살·자해 언급 글은 답할 대상에서 빼거나 "민감 글" 표시, 리딩 제공 글(`Tell me your`, `I'll read`)은 감점을 검토. 또 1·2위가 `AstrologyCharts`의 서양 점성 글이라 3a 발견 사항(감시 서브레딧 사주 문맥)이 다시 확인됨. 점수의 "생년월일 +3"이 2번 글에서는 추출기가 생년월일 없음으로 판정(사건 연도 "96"을 패턴이 잡은 듯). (8번)
 - 루트 `tsconfig.json`의 `include`가 `**/*.ts`라서 `scripts/**/*.mts`는 `npx tsc --noEmit`에 안 잡힌다. 이 TODO의 tsc QA는 1번에 적은 `.mts` 직접 검사 명령을 같이 돌린다. (1번)

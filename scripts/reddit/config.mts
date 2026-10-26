@@ -33,6 +33,9 @@ export type RedditConfig = {
   topN: number;
   requestIntervalMs: number;
   dailyRequestCap: number;
+  separateSubreddits: string[];
+  retryRounds: number;
+  retryCooldownMs: number[];
   scoring: ScoringConfig;
 };
 
@@ -147,6 +150,16 @@ export function parseConfig(raw: unknown): RedditConfig {
     contextWords: strArr(scoringRaw, "contextWords", "scoring.contextWords", true),
     profileMultiplier: num(scoringRaw, "profileMultiplier", "scoring.profileMultiplier", 0),
   };
+  const separateSubreddits = strArr(raw, "separateSubreddits", "separateSubreddits", true);
+  separateSubreddits.forEach((n, i) => {
+    if (!names.has(n.toLowerCase())) throw new ConfigError(`separateSubreddits[${i}]`, `"${n}" is not in subreddits`);
+  });
+  const retryRounds = num(raw, "retryRounds", "retryRounds", 0);
+  if (!Number.isInteger(retryRounds)) throw new ConfigError("retryRounds", "must be an integer >= 0");
+  const retryCooldownMs = arr(raw, "retryCooldownMs", "retryCooldownMs", retryRounds === 0).map((v, i) => {
+    if (typeof v !== "number" || !Number.isFinite(v) || v < 0) throw new ConfigError(`retryCooldownMs[${i}]`, "must be a number >= 0");
+    return v;
+  });
   return {
     subreddits,
     keywords: strArr(raw, "keywords", "keywords", false),
@@ -156,6 +169,9 @@ export function parseConfig(raw: unknown): RedditConfig {
     topN: num(raw, "topN", "topN", 1),
     requestIntervalMs: num(raw, "requestIntervalMs", "requestIntervalMs", 3000),
     dailyRequestCap: num(raw, "dailyRequestCap", "dailyRequestCap", 1),
+    separateSubreddits,
+    retryRounds,
+    retryCooldownMs,
     scoring,
   };
 }

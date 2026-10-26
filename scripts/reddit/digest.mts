@@ -8,7 +8,7 @@ import { loadRequests, loadSeen, saveRequests, saveSeen, todayLocal } from "./st
 import { rankPosts } from "./score.mts";
 import { competitorOwner, findCompetitorMentions } from "./competitors.mts";
 import { groupCrossposts } from "./dedupe.mts";
-import { renderDigest, writeDigest } from "./render.mts";
+import { renderDigest, statNote, writeDigest } from "./render.mts";
 import OpenAI from "openai";
 import { chartForPost, emptyUsage, formatChart } from "./chart.mts";
 import { formatMemo, memoForPost, MEMO_MODEL } from "./memo.mts";
@@ -56,14 +56,12 @@ const limit = Math.min(args.limit ?? config.topN, config.topN);
 console.log(`config ok: ${config.subreddits.length} subreddits, ${config.keywords.length} keywords (+${config.auxKeywords.length} aux), ${config.competitors.length} competitors`);
 console.log(`mode: ${args.dryRun ? "dry-run (no LLM)" : "full"}, top ${limit}, interval ${config.requestIntervalMs}ms, cap ${config.dailyRequestCap} requests/day`);
 
-const failLabel = (f: { reason: string; status?: number }) => (f.reason === "http" ? `http ${f.status ?? "?"}` : f.reason);
-
 const seen = loadSeen();
 const today = loadRequests();
 const { posts, stats, requests } = await collect(config, new Fetcher(config, today), seen);
 for (const s of stats) {
-  if (s.failed) console.log(`${s.source}  FAILED (${failLabel(s.failed)})`);
-  else console.log(`${s.source}  fetched ${s.fetched}  new ${s.fresh}${s.format === "rss" ? " (rss)" : ""}`);
+  if (s.failed) console.log(`${s.source}  FAILED: ${statNote(s)}`);
+  else console.log(`${s.source}  fetched ${s.fetched}  new ${s.fresh}  (${statNote(s)})`);
 }
 console.log(`total new posts: ${posts.length}, failed sources: ${stats.filter((s) => s.failed).length}, requests: ${requests} (today ${today.count}/${config.dailyRequestCap})`);
 const ranked = rankPosts(posts, config, Date.now());

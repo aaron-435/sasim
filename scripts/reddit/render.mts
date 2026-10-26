@@ -36,9 +36,12 @@ function ageLabel(createdUtc: number, at: Date): string {
   return h < 48 ? `${h}시간 전` : `${Math.floor(h / 24)}일 전`;
 }
 
-const statNote = (s: SourceStat): string => {
-  if (s.failed) return `실패 (${s.failed.reason === "http" ? `http ${s.failed.status ?? "?"}` : s.failed.reason})`;
-  return s.format ?? "";
+export const statNote = (s: SourceStat): string => {
+  if (s.failed) {
+    const why = s.failed.reason === "http" ? `http ${s.failed.status ?? "?"}` : s.failed.reason;
+    return [`실패 (${why})`, ...(s.round > 0 ? [`재시도 ${s.round}회 후`] : []), ...(s.note ? [s.note] : [])].join(", ");
+  }
+  return [s.format ?? "", ...(s.round > 0 ? [`재시도 ${s.round}회차 성공`] : [])].filter(Boolean).join(", ");
 };
 
 function snippet(body: string): string {

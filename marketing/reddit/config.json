@@ -34,5 +34,8 @@
   "account": "Ok_Mind_8887",
   "topN": 10,
   "requestIntervalMs": 7000,
-  "dailyRequestCap": 200
+  "dailyRequestCap": 200,
+  "separateSubreddits": ["astrology"],
+  "retryRounds": 2,
+  "retryCooldownMs": [60000, 180000]
 }
