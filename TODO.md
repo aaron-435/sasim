@@ -86,10 +86,11 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA: `npm run reddit:digest -- --limit 3`(OpenAI 3~6회 호출) 후 요약 파일에 메모 3개, 맨 위에 LLM 비용, 검사기 경고 0개. 메모를 직접 읽어 완성 답글처럼 보이지 않는지 확인하고 결과를 여기 적는다.
   - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. `npx tsx scripts/reddit/memo.test.mts` → "memo tests: 27 passed" exit 0(URL·맨 도메인·Fatesaid·Fate Said·경쟁사 이름/별칭 검출, "pal" 미검출, 5문장 문단·인사말·포인트 1개/4개 경고, 서브레딧 규칙 줄, 차트 없으면 프롬프트가 차트 사실 금지, 렌더: 비용 헤더·메모 들여쓰기·`--limit 밖`·dry-run). `score.test.mts` 52·`competitors.test.mts` 29 그대로. 실레딧 `npm run reddit:digest -- --limit 3` → exit 0, 13곳+경쟁사 5곳 중 12곳 성공(429 6곳), 새 글 128, 요청 46(오늘 91/200), `marketing/reddit/digest/2026-10-26-2.md` 맨 위 "LLM 비용: $0.0057 (OpenAI 5회)"(추출 2 + 메모 3), 메모 3개, 검사기 경고 0. 직접 읽은 결과: 세 메모 모두 요지 1줄·포인트 3개·피할 것 3개의 메모 형태이고 그대로 붙여 넣을 문단·인사말·앱/URL 없음. 1번(1999-03-19, 시각·도시 없음) 메모의 차트 근거(庚 일간, 수 0, 卯·午)는 계산 결과와 일치, 2·3번은 차트 없음이라 "생년월일시를 받아야" 쪽으로 감. 건강·죽음 예측 금지가 피할 것에 들어감. 구현: `memo.mts`(새), `digest.mts`(상위 `--limit`개에 사주 → 메모 연결, 비용 합산), `render.mts`(사주·메모 칸, 비용 헤더), `chart.mts`(`addUsage`·`PRICES`·`samplingParams` 공유), `competitors.mts`(`termRe` export). 이 세션 직접 작성. (2026-10-26)
 
-- [ ] 9. 통합 실행과 사용법 문서
+- [x] 9. 통합 실행과 사용법 문서
   - 선행: 2a, 3, 3b, 4, 5, 8
   - 변경: `digest.mts`에서 전 과정 연결(수집 → 점수 → 사주 → 메모 → 경쟁사 → 섀도 → 렌더), 실행 시간과 요청 수 출력, `marketing/reddit/README.md`(아침 루틴: 실행 → 요약 읽기 → 직접 답글 → 로그아웃 확인. 링크 노출 시작 조건: 계정 활동 2~3주 + iOS 공개. 서브레딧별 홍보 규칙 요약은 `REDDIT_RESEARCH_2026-10-25.md` 링크).
   - QA: `npm run reddit:digest`(전체, OpenAI 10~20회) 종료 코드 0, 요약 파일에 네 섹션 모두 존재. 루트 `npx tsc --noEmit` 오류 0, `npm run lint` 통과. `git status`에 digest·state 파일이 안 보인다.
+  - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0, `npm run lint` → "No ESLint warnings or errors". score 52·competitors 29·memo 27·collect ok 그대로. 실레딧 전체 `npx tsx --env-file=.env.local scripts/reddit/digest.mts`(= `npm run reddit:digest`) → exit 0, 출처 18곳 모두 성공, 요청 14(수집 11 + 섀도 3), 3분 34초, `marketing/reddit/digest/2026-10-26-4.md`에 맨 위 "LLM 비용: $0.0047 (OpenAI 4회) · 요청 14 · 실행 3분 34초"와 섹션 1~4 모두, 상위 4개 메모 4개, 검사기 경고 0, 경쟁사 3건(Youra). 섀도 점검은 429로 "확인 실패"가 요약 4번에 기록되고 프로세스는 계속(발견 사항). 같은 날 네 번째 실행이라 새 글이 7개뿐이어서 OpenAI는 기대(10~20회)보다 적은 4회. `git status`에 digest·state 없음. 변경: `digest.mts`(섀도 점검 연결, 실행 시간·요청 수 출력), `render.mts`(헤더에 실행 시간), `marketing/reddit/README.md`(새). 이 세션 직접 작성. (2026-10-26)
 
 - [ ] 10. UTM 유입 확인 (사용자 확인)
   - 선행: 6
@@ -102,6 +103,7 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
 
 ## 발견 사항
 
+- 섀도 점검은 수집 직후 같은 IP로 부르므로 429가 나기 쉽고, `collect.mts`와 달리 재시도 라운드가 없어 9번 실행에서 "확인 실패(http 429)"로 끝났다. 섀도 점검에도 60초 쉬고 한 번 더 부르는 재시도를 붙일지, 또는 수집 전에 먼저 돌릴지 검토. (9번)
 - 묶은 서브레딧 RSS는 100개 상한이라 글 많은 `AstrologyCharts`가 69개를 차지하고 `ChineseZodiac` 2·`Bazi_Astrology` 1만 들어왔다(2a 실측). 하루 한 번 실행이면 사주 서브레딧 글이 밀려 빠질 수 있다 → `AstrologyCharts`도 `separateSubreddits`에 넣을지(요청 +1) 다음 실행들 보고 판단. (2a번)
 - `score.test.mts`(3곳)·`competitors.test.mts`(1곳)에 기존 `no-explicit-any` lint 오류가 있다. `npm run lint`가 scripts를 보는지에 따라 9번 완료 기준(lint 통과)에 걸릴 수 있음. (2a번)
 - `chart.test.mts`는 `OPENAI_API_KEY`가 있어야 돈다(유료). 키 없이 돌리면 OpenAI 생성자에서 바로 죽는다. (2a번)

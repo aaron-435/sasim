@@ -12,6 +12,7 @@ import { renderDigest, statNote, writeDigest } from "./render.mts";
 import OpenAI from "openai";
 import { chartForPost, emptyUsage, formatChart } from "./chart.mts";
 import { formatMemo, memoForPost, MEMO_MODEL } from "./memo.mts";
+import { checkShadow, shadowSummary } from "./shadow.mts";
 
 export type DigestArgs = { dryRun: boolean; limit: number | null; configPath: string | undefined };
 
@@ -56,14 +57,21 @@ const limit = Math.min(args.limit ?? config.topN, config.topN);
 console.log(`config ok: ${config.subreddits.length} subreddits, ${config.keywords.length} keywords (+${config.auxKeywords.length} aux), ${config.competitors.length} competitors`);
 console.log(`mode: ${args.dryRun ? "dry-run (no LLM)" : "full"}, top ${limit}, interval ${config.requestIntervalMs}ms, cap ${config.dailyRequestCap} requests/day`);
 
+const startedAt = Date.now();
 const seen = loadSeen();
 const today = loadRequests();
-const { posts, stats, requests } = await collect(config, new Fetcher(config, today), seen);
+const fetcher = new Fetcher(config, today);
+const { posts, stats } = await collect(config, fetcher, seen);
 for (const s of stats) {
   if (s.failed) console.log(`${s.source}  FAILED: ${statNote(s)}`);
   else console.log(`${s.source}  fetched ${s.fetched}  new ${s.fresh}  (${statNote(s)})`);
 }
-console.log(`total new posts: ${posts.length}, failed sources: ${stats.filter((s) => s.failed).length}, requests: ${requests} (today ${today.count}/${config.dailyRequestCap})`);
+console.log(`total new posts: ${posts.length}, failed sources: ${stats.filter((s) => s.failed).length}, requests: ${fetcher.made} (today ${today.count}/${config.dailyRequestCap})`);
+
+// Logged-out shadow check runs in dry-run too: it is read-only and costs no LLM calls.
+const shadow = shadowSummary(await checkShadow(config.account, fetcher));
+if (shadow.alert) console.log(`WARNING: ${shadow.alert}`);
+for (const l of shadow.lines) console.log(`shadow: ${l}`);
 const ranked = rankPosts(posts, config, Date.now());
 const competitorHits = findCompetitorMentions(posts, config.competitors);
 const kept = ranked.filter((s) => competitorOwner(s.post, config.competitors) === null);
@@ -94,18 +102,21 @@ if (!args.dryRun) {
     console.log(`memo ${i + 1}/${Math.min(limit, top.length)}: ${chart.status} chart, OpenAI ${usage.calls} calls so far`);
   }
 }
+const elapsedSec = Math.round((Date.now() - startedAt) / 1000);
 const file = writeDigest(
   renderDigest({
     date: todayLocal(),
     generatedAt: new Date(),
     dryRun: args.dryRun,
     stats,
-    requests,
+    requests: fetcher.made,
+    elapsedSec,
     todayCount: today.count,
     cap: config.dailyRequestCap,
     totalNew: posts.length,
     top,
     competitors: competitorHits,
+    shadow,
     notes,
     llm: args.dryRun ? undefined : { calls: usage.calls, costUsd: usage.costUsd },
   }),
@@ -118,4 +129,5 @@ saveRequests(today);
 console.log(`scored: ${ranked.length} posts > 0, top ${top.length} → ${file}`);
 console.log(`excluded competitor-own: ${ranked.length - kept.length}, crossposts folded: ${folded}`);
 console.log(`competitor mentions: ${competitorHits.length}`);
+console.log(`done in ${Math.floor(elapsedSec / 60)}m ${elapsedSec % 60}s, requests ${fetcher.made} (today ${today.count}/${config.dailyRequestCap})`);
 if (!args.dryRun) console.log(`LLM: ${usage.calls} calls, ${usage.promptTokens}+${usage.completionTokens} tokens, $${usage.costUsd.toFixed(4)} (memo model ${MEMO_MODEL}), memo warnings: ${memoWarnings}`);

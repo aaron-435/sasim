@@ -14,6 +14,7 @@ export type DigestInput = {
   dryRun: boolean;
   stats: SourceStat[];
   requests: number;
+  elapsedSec?: number;
   todayCount: number;
   cap: number;
   totalNew: number;
@@ -84,7 +85,7 @@ export function renderDigest(d: DigestInput): string {
     `# 레딧 요약 ${d.date}`,
     ...(d.shadow?.alert ? [`> ⚠️ ${d.shadow.alert}`] : []),
     "",
-    `> 모드: ${d.dryRun ? "dry-run" : "full"} · LLM 비용: ${d.dryRun ? "$0 (dry-run)" : llmCost(d.llm)} · 요청 ${d.requests} (오늘 ${d.todayCount}/${d.cap}) · 새 글 ${d.totalNew} · 생성 ${hhmm}`,
+    `> 모드: ${d.dryRun ? "dry-run" : "full"} · LLM 비용: ${d.dryRun ? "$0 (dry-run)" : llmCost(d.llm)} · 요청 ${d.requests} (오늘 ${d.todayCount}/${d.cap}) · 새 글 ${d.totalNew}${d.elapsedSec === undefined ? "" : ` · 실행 ${Math.floor(d.elapsedSec / 60)}분 ${d.elapsedSec % 60}초`} · 생성 ${hhmm}`,
     "",
     "## 1. 수집 통계",
     "| 출처 | 가져옴 | 새 글 | 비고 |",
