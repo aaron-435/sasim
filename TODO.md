@@ -102,6 +102,7 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - 레딧 프로필 표시 이름과 소개 설정(예: "Building a Korean saju app. Ask me about Four Pillars."). 사용자명은 바꿀 수 없음.
   - 첫 2~3주는 링크 없이 ChineseZodiac, Bazi_Astrology, AstrologyCharts 위주로 하루 1시간 이내 답변. 글은 자기 말로(AI 금지 서브레딧 많음).
   - 각 항목 끝에 제안하는 커밋 메시지로 사용자가 커밋·푸시.
+  - 커밋 전 점검(2026-10-26): 루트 `npx tsc --noEmit` → exit 0, `.mts` 직접 tsc(1번 명령) → exit 0, `npm run lint` → "No ESLint warnings or errors", score 52·competitors 29·memo 27 통과. 1~10번은 `task-23`에 항목별로 커밋됨(main보다 13커밋 앞섬, 레딧 관련 미커밋 변경 없음). 남은 것(사용자 확인): ① `task-23`을 main에 합치고 푸시 ② 레딧 프로필 표시 이름·소개 설정 ③ 링크 없는 답변 2~3주 ④ 첫 댓글 다음 날 `npx tsx scripts/reddit/shadow.mts`로 "보임" 확인.
 
 ## 발견 사항
 
