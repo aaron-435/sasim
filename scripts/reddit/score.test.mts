@@ -39,8 +39,8 @@ check(ranked.map((s) => s.post.id).join(",") === "s1,s4,s3,s5", "rank order is s
 const byId = Object.fromEntries(ranked.map((s) => [s.post.id, s]));
 check(byId.s1.score === 19.5, `s1 scores 19.5, got ${byId.s1.score}`);
 check(byId.s4.score === 6.3, `s4 scores 6.3, got ${byId.s4.score}`);
-check(byId.s3.score === 3.5, `s3 scores 3.5, got ${byId.s3.score}`);
-check(byId.s5.score === 2.2, `s5 scores 2.2, got ${byId.s5.score}`);
+check(byId.s3.score === 1.8, `s3 scores 1.8, got ${byId.s3.score}`);
+check(byId.s5.score === 1.1, `s5 scores 1.1, got ${byId.s5.score}`);
 check(scorePost(s2, config, NOW).score === 0, "s2 scores 0");
 check(scorePost(s2, config, NOW).reasons.some((r) => r.includes("단독")), "s2 notes lone bazi");
 check(byId.s3.reasons.some((r) => r.includes("RSS")), "s3 reasons mention RSS");

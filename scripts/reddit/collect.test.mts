@@ -28,13 +28,14 @@ class FakeFetcher {
   }
 }
 
-// Request count: 6 merged subs + astrology alone + 1 keyword OR + 1 competitor OR = 4 (was 18).
+// Request count: 7 merged subs + AstrologyCharts and astrology alone + 1 keyword OR + 1 competitor OR = 5 (was 20).
 const groups = buildGroups(config);
-assert.equal(groups.length, 4);
-assert.match(groups[0].path, /^\/r\/ChineseZodiac\+Bazi_Astrology\+AstrologyCharts\+Horoscope\+AstrologyChartShare\+kpoppers\/new\.json\?limit=100/);
-assert.equal(groups[1].path, "/r/astrology/new.json?limit=50&raw_json=1");
-assert.equal(decodeURIComponent(groups[2].path.match(/q=([^&]+)/)![1]), 'saju OR "four pillars" OR "day master" OR "korean astrology" OR "chinese astrology" OR 사주');
-assert.equal(decodeURIComponent(groups[3].path.match(/q=([^&]+)/)![1]), '"PAL:JA" OR "K-Sajupalja" OR "Starlit Alley" OR "Youra" OR "TKB_Studio"');
+assert.equal(groups.length, 5);
+assert.match(groups[0].path, /^\/r\/ChineseZodiac\+Bazi_Astrology\+chineseastrology\+EasternOccult\+Horoscope\+AstrologyChartShare\+kpoppers\/new\.json\?limit=100/);
+assert.equal(groups[1].path, "/r/AstrologyCharts/new.json?limit=50&raw_json=1");
+assert.equal(groups[2].path, "/r/astrology/new.json?limit=50&raw_json=1");
+assert.equal(decodeURIComponent(groups[3].path.match(/q=([^&]+)/)![1]), 'saju OR "four pillars" OR "day master" OR "korean astrology" OR "chinese astrology" OR 사주');
+assert.equal(decodeURIComponent(groups[4].path.match(/q=([^&]+)/)![1]), '"PAL:JA" OR "K-Sajupalja" OR "Starlit Alley" OR "Youra" OR "TKB_Studio"');
 
 // Long OR chains split.
 assert.deepEqual(chunkQuery(["aaaa", "bbbb", "cccc"], 12), [["aaaa", "bbbb"], ["cccc"]]);
@@ -46,15 +47,16 @@ const rec = async (ms: number) => void sleeps.push(ms);
 const ok = new FakeFetcher((path) => {
   if (path.startsWith("/r/ChineseZodiac+")) return feed(entry("a1", "ChineseZodiac", "Q"), entry("a2", "horoscope", "Q2"), entry("seen1", "kpoppers", "old"));
   if (path.startsWith("/r/astrology/")) return feed(entry("b1", "astrology", "natal"));
+  if (path.startsWith("/r/AstrologyCharts/")) return feed();
   if (path.includes("saju")) return feed(entry("c1", "x", "My Four Pillars and day master?"), entry("c2", "y", "사주 질문"), entry("c3", "z", "pillar stuff"));
   return feed(entry("d1", "k", "Tried getpalja vs Youra"));
 });
 const r = await collect(config, ok, { seen1: "2026-10-25T00:00:00Z" }, { sleep: rec, log: () => {} });
-assert.equal(r.requests, 4);
+assert.equal(r.requests, 5);
 assert.equal(sleeps.length, 0);
 const stat = (src: string) => r.stats.find((s) => s.source === src)!;
-assert.equal(r.stats.length, 7 + 6 + 5);
-assert.deepEqual(r.stats.map((s) => s.source).slice(0, 7), config.subreddits.map((s) => `sub:${s.name}`));
+assert.equal(r.stats.length, 9 + 6 + 5);
+assert.deepEqual(r.stats.map((s) => s.source).slice(0, 9), config.subreddits.map((s) => `sub:${s.name}`));
 assert.deepEqual([stat("sub:ChineseZodiac").fetched, stat("sub:Horoscope").fetched, stat("sub:kpoppers").fetched, stat("sub:kpoppers").fresh], [1, 1, 1, 0]);
 assert.equal(stat("sub:astrology").fetched, 1);
 assert.deepEqual([stat('kw:"four pillars"').fetched, stat('kw:"day master"').fetched, stat("kw:사주").fetched, stat("kw:saju").fetched], [1, 1, 1, 0]);
@@ -73,7 +75,7 @@ const flaky = new FakeFetcher((path, call) => {
 sleeps.length = 0;
 const r2 = await collect(config, flaky, {}, { sleep: rec, log: () => {} });
 assert.deepEqual([...sleeps], [90_000, 180_000]);
-assert.equal(r2.requests, 4 + 2 + 2);
+assert.equal(r2.requests, 5 + 2 + 2);
 assert.equal(statNote(r2.stats.find((s) => s.source === "sub:Bazi_Astrology")!), "rss, 재시도 2회차 성공");
 assert.equal(r2.stats.find((s) => s.source === "sub:ChineseZodiac")!.fetched, 1);
 const comp = r2.stats.find((s) => s.source === "comp:Youra")!;
@@ -82,24 +84,24 @@ assert.equal(statNote(comp), "실패 (http 429), 재시도 2회 후");
 assert.equal(r2.stats.find((s) => s.source === "kw:saju")!.round, 0);
 
 // Daily cap: first pass uses it all, retries are skipped and noted.
-const capped = new FakeFetcher(() => fail429(), 4);
+const capped = new FakeFetcher(() => fail429(), 5);
 sleeps.length = 0;
 const r3 = await collect(config, capped, {}, { sleep: rec, log: () => {} });
-assert.equal(r3.requests, 4);
+assert.equal(r3.requests, 5);
 assert.equal(sleeps.length, 0);
 assert.equal(statNote(r3.stats[0]), "실패 (http 429), 하루 상한 도달, 재시도 생략");
 
 // Cap reached mid-round: the rest of that round is skipped.
-const midCap = new FakeFetcher(() => fail429(), 5);
+const midCap = new FakeFetcher(() => fail429(), 6);
 const r4 = await collect(config, midCap, {}, { sleep: async () => {}, log: () => {} });
-assert.equal(r4.requests, 5);
+assert.equal(r4.requests, 6);
 assert.equal(statNote(r4.stats.find((s) => s.source === "sub:Horoscope")!), "실패 (http 429), 재시도 1회 후, 하루 상한 도달, 재시도 생략");
 assert.equal(statNote(r4.stats.find((s) => s.source === "sub:astrology")!), "실패 (http 429), 하루 상한 도달, 재시도 생략");
 
 // No retries configured.
 const noRetry = { ...config, retryRounds: 0 };
 const r5 = await collect(noRetry, new FakeFetcher(() => fail429()), {}, { sleep: async () => assert.fail("no sleep"), log: () => {} });
-assert.equal(r5.requests, 4);
+assert.equal(r5.requests, 5);
 
 // Config validation.
 const raw = JSON.parse(JSON.stringify(config));

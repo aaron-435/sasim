@@ -1,7 +1,7 @@
 // Draft checker, sensitive filter and formatting, offline: npx tsx scripts/reddit/draft.test.mts
 import assert from "node:assert/strict";
 import { loadConfig, parseConfig } from "./config.mts";
-import { checkDraft, draftPrompt, formatDraft, sensitiveReason } from "./draft.mts";
+import { checkDraft, draftPrompt, formatDraft, imageOnlyReason, sensitiveReason } from "./draft.mts";
 import { renderDigest } from "./render.mts";
 import type { RedditPost } from "./collect.mts";
 
@@ -36,6 +36,12 @@ check(sensitiveReason(post("help", "I want to die, what does my chart say")) !==
 check(sensitiveReason(post("사주", "요즘 자해를 해요")) !== null, "Korean self-harm → skip");
 check(sensitiveReason(post("Career?", "Born 1990-05-12, what job fits?")) === null, "normal post passes");
 check(sensitiveReason(post("Death card?", "My chart has the Death star 死, what is that")) === null, "plain 'death' passes");
+const withUrl = (body: string, url: string) => ({ ...post("22M pls read my chart", body), url });
+check(imageOnlyReason(withUrl("", "https://i.redd.it/1pfjucwdprxh1.png")) !== null, "i.redd.it image, no body → skip");
+check(imageOnlyReason(withUrl("  ", "https://www.reddit.com/gallery/1xabc")) !== null, "gallery, no body → skip");
+check(imageOnlyReason(withUrl("", "https://i.imgur.com/abc.jpg")) !== null, "imgur → skip");
+check(imageOnlyReason(withUrl("Born 2003-12-03 11:05", "https://i.redd.it/x.png")) === null, "image with body text passes");
+check(imageOnlyReason(withUrl("", "https://www.reddit.com/r/x/comments/1/abc/")) === null, "text post without body passes");
 
 const memo = { gist: "직업 방향", points: ["庚 일간 원칙"], avoid: ["단정"] };
 const prompt = draftPrompt(post("Career?", "Born 1990-05-12"), memo, null, null);

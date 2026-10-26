@@ -43,6 +43,14 @@ export function sensitiveReason(post: RedditPost): string | null {
   return m ? `민감 글(“${m[0]}”): 초안 생략, 답할지 직접 판단` : null;
 }
 
+// Empty body + image or gallery link: the model only sees the title, so notes and drafts would talk past
+// the chart the poster actually shared.
+const IMAGE_URL_RE = /^https?:\/\/(?:i\.redd\.it|preview\.redd\.it|i\.imgur\.com)\/|\.(?:png|jpe?g|gif|webp)(?:\?|$)|reddit\.com\/gallery\//i;
+
+export function imageOnlyReason(post: RedditPost): string | null {
+  return !post.body.trim() && IMAGE_URL_RE.test(post.url) ? "이미지 글: 본문 없이 이미지만 있어 메모·초안 생략, 링크에서 이미지를 직접 보고 판단" : null;
+}
+
 const AI_TELL_RE = /—|\b(great question|in summary|overall,|it'?s important to note|dive into|tapestry|journey)\b/i;
 const LIST_RE = /^\s*(?:[-*•]|\d+\.)\s|^#+\s|\*\*/m;
 
@@ -79,8 +87,8 @@ export async function draftForPost(
   usage: Usage,
   model = DRAFT_MODEL,
 ): Promise<Draft> {
-  const sensitive = sensitiveReason(post);
-  if (sensitive) return { status: "skipped", reason: sensitive };
+  const skip = imageOnlyReason(post) ?? sensitiveReason(post);
+  if (skip) return { status: "skipped", reason: skip };
   const completion = await client.chat.completions.create({
     model,
     ...samplingParams(model),

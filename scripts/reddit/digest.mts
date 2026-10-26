@@ -14,7 +14,7 @@ import { renderDigest, statNote, writeDigest } from "./render.mts";
 import OpenAI from "openai";
 import { chartForPost, emptyUsage, formatChart } from "./chart.mts";
 import { formatMemo, memoForPost, MEMO_MODEL } from "./memo.mts";
-import { draftForPost, formatDraft } from "./draft.mts";
+import { draftForPost, formatDraft, imageOnlyReason } from "./draft.mts";
 import { checkShadow, shadowSummary } from "./shadow.mts";
 
 export type DigestArgs = { dryRun: boolean; limit: number | null; configPath: string | undefined; transport: Transport | undefined };
@@ -107,6 +107,12 @@ if (!args.dryRun) {
   const client = new OpenAI();
   notes = [];
   for (const [i, t] of top.slice(0, limit).entries()) {
+    const imageOnly = imageOnlyReason(t.post);
+    if (imageOnly) {
+      notes.push({ memo: `- ${imageOnly}`, chart: "(이미지 글이라 생략)", draft: "(생략)" });
+      console.log(`memo ${i + 1}/${Math.min(limit, top.length)}: image-only, skipped`);
+      continue;
+    }
     const text = `${t.post.title.trim()}\n\n${t.post.body.trim()}`;
     const chart = await chartForPost(text, client, usage);
     const chartText = formatChart(chart);

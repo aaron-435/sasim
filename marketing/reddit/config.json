@@ -2,10 +2,12 @@
   "subreddits": [
     { "name": "ChineseZodiac", "weight": 1.5, "linksAllowed": false, "aiBanned": false, "promoRule": "No ad URLs in comments, no fear marketing, Eastern divination topics only." },
     { "name": "Bazi_Astrology", "weight": 1.5, "linksAllowed": true, "aiBanned": false, "promoRule": "No posted rules. Mixed Chinese and English." },
-    { "name": "AstrologyCharts", "weight": 1.2, "linksAllowed": false, "aiBanned": true, "promoRule": "No promotion. AI chart readings are treated as scams." },
-    { "name": "Horoscope", "weight": 1.0, "linksAllowed": true, "aiBanned": false, "promoRule": "No link-only posts. Links that support the content are allowed." },
-    { "name": "AstrologyChartShare", "weight": 1.0, "linksAllowed": false, "aiBanned": false, "promoRule": "No promo rule posted, zero tolerance for spam." },
-    { "name": "astrology", "weight": 0.8, "linksAllowed": false, "aiBanned": true, "promoRule": "No promotion even if free. No ChatGPT content." },
+    { "name": "chineseastrology", "weight": 1.5, "linksAllowed": false, "aiBanned": false, "promoRule": "BaZi/Chinese metaphysics only. No ad URLs in comments, no unsolicited DMs offering paid services." },
+    { "name": "EasternOccult", "weight": 1.2, "linksAllowed": false, "aiBanned": false, "promoRule": "Mostly Chinese. No labeling or belittling people by their chart, no paid-link baiting." },
+    { "name": "AstrologyCharts", "weight": 0.4, "linksAllowed": false, "aiBanned": true, "promoRule": "No promotion. AI chart readings are treated as scams. Mostly Western chart screenshots." },
+    { "name": "Horoscope", "weight": 0.5, "linksAllowed": true, "aiBanned": false, "promoRule": "No link-only posts. Links that support the content are allowed." },
+    { "name": "AstrologyChartShare", "weight": 0.4, "linksAllowed": false, "aiBanned": false, "promoRule": "No promo rule posted, zero tolerance for spam." },
+    { "name": "astrology", "weight": 0.4, "linksAllowed": false, "aiBanned": true, "promoRule": "No promotion even if free. No ChatGPT content." },
     { "name": "kpoppers", "weight": 0.8, "linksAllowed": false, "aiBanned": false, "promoRule": "Own content once a week, light and positive only." }
   ],
   "keywords": ["saju", "\"four pillars\"", "\"day master\"", "\"korean astrology\"", "\"chinese astrology\"", "사주"],
@@ -35,7 +37,7 @@
   "topN": 10,
   "requestIntervalMs": 7000,
   "dailyRequestCap": 200,
-  "separateSubreddits": ["astrology"],
+  "separateSubreddits": ["astrology", "AstrologyCharts"],
   "retryRounds": 2,
   "retryCooldownMs": [60000, 180000],
   "transport": "aside"
