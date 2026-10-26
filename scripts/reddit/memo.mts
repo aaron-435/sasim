@@ -72,16 +72,21 @@ export function sentenceCount(s: string): number {
   return s.split(/[.!?。]+(?:\s+|$)/).filter((x) => /[\p{L}\p{N}]/u.test(x)).length;
 }
 
-export function checkMemo(m: MemoBody, competitors: Competitor[]): string[] {
+/** URL, own brand and competitor names: banned in memos and drafts alike. */
+export function linkAndBrandWarnings(text: string, competitors: Competitor[]): string[] {
   const warnings: string[] = [];
-  const fields = [m.gist, ...m.points, ...m.avoid];
-  const all = fields.join("\n");
-  if (URL_RE.test(all)) warnings.push("URL·도메인 포함");
-  if (OWN_BRAND_RE.test(all)) warnings.push("Fatesaid 언급");
+  if (URL_RE.test(text)) warnings.push("URL·도메인 포함");
+  if (OWN_BRAND_RE.test(text)) warnings.push("Fatesaid 언급");
   for (const c of competitors) {
-    const hit = [c.name, ...c.aliases, ...c.domains].find((t) => termRe(t)?.test(all));
+    const hit = [c.name, ...c.aliases, ...c.domains].find((t) => termRe(t)?.test(text));
     if (hit) warnings.push(`경쟁사 언급(${hit})`);
   }
+  return warnings;
+}
+
+export function checkMemo(m: MemoBody, competitors: Competitor[]): string[] {
+  const fields = [m.gist, ...m.points, ...m.avoid];
+  const warnings = linkAndBrandWarnings(fields.join("\n"), competitors);
   if (fields.some((f) => sentenceCount(f) > 3)) warnings.push("3문장 넘는 문단(완성 답글 의심)");
   if (fields.some((f) => REPLY_OPENER_RE.test(f))) warnings.push("답글 인사말");
   if (m.points.length < 2 || m.points.length > 3) warnings.push(`답할 포인트 ${m.points.length}개(2~3개 기대)`);

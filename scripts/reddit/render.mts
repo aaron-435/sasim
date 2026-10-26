@@ -14,6 +14,7 @@ export type DigestInput = {
   dryRun: boolean;
   stats: SourceStat[];
   requests: number;
+  transport?: string;
   elapsedSec?: number;
   todayCount: number;
   cap: number;
@@ -21,8 +22,8 @@ export type DigestInput = {
   top: TopPost[];
   competitors?: CompetitorHit[];
   shadow?: { alert: string | null; lines: string[] };
-  // Full mode: memo and chart markdown per top post, same order as top. Missing = beyond --limit.
-  notes?: { memo: string; chart: string }[];
+  // Full mode: memo, chart and draft markdown per top post, same order as top. Missing = beyond --limit.
+  notes?: { memo: string; chart: string; draft?: string }[];
   llm?: { calls: number; costUsd: number };
 };
 
@@ -57,7 +58,7 @@ function slot(label: string, text: string): string[] {
   return [`- ${label}:`, ...text.split("\n").map((l) => `  ${l}`)];
 }
 
-function topBlock(s: TopPost, i: number, dryRun: boolean, at: Date, note: { memo: string; chart: string } | undefined): string[] {
+function topBlock(s: TopPost, i: number, dryRun: boolean, at: Date, note: { memo: string; chart: string; draft?: string } | undefined): string[] {
   const p = s.post;
   const comments = p.numComments === null ? "댓글 알 수 없음" : `댓글 ${p.numComments}`;
   return [
@@ -69,6 +70,7 @@ function topBlock(s: TopPost, i: number, dryRun: boolean, at: Date, note: { memo
     `- 본문: > ${snippet(p.body)}`,
     ...slot("사주", dryRun ? "(dry-run)" : note?.chart ?? "(--limit 밖)"),
     ...slot("메모", dryRun ? "(dry-run)" : note?.memo ?? "(--limit 밖)"),
+    ...(note?.draft !== undefined ? slot("초안 (직접 고쳐서 올리기)", note.draft) : []),
   ];
 }
 
@@ -85,7 +87,7 @@ export function renderDigest(d: DigestInput): string {
     `# 레딧 요약 ${d.date}`,
     ...(d.shadow?.alert ? [`> ⚠️ ${d.shadow.alert}`] : []),
     "",
-    `> 모드: ${d.dryRun ? "dry-run" : "full"} · LLM 비용: ${d.dryRun ? "$0 (dry-run)" : llmCost(d.llm)} · 요청 ${d.requests} (오늘 ${d.todayCount}/${d.cap}) · 새 글 ${d.totalNew}${d.elapsedSec === undefined ? "" : ` · 실행 ${Math.floor(d.elapsedSec / 60)}분 ${d.elapsedSec % 60}초`} · 생성 ${hhmm}`,
+    `> 모드: ${d.dryRun ? "dry-run" : "full"} · LLM 비용: ${d.dryRun ? "$0 (dry-run)" : llmCost(d.llm)} ${d.transport ? ` · 수집 ${d.transport}` : ""} · 요청 ${d.requests} (오늘 ${d.todayCount}/${d.cap}) · 새 글 ${d.totalNew}${d.elapsedSec === undefined ? "" : ` · 실행 ${Math.floor(d.elapsedSec / 60)}분 ${d.elapsedSec % 60}초`} · 생성 ${hhmm}`,
     "",
     "## 1. 수집 통계",
     "| 출처 | 가져옴 | 새 글 | 비고 |",

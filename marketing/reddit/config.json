@@ -37,5 +37,6 @@
   "dailyRequestCap": 200,
   "separateSubreddits": ["astrology"],
   "retryRounds": 2,
-  "retryCooldownMs": [60000, 180000]
+  "retryCooldownMs": [60000, 180000],
+  "transport": "aside"
 }

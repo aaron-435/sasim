@@ -37,6 +37,8 @@ export type RedditConfig = {
   retryRounds: number;
   retryCooldownMs: number[];
   scoring: ScoringConfig;
+  // "aside" collects through the logged-in Aside browser; the shadow check always stays cookie-less.
+  transport: "direct" | "aside";
 };
 
 export class ConfigError extends Error {
@@ -160,6 +162,8 @@ export function parseConfig(raw: unknown): RedditConfig {
     if (typeof v !== "number" || !Number.isFinite(v) || v < 0) throw new ConfigError(`retryCooldownMs[${i}]`, "must be a number >= 0");
     return v;
   });
+  const transport = raw["transport"] ?? "direct";
+  if (transport !== "direct" && transport !== "aside") throw new ConfigError("transport", 'must be "direct" or "aside"');
   return {
     subreddits,
     keywords: strArr(raw, "keywords", "keywords", false),
@@ -173,6 +177,7 @@ export function parseConfig(raw: unknown): RedditConfig {
     retryRounds,
     retryCooldownMs,
     scoring,
+    transport,
   };
 }
 

@@ -1,6 +1,11 @@
 // Read-only Reddit HTTP: pacing, daily cap, retries with RSS fallback. Never throws.
+// Transport "direct" is cookie-less Node fetch. "aside" sends the same GET through the Aside browser
+// (`aside repl` fetch carries the logged-in cookies), which Reddit answers with JSON instead of 403.
+import { execFile } from "node:child_process";
 import type { RedditConfig } from "./config.mts";
 import type { DayCount } from "./state.mts";
+
+export type Transport = "direct" | "aside";
 
 export type FetchOk = { ok: true; format: "json"; data: unknown } | { ok: true; format: "rss"; xml: string };
 // retryAfterMs: Reddit's Retry-After as sent (uncapped), so a later retry round can honor it.
@@ -17,11 +22,60 @@ export function baseUrl(): string {
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-function retryAfterMs(res: Response): number | null {
-  const h = res.headers.get("retry-after")?.trim();
+function retryAfterMs(header: string | null): number | null {
+  const h = header?.trim();
   if (!h) return null;
   const s = Number(h);
   return Number.isFinite(s) && s > 0 ? s * 1000 : null;
+}
+
+type RawResponse = { status: number; retryAfter: string | null; text: string };
+
+const ASIDE_MARK = "__ASIDE_RESULT__";
+const ASIDE_TIMEOUT_MS = 90_000;
+
+// Runs inside `aside repl`: GET only, then slims post listings to the fields collect.mts reads,
+// so a 100-post page (~800 KB) fits through stdout.
+function asideCode(url: string): string {
+  return `
+const asideRes = await fetch(${JSON.stringify(url)});
+let asideText = await asideRes.text();
+try {
+  const j = JSON.parse(asideText);
+  if (j && j.kind === "Listing" && Array.isArray(j.data?.children) && j.data.children.every((c) => c.kind === "t3")) {
+    const keep = ["id", "subreddit", "title", "selftext", "author", "created_utc", "num_comments", "permalink", "url"];
+    j.data.children = j.data.children.map((c) => ({ kind: c.kind, data: Object.fromEntries(keep.map((k) => [k, c.data?.[k]])) }));
+    asideText = JSON.stringify(j);
+  }
+} catch {}
+console.log(${JSON.stringify(ASIDE_MARK)} + JSON.stringify({ status: asideRes.status, retryAfter: asideRes.headers.get("retry-after"), text: asideText }));
+`;
+}
+
+function asideGet(url: string): Promise<RawResponse> {
+  return new Promise((resolve, reject) => {
+    execFile("aside", ["repl", asideCode(url)], { timeout: ASIDE_TIMEOUT_MS, maxBuffer: 32 * 1024 * 1024 }, (err, stdout) => {
+      const line = stdout?.split("\n").find((l) => l.startsWith(ASIDE_MARK));
+      if (!line) return reject(new Error(err ? `aside: ${err.message.split("\n")[0]}` : "aside: no result line"));
+      try {
+        resolve(JSON.parse(line.slice(ASIDE_MARK.length)) as RawResponse);
+      } catch {
+        reject(new Error("aside: unreadable result line"));
+      }
+    });
+  });
+}
+
+/** Logged-in username Aside's browser sends to Reddit, or null when Aside is down or logged out. */
+export async function asideAccount(): Promise<string | null> {
+  try {
+    const r = await asideGet(baseUrl() + "/api/me.json");
+    if (r.status !== 200) return null;
+    const name = (JSON.parse(r.text) as { data?: { name?: unknown } })?.data?.name;
+    return typeof name === "string" && name ? name : null;
+  } catch {
+    return null;
+  }
 }
 
 function retryable(a: FetchResult): boolean {
@@ -37,9 +91,11 @@ export class Fetcher {
   private ua: string;
   private config: RedditConfig;
   private today: DayCount;
-  constructor(config: RedditConfig, today: DayCount) {
+  readonly transport: Transport;
+  constructor(config: RedditConfig, today: DayCount, transport: Transport = "direct") {
     this.config = config;
     this.today = today;
+    this.transport = transport;
     this.ua = `fatesaid-listening/0.1 (read-only digest; by /u/${config.account})`;
   }
 
@@ -82,23 +138,28 @@ export class Fetcher {
     this.today.count++;
     this.made++;
     try {
-      const res = await fetch(baseUrl() + path, {
-        headers: { "User-Agent": this.ua, Accept: rss ? "application/atom+xml" : "application/json" },
-        signal: AbortSignal.timeout(TIMEOUT_MS),
-      });
-      if (!res.ok) {
-        const fail: FetchFail = { ok: false, reason: "http", status: res.status, error: `HTTP ${res.status}` };
-        if (res.status === 429) {
-          const ms = retryAfterMs(res);
+      let raw: RawResponse;
+      if (this.transport === "aside") raw = await asideGet(baseUrl() + path);
+      else {
+        const res = await fetch(baseUrl() + path, {
+          headers: { "User-Agent": this.ua, Accept: rss ? "application/atom+xml" : "application/json" },
+          signal: AbortSignal.timeout(TIMEOUT_MS),
+        });
+        raw = { status: res.status, retryAfter: res.headers.get("retry-after"), text: await res.text() };
+      }
+      if (raw.status < 200 || raw.status >= 300) {
+        const fail: FetchFail = { ok: false, reason: "http", status: raw.status, error: `HTTP ${raw.status}` };
+        if (raw.status === 429) {
+          const ms = retryAfterMs(raw.retryAfter);
           if (ms !== null) fail.retryAfterMs = ms;
         }
         return fail;
       }
-      if (rss) return { ok: true, format: "rss", xml: await res.text() };
+      if (rss) return { ok: true, format: "rss", xml: raw.text };
       try {
-        return { ok: true, format: "json", data: await res.json() };
+        return { ok: true, format: "json", data: JSON.parse(raw.text) };
       } catch {
-        return { ok: false, reason: "http", status: res.status, error: "invalid JSON body" };
+        return { ok: false, reason: "http", status: raw.status, error: "invalid JSON body" };
       }
     } catch (e) {
       const err = e as Error;

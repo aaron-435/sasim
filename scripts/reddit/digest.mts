@@ -1,8 +1,10 @@
-// Morning Reddit listening digest. Read-only: never posts, votes or logs in.
-//   npm run reddit:digest -- [--dry-run] [--limit N] [--config path]
-// --dry-run: collect and score only, no LLM calls. --limit N: memo only the top N posts (default config.topN).
+// Morning Reddit listening digest. Read-only: never posts, votes, comments or messages.
+//   npm run reddit:digest -- [--dry-run] [--limit N] [--config path] [--transport aside|direct]
+// --dry-run: collect and score only, no LLM calls. --limit N: memo + draft only the top N posts (default config.topN).
+// Transport (config.transport, overridable): "aside" collects through the logged-in Aside browser and falls back to
+// "direct" (cookie-less) when Aside is not running or logged in as another account. The shadow check is always direct.
 import { ConfigError, loadConfig } from "./config.mts";
-import { Fetcher } from "./fetch.mts";
+import { asideAccount, Fetcher, type Transport } from "./fetch.mts";
 import { collect } from "./collect.mts";
 import { loadRequests, loadSeen, saveRequests, saveSeen, todayLocal } from "./state.mts";
 import { rankPosts } from "./score.mts";
@@ -12,12 +14,13 @@ import { renderDigest, statNote, writeDigest } from "./render.mts";
 import OpenAI from "openai";
 import { chartForPost, emptyUsage, formatChart } from "./chart.mts";
 import { formatMemo, memoForPost, MEMO_MODEL } from "./memo.mts";
+import { draftForPost, formatDraft } from "./draft.mts";
 import { checkShadow, shadowSummary } from "./shadow.mts";
 
-export type DigestArgs = { dryRun: boolean; limit: number | null; configPath: string | undefined };
+export type DigestArgs = { dryRun: boolean; limit: number | null; configPath: string | undefined; transport: Transport | undefined };
 
 export function parseArgs(argv: string[]): DigestArgs {
-  const args: DigestArgs = { dryRun: false, limit: null, configPath: undefined };
+  const args: DigestArgs = { dryRun: false, limit: null, configPath: undefined, transport: undefined };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--dry-run") args.dryRun = true;
@@ -29,6 +32,10 @@ export function parseArgs(argv: string[]): DigestArgs {
       const p = argv[++i];
       if (!p) throw new Error("--config needs a path");
       args.configPath = p;
+    } else if (a === "--transport") {
+      const t = argv[++i];
+      if (t !== "aside" && t !== "direct") throw new Error("--transport needs aside or direct");
+      args.transport = t;
     } else throw new Error(`unknown argument: ${a}`);
   }
   return args;
@@ -60,7 +67,17 @@ console.log(`mode: ${args.dryRun ? "dry-run (no LLM)" : "full"}, top ${limit}, i
 const startedAt = Date.now();
 const seen = loadSeen();
 const today = loadRequests();
-const fetcher = new Fetcher(config, today);
+let transport: Transport = args.transport ?? config.transport;
+let transportNote = transport === "aside" ? `aside (u/${config.account})` : "direct (쿠키 없음)";
+if (transport === "aside") {
+  const who = await asideAccount();
+  if (who?.toLowerCase() !== config.account.toLowerCase()) {
+    transport = "direct";
+    transportNote = `direct (쿠키 없음) — aside ${who ? `계정이 u/${who}` : "응답 없음·로그아웃"}이라 대체`;
+  }
+}
+console.log(`transport: ${transportNote}`);
+const fetcher = new Fetcher(config, today, transport);
 const { posts, stats } = await collect(config, fetcher, seen);
 for (const s of stats) {
   if (s.failed) console.log(`${s.source}  FAILED: ${statNote(s)}`);
@@ -69,7 +86,9 @@ for (const s of stats) {
 console.log(`total new posts: ${posts.length}, failed sources: ${stats.filter((s) => s.failed).length}, requests: ${fetcher.made} (today ${today.count}/${config.dailyRequestCap})`);
 
 // Logged-out shadow check runs in dry-run too: it is read-only and costs no LLM calls.
-const shadow = shadowSummary(await checkShadow(config.account, fetcher));
+// Logged-out view on purpose: through Aside our own comments would always look visible.
+const shadowFetcher = new Fetcher(config, today, "direct");
+const shadow = shadowSummary(await checkShadow(config.account, shadowFetcher));
 if (shadow.alert) console.log(`WARNING: ${shadow.alert}`);
 for (const l of shadow.lines) console.log(`shadow: ${l}`);
 const ranked = rankPosts(posts, config, Date.now());
@@ -81,8 +100,9 @@ const folded = grouped.reduce((a, t) => a + t.crossposts.length, 0);
 
 // Full mode: chart (only when a birth year shows up) then memo, for the first `limit` top posts.
 const usage = emptyUsage();
-let notes: { memo: string; chart: string }[] | undefined;
+let notes: { memo: string; chart: string; draft: string }[] | undefined;
 let memoWarnings = 0;
+let draftWarnings = 0;
 if (!args.dryRun) {
   const client = new OpenAI();
   notes = [];
@@ -90,15 +110,25 @@ if (!args.dryRun) {
     const text = `${t.post.title.trim()}\n\n${t.post.body.trim()}`;
     const chart = await chartForPost(text, client, usage);
     const chartText = formatChart(chart);
+    const meta = config.subreddits.find((s) => s.name.toLowerCase() === t.post.subreddit.toLowerCase());
     let memo: string;
+    let draft: string;
     try {
-      const m = await memoForPost(t.post, config.subreddits.find((s) => s.name.toLowerCase() === t.post.subreddit.toLowerCase()), chart, chartText, config.competitors, client, usage);
+      const m = await memoForPost(t.post, meta, chart, chartText, config.competitors, client, usage);
       memoWarnings += m.warnings.length;
       memo = formatMemo(m);
+      try {
+        const d = await draftForPost(t.post, m, chart, chartText, config.competitors, client, usage);
+        if (d.status === "ok") draftWarnings += d.warnings.length;
+        draft = formatDraft(d, meta);
+      } catch (err) {
+        draft = `초안 실패: ${(err as Error).message}`;
+      }
     } catch (err) {
       memo = `메모 실패: ${(err as Error).message}`;
+      draft = "(메모 실패로 초안 없음)";
     }
-    notes.push({ memo, chart: chartText });
+    notes.push({ memo, chart: chartText, draft });
     console.log(`memo ${i + 1}/${Math.min(limit, top.length)}: ${chart.status} chart, OpenAI ${usage.calls} calls so far`);
   }
 }
@@ -109,7 +139,8 @@ const file = writeDigest(
     generatedAt: new Date(),
     dryRun: args.dryRun,
     stats,
-    requests: fetcher.made,
+    requests: fetcher.made + shadowFetcher.made,
+    transport: transportNote,
     elapsedSec,
     todayCount: today.count,
     cap: config.dailyRequestCap,
@@ -129,5 +160,5 @@ saveRequests(today);
 console.log(`scored: ${ranked.length} posts > 0, top ${top.length} → ${file}`);
 console.log(`excluded competitor-own: ${ranked.length - kept.length}, crossposts folded: ${folded}`);
 console.log(`competitor mentions: ${competitorHits.length}`);
-console.log(`done in ${Math.floor(elapsedSec / 60)}m ${elapsedSec % 60}s, requests ${fetcher.made} (today ${today.count}/${config.dailyRequestCap})`);
-if (!args.dryRun) console.log(`LLM: ${usage.calls} calls, ${usage.promptTokens}+${usage.completionTokens} tokens, $${usage.costUsd.toFixed(4)} (memo model ${MEMO_MODEL}), memo warnings: ${memoWarnings}`);
+console.log(`done in ${Math.floor(elapsedSec / 60)}m ${elapsedSec % 60}s, requests ${fetcher.made + shadowFetcher.made} (today ${today.count}/${config.dailyRequestCap})`);
+if (!args.dryRun) console.log(`LLM: ${usage.calls} calls, ${usage.promptTokens}+${usage.completionTokens} tokens, $${usage.costUsd.toFixed(4)} (memo model ${MEMO_MODEL}), memo warnings: ${memoWarnings}, draft warnings: ${draftWarnings}`);
