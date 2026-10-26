@@ -21,20 +21,27 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA: `npm run reddit:digest -- --dry-run` 후 `marketing/reddit/digest/<오늘>.md`가 생기고, 상위 글이 최대 10개, 각 글에 제목·퍼머링크·서브레딧·나이·댓글 수·점수 근거가 있다. `npx tsx scripts/reddit/score.test.mts`(고정 샘플 5개: bazi 단독 글은 0점 근처, saju+생년월일 글이 최상위)가 통과.
   - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. `npx tsx scripts/reddit/score.test.mts` → "score tests: 26 passed" exit 0. 실레딧 `npm run reddit:digest -- --dry-run` → exit 0, 13곳 중 9곳 성공(429 4곳은 요약 표에 실패로 기록), 새 글 87·점수 있는 글 84, `marketing/reddit/digest/2026-10-25.md`에 상위 10개(제목·링크·서브레딧·나이·댓글·점수 근거)와 섹션 4개. 같은 날 재실행은 `-2.md`로 따로 쓴다. 구현은 muse(지시서 20, 브랜치 task-20). (2026-10-25)
 
-- [ ] 3a. 점수 잡음 줄이기와 가중치 설정화
+- [x] 3a. 점수 잡음 줄이기와 가중치 설정화
   - 선행: 3
   - 배경: 3번 실측에서 `"four pillars"`가 카지노 스팸·해커톤·D&D·개인 프로필(`r/u_*`) 글에 걸려 상위 10개 중 절반 이상이 잡음. 키워드 외 가중치가 `score.mts`에 고정돼 SPEC("규칙과 가중치는 설정 파일에")과 어긋남. RSS 본문에 HTML 엔티티가 두 번 인코딩돼 남음(`&#39;`, `&quot;`).
   - 변경: `marketing/reddit/config.json`에 `scoring` 블록(키워드·보조 키워드·생년월일·시각·감시 서브레딧·질문 가산값, 나이·댓글 곱셈 구간, 문맥 필요 키워드 목록과 문맥어 목록, 프로필 글 곱셈) 추가 + `config.mts` 검증. `score.mts`가 설정값을 읽고, 감시 서브레딧 밖에서는 문맥 필요 키워드(`four pillars` 등)에 문맥어(bazi·saju·astrology·zodiac·chart·element·day master 등)가 같이 있어야 가산, `r/u_*` 글은 감점. `collect.mts` RSS 본문·제목 엔티티를 한 번 더 디코드.
   - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` exit 0. `npx tsx scripts/reddit/score.test.mts` 통과(샘플 추가: 비감시 서브레딧의 "four pillars of healthcare" 글 0점, `r/u_*` 사주 글은 같은 내용의 감시 서브레딧 글보다 낮음, RSS 이중 인코딩 `&amp;#39;` → `'`). 설정에서 `scoring` 키 하나를 지우면 exit 1과 키 이름. 실레딧 dry-run 1회로 상위 10개 중 사주 무관 글이 2개 이하인지 직접 읽어 확인하고 결과를 여기 적는다.
   - QA(코드): `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. `npx tsx scripts/reddit/score.test.mts` → "score tests: 39 passed" exit 0(기존 26개 점수 그대로). `--config <scoring.contextWords 지운 사본>` → `config: "scoring.contextWords" is missing` exit 1. 구현은 muse(지시서 21, 브랜치 task-21) + 이 세션이 한 줄 추가: 감시 서브레딧 밖에서 인정된 키워드가 없으면 생년월일·시각이 있어도 0점(카지노 스팸이 날짜·시각 +4로 남던 문제). (2026-10-25)
   - QA(오프라인 재채점): 아침 요약 `2026-10-25.md`의 상위 10개(제목 + 잘린 본문)를 새 규칙으로 다시 매김 → 사주 무관 5개(카지노, D&D, 해커톤, Scroll 2개) 모두 0점, `r/u_*` 바쯔 글 5.0→2.5, 남은 5개는 전부 점성·바쯔 글. 본문이 잘린 상태라 근사치.
-  - 남은 것: 실레딧 dry-run 확인. 2026-10-25에는 하루 요청 상한 200을 다 써서(`today 200/200`, 13곳 중 4곳만 성공·새 글 0) 못 했다. 2026-10-26 이후 `npm run reddit:digest -- --dry-run` 1회 → 상위 10개 중 사주 무관 글 2개 이하면 `[x]`.
+  - QA(실레딧): npm run reddit:digest -- --dry-run → exit 0, 13곳 중 9곳 성공(429: AstrologyCharts, astrology, kw "four pillars", kw "korean astrology"), 새 글 62, 요청 45(today 45/200), 상위 10개 중 무관 0개(전부 바쯔·사주·중국 점성 글. 단 1~5위는 같은 작성자의 같은 글 크로스포스트 5개, 6·8위는 경쟁사 Youra·PAL:JA 자사 글). 주의: 잡음의 주 출처였던 kw "four pillars"가 429로 빠져 문맥 필터는 이번 실측에서 거의 안 거쳤다. (2026-10-26)
+
+- [ ] 3b. 크로스포스트 묶기와 경쟁사 자사 글 제외
+  - 선행: 3a, 4
+  - 배경: 2026-10-26 dry-run 상위 1~5위가 한 작성자가 같은 질문을 5개 서브레딧에 올린 글, 6·8위가 경쟁사(Youra·PAL:JA) 자사 글. 8번 메모가 상위 글마다 OpenAI를 부르므로 그대로면 같은 글에 메모 5개.
+  - 변경: `score.mts`(또는 새 `dedupe.mts`)에서 같은 작성자 + 제목·본문 앞부분(정규화 후 앞 200자) 일치 글을 한 글로 묶는다. 대표는 점수 최고 글, 나머지 서브레딧·링크는 대표 글에 목록으로 붙이고 상위 N칸을 차지하지 않는다. `render.mts`는 대표 글 아래 "같은 글: r/A, r/B …" 한 줄. 경쟁사 자사 글(작성자가 설정의 경쟁사 계정이거나, 서브레딧이 경쟁사 서브레딧이거나, 본문이 경쟁사 도메인 링크를 홍보하는 글)은 상위에서 빼고 경쟁사 섹션에만 둔다. 경쟁사 계정·서브레딧 목록은 `config.json`의 `competitors[]`에 `accounts`·`subreddits` 필드로 추가 + `config.mts` 검증.
+  - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` exit 0. `npx tsx scripts/reddit/score.test.mts` 통과(샘플 추가: 같은 작성자·같은 본문 3개 서브레딧 → 상위 1칸 + "같은 글" 2개, 작성자만 같고 본문이 다르면 따로, 경쟁사 서브레딧 글은 상위에 없고 경쟁사 섹션에 있음). `competitors.test.mts` 통과. 실레딧 dry-run은 하지 않고 `2026-10-26.md`의 상위 10개를 오프라인 재채점해 1~5위가 1칸으로, 6·8위가 빠지는지 확인(본문이 잘려 근사치). 실레딧 확인은 9번 전체 실행 때.
 
 - [x] 4. 경쟁사 언급 모음
   - 선행: 2
   - 변경: `scripts/reddit/competitors.mts`(설정의 이름·도메인을 제목·본문·URL에서 대소문자 무시로 찾음, 점수와 무관하게 전부), 사이트 검색에 경쟁사 이름 질의 추가(하루 상한 안에서), `render.mts`의 경쟁사 섹션.
   - QA: `npx tsx scripts/reddit/competitors.test.mts`(샘플 4개: "getpalja.com" 링크, "PAL:JA" 표기, 무관한 "pal" 단어는 미검출) 통과, dry-run 요약에 경쟁사 섹션이 있다(0건이면 "없음").
   - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. `npx tsx scripts/reddit/competitors.test.mts` → "competitor tests: 13 passed" exit 0(getpalja.com 링크·PAL:JA 표기 검출, pal·palette·yourself 미검출, `starlit-alley` URL, 한 글 2개 경쟁사 설정 순서, `renderDigest` 0건 "없음"·히트 줄에 제목·이름·링크). `score.test.mts` 여전히 39 passed. 구현은 muse(지시서 22, 브랜치 task-22). 실레딧 dry-run은 오늘 상한 초과라 못 했고, 3a의 2026-10-26 dry-run에서 `comp:` 5곳 수집 통계와 섹션을 같이 본다. (2026-10-25)
+  - QA(실레딧): 3a와 같은 dry-run 1회 → `comp:` 5곳 중 3곳 성공(K-Sajupalja 1·Starlit Alley 0·TKB_Studio 0, PAL:JA·Youra는 429), 요약 "3. 경쟁사 언급"에 2건(r/KoreanSaju PAL:JA 글, r/Youra_Official Youra 글, 둘 다 다른 출처로 수집된 글에서 검출). (2026-10-26)
 
 - [x] 5. 섀도 필터 점검
   - 선행: 1
@@ -55,12 +62,12 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
   - QA: `.mts` 직접 tsc·루트 `npx tsc --noEmit` → exit 0. `npx tsx --env-file=.env.local scripts/reddit/chart.test.mts` → "chart tests: 59 passed · OpenAI 4 calls, 1727+204 tokens, $0.0022" exit 0(오프라인: 2월 30일·미래 연도·본문에 없는 연도·시 25·분 61 거부, 시 없는 분 버림, 음력 30일 허용/31일 거부, 도시 찾기, 연도 없는 글은 LLM 미호출 / 온라인: 픽스처 4개 추출 필드 전부 일치, 3개의 4기둥·오행이 엔진 직접 호출과 일치, 시주 없음·도시 없음·성별 없음·음력 생략 표기). `npm run validate:manseryeok` → "All golden samples match". `score.test.mts` 39 passed. `lib/` 변경 없음(`git status`). 모델 `REDDIT_EXTRACT_MODEL`(기본 gpt-5.4-mini, JSON 스키마 strict). 도시 없음은 엔진 기본값(서울 KST)으로 근사하고 그 사실을 적는다. 이 세션 직접 작성. (2026-10-25)
 
 - [ ] 8. 답할 포인트 메모 (이 세션 직접)
-  - 선행: 3, 3a, 7
+  - 선행: 3, 3a, 3b, 7
   - 변경: `scripts/reddit/memo.mts`(시스템 지시: 질문 요지 1줄 / 답할 포인트 2~3개 / 피할 것 / 서브레딧 규칙 주의. 완성 문단 금지, 앱·웹 이름·URL 금지, `PRODUCT.md` 원칙 반영(나쁜 날·궁합 없음, 건강·죽음·사고·재정 손실 예측 없음, 단정적 부정 예측 없음, 미성년 연애 없음). 사주 계산 결과가 있으면 그것만 근거로 쓰고 없는 차트 사실은 만들지 않음. 응답 후 검사기: URL·"Fatesaid"·경쟁사 이름·3문장 넘는 연속 문단이 있으면 메모에 경고 표시), 모델은 환경 변수 `REDDIT_MEMO_MODEL`(기본 기존 소형 모델), 사용량으로 비용 합산.
   - QA: `npm run reddit:digest -- --limit 3`(OpenAI 3~6회 호출) 후 요약 파일에 메모 3개, 맨 위에 LLM 비용, 검사기 경고 0개. 메모를 직접 읽어 완성 답글처럼 보이지 않는지 확인하고 결과를 여기 적는다.
 
 - [ ] 9. 통합 실행과 사용법 문서
-  - 선행: 3, 4, 5, 8
+  - 선행: 3, 3b, 4, 5, 8
   - 변경: `digest.mts`에서 전 과정 연결(수집 → 점수 → 사주 → 메모 → 경쟁사 → 섀도 → 렌더), 실행 시간과 요청 수 출력, `marketing/reddit/README.md`(아침 루틴: 실행 → 요약 읽기 → 직접 답글 → 로그아웃 확인. 링크 노출 시작 조건: 계정 활동 2~3주 + iOS 공개. 서브레딧별 홍보 규칙 요약은 `REDDIT_RESEARCH_2026-10-25.md` 링크).
   - QA: `npm run reddit:digest`(전체, OpenAI 10~20회) 종료 코드 0, 요약 파일에 네 섹션 모두 존재. 루트 `npx tsc --noEmit` 오류 0, `npm run lint` 통과. `git status`에 digest·state 파일이 안 보인다.
 
@@ -87,4 +94,5 @@ SPEC: `SPEC.md`. 근거: `REDDIT_RESEARCH_2026-10-25.md`.
 - 감시 서브레딧 `AstrologyCharts`의 서양 점성 질문(형제 궁합, 학교 고르기)이 감시 +2·질문 +1로 3.6점을 받아 상위에 든다. 사주 문맥이 없는 감시 서브레딧 글을 낮출지는 실제 답글 경험을 보고 판단. (3a번)
 - 섀도 점검의 댓글별 판정은 실제 댓글이 없어 실레딧에서 안 돌았다(AutoModerator 공개 피드는 빈 피드). 첫 댓글을 단 다음 날 `npx tsx scripts/reddit/shadow.mts`로 "보임" 1줄이 나오는지 확인. (5번)
 - 사주 계산은 글당 KASI 호출 1회가 더 든다(일주 조회). 레딧 하루 상한과는 별개지만 data.go.kr 일일 한도 안인지 9번 전체 실행 때 볼 것. 한 글에 여러 사람(궁합 질문)이 있으면 첫 사람만 계산한다. (7번)
+- 크로스포스트 중복: 2026-10-26 dry-run 상위 1~5위가 한 작성자(u/Lanky_Lobster_5554)의 같은 질문을 5개 서브레딧에 올린 글이라 상위 10칸 중 5칸을 차지했다. 같은 작성자·같은 본문 앞부분이면 한 글로 묶고 나머지 서브레딧은 목록으로만 붙이는 처리가 필요해 보인다. 경쟁사 자사 서브레딧(r/Youra_Official, r/KoreanSaju의 u/getpalja 글)도 상위에 든다 → 답할 대상이 아니니 경쟁사 섹션에만 두고 상위에서 뺄지 검토. 또 이번 실행은 kw "four pillars"가 429로 빠져 3a 문맥 필터를 실측으로는 거의 확인 못 했다. 다음 실행들에서 그 출처가 성공한 날의 상위 10개를 한 번 더 볼 것. (3a번)
 - 전체 실행 요청 수가 경쟁사 검색 5곳 + 섀도 2회 이상으로 약 40회로 는다. 7초 간격에서도 연속 요청 4번째에 RSS 429가 났다(5번 QA 중). (4·5번)
