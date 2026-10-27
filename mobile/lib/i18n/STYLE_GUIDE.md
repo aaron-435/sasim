@@ -50,9 +50,18 @@ below, a `LOCALE_STYLE` entry, and run a native-reader pass with the persona tes
 Type names (the 50 saju types) are labels shown next to the reader's own name: choose wording that can't
 be mistaken for a first name (es: use a noun phrase, not a bare "Rocío").
 
-## Spanish (es) — neutral Spanish for Latin America and Spain
+## Spanish (es) — neutral Latin American Spanish (es-419)
 
-- **Register: tú.** Never "usted", never "vos"/"vosotros". Imperatives are tú forms ("respira", "espera").
+Decided 2026-10-27: the standard is neutral Latin American Spanish, with no single country's dialect.
+Spain-only forms are out, even where they'd be understood.
+
+- **Register: tú.** Never "usted", never "vos"/"vosotros". Plural "you" is "ustedes" ("os" never appears).
+  Imperatives are tú forms ("respira", "espera").
+- **Past tense:** a finished event takes the simple past ("me contaste", "elegiste"), not the Spain-style
+  present perfect ("me has contado", "has elegido"). Keep the present perfect only for something still
+  open up to now ("este año ha sido largo", "¿alguna vez te ha pasado?").
+- **Vocabulary:** Latin American words: "computadora", "celular", "carro"/"auto", "enojarse", "manejar"
+  (not "ordenador", "móvil", "coche", "enfadarse", "conducir").
 - **Gender-neutral reader:** no "agotado/a", "cansado/a", "solo/a", "yo mismo/a", "contento/a".
   Use nouns/verbs: "estás sin energía", "sientes cansancio", "por tu cuenta", "Sobre ti".
 - **Regional neutrality:** avoid "coger", "ahorita", "chévere", "regañar", "tomar la delantera",

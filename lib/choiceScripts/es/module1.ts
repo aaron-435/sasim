@@ -192,7 +192,7 @@ export const MODULE1_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, cuando no llega la respuesta lo primero que aparece es {g2}; lo que sientes entonces es, más que nada, {g4}; y tras una discusión lo primero es {g8}.",
+    "Por lo que me contaste, cuando no llega la respuesta lo primero que aparece es {g2}; lo que sientes entonces es, más que nada, {g4}; y tras una discusión lo primero es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
@@ -203,6 +203,6 @@ export const MODULE1_SCRIPT_ES: ModuleScript = {
       "Lo que te hace sentir que te quieren es {g13}; lo que te calma cuando algo te incomoda es {g15}; lo que suele hacer el otro entonces es {g17}; y querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que le dijiste a quien empieza su próximo amor también lo guardo, con tus palabras.",
-    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
+    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.",
   },
 };

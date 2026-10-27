@@ -42,6 +42,7 @@ import {
   limitCheckpointLinesV3,
   PERSPECTIVE_LEAD_TURN_V3,
 } from "./chatChoices";
+import { matchEsGenderedReaderInReply } from "./esGender";
 import { JOURNAL_CRISIS_PATTERN } from "./journal";
 import { buildScriptReply, normalizeAnswerText } from "./chatScript";
 import { getModuleScript } from "./choiceScripts/index";
@@ -430,10 +431,25 @@ export async function getChatReply(params: {
       }
       problem = `${replyLocale} 응답에 한글이 섞였습니다.`;
     }
-    if (!problem && expectedQuote && attempt === 0 && !rawLines.some((l) => normForMatch(l).includes(normForMatch(expectedQuote)))) {
-      quoteRetryNote = `\n\n[다시 쓰기] 방금 응답에 이번 턴의 테스트 답 인용("${expectedQuote}")이 빠졌다. 이번 턴은 인용 턴이다 — 그 답을 사용자가 알아볼 수 있게 인용하고, 왜 지금 꺼내는지 한 구절, 그 답에서 나온 질문 하나로 다시 쓴다. 직전 발화에 자책이 있으면 그걸 다르게 보는 한 줄을 인용 앞에 둔다.`;
-      console.warn(`[chat] turn ${params.turnNumber}: 테스트 답 인용이 빠져 한 번 다시 요청합니다.`);
-      continue;
+    // 2026-10-27 (TODO 5): 스페인어는 독자 성별을 모르니 성별 형용사("estás agotada")를 쓰지 않는다. 리포트처럼
+    // 걸린 말과 고치는 법을 짚어 한 번 다시 요청하고, 두 번째는 그대로 받는다. 따옴표 안(사용자 말·퀴즈 답 인용)은 보지 않는다.
+    // v4 고정 스크립트의 위기 응답도 이 함수를 거친다.
+    if (!problem && attempt === 0) {
+      const gendered = replyLocale === "es" ? matchEsGenderedReaderInReply(rawLines) : null;
+      const quoteMissing = !!expectedQuote && !rawLines.some((l) => normForMatch(l).includes(normForMatch(expectedQuote)));
+      if (gendered) {
+        quoteRetryNote += `\n\n[다시 쓰기] 방금 응답에 독자를 가리키는 성별 형용사 "${gendered}"가 있었다. 사용자의 성별을 모르니 형용사를 빼고 명사·동사로 바꿔 다시 쓴다(예: "estás agotada" → "te falta energía", "te sientes atrapado" → "sientes que no hay salida").`;
+        console.warn(`[chat] turn ${params.turnNumber}: 스페인어 성별 표지("${gendered}")가 있어 한 번 다시 요청합니다.`);
+      }
+      if (quoteMissing) {
+        quoteRetryNote += `\n\n[다시 쓰기] 방금 응답에 이번 턴의 테스트 답 인용("${expectedQuote}")이 빠졌다. 이번 턴은 인용 턴이다 — 그 답을 사용자가 알아볼 수 있게 인용하고, 왜 지금 꺼내는지 한 구절, 그 답에서 나온 질문 하나로 다시 쓴다. 직전 발화에 자책이 있으면 그걸 다르게 보는 한 줄을 인용 앞에 둔다.`;
+        console.warn(`[chat] turn ${params.turnNumber}: 테스트 답 인용이 빠져 한 번 다시 요청합니다.`);
+      }
+      if (gendered || quoteMissing) continue;
+    }
+    if (!problem && attempt >= 1 && replyLocale === "es") {
+      const gendered = matchEsGenderedReaderInReply(rawLines);
+      if (gendered) console.warn(`[chat] turn ${params.turnNumber}: 다시 요청해도 스페인어 성별 표지("${gendered}")가 남아 그대로 받습니다.`);
     }
     if (!problem) break;
     if (attempt >= 1) throw new Error(problem);

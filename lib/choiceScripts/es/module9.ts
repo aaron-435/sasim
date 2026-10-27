@@ -189,7 +189,7 @@ export const MODULE9_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, en esas conversaciones tu papel es {g2}, lo que se queda contigo después es sobre todo {g4}, y cuando surgía un conflicto tu sitio era {g8}.",
+    "Por lo que me contaste, en esas conversaciones tu papel es {g2}, lo que se queda contigo después es sobre todo {g4}, y cuando surgía un conflicto tu sitio era {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
@@ -200,6 +200,6 @@ export const MODULE9_SCRIPT_ES: ModuleScript = {
       "Tu manera de ajustar la distancia es {g15}. En cuanto a quién ha reconocido tu papel, la respuesta es {g17}. Y si pudieras ser como eres sin perder el vínculo, querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que le dijiste a quien eras entonces también lo guardo, con tus palabras.",
-    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
+    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.",
   },
 };

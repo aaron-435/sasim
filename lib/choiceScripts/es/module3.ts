@@ -59,7 +59,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
     },
     6: {
       turn: 6,
-      question: "Si piensas en la etapa más dura que has pasado en el trabajo, ¿qué es lo primero que te viene a la cabeza?",
+      question: "Si piensas en la etapa más dura que pasaste en el trabajo, ¿qué es lo primero que te viene a la cabeza?",
       options: [
         o("Se acumuló el trabajo", "Primero aparece la escena de las tareas apiladas.", "un tiempo de trabajo acumulado"),
         o("Me costaba la gente", "La relación con las personas va por delante en ese recuerdo.", "un tiempo en que la gente costaba"),
@@ -192,7 +192,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, lo que más pesa en tus días es {g2}; lo que sientes es, sobre todo, {g4}; y lo que más energía te quita es {g8}.",
+    "Por lo que me contaste, lo que más pesa en tus días es {g2}; lo que sientes es, sobre todo, {g4}; y lo que más energía te quita es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
@@ -203,6 +203,6 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       "Cuando se cuelan pensamientos del trabajo, lo que sueles hacer es {g15}; sobre quién sabe cómo estás, la respuesta es {g17}; y el primer paso pequeño que elegiste para recuperar energía es {g19}.",
     ],
     perspectiveLine: "Lo que le dijiste a tu yo de aquel primer día también lo guardo, con tus palabras.",
-    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
+    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.",
   },
 };

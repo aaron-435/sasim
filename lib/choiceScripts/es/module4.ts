@@ -121,7 +121,7 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
     14: {
       turn: 14,
       quote: true,
-      question: "En un día en que has ocultado lo que sentías, ¿cómo sueles recuperarte?",
+      question: "En un día en que ocultaste lo que sentías, ¿cómo sueles recuperarte?",
       options: [
         o("Con tiempo a solas", "Recargar en el silencio.", "tiempo a solas"),
         o("Con una persona cómoda", "La persona con quien te sientes a gusto es donde te recuperas.", "una persona cómoda"),
@@ -143,7 +143,7 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
       options: [
         o("Me alegraría", "Hay un deseo de que te noten.", "el deseo de que te noten"),
         o("Me pesaría", "Cierta cautela ante que te miren por dentro.", "el peso de que te miren por dentro"),
-        o("Sentiría que me han pillado", "Más cerca de la sensación de que sale lo escondido.", "la sensación de que te pillen"),
+        o("Sentiría que me descubrieron", "Más cerca de la sensación de que sale lo escondido.", "la sensación de que te descubran"),
       ],
     },
     17: {
@@ -151,7 +151,7 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
       question: "¿Hay ahora a tu lado alguien con quien puedas ser tú sin máscara?",
       options: [
         o("Una o dos personas", "Hay a tu lado una o dos personas con quienes puedes ser tú sin máscara.", "una o dos personas"),
-        o("Había, pero nos alejamos", "Había alguien así a tu lado, pero se ha alejado.", "alguien que se alejó"),
+        o("Había, pero nos alejamos", "Había alguien así a tu lado, pero se alejó.", "alguien que se alejó"),
         o("Todavía no", "Todavía no hay a tu lado nadie con quien ser tú sin máscara.", "nadie todavía"),
       ],
     },
@@ -189,7 +189,7 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, el lugar donde la máscara es más gruesa es {g1}, lo que más ajustas es {g2}, tras un encuentro te queda {g4} y ante un plan con gente te viene {g8}.",
+    "Por lo que me contaste, el lugar donde la máscara es más gruesa es {g1}, lo que más ajustas es {g2}, tras un encuentro te queda {g4} y ante un plan con gente te viene {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
@@ -200,6 +200,6 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
       "En los días que ocultas lo que sientes, te recuperas con {g14}. Sobre alguien con quien ser tú sin máscara: {g17}. Y querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que le dijiste a la persona de al lado en ese mismo lugar también lo guardo, con tus palabras.",
-    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
+    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.",
   },
 };

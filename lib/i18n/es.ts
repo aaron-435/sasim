@@ -109,7 +109,7 @@ export const es: typeof ko = {
     errorDefault: "No pudimos obtener una respuesta.",
     errorNetwork: "Un problema de conexión nos impidió obtener una respuesta.",
     timeUpLabel: "Cerrando",
-    finishEarlyButton: "Ya he contado suficiente",
+    finishEarlyButton: "Ya conté suficiente",
     introLines: [
       "Con lo que acabas de compartir, empezamos ahora la conversación de verdad.",
       "Ten en cuenta un par de cosas y el informe final será mucho más preciso.",

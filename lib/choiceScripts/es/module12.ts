@@ -14,7 +14,7 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
     1: {
       turn: 1,
       quote: true,
-      question: "¿Qué se acerca más al gran cambio que has vivido últimamente?",
+      question: "¿Qué se acerca más al gran cambio que viviste hace poco?",
       options: [
         o("Separarme de alguien", "El gran cambio de últimamente es separarte de alguien.", "separarte de alguien"),
         o("Cambió mi trabajo o mis estudios", "El gran cambio de últimamente está en tu trabajo o tus estudios.", "un cambio de trabajo o de estudios"),
@@ -191,7 +191,7 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, el cambio fue {g2}, el primer sentimiento tras él se parece a {g4}, y cuando tienes tiempo libre tu costumbre es {g8}.",
+    "Por lo que me contaste, el cambio fue {g2}, el primer sentimiento tras él se parece a {g4}, y cuando tienes tiempo libre tu costumbre es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
@@ -202,6 +202,6 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
       "En el tiempo sin decidir, lo que más haces es {g15}, tu fuerza de ahora viene de {g17}, y para anclar tu nueva rutina querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que le dijiste a tu yo del día en que empezó el cambio también lo guardo, con tus palabras.",
-    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
+    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.",
   },
 };

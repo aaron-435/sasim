@@ -22,3 +22,16 @@ export const ES_GENDERED_READER_CHAT =
 export function matchEsGenderedReader(text: string): string | null {
   return (text.match(ES_GENDERED_READER) ?? text.match(ES_GENDERED_READER_CHAT))?.[0] ?? null;
 }
+
+// Quoted spans are skipped: a chat reply that quotes the user's own words ("me siento agotada") or a quiz
+// answer is repeating them, not guessing the reader's gender.
+const QUOTED_SPAN = /"[^"]*"|“[^”]*”|«[^»]*»|‘[^’]*’/g;
+
+/** The first reader-gender marker in chat reply lines, ignoring quoted spans, or null. */
+export function matchEsGenderedReaderInReply(lines: string[]): string | null {
+  for (const line of lines) {
+    const hit = matchEsGenderedReader(line.replace(QUOTED_SPAN, " "));
+    if (hit) return hit;
+  }
+  return null;
+}

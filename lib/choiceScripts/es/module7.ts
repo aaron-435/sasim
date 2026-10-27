@@ -187,7 +187,7 @@ export const MODULE7_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, lo primero que te llega es {g2}, cerca de tu límite lo que te ocurre es {g4}, y la sobrecarga llega tras {g8}.",
+    "Por lo que me contaste, lo primero que te llega es {g2}, cerca de tu límite lo que te ocurre es {g4}, y la sobrecarga llega tras {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
@@ -198,6 +198,6 @@ export const MODULE7_SCRIPT_ES: ModuleScript = {
       "Tu manera de reducir el estímulo es {g15}. Sobre quién entiende tu sensibilidad, la respuesta es {g17}. Y querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que le dijiste a tu yo de entonces también lo guardo, con tus palabras.",
-    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
+    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.",
   },
 };

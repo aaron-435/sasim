@@ -189,7 +189,7 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, justo antes de empezar te cruza {g2}, tu ánimo entonces se parece a {g4}, y lo que más te frena es {g8}.",
+    "Por lo que me contaste, justo antes de empezar te cruza {g2}, tu ánimo entonces se parece a {g4}, y lo que más te frena es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
@@ -200,6 +200,6 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
       "Cuando se acumulan las tareas, lo tuyo es {g15}. Quién lo sabe: {g17}. Y querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que dijo el tú de dentro de un año también lo guardo, con tus palabras.",
-    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
+    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.",
   },
 };

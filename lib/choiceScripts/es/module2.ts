@@ -76,11 +76,11 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
     },
     8: {
       turn: 8,
-      question: "En un día en que crece la preocupación por el dinero, ¿hacia dónde se mueve tu cartera?",
+      question: "En un día en que crece la preocupación por el dinero, ¿hacia dónde se mueve tu billetera?",
       options: [
-        o("Se cierra más", "Cuanto más preocupa el dinero, más se cierra la cartera.", "se cierra más"),
+        o("Se cierra más", "Cuanto más preocupa el dinero, más se cierra la billetera.", "se cierra más"),
         o("Más bien se abre", "Soltar la preocupación gastando.", "se abre más"),
-        o("Casi no cambia", "La preocupación y la cartera van por separado.", "no cambia"),
+        o("Casi no cambia", "La preocupación y la billetera van por separado.", "no cambia"),
       ],
     },
     10: {
@@ -191,7 +191,7 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, lo que más pesa con el dinero es {g2}; después de pagar lo que te queda es {g4}; y en los días de más preocupación, tu cartera {g8}.",
+    "Por lo que me contaste, lo que más pesa con el dinero es {g2}; después de pagar lo que te queda es {g4}; y en los días de más preocupación, tu billetera {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
@@ -202,6 +202,6 @@ export const MODULE2_SCRIPT_ES: ModuleScript = {
       "Cuando sube la preocupación, sueles {g15}; hablar de dinero te resulta más incómodo {g17}; y querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que le dirías a esa persona con su primera nómina también lo guardo, con tus palabras.",
-    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
+    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.",
   },
 };

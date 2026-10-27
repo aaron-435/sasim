@@ -12,17 +12,17 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     1: {
       turn: 1,
       quote: true,
-      question: "¿Delante de qué tipo de persona sube más a menudo ese enfado?",
-      questionNoQuote: "¿Delante de qué tipo de persona sube más a menudo el enfado?",
+      question: "¿Delante de qué tipo de persona sube más a menudo ese enojo?",
+      questionNoQuote: "¿Delante de qué tipo de persona sube más a menudo el enojo?",
       options: [
-        o("Gente del trabajo", "El enfado sube más a menudo delante de gente del trabajo.", "la gente del trabajo"),
-        o("Gente cercana", "El enfado sube más a menudo delante de gente cercana.", "la gente cercana"),
-        o("Gente que acabo de conocer", "El enfado sube más a menudo delante de gente que acabas de conocer.", "los desconocidos"),
+        o("Gente del trabajo", "El enojo sube más a menudo delante de gente del trabajo.", "la gente del trabajo"),
+        o("Gente cercana", "El enojo sube más a menudo delante de gente cercana.", "la gente cercana"),
+        o("Gente que acabo de conocer", "El enojo sube más a menudo delante de gente que acabas de conocer.", "los desconocidos"),
       ],
     },
     2: {
       turn: 2,
-      question: "¿En qué tipo de momento sube más el enfado?",
+      question: "¿En qué tipo de momento sube más el enojo?",
       options: [
         o("Cuando veo su tono o su actitud", "Engancharte más en cómo se dice que en lo que se dice.", "el tono y la actitud del otro"),
         o("Que se rompa una promesa", "El momento en que algo acordado se tuerce se queda grande.", "una promesa rota"),
@@ -31,15 +31,15 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
     3: {
       turn: 3,
-      question: "En ese momento, ¿el enfado sube enseguida o más tarde?",
+      question: "En ese momento, ¿el enojo sube enseguida o más tarde?",
       options: [
-        o("Ahí mismo, al instante", "El enfado sube ahí mismo, al instante.", "ahí mismo"),
-        o("Mucho después, a posteriori", "El enfado solo sube mucho después, ya pasado el momento.", "más tarde"),
+        o("Ahí mismo, al instante", "El enojo sube ahí mismo, al instante.", "ahí mismo"),
+        o("Mucho después, a posteriori", "El enojo solo sube mucho después, ya pasado el momento.", "más tarde"),
       ],
     },
     4: {
       turn: 4,
-      question: "Si quitaras una capa a ese enfado, ¿qué habría debajo?",
+      question: "Si quitaras una capa a ese enojo, ¿qué habría debajo?",
       options: [
         o("Sensación de injusticia", "La sensación de que no fue justo está en el fondo.", "la sensación de injusticia"),
         o("Dolor", "Donde lo que esperabas no llegó de vuelta.", "el dolor"),
@@ -50,7 +50,7 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
       turn: 5,
       quote: true,
       question: "¿Ya había pasado antes una situación igual o es la primera vez?",
-      questionNoQuote: "¿Ya había pasado antes una situación que te provoca enfado o es la primera vez?",
+      questionNoQuote: "¿Ya había pasado antes una situación que te provoca enojo o es la primera vez?",
       options: [
         o("Ya había pasado", "La misma situación ya había pasado antes.", "algo que se ha repetido"),
         o("Es la primera vez", "Este tipo de situación es una primera vez.", "algo nuevo para ti"),
@@ -58,7 +58,7 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
     6: {
       turn: 6,
-      question: "¿Adónde suele ir ese enfado?",
+      question: "¿Adónde suele ir ese enojo?",
       options: [
         o("Me lo trago", "Dejarlo dentro en lugar de sacarlo.", "tragártelo"),
         o("Estalla", "Lo acumulado sale de golpe.", "que estalle"),
@@ -67,28 +67,28 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
     7: {
       turn: 7,
-      question: "¿Hacia dónde apunta el enfado?",
+      question: "¿Hacia dónde apunta el enojo?",
       options: [
-        o("Hacia el otro", "El enfado apunta hacia el otro.", "hacia el otro"),
-        o("Hacia mí", "El enfado apunta hacia dentro, hacia ti.", "hacia ti"),
+        o("Hacia el otro", "El enojo apunta hacia el otro.", "hacia el otro"),
+        o("Hacia mí", "El enojo apunta hacia dentro, hacia ti.", "hacia ti"),
       ],
     },
     8: {
       turn: 8,
-      question: "¿Cuánto suele tardar en calmarse el enfado?",
+      question: "¿Cuánto suele tardar en calmarse el enojo?",
       options: [
         o("Unas horas", "Se afloja sin pasar de un día.", "unas horas"),
         o("Un día o dos", "Se queda contigo un día o dos.", "un día o dos"),
-        o("Más de unos días", "Ha habido veces en que se ha quedado mucho.", "más de unos días"),
+        o("Más de unos días", "Hubo veces en que duró bastante más.", "más de unos días"),
       ],
     },
     10: {
       turn: 10,
       quote: true,
-      question: "¿Qué se parece más a lo que piensas por dentro sobre enfadarte?",
+      question: "¿Qué se parece más a lo que piensas por dentro sobre enojarte?",
       options: [
-        o("No se debe", "Primero viene la idea de que el enfado hay que contenerlo.", "pensar que enfadarse no está bien"),
-        o("Está bien si hay motivo", "Puedes mostrarlo si hay una razón.", "pensar que enfadarse está bien si hay motivo"),
+        o("No se debe", "Primero viene la idea de que el enojo hay que contenerlo.", "pensar que enojarse no está bien"),
+        o("Está bien si hay motivo", "Puedes mostrarlo si hay una razón.", "pensar que enojarse está bien si hay motivo"),
       ],
     },
     11: {
@@ -102,11 +102,11 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
     12: {
       turn: 12,
-      question: "En tu infancia, ¿cómo era el enfado en casa?",
+      question: "En tu infancia, ¿cómo era el enojo en casa?",
       options: [
         o("Algo que se podía mostrar", "Un ambiente en que se permitía expresarlo.", "algo que se podía mostrar"),
         o("Algo que había que aguantar", "Un entorno donde contenerlo era lo habitual.", "algo que había que aguantar"),
-        o("Algo que daba miedo", "La tensión era alta cuando el enfado andaba cerca.", "algo que daba miedo"),
+        o("Algo que daba miedo", "La tensión era alta cuando el enojo andaba cerca.", "algo que daba miedo"),
       ],
     },
     13: {
@@ -121,7 +121,7 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     14: {
       turn: 14,
       quote: true,
-      question: "Cuando sube el enfado, ¿qué es lo primero que haces?",
+      question: "Cuando sube el enojo, ¿qué es lo primero que haces?",
       options: [
         o("Me aparto", "Una manera de poner distancia física.", "apartarte"),
         o("No me muevo", "Esperar a que pase sin moverte.", "no moverte"),
@@ -130,16 +130,16 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
     15: {
       turn: 15,
-      question: "¿Cómo calmas principalmente el enfado?",
+      question: "¿Cómo calmas principalmente el enojo?",
       options: [
-        o("Muevo el cuerpo", "Para calmar el enfado, principalmente mueves el cuerpo.", "mover el cuerpo"),
-        o("Me doy tiempo a solas", "Para calmar el enfado, principalmente te das tiempo a solas.", "darte tiempo a solas"),
-        o("Hablo con alguien", "Para calmar el enfado, principalmente hablas con alguien.", "hablar con alguien"),
+        o("Muevo el cuerpo", "Para calmar el enojo, principalmente mueves el cuerpo.", "mover el cuerpo"),
+        o("Me doy tiempo a solas", "Para calmar el enojo, principalmente te das tiempo a solas.", "darte tiempo a solas"),
+        o("Hablo con alguien", "Para calmar el enojo, principalmente hablas con alguien.", "hablar con alguien"),
       ],
     },
     16: {
       turn: 16,
-      question: "Cuando el enfado ya pasó, ¿qué pasa con esa escena?",
+      question: "Cuando el enojo ya pasó, ¿qué pasa con esa escena?",
       options: [
         o("Vuelvo a repasarla", "Sueles repasar la escena después de que acabe.", "repasarla"),
         o("La dejo guardada", "Cerrarla rápido.", "guardarla"),
@@ -147,17 +147,17 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
     17: {
       turn: 17,
-      question: "Cuando has puesto el enfado en palabras, ¿cómo ha reaccionado el otro?",
+      question: "Cuando pusiste el enojo en palabras, ¿cómo reaccionó la otra persona?",
       options: [
         o("Lo acogió", "Cuando lo dijiste, la otra persona lo recibió bien.", "que el otro lo recibió bien"),
         o("Fue una discusión mayor", "Cuando lo dijiste, acabó en una discusión más fuerte.", "que acabó en una discusión más fuerte"),
-        o("Casi nunca lo he dicho", "Casi nunca has puesto el enfado en palabras.", "que casi nunca lo has dicho"),
+        o("Casi nunca lo he dicho", "Casi nunca has puesto el enojo en palabras.", "que casi nunca lo has dicho"),
       ],
     },
     18: {
       turn: 18,
       quote: true,
-      question: "Si piensas en lo que lograste mantener incluso estando enfadado, ¿qué se acerca más?",
+      question: "Si piensas en lo que lograste mantener incluso en pleno enojo, ¿qué se acerca más?",
       options: [
         o("Dije lo que había que decir", "Una experiencia de que saliera lo que había que decir.", "decir lo que había que decir"),
         o("Mantuve la relación", "Del lado de quien no soltó a la persona.", "mantener la relación"),
@@ -175,7 +175,7 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
     20: {
       turn: 20,
-      question: "A la mañana siguiente, con el enfado ya calmado, ¿cómo ves aquello?",
+      question: "A la mañana siguiente, con el enojo ya calmado, ¿cómo ves aquello?",
       options: [
         o("Más pequeño", "Hay cosas que cambian de tamaño de la noche a la mañana.", "que se vea más pequeño"),
         o("Igual de grande", "Era algo que una noche no podía reducir.", "que siga igual de grande"),
@@ -188,17 +188,17 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, el enfado sube con {g2}, debajo está {g4}, y tarda en calmarse {g8}.",
+    "Por lo que me contaste, el enojo sube con {g2}, debajo está {g4}, y tarda en calmarse {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
   closing: {
     summary: [
-      "Tu enfado sube con {g2}, debajo está {g4}, y tardó en calmarse {g8}.",
+      "Tu enojo sube con {g2}, debajo está {g4}, y tardó en calmarse {g8}.",
       "La línea que se cruzó fue {g11}, y con quién desahogarte: {g13}.",
-      "Para calmarte, lo tuyo es {g15}. Al ponerlo en palabras, lo que ha pasado es {g17}. Y si trazaras una línea sería algo como {g19}.",
+      "Para calmarte, lo tuyo es {g15}. Al ponerlo en palabras, lo que pasó es {g17}. Y si trazaras una línea sería algo como {g19}.",
     ],
     perspectiveLine: "Lo que dijo el tú de la mañana siguiente también lo guardo, con tus palabras.",
-    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
+    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.",
   },
 };

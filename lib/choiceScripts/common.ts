@@ -92,12 +92,12 @@ const EN_COMMON: ScriptCommon = {
 const ES_COMMON: ScriptCommon = {
   freeReactionPool: [
     "Entiendo.",
-    "Vale, te escucho.",
+    "De acuerdo, te escucho.",
     "Gracias por contármelo.",
     "Lo tendré en cuenta.",
     "Bien, sigamos.",
     "Tiene sentido.",
-    "Sí, lo he leído.",
+    "Sí, lo leí.",
     "Lo apunto.",
   ],
   quoteLine: 'En el test respondiste "{label}".',

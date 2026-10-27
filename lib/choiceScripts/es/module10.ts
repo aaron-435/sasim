@@ -50,8 +50,8 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
       quote: true,
       question: "¿Se te ha quedado alguna vez a medias algo nuevo que empezaste?",
       options: [
-        o("A menudo", "Has dejado cosas a medias a menudo.", "algo que ocurrió a menudo"),
-        o("A veces", "A veces has dejado cosas a medias.", "algo que ocurrió a veces"),
+        o("A menudo", "Dejaste cosas a medias a menudo.", "algo que ocurrió a menudo"),
+        o("A veces", "A veces dejaste cosas a medias.", "algo que ocurrió a veces"),
         o("Casi nunca", "Casi nunca has dejado cosas a medias.", "algo que casi nunca ocurrió"),
       ],
     },
@@ -93,7 +93,7 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
     },
     11: {
       turn: 11,
-      question: "Si has oído palabras así, ¿cómo te afectaron?",
+      question: "Si oíste palabras así, ¿cómo te afectaron?",
       options: [
         o("Empecé a dudar de mí", "Esas palabras te llevaron a dudar de ti.", "empezar a dudar de ti"),
         o("Me esforcé más en disimularlo", "Esas palabras te hicieron esforzarte más en disimularlo.", "esforzarte más en disimularlo"),
@@ -123,7 +123,7 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
       quote: true,
       question: "¿Tienes alguna forma habitual de intentar concentrarte?",
       options: [
-        o("He probado varios", "Has pasado un tiempo probando una cosa y otra.", "probar varias cosas"),
+        o("Probé varios", "Has pasado un tiempo probando una cosa y otra.", "probar varias cosas"),
         o("Realmente no", "No tienes un método fijo.", "nada fijo"),
       ],
     },
@@ -188,7 +188,7 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, tu atención se desvía primero hacia {g2}, cuando se te dispersa el sentimiento que más se acerca al tuyo es {g4}, y tu concentración se enciende con {g8}.",
+    "Por lo que me contaste, tu atención se desvía primero hacia {g2}, cuando se te dispersa el sentimiento que más se acerca al tuyo es {g4}, y tu concentración se enciende con {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
@@ -199,6 +199,6 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
       "Tu forma habitual de concentrarte: {g15}. En cuanto a gente cuyo ritmo encaje con el tuyo: {g17}. El comienzo más pequeño que elegiste es {g19}.",
     ],
     perspectiveLine: "Lo que dijo el tú de aquellos momentos de absorción también lo guardo, con tus palabras.",
-    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
+    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.",
   },
 };

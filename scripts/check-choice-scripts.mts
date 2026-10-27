@@ -11,7 +11,8 @@
  * 21턴 보기 없음, 반응 15~40자·물음표 없음, gist 비어 있지 않음(필수 턴),
  * 템플릿 {gN} 참조 유효성, 금지어(위로 공식·조언·예측), 위기 문구,
  * 이웃 턴 반응의 "~네요/~군요" 연속, 같은 질문 반응의 문자 유사도(바꿔치기 의심),
- * es는 독자 성별 표지(lib/esGender.ts, 리포트와 같은 목록 + 챗 보조 목록),
+ * es는 독자 성별 표지(lib/esGender.ts, 리포트와 같은 목록 + 챗 보조 목록)와
+ * es-419 기준 밖 스페인식 표지(vale·vosotros·스페인 어휘·끝난 일의 현재완료, 경고),
  * 모듈 안 반응 중복. 끝맺음 반복은 경고로만 센다.
  * ------------------------------------------------------------------
  */
@@ -101,6 +102,54 @@ function similarity(a: string, b: string): number {
   return inter / Math.min(x.size, y.size);
 }
 
+/**
+ * es-419(중남미 중립, 2026-10-27) 기준에서 벗어난 스페인식 표지. 경고만 낸다.
+ * 현재완료는 끝난 일이면 단순과거로 쓰고(me has contado → me contaste), 지금까지 이어지는 뜻이면 남긴다.
+ * 같은 문장에 이어짐 표지(todavía·aún·nunca·alguna vez·últimamente·con el tiempo·hasta ahora·siempre·ya)가
+ * 있으면 경고하지 않고, 그 밖에 남긴 것은 ES_PERFECT_KEPT에 이유와 함께 적는다.
+ */
+// JS의 \b는 á·ñ 같은 글자를 단어 밖으로 봐서("Pequeños"의 "os"가 걸림) 글자 경계를 직접 쓴다.
+const ES_WORD = (body: string) => new RegExp(`(?<![a-záéíóúüñ])(?:${body})(?![a-záéíóúüñ])`, "i");
+const ES_SPAIN_MARKERS: Array<[RegExp, string]> = [
+  [ES_WORD("vale(?! la (?:pena|espera))"), "vale(→ de acuerdo·claro)"],
+  [ES_WORD("vosotr[oa]s|vuestr[oa]s?|os"), "vosotros·os(→ ustedes)"],
+  [ES_WORD("enfad[a-z]*|ordenador(?:es)?|móvil(?:es)?|coches?|conducir|pill(?:ar|ad[oa]|en|o|as?)|guay|cartera"), "스페인 어휘(→ enojo·computadora·celular·auto·manejar·descubrir·billetera)"],
+];
+const ES_PRESENT_PERFECT = ES_WORD("(?:he|has|ha|hemos|han)\\s+[a-záéíóúñ]+(?:ad[oa]|[ií]d[oa]|to|cho|sto|erto|elto)s?");
+const ES_CONTINUING = ES_WORD("todavía|aún|nunca|alguna vez|últimamente|con el tiempo|hasta ahora|siempre|ya");
+/** 지금까지 이어지는 뜻이라 남긴 현재완료(이어짐 표지 없는 것만). 키는 문장 안 구절. */
+const ES_PERFECT_KEPT: Record<string, string> = {
+  "has mantenido": "module2 T13: 지금까지 꾸준히 지켜 온 것",
+  "Has asumido": "module9: 지금도 맡고 있는 가족 안 역할",
+  "has hecho en ese lugar": "module9 T13: 지금도 이어지는 가족 안 자리",
+  "ha tenido sentido": "module9 T13: 지금까지 쌓인 의미",
+  "se ha abierto": "module9: 벌어진 거리가 지금도 남아 있음(결과 상태)",
+  "ha reconocido": "module9 T17: 지금까지 알아준 사람이 있는지(경험)",
+  "han reconocido": "module9 T17: 지금까지 알아준 사람이 있는지(경험)",
+  "has tenido ahí": "module9 T17: 지금도 이어지는 역할",
+  "ha sido {g6}": "module9 틀: 지금까지의 가족 안 역할",
+  "se ha repetido": "module6 gist: 지금까지 되풀이된 일",
+  "se ha vuelto": "module3: 지금도 기준이 되어 있는 결과 상태",
+  "Ha seguido sin": "module4: 지금까지 이어지는 상태",
+  "se ha alejado": "gist '멀어진 기억': 지금 흐려져 있는 결과 상태",
+  "se ha desdibujado": "module10: 지금 흐려져 있는 결과 상태",
+  "Has pasado un tiempo probando": "module10: 지금까지 이것저것 해 보는 중",
+  "no has hecho": "module5: 아직 하지 않은 일(지금까지)",
+};
+
+function checkEsSpain(moduleId: string, where: string, text: string, label: string) {
+  for (const [re, kind] of ES_SPAIN_MARKERS) {
+    const m = text.match(re);
+    if (m) warn(moduleId, where, `${label}에 스페인식 표지 ${kind} "${m[0]}": "${text}"`);
+  }
+  for (const sentence of text.split(/(?<=[.?!])\s+/)) {
+    const m = sentence.match(ES_PRESENT_PERFECT);
+    if (!m || ES_CONTINUING.test(sentence)) continue;
+    if (Object.keys(ES_PERFECT_KEPT).some((k) => sentence.includes(k))) continue;
+    warn(moduleId, where, `${label}에 현재완료 "${m[0]}"(끝난 일이면 단순과거로, 남기려면 ES_PERFECT_KEPT에 이유): "${text}"`);
+  }
+}
+
 function checkText(moduleId: string, where: string, text: string, label: string) {
   if (!text.trim()) return err(moduleId, where, `${label}가 비어 있음`);
   for (const [re, kind] of BANNED_PATTERNS) {
@@ -109,6 +158,7 @@ function checkText(moduleId: string, where: string, text: string, label: string)
   if (CRISIS_PATTERN.test(text)) err(moduleId, where, `${label}에 위기 문구: "${text}"`);
   const gendered = LOCALE === "es" ? matchEsGenderedReader(text) : null;
   if (gendered) err(moduleId, where, `${label}에 독자 성별 표지 "${gendered}"(성별 중립으로): "${text}"`);
+  if (LOCALE === "es") checkEsSpain(moduleId, where, text, label);
 }
 
 function checkOption(moduleId: string, turn: number, idx: number, opt: ScriptOption) {
@@ -262,6 +312,7 @@ for (const [key, value] of Object.entries(common)) {
   lines.forEach((line, i) => {
     const gendered = LOCALE === "es" ? matchEsGenderedReader(line) : null;
     if (gendered) err("common", lines.length > 1 ? `${key}[${i}]` : key, `독자 성별 표지 "${gendered}"(성별 중립으로): "${line}"`);
+    if (LOCALE === "es") checkEsSpain("common", lines.length > 1 ? `${key}[${i}]` : key, line, "공통 문구");
   });
 }
 console.log(`\n오류 ${errors}개, 경고 ${warnings}개`);

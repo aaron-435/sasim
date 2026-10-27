@@ -188,7 +188,7 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, lo que te callaste hace poco es {g2}, después el sentimiento que más se acerca al tuyo es {g4}, y justo antes de callarte lo primero que aparece es {g8}.",
+    "Por lo que me contaste, lo que te callaste hace poco es {g2}, después el sentimiento que más se acerca al tuyo es {g4}, y justo antes de callarte lo primero que aparece es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
@@ -199,6 +199,6 @@ export const MODULE11_SCRIPT_ES: ModuleScript = {
       "Para contarle a alguien lo que quieres: {g17}. El pequeño permiso que te darías empieza por {g19}.",
     ],
     perspectiveLine: "Lo que dijo tu yo de la infancia también lo guardo, con tus palabras.",
-    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
+    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.",
   },
 };

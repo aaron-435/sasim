@@ -186,7 +186,7 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
     },
   },
   checkpoint: [
-    "Por lo que me has contado, lo primero que se reproduce al apagar la luz es {g2}, lo que sientes entonces se parece más a {g4}, y lo que te hace posponer el sueño es {g8}.",
+    "Por lo que me contaste, lo primero que se reproduce al apagar la luz es {g2}, lo que sientes entonces se parece más a {g4}, y lo que te hace posponer el sueño es {g8}.",
     "Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.",
     "¿Seguimos hablando un poco más o lo dejamos aquí?",
   ],
@@ -197,6 +197,6 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
       "Tu manera de intentar dormir es {g15}. En cuanto a quién sabe de tu sueño, dijiste: {g17}. Y una noche más fácil empieza por {g19}.",
     ],
     perspectiveLine: "Lo que te dijiste para esta noche también lo guardo, con tus palabras.",
-    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
+    finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.",
   },
 };
