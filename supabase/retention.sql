@@ -1,8 +1,8 @@
 -- Fatesaid — 보관 기간이 지난 서버 기록 매일 삭제 (2026-10-27, TODO 5)
--- 처리방침 3항("최대 1년", 초대 30일, 커플 연결 코드 7일)을 실제 동작으로 맞춘다.
+-- 처리방침 3항("최대 1년", 초대 30일, 커플 연결 코드 7일, 웹→앱 넘김 7일)을 실제 동작으로 맞춘다.
 -- 이 파일 전에는 1년 지난 행을 지우는 작업이 저장소에 없었다(invites·pairs만 다음 생성 때 정리).
 --
--- 실행(사용자, 한 번):
+-- 실행(사용자, 한 번). handoffs 테이블이 있어야 하므로 supabase/handoffs.sql을 먼저 실행한다:
 --   1. Supabase 대시보드 → Database → Extensions → pg_cron 켜기
 --   2. SQL Editor에 이 파일 전체를 붙여넣고 실행
 --   3. 확인: select jobname, schedule from cron.job;  → fatesaid-retention 한 줄
@@ -27,6 +27,7 @@ as $$
   delete from events          where created_at < now() - interval '1 year';
   delete from invites         where expires_at < now();
   delete from pairs           where joined_at is null and code_expires_at < now();
+  delete from handoffs        where expires_at < now();
 $$;
 
 -- 매일 03:15 UTC(한국 12:15). 같은 이름으로 다시 실행하면 일정만 덮어쓴다.

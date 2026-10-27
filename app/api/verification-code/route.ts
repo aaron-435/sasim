@@ -1,14 +1,11 @@
 /**
  * app/api/verification-code/route.ts
  * ------------------------------------------------------------------
- * Web→app handoff for the "2 free questions on web, install the app
- * for more" funnel (components/QAChat.jsx). Generates a short numeric
- * code tied to the current session, redeemed by the native app
- * (mobile/screens/VerifyCodeScreen.tsx calls the GET side) to restore
- * the birth data already collected on web instead of asking the user
- * to re-enter everything — this is the low-tech stand-in for deferred
- * deep linking (Branch.io/AppsFlyer) decided against for now, see the
- * monetization-model memory.
+ * The original web→app handoff for the "free questions on web, install the app for more"
+ * funnel (components/QAChat.jsx). Installed 1.2.0 apps call the GET side from
+ * mobile/screens/VerifyCodeScreen.tsx, so its response shape stays as it is. Newer web
+ * surfaces use /api/handoff instead; both share lib/handoff.ts, one 6-digit code space
+ * and one lookup rate limit.
  *
  * POST body:  { sessionId }
  * POST response: { code }  or  { error } with a non-200 status
@@ -16,22 +13,15 @@
  * GET  ?code=XXXXXX
  * GET  response: { nickname, track, sajuResult: {...} }, or a non-200
  *   status: 404 if the code is unknown/already used, 410 if it's a
- *   real code but older than 24h (verify_code_created_at — added
- *   2026-09-12, codes had no expiry at all before that). Marks the
- *   code used on successful redemption (one-time use) so it can't be
- *   replayed, same as an expired one being cleared on the way out.
+ *   real code but older than 24h (verify_code_created_at), 409 if it is
+ *   a newer /api/handoff code that this app version can't read. Marks the
+ *   code used on successful redemption (one-time use).
  * ------------------------------------------------------------------
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { issueSessionCode, redeemSessionCode, supabaseHandoffDb } from "@/lib/handoff";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
-import { classifySajuType } from "@/lib/sajuType";
-
-function generateCode(): string {
-  // 6-digit numeric, easy to type on a phone keyboard after installing the app.
-  return String(Math.floor(100000 + Math.random() * 900000));
-}
 
 export async function POST(req: NextRequest) {
   const limited = rateLimitOrResponse(req, "verify-code-post", 10, 10 * 60 * 1000, "요청이 많아 잠시 후 다시 시도해주세요.");
@@ -44,27 +34,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { sessionId } = body ?? {};
-  if (!sessionId) {
-    return NextResponse.json({ error: "sessionId는 필수입니다." }, { status: 400 });
-  }
-
   try {
-    const supabaseAdmin = getSupabaseAdmin();
-    // 드물게 코드가 충돌하면(6자리 유니크 제약) 몇 번 다시 시도한다.
-    for (let attempt = 0; attempt < 5; attempt++) {
-      const code = generateCode();
-      const { error } = await supabaseAdmin
-        .from("sessions")
-        .update({ verify_code: code, verify_code_created_at: new Date().toISOString() })
-        .eq("id", sessionId);
-      if (!error) return NextResponse.json({ code });
-      // unique 제약 위반이 아니면 바로 실패 처리
-      if (!String(error.message).toLowerCase().includes("duplicate")) {
-        throw error;
-      }
-    }
-    return NextResponse.json({ error: "인증번호 생성에 실패했습니다. 다시 시도해주세요." }, { status: 503 });
+    const { status, body: out } = await issueSessionCode(supabaseHandoffDb(), body?.sessionId);
+    return NextResponse.json(out, { status });
   } catch (err) {
     console.error("[api/verification-code] POST failed", err);
     return NextResponse.json({ error: "인증번호 생성 중 오류가 발생했습니다." }, { status: 500 });
@@ -72,59 +44,15 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  // Codes are 6 numeric digits (900,000 possible values) and redemption
-  // returns PII (birth date, city, nickname) — without a limit here,
-  // brute-forcing every code from one IP would be entirely feasible.
+  // Codes are 6 numeric digits and redemption returns PII (birth date, city, nickname) —
+  // without a limit, brute-forcing every code from one IP would be feasible. Same bucket
+  // as /api/handoff's code lookup.
   const limited = rateLimitOrResponse(req, "verify-code-get", 20, 10 * 60 * 1000, "요청이 많아 잠시 후 다시 시도해주세요.");
   if (limited) return limited;
 
-  const code = req.nextUrl.searchParams.get("code");
-  if (!code) {
-    return NextResponse.json({ error: "code는 필수입니다." }, { status: 400 });
-  }
-
   try {
-    const supabaseAdmin = getSupabaseAdmin();
-    const { data: session, error: sessionErr } = await supabaseAdmin
-      .from("sessions")
-      .select("id, nickname, track, verify_code_created_at")
-      .eq("verify_code", code)
-      .maybeSingle();
-    if (sessionErr) throw sessionErr;
-    if (!session) {
-      return NextResponse.json({ error: "유효하지 않거나 이미 사용된 코드입니다." }, { status: 404 });
-    }
-
-    // 2026-09-12: codes previously had no expiration at all. 24h from when the
-    // code was (re)generated — not the session row's own created_at, which can
-    // predate the code by days if the session sat around before a code was
-    // ever issued on it.
-    const codeAgeMs = session.verify_code_created_at ? Date.now() - new Date(session.verify_code_created_at).getTime() : Infinity;
-    if (codeAgeMs > 24 * 60 * 60 * 1000) {
-      await supabaseAdmin.from("sessions").update({ verify_code: null }).eq("id", session.id);
-      return NextResponse.json({ error: "코드가 만료되었습니다. 웹에서 새 코드를 발급받아주세요." }, { status: 410 });
-    }
-
-    const { data: sajuRow, error: sajuErr } = await supabaseAdmin
-      .from("saju_results")
-      .select("birth_year, birth_month, birth_day, birth_hour, birth_minute, is_female, birth_city, elements, four_pillars, decade_fortune, summary")
-      .eq("session_id", session.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (sajuErr) throw sajuErr;
-
-    // 1회용 — 리텀 성공 즉시 코드를 비워서 재사용을 막는다.
-    await supabaseAdmin.from("sessions").update({ verify_code: null }).eq("id", session.id);
-
-    const dayMasterChar = (sajuRow?.summary as { dayMaster?: { char?: string } } | undefined)?.dayMaster?.char;
-    const sajuType = dayMasterChar && sajuRow?.elements ? classifySajuType(dayMasterChar, sajuRow.elements) : null;
-
-    return NextResponse.json({
-      nickname: session.nickname,
-      track: session.track,
-      sajuResult: sajuRow ? { ...sajuRow, saju_type: sajuType } : sajuRow,
-    });
+    const { status, body } = await redeemSessionCode(supabaseHandoffDb(), req.nextUrl.searchParams.get("code"));
+    return NextResponse.json(body, { status });
   } catch (err) {
     console.error("[api/verification-code] GET failed", err);
     return NextResponse.json({ error: "인증번호 확인 중 오류가 발생했습니다." }, { status: 500 });

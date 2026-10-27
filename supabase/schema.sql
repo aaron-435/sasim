@@ -181,6 +181,21 @@ create table if not exists pairs (
 
 create index if not exists idx_pairs_code_expires_at on pairs(code_expires_at);
 
+-- 2026-10-27: 웹→앱 넘김(/api/handoff, lib/handoff.ts). 웹에서 "앱에서 이어 보기"를 누른 때만 생긴다.
+-- 저장: 6자리 코드, 링크 토큰의 SHA-256, 진입점, 언어, 웹에서 이미 입력한 값(생년월일, 있으면 시각·성별·
+-- 도시·닉네임·관심 주제). 7일 뒤 만료, 앱이 꺼내면 지운다. 배포된 DB에는 supabase/handoffs.sql을 한 번 실행한다.
+create table if not exists handoffs (
+  code text primary key,
+  token_hash text not null unique,
+  source text not null check (source in ('type_card', 'calculator', 'day_master', 'invite', 'qa')),
+  locale text not null check (locale in ('ko', 'en', 'es')),
+  data jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  expires_at timestamptz not null
+);
+
+create index if not exists idx_handoffs_expires_at on handoffs(expires_at);
+
 create index if not exists idx_saju_results_session on saju_results(session_id);
 create index if not exists idx_quiz_results_session on quiz_results(session_id);
 create index if not exists idx_chat_sessions_session on chat_sessions(session_id);
@@ -198,6 +213,7 @@ alter table report_results enable row level security;
 alter table llm_usage_log enable row level security;
 alter table events enable row level security;
 alter table compat_report_purchases enable row level security;
+alter table handoffs enable row level security;
 alter table invites enable row level security;
 alter table pairs enable row level security;
 

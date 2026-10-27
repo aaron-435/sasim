@@ -57,19 +57,24 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
 
 ## B. 웹→앱 이동 (결제 없음)
 
-- [ ] 9. 넘김 저장·코드 서버
+- [x] 9. 넘김 저장·코드 서버
   - 선행: 1
   - 변경: `app/api/verification-code/route.ts`(또는 새 `app/api/handoff`), 저장 위치(`sessions` 확장 or 새 테이블 SQL), 6자리 코드 + 긴 토큰, 7일 만료, 꺼내면 삭제, 속도 제한. 기존 GET 응답 모양 유지.
   - QA: 라우트 테스트(새 `.test.mts`: 만료·1회용·토큰/코드 두 경로·옛 응답 모양) 통과. `npm run lint && npm run build` 통과. 새 테이블이면 SQL 파일 + 18번에 실행 절차.
+  - 결과(2026-10-27): **새 테이블**을 골랐다. 근거: `sessions`는 Q&A 세션 행이라 유형 카드·계산기처럼 세션이 없는 진입점을 담으려면 빈 세션을 만들어야 하고, 1년 보관 대상이라 7일 만료·꺼내면 삭제와 맞지 않는다. 새 `handoffs`(코드 PK, 토큰 SHA-256 unique, 진입점·언어 check, 입력값 jsonb, 7일 `expires_at`, RLS). 새 `POST /api/handoff {source, locale, data}` → `{code, token, deepLink, expiresAt}`, `GET /api/handoff?t=|?code=` → `{kind:"handoff", source, locale, data}`, 옛 Q&A 코드는 같은 GET이 `{kind:"session", nickname, track, sajuResult}`로(앱이 한 번만 부르게). 입력값은 엄격 검사(모르는 키·불가능한 날짜·미래 날짜·시각만 있는 경우 400, 닉네임·도시는 한 줄로 정리·길이 제한, `birthHour: null` = 시각 모름, 없으면 앱이 물음). 꺼낼 때 삭제가 행을 지운 요청만 데이터를 받음(동시 요청 1명만). 옛 `/api/verification-code`는 로직을 `lib/handoff.ts`로 옮기고 응답 모양 그대로, 새 넘김 코드가 들어오면 409 `update_app`(소모 안 함). 두 테이블이 같은 6자리 코드 공간을 피하고(서로 확인), 코드 조회는 두 라우트가 같은 속도 제한 버킷(IP당 10분 20회) — 예전엔 엔드포인트가 둘이 되면 시도가 두 배였다. 토큰 조회는 별도 30회, 생성 10회. 코드 생성은 `Math.random` → `crypto.randomInt`. SQL `supabase/handoffs.sql`(새), `schema.sql`·`retention.sql`(만료 넘김 매일 삭제)에 반영.
+  - QA: 새 `npx tsx scripts/handoff.test.mts` → "109 passed"(메모리 저장소: 생성→토큰/코드 두 경로·1회용·서로 무효화, 7일 경계·만료 410·다음 생성 때 정리, 입력 검사 400 15종·거절 시 저장 0, 옛 POST `{code}`·옛 GET `{nickname,track,sajuResult}`·24시간 410·1회용, 새 GET의 옛 코드, 옛 GET의 새 코드 409 비소모, 코드 공간 충돌 회피). 루트 `npx tsc --noEmit` → exit 0. `npm run lint` → "No ESLint warnings or errors", `npm run build` → exit 0(`ƒ /api/handoff`, `ƒ /api/verification-code`). dev 서버(`work-dev`) curl: DB를 안 타는 잘못된 입력 5종 → 모두 400과 맞는 메시지. 같은 dev 서버가 실제 DB(아직 `handoffs` 없음)로 `GET /api/verification-code?code=123456`·`GET /api/handoff?code=123456` → 둘 다 404(테이블이 없어도 500 아님, `isMissingTable`). 정상 생성·꺼내기는 테이블이 없어 아직 실제 DB로 확인 못 함 → 18번 SQL 실행 뒤 아래 (사용자 확인).
+  - (사용자 확인, 18번 SQL 뒤) 로컬 `npm run dev`에서: `curl -s -X POST localhost:3000/api/handoff -H 'content-type: application/json' -d '{"source":"type_card","locale":"en","data":{"birthYear":1994,"birthMonth":3,"birthDay":8}}'` → `code`·`token`이 옴 → `curl -s "localhost:3000/api/handoff?code=<code>"` → `"kind":"handoff"`와 생년월일 → 같은 명령 한 번 더 → 404. 운영 DB에 테스트 행 1개가 생겼다 바로 지워진다.
 
 - [ ] 10. 웹 진입점 버튼 + 기기별 설치 안내
   - 선행: 9
   - 변경: `LandingTypeCard`·`SajuCalculator`·일간 글·`InviteAccept`·`QAChat` 끝의 "앱에서 이어 보기", `components/AppInstall.tsx`(iOS/Android/데스크톱 구분, 데스크톱 QR, App Store 링크는 설정 하나로 켜기 — 지금은 "iOS는 곧"). ko/en/es.
+  - 함께(9번에서 넘김): 처리방침 ko/en/es(`lib/legalContent.ts`) 3항에 넘김 저장(누른 뒤에만, 항목, 7일, 꺼내면 삭제)을 적는다 — 버튼이 생겨 실제 저장이 시작되는 배포와 같이 나가야 한다. 서버 API는 `POST /api/handoff {source, locale, data}`(`lib/handoff.ts` 주석).
   - QA: `npm run lint && npm run build` 통과. 웹 preview 데스크톱(QR 보임)·mobile 뷰포트(스토어 버튼 하나) 캡처. 버튼을 누르기 전에는 넘김 저장 요청이 없는지 network로 확인.
 
 - [ ] 11. 앱 이어받기: 딥링크 + 코드 버튼 + 빠진 단계만
   - 선행: 9
   - 변경: `mobile/App.tsx`(`fatesaid://handoff?t=` 처리), 인트로의 코드 입력을 보조 버튼으로, `VerifyCodeScreen`, 일부만 넘어온 경우 빠진 온보딩 단계만 묻고 유형 공개로. ko/en/es. OTA 가능(네이티브 변경 없음).
+  - 서버(9번): 코드·링크 모두 `GET /api/handoff?t=|?code=` 한 번. `kind:"handoff"`면 `data`의 빠진 칸만 묻고, `kind:"session"`이면 지금의 옛 처리(`normalizeVerifyCodeSajuResult`) 그대로. `birthHour: null`은 "시각 모름"을 고른 것, 키가 없으면 물어야 한다.
   - QA: mobile tsc 0. iOS 시뮬레이터 dev-client에서 `xcrun simctl openurl booted "fatesaid://handoff?t=<테스트 토큰>"` → 자동 이어받기 캡처. 코드 경로: 생년월일만 넘어온 코드 → 시각·도시 등만 묻는지 캡처. 증거 출처(시뮬레이터) 명시.
 
 - [ ] 12. 넘김 측정
@@ -104,10 +109,12 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
 
 - [ ] 18. (사용자 확인·실행) Supabase 삭제 작업 확인 / SQL 실행
   - 대시보드 Database → Cron(또는 Functions)에 보관 기간 삭제 작업이 있는지 확인. 5·9번에서 SQL 파일이 생기면 SQL Editor에서 실행.
+  - (9번, retention.sql보다 먼저) SQL Editor에 `supabase/handoffs.sql` 전체를 붙여넣고 Run → `select count(*) from handoffs;` → 0. 그다음 9번 (사용자 확인) curl. retention.sql을 이미 실행했다면 다시 한 번 실행하면 함수가 넘김 삭제 줄까지 포함해 덮어써진다.
   - (5번, 19번 웹 배포 전에) ① Database → Extensions에서 `pg_cron` 켜기 ② SQL Editor에 `supabase/retention.sql` 전체를 붙여넣고 Run ③ `select jobname, schedule from cron.job;` → `fatesaid-retention | 15 3 * * *` 한 줄 ④ 바로 한 번 `select purge_expired_data();` → 오류 없이 끝나면 성공. 대시보드에 비슷한 작업이 이미 있으면 실행 전에 알려 주기.
 
 - [ ] 19. (사용자 실행) 커밋·푸시 → Vercel 웹 배포 확인
   - 웹 변경(2·3·5·9·10·12)이 실린다. 앱 OTA보다 먼저.
+  - 9번의 `handoffs.sql`이 운영 DB에 없으면 `/api/handoff` 생성은 503이다. 옛 `/api/verification-code`(Q&A 코드)는 테이블이 없으면 "넘김 없음"으로 보고 그대로 동작한다(`lib/handoff.ts` `isMissingTable`). 그래도 10번 버튼이 함께 나가므로 18번 SQL을 이 배포 전에 실행한다.
 
 - [ ] 20. (사용자 실행) iOS 1.2.0 승인 뒤 `eas update`
   - 이전 TODO 11번(결과 문구 1·2)에 이번 앱 변경(2·4·6·7·11)까지 함께 실린다. 순서는 `HANDOFF_2026-10-25_ota_pending.md`(웹 먼저).
@@ -123,3 +130,5 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
 - (4번 중) 이미 생성된 심층 리포트 본문은 생성 당시 대체 제목을 프롬프트로 받았다. 화면 제목은 고쳐지지만 본문 문장 안 언급은 다시 생성하기 전까지 남는다.
 - (1번 중) 운영 이벤트의 `purchase_success`가 모두 `kind` 없음(unknown) — `kind`는 커밋 3046e93부터라 구버전 빌드 신호로 보임. 미확인 1·2와 같이 확인.
 - (1번 중) 구독 SKU는 코드에 이름이 없고(RevenueCat 오퍼링에서 옴) 리포트에서 `other_or_missing_product`로 묶인다. 구독을 따로 세려면 ASC/Play의 실제 구독 상품 ID를 받아 `productFamily`에 넣는다(2번이나 12번에서).
+- (9번 중) `/api/verification-code`·`/api/handoff`의 `error` 문구는 한국어뿐인데, 앱 `VerifyCodeScreen`은 서버 `error`를 그대로 보여 줘서 en/es 사용자가 한국어 오류를 본다(예전부터). 새 `/api/handoff`는 `code`(`not_found`·`expired`·`update_app` 등)를 같이 주니 11번에서 앱이 `code`로 자기 언어 문구를 고르면 된다. 깔린 1.2.0은 그대로.
+- (9번 중) 옛 Q&A 코드 꺼내기는 읽고 나서 비우는 두 단계라 같은 코드를 동시에 두 번 내면 둘 다 받을 수 있다(예전부터, 24시간·한 사람용이라 그대로 둠). 새 넘김은 삭제가 성공한 요청만 받는다.
