@@ -1,85 +1,148 @@
-// Funnel report over the first 100/200/300 install cohorts. Read-only; prints aggregates only
-// (no anon ids, session ids or props values).
-//   npx tsx --env-file=.env.local scripts/funnel-report.mts
-// Install = first event of an anon_id on ios/android (no store install count in the DB).
-// Anons that ever sent a dev=true event are excluded as test devices.
-import { getSupabaseAdmin } from "../lib/supabase.ts";
+// Read-only product-event report. IDs, free text and arbitrary props are never printed.
+// Run: npx tsx --env-file=.env.local scripts/funnel-report.mts
+import { pathToFileURL } from "node:url";
 
+export interface FunnelEvent {
+  created_at: string;
+  anon_id: string;
+  platform: string;
+  dev: boolean;
+  name: string;
+  props?: Record<string, unknown> | null;
+}
+export interface UsageRow { created_at: string; session_id: string | null; cost_usd: number | string | null }
+export interface SessionRow { created_at: string }
+
+const DAY = 86_400_000;
+const kstDay = (ms: number) => Math.floor((ms + 9 * 3_600_000) / DAY);
 const COHORTS = [100, 200, 300];
-const DAY = 86400_000;
-const kstDay = (ms: number) => Math.floor((ms + 9 * 3600_000) / DAY);
-const sb = getSupabaseAdmin();
+const SURFACES = new Set(["report", "qa", "qa_person", "compat_report", "year_report", "fortune"]);
+const PURCHASE_EVENTS = ["purchase_start", "purchase_success", "purchase_cancel", "purchase_error"];
 
-async function fetchAll(table: string, columns: string, orderBy = "created_at"): Promise<any[]> {
-  const rows: any[] = [];
-  for (let from = 0; ; from += 1000) {
-    const { data, error } = await sb.from(table).select(columns).order(orderBy).range(from, from + 999);
-    if (error) { console.error(table, error.message); process.exit(1); }
-    rows.push(...(data ?? []));
-    if (!data || data.length < 1000) break;
-  }
-  return rows;
+// Normalize only known product families. Event props can be forged: never print an
+// unrecognized product or surface verbatim, even if it passed the API's string rules.
+function productFamily(value: unknown): string {
+  if (typeof value !== "string") return "other_or_missing_product";
+  const module = /^(?:report_module|com\.fatesaid\.app\.report\.module)([1-9]|1[0-2])$/.exec(value);
+  if (module) return `report_module${module[1]}`;
+  if (["report_bundle_all", "com.fatesaid.app.report.bundle_all"].includes(value)) return "report_bundle_all";
+  if (["compat_report", "com.fatesaid.app.report.compat"].includes(value)) return "compat_report";
+  const year = /^(?:year_report_|com\.fatesaid\.app\.report\.year_)(20\d{2})$/.exec(value);
+  return year ? `year_report_${year[1]}` : "other_or_missing_product";
 }
 
-const events = await fetchAll("events", "created_at,anon_id,platform,dev,name,props");
-const usage = await fetchAll("llm_usage_log", "session_id,cost_usd,created_at");
-const sessions = await fetchAll("sessions", "created_at");
+interface Device { id: string; first: number; days: Set<number>; events: FunnelEvent[] }
 
-const testAnons = new Set(events.filter((e) => e.dev).map((e) => e.anon_id));
-type Anon = { first: number; days: Set<number>; trial: boolean; paid: boolean; paidUnknown: boolean; paywall: boolean; chatDone: boolean; report: boolean };
-const anons = new Map<string, Anon>();
-let appOpenEvents = 0, purchaseKindEvents = 0;
-for (const e of events) {
-  if (testAnons.has(e.anon_id) || (e.platform !== "ios" && e.platform !== "android")) continue;
-  const t = new Date(e.created_at).getTime();
-  const a = anons.get(e.anon_id) ?? { first: t, days: new Set<number>(), trial: false, paid: false, paidUnknown: false, paywall: false, chatDone: false, report: false };
-  anons.set(e.anon_id, a);
-  a.days.add(kstDay(t));
-  if (e.name === "app_open") appOpenEvents++;
-  if (e.name === "paywall_view") a.paywall = true;
-  if (e.name === "chat_complete") a.chatDone = true;
-  if (e.name === "report_generate") a.report = true;
-  if (e.name === "purchase_success") {
-    const kind = e.props?.kind;
-    if (kind) purchaseKindEvents++;
-    if (kind === "trial") a.trial = true;
-    else if (kind === "paid") a.paid = true;
-    else a.paidUnknown = true; // old app builds don't send kind
+export function buildFunnelReport(
+  events: FunnelEvent[], usage: UsageRow[] = [], sessions: SessionRow[] = [], now = Date.now(),
+): string {
+  const lines: string[] = [];
+  const testIds = new Set(events.filter((e) => e.dev).map((e) => e.anon_id));
+  const devices = new Map<string, Device>();
+  for (const e of events) {
+    const time = Date.parse(e.created_at);
+    if (testIds.has(e.anon_id) || !e.anon_id || !["ios", "android"].includes(e.platform) || !Number.isFinite(time) || time > now) continue;
+    const device = devices.get(e.anon_id) ?? { id: e.anon_id, first: time, days: new Set<number>(), events: [] };
+    device.first = Math.min(device.first, time);
+    device.days.add(kstDay(time));
+    device.events.push(e);
+    devices.set(e.anon_id, device);
   }
+  const ordered = [...devices.values()].sort((a, b) => a.first - b.first || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  const count = (group: Device[], predicate: (event: FunnelEvent) => boolean) => group.filter((d) => d.events.some(predicate)).length;
+  const ratio = (n: number, d: number) => d ? `${n}/${d}` : "- (0 eligible devices)";
+  const milestone = (group: Device[], name: string) => count(group, (e) => e.name === name);
+
+  lines.push(`native anonymous devices observed: ${ordered.length}`);
+  lines.push("Device != person or verified install. dev-marked IDs are excluded; production-build test devices may remain.");
+  lines.push("Rows below are independent milestones (unique devices), not an ordered conversion funnel.");
+  lines.push("Purchase events are client signals, not verified charges, revenue, net profit or independent paying customers.");
+  lines.push("Product families merge known iOS/Android SKUs; subscription/unrecognized/missing SKUs stay in other_or_missing_product.");
+
+  function section(title: string, group: Device[]) {
+    lines.push(`\n== ${title} ==`, `observed devices: ${group.length}`);
+    for (const name of ["onboarding_complete", "type_reveal_view", "chat_start", "chat_complete", "report_generate", "paywall_view", "purchase_start"]) {
+      lines.push(`${name}: ${ratio(milestone(group, name), group.length)}`);
+    }
+    for (const [label, predicate] of [
+      ["purchase_success kind=paid (unverified)", (e: FunnelEvent) => e.name === "purchase_success" && e.props?.kind === "paid"],
+      ["purchase_success kind=trial (not a charge)", (e: FunnelEvent) => e.name === "purchase_success" && e.props?.kind === "trial"],
+      ["purchase_success kind=unknown", (e: FunnelEvent) => e.name === "purchase_success" && !["paid", "trial"].includes(String(e.props?.kind))],
+      ["purchase_cancel", (e: FunnelEvent) => e.name === "purchase_cancel"],
+      ["purchase_error", (e: FunnelEvent) => e.name === "purchase_error"],
+    ] as const) lines.push(`${label}: ${ratio(count(group, predicate), group.length)}`);
+
+    // A return day must have ended in KST before it enters the denominator.
+    // Otherwise today's not-yet-returned devices would be counted as churned.
+    for (const day of [1, 7]) {
+      const eligible = group.filter((d) => kstDay(now) > kstDay(d.first) + day);
+      lines.push(`D${day} retained (completed KST days, any event): ${ratio(eligible.filter((d) => d.days.has(kstDay(d.first) + day)).length, eligible.length)}`);
+    }
+
+    const surfaces = new Set<string>();
+    const products = new Set<string>();
+    for (const d of group) for (const e of d.events) {
+      if (e.name === "paywall_view") surfaces.add(SURFACES.has(String(e.props?.surface)) ? String(e.props?.surface) : "other_or_missing_surface");
+      if (PURCHASE_EVENTS.includes(e.name)) products.add(productFamily(e.props?.product));
+    }
+    for (const surface of [...surfaces].sort()) {
+      lines.push(`paywall surface=${surface}: ${ratio(count(group, (e) => e.name === "paywall_view" && (SURFACES.has(String(e.props?.surface)) ? String(e.props?.surface) : "other_or_missing_surface") === surface), group.length)}`);
+    }
+    for (const product of [...products].sort()) {
+      const has = (name: string, kind?: string) => count(group, (e) => e.name === name && productFamily(e.props?.product) === product &&
+        (kind === undefined || (kind === "unknown" ? !["paid", "trial"].includes(String(e.props?.kind)) : e.props?.kind === kind)));
+      lines.push(`product=${product}: start=${has("purchase_start")}, paid_signal=${has("purchase_success", "paid")}, trial_signal=${has("purchase_success", "trial")}, unknown_success=${has("purchase_success", "unknown")}, cancel=${has("purchase_cancel")}, error=${has("purchase_error")} (unique devices per milestone; categories may overlap)`);
+    }
+
+    if (group.length) {
+      const start = group[0].first;
+      const inWindow = (iso: string) => { const t = Date.parse(iso); return t >= start && t <= now; };
+      const rows = usage.filter((u) => inWindow(u.created_at));
+      const priced = rows.filter((u) => u.cost_usd !== null && Number.isFinite(Number(u.cost_usd)) && Number(u.cost_usd) >= 0);
+      const cost = priced.reduce((sum, u) => sum + Number(u.cost_usd), 0);
+      const sessionCount = sessions.filter((s) => inWindow(s.created_at)).length;
+      lines.push(`AI window cost (not cohort-attributed; includes web/test/other devices): $${cost.toFixed(3)} known, ${rows.length - priced.length} unpriced rows; ${sessionCount} sessions`);
+      lines.push(`AI window rows with no session attribution (included above): ${rows.filter((u) => !u.session_id).length}`);
+      lines.push(`AI window cost/session (rough, not customer margin): ${sessionCount ? `$${(cost / sessionCount).toFixed(3)}` : "-"}`);
+    }
+  }
+
+  section("all observed native devices", ordered);
+  const firstRecentDay = kstDay(now) - 6;
+  lines.push("\nRecent cohort = first observed on one of the last 7 KST calendar dates, including today's partial day; lifetime milestones through now.");
+  section("first seen in last 7 KST calendar dates", ordered.filter((d) => kstDay(d.first) >= firstRecentDay));
+  for (const size of COHORTS) {
+    if (ordered.length < size) lines.push(`\n== first ${size} installs: sample too small (${ordered.length}/${size}) ==`);
+    else section(`first ${size} observed native devices (legacy install cohort)`, ordered.slice(0, size));
+  }
+  lines.push("\nReconcile paid/trial signals, test purchases, refunds and renewals with RevenueCat/store records. Verified charges are not available in this report.");
+  return lines.join("\n");
 }
 
-const ordered = [...anons.values()].sort((a, b) => a.first - b.first);
-const now = Date.now();
-const pct = (n: number, d: number) => (d ? `${((n / d) * 100).toFixed(1)}% (${n}/${d})` : "-");
-
-console.log(`events: ${events.length} rows; test (dev) anons excluded: ${testAnons.size}; real-app anons: ${ordered.length}`);
-console.log(`app_open events: ${appOpenEvents} (D1/D7 below count any event as "active" until the new build is widespread)`);
-console.log(`purchase_success with kind: ${purchaseKindEvents} (rest counted as "paid?" because kind is missing)\n`);
-
-for (const size of COHORTS) {
-  if (ordered.length < size) {
-    console.log(`== first ${size} installs: sample too small (${ordered.length}/${size}) ==`);
-    continue;
+async function main() {
+  // Import only when executing the CLI: unit tests need neither secrets nor network.
+  const { getSupabaseAdmin } = await import("../lib/supabase.ts");
+  const sb = getSupabaseAdmin();
+  async function fetchAll(table: string, columns: string): Promise<unknown[]> {
+    const rows: unknown[] = [];
+    for (let from = 0; ; from += 1000) {
+      const { data, error } = await sb.from(table).select(columns).order("created_at").order("id").range(from, from + 999);
+      if (error) throw error;
+      rows.push(...(data ?? []));
+      if (!data || data.length < 1000) return rows;
+    }
   }
-  const c = ordered.slice(0, size);
-  const start = c[0].first, end = c[c.length - 1].first;
-  const eligible = (n: number) => c.filter((a) => kstDay(now) >= kstDay(a.first) + n);
-  const retained = (n: number) => eligible(n).filter((a) => a.days.has(kstDay(a.first) + n));
-  const e1 = eligible(1), e7 = eligible(7);
-  console.log(`== first ${size} installs (${new Date(start).toISOString().slice(0, 10)} ~ ${new Date(end).toISOString().slice(0, 10)}) ==`);
-  console.log(`D1 retention       ${pct(retained(1).length, e1.length)}`);
-  console.log(`D7 retention       ${pct(retained(7).length, e7.length)}`);
-  console.log(`paywall seen       ${pct(c.filter((a) => a.paywall).length, size)}`);
-  console.log(`chat completed     ${pct(c.filter((a) => a.chatDone).length, size)}`);
-  console.log(`report generated   ${pct(c.filter((a) => a.report).length, size)}`);
-  console.log(`trial started      ${pct(c.filter((a) => a.trial).length, size)}`);
-  console.log(`paid (kind=paid)   ${pct(c.filter((a) => a.paid).length, size)}`);
-  console.log(`paid? (no kind)    ${pct(c.filter((a) => a.paidUnknown).length, size)}`);
-  // AI cost can't be split per install (llm_usage_log has no anon id): total cost in the cohort's
-  // window divided by sessions created in that window.
-  const inWin = (iso: string) => { const t = new Date(iso).getTime(); return t >= start && t <= end; };
-  const cost = usage.filter((u) => u.session_id && inWin(u.created_at)).reduce((s, u) => s + Number(u.cost_usd ?? 0), 0);
-  const nSess = sessions.filter((s) => inWin(s.created_at)).length;
-  console.log(`AI cost / session  ${nSess ? `$${(cost / nSess).toFixed(3)} ($${cost.toFixed(2)} / ${nSess} sessions, approx, includes web)` : "-"}\n`);
+  const [events, usage, sessions] = await Promise.all([
+    fetchAll("events", "id,created_at,anon_id,platform,dev,name,props"),
+    fetchAll("llm_usage_log", "id,session_id,cost_usd,created_at"),
+    fetchAll("sessions", "id,created_at"),
+  ]);
+  console.log(buildFunnelReport(events as FunnelEvent[], usage as UsageRow[], sessions as SessionRow[]));
 }
-console.log("Trial vs paid is a floor/ceiling guess; RevenueCat dashboard is the source of truth for subscriptions and churn.");
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch(() => {
+    console.error("Funnel report failed. Check database access/configuration; no customer records were printed.");
+    process.exitCode = 1;
+  });
+}
