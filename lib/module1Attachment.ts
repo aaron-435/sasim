@@ -400,18 +400,18 @@ export const MODULE1_DIMENSION_LABELS = {
 export const MODULE1_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
   baseline: {
     title: "안정형 (Secure)",
-    hook: "관계에서 크게 불안해하거나 거리를 두지 않는, 비교적 안정된 애착 패턴입니다.",
+    hook: "이번 응답에서는 관계에서 크게 불안해하거나 거리를 두려는 신호가 뚜렷하지 않아, 비교적 안정된 애착 경향이 보입니다.",
   },
   anxiety: {
     title: "불안형 (Anxious-Preoccupied)",
-    hook: "관계의 안정성을 자주 확인받고 싶어하고, 상대의 반응에 민감하게 반응하는 패턴입니다.",
+    hook: "이번 응답에서는 관계가 괜찮은지 자주 확인받고 싶고, 상대의 반응에 마음이 크게 움직이는 경향이 보입니다.",
   },
   avoidance: {
     title: "회피형 (Dismissive-Avoidant)",
-    hook: "친밀감이나 정서적 의존을 부담스러워하고, 독립성을 우선시하는 패턴입니다.",
+    hook: "이번 응답에서는 가까워지거나 기대는 일이 부담스럽게 느껴지고, 혼자 해내는 쪽을 앞세우는 경향이 보입니다.",
   },
   "anxiety+avoidance": {
     title: "혼란형 (Fearful-Avoidant)",
-    hook: "가까워지고 싶은 마음과 거리를 두고 싶은 마음이 동시에 강하게 작동하는, 양가적인 패턴입니다.",
+    hook: "이번 응답에서는 가까워지고 싶은 마음과 거리를 두고 싶은 마음이 함께 강하게 나타나는, 양가적인 경향이 보입니다.",
   },
 };

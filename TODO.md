@@ -9,10 +9,13 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이�
   - 결과: 최고점 hook을 "이번 응답에서 세 가지 신호가 모두 뚜렷하게 나타났다" 꼴로(ko/en/es), en 제목 "Full Burnout" → "Running on Empty"(ko "완전 소진형"·es "Agotamiento completo"는 진단명으로 읽히지 않아 유지). "MBI에서 흔한 조합"·"burnout research" → "함께 나타나기 쉬운 조합". 탈진형의 "번아웃이 상당히 진행된 상태"(병기처럼 읽힘) → "많이 지쳐 있는 상태", es 제목 "Agotamiento avanzado" → "Sin energía ni ganas". 웹 `lib/module3Burnout.ts`(ko) 같이 수정.
   - QA: `grep -rniE "syndrome|증후군|síndrome|MBI가 정의" lib mobile/lib` → `quizProfile.ts` 주석 2건만(결과 문구 0). 루트 `npx tsc --noEmit` → exit 0. mobile tsc → exit 0. mobile-web(8082, 375x812, `?qa=free&persona=jordan&lang=en|ko|es`)에서 30문항 모두 최고값으로 응답 → 세 언어 결과 화면에 새 제목·hook 표시 확인, 캡처 `.agents/qa/burnout-copy-2026-10/`(증거: mobile-web, 네이티브 아님).
 
-- [ ] 2. 애착 결과 문구의 2인칭 단정 풀기 (ko/en/es)
+- [x] 2. 애착 결과 문구의 2인칭 단정 풀기 (ko/en/es)
   - 변경: `mobile/lib/quiz/module1Attachment.ts`의 `MODULE1_TYPE_NAMES` hook과 결과 문단(en "You tend to…" 위치는 grep으로 찾기), 웹에 같은 문구가 있으면 함께
   - 기준: "~하는 패턴입니다", "You tend to…"처럼 단정하는 표현을 "이런 경향이 보일 수 있어요" 꼴의 관찰 표현으로. 유형 이름(Secure 등)은 그대로.
   - QA: `grep -rn "You tend to" mobile/lib/quiz lib` → 0건. 루트·mobile tsc 0(1번과 같은 명령). mobile-web에서 애착 결과 화면 1개를 캡처해 확인.
+  - 결과: 단정 표현은 4유형 hook에만 있었다(결과 문단은 없음). 앱 hook 12개(ko/en/es)와 웹 `lib/module1Attachment.ts` ko 4개를 "이번 응답에서는 ~ 경향이 보입니다 / Your answers this time suggest… / Tus respuestas de esta vez sugieren…" 꼴로 바꿨다. 제목은 그대로.
+  - QA 범위 보정: `lib` 전체 grep은 챗 선택지(`lib/choiceScripts/en/*`)·사주 SEO 글(`lib/seoArticles/*`)의 "You tend to"까지 잡는데, 애착 결과가 아니라 범위 밖이다. 결과 문구만 보도록 좁혔다.
+  - QA: `grep -rn "You tend to\|패턴입니다\|Tiendes a" mobile/lib/quiz/module1Attachment.ts lib/module1Attachment.ts` → 0건(`mobile/lib/quiz` 전체에서 "You tend to"도 0건). 루트 `npx tsc --noEmit` → exit 0. mobile tsc → exit 0. mobile-web(8082, 375x812, `?qa=free&persona=jordan&lang=en`)에서 애착 30문항 최고값 응답 → 결과 "Fearful-Avoidant"에 새 hook 표시 확인, 캡처 `.agents/qa/attachment-copy-2026-10/en-fearful-avoidant.jpg`(증거: mobile-web, 네이티브 아님).
 
 - [ ] 3. 레딧 다이제스트: 질문 아닌 글 감점
   - 변경: `scripts/reddit/score.mts`, `scripts/reddit/config.mts`(검증), `marketing/reddit/config.json`(감점 값·무시 서브레딧·패턴), `scripts/reddit/score.test.mts`, `marketing/reddit/README.md` "설정 바꾸기"
@@ -59,3 +62,4 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이�
 - (1번 중) A3x 영상 소재에 옛 제목 "Full Burnout"이 남아 있다: `scripts/record-app-ab.mts` A3x `highlight`, `marketing/tts-samples/scripts.json` A3x 대본, 기존 `marketing/video/A3x.mp4`. 대본·TTS·영상을 "Running on Empty"로 다시 만들어야 한다.
 - (1번 중) `mobile/lib/i18n/ko.ts:289` 안내 문구 "심리테스트로 나의 성향과 패턴을 진단해보면" — 결과 문구 밖이라 손대지 않음, "진단" 표현.
 - (1번 중) `record-app-ab.mts` 기본 브라우저 경로(`~/Library/Caches/ms-playwright/chromium_headless_shell-1243`)가 이 기기에 없다. 4번 녹화 때 `CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`로 지정해야 할 수 있다.
+- (2번 중) 다른 모듈 결과 hook에도 "~하는 패턴입니다" 단정이 남아 있다: `mobile/lib/quiz/module2Money.ts`·`module4Mask.ts`·`module5Execution.ts`·`module6Anger.ts`·`module7Sensitivity.ts`·`module8Sleep.ts`·`module9Family.ts`·`module10Focus.ts` ko hook(en/es 대응 문구 포함 여부는 미확인). module7은 "전형적인 고감각민감자(HSP)"라 진단처럼 읽힐 수 있다. 이번 SPEC은 번아웃·애착만이라 손대지 않음.

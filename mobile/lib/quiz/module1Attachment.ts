@@ -483,55 +483,55 @@ export const MODULE1_TYPE_NAMES: Record<Locale, Record<string, { title: string; 
   ko: {
     baseline: {
       title: "안정형 (Secure)",
-      hook: "관계에서 크게 불안해하거나 거리를 두지 않는, 비교적 안정된 애착 패턴입니다.",
+      hook: "이번 응답에서는 관계에서 크게 불안해하거나 거리를 두려는 신호가 뚜렷하지 않아, 비교적 안정된 애착 경향이 보입니다.",
     },
     anxiety: {
       title: "불안형 (Anxious-Preoccupied)",
-      hook: "관계의 안정성을 자주 확인받고 싶어하고, 상대의 반응에 민감하게 반응하는 패턴입니다.",
+      hook: "이번 응답에서는 관계가 괜찮은지 자주 확인받고 싶고, 상대의 반응에 마음이 크게 움직이는 경향이 보입니다.",
     },
     avoidance: {
       title: "회피형 (Dismissive-Avoidant)",
-      hook: "친밀감이나 정서적 의존을 부담스러워하고, 독립성을 우선시하는 패턴입니다.",
+      hook: "이번 응답에서는 가까워지거나 기대는 일이 부담스럽게 느껴지고, 혼자 해내는 쪽을 앞세우는 경향이 보입니다.",
     },
     "anxiety+avoidance": {
       title: "혼란형 (Fearful-Avoidant)",
-      hook: "가까워지고 싶은 마음과 거리를 두고 싶은 마음이 동시에 강하게 작동하는, 양가적인 패턴입니다.",
+      hook: "이번 응답에서는 가까워지고 싶은 마음과 거리를 두고 싶은 마음이 함께 강하게 나타나는, 양가적인 경향이 보입니다.",
     },
   },
   en: {
     baseline: {
       title: "Secure",
-      hook: "A relatively stable attachment pattern — you don't get especially anxious about the relationship or feel the need to keep your distance.",
+      hook: "Your answers this time point to a relatively stable attachment style — neither strong worry about the relationship nor a strong pull to keep your distance stood out.",
     },
     anxiety: {
       title: "Anxious-Preoccupied",
-      hook: "You tend to seek frequent reassurance that the relationship is okay, and you're sensitive to how your partner reacts.",
+      hook: "Your answers this time suggest a leaning toward wanting frequent reassurance that the relationship is okay, with your partner's reactions weighing heavily on you.",
     },
     avoidance: {
       title: "Dismissive-Avoidant",
-      hook: "Closeness and emotional dependence feel like a lot — you tend to prioritize your independence.",
+      hook: "Your answers this time suggest closeness and leaning on someone can feel like a lot, with independence often coming first.",
     },
     "anxiety+avoidance": {
       title: "Fearful-Avoidant",
-      hook: "A push-and-pull pattern — wanting to get closer and wanting to keep your distance are both running strong at the same time.",
+      hook: "Your answers this time show a push and pull — wanting to get closer and wanting to keep your distance both came through strongly.",
     },
   },
   es: {
     baseline: {
       title: "Apego seguro",
-      hook: "Un patrón de apego relativamente estable: no sueles sentir mucha ansiedad en la relación ni la necesidad de tomar distancia.",
+      hook: "Tus respuestas de esta vez apuntan a un estilo de apego relativamente estable: no destacaron ni mucha ansiedad en la relación ni la necesidad de tomar distancia.",
     },
     anxiety: {
       title: "Apego ansioso",
-      hook: "Tiendes a buscar confirmación frecuente de que la relación está bien, y eres sensible a las reacciones de la otra persona.",
+      hook: "Tus respuestas de esta vez sugieren una inclinación a buscar confirmación frecuente de que la relación está bien, y las reacciones de la otra persona te pesan mucho.",
     },
     avoidance: {
       title: "Apego evitativo",
-      hook: "La cercanía y la dependencia emocional se te hacen pesadas, y tiendes a dar prioridad a tu independencia.",
+      hook: "Tus respuestas de esta vez sugieren que la cercanía y apoyarte en alguien se te pueden hacer pesadas, y que tu independencia suele ir primero.",
     },
     "anxiety+avoidance": {
       title: "Apego temeroso-evitativo",
-      hook: "Un patrón ambivalente: las ganas de acercarte y las de tomar distancia actúan con la misma fuerza al mismo tiempo.",
+      hook: "Tus respuestas de esta vez muestran una tensión ambivalente: las ganas de acercarte y las de tomar distancia aparecieron con fuerza a la vez.",
     },
   },
 };
