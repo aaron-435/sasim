@@ -1,0 +1,135 @@
+
+==================== 시나리오 (p) 매 턴 0번째 보기 ====================
+
+[T1]
+  1. Hola. Vamos a hablar a partir de los resultados de tu test.
+  2. Para un resultado más preciso, tómate tu tiempo y responde con calma.
+  3. En el test, a "Cuando dudas de cómo va a quedar el resultado, ¿qué haces?" respondiste "Espero a tener un plan perfecto".
+  4. ¿Con qué tipo de tarea aparece más a menudo esa faceta tuya?
+  choices: "Papeleo y tareas de orden" / "Trabajo o estudio que se evalúa" / "Mensajes y respuestas a otras personas"
+  > 사용자: Papeleo y tareas de orden
+
+[T2]
+  1. Aparece más a menudo con el papeleo y las tareas de orden.
+  2. Justo antes de abrir esa tarea, ¿qué pensamiento te cruza?
+  choices: "Tengo que hacerlo bien" / "Ahora no me apetece" / "No sé por dónde empezar"
+  > 사용자: Tengo que hacerlo bien
+
+[T3]
+  1. Entonces, en ese momento, ¿qué es lo que más quieres evitar?
+  choices: "Lo engorroso y aburrido" / "Que no salga bien"
+  > 사용자: Lo engorroso y aburrido
+
+[T4]
+  1. En ese momento, lo que más quieres evitar es lo engorroso y aburrido.
+  2. Mientras lo vas dejando, ¿qué se parece más a tu ánimo?
+  choices: "Inquietud" / "Culpa" / "Un alivio momentáneo"
+  > 사용자: Inquietud
+
+[T5]
+  1. En el test, a "En los últimos momentos antes de entregar o presentar algo, ¿cómo lo vives?" respondiste "Como nunca me convence, no logro soltarlo hasta el final".
+  2. Esta faceta tuya, ¿viene de hace tiempo o ha crecido últimamente?
+  choices: "Viene de hace tiempo" / "Ha crecido últimamente"
+  > 사용자: Viene de hace tiempo
+
+[T6]
+  1. Esto viene de hace tiempo.
+  2. ¿En qué punto sueles pararte?
+  choices: "Al empezar" / "A mitad" / "Justo antes de terminar"
+  > 사용자: Al empezar
+
+[T7]
+  1. Entonces, cuando tienes que elegir, ¿hacia qué lado tiendes?
+  choices: "Lo pienso tanto que se me pasa el momento" / "Elijo rápido y me arrepiento"
+  > 사용자: Lo pienso tanto que se me pasa el momento
+
+[T8]
+  1. Cuando tienes que elegir, lo piensas tanto que se te pasa el momento.
+  2. ¿Qué te frena con más fuerza a la hora de empezar?
+  choices: "El miedo a equivocarme" / "Un estándar muy alto" / "Demasiadas opciones"
+  > 사용자: El miedo a equivocarme
+
+[T9]
+  1. Por lo que me contaste, justo antes de empezar te cruza la idea de que hay que hacerlo bien, tu ánimo entonces se parece a la inquietud, y lo que más te frena es el miedo a equivocarte.
+  2. Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.
+  3. ¿Seguimos hablando un poco más o lo dejamos aquí?
+  choices: (없음)
+  [전체] Por lo que me contaste, justo antes de empezar te cruza la idea de que hay que hacerlo bien, tu ánimo entonces se parece a la inquietud, y lo que más te frena es el miedo a equivocarte. Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe. ¿Seguimos hablando un poco más o lo dejamos aquí?
+
+[T10]
+  1. En el test, a "Si tienes que enseñar a alguien algo que aún no está terminado, ¿qué sientes?" respondiste "Preferiría esconderlo antes que enseñarlo".
+  2. ¿Quién dirías que puso ese estándar?
+  choices: "Lo puse yo" / "Siento que lo esperan los demás"
+  > 사용자: Lo puse yo
+
+[T11]
+  1. Entonces, cuando el resultado no llega al estándar, ¿qué es lo que más te pesa?
+  choices: "Que digan que el trabajo es malo" / "Que digan que no valgo" / "Aún no lo sé"
+  > 사용자: Que digan que el trabajo es malo
+
+[T12]
+  1. Que digan que el trabajo es malo es lo que más te pesa.
+  2. ¿De quién te importa más el juicio?
+  choices: "De alguien por encima de mí" / "De alguien cercano" / "Del mío propio"
+  > 사용자: De alguien por encima de mí
+
+[T13]
+  1. Entonces, cuando por fin te pones en marcha, ¿qué suele ser lo que te mueve?
+  choices: "Una fecha límite encima" / "Alguien a mi lado" / "Partirlo en trozos diminutos"
+  > 사용자: Una fecha límite encima
+
+[T14]
+  1. Lo que te pone en marcha al final es una fecha límite encima.
+  2. El día que terminas por fin algo que habías dejado, ¿cómo te sientes?
+  choices: "Me quito un peso" / "Me quito un peso, pero me lo reprocho"
+  > 사용자: Me quito un peso
+
+[T15]
+  1. Entonces, cuando se acumulan las tareas aplazadas, ¿qué sueles hacer?
+  choices: "Todo de golpe" / "Elijo una y empiezo por ella" / "Me paso a otras tareas"
+  > 사용자: Todo de golpe
+
+[T16]
+  1. Cuando se acumulan, sueles hacerlo todo de golpe.
+  2. ¿Sueles contar a quienes te rodean que lo estás dejando?
+  choices: "Suelo decirlo" / "Procuro que no se note"
+  > 사용자: Suelo decirlo
+
+[T17]
+  1. Entonces, ¿hay alguien que sepa que lo dejas para después?
+  choices: "Una o dos personas cercanas" / "Todos a mi alrededor" / "Nadie"
+  > 사용자: Una o dos personas cercanas
+
+[T18]
+  1. Una o dos personas cercanas saben que lo dejas para después.
+  2. En el test, a "Cuando te dan la carta en un restaurante, ¿qué haces?" respondiste "Lo pienso un poco y decido".
+  3. Si esa faceta apareciera un poco más a menudo, ¿en qué tipo de tarea te gustaría?
+  choices: "En el trabajo o el estudio" / "En asuntos con otras personas" / "En cosas para mí"
+  > 사용자: En el trabajo o el estudio
+
+[T19]
+  1. Entonces, ¿cuál sería la versión más pequeña de empezarlo?
+  choices: "Abrirlo solo cinco minutos" / "Terminar solo una parte primero" / "Contárselo a alguien"
+  > 사용자: Abrirlo solo cinco minutos
+
+[T20]
+  1. El comienzo es abrirlo solo cinco minutos.
+  2. Hay una última cosa que me gustaría preguntarte.
+  3. Dentro de un año, si esa tarea ya está hecha, ¿cómo te ves?
+  choices: "Con alivio y ligereza" / "Como si nada" / "No lo veo claro"
+  > 사용자: Con alivio y ligereza
+
+[T21]
+  1. Si el tú de dentro de un año pudiera decirle una palabra al tú de hoy, ¿cuál sería?
+  choices: (없음) inputOnly
+  > 사용자: 그때의 나에게 수고했다고 말해주고 싶어요.
+
+[T22]
+  1. Tiene sentido.
+  2. Justo antes de empezar te cruza la idea de que hay que hacerlo bien, y debajo, lo que más te frena es el miedo a equivocarte.
+  3. Bajo el estándar está una mala opinión del trabajo, y lo que suele ponerte en marcha es una fecha límite.
+  4. Cuando se acumulan las tareas, lo tuyo es hacerlo todo de golpe. Quién lo sabe: una o dos personas cercanas. Y querrías empezar por abrirlo cinco minutos.
+  5. Lo que dijo el tú de dentro de un año también lo guardo, con tus palabras.
+  6. Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.
+  choices: (없음)
+  [전체] Tiene sentido. Justo antes de empezar te cruza la idea de que hay que hacerlo bien, y debajo, lo que más te frena es el miedo a equivocarte. Bajo el estándar está una mala opinión del trabajo, y lo que suele ponerte en marcha es una fecha límite. Cuando se acumulan las tareas, lo tuyo es hacerlo todo de golpe. Quién lo sabe: una o dos personas cercanas. Y querrías empezar por abrirlo cinco minutos. Lo que dijo el tú de dentro de un año también lo guardo, con tus palabras. Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.

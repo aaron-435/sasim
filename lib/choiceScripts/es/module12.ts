@@ -90,17 +90,17 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
       question: "¿Te viene a veces el pensamiento de «a estas alturas ya debería haberme asentado»?",
       options: [
         o("A menudo", "Siempre hay una línea de base trazada en tu cabeza.", "un pensamiento que viene a menudo"),
-        o("A veces", "A veces ese listón aparece de repente.", "un pensamiento que viene a veces"),
+        o("A veces", "A veces ese estándar aparece de repente.", "un pensamiento que viene a veces"),
         o("Casi nunca", "No sueles medirte con una vara de velocidad.", "un pensamiento que casi nunca viene"),
       ],
     },
     11: {
       turn: 11,
-      question: "Si hay un plazo para asentarse, ¿de quién es más bien ese listón?",
+      question: "Si hay un plazo para asentarse, ¿de quién es más bien ese estándar?",
       options: [
-        o("Mío", "Ese listón es más bien tuyo.", "el tuyo"),
-        o("De los demás", "Ese listón es más bien de los demás.", "el de los demás"),
-        o("Una mezcla de los dos", "En ese listón se mezclan el tuyo y el de los demás.", "una mezcla del tuyo y el de los demás"),
+        o("Mío", "Ese estándar es más bien tuyo.", "el tuyo"),
+        o("De los demás", "Ese estándar es más bien de los demás.", "el de los demás"),
+        o("Una mezcla de los dos", "En ese estándar se mezclan el tuyo y el de los demás.", "una mezcla del tuyo y el de los demás"),
       ],
     },
     12: {
@@ -198,7 +198,7 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
   closing: {
     summary: [
       "El primer sentimiento tras el cambio se parecía a {g4}, y los pensamientos del pasado suelen llegar {g6}.",
-      "El listón de lo rápido que se espera que te asientes es {g11}, y aferrarte a lo que terminó te parece {g13}.",
+      "El estándar de lo rápido que se espera que te asientes es {g11}, y aferrarte a lo que terminó te parece {g13}.",
       "En el tiempo sin decidir, lo que más haces es {g15}, tu fuerza de ahora viene de {g17}, y para anclar tu nueva rutina querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que le dijiste a tu yo del día en que empezó el cambio también lo guardo, con tus palabras.",

@@ -26,7 +26,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       question: "¿Qué parte de ese peso es la más grande?",
       options: [
         o("La cantidad de trabajo", "Lo primero que destaca es la cantidad en sí.", "la carga de trabajo"),
-        o("Las personas", "El peso viene más de la gente que del trabajo.", "las personas"),
+        o("Las personas", "El peso viene más de la gente que del trabajo.", "la gente"),
         o("No sabría elegir una", "No caber en una sola cosa también es una respuesta.", "varias cosas a la vez"),
       ],
     },

@@ -199,7 +199,7 @@ export const MODULE12_SCRIPT_EN: ModuleScript = {
     summary: [
       "The first feeling after the change was closest to {g4}, and thoughts of the past mostly come {g6}.",
       "The standard for how quickly you settle in is {g11}, and holding on to what ended seems to you like {g13}.",
-      "In the undecided time, what you most often do is {g15}, your strength right now comes from {g17}, and you'd like to start anchoring your new everyday life with {g19}.",
+      "In the undecided time, what you find yourself doing most is {g15}, your strength right now comes from {g17}, and you'd like to start anchoring your new everyday life with {g19}.",
     ],
     perspectiveLine: "I'll also keep the words you wrote to the you of the day the change began, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",

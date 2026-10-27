@@ -1,0 +1,135 @@
+
+==================== 시나리오 (p) 매 턴 0번째 보기 ====================
+
+[T1]
+  1. Hola. Vamos a hablar a partir de los resultados de tu test.
+  2. Para un resultado más preciso, tómate tu tiempo y responde con calma.
+  3. En el test, a "Cuando abres los ojos por la mañana, ¿qué sientes?" respondiste "Nada más despertar, ya estoy sin energía".
+  4. ¿En qué momento del día se nota más?
+  choices: "Antes de ir a trabajar" / "En pleno trabajo" / "Al terminar la jornada"
+  > 사용자: Antes de ir a trabajar
+
+[T2]
+  1. Se nota más antes de ir a trabajar.
+  2. ¿Qué parte de ese peso es la más grande?
+  choices: "La cantidad de trabajo" / "Las personas" / "No sabría elegir una"
+  > 사용자: La cantidad de trabajo
+
+[T3]
+  1. Entonces, ¿dónde apareció primero el agotamiento?
+  choices: "Primero se cansó el cuerpo" / "Primero se enfrió el ánimo"
+  > 사용자: Primero se cansó el cuerpo
+
+[T4]
+  1. El agotamiento llegó primero por el cuerpo.
+  2. Si tuvieras que resumir cómo estás en una palabra, ¿cuál se acerca más?
+  choices: "Desgana" / "Irritación" / "Vacío"
+  > 사용자: Desgana
+
+[T5]
+  1. En el test, a "Cuando termina el fin de semana o unas vacaciones, ¿cómo estás?" respondiste "Hasta descansar me cansa".
+  2. ¿Habías pasado por una etapa así antes, o es la primera vez?
+  choices: "Sí, ya me había pasado" / "Es la primera vez"
+  > 사용자: Sí, ya me había pasado
+
+[T6]
+  1. Entonces ya hubo etapas así antes.
+  2. Si piensas en la etapa más dura que pasaste en el trabajo, ¿qué es lo primero que te viene a la cabeza?
+  choices: "Se acumuló el trabajo" / "Me costaba la gente" / "Lo recuerdo borroso"
+  > 사용자: Se acumuló el trabajo
+
+[T7]
+  1. Entonces, ¿qué cambió cuando empezó este peso?
+  choices: "Se desdibujó el sentido del trabajo" / "Cambió mi ritmo de vida" / "Nada que pueda señalar"
+  > 사용자: Se desdibujó el sentido del trabajo
+
+[T8]
+  1. Lo primero que se fue apagando fue el porqué.
+  2. ¿Qué es lo que más energía te quita?
+  choices: "Gestionar emociones" / "Que nada salga como quiero" / "La presión de hacerlo bien"
+  > 사용자: Gestionar emociones
+
+[T9]
+  1. Por lo que me contaste, lo que más pesa en tus días es la carga de trabajo; lo que sientes es, sobre todo, la desgana; y lo que más energía te quita es gestionar emociones.
+  2. Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.
+  3. ¿Seguimos hablando un poco más o lo dejamos aquí?
+  choices: (없음)
+  [전체] Por lo que me contaste, lo que más pesa en tus días es la carga de trabajo; lo que sientes es, sobre todo, la desgana; y lo que más energía te quita es gestionar emociones. Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe. ¿Seguimos hablando un poco más o lo dejamos aquí?
+
+[T10]
+  1. Entonces, si algo te frena a la hora de descansar, ¿de dónde crees que viene?
+  choices: "De dentro de mí" / "De lo que pensarán los demás"
+  > 사용자: De dentro de mí
+
+[T11]
+  1. Entonces, si esa sensación desapareciera, ¿qué es lo que más te preocuparía?
+  choices: "Quedarme atrás" / "Volverme inútil" / "No lo sé"
+  > 사용자: Quedarme atrás
+
+[T12]
+  1. Quedarte atrás es lo que más te preocupa.
+  2. ¿Qué te gustaba de este trabajo cuando lo empezaste?
+  choices: "El trabajo en sí" / "Verme hacerlo bien" / "Que me reconocieran"
+  > 사용자: El trabajo en sí
+
+[T13]
+  1. Entonces, ¿hay algo que todavía te dé un poco de energía, aunque sea poco?
+  choices: "La gente cercana" / "El tiempo a solas" / "Pequeños logros del trabajo"
+  > 사용자: La gente cercana
+
+[T14]
+  1. Aun ahora, la gente cercana te da un poco de energía.
+  2. En el test, a "¿Cómo estás justo antes de dormir?" respondiste "Tengo cansancio, pero me cuesta dormirme".
+  3. ¿Cómo pasas los días libres?
+  choices: "Descanso de verdad" / "Sigo pensando en el trabajo"
+  > 사용자: Descanso de verdad
+
+[T15]
+  1. Entonces, si se cuelan pensamientos del trabajo mientras descansas, ¿qué sueles hacer?
+  choices: "Los dejo estar" / "Lo reviso o lo resuelvo" / "Me distraigo con otra cosa"
+  > 사용자: Los dejo estar
+
+[T16]
+  1. Cuando se cuelan pensamientos del trabajo, sueles dejarlos estar.
+  2. Cuando lo pasas mal, ¿qué sueles hacer a la hora de pedir ayuda?
+  choices: "Suelo decirlo" / "Lo cargo sin ayuda hasta el final"
+  > 사용자: Suelo decirlo
+
+[T17]
+  1. Entonces, ¿quién sabe cómo estás ahora?
+  choices: "Una o dos personas lo saben" / "Solo familia y amigos" / "Nadie lo sabe"
+  > 사용자: Una o dos personas lo saben
+
+[T18]
+  1. Una o dos personas saben cómo estás.
+  2. En el test, a "Cuando miras atrás y ves lo que has logrado, ¿qué sientes?" respondiste "Siento orgullo".
+  3. Si te volviera la energía, ¿qué querrías hacer primero?
+  choices: "Hacer bien mi trabajo" / "Ver a gente" / "Cuidarme"
+  > 사용자: Hacer bien mi trabajo
+
+[T19]
+  1. Entonces, ¿cuál sería el primer paso más pequeño para recuperar tu energía?
+  choices: "Caminar diez minutos" / "Retomar algo que me gustaba" / "Dormir bien una noche entera"
+  > 사용자: Caminar diez minutos
+
+[T20]
+  1. El comienzo más pequeño es caminar diez minutos.
+  2. Hay una última cosa que me gustaría preguntarte.
+  3. ¿Cómo eras el día en que empezaste este trabajo?
+  choices: "Con ilusión" / "Con nervios" / "No lo recuerdo bien"
+  > 사용자: Con ilusión
+
+[T21]
+  1. Si el tú de hoy pudiera decirle una palabra al tú de aquel día, ¿cuál sería?
+  choices: (없음) inputOnly
+  > 사용자: 그때의 나에게 수고했다고 말해주고 싶어요.
+
+[T22]
+  1. Tiene sentido.
+  2. En tus días pesa sobre todo la carga de trabajo, lo que sientes es la desgana y lo que más energía te quita es gestionar emociones.
+  3. Al imaginar que esa sensación se fuera, lo que aparece es el miedo a quedarte atrás, y aun así la gente cercana te da un poco de energía.
+  4. Cuando se cuelan pensamientos del trabajo, lo que sueles hacer es dejar estar esos pensamientos; sobre quién sabe cómo estás, la respuesta es una o dos personas; y el primer paso pequeño que elegiste para recuperar energía es caminar diez minutos.
+  5. Lo que le dijiste a tu yo de aquel primer día también lo guardo, con tus palabras.
+  6. Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.
+  choices: (없음)
+  [전체] Tiene sentido. En tus días pesa sobre todo la carga de trabajo, lo que sientes es la desgana y lo que más energía te quita es gestionar emociones. Al imaginar que esa sensación se fuera, lo que aparece es el miedo a quedarte atrás, y aun así la gente cercana te da un poco de energía. Cuando se cuelan pensamientos del trabajo, lo que sueles hacer es dejar estar esos pensamientos; sobre quién sabe cómo estás, la respuesta es una o dos personas; y el primer paso pequeño que elegiste para recuperar energía es caminar diez minutos. Lo que le dijiste a tu yo de aquel primer día también lo guardo, con tus palabras. Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.

@@ -1,0 +1,136 @@
+
+==================== 시나리오 (p) 매 턴 0번째 보기 ====================
+
+[T1]
+  1. Hi. Let's talk through your quiz results together.
+  2. For the most accurate result, take your time and answer calmly.
+  3. On the quiz, to "When you come across old photos or messages" you answered "I stay in that time for a while".
+  4. Which is closest to the big change in your life lately?
+  choices: "Parting from someone" / "My work or school changed" / "Where I live changed"
+  > 사용자: Parting from someone
+
+[T2]
+  1. The big change lately is parting from someone.
+  2. Was that change something you chose?
+  choices: "I chose it" / "It just happened to me" / "A bit of both"
+  > 사용자: I chose it
+
+[T3]
+  1. So, when did that change feel most real?
+  choices: "When I first told people" / "When I felt the gap in my routine" / "The first day of my new everyday life"
+  > 사용자: When I first told people
+
+[T4]
+  1. Saying it out loud is when the change became real.
+  2. After the change, what was the first feeling to arrive?
+  choices: "Lightness" / "Emptiness" / "Being lost"
+  > 사용자: Lightness
+
+[T5]
+  1. On the quiz, to "How much do you compare new people or a new job with what came before" you answered "The old one is always my yardstick".
+  2. How often do thoughts of how things used to be come up?
+  choices: "Often" / "Sometimes" / "They settled faster than I expected"
+  > 사용자: Often
+
+[T6]
+  1. Thoughts of how things used to be come up often.
+  2. If thoughts of the past do come up, when do they mostly come?
+  choices: "When I'm alone" / "When my days feel off" / "Out of nowhere"
+  > 사용자: When I'm alone
+
+[T7]
+  1. So, if those thoughts do come up, what happens?
+  choices: "I stay with them a while" / "I come back quickly"
+  > 사용자: I stay with them a while
+
+[T8]
+  1. When those thoughts come up, you stay with them a while.
+  2. When you have empty time, how do you usually spend it?
+  choices: "I fill it with something" / "I just leave it empty" / "I look back at the past"
+  > 사용자: I fill it with something
+
+[T9]
+  1. From what you've told me, the change was one you chose, the first feeling after it was closest to lightness, and when you have empty time, your habit is filling it with something.
+  2. If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.
+  3. Shall we keep talking a little more, or wrap up here?
+  choices: (없음)
+  [전체] From what you've told me, the change was one you chose, the first feeling after it was closest to lightness, and when you have empty time, your habit is filling it with something. If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report. Shall we keep talking a little more, or wrap up here?
+
+[T10]
+  1. On the quiz, to "When you think back on what ended, what do you mostly feel" you answered "It still doesn't feel real that it's over".
+  2. Do you ever think, "By now I should have settled in"?
+  choices: "Often" / "Sometimes" / "Hardly ever"
+  > 사용자: Often
+
+[T11]
+  1. So, if there is a timeline for settling in, whose standard is it closer to?
+  choices: "Mine" / "Other people's" / "A mix of both"
+  > 사용자: Mine
+
+[T12]
+  1. That standard is closer to your own.
+  2. How did you get through other changes in the past?
+  choices: "I adapted slowly" / "I adapted quickly" / "I don't remember well"
+  > 사용자: I adapted slowly
+
+[T13]
+  1. So, how does holding on to something that's over for a long time seem to you?
+  choices: "Like it's weakness" / "Like it mattered that much" / "I'm not sure"
+  > 사용자: Like it's weakness
+
+[T14]
+  1. To you, holding on for so long looks like weakness.
+  2. On the quiz, to "Clearing out things from that chapter (gifts, an old work badge, keys to a former home)" you answered "I can't even think about starting".
+  3. How do you tend to spend time when what comes next isn't decided yet?
+  choices: "I try to decide quickly" / "I pause for now" / "Day by day"
+  > 사용자: I try to decide quickly
+
+[T15]
+  1. So, in that undecided time, what do you do most often?
+  choices: "Pack my schedule tight" / "Lean on what's familiar" / "Just watch"
+  > 사용자: Pack my schedule tight
+
+[T16]
+  1. In that time, you pack your schedule tight.
+  2. Is there someone going through this period with you?
+  choices: "Yes" / "Mostly I'm alone"
+  > 사용자: Yes
+
+[T17]
+  1. So, where does the most strength come from right now?
+  choices: "Someone who's been with me a long time" / "Someone I met after the change" / "People going through the same period"
+  > 사용자: Someone who's been with me a long time
+
+[T18]
+  1. A long-standing bond is what holds you up right now.
+  2. On the quiz, to "When something unexpected changes your plans" you answered "I adjust easily".
+  3. Has anything in your new everyday life started to feel familiar?
+  choices: "Yes" / "Something is starting to" / "Not yet"
+  > 사용자: Yes
+
+[T19]
+  1. So, what one scene would make this new everyday life feel like yours?
+  choices: "A place I go often" / "One comfortable person" / "A routine of my own"
+  > 사용자: A place I go often
+
+[T20]
+  1. It would be enough to have one place you go often.
+  2. There's one last thing I'd like to ask.
+  3. On the day that scene appears, how do you picture yourself?
+  choices: "Breathing a little easier" / "Still unfamiliar" / "I can't picture it yet"
+  > 사용자: Breathing a little easier
+
+[T21]
+  1. Is there something you'd like to say to the you of the day the change was just beginning?
+  choices: (없음) inputOnly
+  > 사용자: 그때의 나에게 수고했다고 말해주고 싶어요.
+
+[T22]
+  1. That makes sense.
+  2. The first feeling after the change was closest to lightness, and thoughts of the past mostly come when you're alone.
+  3. The standard for how quickly you settle in is your own, and holding on to what ended seems to you like weakness.
+  4. In the undecided time, what you find yourself doing most is packing your schedule tight, your strength right now comes from someone who's been by your side a long time, and you'd like to start anchoring your new everyday life with one place you go often.
+  5. I'll also keep the words you wrote to the you of the day the change began, just as you wrote them.
+  6. Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.
+  choices: (없음)
+  [전체] That makes sense. The first feeling after the change was closest to lightness, and thoughts of the past mostly come when you're alone. The standard for how quickly you settle in is your own, and holding on to what ended seems to you like weakness. In the undecided time, what you find yourself doing most is packing your schedule tight, your strength right now comes from someone who's been by your side a long time, and you'd like to start anchoring your new everyday life with one place you go often. I'll also keep the words you wrote to the you of the day the change began, just as you wrote them. Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.

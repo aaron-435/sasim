@@ -113,7 +113,7 @@ const ES_WORD = (body: string) => new RegExp(`(?<![a-záéíóúüñ])(?:${body}
 const ES_SPAIN_MARKERS: Array<[RegExp, string]> = [
   [ES_WORD("vale(?! la (?:pena|espera))"), "vale(→ de acuerdo·claro)"],
   [ES_WORD("vosotr[oa]s|vuestr[oa]s?|os"), "vosotros·os(→ ustedes)"],
-  [ES_WORD("enfad[a-z]*|ordenador(?:es)?|móvil(?:es)?|coches?|conducir|pill(?:ar|ad[oa]|en|o|as?)|guay|cartera"), "스페인 어휘(→ enojo·computadora·celular·auto·manejar·descubrir·billetera)"],
+  [ES_WORD("enfad[a-z]*|ordenador(?:es)?|móvil(?:es)?|coches?|conducir|pill(?:ar|ad[oa]|en|o|as?)|guay|cartera|listón(?:es)?"), "스페인 어휘(→ enojo·computadora·celular·auto·manejar·descubrir·billetera·estándar)"],
 ];
 const ES_PRESENT_PERFECT = ES_WORD("(?:he|has|ha|hemos|han)\\s+[a-záéíóúñ]+(?:ad[oa]|[ií]d[oa]|to|cho|sto|erto|elto)s?");
 const ES_CONTINUING = ES_WORD("todavía|aún|nunca|alguna vez|últimamente|con el tiempo|hasta ahora|siempre|ya");

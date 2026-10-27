@@ -54,13 +54,23 @@ SPEC: `SPEC.md`. 한 번에 한 항목(`/work`). 문구는 이 프로젝트의 C
   - QA: `LOCALE=es npx tsx scripts/check-choice-scripts.mts` → 오류 0, 경고 3(module4 `{g1}`·`{g14}` gist, 기존). 스페인식 표지 경고 0. ko(오류 0, 경고 22 — 고치기 전 HEAD와 같은 수, 끝맺음 편중)·en(오류 0, 경고 3) 전체도 확인.
   - QA: 스크래치패드 `spain.mts`로 린트 정규식 확인 — 옛 문구 "Vale, te escucho."·"lo he leído"·"me has contado"·"enfado"·"Os"·"cartera"는 걸리고 "vale la pena"·"Pequeños logros"·"ha crecido últimamente"·"Todavía no has fijado"는 통과.
   - QA: `grep -rniE "\bvale\b" lib/choiceScripts/es lib/choiceScripts/common.ts | grep -vi "vale la pena"` → 0. `npx tsc --noEmit` → 0, `npm run lint && npm run build` → ESLint 0, 빌드 성공. 앱 tsc(`mobile/`, 큰 스택) → 0.
-- [ ] 7. (사용자 확인) 문구 판정
+- [x] 7. (사용자 확인) 문구 판정
+  - 판정(2026-10-27, 사용자): 괜찮음. 아래 사전 검토 5건은 모두 고치라고 해서 고쳤다.
+  - 고친 곳: ko module3 체크포인트 "마지막 몫" → "가장 큰 몫". ko module12 체크포인트 "빈 시간은 {g8:으로/로} 보내는" → "빈 시간을 보내는 방식은 {g8} 쪽인"(gist는 명사구 그대로, "직접 들려준 말"도 성립). en module12 마무리 "what you most often do is {g15}" → "what you find yourself doing most is {g15}". es module3 2턴 gist "las personas" → "la gente"(체크포인트·마무리 수 일치, 발견 사항 첫 줄 해결). es "listón" → "estándar"(module12 6곳, module5 7곳, module5 T11 보기는 24자 제한으로 "Un estándar muy alto"). 린트 스페인 어휘 경고에 `listón`을 더했다.
+  - QA: `LOCALE=ko|en|es npx tsx scripts/check-choice-scripts.mts` → 오류 0, 경고 22/3/3(고치기 전과 같음). module5 마무리에 "listón"을 잠깐 넣어 린트가 경고하는 것을 확인하고 되돌렸다. 경로 출력 재생성(+ `es-module3-pick1.txt`로 "la gente" 경로, `es-module5-pick0.txt`). `npx tsc --noEmit` → 0, `npm run lint && npm run build` → ESLint 0, 빌드 성공.
   - 1~3의 경로별 출력 파일을 열어 ko는 직접 읽고, en/es는 어색한 곳을 표시한다. 문제가 있으면 이 항목에 적고 해당 항목을 다시 연다.
+  - 준비(2026-10-27): 4~6번에서 es 체크포인트·마무리 문구가 바뀌어서 `.agents/qa/choice-paths-2026-10-27/`의 ko/en/es 출력 12개를 현재 코드(e75733f)로 다시 뽑았다(`LOCALE=… MODULE_ID=module12 PICK=0|1|2`, `MODULE_ID=module3 PICK=0`). 모델 호출 없음. module12 장소 전제 grep 0건, module3 일의 양 질문은 3개 언어 모두 T2 하나.
+  - Claude 사전 검토(판정 아님, 참고용):
+    - ko module3 T9 체크포인트 "마지막 몫은 {g2}" — 2턴 질문은 "가장 큰 몫"이라 "마지막 몫"이 어긋나 보인다. 2026-10-21 처음 넣을 때부터 있던 문구다(이번에 바꾸지 않음).
+    - ko module12 T9 "빈 시간은 뭔가로 채우기로 보내는 것 같아요" — 8턴 gist와 틀이 겹쳐 "~기로 보내는"이 어색하다.
+    - en module12 T22 "what you most often do is packing your schedule tight" — 동명사 gist가 "is" 뒤에 와서 "is pack…"이 자연스럽다(15턴 gist 문제).
+    - es module12 T22 "El listón de lo rápido…" — "listón"은 스페인 쪽 말이다. es-419라면 "la vara"나 "el estándar"가 낫다(린트 목록에 없음).
+    - es module3 체크포인트·마무리 수 일치 문제는 "발견 사항" 첫 줄 그대로(복수 gist 경로에서만 보인다. 이번 출력은 "la carga de trabajo" 경로라 안 보임).
 - [ ] 8. (사용자 실행) 커밋·푸시 → Vercel 웹 배포
   - 스크립트는 서버 데이터라 웹 배포로 앱에도 반영된다. 앱 문구(`mobile/lib/i18n/es.ts`)를 고쳤다면 그 부분만 다음 OTA에 실린다(iOS 1.2.0 승인 뒤).
 
 ## 발견 사항
-- (3번) es module3 체크포인트·마무리 "lo que más pesa en tus días es las personas", "En tus días pesa sobre todo las personas": 2턴 gist가 복수일 때 동사 수 일치가 깨진다(기존 문장). 틀을 "lo que más pesa… son…" 꼴로 바꾸거나 gist를 단수로 써야 한다.
+- (해결, 7번) (3번) es module3 체크포인트·마무리 "lo que más pesa en tus días es las personas", "En tus días pesa sobre todo las personas": 2턴 gist가 복수일 때 동사 수 일치가 깨진다(기존 문장). 틀을 "lo que más pesa… son…" 꼴로 바꾸거나 gist를 단수로 써야 한다.
 - (4번) 짝수 턴 반응은 엔진이 쓰지 않는데 데이터에 남아 있고 린트도 보지 않는다. 이번에 성별 표지가 있던 짝수 턴 반응 2건(module1·module8 T4)은 같이 고쳤다.
 - (5번 참고) 챗 응답 검사는 `matchEsGenderedReader`(두 목록)를 쓰면 된다.
 - (1번) `lib/modulePlaybooks.ts` module12의 boundary·C단계·`anchor_in_new` 설명이 아직 "새 자리"라고 쓴다. v2 모델 프롬프트(지금 en/es 기본 흐름)와 리포트에 들어가는 문장이라 이번 범위(고정 스크립트) 밖. 같은 전제 문제가 있는지 다음 SPEC에서 볼 것.

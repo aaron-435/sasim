@@ -1,0 +1,136 @@
+
+==================== 시나리오 (p) 매 턴 0번째 보기 ====================
+
+[T1]
+  1. Hola. Vamos a hablar a partir de los resultados de tu test.
+  2. Para un resultado más preciso, tómate tu tiempo y responde con calma.
+  3. En el test respondiste "Cuando vuelves a ver fotos o mensajes de antes… Me quedo en esa época un buen rato".
+  4. ¿Qué se acerca más al gran cambio que viviste hace poco?
+  choices: "Separarme de alguien" / "Cambió mi trabajo o mis estudios" / "Cambió dónde vivo"
+  > 사용자: Separarme de alguien
+
+[T2]
+  1. El gran cambio de últimamente es separarte de alguien.
+  2. Ese cambio, ¿lo elegiste tú?
+  choices: "Lo elegí yo" / "Me vino sin más" / "Un poco de cada"
+  > 사용자: Lo elegí yo
+
+[T3]
+  1. Entonces, ¿cuándo se te hizo más real ese cambio?
+  choices: "Al contárselo a alguien por primera vez" / "Al notar el vacío en mi rutina" / "El primer día de mi nueva rutina"
+  > 사용자: Al contárselo a alguien por primera vez
+
+[T4]
+  1. Al decirlo en voz alta, el cambio se volvió real.
+  2. Después del cambio, ¿cuál fue el primer sentimiento que llegó?
+  choices: "Ligereza" / "Vacío" / "Desorientación"
+  > 사용자: Ligereza
+
+[T5]
+  1. En el test, a "¿Cuánto comparas a la gente nueva o un trabajo nuevo con lo de antes?" respondiste "Lo de antes siempre es mi medida".
+  2. ¿Con qué frecuencia te vienen pensamientos de cómo eran antes las cosas?
+  choices: "A menudo" / "A veces" / "Lo dejé atrás antes de lo esperado"
+  > 사용자: A menudo
+
+[T6]
+  1. Te vienen a menudo pensamientos de cómo eran antes las cosas.
+  2. Si te vienen pensamientos del pasado, ¿cuándo suelen llegar?
+  choices: "Cuando estoy a solas" / "Cuando mis días no encajan" / "De repente, sin motivo"
+  > 사용자: Cuando estoy a solas
+
+[T7]
+  1. Entonces, si esos pensamientos llegan, ¿qué pasa?
+  choices: "Me quedo con ellos un rato" / "Vuelvo enseguida"
+  > 사용자: Me quedo con ellos un rato
+
+[T8]
+  1. Cuando llegan, te quedas un rato con ellos.
+  2. Cuando tienes tiempo libre, ¿cómo lo pasas normalmente?
+  choices: "Lo lleno con algo" / "Lo dejo vacío" / "Miro hacia el pasado"
+  > 사용자: Lo lleno con algo
+
+[T9]
+  1. Por lo que me contaste, el cambio fue algo que elegiste, el primer sentimiento tras él se parece a la ligereza, y cuando tienes tiempo libre tu costumbre es llenarlo con algo.
+  2. Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe.
+  3. ¿Seguimos hablando un poco más o lo dejamos aquí?
+  choices: (없음)
+  [전체] Por lo que me contaste, el cambio fue algo que elegiste, el primer sentimiento tras él se parece a la ligereza, y cuando tienes tiempo libre tu costumbre es llenarlo con algo. Si algo te sonó distinto, dímelo mientras seguimos y lo corrijo. La lectura detallada llega en tu informe. ¿Seguimos hablando un poco más o lo dejamos aquí?
+
+[T10]
+  1. En el test, a "Cuando recuerdas lo que terminó, ¿qué sientes sobre todo?" respondiste "Todavía no me parece real que haya terminado".
+  2. ¿Te viene a veces el pensamiento de «a estas alturas ya debería haberme asentado»?
+  choices: "A menudo" / "A veces" / "Casi nunca"
+  > 사용자: A menudo
+
+[T11]
+  1. Entonces, si hay un plazo para asentarse, ¿de quién es más bien ese estándar?
+  choices: "Mío" / "De los demás" / "Una mezcla de los dos"
+  > 사용자: Mío
+
+[T12]
+  1. Ese estándar es más bien tuyo.
+  2. Cuando pasaste por otros cambios en el pasado, ¿cómo fue?
+  choices: "Me adapté despacio" / "Me adapté rápido" / "No lo recuerdo bien"
+  > 사용자: Me adapté despacio
+
+[T13]
+  1. Entonces, ¿cómo te parece aferrarte mucho tiempo a algo que ya terminó?
+  choices: "Como debilidad" / "Como que importaba tanto" / "No lo sé"
+  > 사용자: Como debilidad
+
+[T14]
+  1. Para ti, aferrarte tanto tiempo parece debilidad.
+  2. En el test respondiste "Ordenar las cosas de esa etapa (regalos, la tarjeta del trabajo anterior, llaves de una casa de antes)… Ni siquiera me veo empezando".
+  3. ¿Cómo sueles pasar el tiempo cuando lo siguiente aún no está decidido?
+  choices: "Intento decidirlo rápido" / "Me quedo en pausa por ahora" / "Día a día"
+  > 사용자: Intento decidirlo rápido
+
+[T15]
+  1. Entonces, en ese tiempo sin decidir, ¿qué haces con más frecuencia?
+  choices: "Lleno la agenda hasta arriba" / "Me apoyo en lo conocido" / "Solo observo"
+  > 사용자: Lleno la agenda hasta arriba
+
+[T16]
+  1. En ese tiempo llenas la agenda hasta arriba.
+  2. ¿Hay alguien que esté pasando por esta etapa contigo?
+  choices: "Sí" / "Lo paso casi a solas"
+  > 사용자: Sí
+
+[T17]
+  1. Entonces, ¿de dónde viene ahora la mayor fuerza?
+  choices: "De quienes están conmigo desde siempre" / "De quienes conocí tras el cambio" / "De quienes pasan por la misma etapa"
+  > 사용자: De quienes están conmigo desde siempre
+
+[T18]
+  1. Un vínculo de muchos años es lo que hoy te sostiene.
+  2. En el test respondiste "Cuando algo inesperado cambia tus planes… Me adapto con facilidad".
+  3. ¿Hay ya algo de tu nueva rutina que te resulte familiar?
+  choices: "Sí" / "Algo se va formando" / "Todavía no"
+  > 사용자: Sí
+
+[T19]
+  1. Entonces, ¿qué escena bastaría para que tu nueva rutina se sintiera tuya?
+  choices: "Un lugar al que vaya a menudo" / "Una persona con quien esté a gusto" / "Un hábito que sea solo mío"
+  > 사용자: Un lugar al que vaya a menudo
+
+[T20]
+  1. Bastaría con tener un lugar al que ir a menudo.
+  2. Hay una última cosa que me gustaría preguntarte.
+  3. El día en que aparezca esa escena, ¿cómo te imaginas?
+  choices: "Respirando un poco mejor" / "Aún con extrañeza" / "No lo veo claro"
+  > 사용자: Respirando un poco mejor
+
+[T21]
+  1. ¿Hay algo que el tú de hoy quiera decirle al tú del día en que empezaba el cambio?
+  choices: (없음) inputOnly
+  > 사용자: 그때의 나에게 수고했다고 말해주고 싶어요.
+
+[T22]
+  1. Tiene sentido.
+  2. El primer sentimiento tras el cambio se parecía a la ligereza, y los pensamientos del pasado suelen llegar cuando estás a solas.
+  3. El estándar de lo rápido que se espera que te asientes es el tuyo, y aferrarte a lo que terminó te parece debilidad.
+  4. En el tiempo sin decidir, lo que más haces es llenar la agenda hasta arriba, tu fuerza de ahora viene de quienes están contigo desde siempre, y para anclar tu nueva rutina querrías empezar por un lugar al que ir a menudo.
+  5. Lo que le dijiste a tu yo del día en que empezó el cambio también lo guardo, con tus palabras.
+  6. Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.
+  choices: (없음)
+  [전체] Tiene sentido. El primer sentimiento tras el cambio se parecía a la ligereza, y los pensamientos del pasado suelen llegar cuando estás a solas. El estándar de lo rápido que se espera que te asientes es el tuyo, y aferrarte a lo que terminó te parece debilidad. En el tiempo sin decidir, lo que más haces es llenar la agenda hasta arriba, tu fuerza de ahora viene de quienes están contigo desde siempre, y para anclar tu nueva rutina querrías empezar por un lugar al que ir a menudo. Lo que le dijiste a tu yo del día en que empezó el cambio también lo guardo, con tus palabras. Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me contaste para escribir tu informe.

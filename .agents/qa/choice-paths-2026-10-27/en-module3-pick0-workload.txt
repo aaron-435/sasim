@@ -1,0 +1,135 @@
+
+==================== 시나리오 (p) 매 턴 0번째 보기 ====================
+
+[T1]
+  1. Hi. Let's talk through your quiz results together.
+  2. For the most accurate result, take your time and answer calmly.
+  3. On the quiz, to "When you open your eyes in the morning" you answered "I'm already exhausted the moment I wake up".
+  4. When in the day does that feel the strongest?
+  choices: "Before I head to work" / "Right in the middle of work" / "After work is over"
+  > 사용자: Before I head to work
+
+[T2]
+  1. It hits hardest before you head to work.
+  2. What takes up the biggest share of that weight?
+  choices: "The sheer amount of work" / "The people" / "I can't pick just one"
+  > 사용자: The sheer amount of work
+
+[T3]
+  1. So, where did the exhaustion show up first?
+  choices: "My body wore out first" / "My heart cooled first"
+  > 사용자: My body wore out first
+
+[T4]
+  1. The exhaustion came first in the body.
+  2. If you had to name this state in one word, which is closest?
+  choices: "Listlessness" / "Irritation" / "Emptiness"
+  > 사용자: Listlessness
+
+[T5]
+  1. On the quiz, to "After the weekend or a vacation ends" you answered "Even resting feels tiring".
+  2. Have you had a stretch like this before, or is this the first?
+  choices: "Yes, before" / "This is the first time"
+  > 사용자: Yes, before
+
+[T6]
+  1. So there have been stretches like this before.
+  2. When you think of the hardest stretch at work so far, what comes to mind first?
+  choices: "Work piled up" / "People were hard" / "It's blurry"
+  > 사용자: Work piled up
+
+[T7]
+  1. So, around the time this heaviness started, what changed?
+  choices: "The point of the work blurred" / "My daily rhythm shifted" / "Nothing I can pin down"
+  > 사용자: The point of the work blurred
+
+[T8]
+  1. The reason for doing it faded first.
+  2. What drains your energy the most?
+  choices: "Handling emotions" / "Things not going my way" / "Pressure to do well"
+  > 사용자: Handling emotions
+
+[T9]
+  1. From what you've told me, the heaviest part of your days is the volume of work; the exhaustion feels like listlessness; and what drains you most is handling emotions.
+  2. If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report.
+  3. Shall we keep talking a little more, or wrap up here?
+  choices: (없음)
+  [전체] From what you've told me, the heaviest part of your days is the volume of work; the exhaustion feels like listlessness; and what drains you most is handling emotions. If any of that sounded off, tell me as we keep talking and I'll adjust. The detailed reading comes in your report. Shall we keep talking a little more, or wrap up here?
+
+[T10]
+  1. So, if something stops you from resting, where do you think it comes from?
+  choices: "From inside me" / "From worrying about others"
+  > 사용자: From inside me
+
+[T11]
+  1. So, if that feeling went away, what would worry you most?
+  choices: "Falling behind" / "Becoming useless" / "I'm not sure"
+  > 사용자: Falling behind
+
+[T12]
+  1. Falling behind is what worries you most.
+  2. What did you like about this work when you first took it on?
+  choices: "The work itself" / "Seeing myself do it well" / "Feeling recognized"
+  > 사용자: The work itself
+
+[T13]
+  1. So, is there anything that still gives you a little energy, even now?
+  choices: "People close to me" / "Time alone" / "Small wins at work"
+  > 사용자: People close to me
+
+[T14]
+  1. Even now, people close to you give you a little energy.
+  2. On the quiz, to "What's your state right before falling asleep" you answered "I'm tired but can't fall asleep easily".
+  3. How do you spend your days off?
+  choices: "I actually rest" / "Work stays on my mind"
+  > 사용자: I actually rest
+
+[T15]
+  1. So, if thoughts of work come up while you're resting, what do you usually do?
+  choices: "Just let them be" / "Check or deal with it" / "Turn to something else"
+  > 사용자: Just let them be
+
+[T16]
+  1. When work thoughts come up, you usually let them be.
+  2. When things get hard, which is closer to how you handle asking for help?
+  choices: "I tend to say so" / "I carry it alone to the end"
+  > 사용자: I tend to say so
+
+[T17]
+  1. So, who knows how you're doing right now?
+  choices: "One or two people know" / "Only family and friends" / "Nobody knows"
+  > 사용자: One or two people know
+
+[T18]
+  1. One or two people know how you're doing now.
+  2. On the quiz, to "When you look back on what you've achieved so far" you answered "I feel proud of myself".
+  3. If your energy came back, what would you want to do first?
+  choices: "Do my work properly" / "See people" / "Take care of myself"
+  > 사용자: Do my work properly
+
+[T19]
+  1. So, what would be the smallest first step toward getting your energy back?
+  choices: "A ten-minute walk" / "Doing something I used to love" / "A full night's sleep"
+  > 사용자: A ten-minute walk
+
+[T20]
+  1. The smallest start is a ten-minute walk.
+  2. There's one last thing I'd like to ask.
+  3. What were you like on the day you first started this work?
+  choices: "Excited" / "Nervous" / "I can't really remember"
+  > 사용자: Excited
+
+[T21]
+  1. If you could say one thing to yourself on that first day, what would it be?
+  choices: (없음) inputOnly
+  > 사용자: 그때의 나에게 수고했다고 말해주고 싶어요.
+
+[T22]
+  1. That makes sense.
+  2. What weighs on your days most is the volume of work. The exhaustion feels like listlessness, and what drains you most is handling emotions.
+  3. When you picture that feeling gone, what comes up is the worry of falling behind, and you still get a little energy from people close to you.
+  4. When work thoughts come up, your usual move is letting them be; as for who knows how you're doing, the answer is one or two people; and the smallest first step you chose toward getting your energy back is a ten-minute walk.
+  5. I'll also keep the words you wrote to yourself on that first day, just as you wrote them.
+  6. Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.
+  choices: (없음)
+  [전체] That makes sense. What weighs on your days most is the volume of work. The exhaustion feels like listlessness, and what drains you most is handling emotions. When you picture that feeling gone, what comes up is the worry of falling behind, and you still get a little energy from people close to you. When work thoughts come up, your usual move is letting them be; as for who knows how you're doing, the answer is one or two people; and the smallest first step you chose toward getting your energy back is a ten-minute walk. I'll also keep the words you wrote to yourself on that first day, just as you wrote them. Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.

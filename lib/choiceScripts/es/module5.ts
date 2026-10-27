@@ -24,7 +24,7 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
       turn: 2,
       question: "Justo antes de abrir esa tarea, ¿qué pensamiento te cruza?",
       options: [
-        o("Tengo que hacerlo bien", "El listón se levanta antes de empezar.", "la idea de que hay que hacerlo bien"),
+        o("Tengo que hacerlo bien", "El estándar sube antes de empezar.", "la idea de que hay que hacerlo bien"),
         o("Ahora no me apetece", "Primero habla la falta de ganas.", "la falta de ganas"),
         o("No sé por dónde empezar", "Te quedas quieto al no ver cuál es el primer paso.", "la duda de por dónde empezar"),
       ],
@@ -78,23 +78,23 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
       question: "¿Qué te frena con más fuerza a la hora de empezar?",
       options: [
         o("El miedo a equivocarme", "La preocupación por los errores pisa el freno.", "el miedo a equivocarte"),
-        o("Un listón demasiado alto", "La vista va muy por delante de la mano.", "un listón alto"),
+        o("Un estándar muy alto", "La vista va muy por delante de la mano.", "un estándar alto"),
         o("Demasiadas opciones", "Tantas ramas que no puedes agarrarte a una.", "demasiadas opciones"),
       ],
     },
     10: {
       turn: 10,
       quote: true,
-      question: "¿Quién dirías que puso ese listón?",
-      questionNoQuote: "¿Quién dirías que puso el listón que sientes que debes alcanzar?",
+      question: "¿Quién dirías que puso ese estándar?",
+      questionNoQuote: "¿Quién dirías que puso el estándar que sientes que debes alcanzar?",
       options: [
-        o("Lo puse yo", "Una marca que te pusiste tú.", "un listón que pusiste tú"),
-        o("Siento que lo esperan los demás", "Las expectativas de fuera se volvieron el listón.", "las expectativas de los demás"),
+        o("Lo puse yo", "Una marca que te pusiste tú.", "un estándar que pusiste tú"),
+        o("Siento que lo esperan los demás", "Las expectativas de fuera se volvieron el estándar.", "las expectativas de los demás"),
       ],
     },
     11: {
       turn: 11,
-      question: "Cuando el resultado no llega al listón, ¿qué es lo que más te pesa?",
+      question: "Cuando el resultado no llega al estándar, ¿qué es lo que más te pesa?",
       options: [
         o("Que digan que el trabajo es malo", "Que digan que el trabajo es malo es lo que más te pesa.", "una mala opinión del trabajo"),
         o("Que digan que no valgo", "Que digan que no vales es lo que más te pesa.", "una mala opinión sobre ti"),
@@ -196,7 +196,7 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
   closing: {
     summary: [
       "Justo antes de empezar te cruza {g2}, y debajo, lo que más te frena es {g8}.",
-      "Bajo el listón está {g11}, y lo que suele ponerte en marcha es {g13}.",
+      "Bajo el estándar está {g11}, y lo que suele ponerte en marcha es {g13}.",
       "Cuando se acumulan las tareas, lo tuyo es {g15}. Quién lo sabe: {g17}. Y querrías empezar por {g19}.",
     ],
     perspectiveLine: "Lo que dijo el tú de dentro de un año también lo guardo, con tus palabras.",
