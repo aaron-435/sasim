@@ -53,6 +53,12 @@ export const EVENT_NAMES = [
   // web site
   "landing_view",
   "landing_cta_click",
+  // web→app handoff (2026-10-27): web handoff_create (surface = entry point, kind = device),
+  // store_click (surface, kind = play/app_store); app handoff_redeem (via = link/code,
+  // kind = handoff/session, surface = entry point, value = fields carried over)
+  "handoff_create",
+  "store_click",
+  "handoff_redeem",
 ] as const;
 
 export type EventName = (typeof EVENT_NAMES)[number];

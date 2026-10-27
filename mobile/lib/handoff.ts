@@ -31,9 +31,13 @@ export type LegacySessionData = { nickname: string; track: string; sajuResult: u
 export type HandoffErrorCode = "bad_request" | "not_found" | "expired" | "update_app" | "unavailable" | "too_many" | "network";
 
 export type HandoffRedeemResult =
-  | { ok: true; kind: "handoff"; data: HandoffData }
+  | { ok: true; kind: "handoff"; data: HandoffData; source: HandoffSource | null }
   | { ok: true; kind: "session"; session: LegacySessionData }
   | { ok: false; error: HandoffErrorCode };
+
+/** The web entry points (lib/handoff.ts HANDOFF_SOURCES at the repo root). */
+export const HANDOFF_SOURCES = ["type_card", "calculator", "day_master", "invite", "qa"] as const;
+export type HandoffSource = (typeof HANDOFF_SOURCES)[number];
 
 const ERROR_CODES: readonly HandoffErrorCode[] = ["bad_request", "not_found", "expired", "update_app", "unavailable"];
 
@@ -51,7 +55,10 @@ export async function redeemHandoff(query: { t: string } | { code: string }): Pr
     const code = json.code as HandoffErrorCode;
     return { ok: false, error: ERROR_CODES.includes(code) ? code : res.status >= 500 ? "unavailable" : "not_found" };
   }
-  if (json.kind === "handoff") return { ok: true, kind: "handoff", data: (json.data ?? {}) as HandoffData };
+  if (json.kind === "handoff") {
+    const source = HANDOFF_SOURCES.find((s) => s === json.source) ?? null;
+    return { ok: true, kind: "handoff", data: (json.data ?? {}) as HandoffData, source };
+  }
   if (json.kind === "session") return { ok: true, kind: "session", session: json as unknown as LegacySessionData };
   return { ok: false, error: "unavailable" };
 }

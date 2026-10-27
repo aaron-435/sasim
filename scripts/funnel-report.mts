@@ -17,6 +17,10 @@ const DAY = 86_400_000;
 const kstDay = (ms: number) => Math.floor((ms + 9 * 3_600_000) / DAY);
 const COHORTS = [100, 200, 300];
 const SURFACES = new Set(["report", "qa", "qa_person", "compat_report", "year_report", "fortune"]);
+// Web→app handoff (2026-10-27): web entry points, store buttons, app redeem paths.
+const HANDOFF_SURFACES = new Set(["type_card", "calculator", "day_master", "invite", "qa"]);
+const STORE_SURFACES = new Set([...HANDOFF_SURFACES, "landing"]);
+const known = (set: Set<string>, value: unknown, fallback: string) => set.has(String(value)) ? String(value) : fallback;
 const PURCHASE_EVENTS = ["purchase_start", "purchase_success", "purchase_cancel", "purchase_error"];
 
 // Normalize only known product families. Event props can be forged: never print an
@@ -43,6 +47,18 @@ export function buildFunnelReport(
   const testerIds = new Set(events.filter((e) => e.props?.tester === true).map((e) => e.anon_id));
   const devices = new Map<string, Device>();
   const testers = new Map<string, Device>();
+  // Web browsers, for the handoff section only. Their IDs are not the app's, so web and app
+  // rows are counted side by side, never joined into a per-person conversion.
+  const browsers = new Map<string, Device>();
+  const testerBrowsers = new Map<string, Device>();
+  for (const e of events) {
+    const time = Date.parse(e.created_at);
+    if (e.platform !== "site" || devIds.has(e.anon_id) || !e.anon_id || !Number.isFinite(time) || time > now) continue;
+    const into = testerIds.has(e.anon_id) ? testerBrowsers : browsers;
+    const browser = into.get(e.anon_id) ?? { id: e.anon_id, first: time, days: new Set<number>(), events: [] };
+    browser.events.push(e);
+    into.set(e.anon_id, browser);
+  }
   for (const e of events) {
     const time = Date.parse(e.created_at);
     if (devIds.has(e.anon_id) || !e.anon_id || !["ios", "android"].includes(e.platform) || !Number.isFinite(time) || time > now) continue;
@@ -114,6 +130,34 @@ export function buildFunnelReport(
     }
   }
 
+  function handoffSection(title: string, web: Device[], app: Device[]) {
+    lines.push(`\n== ${title} ==`);
+    const webCount = (predicate: (e: FunnelEvent) => boolean) => count(web, predicate);
+    const breakdown = (group: Device[], name: string, key: string, set: Set<string>, fallback: string) => {
+      const values = new Set<string>();
+      for (const d of group) for (const e of d.events) if (e.name === name) values.add(known(set, e.props?.[key], fallback));
+      for (const v of [...values].sort()) lines.push(`  ${name} ${key}=${v}: ${count(group, (e) => e.name === name && known(set, e.props?.[key], fallback) === v)}`);
+    };
+    lines.push(`web browsers observed: ${web.length}`);
+    lines.push(`web handoff_create: ${webCount((e) => e.name === "handoff_create")}`);
+    breakdown(web, "handoff_create", "surface", HANDOFF_SURFACES, "other_or_missing_surface");
+    breakdown(web, "handoff_create", "kind", new Set(["android", "ios", "desktop"]), "other_or_missing_device");
+    lines.push(`web store_click: ${webCount((e) => e.name === "store_click")}`);
+    breakdown(web, "store_click", "kind", new Set(["play", "app_store"]), "other_or_missing_store");
+    breakdown(web, "store_click", "surface", STORE_SURFACES, "other_or_missing_surface");
+    const redeemed = app.filter((d) => d.events.some((e) => e.name === "handoff_redeem"));
+    lines.push(`app handoff_redeem: ${ratio(redeemed.length, app.length)}`);
+    breakdown(app, "handoff_redeem", "via", new Set(["link", "code"]), "other_or_missing_via");
+    breakdown(app, "handoff_redeem", "kind", new Set(["handoff", "session"]), "other_or_missing_kind");
+    breakdown(app, "handoff_redeem", "surface", HANDOFF_SURFACES, "other_or_missing_surface");
+    // A redeemed newer handoff still walks the unanswered onboarding steps; the old Q&A code skips them.
+    const finished = redeemed.filter((d) => {
+      const at = Math.min(...d.events.filter((e) => e.name === "handoff_redeem").map((e) => Date.parse(e.created_at)));
+      return d.events.some((e) => e.name === "onboarding_complete" && Date.parse(e.created_at) >= at);
+    });
+    lines.push(`redeemed devices with onboarding_complete after redeem: ${ratio(finished.length, redeemed.length)}`);
+  }
+
   section("all observed native devices", ordered);
   const firstRecentDay = kstDay(now) - 6;
   lines.push("\nRecent cohort = first observed on one of the last 7 KST calendar dates, including today's partial day; lifetime milestones through now.");
@@ -122,8 +166,11 @@ export function buildFunnelReport(
     if (ordered.length < size) lines.push(`\n== first ${size} installs: sample too small (${ordered.length}/${size}) ==`);
     else section(`first ${size} observed native devices (legacy install cohort)`, ordered.slice(0, size));
   }
+  lines.push("\nWeb handoff → app: web browser IDs and app device IDs are separate, so these are side-by-side counts (unique browsers/devices), not a matched conversion. A store click is not an install.");
+  handoffSection("web handoff → app redeem (all time)", [...browsers.values()], ordered);
   lines.push("\nTester devices = hidden Settings switch or ?tester=1; use this to check that a build records each milestone, not as user data.");
   section("tester-marked native devices (excluded above)", testerDevices);
+  handoffSection("tester-marked web handoff → app redeem (excluded above)", [...testerBrowsers.values()], testerDevices);
   lines.push("\nReconcile paid/trial signals, test purchases, refunds and renewals with RevenueCat/store records. Verified charges are not available in this report.");
   return lines.join("\n");
 }

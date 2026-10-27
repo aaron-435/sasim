@@ -122,6 +122,16 @@ export function trackLandingCtaClick(position: string, locale?: string) {
   logEvent("landing_cta_click", { position }, locale);
 }
 
+/** "Continue in the app" stored a handoff. Only the entry point, the device class and how many fields went along — never the fields. */
+export function trackHandoffCreate(source: string, device: string, fields: number, locale?: string) {
+  logEvent("handoff_create", { surface: source, kind: device, value: fields }, locale);
+}
+
+/** A store button on the site (surface = handoff entry point, or "landing" for the plain install line). */
+export function trackStoreClick(surface: string, store: "play" | "app_store", locale?: string) {
+  logEvent("store_click", { surface, kind: store }, locale);
+}
+
 export function trackLandingView(locale?: string) {
   logEvent("landing_view", undefined, locale);
 }

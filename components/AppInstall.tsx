@@ -5,6 +5,7 @@ import qrcode from "qrcode-generator";
 import { Check, Copy } from "lucide-react";
 import { APP_STORE_URL, PLAY_STORE_URL } from "@/lib/jsonLd";
 import { getDictionary, type Locale } from "@/lib/i18n";
+import { trackHandoffCreate, trackStoreClick } from "@/lib/analytics";
 import type { HandoffData, HandoffSource } from "@/lib/handoff";
 
 /**
@@ -90,6 +91,7 @@ export default function AppInstall({
       const json = await res.json().catch(() => ({}));
       if (!res.ok || typeof json.code !== "string" || typeof json.deepLink !== "string") throw new Error(String(res.status));
       setCreated({ code: json.code, deepLink: json.deepLink });
+      trackHandoffCreate(handoff.source, device ?? "desktop", Object.keys(handoff.data ?? {}).length, locale);
       if (device === "android") window.location.href = json.deepLink;
     } catch {
       setFailed(true);
@@ -108,9 +110,10 @@ export default function AppInstall({
   // In the plain install line the first store link is the main button; in the handoff panel all are secondary.
   const storeLinks = (primary: boolean) => {
     const cls = primary ? "ai-btn" : "ai-store";
-    const play = <a key="play" className={cls} href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer">{t.common.playCta}</a>;
+    const surface = handoff?.source ?? "landing";
+    const play = <a key="play" className={cls} href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackStoreClick(surface, "play", locale)}>{t.common.playCta}</a>;
     const ios = APP_STORE_URL ? (
-      <a key="ios" className={device === "ios" ? cls : "ai-store"} href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">{h.appStoreCta}</a>
+      <a key="ios" className={device === "ios" ? cls : "ai-store"} href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" onClick={() => trackStoreClick(surface, "app_store", locale)}>{h.appStoreCta}</a>
     ) : (
       <span key="ios" className="ai-note">{t.common.iosSoon}</span>
     );

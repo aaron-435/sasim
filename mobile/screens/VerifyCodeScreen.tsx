@@ -6,6 +6,7 @@ import OnboardingShell from "../components/OnboardingShell";
 import ElementsLoader from "../components/motion/ElementsLoader";
 import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
+import { track } from "../lib/analytics";
 import { redeemHandoff, type HandoffData, type HandoffErrorCode, type LegacySessionData } from "../lib/handoff";
 import { useStrings } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
@@ -57,8 +58,15 @@ export default function VerifyCodeScreen({
     const result = await redeemHandoff(query);
     setLoading(false);
     if (!result.ok) return setError(errorText(result.error));
-    if (result.kind === "session") onVerified(result.session);
-    else onHandoff(result.data);
+    // Counts only (lib/eventSchema.ts): how it arrived, which web page, how many fields came along.
+    const via = "t" in query ? "link" : "code";
+    if (result.kind === "session") {
+      track("handoff_redeem", { via, kind: "session" });
+      onVerified(result.session);
+    } else {
+      track("handoff_redeem", { via, kind: "handoff", ...(result.source ? { surface: result.source } : {}), value: Object.keys(result.data).length });
+      onHandoff(result.data);
+    }
   }
 
   // A link redeems once on arrival; if it fails, the code field below still works.

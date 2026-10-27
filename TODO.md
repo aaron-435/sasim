@@ -84,10 +84,13 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
   - QA: `npx tsx scripts/handoff.test.mts` → "110 passed"(옛 404·410이 `error` 유지 + `code`, 새 엔드포인트의 없는 코드 404 `not_found`). mobile `ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit` → exit 0. 루트 tsc 0, lint·build 통과(10번과 같은 실행). **mobile-web**(Playwright, 앱의 운영 API 호출을 로컬 dev 서버로 돌림 — 운영에는 아직 `/api/handoff`가 없음): en/es에서 `123456` 입력 → 실제 서버 응답 404 `{error:"유효하지 않거나…"(한국어), code:"not_found"}`인데 화면은 "We couldn't find that code…" / "No encontramos ese código…"(`/private/tmp/claude-501/-Users-kwonhyunjo-Desktop-sasim-work/c83f01c5-e81d-4ce8-a49e-2596a249ac39/scratchpad/app-verify-error-es.png`). 인트로 보조 버튼 `/private/tmp/claude-501/-Users-kwonhyunjo-Desktop-sasim-work/c83f01c5-e81d-4ce8-a49e-2596a249ac39/scratchpad/app-intro-en.png`. 성공 응답은 테이블이 없어 가로챈 값으로: 생년월일만(유형 카드) → 닉네임 → 성별 → (생년월일 건너뜀) → 시각, 뒤로 가면 생년월일 칸 03/08/1994(`app-handoff-skip-to-tob.png`, `app-handoff-dob-prefilled.png`). 전체(Q&A 모양) → 바로 도시 화면, "Seoul" 미리 채움. 2016년생 → 생년월일 화면 + "Sorry, you must be 14 or older…". **iOS 시뮬레이터 dev-client**(iPhone 17 Pro Max, 로컬 Metro): 사주가 저장된 테스트 사용자 상태에서 `xcrun simctl openurl booted "fatesaid://handoff?t=abab…"` → "Open in Fate Said?" → 열기 → 홈 그대로(의도대로 무시). 새 설치 상태의 자동 이어받기는 시뮬레이터 테스트 사용자를 지워야 하고 운영 API에 라우트가 없어 성공할 수 없어서 하지 않음 → 아래 (사용자 확인).
   - (사용자 확인, 18번 SQL + 19번 웹 배포 + 20번 OTA 뒤) iPhone 또는 Android에서 앱 설정 → "내 정보 초기화"(또는 새 설치) → 웹 유형 카드에서 "앱에서 이어 보기" → ① 같은 폰이면 앱이 열리고 "웹에서 입력한 정보를 불러오는 중…" 뒤 닉네임 화면, 성별 다음에 생년월일을 건너뛰고 시각 화면 ② PC면 QR을 폰으로 찍거나, 앱 첫 화면 "웹에서 시작했나요?"에 6자리 코드 → 같은 흐름. 끝에 유형 공개 화면이 나오면 성공. 같은 링크를 한 번 더 열면 "이 링크는 이미 사용됐어요".
 
-- [ ] 12. 넘김 측정
-  - 선행: 2, 10, 11
+- [x] 12. 넘김 측정
+  - 선행: 2, 10, 11 (11은 구현 끝, 사용자 확인만 남음)
   - 변경: `handoff_create`(진입점)·`handoff_redeem`(딥링크/코드, 항목 수)·`store_click` 이벤트를 앱·웹·`lib/eventSchema.ts`에, `funnel-report.mts`에 "웹 넘김 → 앱 이어받기" 줄.
   - QA: funnel 테스트에 넘김 사례 추가 → 통과. 허용 목록 밖 값은 400인지 라우트 테스트. 루트·mobile tsc 0.
+  - 결과(2026-10-27): 새 속성 키 없이 기존 키만 씀. 웹 `components/AppInstall.tsx` 한 곳: 넘김 POST가 성공한 뒤 `handoff_create {surface: 진입점, kind: android|ios|desktop, value: 넘긴 항목 수}`, 스토어 버튼을 누르면 `store_click {surface: 진입점 또는 landing, kind: play|app_store}`(`lib/analytics.ts` `trackHandoffCreate`·`trackStoreClick`). 앱 `VerifyCodeScreen`이 꺼내기 성공 때 `handoff_redeem {via: link|code, kind: handoff|session, surface: 진입점(서버 GET의 `source`, 앱 `mobile/lib/handoff.ts`가 알려진 값만 받음), value: 항목 수}`(옛 Q&A 코드는 `kind: session`, surface·value 없음). 리포트에 "web handoff → app redeem (all time)" 섹션: 웹 브라우저 수, `handoff_create`·`store_click`(진입점·기기·스토어별 고유 브라우저), 앱 `handoff_redeem`(네이티브 기기 분모, via·kind·진입점별), "꺼낸 뒤 `onboarding_complete`까지 간 기기". 웹·앱 ID는 연결되지 않아 나란히 센 숫자이고 사람 단위 전환이 아니라고 출력에 적음. dev 브라우저는 빼고, 테스터 표시 브라우저·기기는 끝의 "tester-marked web handoff" 섹션에만. 모르는 값은 `other_or_missing_*`로 가림.
+  - QA: `npx tsx scripts/funnel-report.test.mts` → "42 passed"(기존 31 + 넘김 11: 진입점·기기·스토어 분해, 중복 제거, 모르는 값 가림, dev·테스터 제외와 테스터 섹션, 꺼내기 전 온보딩은 안 셈, ID·날짜 미출력). `npx tsx scripts/event-schema.test.mts` → "18 passed"(새 이벤트 3종 통과, `birthYear` 키·날짜 꼴 값·1994 숫자·공백 든 글·`code` 키·목록 밖 이름 `handoff_open` 모두 거절 = 라우트 400). `npx tsx scripts/handoff.test.mts` → "110 passed". 루트 `npx tsc --noEmit` → exit 0, mobile tsc(큰 스택) → exit 0, `npm run lint` → "No ESLint warnings or errors", `npm run build` → exit 0. `npx tsx --env-file=.env.local scripts/funnel-report.mts` → exit 0, 102줄, UUID 꼴·날짜 꼴 0건, 새 섹션 "web handoff_create: 0 / app handoff_redeem: 0/27"(아직 배포 전이라 0이 맞음). 브라우저에서 이벤트가 실제로 나가는 것은 확인하지 않음(dev 서버 `localhost`는 `dev: true`로 리포트에서 빠짐) → 아래 (사용자 확인).
+  - (사용자 확인, 18번 SQL + 19번 웹 배포 + 20번 OTA 뒤) PC 브라우저로 `https://fatesaidapp.com/?tester=1` 한 번 열기 → 유형 카드 "앱에서 이어 보기" → Play 버튼 클릭 → 폰(설정 © 7번 탭으로 테스터 켬)에서 코드 입력 → `npx tsx --env-file=.env.local scripts/funnel-report.mts` 끝의 "tester-marked web handoff → app redeem" 섹션에 `handoff_create surface=type_card: 1`, `store_click kind=play: 1`, `handoff_redeem via=code: 1`이 보이면 성공.
 
 - [ ] 13. (조건부) 웹 애착 검사 맛보기 → 앱에서 이어서
   - 선행: 9, 11, 그리고 21번 관찰 또는 퍼널에서 "검사 시작 전 이탈"이 병목으로 보일 것. 아니면 이 항목은 다음 SPEC으로 넘긴다고 적고 닫는다.
@@ -130,6 +133,8 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
   - 선행: 16, 그리고 19·20으로 넘김이 배포된 뒤가 좋다. 결과 기록표를 공유하면 13번 진행 여부와 주력 상품 판단에 쓴다.
 
 ## 발견 사항
+- (12번 중) `handoff_redeem`은 성공만 센다. 만료·없는 코드·`update_app` 같은 실패는 기록하지 않아, 링크가 실패해서 멈춘 사람은 리포트에 안 보인다. 필요하면 다음 측정 작업에서 실패 코드를 `kind`로 따로 남긴다.
+- (12번 중) iPhone의 "앱에서 열기" 링크 탭은 기록하지 않는다(앱이 열리면 `handoff_redeem`으로 잡힘). 링크 탭 대비 꺼내기 비율이 필요하면 별도 이벤트가 있어야 한다.
 - (10번 중) 넘김 측정(12번) 전까지 `onboarding_complete`는 넘김으로 온 사용자도 `via: "app"`으로 찍힌다(고민 화면을 거치므로). 12번 `handoff_redeem`으로 구분한다.
 - (10번 중) Q&A 끝 화면은 옛 코드 + 새 링크(별도 넘김 행)를 함께 만든다. 링크로 꺼내도 옛 코드는 24시간 남는다(한 사람용이라 그대로 둠). OTA가 충분히 퍼지면 Q&A도 새 넘김 코드 하나로 바꿀 수 있다.
 - (11번 중) 앱은 넘김의 `locale`을 쓰지 않는다(첫 실행이면 언어 선택 화면을 먼저 거침). 웹 언어로 앱 언어를 미리 고르는 것은 범위 밖이라 두었다.

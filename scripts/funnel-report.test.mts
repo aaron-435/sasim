@@ -87,4 +87,35 @@ check(testerSection.includes("purchase_success kind=paid (unverified): 1/1"), "t
 check(!/private-/.test(withTesters), "no tester IDs printed");
 check(section(report, "tester-marked native devices (excluded above)").includes("observed devices: 0"), "tester section present (empty) without testers");
 check(section(buildFunnelReport([event("dev-and-tester", "2026-10-21T00:00:00Z", "app_open", { tester: true }, { dev: true })], [], [], now), "tester-marked native devices (excluded above)").includes("observed devices: 0"), "dev builds stay fully excluded, even when tester-marked");
+// Web→app handoff: web and app IDs are counted side by side, never joined.
+const handoffRows = [
+  ...rows,
+  event("private-web-1", "2026-10-21T00:00:00Z", "handoff_create", { surface: "type_card", kind: "android", value: 3 }, { platform: "site" }),
+  event("private-web-1", "2026-10-21T00:01:00Z", "handoff_create", { surface: "type_card", kind: "android", value: 3 }, { platform: "site" }),
+  event("private-web-1", "2026-10-21T00:02:00Z", "store_click", { surface: "type_card", kind: "play" }, { platform: "site" }),
+  event("private-web-2", "2026-10-21T00:00:00Z", "handoff_create", { surface: "calculator", kind: "desktop", value: 4 }, { platform: "site" }),
+  event("private-web-3", "2026-10-21T00:00:00Z", "store_click", { surface: "landing", kind: "play" }, { platform: "site" }),
+  event("private-web-4", "2026-10-21T00:00:00Z", "handoff_create", { surface: "private-city-1994-03-08", kind: "fridge" }, { platform: "site" }),
+  event("private-web-dev", "2026-10-21T00:00:00Z", "handoff_create", { surface: "qa", kind: "ios" }, { platform: "site", dev: true }),
+  event("private-web-tester", "2026-10-21T00:00:00Z", "handoff_create", { surface: "invite", kind: "ios", tester: true }, { platform: "site" }),
+  event("private-app-link", "2026-10-21T01:00:00Z", "handoff_redeem", { via: "link", kind: "handoff", surface: "type_card", value: 3 }),
+  event("private-app-link", "2026-10-21T01:05:00Z", "onboarding_complete", { via: "app" }),
+  event("private-app-code", "2026-10-21T01:00:00Z", "onboarding_complete", { via: "app" }), // before redeem: does not count
+  event("private-app-code", "2026-10-21T02:00:00Z", "handoff_redeem", { via: "code", kind: "session" }),
+  event("private-app-tester", "2026-10-21T02:00:00Z", "handoff_redeem", { via: "link", kind: "handoff", surface: "invite", tester: true }),
+];
+const withHandoff = buildFunnelReport(handoffRows, [], [], now);
+const handoff = section(withHandoff, "web handoff → app redeem (all time)");
+const testerHandoff = section(withHandoff, "tester-marked web handoff → app redeem (excluded above)");
+check(handoff.includes("web browsers observed: 5") && handoff.includes("web handoff_create: 3"), "web handoff counts unique non-dev, non-tester browsers");
+check(handoff.includes("handoff_create surface=type_card: 1") && handoff.includes("handoff_create surface=calculator: 1"), "handoff_create split by entry point, repeats deduplicated");
+check(handoff.includes("handoff_create surface=other_or_missing_surface: 1") && handoff.includes("handoff_create kind=other_or_missing_device: 1"), "unknown handoff values masked");
+check(handoff.includes("web store_click: 2") && handoff.includes("store_click kind=play: 2") && handoff.includes("store_click surface=landing: 1"), "store clicks split by store and surface");
+check(handoff.includes("app handoff_redeem: 2/5"), "redeem uses the native device denominator");
+check(handoff.includes("handoff_redeem via=link: 1") && handoff.includes("handoff_redeem via=code: 1") && handoff.includes("handoff_redeem kind=session: 1"), "redeem split by path and kind");
+check(handoff.includes("redeemed devices with onboarding_complete after redeem: 1/2"), "only onboarding completed after the redeem counts");
+check(!handoff.includes("surface=qa") && !handoff.includes("surface=invite"), "dev and tester browsers stay out of the user handoff section");
+check(testerHandoff.includes("web handoff_create: 1") && testerHandoff.includes("app handoff_redeem: 1/1"), "tester handoff rows have their own section");
+check(!/private-|1994-03-08|fridge/.test(withHandoff), "no IDs or unknown handoff values printed");
+check(section(report, "web handoff → app redeem (all time)").includes("app handoff_redeem: 0/3"), "handoff section present with no handoff events");
 console.log(`funnel report tests: ${checks} passed (offline, synthetic data only)`);

@@ -42,7 +42,8 @@ export type EventName =
   | "wrapped_view"
   | "review_prompt"
   | "widget_tap"
-  | "calendar_purpose";
+  | "calendar_purpose"
+  | "handoff_redeem";
 
 type PropKey = "step" | "surface" | "product" | "kind" | "value" | "topic" | "position" | "module" | "via";
 export type EventProps = Partial<Record<PropKey, string | number | boolean>>;

@@ -20,4 +20,16 @@ check(parseEventBatch({ ...base, tester: 1 }) === "tester", "numeric tester reje
 check(parseEventBatch({ ...base, events: [{ name: "app_open", props: { tester: true } }] }) === "prop:tester", "per-event tester prop is not a client prop key");
 check((parseEventBatch({ ...base, tester: false }) as CleanBatch).tester === false, "tester: false accepted as unmarked");
 
+// Web→app handoff events (2026-10-27): ids and counts only; anything carrying the stored data is 400.
+const site = { anonId: "web123", platform: "site", locale: "en" };
+check(typeof parseEventBatch({ ...site, events: [{ name: "handoff_create", props: { surface: "type_card", kind: "android", value: 3 } }] }) === "object", "handoff_create accepted");
+check(typeof parseEventBatch({ ...site, events: [{ name: "store_click", props: { surface: "landing", kind: "play" } }] }) === "object", "store_click accepted");
+check(typeof parseEventBatch({ ...base, events: [{ name: "handoff_redeem", props: { via: "link", kind: "handoff", surface: "calculator", value: 4 } }] }) === "object", "handoff_redeem accepted");
+check(parseEventBatch({ ...site, events: [{ name: "handoff_create", props: { birthYear: 1994 } }] }) === "prop:birthYear", "handoff data keys are not prop keys");
+check(parseEventBatch({ ...site, events: [{ name: "handoff_create", props: { surface: "1994-03-08" } }] }) === "prop:surface", "date-like value rejected");
+check(parseEventBatch({ ...site, events: [{ name: "handoff_create", props: { value: 1994 } }] }) === "prop:value", "birth year as a number rejected");
+check(parseEventBatch({ ...base, events: [{ name: "handoff_redeem", props: { kind: "Seoul Korea" } }] }) === "prop:kind", "free text (space) rejected");
+check(parseEventBatch({ ...site, events: [{ name: "handoff_open" }] }) === "name", "names outside the list rejected");
+check(parseEventBatch({ ...base, events: [{ name: "handoff_redeem", props: { code: "123456" } }] }) === "prop:code", "the handoff code cannot be sent");
+
 console.log(`event schema tests: ${checks} passed (offline)`);
