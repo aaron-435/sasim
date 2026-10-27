@@ -92,10 +92,11 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
   - QA: `npx tsx scripts/funnel-report.test.mts` → "42 passed"(기존 31 + 넘김 11: 진입점·기기·스토어 분해, 중복 제거, 모르는 값 가림, dev·테스터 제외와 테스터 섹션, 꺼내기 전 온보딩은 안 셈, ID·날짜 미출력). `npx tsx scripts/event-schema.test.mts` → "18 passed"(새 이벤트 3종 통과, `birthYear` 키·날짜 꼴 값·1994 숫자·공백 든 글·`code` 키·목록 밖 이름 `handoff_open` 모두 거절 = 라우트 400). `npx tsx scripts/handoff.test.mts` → "110 passed". 루트 `npx tsc --noEmit` → exit 0, mobile tsc(큰 스택) → exit 0, `npm run lint` → "No ESLint warnings or errors", `npm run build` → exit 0. `npx tsx --env-file=.env.local scripts/funnel-report.mts` → exit 0, 102줄, UUID 꼴·날짜 꼴 0건, 새 섹션 "web handoff_create: 0 / app handoff_redeem: 0/27"(아직 배포 전이라 0이 맞음). 브라우저에서 이벤트가 실제로 나가는 것은 확인하지 않음(dev 서버 `localhost`는 `dev: true`로 리포트에서 빠짐) → 아래 (사용자 확인).
   - (사용자 확인, 18번 SQL + 19번 웹 배포 + 20번 OTA 뒤) PC 브라우저로 `https://fatesaidapp.com/?tester=1` 한 번 열기 → 유형 카드 "앱에서 이어 보기" → Play 버튼 클릭 → 폰(설정 © 7번 탭으로 테스터 켬)에서 코드 입력 → `npx tsx --env-file=.env.local scripts/funnel-report.mts` 끝의 "tester-marked web handoff → app redeem" 섹션에 `handoff_create surface=type_card: 1`, `store_click kind=play: 1`, `handoff_redeem via=code: 1`이 보이면 성공.
 
-- [ ] 13. (조건부) 웹 애착 검사 맛보기 → 앱에서 이어서
+- [x] 13. (조건부) 웹 애착 검사 맛보기 → 앱에서 이어서 — **조건 미충족, 구현하지 않고 다음 SPEC으로 넘김**
   - 선행: 9, 11, 그리고 21번 관찰 또는 퍼널에서 "검사 시작 전 이탈"이 병목으로 보일 것. 아니면 이 항목은 다음 SPEC으로 넘긴다고 적고 닫는다.
   - 변경: 웹 module1 앞 몇 문항 화면, 넘김에 답 싣기, 앱 검사 이어하기 저장소에 넣기.
-  - QA: `npm run lint && npm run build`, mobile tsc 0. 웹에서 몇 문항 → 코드 → 앱(mobile-web 또는 시뮬레이터)에서 다음 문항부터 시작하는 캡처.
+  - 결과(2026-10-28): 조건 셋 다 안 맞아 닫음. ① 21번 영어 사용자 5명 관찰은 아직 안 함. ② 11번은 사용자 확인(18 SQL·19 배포·20 OTA 뒤)이 남음. ③ 퍼널은 "검사 시작 전 이탈"을 보여 줄 수 없음 — 이벤트 허용 목록(`lib/eventSchema.ts`)에 검사 시작·완료 이벤트가 없어 리포트에 그 줄이 없고, 독립 기기 27대(최근 7일 2대, "first 100 installs: sample too small")에 본인·구버전 테스트가 섞여 있음. 다음 SPEC에서 관찰 결과와 함께 다시 판단한다(먼저 검사 시작·완료 계측이 필요하면 아래 발견 사항).
+  - QA: `npx tsx --env-file=.env.local scripts/funnel-report.mts` → exit 0, "observed devices: 27", onboarding_complete 5/27, chat_start 0/27, 검사 관련 줄 없음, "web handoff_create: 0"(배포 전). 코드 변경 없음.
 
 ## C. 소재와 관찰 (돈 쓰지 않음)
 
@@ -133,6 +134,7 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
   - 선행: 16, 그리고 19·20으로 넘김이 배포된 뒤가 좋다. 결과 기록표를 공유하면 13번 진행 여부와 주력 상품 판단에 쓴다.
 
 ## 발견 사항
+- (13번 중) 퍼널이 검사(퀴즈) 단계를 보지 못한다: `lib/eventSchema.ts` 허용 목록에 검사 시작·완료 이벤트가 없어 "유형 공개 → 검사 시작 → 검사 완료 → 대화" 중 어디서 멈추는지 숫자로 알 수 없다. SPEC의 "바꿀 조건"(애착 검사 30문항 전 이탈)과 13번 조건을 퍼널로 판단하려면 다음 측정 작업에서 `quiz_start`·`quiz_complete`(모듈 id만)를 앱에 넣어야 한다.
 - (12번 중) `handoff_redeem`은 성공만 센다. 만료·없는 코드·`update_app` 같은 실패는 기록하지 않아, 링크가 실패해서 멈춘 사람은 리포트에 안 보인다. 필요하면 다음 측정 작업에서 실패 코드를 `kind`로 따로 남긴다.
 - (12번 중) iPhone의 "앱에서 열기" 링크 탭은 기록하지 않는다(앱이 열리면 `handoff_redeem`으로 잡힘). 링크 탭 대비 꺼내기 비율이 필요하면 별도 이벤트가 있어야 한다.
 - (10번 중) 넘김 측정(12번) 전까지 `onboarding_complete`는 넘김으로 온 사용자도 `via: "app"`으로 찍힌다(고민 화면을 거치므로). 12번 `handoff_redeem`으로 구분한다.
