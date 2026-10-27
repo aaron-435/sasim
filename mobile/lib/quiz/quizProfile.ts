@@ -438,8 +438,24 @@ export function resolveTypeName(
   typeNames: Record<string, { title: string; hook: string }>,
   fallback: (dims: string[]) => { title: string; hook: string }
 ): { title: string; hook: string } {
-  const known = typeNames[classification.typeKey];
+  const known = typeNames[classification.typeKey] ?? findCombinedTypeName(classification, typeNames);
   if (known) return known;
   if (classification.kind === "combined") return fallback(classification.activeDimensions);
   return typeNames["baseline"] ?? fallback(classification.activeDimensions);
+}
+
+/**
+ * typeKey joins combined dimensions in score order ("avoidance+scarcity"), while each
+ * module's typeNames lists them in a fixed order ("scarcity+avoidance") — so an exact
+ * lookup missed most combos and showed the generic "…Combined Type" title. Match on the
+ * set of dimensions instead. Also repairs results saved with the old key order.
+ */
+function findCombinedTypeName(
+  classification: ProfileClassification,
+  typeNames: Record<string, { title: string; hook: string }>
+): { title: string; hook: string } | undefined {
+  if (classification.kind !== "combined") return undefined;
+  const want = [...classification.activeDimensions].sort().join("+");
+  const match = Object.keys(typeNames).find((k) => k.split("+").sort().join("+") === want);
+  return match ? typeNames[match] : undefined;
 }

@@ -40,6 +40,19 @@ export default function Landing({ onStart }) {
     onStart();
   };
 
+  // The landing CTAs promise "just your birth date", so they lead to the type card (date only)
+  // rather than straight into the full onboarding (name, gender, date, time, city). The card's own
+  // continue button is what opens onboarding, with the date already filled in.
+  const goToTypeCard = (position) => {
+    trackLandingCtaClick(position, locale);
+    const section = document.getElementById("lp-typecard")?.closest("section");
+    if (!section) return onStart();
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    section.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    const target = section.querySelector(".tc-card") ?? section.querySelector("input");
+    target?.focus({ preventScroll: true });
+  };
+
   const legalNotice = (
     <p className="lp-legal">
       {t.onboarding.freeNote}
@@ -130,7 +143,7 @@ export default function Landing({ onStart }) {
             ))}
           </h1>
           <p className="lp-lead">{l.heroBody}</p>
-          <button type="button" className="lp-cta" onClick={() => start("hero")}>
+          <button type="button" className="lp-cta" onClick={() => goToTypeCard("hero")}>
             {l.cta} <ArrowRight size={18} strokeWidth={2.25} aria-hidden="true" />
           </button>
           <p className="lp-note">{l.ctaNote}</p>
@@ -204,7 +217,7 @@ export default function Landing({ onStart }) {
 
         <section className="lp-section lp-bottom">
           <h2 className="lp-serif lp-h2">{l.bottomTitle}</h2>
-          <button type="button" className="lp-cta" style={{ marginTop: 0 }} onClick={() => start("bottom")}>
+          <button type="button" className="lp-cta" style={{ marginTop: 0 }} onClick={() => goToTypeCard("bottom")}>
             {l.cta} <ArrowRight size={18} strokeWidth={2.25} aria-hidden="true" />
           </button>
           <p className="lp-note">{l.ctaNote}</p>
@@ -215,7 +228,7 @@ export default function Landing({ onStart }) {
       </div>
 
       <div className="lp-sticky" data-hidden={cardShown}>
-        <button type="button" className="lp-cta" onClick={() => start("sticky")}>
+        <button type="button" className="lp-cta" onClick={() => goToTypeCard("sticky")}>
           {l.cta} <ArrowRight size={18} strokeWidth={2.25} aria-hidden="true" />
         </button>
       </div>

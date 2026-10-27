@@ -170,8 +170,8 @@ export const en: typeof ko = {
     langLabel: "Language",
     heroTitle: "Your birth chart, read as\nthe rhythm you're in now",
     heroBody: "A real saju calculation, combined with psychology: your temperament and what's coming, in about three minutes. Free to start, no signup.",
-    cta: "See my chart, free",
-    ctaNote: "No signup · about 3 minutes · just your birth date and city",
+    cta: "See my saju type, free",
+    ctaNote: "No signup · about 10 seconds · just your birth date",
     trust: "Calculated from astronomical calendar data (Korea's KASI), not made up.",
     featuresTitle: "What you'll find out",
     features: [
@@ -191,11 +191,11 @@ export const en: typeof ko = {
     samplePage3Locked: "Opens in the app",
     elementNames: ["Wood", "Fire", "Earth", "Metal", "Water"],
     stepsTitle: "How it works",
-    steps: ["Enter your birth date and birth city", "See your saju result right away, for free", "Ask what you're curious about, then go deeper in the app"],
+    steps: ["Enter your birth date and see your saju type right away, for free", "Add a few details like your birth time and city, then ask what you're curious about", "Go deeper in the app"],
     faqTitle: "Common questions",
     faq: [
       { q: "Is it really calculated?", a: "Yes. We work out your four pillars from your birth date, time and city, including the time difference and longitude. An AI writes the reading, but the calculation itself is never made up." },
-      { q: "Is it free?", a: "Your saju result and your first 2 questions are free. Deeper reports and the daily fortune open in the app." },
+      { q: "Is it free?", a: "Your saju type and your first 2 questions are free. Deeper reports and the daily fortune open in the app." },
       { q: "How is my information used?", a: "You can use Fatesaid without signing up, and your information can be stored and deleted as described in the privacy policy. This is reading material for self-understanding, not prediction or diagnosis." },
     ],
     bottomTitle: "Ready to see your rhythm?",
@@ -218,7 +218,7 @@ export const en: typeof ko = {
     noTimeNote: "Calculated without your birth time. Adding your time and city can change \"what's driving you right now\".",
     appTitle: "Your full chart lives in the app",
     appBody: "The four-pillar chart, your daily rhythm and your own Deep Report open in the app.",
-    continueCta: "Add your time and city for the full reading",
+    continueCta: "Add a few details, then ask a question",
     again: "Try another birth date",
   },
   calculator: {

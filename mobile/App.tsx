@@ -58,6 +58,7 @@ import { clearSavedInvites } from "./lib/invites";
 import { clearPair } from "./lib/pairs";
 import { clearJournal } from "./lib/journalStorage";
 import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } from "./lib/userConcern";
+import { repairSavedTypeInfo } from "./lib/quiz/modules";
 
 // Onboarding flow shell — mirrors components/AppFlow.jsx's step-switcher role on web,
 // just with local state for now (no react-navigation/expo-router wired up yet; this is
@@ -634,7 +635,8 @@ function AppContent() {
         {step === "myReports" && (
           <MyReportsScreen
             onOpen={(report) => {
-              setQuizDiagnosis(report.quizDiagnosis);
+              const d = report.quizDiagnosis;
+              setQuizDiagnosis({ ...d, typeInfo: repairSavedTypeInfo(d.moduleId, d.classification, d.typeInfo) ?? d.typeInfo });
               setChatExtract(report.chatExtract);
               setSavedReport(report);
               setStep("report");

@@ -18,13 +18,17 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
   - QA: `npx tsx scripts/funnel-report.test.mts` → "31 passed"(기존 22 + 테스터 9). 새 `npx tsx scripts/event-schema.test.mts` → "9 passed". 루트 `npx tsc --noEmit` → exit 0. mobile tsc(큰 스택) → exit 0. mobile-web(`?qa=free&persona=sam&lang=en`, 375x812): 설정 © 7번 탭 → "© 2026 Studio Aaron · T", localStorage `fatesaid_tester`="1" → 운세 "Helpful" 탭 → `/api/events` 본문 `{platform:"app-web", dev:true, tester:true, events:[feedback]}`. 증거 출처: 브라우저 패널은 교차 출처 fetch를 `read_network_requests`에 잡지 못해(API 요청 0건으로 보임), 페이지 안 fetch 래퍼로 본문을 읽음.
   - (사용자 확인, 미확인 2 해소용) 웹 배포(19번)와 OTA(20번) 뒤: 휴대폰 앱 설정 맨 아래 © 줄 7번 탭 → "테스터 모드를 켰어요" → 온보딩·검사·대화·리포트 한 바퀴 → `npx tsx --env-file=.env.local scripts/funnel-report.mts`의 "tester-marked native devices" 섹션에서 `onboarding_complete`·`chat_start`·`chat_complete`·`report_generate`가 1/1인지 확인. 지금 깔린 1.2.0 빌드에는 스위치가 없다.
 
-- [ ] 3. 랜딩 약속 일치 (ko/en/es)
+- [x] 3. 랜딩 약속 일치 (ko/en/es)
   - 변경: `lib/i18n/{en,ko,es}.ts` 랜딩 CTA·보조 문구, 필요하면 `components/AppFlow.jsx`·`Landing.jsx`·`LandingTypeCard.jsx`의 CTA 뒤 첫 화면. (가) 문구를 실제 입력에 맞추기 vs (나) 짧은 첫 화면, 근거를 적고 하나를 고른다. 새 결과 화면은 만들지 않는다.
   - QA: `npm run lint && npm run build` → 통과. 웹 preview(데스크톱 + mobile 뷰포트)에서 en/ko/es 랜딩 → CTA → 첫 화면 캡처, 문구와 실제 입력이 맞는지 확인.
+  - 결과(2026-10-27): (나)를 골랐다. 근거: CTA 뒤 온보딩은 이름·성별·생년월일·시각·도시 5단계를 받고 Q&A 주제 선택으로 가서 "차트"를 보여 주지 않는다. 반면 같은 랜딩의 유형 카드는 생년월일만으로 바로 유형을 보여 주므로 "생년월일만" 약속을 그대로 지킨다(새 화면 없음). 히어로·하단·고정 CTA → 유형 카드로 스크롤 + 첫 입력칸 초점(reduced motion이면 즉시 이동). 카드의 계속 버튼만 온보딩을 연다(생년월일은 채워져 4단계). 문구: CTA "See my saju type, free"/"내 사주 유형 무료로 보기"/"Ver mi tipo de saju gratis", 보조 "약 10초 · 생년월일만", 이용 순서 3단계, FAQ "무료인가요" 첫 문장(결과 → 유형), 카드 계속 버튼 "몇 가지 더 넣고 질문해 보기"(시간·도시만이라고 하면 이름·성별을 빼먹음).
+  - QA: `npm run lint` → "No ESLint warnings or errors". `npm run build` → exit 0(마지막 문구 수정 뒤 다시 실행). 루트 `npx tsc --noEmit` → exit 0. `npx tsx scripts/check-es-text.mts <새 es 문구>` → 경고 0개. 웹 preview(`work-dev`): en 데스크톱·en/ko/es 375x812에서 CTA 클릭 → 카드 섹션이 화면 맨 위(top 0), 초점 en "Birth month"·ko "태어난 연도"·es "Día de nacimiento"(언어별 날짜 순서). es·en: 날짜 입력 → 유형 카드 → 계속 → "PASO 1 / 4 ¿Cómo te llamamos?"(생년월일 단계 건너뜀). 증거: 브라우저 패널 스크린샷은 늦게 갱신돼 스크롤·초점 상태를 페이지 안 JS로 읽음.
 
-- [ ] 4. 결과 이름 버그 수정 (전 모듈, 직접 처리·muse 위임 금지)
+- [x] 4. 결과 이름 버그 수정 (전 모듈, 직접 처리·muse 위임 금지)
   - 변경: `mobile/lib/quiz/quizProfile.ts`(`classifyProfile` 조회), 필요하면 `QuizScreen.tsx` 대체 제목 경로. 먼저 저장된 결과·리포트 프롬프트·이벤트가 `typeKey` 순서에 기대는지 grep으로 확인. 분류 기준은 그대로.
   - QA: 모든 모듈의 2·3개 조합 키 순열을 도는 검사 스크립트(새로, `scripts/`) → 대체 제목 0건. mobile tsc 0. mobile-web(`?qa=free&persona=sam&lang=en`) 가면 30문항 최고값 → 정의된 제목 캡처. 옛 순서로 저장된 결과를 다시 열어도 맞는 이름(스크립트 사례로).
+  - 결과(2026-10-27): 먼저 grep으로 확인 — `typeKey`는 서버·이벤트·리포트 프롬프트 어디에도 키로 쓰이지 않고(서버엔 `typeInfo.title`만 감) `resolveTypeName` 조회에만 쓰임. 그래서 분류(`classifyProfile`, `activeDimensions` 순서 포함)는 그대로 두고 `resolveTypeName`이 정확한 키가 없으면 차원 집합이 같은 키를 찾게 함(앱 `mobile/lib/quiz/quizProfile.ts`와 같은 코드인 웹 `lib/quizProfile.ts` 둘 다). 저장된 리포트(`reportStorage`)는 `typeInfo`를 그대로 저장하므로, 내 리포트에서 다시 열 때 `repairSavedTypeInfo`(`mobile/lib/quiz/modules.ts`)가 옛 대체 제목("<차원>+<차원> Combined Type" 꼴, 쓰인 언어 판별)만 정의된 제목으로 바꿈(`App.tsx`). 이미 생성된 리포트 본문 안의 옛 제목은 바꾸지 않음. 가면(module4)은 화면 이동 대신 돈(module2)으로 확인 — 같은 엔진이고 버그가 나던 순서를 정확히 만들 수 있어서.
+  - QA: 새 `npx tsx scripts/quiz-type-names.test.mts` → "532 passed, fallback titles: 0"(앱 12모듈×3언어 + 웹 11모듈, 2개 이상 조합의 모든 순열 + 단일·기준 + 저장 복구 ko/en/es + 손대지 않는 경우). 대조: 예전 정확 키 조회는 en만 134개 중 89개를 놓침(임시 스크립트). mobile tsc(큰 스택) → exit 0. 루트 `npx tsc --noEmit` → exit 0. mobile-web(`?qa=free&persona=sam&lang=en`, 375x812): 돈 검사 이어 풀기 저장값에 29개 답(회피 > 결핍, 과시 0)을 넣고 30번 화면에서 마지막 답 → 키 `avoidance+scarcity`인데 정의된 제목 "Anxious Avoidant" 표시(예전이면 대체 제목).
 
 - [ ] 5. 개인정보 설명 정합성 (ko/en/es)
   - 변경: `lib/legalContent.ts`(KASI 호출 사실: 양력 날짜만 한국천문연구원 공공 API로), 보관 1년 → 실제 삭제 작업 SQL(`supabase/` 새 파일, 사용자 실행) 또는 문구를 실제에 맞추기. 앱 안 처리방침 사본이 있으면 함께.
@@ -102,5 +106,8 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
   - 선행: 16, 그리고 19·20으로 넘김이 배포된 뒤가 좋다. 결과 기록표를 공유하면 13번 진행 여부와 주력 상품 판단에 쓴다.
 
 ## 발견 사항
+- (3번 중) 히어로 본문 "about three minutes / 3분 만에"는 유형 카드 + 온보딩 + 첫 질문까지의 전체 시간이라 그대로 뒀다. 헤드라인 "Your birth chart, read as…"도 약속이 아니라 소개라 그대로. 필요하면 별도 문구 작업으로.
+- (3번 중) `landing_cta_click`의 뜻이 "온보딩 시작"에서 "유형 카드로 이동"으로 바뀌었다(funnel-report는 이 이벤트를 안 씀). 온보딩 시작은 `position: type_card` 클릭.
+- (4번 중) 이미 생성된 심층 리포트 본문은 생성 당시 대체 제목을 프롬프트로 받았다. 화면 제목은 고쳐지지만 본문 문장 안 언급은 다시 생성하기 전까지 남는다.
 - (1번 중) 운영 이벤트의 `purchase_success`가 모두 `kind` 없음(unknown) — `kind`는 커밋 3046e93부터라 구버전 빌드 신호로 보임. 미확인 1·2와 같이 확인.
 - (1번 중) 구독 SKU는 코드에 이름이 없고(RevenueCat 오퍼링에서 옴) 리포트에서 `other_or_missing_product`로 묶인다. 구독을 따로 세려면 ASC/Play의 실제 구독 상품 ID를 받아 `productFamily`에 넣는다(2번이나 12번에서).

@@ -59,7 +59,7 @@ import {
   MODULE12_DIMENSION_ITEM_COUNTS, MODULE12_DIMENSION_LABELS, MODULE12_TYPE_NAMES,
 } from "./module12Transition";
 import type { Locale } from "../i18n/types";
-import { localizeQuestions, type ModuleQuestion, type QuestionTextOverride } from "./quizProfile";
+import { localizeQuestions, resolveTypeName, type ModuleQuestion, type ProfileClassification, type QuestionTextOverride } from "./quizProfile";
 
 export interface ModuleDefinition {
   id: string;
@@ -309,6 +309,26 @@ export function resolveModuleLocale(moduleDef: ModuleDefinition, locale: Locale)
     typeNames: moduleDef.typeNames[locale] ?? moduleDef.typeNames.ko,
     dimensionShortNames: moduleDef.dimensionShortNames[locale] ?? moduleDef.dimensionShortNames.ko,
   };
+}
+
+/** Saved reports (reportStorage) keep the typeInfo computed when the quiz finished. Before
+ * resolveTypeName matched combos regardless of key order, most combined results got the
+ * generic "<dim>+<dim> Combined Type" title; this swaps that for the module's defined name,
+ * in the locale the stale title was written in. Anything else is returned unchanged. */
+export function repairSavedTypeInfo(
+  moduleId: string,
+  classification: ProfileClassification | undefined,
+  typeInfo: { title: string; hook: string } | undefined
+): { title: string; hook: string } | undefined {
+  const moduleDef = getModuleById(moduleId);
+  if (!moduleDef || !typeInfo || classification?.kind !== "combined") return typeInfo;
+  for (const locale of Object.keys(moduleDef.typeNames) as Locale[]) {
+    const shortNames = moduleDef.dimensionShortNames[locale] ?? {};
+    const stalePrefix = classification.activeDimensions.map((d) => shortNames[d] ?? d).join("+");
+    if (!typeInfo.title.startsWith(stalePrefix + " ")) continue;
+    return resolveTypeName(classification, moduleDef.typeNames[locale], () => typeInfo);
+  }
+  return typeInfo;
 }
 
 /** Resolves `moduleDef.questions` (always Korean) against that locale's

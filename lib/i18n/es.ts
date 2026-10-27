@@ -171,8 +171,8 @@ export const es: typeof ko = {
     langLabel: "Idioma",
     heroTitle: "Tu mapa natal, leído desde\nel momento en que estás",
     heroBody: "Un cálculo real de saju unido a la psicología: tu temperamento y lo que viene, en unos tres minutos. Gratis y sin registro.",
-    cta: "Ver mi mapa gratis",
-    ctaNote: "Sin registro · unos 3 minutos · solo tu fecha y ciudad de nacimiento",
+    cta: "Ver mi tipo de saju gratis",
+    ctaNote: "Sin registro · unos 10 segundos · solo tu fecha de nacimiento",
     trust: "Calculado con datos astronómicos oficiales (KASI, Corea), nunca inventado.",
     featuresTitle: "Qué vas a descubrir",
     features: [
@@ -192,11 +192,11 @@ export const es: typeof ko = {
     samplePage3Locked: "Se abre en la app",
     elementNames: ["Madera", "Fuego", "Tierra", "Metal", "Agua"],
     stepsTitle: "Cómo funciona",
-    steps: ["Escribe tu fecha y tu ciudad de nacimiento", "Mira tu resultado de saju al instante, gratis", "Pregunta lo que te intrigue y profundiza en la app"],
+    steps: ["Escribe tu fecha de nacimiento y mira tu tipo de saju al instante, gratis", "Añade algunos datos, como tu hora y ciudad de nacimiento, y pregunta lo que te intrigue", "Profundiza en la app"],
     faqTitle: "Preguntas frecuentes",
     faq: [
       { q: "¿De verdad se calcula?", a: "Sí. Calculamos tus cuatro pilares a partir de tu fecha, hora y ciudad de nacimiento, teniendo en cuenta la zona horaria y la longitud. Una IA escribe la lectura, pero el cálculo en sí nunca se inventa." },
-      { q: "¿Es gratis?", a: "Tu resultado de saju y tus 2 primeras preguntas son gratis. Los informes profundos y la lectura diaria se abren en la app." },
+      { q: "¿Es gratis?", a: "Tu tipo de saju y tus 2 primeras preguntas son gratis. Los informes profundos y la lectura diaria se abren en la app." },
       { q: "¿Cómo se usa mi información?", a: "Puedes usarlo sin registrarte, y tus datos pueden guardarse y borrarse según la política de privacidad. Es una lectura para conocerte mejor, no una predicción ni un diagnóstico." },
     ],
     bottomTitle: "¿Quieres ver tu ritmo?",
@@ -219,7 +219,7 @@ export const es: typeof ko = {
     noTimeNote: "Calculado sin tu hora de nacimiento. Si añades la hora y la ciudad, \"lo que te mueve ahora mismo\" puede cambiar.",
     appTitle: "Tu mapa completo está en la app",
     appBody: "El mapa de los cuatro pilares, tu ritmo diario y tu Informe profundo se abren en la app.",
-    continueCta: "Añade hora y ciudad para la lectura completa",
+    continueCta: "Añade unos datos más y haz una pregunta",
     again: "Probar con otra fecha",
   },
   calculator: {
