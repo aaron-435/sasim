@@ -9,6 +9,9 @@
  * 시나리오 3개: (a) 매 턴 첫 번째 보기, (b) 보기와 직접 쓴 글 섞기
  * (3·7·12·21턴 직접 입력), (c) (a)와 같되 21턴 건너뛰기.
  * 9턴·22턴은 조사 치환을 사람이 읽을 수 있게 줄 전체를 이어서도 찍는다.
+ * PICK=0|1|2를 주면 위 3개 대신 경로 하나만 돈다: 매 턴 PICK번째 보기(보기가 적으면
+ * 마지막 보기). 1턴 보기별 경로를 끝까지 볼 때 쓴다.
+ *   MODULE_ID=module12 PICK=2 npx tsx scripts/run-choice-script.mts
  * ------------------------------------------------------------------
  */
 
@@ -73,7 +76,14 @@ const MIXED: AnswerFn = (turn, firstOption) => MIXED_FREE[turn] ?? firstOption ?
 const SKIP_LAST: AnswerFn = (turn, firstOption) =>
   turn === 21 ? SKIP_ANSWER_TEXT : (firstOption ?? MIXED_FREE[21]);
 
-const SCENARIOS: { name: string; answer: AnswerFn }[] = [
+const PICK = process.env.PICK === undefined ? null : Number(process.env.PICK);
+const PICKED: AnswerFn = (turn, firstOption) => {
+  const opts = script.turns[turn]?.options;
+  if (!opts?.length) return firstOption ?? MIXED_FREE[21];
+  return opts[Math.min(PICK ?? 0, opts.length - 1)].text;
+};
+
+const SCENARIOS: { name: string; answer: AnswerFn }[] = PICK !== null ? [{ name: `(p) 매 턴 ${PICK}번째 보기`, answer: PICKED }] : [
   { name: "(a) 매 턴 첫 번째 보기", answer: FIRST_OPTION },
   { name: "(b) 보기 + 직접 입력(3·7·12·21턴)", answer: MIXED },
   { name: "(c) (a)와 같되 21턴 건너뛰기", answer: SKIP_LAST },
