@@ -24,7 +24,20 @@
     "comments": { "bands": [{ "upTo": 0, "factor": 1.3 }, { "upTo": 3, "factor": 1.1 }, { "upTo": 10, "factor": 1.0 }], "over": 0.7 },
     "contextKeywords": ["four pillars"],
     "contextWords": ["bazi", "saju", "사주", "astrology", "zodiac", "horoscope", "chart", "element", "elements", "day master", "destiny", "fortune", "heavenly stem", "earthly branch", "luck pillar", "yin", "yang", "metaphysics"],
-    "profileMultiplier": 0.5
+    "profileMultiplier": 0.5,
+    "penalties": {
+      "ignoreSubreddits": ["FreeBaziReading"],
+      "seriesTitlePatterns": ["^\\[[^\\]]*[a-z][^\\]]*\\s\\d{1,3}\\]", "^\\d{1,3}\\s*[|｜]", "\\b(?:part|lesson|chapter|episode|ep\\.?)\\s*\\d{1,3}\\b"],
+      "seriesMultiplier": 0.3,
+      "articleMinChars": 1500,
+      "articleMultiplier": 0.5,
+      "promoPatterns": ["\\bclients?\\b", "\\bconsultations?\\b", "reading case", "\\bi(?:'m|’m| am) offering\\b", "\\bread(?:ings?)? for (?:just |only )?(?:₹|\\$|€|£|rs\\.? ?)\\d", "\\bdm me\\b", "\\bbook (?:a|your) (?:reading|session)\\b", "\\bfree (?:kindle|e-?book)\\b", "\\blink in (?:my )?(?:bio|profile)\\b", "\\bi (?:built|launched)\\b"],
+      "promoMultiplier": 0.3,
+      "spreadMinSubreddits": 3,
+      "spreadMultiplier": 0.5,
+      "contextSubreddits": ["AstrologyCharts", "AstrologyChartShare", "astrology", "Horoscope", "kpoppers"],
+      "noContextMultiplier": 0.3
+    }
   },
   "competitors": [
     { "name": "PAL:JA", "aliases": ["palja", "getpalja"], "domains": ["getpalja.com"], "accounts": ["getpalja"], "subreddits": [] },

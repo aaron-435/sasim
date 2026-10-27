@@ -10,6 +10,19 @@ export type Competitor = { name: string; aliases: string[]; domains: string[]; a
 export type ScoringAgeConfig = { fullHours: number; fadeHours: number; fadeTo: number; after: number; unknown: number };
 export type CommentBand = { upTo: number; factor: number };
 export type ScoringCommentsConfig = { bands: CommentBand[]; over: number };
+export type PenaltyConfig = {
+  ignoreSubreddits: string[];
+  seriesTitlePatterns: string[];
+  seriesMultiplier: number;
+  articleMinChars: number;
+  articleMultiplier: number;
+  promoPatterns: string[];
+  promoMultiplier: number;
+  spreadMinSubreddits: number;
+  spreadMultiplier: number;
+  contextSubreddits: string[];
+  noContextMultiplier: number;
+};
 export type ScoringConfig = {
   keywordPoints: number;
   keywordMaxPoints: number;
@@ -23,6 +36,7 @@ export type ScoringConfig = {
   contextKeywords: string[];
   contextWords: string[];
   profileMultiplier: number;
+  penalties: PenaltyConfig;
 };
 export type RedditConfig = {
   subreddits: SubredditMeta[];
@@ -67,6 +81,16 @@ function bool(o: Obj, k: string, path: string): boolean {
   if (v === undefined) throw new ConfigError(path, "is missing");
   if (typeof v !== "boolean") throw new ConfigError(path, "must be true or false");
   return v;
+}
+function regexArr(o: Obj, k: string, path: string): string[] {
+  return strArr(o, k, path, true).map((v, i) => {
+    try {
+      new RegExp(v, "i");
+    } catch {
+      throw new ConfigError(`${path}[${i}]`, "must be a valid regular expression");
+    }
+    return v;
+  });
 }
 function arr(o: Obj, k: string, path: string, allowEmpty: boolean): unknown[] {
   const v = o[k];
@@ -132,6 +156,31 @@ export function parseConfig(raw: unknown): RedditConfig {
   for (let i = 1; i < bands.length; i++) {
     if (bands[i].upTo <= bands[i - 1].upTo) throw new ConfigError(`scoring.comments.bands[${i}].upTo`, `must be greater than scoring.comments.bands[${i - 1}].upTo`);
   }
+  const penRaw = scoringRaw["penalties"];
+  if (penRaw === undefined) throw new ConfigError("scoring.penalties", "is missing");
+  if (!isObj(penRaw)) throw new ConfigError("scoring.penalties", "must be an object");
+  const P = "scoring.penalties";
+  const contextSubreddits = strArr(penRaw, "contextSubreddits", `${P}.contextSubreddits`, true);
+  contextSubreddits.forEach((n, i) => {
+    if (!names.has(n.toLowerCase())) throw new ConfigError(`${P}.contextSubreddits[${i}]`, `"${n}" is not in subreddits`);
+  });
+  const ignoreSubreddits = strArr(penRaw, "ignoreSubreddits", `${P}.ignoreSubreddits`, true);
+  ignoreSubreddits.forEach((n, i) => {
+    if (names.has(n.toLowerCase())) throw new ConfigError(`${P}.ignoreSubreddits[${i}]`, `"${n}" is also a watched subreddit`);
+  });
+  const penalties: PenaltyConfig = {
+    ignoreSubreddits,
+    seriesTitlePatterns: regexArr(penRaw, "seriesTitlePatterns", `${P}.seriesTitlePatterns`),
+    seriesMultiplier: num(penRaw, "seriesMultiplier", `${P}.seriesMultiplier`, 0),
+    articleMinChars: num(penRaw, "articleMinChars", `${P}.articleMinChars`, 1),
+    articleMultiplier: num(penRaw, "articleMultiplier", `${P}.articleMultiplier`, 0),
+    promoPatterns: regexArr(penRaw, "promoPatterns", `${P}.promoPatterns`),
+    promoMultiplier: num(penRaw, "promoMultiplier", `${P}.promoMultiplier`, 0),
+    spreadMinSubreddits: num(penRaw, "spreadMinSubreddits", `${P}.spreadMinSubreddits`, 2),
+    spreadMultiplier: num(penRaw, "spreadMultiplier", `${P}.spreadMultiplier`, 0),
+    contextSubreddits,
+    noContextMultiplier: num(penRaw, "noContextMultiplier", `${P}.noContextMultiplier`, 0),
+  };
   const scoring: ScoringConfig = {
     keywordPoints: num(scoringRaw, "keywordPoints", "scoring.keywordPoints", 0),
     keywordMaxPoints: num(scoringRaw, "keywordMaxPoints", "scoring.keywordMaxPoints", 0),
@@ -151,6 +200,7 @@ export function parseConfig(raw: unknown): RedditConfig {
     contextKeywords: strArr(scoringRaw, "contextKeywords", "scoring.contextKeywords", true),
     contextWords: strArr(scoringRaw, "contextWords", "scoring.contextWords", true),
     profileMultiplier: num(scoringRaw, "profileMultiplier", "scoring.profileMultiplier", 0),
+    penalties,
   };
   const separateSubreddits = strArr(raw, "separateSubreddits", "separateSubreddits", true);
   separateSubreddits.forEach((n, i) => {

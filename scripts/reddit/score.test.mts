@@ -12,7 +12,7 @@ const ago = (h: number) => Math.floor(NOW / 1000) - Math.round(h * 3600);
 
 const post = (p: Partial<RedditPost> & { id: string; subreddit: string; title: string }): RedditPost => ({
   body: "",
-  author: "testuser",
+  author: `author-${p.id}`,
   createdUtc: ago(1),
   numComments: 0,
   permalink: `https://www.reddit.com/r/${p.subreddit}/comments/${p.id}/x/`,
@@ -40,7 +40,8 @@ const byId = Object.fromEntries(ranked.map((s) => [s.post.id, s]));
 check(byId.s1.score === 19.5, `s1 scores 19.5, got ${byId.s1.score}`);
 check(byId.s4.score === 6.3, `s4 scores 6.3, got ${byId.s4.score}`);
 check(byId.s3.score === 1.8, `s3 scores 1.8, got ${byId.s3.score}`);
-check(byId.s5.score === 1.1, `s5 scores 1.1, got ${byId.s5.score}`);
+check(byId.s5.score === 0.3, `s5 scores 0.3 (no saju context in r/Horoscope), got ${byId.s5.score}`);
+check(byId.s5.reasons.some((r) => r.includes("사주 문맥 없음")), "s5 reasons mention 사주 문맥 없음");
 check(scorePost(s2, config, NOW).score === 0, "s2 scores 0");
 check(scorePost(s2, config, NOW).reasons.some((r) => r.includes("단독")), "s2 notes lone bazi");
 check(byId.s3.reasons.some((r) => r.includes("RSS")), "s3 reasons mention RSS");
@@ -71,6 +72,84 @@ const pWatch = scorePost(post({ id: "p2", subreddit: "ChineseZodiac", ...pBase }
 check(pProf.score > 0 && pProf.score < pWatch.score, `profile post scores lower, got ${pProf.score} vs ${pWatch.score}`);
 check(pProf.reasons.some((r) => r.includes("프로필 글")), "profile post reasons mention 프로필 글");
 check(scorePost(post({ id: "p3", subreddit: "u_someone", title: "The four pillars", body: "Just some notes." }), config, NOW).score === 0, "lone profile four pillars scores 0");
+
+// Non-question penalties (2026-10-27): series, ignored subreddit, promo wording, spread author, Western no-context.
+const longBody = "Here is how the luck pillars work in a day master chart. ".repeat(40);
+const q1 = post({ id: "q1", subreddit: "ChineseZodiac", title: "Can someone read my day master? Born 1994-03-08", body: "Weak yin water, what does it mean for me?" });
+const qBase = scorePost(q1, config, NOW);
+const k1 = scorePost(post({ id: "k1", subreddit: "ChineseZodiac", title: "[BaZi Basics 03] How Timing Works in BaZi: 10-Year Luck Pillars", body: longBody }), config, NOW);
+const k2 = scorePost(post({ id: "k2", subreddit: "ChineseZodiac", title: "03 | Her chart pointed toward education and public service", body: "A day master case." }), config, NOW);
+const k0 = scorePost(post({ id: "k0", subreddit: "ChineseZodiac", title: "How Timing Works in BaZi: 10-Year Luck Pillars", body: "A short day master note." }), config, NOW);
+check(k1.reasons.some((r) => r.includes("연재 글")) && k1.reasons.some((r) => r.includes("긴 글")), `series + long article both noted, got ${k1.reasons.join(" / ")}`);
+check(k1.score > 0 && k1.score < qBase.score / 3, `series article sinks well below a real question, got ${k1.score} vs ${qBase.score}`);
+check(k2.reasons.some((r) => r.includes("연재 글")), "'03 |' title is a series");
+check(!k0.reasons.some((r) => r.includes("연재 글") || r.includes("긴 글")), "short non-series post has no series/article penalty");
+check(!scorePost(post({ id: "k3", subreddit: "ChineseZodiac", title: "[2027] what does my day master mean?", body: "Help" }), config, NOW).reasons.some((r) => r.includes("연재")), "[2027] bracket is not a series");
+const kLongAsk = scorePost(post({ id: "k4", subreddit: "ChineseZodiac", title: "Can someone help with my day master?", body: longBody }), config, NOW);
+check(!kLongAsk.reasons.some((r) => r.includes("긴 글")), "long body with a question title keeps full score");
+
+const fb = scorePost(post({ id: "fb", subreddit: "FreeBaziReading", title: "What is a BaZi chart? Four pillars day master breakdown", body: "Free reading below." }), config, NOW);
+check(fb.score === 0 && fb.reasons[0]?.includes("무시 서브레딧"), `r/FreeBaziReading is ignored, got ${fb.score} ${fb.reasons.join(" / ")}`);
+
+const pr1 = scorePost(post({ id: "pr1", subreddit: "SideHustlesIndia", title: "Personalised Chinese Astrology (BaZi) Readings for just ₹49", body: "I am offering four pillars readings." }), config, NOW);
+const pr2 = scorePost(post({ id: "pr2", subreddit: "EasternOccult", title: "Why Her 2026 Auspicious Bazi Luck Failed?", body: "In this bazi four pillars reading case, follow me as I figure out why a client had bad luck." }), config, NOW);
+const pr0 = scorePost(post({ id: "pr0", subreddit: "EasternOccult", title: "Why did my bazi luck pillar change?", body: "My four pillars chart says a new decade starts." }), config, NOW);
+check(pr1.reasons.some((r) => r.includes("홍보 문구")), `₹49 reading offer is promo, got ${pr1.reasons.join(" / ")}`);
+check(pr2.reasons.some((r) => r.includes("홍보 문구")) && pr2.score < pr0.score / 2, `client case study is promo and sinks, got ${pr2.score} vs ${pr0.score}`);
+check(!pr0.reasons.some((r) => r.includes("홍보")), "plain question has no promo penalty");
+
+const spreadPosts = ["Scorpio", "LoveIslandUSA", "Horoscope"].map((sub, i) =>
+  post({ id: `sp${i}`, subreddit: sub, title: `Chinese astrology has 10 birthday types (${sub})`, body: `Each four pillars type differs ${i}.`, author: "spreader" }),
+);
+const askPosts = ["ChineseZodiac", "chineseastrology", "Bazi_Astrology"].map((sub, i) =>
+  post({ id: `as${i}`, subreddit: sub, title: "Am I doomed with a weak day master?", body: `Worried ${i}.`, author: "asker" }),
+);
+const spreadRanked = rankPosts([...spreadPosts, ...askPosts], config, NOW);
+const sp = spreadRanked.find((s) => s.post.id === "sp0");
+const sp0Alone = scorePost(spreadPosts[0], config, NOW);
+check(sp?.reasons.some((r) => r.includes("같은 작성자 3개 서브레딧")) && sp.score < sp0Alone.score, `author spread over 3 subs is penalized, got ${sp?.score} vs ${sp0Alone.score}`);
+const tailored = ["Scorpio", "Taurusgang", "LoveIslandUSA"].map((sub, i) =>
+  post({ id: `tl${i}`, subreddit: sub, title: `${sub} come in 10 types in Chinese astrology. You?`, body: `Each saju day type gets a famous ${sub} example, number ${i}.`, author: "tailor" }),
+);
+check(rankPosts(tailored, config, NOW).every((s) => s.reasons.some((r) => r.includes("같은 작성자 3개"))), "different texts across 3 subs are penalized even with a question title");
+check(scorePost(post({ id: "ep", subreddit: "SameDayPaths", title: "One Tree, Four Seasons | Same Day Paths EP04", body: "A day master episode." }), config, NOW).reasons.some((r) => r.includes("연재 글")), "EP04 title is a series");
+check(scorePost(post({ id: "ib", subreddit: "SideProject", title: "Free Korean four pillars (saju) calculator", body: "Small details change the result. So I built one." }), config, NOW).reasons.some((r) => r.includes("홍보 문구")), "'I built' launch post is promo");
+check(!scorePost(post({ id: "mb", subreddit: "astrology", title: "Full moon energy", body: "Expect grand statements made by those in charge, four pillars of destiny style." }), config, NOW).reasons.some((r) => r.includes("홍보")), "'made by' alone is not promo");
+check(spreadRanked.filter((s) => s.post.author === "asker").every((s) => !s.reasons.some((r) => r.includes("같은 작성자"))), "question titles are exempt from the spread penalty");
+
+const w1 = scorePost(post({ id: "w1", subreddit: "AstrologyCharts", title: "Which school should I pick? Sun in Leo, Moon in Virgo", body: "Help me read my natal chart." }), config, NOW);
+const w2 = scorePost(post({ id: "w2", subreddit: "AstrologyCharts", title: "My bazi day master vs my natal chart?", body: "Help me compare." }), config, NOW);
+check(w1.reasons.some((r) => r.includes("사주 문맥 없음")) && w1.score < w2.score / 3, `Western chart with no saju context sinks, got ${w1.score} vs ${w2.score}`);
+check(!w2.reasons.some((r) => r.includes("사주 문맥 없음")), "AstrologyCharts post with saju keywords keeps context");
+check(!scorePost(post({ id: "w3", subreddit: "ChineseZodiac", title: "Year of the Horse question?", body: "Help" }), config, NOW).reasons.some((r) => r.includes("사주 문맥 없음")), "no-context rule only applies to contextSubreddits");
+
+const badRe: any = JSON.parse(JSON.stringify(config));
+badRe.scoring.penalties.promoPatterns = ["(unclosed"];
+let m4 = "";
+try {
+  parseConfig(badRe);
+} catch (e) {
+  m4 = (e as Error).message;
+}
+check(m4.includes("scoring.penalties.promoPatterns[0]"), `bad regex names key, got ${m4}`);
+const badCtx: any = JSON.parse(JSON.stringify(config));
+badCtx.scoring.penalties.contextSubreddits = ["NotWatched"];
+let m5 = "";
+try {
+  parseConfig(badCtx);
+} catch (e) {
+  m5 = (e as Error).message;
+}
+check(m5.includes("contextSubreddits[0]"), `unwatched context sub throws, got ${m5}`);
+const noPen: any = JSON.parse(JSON.stringify(config));
+delete noPen.scoring.penalties;
+let m6 = "";
+try {
+  parseConfig(noPen);
+} catch (e) {
+  m6 = (e as Error).message;
+}
+check(m6.includes('"scoring.penalties" is missing'), `missing penalties names key, got ${m6}`);
 
 const xml = `<feed><entry><id>t3_abc</id><title>I&amp;#39;m here</title><content>&lt;p&gt;It&amp;#39;s &amp;quot;fine&amp;quot;&lt;/p&gt;</content><category term="astrology"/><link href="/r/astrology/comments/abc/x/"/><published>2026-10-25T12:00:00Z</published></entry></feed>`;
 const rss = normalizeRss(xml);

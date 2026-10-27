@@ -17,10 +17,12 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이�
   - QA 범위 보정: `lib` 전체 grep은 챗 선택지(`lib/choiceScripts/en/*`)·사주 SEO 글(`lib/seoArticles/*`)의 "You tend to"까지 잡는데, 애착 결과가 아니라 범위 밖이다. 결과 문구만 보도록 좁혔다.
   - QA: `grep -rn "You tend to\|패턴입니다\|Tiendes a" mobile/lib/quiz/module1Attachment.ts lib/module1Attachment.ts` → 0건(`mobile/lib/quiz` 전체에서 "You tend to"도 0건). 루트 `npx tsc --noEmit` → exit 0. mobile tsc → exit 0. mobile-web(8082, 375x812, `?qa=free&persona=jordan&lang=en`)에서 애착 30문항 최고값 응답 → 결과 "Fearful-Avoidant"에 새 hook 표시 확인, 캡처 `.agents/qa/attachment-copy-2026-10/en-fearful-avoidant.jpg`(증거: mobile-web, 네이티브 아님).
 
-- [ ] 3. 레딧 다이제스트: 질문 아닌 글 감점
+- [x] 3. 레딧 다이제스트: 질문 아닌 글 감점
   - 변경: `scripts/reddit/score.mts`, `scripts/reddit/config.mts`(검증), `marketing/reddit/config.json`(감점 값·무시 서브레딧·패턴), `scripts/reddit/score.test.mts`, `marketing/reddit/README.md` "설정 바꾸기"
   - 내용: 강좌 연재 제목 패턴("[BaZi Basics 01]" 류), r/FreeBaziReading 같은 1인 SEO 서브레딧(무시 목록), 같은 문구를 여러 서브레딧에 뿌린 홍보 글, 사주 문맥 없는 서양 점성 차트 글을 감점하거나 제외. 규칙 기반, LLM 없음.
   - QA: 고치기 전에 `npm run reddit:digest -- --dry-run` 상위 10개를 기록한다. `npx tsx scripts/reddit/score.test.mts` → 새 사례 4종 포함 전부 통과, 기존 테스트(`collect`·`competitors`·`memo`·`draft` `.test.mts`) 통과. 루트 `npx tsc --noEmit` → 0, `npm run lint` → 0. 고친 뒤 `--dry-run`을 다시 돌려 상위 10개에서 해당 유형이 줄었는지 전후를 비교해 적는다.
+  - 결과: `config.json`에 `scoring.penalties`를 새로 만들었다(검증은 `config.mts`. 정규식이 컴파일되는지, `contextSubreddits`가 감시 목록에 있는지, `ignoreSubreddits`가 감시 목록과 겹치지 않는지 본다). 규칙은 이렇다. 무시 서브레딧 FreeBaziReading은 0점. 연재 제목("[BaZi Basics 01]", "03 |", "EP04")은 ×0.3. 제목이 질문이 아닌 1500자 이상 글은 ×0.5. 홍보 문구(client, consultation, "I'm offering", "readings for ₹49", "I built" 등)는 ×0.3. 한 작성자가 이번 수집에서 3곳 이상에 올렸으면 ×0.5. 이때 서브레딧마다 문구가 다르면 제목이 질문이어도 걸고, 같은 글 크로스포스트면 제목이 질문이 아닐 때만 건다. 서양 점성 서브레딧 5곳에서 사주 키워드도 bazi도 없는 글은 ×0.3. 긴 본문은 질문 패턴에 우연히 걸리기 쉬워서, 질문 여부는 이 감점들에 한해 제목만 본다. 기존 테스트의 기본 작성자를 글마다 다르게 바꿨다(전부 "testuser"라 뿌리기 감점에 걸렸다). s5(r/Horoscope, 사주 문맥 없음) 기대값은 1.1 → 0.3.
+  - QA: 고치기 전 `npm run reddit:digest -- --dry-run`(`seen.json`을 비우고 돌린 뒤 복원) → `digest/2026-10-27-2.md` 상위 10개 중 진짜 질문 2개(1·5위). 나머지는 강좌 연재 3(Basics 03·02·01), 사례 연재 "03 |" 1, 긴 글 3(2027 Ding Wei, 같은 띠 다른 삶, Taurus season), 여러 서브레딧 사례 홍보 1. 같은 수집분(스크래치패드 스냅샷 305개)을 옛 점수와 새 점수로 매겨 비교했고, 고친 뒤 실제 `--dry-run`도 돌렸다 → `digest/2026-10-27-3.md` 상위 10개: 연재 0(5에서 줄어듦), 진짜 질문 5(1·2·6·8·10위). 긴 글 3개는 ×0.5로 진짜 질문 두 개보다 아래(6.3·5.1·3.8). 사례 홍보는 "client" ×0.3으로 6위 → 7위(10.9 → 3.3). 뿌리기 글 Scorpio는 ×0.5로 9위(2.8). 서양 차트 글은 전후 모두 상위 10개에 없었다(가중치 0.4가 이미 막음). 전체 241개 중 감점 건수: 무시 5, 연재 7, 긴 글 44, 홍보 18, 뿌리기 23, 사주 문맥 없음 177. `npx tsx scripts/reddit/score.test.mts` → "score tests: 75 passed"(이전 52. 연재·[2027] 비연재·긴 질문 제외, FreeBaziReading 0점, ₹49·client 홍보·"made by" 비홍보, 3곳 뿌리기·질문 크로스포스트 제외·문구 다른 질문 뿌리기, 서양 차트 문맥 없음·문맥 있음·비대상 서브레딧, 설정 오류 3종). collect ok·competitors 29·memo 27·draft 31 passed. 루트 `npx tsc --noEmit` → exit 0, `npm run lint` → 경고·오류 0. `chart.test.mts`는 OpenAI 키가 필요해 바꾸기 전에도 같은 이유로 실패한다(이번 QA 목록 밖, 돌리지 않음).
 
 - [ ] 4. 모듈 영상 설정 3개 추가 (수면·몰입·가면)
   - 변경: `scripts/record-app-ab.mts`의 `CONFIGS`에 A4(가면, module4)·A6(수면, module8)·A7(몰입, module10) 키 추가. 대본·TTS가 없으면 `marketing/video-kit.md` 형식으로 대본을 쓰고 TTS(`generate.py`)를 만든다.
@@ -59,6 +61,7 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이�
   - 1·2번 앱 문구(`mobile/lib/quiz/*`)는 OTA로만 나간다. 순서는 `HANDOFF_2026-10-25_ota_pending.md`를 따른다(웹 먼저).
 
 ## 발견 사항
+- (3번 중) 경쟁사 설정 보강 후보: Youra 글을 r/ChineseZodiac·promoteMyApp·ShowYourApp에 올리는 u/Kan0521, r/SideProject에 K-Sajupalja를 소개한 u/Whispered_Tales23을 `competitors[].accounts`에 넣으면 자사 글로 빠진다. 계정 주인은 확인하지 않아 손대지 않음.
 - (1번 중) A3x 영상 소재에 옛 제목 "Full Burnout"이 남아 있다: `scripts/record-app-ab.mts` A3x `highlight`, `marketing/tts-samples/scripts.json` A3x 대본, 기존 `marketing/video/A3x.mp4`. 대본·TTS·영상을 "Running on Empty"로 다시 만들어야 한다.
 - (1번 중) `mobile/lib/i18n/ko.ts:289` 안내 문구 "심리테스트로 나의 성향과 패턴을 진단해보면" — 결과 문구 밖이라 손대지 않음, "진단" 표현.
 - (1번 중) `record-app-ab.mts` 기본 브라우저 경로(`~/Library/Caches/ms-playwright/chromium_headless_shell-1243`)가 이 기기에 없다. 4번 녹화 때 `CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`로 지정해야 할 수 있다.

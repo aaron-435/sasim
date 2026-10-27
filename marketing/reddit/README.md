@@ -57,6 +57,7 @@ npm run reddit:utm -- --sub Bazi_Astrology --medium comment --content day-master
 
 - 서브레딧 목록과 메타(가중치, 링크 허용, AI 금지, 홍보 규칙 한 줄), 따로 부를 서브레딧(`separateSubreddits`)
 - 키워드, 보조 키워드(`bazi`), 점수 가산값(`scoring`)
+- 질문 아닌 글 감점(`scoring.penalties`): 무시 서브레딧(`ignoreSubreddits`, 점수 0, 지금은 1인 SEO 서브레딧 FreeBaziReading), 연재 제목 패턴(`seriesTitlePatterns`, "[BaZi Basics 01]"·"03 |"·"EP04"), 제목이 질문이 아닌 긴 글(`articleMinChars` 자 이상), 홍보 문구 패턴(`promoPatterns`: client·consultation·"I'm offering"·"readings for ₹49"·"I built" 등), 한 작성자가 이번 수집에서 `spreadMinSubreddits`곳 이상에 올린 글(서브레딧마다 문구가 다르면 제목이 질문이어도, 같은 글 크로스포스트면 제목이 질문이 아닐 때만), 서양 점성 서브레딧(`contextSubreddits`)에서 사주 키워드·bazi가 없는 글. 걸릴 때마다 해당 배수(`…Multiplier`)를 곱하고 근거 줄에 적는다. 패턴은 대소문자 무시 정규식이고, 잘못된 정규식이나 감시 목록에 없는 `contextSubreddits`는 설정 오류로 멈춘다.
 - 경쟁사 이름·별칭·도메인·계정·서브레딧
 - 요청 간격, 하루 요청 상한(기본 200), 재시도 라운드와 대기 시간, 섀도 점검 계정
 
