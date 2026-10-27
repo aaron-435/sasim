@@ -91,8 +91,9 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이�
     5. 영상: A6x·A7x 게시 후보 여부. A4x는 결과 이름 버그(발견 사항) 수정 뒤 다시 렌더할 때까지 보류.
   - 확정되면 각 파일 맨 위 "초안" 표기를 지우고 이 항목을 `[x]`로.
 
-- [ ] 10. (사용자 실행) 커밋·푸시 → Vercel 웹 배포
+- [x] 10. (사용자 실행) 커밋·푸시 → Vercel 웹 배포
   - 1·2번 웹 문구, 3번 레딧 설정이 실린다. 배포 Ready 확인.
+  - 결과: 사용자가 `git push`(d5b38ea..a39ff84). `gh api repos/aaron-435/sasim/commits/a39ff84/status` → Vercel success "Deployment has completed". `curl` → `/`·`/es` 200.
 
 - [ ] 11. (사용자 실행) iOS 1.2.0 승인 뒤 `eas update`
   - 1·2번 앱 문구(`mobile/lib/quiz/*`)는 OTA로만 나간다. 순서는 `HANDOFF_2026-10-25_ota_pending.md`를 따른다(웹 먼저).
