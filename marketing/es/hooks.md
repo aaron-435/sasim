@@ -1,6 +1,6 @@
 # Ganchos en español (es-419): 24 = B 8 + A 8 + C 8
 
-작성: 2026-10-27(TODO 7). **초안이며 사용자가 확정한다.** 원본은 `marketing/video-kit.md` 9장(B·A형)과 10장(C형)이다. 직역이 아니라 중남미 시청자가 실제로 말할 문장으로 다시 썼고, 번호는 영어판과 같다(B1 ↔ B1).
+작성: 2026-10-27(TODO 7). **2026-10-27 확정(사용자 위임으로 Claude가 검토·확정, TODO 9).** 원본은 `marketing/video-kit.md` 9장(B·A형)과 10장(C형)이다. 직역이 아니라 중남미 시청자가 실제로 말할 문장으로 다시 썼고, 번호는 영어판과 같다(B1 ↔ B1).
 
 규칙은 영어 키트와 같다(`video-kit.md` 1장 규칙, 9장 A형 추가 규칙, 10장 형식 규칙). 여기에 es-419 기준(`mobile/lib/i18n/STYLE_GUIDE.md`)을 더한다.
 
@@ -23,7 +23,7 @@
 | B5 | Escribí tres cumpleaños en una app coreana de saju. Estas son las tarjetas. | I typed three birthdays into a Korean saju app. Here are the cards. | 단순과거 "Escribí" |
 | B6 | Dos fechas de nacimiento entran, sale un nombre para la relación. Así funciona la compatibilidad en el saju. | Two birth dates in, one relationship name out. A look at saju compatibility. | - |
 | B7 | Adivina el tipo de saju a partir de una fecha y luego mira la tarjeta. | Guess the saju type from a birth date, then see the card. | 명령형은 tú(adivina, mira) |
-| B8 | Tres cumpleaños, tres apuestas. ¿Qué tarjeta eligió la app? | Three birthdays, three guesses. Which card did the app pick? | "apuestas"는 돈 내기가 아니라 내 추측. 돈 연상이 걸리면 "tres intentos"로 |
+| B8 | Tres cumpleaños, tres corazonadas. ¿Qué tarjeta eligió la app? | Three birthdays, three guesses. Which card did the app pick? | "apuestas"(내기)는 운세 앱에서 도박 연상이 있어 검토 때 "corazonadas"(감)로 바꿨다 |
 
 B7·B8 대본 요지는 영어판과 같다. "acerté / fallé"는 내 추측에 대한 말이고 앱의 정확도 주장이 아니다. 카드의 유명인 이름은 가린다.
 
@@ -33,7 +33,7 @@ B7·B8 대본 요지는 영어판과 같다. "acerté / fallé"는 내 추측에
 |---|---|---|---|---|
 | A1 | ¿Apego ansioso o evitativo? Así lo ordena un test de 30 preguntas. | 1 Amor y apego | Anxious or avoidant? Here's how a 30-question attachment test sorts it. | 영어처럼 형용사만 쓰면 사람을 꾸미는 남성형이 되어 독자 성별 표지가 된다. 앱 부제("apego ansioso y evitativo")처럼 "apego"를 꾸미게 했다 |
 | A2 | Un test de apego y un mapa de saju en una sola app. Así se ve el resultado. | 1 Amor y apego | An attachment test and a saju chart, in one app. Here's what the result looks like. | 용어집: chart = "mapa", "carta" 아님 |
-| A3 | Falta de energía, cinismo, poca eficacia: un test de agotamiento laboral lo separa en tres partes. | 3 Agotamiento | Exhaustion, cynicism, low energy: how a burnout test breaks it into three parts. | 앱 es 부제 그대로. "burnout"보다 "agotamiento laboral"이 앱 모듈 이름과 맞는다 |
+| A3 | Falta de energía, cinismo, poca eficacia: así divide en tres partes un test de agotamiento laboral. | 3 Agotamiento | Exhaustion, cynicism, low energy: how a burnout test breaks it into three parts. | 앱 es 부제 그대로. "burnout"보다 "agotamiento laboral"이 앱 모듈 이름과 맞는다 |
 | A4 | El test de la máscara: cuidado de la imagen, ocultamiento, cansancio social. Esta es la pantalla de resultado. | 4 La máscara | The mask test: image management, concealment, social fatigue. Here's the result screen. | 앱 es 부제 그대로 |
 | A5 | Sobreestimulación, sensibilidad estética, umbral sensorial bajo: un test de sensibilidad en 30 preguntas. | 7 Sensibilidad | Overstimulation, aesthetic sensitivity, a low sensory threshold: a sensitivity test, in 30 questions. | - |
 | A6 | Mente activa, cuerpo en tensión, sueños inquietos: así los ordena un test de sueño. | 8 Sueño | Racing mind, tense body, restless dreams: how a sleep test sorts them. | 앱 es 부제 그대로. "inquietos"는 꿈(sueños)을 꾸미는 말이라 독자 성별과 무관해서 검사 예외로 둔다 <!-- es-check: ignore (sueños inquietos = 앱 부제) --> |

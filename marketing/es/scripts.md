@@ -1,6 +1,6 @@
 # Guiones en español (es-419): 7
 
-작성: 2026-10-27(TODO 7). **초안이며 사용자가 확정한다.** 원본은 `marketing/tts-samples/scripts.json`의 영어 대본 7개(B1·C7·A3·C5·C1·A3x·A1x)다. 이번엔 글만 만들고 스페인어 TTS·녹화는 하지 않는다(SPEC 제외 범위).
+작성: 2026-10-27(TODO 7). **2026-10-27 확정(사용자 위임으로 Claude가 검토·확정, TODO 9).** 원본은 `marketing/tts-samples/scripts.json`의 영어 대본 7개(B1·C7·A3·C5·C1·A3x·A1x)다. 이번엔 글만 만들고 스페인어 TTS·녹화는 하지 않는다(SPEC 제외 범위).
 
 규칙: `hooks.md` 머리말과 같다(tú, 단순과거, 중남미 어휘, 독자 성별 표지 금지, 정확·예측·진단 표현 금지). 화면에 나오는 이름(결과 제목, 모듈 부제, 절기 이름, 일간 이름)은 앱 es 문구를 그대로 읽는다. 출처:
 
@@ -38,7 +38,7 @@
 
 ### Guion A3 · agotamiento laboral en tres partes
 
-> Falta de energía, cinismo, poca eficacia: un test de agotamiento laboral lo separa en tres partes. Son treinta preguntas, cada una sobre una situación breve del día a día. El resultado es un nombre de tipo con un resumen de una línea. Después sigue una conversación con IA. Es una herramienta de autoconocimiento, no es consejo médico ni psicológico. La app está en el link de mi bio.
+> Falta de energía, cinismo, poca eficacia: así divide en tres partes un test de agotamiento laboral. Son treinta preguntas, cada una sobre una situación breve del día a día. El resultado es un nombre de tipo con un resumen de una línea. Después sigue una conversación con IA. Es una herramienta de autoconocimiento, no es consejo médico ni psicológico. La app está en el link de mi bio.
 
 - 영어: "Exhaustion, cynicism, reduced efficacy: how a burnout test breaks it into three parts. The test is thirty questions… Then an AI conversation follows up. It's a self-reflection tool, not medical or psychological advice. …"
 - 메모: 세 차원은 앱 es 부제("Falta de energía / Cinismo / Poca eficacia")를 그대로 읽는다. "burnout"은 앱 모듈 이름 "Agotamiento"에 맞춰 "agotamiento laboral". 용어집의 AI 상담 = "conversación con IA".

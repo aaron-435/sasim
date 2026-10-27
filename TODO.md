@@ -76,9 +76,20 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이�
 
     금지어(금융·정확·예측·남의 상표) 0. 시딩 키트 `grep -inE "garantiz|cinco estrellas|reseña positiva|tienes que decir|testimonio"` → "보내지 않는 것" 목록 줄 1건만(요구 문구 0), 표기 단어 7곳.
 
-- [ ] 9. (사용자 확인) es 키트·영상 확정
+- [x] 9. (사용자 확인 → Claude에 위임) es 키트·영상 확정
+  - 결과(2026-10-27, 사용자가 "너가 보고 판단해줘"로 위임): es 네 파일을 읽고 앱 es 문구와 대조했다(모듈 부제 `modules.ts`, 번아웃 제목, 유형 이름 "첫 단어·둘째 단어" `es.ts` typeGloss → B1 "dos partes" 맞음, 절기·일간 이름, en ASO와 기능 목록). 고친 곳: B8 "tres apuestas"(도박 연상) → "tres corazonadas", A3 훅·대본 첫 문장의 지시 대상이 어색한 "lo separa" → "así divide en tres partes un test de agotamiento laboral", 시딩 표기 예시 "me regaló esta app" → "este informe"(주는 것은 리포트). "carta natal" 키워드는 검색어로만 유지, 시딩 키트의 중남미 표기 규정 `(미확인)`은 그대로 둠(DM은 공개 뒤라 그 전에 확인). 네 파일 머리말을 "확정"으로 바꿈.
+  - 영상: A7x 게시 후보. A6x 보류(최고점 "Deep-Sleep Deprived"가 건강 상태 이름처럼 읽히고 hook이 2인칭 단정, module8 문구 수정 후 재렌더). A4x 보류(결과 이름 버그). `video-kit.md` 9장 메모에 기록.
+  - QA: `npx tsx scripts/check-es-text.mts marketing/es/*.md` → 경고 0, exit 0. 훅 금지어 점검 → 24개, 걸림 0. `grep -c "^### Guion" marketing/es/scripts.md` → 7. 영상 프레임은 `ffmpeg fps=1/2.5` 타일로 A6x·A7x 확인(mobile-web 렌더).
   - 선행: 4, 7, 8
   - 절차: `marketing/es/` 네 파일을 읽고 고칠 곳을 알려 주기, `marketing/video/` 새 영상 3개를 보고 게시 후보 여부를 정하기. 확정 전까지는 초안.
+  - 준비 확인(2026-10-27): 네 파일 있음(hooks 86줄·scripts 79줄·aso 191줄·seeding-kit 89줄). `npx tsx scripts/check-es-text.mts marketing/es/*.md` → 경고 0, exit 0. `ffprobe` → A4x 18.8초·A6x 21.0초·A7x 22.5초, 셋 다 1080x1920 + 오디오. 영상 3개는 채팅으로 보냄. 남은 것은 사용자 판단뿐.
+  - 사용자가 볼 곳:
+    1. `marketing/es/hooks.md` — 훅 24개가 자연스러운 중남미 스페인어인지, 앱 화면 이름(번아웃 "Agotamiento completo", 애착 4제목)과 맞는지.
+    2. `marketing/es/scripts.md` — 대본 7개. B1 "dos partes"는 es 카드 표기를 녹화 전에 확인(발견 사항 7번 줄).
+    3. `marketing/es/aso.md` — 이름 "Fate Said: saju coreano", 부제, 키워드의 "carta natal"(검색어로만 쓸지) 승인.
+    4. `marketing/es/seeding-kit.md` — 중남미 광고 표기 규정 `(미확인)` 부분을 그대로 둘지.
+    5. 영상: A6x·A7x 게시 후보 여부. A4x는 결과 이름 버그(발견 사항) 수정 뒤 다시 렌더할 때까지 보류.
+  - 확정되면 각 파일 맨 위 "초안" 표기를 지우고 이 항목을 `[x]`로.
 
 - [ ] 10. (사용자 실행) 커밋·푸시 → Vercel 웹 배포
   - 1·2번 웹 문구, 3번 레딧 설정이 실린다. 배포 Ready 확인.
@@ -96,4 +107,6 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이�
 - (5번 중) 위 결과 이름 버그는 iOS 시뮬레이터(dev-client)에서도 재현된다(`.agents/qa/video-native-2026-10/native-A4x-high.png`). 웹 렌더 문제가 아니라 실사용자 화면 문제다.
 - (7번 중) 영어 대본 B1 "the card names the type with two words"는 es 카드 이름("El roble" + 모드)이 두 단어가 아닐 수 있다. es판은 "dos partes"로 썼고 실제 es 카드 표기는 녹화 전 확인 필요.
 - (8번 중) 영어판 `marketing/aso-en.md`의 글자 수 점검 스크립트가 "Play 앱 이름"을 따로 세지 못한다. 제목 정규식 `### (.+?) \(limit`이 줄을 넘어가서 "iOS 스크린샷 캡션 (… limit 40으로…)" 제목부터 Play 앱 이름 블록까지를 한 항목으로 읽는다(출력 "28/30 iOS 스크린샷 캡션"이 실제로는 Play 이름). 지금 값은 제한 안이라 결과는 맞다. es판은 `([^\n]+?)`로 고쳐 두었다.
+- (9번 중) 수면 최고점 결과 en "Deep-Sleep Deprived" / hook "Neither your mind, body, nor subconscious gets a proper rest — a sleep state that needs real recovery."가 건강 상태 이름처럼 읽히고 2인칭 단정이다. 1·2번과 같은 기준으로 module8 ko/en/es 문구를 고쳐야 A6x를 쓸 수 있다.
+- (9번 중) 결과 화면 버튼 "Continue to AI Counseling"과 안내 "counseling-based insights"의 "Counseling"이 "의학·심리 조언이 아님" 고지와 부딪힌다. 영상마다 보인다. 앱 용어집은 "conversation with AI"인데 이 버튼만 다르다(es·ko 대응 문구는 확인 안 함).
 - (5번 중) 시뮬레이터 탭 자동화 팁: 탭에 `duration: 0.15`를 주지 않으면 탭이 빠지거나 늦게 들어간다. 스크린샷도 한 박자 늦게 오므로 화면 전환 뒤에는 두 번 찍어 확인한다.

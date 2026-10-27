@@ -1,6 +1,6 @@
 # 크리에이터 시딩 키트 스페인어(중남미)판 (TODO 8)
 
-작성: 2026-10-27. **초안이며 사용자가 확정한다.** 원본은 `marketing/seeding-kit.md`. DM 발송과 코드 전달은 사용자가 직접 한다. 원본과 같은 부분(선행 조건, 코드 전달 표, 성과 기록표, 자유 의견 원칙)은 원본을 그대로 따르고, 여기에는 **중남미 대상으로 달라지는 것과 스페인어 문구만** 둔다.
+작성: 2026-10-27. **2026-10-27 확정(사용자 위임으로 Claude가 검토·확정, TODO 9).** 원본은 `marketing/seeding-kit.md`. DM 발송과 코드 전달은 사용자가 직접 한다. 원본과 같은 부분(선행 조건, 코드 전달 표, 성과 기록표, 자유 의견 원칙)은 원본을 그대로 따르고, 여기에는 **중남미 대상으로 달라지는 것과 스페인어 문구만** 둔다.
 
 표기: `(추정)`은 근거 없는 추론, `(미확인)`은 확인 못 한 것.
 
@@ -68,7 +68,7 @@
 
 > **Nota sobre la publicidad (léela, por favor)**
 > Recibiste este informe gratis (y/o un pago). Eso cuenta como una relación con la marca, así que cualquier publicación sobre Fate Said debe decirlo con claridad.
-> - Ponlo dentro del video: texto en pantalla y una frase dicha, por ejemplo "Fate Said me regaló esta app" o "Publicidad: informe gratis de Fate Said".
+> - Ponlo dentro del video: texto en pantalla y una frase dicha, por ejemplo "Fate Said me regaló este informe" o "Publicidad: informe gratis de Fate Said".
 > - Usa palabras claras: "publicidad", "patrocinado", "producto gratis". Evita usar solo "colab" o "colaboración".
 > - Que se vea durante los primeros segundos, no solo en la descripción.
 > - También puedes usar la etiqueta de colaboración pagada de la plataforma.

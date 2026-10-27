@@ -287,6 +287,7 @@ A형 추가 규칙(1장에 더해):
 - 캡션 틀은 6장 그대로, 해시태그만 A형은 `#attachmentstyle #selfdiscovery #personalitytest`를 앞에 두고 `#saju`는 마지막(첫 2주 성과 후 조정). 캡션 설명 줄은 "Self-reflection tool, not medical or psychological advice."를 유지.
 - 프로필 문구 후보(결정 필요): 앱 한 줄 이름이 정해지기 전까지는 6장 틀을 쓴다.
 - 비교형 변형(2026-10-27): A4x(가면)·A6x(수면)·A7x(몰입)는 위 A4·A6·A7 주제를 A3x와 같은 "매번 가장 낮은 답 vs 가장 높은 답" 형식으로 찍은 것. 첫 문장이 세 차원 이름, 대본은 `tts-samples/scripts.json`, 녹화는 `node --import tsx scripts/record-app-ab.mts <KEY>`(mobile-web 렌더). A4x는 앱 버그(최고점 결과가 "Fully Masked" 대신 대체 제목으로 뜸, `TODO.md` 발견 사항)가 고쳐질 때까지 게시 후보가 아니다.
+  - 게시 판단(2026-10-27, TODO 9, 사용자 위임으로 Claude 검토): **A7x = 게시 후보**(대본과 화면이 맞고, 샘플 답변·자기이해 도구 고지가 자막으로 나온다. 캡션에 ADHD 같은 진단명을 쓰지 않는다). **A6x = 보류**: 최고점 제목 "Deep-Sleep Deprived"가 수면 건강 상태 이름처럼 읽히고, hook "Neither your mind, body, nor subconscious gets a proper rest"는 TODO 1·2에서 고친 것과 같은 2인칭 단정이다. 영상이 이 문구를 크게 보여 주므로 module8 결과 문구를 고친 뒤 다시 렌더한다. **A4x = 보류**(위 결과 이름 버그).
 
 #### 비교형 영상의 네이티브 컷 필요 여부 (2026-10-27, TODO 5)
 
