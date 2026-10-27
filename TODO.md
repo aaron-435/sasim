@@ -31,10 +31,13 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이�
   - 결과: 키 이름은 A3x·A1x 관례를 따라 `A4x`(가면)·`A6x`(수면)·`A7x`(몰입)로 했다(키트의 A4·A6·A7은 다른 형식의 훅이라 남겨 둠). `scripts.json`에 대본 3개(첫 문장 = 키트 A4·A6·A7의 세 차원, 이어서 A3x와 같은 낮음/높음 비교, "These are sample answers."·"not medical or psychological advice" 포함, 키트 금지어 정규식 통과), `generate.py`로 TTS 3개(21.0·23.6·25.2초). `record-app-ab.mts`: `CONFIGS` 3개(`runAt [1,1]`), 그리고 "Good places to start" 밖의 검사는 "All tests · N more"를 펼쳐야 보여서 녹화 전(화면 밖) 단계에 펼치기·스크롤을 넣었다. 페르소나 sam(가면·수면), riley(몰입).
   - QA: `CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" node --import tsx scripts/record-app-ab.mts A4x|A6x|A7x` → 셋 다 exit 0, `marketing/video/A4x.mp4`(18.8초)·`A6x.mp4`(21.0초)·`A7x.mp4`(22.5초). `ffprobe` → 셋 다 video 1080x1920 + audio 트랙. 2.5초 간격 프레임 8장씩 확인: 목록 → 문항 → 결과 화면 2개 → 나란히 비교, 자막·배지 표시. A6x는 Peaceful Sleeper / Deep-Sleep Deprived, A7x는 Balanced Attention / Attention at Both Extremes로 대본과 화면이 맞다. **A4x는 최고점 결과가 "Fully Masked"가 아니라 "Image Management+Social Fatigue+Concealment Combined Type"(대체 제목)으로 떠서 대본과 어긋난다**(앱 버그, 아래 발견 사항). A4x는 버그를 고친 뒤 같은 명령으로 다시 렌더할 때까지 게시 후보가 아니다(`video-kit.md` 9장 메모에도 적음). 루트 `npx tsc --noEmit` → exit 0. 증거: mobile-web 렌더(네이티브 아님).
 
-- [ ] 5. 모듈 영상 네이티브 컷 필요 여부 판단
+- [x] 5. 모듈 영상 네이티브 컷 필요 여부 판단
   - 선행: 4
   - 변경: `marketing/video-kit.md`에 판단 표 추가(모듈, mobile-web과 네이티브의 차이, 네이티브 컷 필요 여부, 이유)
   - QA: iOS 시뮬레이터 dev-client로 세 모듈의 결과 화면을 캡처하고, 4번 영상 프레임과 나란히 비교한 이미지를 `.agents/qa/video-native-2026-10/`에 둔다. 차이(글꼴, 레이아웃, 애니메이션)를 표에 적는다. 증거는 시뮬레이터에서 나온 것임을 밝힌다. 시뮬레이터 빌드가 안 되면 `(사용자 확인)`으로 바꾸고 절차를 적는다.
+  - 결과: 판단은 "세 영상 모두 네이티브 컷 불필요"다. 결과 카드 구성·문구·글꼴이 같고, 차이는 iOS 상태 막대, 결과 카드 페이드인, 목록 이미지 흐림→선명 진입, 목록 카드 말줄임 위치뿐이다. 표는 `video-kit.md` 9장 "비교형 영상의 네이티브 컷 필요 여부"에 있다. A4x는 네이티브에서도 대체 제목("…Combined Type")이 떠서, 4번 발견 사항의 결과 이름 버그가 실제 앱에도 있다는 것을 확인했다.
+  - 방법: 기존 dev-client 빌드(10/15, iPhone 17 Pro Max 시뮬레이터)에 Metro(8081)로 현재 JS를 실었다. 30문항을 손으로 누르는 대신, 녹화 스크립트와 같은 규칙(선택지는 마지막, 슬라이더는 10)으로 1~29번 답을 앱의 이어하기 저장소(`fatesaid_quiz_progress_<module>`, AsyncStorage)에 넣었다. 30번째 문항은 화면에서 직접 마지막 선택지를 눌렀다. 끝난 뒤 저장소와 언어(es)를 원래대로 돌렸다.
+  - QA: iOS 시뮬레이터(dev-client, 네이티브)에서 세 검사 결과 화면과 검사 목록 캡처 → `.agents/qa/video-native-2026-10/native-{A4x,A6x,A7x}-high.png`·`native-list.png`. 결과는 Deep-Sleep Deprived, Attention at Both Extremes, 그리고 가면은 대체 제목. `ffmpeg -ss 8.5|10`으로 영상 프레임을 뽑아 나란히 붙임 → `compare-{A4x,A6x,A7x,list}.jpg`. 증거: 시뮬레이터(네이티브)와 mobile-web 영상 프레임 비교.
 
 - [ ] 6. 스페인어 텍스트 검사 스크립트
   - 변경: 새 `scripts/check-es-text.mts`. md·txt 파일을 받아 `lib/esGender.ts`의 `matchEsGenderedReader`와 `check-choice-scripts.mts`의 스페인식 표지 검사(`vale`, `vosotros/os`, 현재완료 남용)를 돌린다. 스페인식 표지 검사는 공용 함수로 꺼내 두 스크립트가 같이 쓴다.
@@ -69,3 +72,5 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이�
 - (1번 중) `record-app-ab.mts` 기본 브라우저 경로(`~/Library/Caches/ms-playwright/chromium_headless_shell-1243`)가 이 기기에 없다. 4번 녹화 때 `CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`로 지정해야 할 수 있다.
 - (2번 중) 다른 모듈 결과 hook에도 "~하는 패턴입니다" 단정이 남아 있다: `mobile/lib/quiz/module2Money.ts`·`module4Mask.ts`·`module5Execution.ts`·`module6Anger.ts`·`module7Sensitivity.ts`·`module8Sleep.ts`·`module9Family.ts`·`module10Focus.ts` ko hook(en/es 대응 문구 포함 여부는 미확인). module7은 "전형적인 고감각민감자(HSP)"라 진단처럼 읽힐 수 있다. 이번 SPEC은 번아웃·애착만이라 손대지 않음.
 - (4번 중, 중요) 결과 유형 이름 조회 버그: `mobile/lib/quiz/quizProfile.ts` `classifyProfile`이 2개 이상 조합의 `typeKey`를 **점수 높은 순**으로 이어 붙이는데, 각 모듈 `*_TYPE_NAMES`의 키는 **고정 순서**(예: `imageManagement+concealment+socialFatigue`)다. 점수 순서가 키 순서와 다르면 조회가 빠져 `QuizScreen.tsx:216`의 대체 제목("A+B+C Combined Type" + 일반 hook)이 뜬다. 가면 검사 30문항 최고값 응답에서 재현(mobile-web, `?qa=free&persona=sam&lang=en`). 모든 모듈의 2·3개 조합 결과에 해당할 수 있고 실사용자 화면에도 나온다. 고치려면 키를 정렬해 조회하거나 순열을 모두 시도해야 하는데 결과 분류 로직이라 이번 SPEC 밖이고 사업 핵심 로직이라 이 세션에서 직접 다뤄야 한다. 저장된 결과·리포트 프롬프트가 `typeKey` 순서에 기대는지 먼저 확인.
+- (5번 중) 위 결과 이름 버그는 iOS 시뮬레이터(dev-client)에서도 재현된다(`.agents/qa/video-native-2026-10/native-A4x-high.png`). 웹 렌더 문제가 아니라 실사용자 화면 문제다.
+- (5번 중) 시뮬레이터 탭 자동화 팁: 탭에 `duration: 0.15`를 주지 않으면 탭이 빠지거나 늦게 들어간다. 스크린샷도 한 박자 늦게 오므로 화면 전환 뒤에는 두 번 찍어 확인한다.
