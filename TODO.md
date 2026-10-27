@@ -1,37 +1,37 @@
-# TODO (2026-10-26) — 레딧 aside 수집·답글 초안·매일 실행
+# TODO (2026-10-27) — 챗 스크립트 보정 + 스페인어 성별·중남미 기준
 
-범위는 `SPEC.md`. 이 세션에서 1~4를 한 번에 진행(사용자 요청).
+SPEC: `SPEC.md`. 한 번에 한 항목(`/work`). 문구는 이 프로젝트의 Claude 세션이 직접 쓴다. muse와 외부 AI에는 맡기지 않는다(핵심 콘텐츠).
+공통 QA: 루트 `npx tsc --noEmit`, `npm run lint && npm run build`(dev 서버를 내리고).
+스크립트 린트: `npx tsx scripts/check-choice-scripts.mts <모듈…>`, 영어·스페인어는 앞에 `LOCALE=en` / `LOCALE=es`.
 
-- [x] 1. aside 수집
-  - 변경: `fetch.mts`(`Transport`, `aside repl` GET + 글 목록 필드 줄이기, `asideAccount`), `config.mts`·`config.json`(`transport: "aside"`), `digest.mts`(`--transport`, 계정 확인 후 direct 대체, 섀도 점검은 direct Fetcher).
-  - QA: aside repl로 `/api/me.json` → `Ok_Mind_8887`. `npm run reddit:digest -- --limit 3` → "transport: aside (u/Ok_Mind_8887)", 출처 18곳 모두 json 성공(실패 0, 429 0), 요청 6(수집 4 + 섀도 2), 실행 46초(이전 direct 3분 34초). 상위 글에 댓글 수 표시("댓글 0", "댓글 1").
+- [ ] 1. module12 ko 중립화
+  - 변경: `lib/choiceScripts/module12.ts`의 3·15·17·18·19·21턴, 마무리, 머리 주석. "새 자리·장소" 전제를 "새로운 상황·새 일상"으로 바꾼다. 19턴 gist는 `anchor_in_new` 설명(사람, 장소, 습관)과 맞게 쓴다.
+  - QA: `npx tsx scripts/check-choice-scripts.mts module12` 오류 0. `run-choice-script.mts`로 1턴 보기 3가지 경로를 각각 끝까지 출력한다. `grep -nE "짐|새 자리|단골|떠나던|익숙한 곳"` 결과가 남지 않거나, 남긴 것마다 이유가 있다.
+- [ ] 2. module3 ko 업무량 중복 해소
+  - 변경: `lib/choiceScripts/module3.ts` 7·8턴(필요하면 체크포인트·마무리 틀), `CHOICE_SCRIPT_GUIDE.md` 5절 원문을 같이 고친다. `demand_drain`=8턴 매핑은 유지하고, 8턴 보기에서 "일의 양"을 뺀다.
+  - QA: 린트 module3 오류 0. "일의 양" 경로(2턴 일의 양)로 끝까지 출력해서 일의 양을 묻는 턴이 1개 이하인지 확인한다. 체크포인트와 마무리 조사가 자연스러운지 확인한다.
+- [ ] 3. module12·module3 en/es 반영
+  - 선행: 1, 2
+  - 변경: `lib/choiceScripts/en|es/module12.ts`, `en|es/module3.ts`. ko에서 바꾼 뜻을 번역투 없이 옮기고, es는 성별 중립으로 쓴다.
+  - QA: `LOCALE=en` / `LOCALE=es` 린트 module3 module12 오류 0. 경로별 출력(en/es 각 module12 3경로, module3 일의 양 경로)을 확인한다.
+- [ ] 4. 스페인어 성별 표지 검사 공용화 + 스크립트 린트
+  - 변경: `ES_GENDERED_READER`를 `lib/reportQuality.ts`에서 공용 모듈로 꺼낸다(리포트 동작은 그대로). `scripts/check-choice-scripts.mts`의 es 모드에서 보기, 반응, gist, 틀에 적용한다. 걸린 es 스크립트 문구(12개 모듈 + `common.ts`)를 고친다.
+  - QA: `LOCALE=es npx tsx scripts/check-choice-scripts.mts` 전체 오류 0. 리포트 품질 기존 테스트가 있으면 통과. tsc 0.
+- [ ] 5. 챗 모델 응답 es 성별 표지 후처리
+  - 변경: 챗에서 아직 모델이 es 글을 쓰는 경로를 찾는다(위기 응답, v4가 아닌 흐름 등). 응답에 4번 검사를 건다. 걸리면 리포트의 방식(재시도 또는 교정)을 따른다. 어느 경로에 걸었는지 WIKI 또는 이 항목에 적는다.
+  - 선행: 4
+  - QA: 성별 표지가 든 가짜 응답으로 오프라인 테스트(걸림, 통과 각 1건 이상), tsc 0, `npm run lint && npm run build`. 모델 호출 시뮬레이션은 필요할 때만 `sim-chat` 2턴 이하로 한다(비용).
+- [ ] 6. 스페인어 기준을 중남미 중립(es-419)으로 명시 + 표지 정리
+  - 변경: `lib/promptLocale.ts` es 규칙 문장, `mobile/lib/i18n/STYLE_GUIDE.md`에 es-419 기준을 적는다.
+    - `tú` 유지, 복수 `ustedes`
+    - 끝난 일은 단순과거, `vale` 금지
+    - 어휘는 `computadora`·`celular`
 
-- [x] 2. 답글 초안
-  - 변경: `draft.mts`(새, 이 세션 직접 작성), `memo.mts`(`linkAndBrandWarnings` 분리), `render.mts`(초안 칸, 수집 경로), `digest.mts`(메모 뒤 초안).
-  - QA: `npx tsx scripts/reddit/draft.test.mts` → "draft tests: 26 passed". 위 실행 `marketing/reddit/digest/2026-10-26-5.md`: 상위 3개 초안, OpenAI 6회 $0.0067, 메모·초안 경고 0. 직접 읽음: 인사말·목록·링크·DM 없음, 차트 없는 글이라 차트 사실 없이 출생 정보를 물음, AstrologyCharts 글에 "AI 글 금지" 경고 줄 표시.
-
-- [x] 3. 매일 자동 실행 스크립트
-  - 변경: `scripts/reddit/run-daily.sh`. (launchd plist는 4번에서 막혀 지움)
-  - QA: `scripts/reddit/run-daily.sh --dry-run` → exit 0, `marketing/reddit/state/daily-2026-10-26.log`에 시작·종료(exit 0) 기록.
-
-- [x] 4. 매일 자동 실행 등록과 첫 실행 (사용자 확인)
-  - QA: 사용자가 예약 작업 "지금 실행" 후 정상 작동 확인(2026-10-26). 로그 `daily-2026-10-26.log`에 aside 수집 출처 전부 json, 실패 0. 다음 날 07:30 자동 실행은 아직 확인 전.
-  - launchd 시도(2026-10-26, 사용자 설치): `last exit code = 126`, `/tmp/fatesaid-reddit-digest.err`에 `run-daily.sh: Operation not permitted` → `~/Desktop` 보호 폴더라 launchd 불가. 사용자 선택으로 bootout·plist 삭제 후 Claude 예약 작업 `reddit-digest-daily`(매일 07:30, Auto 모드로 저장)로 교체. 이 세션의 "지금 실행"은 권한 분류기가 막음.
-  - 확인(사용자): Claude 앱 사이드바 Scheduled → "레딧 아침 요약" → 지금 실행 → 실행 세션이 요약 파일 경로와 "수집 aside (u/Ok_Mind_8887)"를 보고하고 "레딧 요약" 알림이 뜨면 `[x]`. 다음 날 07:30 실행도 한 번 확인.
-
-- [x] 5. 문서
-  - `marketing/reddit/README.md`(aside 수집, 자동 실행, 초안 쓰는 법), `WIKI.md` 레딧 줄.
-  - QA: 루트 `npx tsc --noEmit` → exit 0, `.mts` 직접 tsc → exit 0, `npm run lint` → "No ESLint warnings or errors", score 52·competitors 29·memo 27·draft 26 통과.
-
-- [x] 6. 감시 서브레딧 조정 (사용자 요청, 2026-10-26)
-  - 이유: 지금까지 요약 상위 글 약 55개 중 30개가 r/AstrologyCharts(본문 없는 서양 점성 차트 사진). 그 서브레딧이 묶음 100개 중 약 70개를 차지해 사주 서브레딧 글도 밀어냄.
-  - 변경(`config.json`, 사용자 선택: 서양은 빼지 않고 가중치만 낮춤): chineseastrology(1.5)·EasternOccult(1.2) 추가(aside로 최근 7일 글 6·9개, 규칙 확인), AstrologyCharts 1.2→0.4, AstrologyChartShare 1.0→0.4, astrology 0.8→0.4, Horoscope 1.0→0.5, AstrologyCharts를 `separateSubreddits`로(요청 +1). 테스트 기대값 갱신(`collect.test.mts` 묶음 5개, `score.test.mts` s3 1.8·s5 1.1).
-  - QA: 상태 파일 안 쓰는 미리보기(스크래치패드 `rank-preview.mts`, aside 수집, 최근 3일 글) → 상위 12개에 AstrologyCharts 0개, 1~7위 ChineseZodiac·EasternOccult·chineseastrology·FreeBaziReading 사주 글. score 52·competitors 29·memo 27·draft 31·collect ok, `.mts` tsc exit 0, lint 통과.
+    `check-choice-scripts.mts` es 모드에 스페인식 표지 경고를 넣는다(`vale`, `vosotros/os`, 현재완료). 그리고 es 스크립트와 `common.ts` 반응 풀("Vale, te escucho.", "Sí, lo he leído." 등)을 고친다. 지금과 이어지는 현재완료는 남기고 이유를 적는다. `lib/i18n/es.ts`, `mobile/lib/i18n/es.ts`는 같은 grep으로 걸린 곳만 고친다.
+  - QA: `LOCALE=es` 린트 전체 오류 0, 경고는 남긴 것마다 이유가 있다. `grep -rniE "\bvale\b" lib/choiceScripts/es lib/choiceScripts/common.ts` 결과 0("vale la pena"는 예외). 루트 tsc, 앱 tsc(`mobile/`에서 `ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit`).
+- [ ] 7. (사용자 확인) 문구 판정
+  - 1~3의 경로별 출력 파일을 열어 ko는 직접 읽고, en/es는 어색한 곳을 표시한다. 문제가 있으면 이 항목에 적고 해당 항목을 다시 연다.
+- [ ] 8. (사용자 실행) 커밋·푸시 → Vercel 웹 배포
+  - 스크립트는 서버 데이터라 웹 배포로 앱에도 반영된다. 앱 문구(`mobile/lib/i18n/es.ts`)를 고쳤다면 그 부분만 다음 OTA에 실린다(iOS 1.2.0 승인 뒤).
 
 ## 발견 사항
-
-- 상위 글이 대부분 r/AstrologyCharts의 서양 점성 차트 글(이미지 글)이라 사주 초안이 어긋난다("생년월일시 주세요"). 점수에서 사주 문맥 없는 감시 서브레딧 글을 낮추는 일은 보관본 발견 사항과 같은 문제. 다음 SPEC에서 처리.
-- aside 수집 대체 경로(aside 꺼짐 → direct)는 코드로만 넣었고 실제로 aside를 끈 상태로는 돌려 보지 않았다.
-- aside로 요청이 4회로 줄어 하루 상한 200은 여유가 크다. 간격 7초도 줄일 수 있지만 계정 보호를 위해 그대로 둠.
-- 이미지만 있는 글(본문 비어 있음, url이 `i.redd.it`)은 메모·초안이 이미지를 못 보고 "차트 없음, 생년월일시 달라"로 쓴다. 실례: r/AstrologyCharts 1xfql6z(r/Free_Vedic_Astro 크로스포스트, 이미지는 베딕 쿤달리에 생년월일·시각까지 있음) → 초안이 "Without a chart"로 시작해 봇처럼 보임. 수집 때 `post_hint`/이미지 url을 남겨 "이미지 글: 초안 생략 또는 감점" 처리 검토. (2026-10-26 사용자 확인 요청) → 같은 날 해결: `draft.mts`의 `imageOnlyReason`(본문 비어 있고 url이 i.redd.it·preview.redd.it·imgur·이미지 확장자·gallery)이면 `digest.mts`가 사주·메모·초안 모두 생략하고 "이미지 글: 직접 보고 판단" 표시. QA: `draft.test.mts` → 31 passed(이 글 url 포함 5건), `.mts` tsc·루트 tsc exit 0, lint 통과, score 52·competitors 29·memo 27.
-- 6번 미리보기 상위권에 질문이 아닌 글이 섞인다: 다른 사람의 바쯔 강좌 연재("[BaZi Basics 01]"), 1인 SEO 서브레딧 r/FreeBaziReading, 여러 서브레딧(r/Scorpio, r/LoveIslandUSA, r/Taurusgang)에 "Chinese astrology has 10 birthday types" 식으로 뿌리는 홍보 글. 답할 질문이 아니므로 질문 신호 없는 글 감점 또는 FreeBaziReading을 경쟁사·무시 목록에 넣는 것 검토. (6번)
