@@ -2,10 +2,12 @@
 
 SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이다.
 
-- [ ] 1. 번아웃 결과 문구에서 진단 표현 빼기 (ko/en/es)
+- [x] 1. 번아웃 결과 문구에서 진단 표현 빼기 (ko/en/es)
   - 변경: `mobile/lib/quiz/module3Burnout.ts` 결과 7개 `title`·`hook`, 같은 문구가 있는 웹 `lib/module3Burnout.ts`, 공유 카드에서 이 문구를 쓰는 곳(있으면 grep으로 찾기)
   - 기준: "증후군/syndrome/síndrome", "MBI가 정의하는" 같은 검사 권위·진단 표현 금지. 최고점 제목이 진단명처럼 읽히면 바꾼다. es는 es-419.
   - QA: `grep -rniE "syndrome|증후군|síndrome|MBI가 정의" lib mobile/lib` → 결과 문구에서 0건(코드 주석은 제외). 루트 `npx tsc --noEmit` → 0. `mobile/`에서 `ulimit -s 65500; node --stack-size=60000 node_modules/typescript/lib/tsc.js --noEmit` → 0. mobile-web(8082, mobile 뷰포트)에서 `?qa=` 페르소나로 번아웃 최고점 결과 화면 캡처, 바뀐 문구가 보이는지 확인.
+  - 결과: 최고점 hook을 "이번 응답에서 세 가지 신호가 모두 뚜렷하게 나타났다" 꼴로(ko/en/es), en 제목 "Full Burnout" → "Running on Empty"(ko "완전 소진형"·es "Agotamiento completo"는 진단명으로 읽히지 않아 유지). "MBI에서 흔한 조합"·"burnout research" → "함께 나타나기 쉬운 조합". 탈진형의 "번아웃이 상당히 진행된 상태"(병기처럼 읽힘) → "많이 지쳐 있는 상태", es 제목 "Agotamiento avanzado" → "Sin energía ni ganas". 웹 `lib/module3Burnout.ts`(ko) 같이 수정.
+  - QA: `grep -rniE "syndrome|증후군|síndrome|MBI가 정의" lib mobile/lib` → `quizProfile.ts` 주석 2건만(결과 문구 0). 루트 `npx tsc --noEmit` → exit 0. mobile tsc → exit 0. mobile-web(8082, 375x812, `?qa=free&persona=jordan&lang=en|ko|es`)에서 30문항 모두 최고값으로 응답 → 세 언어 결과 화면에 새 제목·hook 표시 확인, 캡처 `.agents/qa/burnout-copy-2026-10/`(증거: mobile-web, 네이티브 아님).
 
 - [ ] 2. 애착 결과 문구의 2인칭 단정 풀기 (ko/en/es)
   - 변경: `mobile/lib/quiz/module1Attachment.ts`의 `MODULE1_TYPE_NAMES` hook과 결과 문단(en "You tend to…" 위치는 grep으로 찾기), 웹에 같은 문구가 있으면 함께
@@ -54,3 +56,6 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이�
   - 1·2번 앱 문구(`mobile/lib/quiz/*`)는 OTA로만 나간다. 순서는 `HANDOFF_2026-10-25_ota_pending.md`를 따른다(웹 먼저).
 
 ## 발견 사항
+- (1번 중) A3x 영상 소재에 옛 제목 "Full Burnout"이 남아 있다: `scripts/record-app-ab.mts` A3x `highlight`, `marketing/tts-samples/scripts.json` A3x 대본, 기존 `marketing/video/A3x.mp4`. 대본·TTS·영상을 "Running on Empty"로 다시 만들어야 한다.
+- (1번 중) `mobile/lib/i18n/ko.ts:289` 안내 문구 "심리테스트로 나의 성향과 패턴을 진단해보면" — 결과 문구 밖이라 손대지 않음, "진단" 표현.
+- (1번 중) `record-app-ab.mts` 기본 브라우저 경로(`~/Library/Caches/ms-playwright/chromium_headless_shell-1243`)가 이 기기에 없다. 4번 녹화 때 `CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`로 지정해야 할 수 있다.

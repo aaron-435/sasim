@@ -117,8 +117,8 @@ export const MODULE3_TYPE_NAMES: Record<string, { title: string; hook: string }>
   exhaustion: { title: "소진형", hook: "에너지가 바닥난 상태지만, 일에 대한 애정과 자기 확신은 아직 남아있습니다." },
   cynicism: { title: "냉소형", hook: "몸은 버틸 만하지만, 일과 조직에 대한 마음이 식어가고 있습니다." },
   efficacyLoss: { title: "효능감저하형", hook: "실제 성과와 무관하게, 스스로의 능력에 대한 확신이 흔들리고 있습니다." },
-  "exhaustion+cynicism": { title: "탈진형", hook: "에너지도 바닥났고 일에 대한 애정도 식어가는, 번아웃이 상당히 진행된 상태입니다." },
-  "exhaustion+efficacyLoss": { title: "소진된 확신 결여형", hook: "지쳐있는 동시에 스스로를 의심하게 되는, MBI에서 흔한 조합입니다." },
+  "exhaustion+cynicism": { title: "탈진형", hook: "에너지도 바닥났고 일에 대한 애정도 식어가는, 많이 지쳐 있는 상태입니다." },
+  "exhaustion+efficacyLoss": { title: "소진된 확신 결여형", hook: "지쳐있는 동시에 스스로를 의심하게 되는, 함께 나타나기 쉬운 조합입니다." },
   "cynicism+efficacyLoss": { title: "회의적 무력형", hook: "일에 대한 의미도, 스스로에 대한 확신도 함께 옅어진 상태입니다." },
-  "exhaustion+cynicism+efficacyLoss": { title: "완전 소진형", hook: "MBI가 정의하는 전형적인 '풀 번아웃 증후군' — 소진, 냉소, 효능감저하가 모두 뚜렷합니다." },
+  "exhaustion+cynicism+efficacyLoss": { title: "완전 소진형", hook: "소진, 냉소, 효능감저하 세 가지 신호가 이번 응답에서 모두 뚜렷하게 나타났습니다." },
 };
