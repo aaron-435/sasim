@@ -13,7 +13,7 @@ import { applyNotificationPreference } from "../lib/routineNotification";
 import { getSolarTermPreference, refreshSolarTermNotifications, setSolarTermPreference } from "../lib/solarTermNotification";
 import { hasQaProEntitlement, restoreReports } from "../lib/purchases";
 import { getSavedPair, unlinkPair, type SavedPair } from "../lib/pairs";
-import { track } from "../lib/analytics";
+import { isTesterDevice, setTesterDevice, track } from "../lib/analytics";
 import { confirmUnlink } from "../components/CoupleModeSection";
 import { COLORS } from "../theme/colors";
 import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
@@ -145,6 +145,26 @@ export default function SettingsScreen({
     { label: strings.settings.termsLinkSettings, url: `${API_BASE_URL}/terms?lang=${locale}` },
     { label: strings.settings.privacyLinkSettings, url: `${API_BASE_URL}/privacy?lang=${locale}` },
   ];
+
+  // Hidden tester switch: seven taps on the copyright line marks this phone's events as a
+  // tester's, so our own runs on store builds stay out of the funnel. Not a button on purpose.
+  const [testerTaps, setTesterTaps] = useState(0);
+  const [tester, setTester] = useState(false);
+  useEffect(() => {
+    isTesterDevice().then(setTester);
+  }, []);
+  async function handleCopyrightTap() {
+    const taps = testerTaps + 1;
+    if (taps < 7) {
+      setTesterTaps(taps);
+      return;
+    }
+    setTesterTaps(0);
+    const next = !tester;
+    await setTesterDevice(next);
+    setTester(next);
+    Alert.alert(next ? strings.settings.testerOn : strings.settings.testerOff);
+  }
 
   function handleResetPress() {
     Alert.alert(strings.settings.resetConfirmTitle, strings.settings.resetConfirmBody, [
@@ -285,7 +305,9 @@ export default function SettingsScreen({
             <Text style={styles.resetLabel}>{strings.settings.resetButton}</Text>
           </PressableScale>
 
-          <Text style={styles.copyright}>© 2026 Studio Aaron</Text>
+          <Text style={styles.copyright} onPress={handleCopyrightTap} suppressHighlighting>
+            © 2026 Studio Aaron{tester ? " · T" : ""}
+          </Text>
         </Reveal>
       </ScrollView>
     </SafeAreaView>

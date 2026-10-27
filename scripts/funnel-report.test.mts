@@ -66,4 +66,25 @@ const tied = buildFunnelReport(tiedRows, [], [], now);
 check(tied === buildFunnelReport([...tiedRows].reverse(), [], [], now), "deterministic cohort boundary for identical first timestamps");
 check(section(tied, "first 100 observed native devices (legacy install cohort)").includes("purchase_success kind=paid (unverified): 0/100"), "cohort-specific assertion catches the 101st device leaking into the first 100");
 check(report.includes("independent milestones") && report.includes("not verified charges"), "do not describe signals as ordered conversion or revenue");
+
+// Tester-marked devices (hidden Settings switch / ?tester=1): out of every user section, into their own.
+const testerRows = [
+  ...rows,
+  event("private-tester", "2026-10-21T00:00:00Z", "onboarding_complete"), // before the switch was turned on
+  event("private-tester", "2026-10-21T01:00:00Z", "chat_start", { tester: true }),
+  event("private-tester", "2026-10-21T02:00:00Z", "report_generate", { module: "module1", tester: true }),
+  event("private-tester", "2026-10-21T03:00:00Z", "purchase_success", { product: "report_module1", kind: "paid", tester: true }),
+  event("private-tester-web", "2026-10-21T00:00:00Z", "landing_view", { tester: true }, { platform: "site" }),
+];
+const withTesters = buildFunnelReport(testerRows, [], [], now);
+const testerSection = section(withTesters, "tester-marked native devices (excluded above)");
+check(withTesters.includes("native anonymous devices observed: 3 (tester-marked, reported separately: 1)"), "tester device leaves the main count and is counted on its own");
+check(section(withTesters, "all observed native devices").includes("purchase_success kind=paid (unverified): 1/3"), "tester purchase does not reach user sections");
+check(section(withTesters, "all observed native devices").includes("chat_start: 0/3"), "tester milestones do not reach user sections");
+check(testerSection.includes("observed devices: 1") && testerSection.includes("chat_start: 1/1") && testerSection.includes("report_generate: 1/1"), "tester section shows the build's recorded milestones");
+check(testerSection.includes("onboarding_complete: 1/1"), "events from before the switch go with the tester device");
+check(testerSection.includes("purchase_success kind=paid (unverified): 1/1"), "tester purchases are visible only in the tester section");
+check(!/private-/.test(withTesters), "no tester IDs printed");
+check(section(report, "tester-marked native devices (excluded above)").includes("observed devices: 0"), "tester section present (empty) without testers");
+check(section(buildFunnelReport([event("dev-and-tester", "2026-10-21T00:00:00Z", "app_open", { tester: true }, { dev: true })], [], [], now), "tester-marked native devices (excluded above)").includes("observed devices: 0"), "dev builds stay fully excluded, even when tester-marked");
 console.log(`funnel report tests: ${checks} passed (offline, synthetic data only)`);

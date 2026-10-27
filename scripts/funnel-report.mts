@@ -37,24 +37,31 @@ export function buildFunnelReport(
   events: FunnelEvent[], usage: UsageRow[] = [], sessions: SessionRow[] = [], now = Date.now(),
 ): string {
   const lines: string[] = [];
-  const testIds = new Set(events.filter((e) => e.dev).map((e) => e.anon_id));
+  // A device is a tester's if any of its events is dev-built or carries the tester mark
+  // (hidden Settings switch / ?tester=1) — its earlier, unmarked events go with it.
+  const devIds = new Set(events.filter((e) => e.dev).map((e) => e.anon_id));
+  const testerIds = new Set(events.filter((e) => e.props?.tester === true).map((e) => e.anon_id));
   const devices = new Map<string, Device>();
+  const testers = new Map<string, Device>();
   for (const e of events) {
     const time = Date.parse(e.created_at);
-    if (testIds.has(e.anon_id) || !e.anon_id || !["ios", "android"].includes(e.platform) || !Number.isFinite(time) || time > now) continue;
-    const device = devices.get(e.anon_id) ?? { id: e.anon_id, first: time, days: new Set<number>(), events: [] };
+    if (devIds.has(e.anon_id) || !e.anon_id || !["ios", "android"].includes(e.platform) || !Number.isFinite(time) || time > now) continue;
+    const into = testerIds.has(e.anon_id) ? testers : devices;
+    const device = into.get(e.anon_id) ?? { id: e.anon_id, first: time, days: new Set<number>(), events: [] };
     device.first = Math.min(device.first, time);
     device.days.add(kstDay(time));
     device.events.push(e);
-    devices.set(e.anon_id, device);
+    into.set(e.anon_id, device);
   }
-  const ordered = [...devices.values()].sort((a, b) => a.first - b.first || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  const byFirst = (a: Device, b: Device) => a.first - b.first || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+  const ordered = [...devices.values()].sort(byFirst);
+  const testerDevices = [...testers.values()].sort(byFirst);
   const count = (group: Device[], predicate: (event: FunnelEvent) => boolean) => group.filter((d) => d.events.some(predicate)).length;
   const ratio = (n: number, d: number) => d ? `${n}/${d}` : "- (0 eligible devices)";
   const milestone = (group: Device[], name: string) => count(group, (e) => e.name === name);
 
-  lines.push(`native anonymous devices observed: ${ordered.length}`);
-  lines.push("Device != person or verified install. dev-marked IDs are excluded; production-build test devices may remain.");
+  lines.push(`native anonymous devices observed: ${ordered.length} (tester-marked, reported separately: ${testerDevices.length})`);
+  lines.push("Device != person or verified install. dev-built and tester-marked IDs are excluded from every section except the tester one; unmarked production-build test devices may remain.");
   lines.push("Rows below are independent milestones (unique devices), not an ordered conversion funnel.");
   lines.push("Purchase events are client signals, not verified charges, revenue, net profit or independent paying customers.");
   lines.push("Product families merge known iOS/Android SKUs; subscription/unrecognized/missing SKUs stay in other_or_missing_product.");
@@ -115,6 +122,8 @@ export function buildFunnelReport(
     if (ordered.length < size) lines.push(`\n== first ${size} installs: sample too small (${ordered.length}/${size}) ==`);
     else section(`first ${size} observed native devices (legacy install cohort)`, ordered.slice(0, size));
   }
+  lines.push("\nTester devices = hidden Settings switch or ?tester=1; use this to check that a build records each milestone, not as user data.");
+  section("tester-marked native devices (excluded above)", testerDevices);
   lines.push("\nReconcile paid/trial signals, test purchases, refunds and renewals with RevenueCat/store records. Verified charges are not available in this report.");
   return lines.join("\n");
 }

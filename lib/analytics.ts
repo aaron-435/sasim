@@ -52,6 +52,23 @@ function currentLocale(): string | null {
   return ok(navigator.language?.slice(0, 2).toLowerCase());
 }
 
+const TESTER_KEY = "fatesaid_tester";
+
+/**
+ * Tester mark for our own / invited testers' browsers: open any page once with ?tester=1
+ * (?tester=0 clears it) and every later event from this browser carries tester: true.
+ */
+function isTester(): boolean {
+  try {
+    const flag = new URLSearchParams(window.location.search).get("tester");
+    if (flag === "1") localStorage.setItem(TESTER_KEY, "1");
+    else if (flag === "0") localStorage.removeItem(TESTER_KEY);
+    return localStorage.getItem(TESTER_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 const UTM_STORAGE_KEY = "fatesaid_utm";
 
 /**
@@ -90,6 +107,7 @@ export function logEvent(name: EventName, props?: Partial<Record<(typeof PROP_KE
       platform: "site",
       locale: locale ?? currentLocale(),
       dev: window.location.hostname === "localhost",
+      ...(isTester() ? { tester: true } : {}),
       events: [{ name, props: { ...campaignTags(), ...props }, ts: Date.now() }],
     });
     fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => {});

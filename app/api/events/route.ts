@@ -6,8 +6,9 @@
  * small batches here; rows go to the Supabase `events` table.
  *
  * Request body:
- *   { anonId, platform: "ios"|"android"|"app-web"|"site", locale?, dev?,
+ *   { anonId, platform: "ios"|"android"|"app-web"|"site", locale?, dev?, tester?,
  *     events: [{ name, props?, ts? }] }   (1–20 events)
+ *   tester: true is stored as props.tester on every row (no separate column).
  * Response:
  *   200 { ok: true, stored: n }  — accepted (stored: 0 if the DB write failed;
  *                                  clients never retry, so that's only logged)
@@ -20,7 +21,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { parseEventBatch } from "@/lib/eventSchema";
+import { parseEventBatch, storedProps } from "@/lib/eventSchema";
 import { rateLimitOrResponse } from "@/lib/rateLimit";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
           locale: batch.locale,
           dev: batch.dev,
           name: e.name,
-          props: e.props,
+          props: storedProps(batch, e),
           client_ts: e.clientTs,
         }))
       );

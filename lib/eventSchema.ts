@@ -97,7 +97,17 @@ export interface CleanBatch {
   locale: string | null;
   platform: (typeof PLATFORMS)[number];
   dev: boolean;
+  /** Our own / invited testers on a store build (hidden switch in the app, ?tester=1 on the site). */
+  tester: boolean;
   events: CleanEvent[];
+}
+
+/**
+ * Props as stored: a tester batch gets `tester: true` on every row, so the mark lives in
+ * the existing jsonb column (no new DB column) and can't be sent per event by a client.
+ */
+export function storedProps(batch: CleanBatch, event: CleanEvent): CleanEvent["props"] {
+  return batch.tester ? { ...(event.props ?? {}), tester: true } : event.props;
 }
 
 /** Returns the cleaned batch, or a short reason string when anything is off (whole batch rejected). */
@@ -112,6 +122,7 @@ export function parseEventBatch(body: unknown): CleanBatch | string {
   const locale = b.locale ?? null;
   if (locale !== null && (typeof locale !== "string" || !(LOCALES as readonly string[]).includes(locale))) return "locale";
   if (b.dev !== undefined && typeof b.dev !== "boolean") return "dev";
+  if (b.tester !== undefined && typeof b.tester !== "boolean") return "tester";
 
   const raw = b.events;
   if (!Array.isArray(raw) || raw.length === 0 || raw.length > MAX_EVENTS_PER_BATCH) return "events";
@@ -159,5 +170,5 @@ export function parseEventBatch(body: unknown): CleanBatch | string {
     events.push({ name: ev.name as EventName, props, clientTs });
   }
 
-  return { anonId, locale: locale as string | null, platform: platform as CleanBatch["platform"], dev: b.dev === true, events };
+  return { anonId, locale: locale as string | null, platform: platform as CleanBatch["platform"], dev: b.dev === true, tester: b.tester === true, events };
 }

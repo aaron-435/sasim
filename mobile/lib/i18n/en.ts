@@ -324,6 +324,8 @@ export const en: typeof ko = {
     resetConfirmTitle: "Reset your info?",
     resetConfirmBody: "Your saved saju reading will be deleted, and you'll start onboarding over from scratch.",
     resetConfirmButton: "Reset",
+    testerOn: "Tester mode on. This phone's activity is now labeled as testing.",
+    testerOff: "Tester mode off.",
   },
 
   compatibility: {

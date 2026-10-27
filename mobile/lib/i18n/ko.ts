@@ -350,6 +350,8 @@ export const ko = {
     resetConfirmTitle: "정보를 초기화할까요?",
     resetConfirmBody: "저장된 사주 정보가 삭제되고, 처음부터 다시 입력하게 돼요.",
     resetConfirmButton: "초기화",
+    testerOn: "테스터 모드를 켰어요. 이 기기의 이용 기록은 테스트로 표시돼요.",
+    testerOff: "테스터 모드를 껐어요.",
   },
 
   compatibility: {

@@ -50,6 +50,7 @@ export type EventProps = Partial<Record<PropKey, string | number | boolean>>;
 type QueuedEvent = { name: EventName; props?: EventProps; ts: number };
 
 const ANON_ID_KEY = "fatesaid_anon_id";
+const TESTER_KEY = "fatesaid_tester";
 const ONCE_KEY_PREFIX = "fatesaid_event_once_";
 const FLUSH_DELAY_MS = 4000;
 const MAX_BATCH = 20;
@@ -85,6 +86,30 @@ function getAnonId(): Promise<string> {
     })();
   }
   return anonIdPromise;
+}
+
+// Tester mark: our own and invited testers' phones run the same store build as everyone
+// else, so `dev` alone can't keep them out of the funnel. A hidden switch in Settings sets
+// this; it rides along as one boolean per batch and survives "reset my info".
+let testerPromise: Promise<boolean> | null = null;
+
+function getTester(): Promise<boolean> {
+  if (!testerPromise) testerPromise = AsyncStorage.getItem(TESTER_KEY).then((v) => v === "1").catch(() => false);
+  return testerPromise;
+}
+
+export function isTesterDevice(): Promise<boolean> {
+  return getTester();
+}
+
+export async function setTesterDevice(on: boolean): Promise<void> {
+  testerPromise = Promise.resolve(on);
+  try {
+    if (on) await AsyncStorage.setItem(TESTER_KEY, "1");
+    else await AsyncStorage.removeItem(TESTER_KEY);
+  } catch {
+    // stays in memory for this launch
+  }
 }
 
 /** App.tsx keeps this in step with the picked language. */
@@ -137,12 +162,12 @@ export function flush() {
   queue = queue.slice(MAX_BATCH);
   if (queue.length > 0) flushTimer = setTimeout(flush, FLUSH_DELAY_MS);
 
-  getAnonId()
-    .then((anonId) =>
+  Promise.all([getAnonId(), getTester()])
+    .then(([anonId, tester]) =>
       fetch(`${API_BASE_URL}/api/events`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ anonId, platform: PLATFORM, locale: currentLocale, dev: __DEV__, events }),
+        body: JSON.stringify({ anonId, platform: PLATFORM, locale: currentLocale, dev: __DEV__, ...(tester ? { tester: true } : {}), events }),
       })
     )
     .catch(() => {});

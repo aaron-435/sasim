@@ -324,6 +324,8 @@ export const es: typeof ko = {
     resetConfirmTitle: "¿Restablecer tus datos?",
     resetConfirmBody: "Se borrará tu lectura de saju guardada y empezarás de nuevo desde cero.",
     resetConfirmButton: "Restablecer",
+    testerOn: "Modo de prueba activado. La actividad de este teléfono queda marcada como prueba.",
+    testerOff: "Modo de prueba desactivado.",
   },
 
   compatibility: {
