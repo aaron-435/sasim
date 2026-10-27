@@ -50,6 +50,41 @@ const CONFIGS: Record<string, Config> = {
     compare: /^Four different/,
     highlight: ["Secure", "Anxious-Preoccupied", "Dismissive-Avoidant", "Fearful-Avoidant", "Four different results"],
   },
+  // A4x/A6x/A7x: the A4/A6/A7 topics (video-kit.md 9장) in the A3x lowest-vs-highest form.
+  // Sentence 0 names the three dimensions, so the first run starts on sentence 1.
+  A4x: {
+    persona: "sam",
+    test: "The Mask",
+    runs: [
+      { pattern: "L", badge: "Lowest option every time", label: "Lowest" },
+      { pattern: "H", badge: "Highest option every time", label: "Highest" },
+    ],
+    runAt: [1, 1],
+    compare: /^One says/,
+    highlight: ["lowest", "highest", "Consistent Self", "Fully Masked", "Two different results"],
+  },
+  A6x: {
+    persona: "sam",
+    test: "Sleep",
+    runs: [
+      { pattern: "L", badge: "Lowest option every time", label: "Lowest" },
+      { pattern: "H", badge: "Highest option every time", label: "Highest" },
+    ],
+    runAt: [1, 1],
+    compare: /^One says/,
+    highlight: ["lowest", "highest", "Peaceful Sleeper", "Deep-Sleep Deprived", "Two different results"],
+  },
+  A7x: {
+    persona: "riley",
+    test: "Focus",
+    runs: [
+      { pattern: "L", badge: "Lowest option every time", label: "Lowest" },
+      { pattern: "H", badge: "Highest option every time", label: "Highest" },
+    ],
+    runAt: [1, 1],
+    compare: /^One says/,
+    highlight: ["lowest", "highest", "Balanced Attention", "Attention at Both Extremes", "Two different results"],
+  },
 };
 const [key, personaArg] = process.argv.slice(2);
 if (!key) throw new Error("usage: record-app-ab.mts <scriptKey> [persona]");
@@ -184,7 +219,11 @@ async function answer(i: number, pattern: Pattern, pause: number) {
 
 // Pre-roll (off-camera): open the test list so the first filmed frame is already app UI.
 await page.getByText("Choose a test").click();
+await page.getByText("Which psych test would you like to take?").waitFor();
+// Tests outside the "Good places to start" picks sit behind the "All tests · N more" toggle.
+if (!(await page.getByText(cfg.test, { exact: true }).count())) await page.getByText(/^All tests/).first().click();
 await page.getByText(cfg.test, { exact: true }).first().waitFor();
+await page.getByText(cfg.test, { exact: true }).first().scrollIntoViewIfNeeded();
 await cdp.send("Page.startScreencast", { format: "jpeg", quality: 92, maxWidth: 1080, maxHeight: 1920, everyNthFrame: 1 });
 await page.waitForTimeout(300);
 capturing = true;
