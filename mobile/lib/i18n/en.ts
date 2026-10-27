@@ -61,12 +61,22 @@ export const en: typeof ko = {
   verifyCode: {
     heading: "Have a verification code?",
     subtext:
-      "If you did the Q&A on the web, enter the 6-digit code you were given there to pick up right where you left off.",
+      "If you tapped “Continue in the app” on the website or finished the Q&A there, enter the 6-digit code it showed. What you entered on the web carries over.",
     placeholder: "000000",
     skipLabel: "No code, start fresh",
     errorDefault: "This code is invalid or has already been used.",
     errorNetwork: "A network error kept us from checking your code.",
     inputLabel: "6-digit verification code",
+    openingLink: "Bringing over what you entered on the web…",
+    errors: {
+      bad_request: "That doesn't look like a valid code. Check the 6 digits.",
+      not_found: "We couldn't find that code. It may have been used already or mistyped.",
+      expired: "This code has expired. Tap “Continue in the app” on the website again for a new one.",
+      update_app: "Please update the app, then enter the code again.",
+      unavailable: "We can't check codes right now. Please try again in a moment.",
+      too_many: "Too many tries. Please wait a few minutes and try again.",
+      linkUsed: "This link was already used. Tap “Continue in the app” on the website again, or start fresh.",
+    },
   },
 
   nickname: {

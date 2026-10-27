@@ -273,8 +273,9 @@ export async function issueSessionCode(db: HandoffDb, sessionId: unknown, now = 
 
 /**
  * GET /api/verification-code: the response installed 1.2.0 apps parse —
- * { nickname, track, sajuResult } on success, { error } with 404 (unknown/used) or 410
- * (older than 24h). A code that belongs to the new handoffs is answered with 409 and left
+ * { nickname, track, sajuResult } on success, { error, code } with 404 (unknown/used,
+ * code "not_found") or 410 (older than 24h, "expired"). Old apps read only `error`; the new
+ * app picks its own-language message from `code`. A code that belongs to the new handoffs is answered with 409 and left
  * in place, since an old app cannot read a partial handoff but the same code still works
  * after updating.
  */
@@ -285,14 +286,14 @@ export async function redeemSessionCode(db: HandoffDb, code: string | null, now 
     if (isHandoffCode(code) && (await db.findHandoffByCode(code))) {
       return { status: 409, body: { error: "앱을 최신 버전으로 업데이트한 뒤 이 코드를 입력해 주세요.", code: "update_app" } };
     }
-    return { status: 404, body: { error: "유효하지 않거나 이미 사용된 코드입니다." } };
+    return fail(404, "not_found", "유효하지 않거나 이미 사용된 코드입니다.");
   }
 
   // 24h from when the code was (re)generated, not the session's own created_at.
   const codeAgeMs = session.verify_code_created_at ? now - Date.parse(session.verify_code_created_at) : Infinity;
   if (codeAgeMs > LEGACY_CODE_TTL_MS) {
     await db.clearSessionCode(session.id);
-    return { status: 410, body: { error: "코드가 만료되었습니다. 웹에서 새 코드를 발급받아주세요." } };
+    return fail(410, "expired", "코드가 만료되었습니다. 웹에서 새 코드를 발급받아주세요.");
   }
 
   const sajuRow = await db.latestSajuRow(session.id);

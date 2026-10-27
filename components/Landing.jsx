@@ -222,7 +222,7 @@ export default function Landing({ onStart }) {
           </button>
           <p className="lp-note">{l.ctaNote}</p>
           {legalNotice}
-          <AppInstall t={t} align="center" />
+          <AppInstall locale={locale} align="center" />
           <p className="lp-copy">© 2026 Studio Aaron</p>
         </section>
       </div>

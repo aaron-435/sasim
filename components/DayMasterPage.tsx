@@ -81,7 +81,7 @@ export function Shell({ locale, langHref, locales = LOCALES, children }: { local
         <section className="dm-box" aria-labelledby="dm-app-title">
           <h2 id="dm-app-title">{t.calculator.appTitle}</h2>
           <p>{t.calculator.appBody}</p>
-          <AppInstall t={t} />
+          <AppInstall locale={locale} handoff={{ source: "day_master" }} />
           <a className="dm-cta" href={localizedPath("/", locale)}>{t.calculator.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
         </section>
       </div>

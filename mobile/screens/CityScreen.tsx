@@ -16,6 +16,9 @@ import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
 type CityResult = { id: string; cityDisplay: string; countryDisplay: string };
 
+// A city carried over from the web has no country label; it shows as the city alone.
+const cityLabel = (c: CityResult) => (c.countryDisplay ? `${c.cityDisplay}, ${c.countryDisplay}` : c.cityDisplay);
+
 export type SajuResult = {
   elements: Record<string, number>;
   dominantElement: string;
@@ -34,6 +37,7 @@ export type SajuResult = {
 
 export default function CityScreen({
   birthPayload,
+  initialCity,
   onSubmitted,
   onBack,
 }: {
@@ -48,21 +52,23 @@ export default function CityScreen({
     sessionId: string;
     nickname: string;
   };
+  /** Preselected from a web→app handoff (lib/handoff.ts); the step still shows so the calculation runs here. */
+  initialCity?: { id: string; cityDisplay: string } | null;
   onSubmitted: (result: SajuResult) => void;
   onBack: () => void;
 }) {
   const strings = useStrings();
   const { locale } = useLocale();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialCity ? initialCity.cityDisplay : "");
   const [results, setResults] = useState<CityResult[]>([]);
-  const [selected, setSelected] = useState<CityResult | null>(null);
+  const [selected, setSelected] = useState<CityResult | null>(initialCity ? { ...initialCity, countryDisplay: "" } : null);
   const [searching, setSearching] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const searchSeq = useRef(0);
 
   useEffect(() => {
-    if (selected && query === `${selected.cityDisplay}, ${selected.countryDisplay}`) return;
+    if (selected && query === cityLabel(selected)) return;
     setSelected(null);
     if (!query.trim()) {
       setResults([]);
@@ -87,7 +93,7 @@ export default function CityScreen({
 
   function handlePick(city: CityResult) {
     setSelected(city);
-    setQuery(`${city.cityDisplay}, ${city.countryDisplay}`);
+    setQuery(cityLabel(city));
     setResults([]);
   }
 

@@ -63,6 +63,7 @@ export default function AppFlow() {
   const [sajuResult, setSajuResult] = useState(null);
   const [nickname, setNickname] = useState("");
   const [track, setTrack] = useState("romance");
+  const [handoffData, setHandoffData] = useState(null);
   const [moduleId, setModuleId] = useState(null);
   const [chatContextForChat, setChatContextForChat] = useState(null);
   const [chatExtract, setChatExtract] = useState(null);
@@ -71,6 +72,7 @@ export default function AppFlow() {
   const handleOnboardingComplete = ({ birthInput, sajuResult, track }) => {
     setSajuResult(sajuResult);
     setNickname(birthInput?.nickname ?? "");
+    setHandoffData(birthInput?.handoff ?? null);
     setTrack(track);
     trackOnboardingComplete(track);
     setStep("qaChat");
@@ -142,7 +144,7 @@ export default function AppFlow() {
   }
 
   if (step === "qaChat") {
-    return <QAChat nickname={nickname} sajuResult={sajuResult} sessionId={sessionId} />;
+    return <QAChat nickname={nickname} sajuResult={sajuResult} sessionId={sessionId} handoffData={handoffData} />;
   }
 
   if (step === "landing") {

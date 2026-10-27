@@ -9,6 +9,8 @@
 import { SITE_ORIGIN } from "@/lib/seoArticles";
 
 export const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.fatesaid.app";
+/** Set to the App Store listing once iOS is public; while null the web says "iOS is coming soon" (components/AppInstall.tsx). */
+export const APP_STORE_URL: string | null = null;
 
 type Node = Record<string, unknown>;
 

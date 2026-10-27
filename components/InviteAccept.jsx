@@ -66,7 +66,7 @@ export default function InviteAccept({ code, locale, state, senderName }) {
       if (res.status === 409) return setClosed("answered");
       if (res.status === 404) return setClosed("notFound");
       if (!res.ok || !json.compatibility) throw new Error(String(res.status));
-      setResult({ compatibility: json.compatibility, friendName: friendName.trim() });
+      setResult({ compatibility: json.compatibility, friendName: friendName.trim(), dob, hour: hour === "" ? null : Number(hour) });
       logEvent("invite_accept", { surface: "web" }, locale);
       requestAnimationFrame(() => resultRef.current?.focus());
     } catch {
@@ -183,7 +183,22 @@ export default function InviteAccept({ code, locale, state, senderName }) {
         <section className="iv-app" aria-labelledby="iv-app-title">
           <h2 id="iv-app-title">{c.appTitle}</h2>
           <p>{c.appBody}</p>
-          <AppInstall t={t} />
+          <AppInstall
+            locale={locale}
+            handoff={{
+              source: "invite",
+              // The friend's own inputs, carried only if they tap "continue in the app"; the invite answer itself stores none.
+              data: result
+                ? {
+                    birthYear: result.dob.year,
+                    birthMonth: result.dob.month,
+                    birthDay: result.dob.day,
+                    ...(result.hour === null ? {} : { birthHour: result.hour }),
+                    ...(result.friendName ? { nickname: result.friendName } : {}),
+                  }
+                : null,
+            }}
+          />
           <a className="iv-cta" href={localizedPath("/", locale)}>{t.calculator.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
         </section>
       </div>

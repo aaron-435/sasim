@@ -65,7 +65,7 @@ function wait(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
-export default function QAChat({ nickname, sajuResult, sessionId }) {
+export default function QAChat({ nickname, sajuResult, sessionId, handoffData }) {
   const t = useStrings();
   const { locale } = useLocale();
   const [messages, setMessages] = useState([]); // {role:'bot'|'user', text} | {role:'picker', options}
@@ -356,7 +356,7 @@ export default function QAChat({ nickname, sajuResult, sessionId }) {
                     <span className="qa-mono" style={{ fontSize: "20px", fontWeight: 700, color: "#6FA98B", letterSpacing: "0.1em" }}>{verifyCode}</span>
                     {copied ? <Check size={15} color="#6FA98B" /> : <Copy size={15} color="#6FA98B" />}
                   </button>
-                  <AppInstall t={t} align="center" />
+                  <AppInstall locale={locale} align="center" handoff={{ source: "qa", data: handoffData }} showCode={false} />
                 </div>
               )}
               <div style={{ marginTop: "18px", textAlign: "left", background: "rgba(255,255,255,0.03)", border: "1px solid #26332B", borderRadius: "14px", padding: "16px" }}>

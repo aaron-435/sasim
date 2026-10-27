@@ -11,7 +11,7 @@ import { API_BASE_URL } from "../config";
 import { useStrings, useLocale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
-import { SPACE } from "../theme/tokens";
+import { RADIUS, SPACE } from "../theme/tokens";
 import useReducedMotion from "../lib/useReducedMotion";
 
 export default function IntroScreen({ onNext, onVerifyCode }: { onNext: () => void; onVerifyCode: () => void }) {
@@ -78,11 +78,12 @@ export default function IntroScreen({ onNext, onVerifyCode }: { onNext: () => vo
 
         <View style={{ flex: 1 }} />
 
-        {/* Web-to-app handoff is the minority path, so it waits behind a quiet link instead of
-            being a screen every store install has to pass. */}
+        {/* Web-to-app handoff: an outlined secondary button (2026-10-27, SPEC B3) — visible enough
+            for someone arriving from the website with a code, still not a screen every store
+            install has to pass. A fatesaid://handoff link skips this and opens the code screen itself. */}
         {/* Hero keeps its bespoke entrance above; these footer Reveals follow it. */}
         <Reveal index={2} style={styles.footerReveal}>
-          <PressableScale onPress={onVerifyCode} style={styles.verifyLink} accessibilityRole="button" hitSlop={8} haptic="none">
+          <PressableScale onPress={onVerifyCode} style={styles.verifyButton} accessibilityRole="button" hitSlop={4} haptic="tap">
             <Text style={styles.verifyLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.intro.verifyCodeLink}</Text>
           </PressableScale>
         </Reveal>
@@ -167,19 +168,21 @@ const styles = StyleSheet.create({
   footerReveal: {
     zIndex: 2,
   },
-  verifyLink: {
+  verifyButton: {
     alignSelf: "center",
     minHeight: 44,
     justifyContent: "center",
-    paddingHorizontal: SPACE.md,
-    marginBottom: SPACE.sm,
+    paddingHorizontal: SPACE.xl,
+    marginBottom: SPACE.md,
+    borderRadius: RADIUS.pill,
+    borderWidth: 1,
+    borderColor: COLORS.gold,
     zIndex: 2,
   },
   verifyLinkText: {
-    fontFamily: FONTS.medium,
+    fontFamily: FONTS.semibold,
     fontSize: 13.5,
     color: COLORS.gold,
-    textDecorationLine: "underline",
   },
   footer: {
     zIndex: 2,

@@ -55,7 +55,7 @@ export default function SajuCalculator({ locale }) {
       const data = await fetchQuickSaju({ ...dob, hour: hour === "" ? null : Number(hour) });
       const pillars = data?.fourPillars;
       if (!asPillar(pillars?.year) || !asPillar(pillars?.month) || !asPillar(pillars?.day)) throw new Error("shape");
-      setResult({ pillars, elements: data.elements, hourKnown: hour !== "" });
+      setResult({ pillars, elements: data.elements, hourKnown: hour !== "", dob, hour: hour === "" ? null : Number(hour) });
       logEvent("type_reveal_view", { surface: "calculator", ...(data.sajuType?.code ? { kind: data.sajuType.code } : {}) }, locale);
       requestAnimationFrame(() => resultRef.current?.focus());
     } catch {
@@ -219,7 +219,14 @@ export default function SajuCalculator({ locale }) {
         <section className="sc-app" aria-labelledby="sc-app-title">
           <h2 id="sc-app-title">{c.appTitle}</h2>
           <p>{c.appBody}</p>
-          <AppInstall t={t} />
+          <AppInstall
+            locale={locale}
+            handoff={{
+              source: "calculator",
+              // "Unknown" is also this select's default, so a missing hour is left for the app to ask.
+              data: result ? { birthYear: result.dob.year, birthMonth: result.dob.month, birthDay: result.dob.day, ...(result.hour === null ? {} : { birthHour: result.hour }) } : null,
+            }}
+          />
           <a className="sc-cta" href={localizedPath("/", locale)}>{c.homeCta} <ArrowRight size={16} strokeWidth={2.25} aria-hidden="true" /></a>
         </section>
 

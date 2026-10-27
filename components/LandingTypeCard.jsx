@@ -22,6 +22,7 @@ export default function LandingTypeCard({ t, locale, onContinue, onRevealChange 
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [type, setType] = React.useState(null);
+  const [dob, setDob] = React.useState(null);
   const [celebs, setCelebs] = React.useState([]);
   const [celebModule, setCelebModule] = React.useState(null);
   const resultRef = React.useRef(null);
@@ -56,6 +57,7 @@ export default function LandingTypeCard({ t, locale, onContinue, onRevealChange 
       const result = await fetchQuickSaju(dob);
       if (!result?.sajuType) throw new Error("no type");
       setType(result.sajuType);
+      setDob(dob);
       saveLandingBirth(dob); // onboarding picks this up so it does not ask for the date again
       logEvent("type_reveal_view", { surface: "landing", kind: result.sajuType.code }, locale);
       requestAnimationFrame(() => resultRef.current?.focus());
@@ -68,6 +70,7 @@ export default function LandingTypeCard({ t, locale, onContinue, onRevealChange 
 
   const reset = () => {
     setType(null);
+    setDob(null);
     setError(null);
     clearLandingBirth();
   };
@@ -144,7 +147,10 @@ export default function LandingTypeCard({ t, locale, onContinue, onRevealChange 
             <div className="tc-app">
               <h3>{c.appTitle}</h3>
               <p>{c.appBody}</p>
-              <AppInstall t={t} />
+              <AppInstall
+                locale={locale}
+                handoff={{ source: "type_card", data: dob ? { birthYear: dob.year, birthMonth: dob.month, birthDay: dob.day } : null }}
+              />
             </div>
 
             <div className="tc-actions">

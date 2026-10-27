@@ -153,12 +153,15 @@ const typeCard = { source: "type_card", locale: "en", data: { birthYear: 1994, b
   check(old.status === 200 && keys(old.body) === "nickname,sajuResult,track", "old GET shape { nickname, track, sajuResult }");
   const sr = old.body.sajuResult as Record<string, unknown>;
   check(sr.birth_year === 1994 && "saju_type" in sr && sr.saju_type !== null, "sajuResult keeps the row + saju_type");
-  check((await redeemSessionCode(db, code, NOW + 2000)).status === 404, "old code one-use");
+  const reused = await redeemSessionCode(db, code, NOW + 2000);
+  check(reused.status === 404 && typeof reused.body.error === "string" && reused.body.code === "not_found", "old code one-use, 404 keeps error + code not_found");
+  const unknownNew = await redeemHandoff(db, { code: "999999" }, NOW);
+  check(unknownNew.status === 404 && unknownNew.body.code === "not_found", "unknown code on the new endpoint → 404 not_found");
   check((await redeemSessionCode(db, null, NOW)).status === 400, "old GET without code → 400");
 
   const code2 = (await issueSessionCode(db, "s1", NOW)).body.code as string;
   const expired = await redeemSessionCode(db, code2, NOW + LEGACY_CODE_TTL_MS + 1);
-  check(expired.status === 410 && keys(expired.body) === "error", "old code still expires at 24h, { error } only");
+  check(expired.status === 410 && keys(expired.body) === "code,error" && expired.body.code === "expired", "old code still expires at 24h, error kept + code expired");
   check(sessions.get("s1")!.verify_code === null, "expired old code cleared");
 
   const code3 = (await issueSessionCode(db, "s1", NOW)).body.code as string;

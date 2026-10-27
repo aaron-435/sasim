@@ -242,7 +242,21 @@ export default function OnboardingWizard({ sessionId, onComplete, skipIntro = fa
     city: selectedCity,
     isFemale,
     track: TRACK_DEFAULT,
+    // What "continue in the app" may carry (lib/handoff.ts HandoffData); sent only on that tap.
+    handoff: handoffData(),
   });
+
+  const handoffData = () => {
+    const [hh, mm] = tob ? tob.split(":").map(Number) : [null, 0];
+    const time = timeUnknown ? { birthHour: null } : Number.isInteger(hh) ? { birthHour: hh, birthMinute: Number.isInteger(mm) ? mm : 0 } : {};
+    return {
+      ...(parsedDate ? { birthYear: parsedDate.year, birthMonth: parsedDate.month, birthDay: parsedDate.day, ...time } : {}),
+      ...(isFemale === null ? {} : { isFemale }),
+      ...(selectedCity ? { birthCity: selectedCity.cityDisplay, birthCityId: selectedCity.id } : {}),
+      ...(nickname.trim() ? { nickname: nickname.trim() } : {}),
+      // No track: the web flow never asks for one (TRACK_DEFAULT is a placeholder), so the app asks.
+    };
+  };
 
   const handleSubmit = useCallback(async () => {
     setLoading(true);

@@ -61,12 +61,22 @@ export const es: typeof ko = {
   verifyCode: {
     heading: "¿Tienes un código de verificación?",
     subtext:
-      "Si hiciste las preguntas en la web, escribe el código de 6 dígitos que recibiste allí para seguir justo donde lo dejaste.",
+      "Si tocaste “Continuar en la app” en el sitio web o terminaste las preguntas allí, ingresa el código de 6 dígitos que te mostró. Lo que ingresaste en la web pasa a la app.",
     placeholder: "000000",
     skipLabel: "No tengo código, empezar de nuevo",
     errorDefault: "Este código no es válido o ya se ha usado.",
     errorNetwork: "Un problema de conexión nos impidió verificar tu código.",
     inputLabel: "Código de verificación de 6 dígitos",
+    openingLink: "Trayendo lo que ingresaste en la web…",
+    errors: {
+      bad_request: "Ese código no tiene el formato correcto. Revisa los 6 dígitos.",
+      not_found: "No encontramos ese código. Puede que ya se haya usado o que tenga un error.",
+      expired: "Este código ya venció. Toca “Continuar en la app” en el sitio web otra vez para obtener uno nuevo.",
+      update_app: "Actualiza la app y vuelve a ingresar el código.",
+      unavailable: "Ahora no podemos verificar códigos. Inténtalo de nuevo en un momento.",
+      too_many: "Hubo demasiados intentos. Espera unos minutos y vuelve a intentarlo.",
+      linkUsed: "Este enlace ya se usó. Toca “Continuar en la app” en el sitio web otra vez o empieza de nuevo.",
+    },
   },
 
   nickname: {

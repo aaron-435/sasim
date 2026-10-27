@@ -58,6 +58,8 @@ import { clearSavedInvites } from "./lib/invites";
 import { clearPair } from "./lib/pairs";
 import { clearJournal } from "./lib/journalStorage";
 import { clearUserConcern, getStoredUserConcern, saveUserConcern, type Track } from "./lib/userConcern";
+import { nextUnanswered, planHandoff, type HandoffData, type HandoffPrefill } from "./lib/handoff";
+import { ONBOARDING_STEP_IDS, type OnboardingStepId } from "./lib/onboardingSteps";
 import { repairSavedTypeInfo } from "./lib/quiz/modules";
 
 // Onboarding flow shell — mirrors components/AppFlow.jsx's step-switcher role on web,
@@ -194,6 +196,12 @@ function AppContent() {
   const [tobPeriod, setTobPeriod] = useState<"AM" | "PM" | null>(null);
   const [timeUnknown, setTimeUnknown] = useState(false);
   const [concern, setConcern] = useState<Track | null>(null);
+  // Web→app handoff (lib/handoff.ts): the steps the website already answered are skipped going
+  // forward (back still shows them, filled in), and a carried-over city is preselected.
+  const [handoffKnown, setHandoffKnown] = useState<ReadonlySet<OnboardingStepId>>(() => new Set());
+  const [handoffCity, setHandoffCity] = useState<HandoffPrefill["city"] | null>(null);
+  // A fatesaid://handoff?t= link waiting for VerifyCodeScreen to redeem it.
+  const [handoffToken, setHandoffToken] = useState<string | null>(null);
   const [homeData, setHomeData] = useState<HomeData | null>(null);
   const [moduleId, setModuleId] = useState<string | null>(null);
   const [quizDiagnosis, setQuizDiagnosis] = useState<QuizDiagnosis | null>(null);
@@ -242,10 +250,17 @@ function AppContent() {
   // the saved reading is restored, then go to today's fortune. A tap while a quiz, chat or
   // report is open leaves that screen alone (the app just comes to the front).
   const pendingFortuneRef = useRef(false);
+  const pendingHandoffRef = useRef<string | null>(null);
   const [deepLinkTick, setDeepLinkTick] = useState(0);
   useEffect(() => {
     if (Platform.OS === "web") return;
     const handle = (url: string | null) => {
+      const handoff = url?.match(/^fatesaid:\/\/handoff\?(?:[^#]*&)?t=([0-9a-f]{64})\b/);
+      if (handoff) {
+        pendingHandoffRef.current = handoff[1];
+        setDeepLinkTick((t) => t + 1);
+        return;
+      }
       if (!url || !/^fatesaid:\/\/fortune\b/.test(url)) return;
       track("widget_tap");
       pendingFortuneRef.current = true;
@@ -255,6 +270,17 @@ function AppContent() {
     const sub = Linking.addEventListener("url", (e) => handle(e.url));
     return () => sub.remove();
   }, []);
+  // A handoff link opens the code screen, which redeems it. Someone already set up on this
+  // device keeps their reading; the link is left unredeemed (it expires on its own).
+  useEffect(() => {
+    const token = pendingHandoffRef.current;
+    // On a first launch the language is picked first; the link waits until that is done.
+    if (!token || !step || step === "language") return;
+    pendingHandoffRef.current = null;
+    if (homeData || !ONBOARDING_STEPS.has(step)) return;
+    setHandoffToken(token);
+    setStep("verifyCode");
+  }, [deepLinkTick, step, homeData]);
   useEffect(() => {
     if (!pendingFortuneRef.current || !step || !homeData || ONBOARDING_STEPS.has(step)) return;
     pendingFortuneRef.current = false;
@@ -324,6 +350,36 @@ function AppContent() {
     setStep("quiz");
   }
 
+  // Fills in what the website carried over and goes to the first step it did not answer.
+  function applyHandoff(data: HandoffData) {
+    const { prefill, known } = planHandoff(data);
+    if (prefill.nickname) setNickname(prefill.nickname);
+    if (prefill.isFemale !== undefined) setIsFemale(prefill.isFemale);
+    if (prefill.dob) {
+      setDobYear(prefill.dob.year);
+      setDobMonth(prefill.dob.month);
+      setDobDay(prefill.dob.day);
+    }
+    if (prefill.tob === "unknown") {
+      setTimeUnknown(true);
+    } else if (prefill.tob) {
+      setTimeUnknown(false);
+      setTobHour(prefill.tob.hour);
+      setTobMinute(prefill.tob.minute);
+      setTobPeriod(prefill.tob.period);
+    }
+    if (prefill.track) setConcern(prefill.track);
+    setHandoffCity(prefill.city ?? null);
+    setHandoffKnown(known);
+    setHandoffToken(null);
+    setStep(nextUnanswered(null, known, ONBOARDING_STEP_IDS) ?? "city");
+  }
+
+  // Forward from an onboarding step, past the ones a web handoff already answered.
+  function advanceFrom(from: OnboardingStepId) {
+    setStep(nextUnanswered(from, handoffKnown, ONBOARDING_STEP_IDS) ?? "concern");
+  }
+
   // Clears the persisted saju reading and every raw onboarding field, then drops the
   // user back at "intro" — the only way to re-onboard once a reading is auto-restored
   // on launch (see the effect above). Exposed from Settings.
@@ -353,6 +409,9 @@ function AppContent() {
     setTobPeriod(null);
     setTimeUnknown(false);
     setConcern(null);
+    setHandoffKnown(new Set());
+    setHandoffCity(null);
+    setHandoffToken(null);
     setStep("intro");
   }
 
@@ -417,7 +476,10 @@ function AppContent() {
 
         {step === "verifyCode" && (
           <VerifyCodeScreen
+            token={handoffToken}
+            onHandoff={applyHandoff}
             onVerified={(data: VerifiedData) => {
+              setHandoffToken(null);
               const row = data.sajuResult as Parameters<typeof normalizeVerifyCodeSajuResult>[0];
               const dominant = dominantElementFrom(row?.elements);
               const newHomeData: HomeData = { nickname: data.nickname, sajuResult: normalizeVerifyCodeSajuResult(row, dominant) };
@@ -426,8 +488,14 @@ function AppContent() {
               track("onboarding_complete", { via: "verify_code" });
               setStep("home");
             }}
-            onSkip={() => setStep("nickname")}
-            onBack={() => setStep("intro")}
+            onSkip={() => {
+              setHandoffToken(null);
+              setStep("nickname");
+            }}
+            onBack={() => {
+              setHandoffToken(null);
+              setStep("intro");
+            }}
           />
         )}
 
@@ -435,7 +503,7 @@ function AppContent() {
           <NicknameScreen
             value={nickname}
             onChange={setNickname}
-            onNext={() => setStep("gender")}
+            onNext={() => advanceFrom("nickname")}
             onBack={() => setStep("intro")}
           />
         )}
@@ -444,7 +512,7 @@ function AppContent() {
           <GenderScreen
             isFemale={isFemale}
             onChange={setIsFemale}
-            onNext={() => setStep("dob")}
+            onNext={() => advanceFrom("gender")}
             onBack={() => setStep("nickname")}
           />
         )}
@@ -457,7 +525,7 @@ function AppContent() {
             onChangeYear={setDobYear}
             onChangeMonth={setDobMonth}
             onChangeDay={setDobDay}
-            onNext={() => setStep("tob")}
+            onNext={() => advanceFrom("dob")}
             onBack={() => setStep("gender")}
           />
         )}
@@ -472,13 +540,14 @@ function AppContent() {
             onChangeMinute={setTobMinute}
             onChangePeriod={setTobPeriod}
             onToggleUnknown={() => setTimeUnknown((v) => !v)}
-            onNext={() => setStep("city")}
+            onNext={() => advanceFrom("tob")}
             onBack={() => setStep("dob")}
           />
         )}
 
         {step === "city" && isFemale !== null && (
           <CityScreen
+            initialCity={handoffCity}
             birthPayload={{
               birthYear: Number(dobYear),
               birthMonth: Number(dobMonth),
