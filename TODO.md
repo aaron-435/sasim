@@ -39,21 +39,42 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이�
   - 방법: 기존 dev-client 빌드(10/15, iPhone 17 Pro Max 시뮬레이터)에 Metro(8081)로 현재 JS를 실었다. 30문항을 손으로 누르는 대신, 녹화 스크립트와 같은 규칙(선택지는 마지막, 슬라이더는 10)으로 1~29번 답을 앱의 이어하기 저장소(`fatesaid_quiz_progress_<module>`, AsyncStorage)에 넣었다. 30번째 문항은 화면에서 직접 마지막 선택지를 눌렀다. 끝난 뒤 저장소와 언어(es)를 원래대로 돌렸다.
   - QA: iOS 시뮬레이터(dev-client, 네이티브)에서 세 검사 결과 화면과 검사 목록 캡처 → `.agents/qa/video-native-2026-10/native-{A4x,A6x,A7x}-high.png`·`native-list.png`. 결과는 Deep-Sleep Deprived, Attention at Both Extremes, 그리고 가면은 대체 제목. `ffmpeg -ss 8.5|10`으로 영상 프레임을 뽑아 나란히 붙임 → `compare-{A4x,A6x,A7x,list}.jpg`. 증거: 시뮬레이터(네이티브)와 mobile-web 영상 프레임 비교.
 
-- [ ] 6. 스페인어 텍스트 검사 스크립트
+- [x] 6. 스페인어 텍스트 검사 스크립트
   - 변경: 새 `scripts/check-es-text.mts`. md·txt 파일을 받아 `lib/esGender.ts`의 `matchEsGenderedReader`와 `check-choice-scripts.mts`의 스페인식 표지 검사(`vale`, `vosotros/os`, 현재완료 남용)를 돌린다. 스페인식 표지 검사는 공용 함수로 꺼내 두 스크립트가 같이 쓴다.
   - QA: `LOCALE=es npx tsx scripts/check-choice-scripts.mts` → 꺼내기 전과 같은 결과(오류 0, 경고 수 동일). 일부러 "Vale, vosotros…" 문장을 넣은 임시 파일로 `npx tsx scripts/check-es-text.mts <파일>` → 경고, 지우면 0. 루트 `npx tsc --noEmit` → 0.
+  - 결과: 스페인식 표지 검사(목록·현재완료 규칙·`ES_PERFECT_KEPT`)를 새 `lib/esSpain.ts`의 `findEsSpainMarkers`로 옮기고, `check-choice-scripts.mts`의 `checkEsSpain`은 그 결과를 경고로 찍는 세 줄만 남겼다. 새 `scripts/check-es-text.mts`는 md·txt를 줄 단위로 보고 `matchEsGenderedReader`(리포트+챗 목록)와 `findEsSpainMarkers`를 돌린다. 훅·대사를 따옴표 안에 쓰므로 챗 응답용 함수와 달리 따옴표 안도 본다. 금지 예시를 일부러 적은 줄은 `es-check: ignore`로 건너뛴다. 걸리면 종료 코드 1.
+  - QA: `LOCALE=es npx tsx scripts/check-choice-scripts.mts` → 꺼내기 전후 출력 `diff` 동일(오류 0, 경고 3, exit 0). ko(경고 22)·en(경고 3)도 오류 0. 임시 파일("Vale, vosotros ya lo sabéis." / "Me has contado tu día." / "\"Estás agotada\"…" / ignore 줄)로 `npx tsx scripts/check-es-text.mts` → 경고 4개(vale·vosotros·현재완료·agotada, ignore 줄 제외), exit 1. 고친 문장 파일 → 경고 0, exit 0. 루트 `npx tsc --noEmit` → exit 0.
 
-- [ ] 7. es-419 키트: 훅 24개 + 대본 7개
+- [x] 7. es-419 키트: 훅 24개 + 대본 7개
   - 선행: 6
   - 변경: `marketing/es/hooks.md`, `marketing/es/scripts.md`(영어 원본: `marketing/video-kit.md`, `hook-analysis.md` 등 영어 키트 위치를 먼저 확인)
   - 기준: 직역이 아니라 현지화. `mobile/lib/i18n/STYLE_GUIDE.md`의 es-419 규칙, 압박 규칙·정확도 표현 금지, 1·2번에서 바뀐 결과 문구를 반영. 원문 대응표(영어 번호 ↔ es) 포함.
   - QA: `npx tsx scripts/check-es-text.mts marketing/es/hooks.md marketing/es/scripts.md` → 경고 0. 훅 24개·대본 7개 개수 확인(`grep -c`).
+  - 결과: 영어 원본은 `video-kit.md` 9·10장 훅 24개(B1~8·A1~8·C1~8)와 `tts-samples/scripts.json` 대본 7개(B1·C7·A3·C5·C1·A3x·A1x)다. `marketing/es/hooks.md`(번호 같은 대응표 + 현지화 메모, es 캡션 틀·UTM, 금지어·A형 tú 점검 스크립트), `marketing/es/scripts.md`(대응표, 대본마다 es 본문·영어 원문·메모). 화면 이름은 앱 es 문구 그대로: 번아웃 "Ritmo propio"/"Agotamiento completo"(1번 기준), 애착 4제목(2번의 새 hook 화면으로 녹화하라고 메모), 모듈 부제, 절기 "Inicio del invierno"(로마자 Lidong 뺌), "Madera yang". 사람을 꾸미는 형용사가 독자 성별 표지가 되는 곳은 명사를 꾸미게 바꿨다(A1 "¿Apego ansioso o evitativo?", A1x "respuestas altas"). A6 "sueños inquietos"는 앱 부제 그대로라 그 줄만 `es-check: ignore`(꿈을 꾸미는 말), 금지 예시를 적은 규칙 줄 2개와 금지어 목록 줄도 ignore.
+  - QA: `npx tsx scripts/check-es-text.mts marketing/es/hooks.md marketing/es/scripts.md` → 경고 0, exit 0. `grep -c "^| [ABC][1-8] |" marketing/es/hooks.md` → 24, `grep -c "^### Guion" marketing/es/scripts.md` → 7. `hooks.md`의 점검 스크립트 → 24개 모두 ok(금지어·A형 tú 0). 대본 본문 7개도 같은 금지어 정규식 → 0.
 
-- [ ] 8. es-419 키트: ASO 등록정보 + 시딩 키트
+- [x] 8. es-419 키트: ASO 등록정보 + 시딩 키트
   - 선행: 6
   - 변경: `marketing/es/aso.md`(원본 `marketing/aso-en.md`), `marketing/es/seeding-kit.md`(원본 `marketing/seeding-kit.md`)
   - 기준: App Store(이름 30·부제 30·키워드 100·프로모션 문구 170자), Play(제목 30·짧은 설명 80·긴 설명 4000자) 글자 수 제한. 등록 이름은 "Fate Said". 스페인어(멕시코/중남미) 로케일 기준.
   - QA: `npx tsx scripts/check-es-text.mts marketing/es/aso.md marketing/es/seeding-kit.md` → 경고 0. 각 필드 글자 수를 표로 함께 적고 제한 안인지 확인.
+  - 결과: `marketing/es/aso.md` — 로케일은 App Store `es-MX`(중남미 공통 로케일이 없음), Play `es-419`. 이름 "Fate Said: saju coreano"(영어판 "Self-Insight"는 30자를 넘어 부제로), 부제 "Autoconocimiento con 4 Pilares", 키워드 100자(검색어로만 "carta natal", 사용자 확인 항목), 프로모션·설명·What's New·캡션 5개, 법적 링크 `?lang=es`(es 본문 `lib/legalContent.ts`에 있음 확인). 금융 연상 단어를 스페인어 목록으로 바꿔 검사(dinero·banco·pago·precio 등), 구독 관리 안내는 "pagos" 메뉴 이름 없이. 글자 수 점검 스크립트를 파일 안에 두었다. `marketing/es/seeding-kit.md` — 원본과 같은 장(선행 조건·자유 의견·코드 표·성과표)은 원본 참조로 두고 라벨 `seed_es01…`·`utm_campaign=seeding_es`·`/es` 랜딩만 바꿈. 중남미 후보 기준(청중 나라, tú/vos, 겁주는 계정 제외), es DM 4개·표기 안내 한 장(publicidad·patrocinado·producto gratis, 크리에이터 성별 표지 없음), 코드 입력 경로는 앱 es "Ajustes". 중남미 각국 광고 표기 규정은 확인하지 않았다고 `(미확인)`으로 적음.
+  - QA: `npx tsx scripts/check-es-text.mts marketing/es/aso.md marketing/es/seeding-kit.md` → 경고 0, exit 0(네 파일 함께 돌려도 0). `aso.md`의 글자 수 점검 스크립트 → FAIL 0:
+
+    | 필드 | 글자 수 / 제한 |
+    |---|---|
+    | iOS 앱 이름 | 23 / 30 |
+    | iOS 부제 | 30 / 30 |
+    | iOS 키워드 | 100 / 100 |
+    | iOS 프로모션 텍스트 | 166 / 170 |
+    | iOS 설명 | 2750 / 4000 |
+    | iOS What's New | 77 / 4000 |
+    | Play 앱 이름 | 23 / 30 |
+    | Play 간단한 설명 | 74 / 80 |
+    | Play 자세한 설명 | 2665 / 4000 |
+    | 스크린샷 캡션 5개 | 38·38·40·37·35 / 40(자체 제한) |
+
+    금지어(금융·정확·예측·남의 상표) 0. 시딩 키트 `grep -inE "garantiz|cinco estrellas|reseña positiva|tienes que decir|testimonio"` → "보내지 않는 것" 목록 줄 1건만(요구 문구 0), 표기 단어 7곳.
 
 - [ ] 9. (사용자 확인) es 키트·영상 확정
   - 선행: 4, 7, 8
@@ -73,4 +94,6 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1·2, 3, 4~6, 7은 서로 독립이�
 - (2번 중) 다른 모듈 결과 hook에도 "~하는 패턴입니다" 단정이 남아 있다: `mobile/lib/quiz/module2Money.ts`·`module4Mask.ts`·`module5Execution.ts`·`module6Anger.ts`·`module7Sensitivity.ts`·`module8Sleep.ts`·`module9Family.ts`·`module10Focus.ts` ko hook(en/es 대응 문구 포함 여부는 미확인). module7은 "전형적인 고감각민감자(HSP)"라 진단처럼 읽힐 수 있다. 이번 SPEC은 번아웃·애착만이라 손대지 않음.
 - (4번 중, 중요) 결과 유형 이름 조회 버그: `mobile/lib/quiz/quizProfile.ts` `classifyProfile`이 2개 이상 조합의 `typeKey`를 **점수 높은 순**으로 이어 붙이는데, 각 모듈 `*_TYPE_NAMES`의 키는 **고정 순서**(예: `imageManagement+concealment+socialFatigue`)다. 점수 순서가 키 순서와 다르면 조회가 빠져 `QuizScreen.tsx:216`의 대체 제목("A+B+C Combined Type" + 일반 hook)이 뜬다. 가면 검사 30문항 최고값 응답에서 재현(mobile-web, `?qa=free&persona=sam&lang=en`). 모든 모듈의 2·3개 조합 결과에 해당할 수 있고 실사용자 화면에도 나온다. 고치려면 키를 정렬해 조회하거나 순열을 모두 시도해야 하는데 결과 분류 로직이라 이번 SPEC 밖이고 사업 핵심 로직이라 이 세션에서 직접 다뤄야 한다. 저장된 결과·리포트 프롬프트가 `typeKey` 순서에 기대는지 먼저 확인.
 - (5번 중) 위 결과 이름 버그는 iOS 시뮬레이터(dev-client)에서도 재현된다(`.agents/qa/video-native-2026-10/native-A4x-high.png`). 웹 렌더 문제가 아니라 실사용자 화면 문제다.
+- (7번 중) 영어 대본 B1 "the card names the type with two words"는 es 카드 이름("El roble" + 모드)이 두 단어가 아닐 수 있다. es판은 "dos partes"로 썼고 실제 es 카드 표기는 녹화 전 확인 필요.
+- (8번 중) 영어판 `marketing/aso-en.md`의 글자 수 점검 스크립트가 "Play 앱 이름"을 따로 세지 못한다. 제목 정규식 `### (.+?) \(limit`이 줄을 넘어가서 "iOS 스크린샷 캡션 (… limit 40으로…)" 제목부터 Play 앱 이름 블록까지를 한 항목으로 읽는다(출력 "28/30 iOS 스크린샷 캡션"이 실제로는 Play 이름). 지금 값은 제한 안이라 결과는 맞다. es판은 `([^\n]+?)`로 고쳐 두었다.
 - (5번 중) 시뮬레이터 탭 자동화 팁: 탭에 `duration: 0.15`를 주지 않으면 탭이 빠지거나 늦게 들어간다. 스크린샷도 한 박자 늦게 오므로 화면 전환 뒤에는 두 번 찍어 확인한다.
