@@ -1,0 +1,98 @@
+# 콘텐츠 엔진이 먼저, 광고는 그다음에 키운다
+
+월 ₩500만(약 $3,600)을 넘긴 운세·점성술·자기이해 앱들이 처음부터 유료 광고로 그 선을 넘은 경우는 거의 없다. 공통 경로는 셋이다. 첫째는 이미 있던 팬층이나 숏폼 콘텐츠 엔진(CHANI의 베스트셀러 독자, Starcrossed의 TikTok 1.6억 뷰, 젠디의 Threads 대량 게시)이다. 둘째는 결과 자체가 공유되는 구조(포스텔러 공유율 35%, 타이트사주의 웹툰형 결과, Co-Star의 캡처하고 싶은 문장)다. 셋째는 두 사람이 있어야 완성되는 궁합 기능이 만드는 초대 루프다. 유료 광고는 Nebula처럼 퍼포먼스 마케팅 회사가 키운 앱이거나, 오가닉으로 이긴 포맷을 나중에 키우는 2단계 도구였다. Fatesaid가 가져올 것은 "포맷 하나를 정해 매일 반복하기 → 공유 카드와 궁합으로 초대 루프 만들기 → 연간 플랜에만 체험 붙이기 → 한국은 건별 리포트를 앞세우기 → 12~2월 신년 특수에 맞추기"다. 하지만 정직하게 말하면 **1개월 안에 월 ₩500만에 도달할 가능성은 낮다.** 설치당 매출(RPI) 중앙값 $0.34로는 해외 설치가 월 약 10,500건 필요하다. 그런데 출시 1~6개월에 월 $3k~10k를 냈다는 인디 운세 앱 사례는 출처로 확인되는 것이 하나도 없었다. 신규 구독 앱 중 2년 안에 월 $1K MRR에 도달하는 비율도 17.3%뿐이다. 현실적인 목표는 3개월이다. 11월에 포맷을 찾고, 12~2월 신년 특수에 맞춰 키운다. 그 전에 하나 짚을 것이 있다. 심사 중인 iOS 1.2.0이 Apple 가이드라인 4.3(b)의 "점술" 과포화 조항에 걸릴 수 있으니, 스토어 문구를 "자기이해·심리검사 + 상담" 쪽으로 기울여 두는 것이 우선이다.
+
+판단 표기는 이렇다. **[확인]**은 회사 발표나 1차 보도, **[추정]**은 앱마켓 추정·대행사 주장·검증 안 된 2차 보도, **[추론]**은 이 보고서가 계산하거나 해석한 것이다. 숏폼 영상 포맷 분석은 이미 `marketing/competitors.md`(영어 사주 TikTok 계정은 팔로워 2~17명, 영상당 200~1,000뷰), `adjacent-apps.md`(#attachmentstyle 41억 뷰 대 #saju 3.3억 뷰), `reference-videos.md`, `hook-analysis.md`에 있다. 여기서는 반복하지 않고 결론에만 쓴다.
+
+## 16개 서비스가 첫 사용자를 모은 경로는 대부분 광고가 아니었다
+
+아래 표는 월 ₩500만 기준선을 넘긴 서비스(넘었다고 추정되는 곳 포함)와, 비교용으로 기준선 아래인 사주핑을 정리한 것이다. 어느 곳도 "언제 월 ₩500만을 넘었는지"는 공개하지 않았다. 그래서 규모 열은 확인된 가장 이른 시점과 가장 최근 시점을 함께 적었다.
+
+| 서비스 | 매출·사용자 규모(시점) | 첫 사용자 채널 | 유료 광고 | 오가닉·바이럴 장치 | 수익화 | ASO·피처링 | 출처 |
+|---|---|---|---|---|---|---|---|
+| **Co-Star** (미국) | [확인] 출시 21개월 만인 2019-07에 계정 300만+. 2021년 다운로드 2,000만+를 "실질적 마케팅 없이" 달성. 2026 Midjourney 인수, MAU 약 430만. [추정] 미국 iOS 월 $90k~400k | 입소문, Instagram 점성술 밈 유행, 언론 | [확인] 공개된 집행 없음 | "단톡방 문자" 같은 독설 푸시(캡처·공유용), 친구 궁합 | 2021년까지 매출 100% 단건(미가입 친구 궁합 $3). 2022년 이후 구독 약 $8.99~9.99/월, 약 $59.99/년 [추정] | 2019년 평점 5만+ | [Yahoo/Cosmo](https://www.yahoo.com/lifestyle/meet-banu-guler-ceo-co-150000063.html), [TechCrunch](https://techcrunch.com/2019/04/17/co-star-astrology-app-seed-round/), [Axios](https://www.axios.com/2021/04/14/astrology-app-co-star-raises-15-million-funding), [Bloomberg Law](https://news.bloomberglaw.com/private-equity/ai-lab-midjourney-buys-astrology-startup-co-star-plans-new-apps), [Sensor Tower](https://app.sensortower.com/overview/1264782561?country=US) |
+| **The Pattern** (미국) | [확인] 정식 출시 전 입소문으로 3만 명, 팬데믹 중 +350만. [추정] 미국 iOS 월 $300k | 출시 전 입소문, 유명인의 자발적 반응(Channing Tatum 영상 바이럴, 이후 투자) | [확인] 2021년까지 홍보·마케팅 없음 | Bonds(궁합) 무료 하루 3회 제한 | 구독(2021년 분기 £14.50, 연 £36), 단건 리포트 $4.99~29.99 [추정] | 확인 못 함 | [Hattie Crisell](https://www.hattiecrisell.com/new-blog/2023/7/7/meet-pattern-astrology-founder-lisa-donovan), [Sensor Tower](https://app.sensortower.com/overview/1071085727?country=US), [Nummi](https://www.nummi.ai/blog/is-the-pattern-app-worth-it-2026) |
+| **CHANI** (미국) | [확인] 2020-12 출시, 구독자·매출이 매년 50%+ 성장. [추정] 연 약 $14M(Inc.), iOS 월 약 $800k | 창업자의 NYT 베스트셀러 독자층 | 공개 자료 없음 | 창업자 개인 브랜드 | 구독 $11.99/월. 페이월이 늦고 눈에 띄지 않음, 무료 체험 | 평점 4.9(5.5만+) | [Wikipedia](https://en.wikipedia.org/wiki/Chani_Nicholas), [Forbes](https://www.forbes.com/sites/hollycorbett/2023/07/31/how-one-tech-company-is-proving-why-taking-care-of-your-employees-is-profitable/), [Retention.Blog](https://www.retention.blog/p/whats-your-sign), [Built by Foundry](https://www.builtbyfoundry.io/blog/chani-nicholas-chani-astrology-app) |
+| **Sanctuary** (미국) | [확인] 누적 투자 $6.5M, 팬데믹 중 상담 예약 +500%. 매출은 비공개 | 점성술 새해(3/20) 출시 + Bloomberg·Fortune 동시 보도 | 공개 자료 없음 | 사람 점성가 문자 상담 | 2019년 $19.99/월 회원제. 현재 분당 과금, 5분 입문 $4.99 | "App of the Day" 기록이 있으나 미검증 | [Fortune](https://fortune.com/2019/03/23/new-astrology-app-sanctuary/), [AlleyWatch](https://www.alleywatch.com/2021/05/sanctuary-virtual-text-online-astrological-taror-psychic-readings-ross-clark/), [App Store](https://apps.apple.com/app/id1417411962) |
+| **Nebula / OBRIO** (우크라이나→미국) | [확인] 2023 매출 $40~50M(전년 대비 2.5배), 사용자 3,000만 → 2025년 6,500만 | Facebook 퍼포먼스(Genesis 출신 팀, "0에서 시작하지 않았다") | [확인] Meta가 지금도 핵심(Meta Ads 채용 중). 성숙기에는 유입의 약 50%가 오가닉 | 무료 첫 심령 채팅 | 구독 + 사람 상담 + 웹투앱 퍼널(약 30문항 퀴즈 → 체험가 선택 €1~13.67) | 미국·캐나다·호주 Lifestyle 1위 여러 번, 멕시코 스토어 스페인어 현지화 | [Forbes UA](https://forbes.ua/innovations/platsebo-vid-trivozhnosti-04042024-20328), [Tech.eu](https://tech.eu/2023/12/05/obrio/), [djinni](https://djinni.co/jobs/821476-senior-growth-marketing-specialist-meta-ads/), [FunnelFox](https://blog.funnelfox.com/web2app-funnel-patterns-2026/), [App Store MX](https://apps.apple.com/MX/app/id1459969523) |
+| **Hint** (미국·중남미 타깃) | [추정·대행사] 신규 유료 1,500명+, CPA $30 | 대행사 집행 | [추정] 크리에이터 UGC 16편을 TikTok·Meta 광고로, 미국·중남미 여성 18~54세 | 데이팅·점성술 크리에이터 | 구독 | 확인 못 함 | [House of Marketers](https://houseofmarketers.com/hint-app-influencer-marketing-case-study/) |
+| **Starcrossed** (인디) | [추정] 월 $60~70k, "90일 만에"(숫자부터 서로 어긋남) | 창업자 본인 TikTok(팔로워 약 22만, 18개월 1.6억 뷰) | 언급 없음 | 별자리별 같은 포맷 4~10분 영상, 영상 첫머리에 앱 언급, 소울메이트 스케치 | 짧은 체험 뒤 구독, $6.99 개인 리딩 | 확인 못 함 | [Venture Radar](https://ventureradar.substack.com/p/inside-the-60000month-growth-of-a), [Playkit](https://playkit.substack.com/p/starcrossed-astrology-app) |
+| **Pocket Insight** (타로 채팅) | [추정] 약 $70K MRR, 신규 유입이 거의 없는데도 유지 | 얼굴 없는 TikTok 계정 3개, 6,300만 뷰 | 언급 없음 | "This is your sign" 카드 클립 | 약 3분 무료 채팅 뒤 분당 과금 | 확인 못 함 | [SGE](https://www.socialgrowthengineers.com/63m-views-later-this-dead-app-still-makes-70k-a-month) |
+| **Moonly** | [추정·Adapty] 2020-03 출시, 2021 ARR $2.45M | 확인 못 함 | 확인 못 함 | 달 주기 콘텐츠 | 연간 플랜에만 체험을 붙여 설치 100건당 매출 +47%. 구독의 약 80%가 첫 페이월에서 나옴 | 확인 못 함 | [Adapty](https://adapty.io/case-studies/moonly/) |
+| **타이트사주** (한국) | [확인·회사 주장] 2024년 월 1,000만 원대 → 출시 5개월 만에 월 1억 → 월 약 10억. 누적 500만+, MAU 100만, 재구매율 35%, 20~30대 여성 70% | 공개 안 됨. 웹툰형 결과물이 확산 장치라는 분석 | 공개 안 됨 | 캐릭터 IP('MZ무당 범산도령'), 웹툰형 숏폼 결과 | 건별 판매 사다리(썸 → 연애운 → 속궁합·결혼운). 일본·대만 월 +20%, 서양은 "별자리+사주"로 시험 중 | 확인 못 함 | [서울경제](https://www.sedaily.com/article/20078714), [서울경제TV](https://www.sentv.co.kr/article/view/sentv202610230113), [유니콘팩토리](https://www.unicornfactory.co.kr/article/2026080417541357071), [서플](https://supple.kr/news/cmsuzfejp007cktk2dxglnctp) |
+| **젠디** (한국) | [회사 주장, 반론 있음] 출시 다음 달 월 3,000만 → 3개월째 5,000만 → 6개월 만에 월 1억. 회원 약 4만, 약 30%가 유료 | **Threads**(AI 작성 글을 API로 자동 게시, "100개 중 1개 바이럴"), 릴스(한 편 17만 뷰). TikTok·X는 효과 없음 | Meta 광고를 판매 전환용으로 | 캐릭터 '호키동자', 24시간 후속 상담 | 건별 유료 상담 | 확인 못 함 | [언섹시 비즈니스](https://maily.so/unsexybusinesskr/posts/92zew8j7zep), [아시아경제](https://www.asiae.co.kr/article/2025071510020758999), [블라인드 반론](https://www.teamblind.com/kr/post/%EC%9B%94-1%EC%96%B5-%EB%B2%88%EB%8B%A4%EB%8D%98-%EC%96%B4%EB%B3%B4%EB%B8%8C%ED%85%8C%ED%81%AC-%EC%A0%A0%EB%94%94-%ED%88%AC%EC%9E%90-%EC%82%AC%EA%B8%B0-%EB%A7%A4%EC%B6%9C-%EA%B7%BC%ED%99%A9-%E3%85%8B%E3%85%8B-Jn2EuMjU) |
+| **포스텔러** (한국) | [확인] 출시 한 달 만에 가입 4만. 가입 10만이던 2017-12에 유료 도입, 구매율 8%. 2023 매출 99억, 2024 100억+ | 웹 먼저 출시, 소셜 로그인, 무료 콘텐츠 + SNS | 인앱 광고 없음. UA 광고 집행은 확인 못 함 | 일 방문자 35%가 공유, 캐릭터, 예능 '신들린 연애'·세븐일레븐·케이뱅크 신년 콜라보 | 코인 차감 건별 결제. 유료 콘텐츠는 5%지만 매출 대부분. 12개월 재구매 65.6% | 확인 못 함 | [아시아경제](https://view.asiae.co.kr/article/2017042410090318478), [서울경제](https://www.sedaily.com/article/13668098), [혁신의숲](https://www.innoforest.co.kr/report/NS00000275), [ZDNet](https://zdnet.co.kr/view/?no=20250203104315) |
+| **점신** (한국) | [확인] 2023 매출 50억, [추정] 2024 60억. 다운로드 1,700만, MAU 약 97만 | 무가입(성별·생년월일만 입력), "용하네" 입소문 | 모회사 테크랩스가 퍼포먼스 광고사지만 집행 내역은 확인 못 함 | 이마트24 콜라보, '소원담벼락' 80만 명 | 광고 + 광고 제거 ₩2,900/월 + 소원카드 ₩4,400~44,000 + 부적 + 전화 상담(첫 3분 무료) | **앱 이름에 매년 간지를 넣음**("2027점신… 정미년"), 평점 4.7(11만) | [유니콘팩토리](https://www.unicornfactory.co.kr/article/2025012414570018707), [한국경제](https://www.hankyung.com/article/2026021070861), [App Store](https://apps.apple.com/kr/app/id960571015) |
+| **천명** (한국) | [확인] 2023 매출 48억, 2022 MAU 약 40만, 연평균 재구매 3회 | 신뢰 장치를 차별점으로(불만족 시 전액 환불, 상담사 검수) | 확인 못 함 | 상담 후기 25만+ | 상담 중개(업계 수수료 20~40%) | 확인 못 함 | [딜사이트](https://dealsite.co.kr/articles/85894), [유니콘팩토리](https://www.unicornfactory.co.kr/article/2025012414570018707) |
+| **헬로우봇** (한국) | [확인] 2018 유료 마케팅 없이 6개월 만에 다운로드 50만. 2024 1분기 매출 47.7억(월 약 16억) | SNS 자발 후기, 메신저·AI 스피커 챗봇 배포 | [확인] 2018년 기준 없음 | 캐릭터 3종(라마마·바비·판밍밍), 굿즈 펀딩 1억 | 200종 콘텐츠 중 일부 유료(재화) | 구글 글로벌 피처드 | [한경비즈니스](https://magazine.hankyung.com/business/article/201812114995b), [ZDNet](https://zdnet.co.kr/view/?no=20240417090643), [AI타임스](https://www.aitimes.com/news/articleView.html?idxno=159171) |
+| *비교:* **사주핑** (한국, AI 상담형) | [확인] 3개월 누적 매출 1,000만, 유료 800명+, 인당 40회 이상 대화. **기준선에 아직 못 미침** | 공개 안 됨 | 공개 안 됨 | 영어 SEO 페이지 | 정기구독 중심으로 전환 예정 | 별점 4.5+ | [AI타임스](https://www.aitimes.com/news/articleView.html?idxno=207092), [sajuping.ai](https://sajuping.ai/what-is-saju) |
+
+표에서 눈에 띄는 것은 비어 있는 칸이다. "유료 광고"가 확인된 곳은 Nebula, Hint, 젠디(판매용 Meta) 셋뿐이다. Co-Star, The Pattern, 헬로우봇은 기준선을 훨씬 넘을 때까지 마케팅을 거의 하지 않았다고 직접 말했다. 다만 이 셋은 2017~2019년, 아직 경쟁이 없던 시장에서 출시했다는 점을 감안해야 한다. Fatesaid와 위치가 가장 비슷한 사주핑(AI 상담형, 구독 중심)은 높은 참여도에도 기준선에 닿지 못했다. 이 대비가 다음 절의 핵심이다.
+
+## 다섯 가지 패턴이 거의 모든 성공 사례에서 반복된다
+
+**첫째, 오디언스가 앱보다 먼저 있었다.** CHANI는 베스트셀러 독자, Starcrossed는 22만 팔로워, The Pattern은 출시 전 3만 명, Nebula는 Genesis의 광고 조직이라는 출발점이 있었다. 리뷰어가 CHANI의 성공을 "사람들이 Chani를 사랑한다"로 요약한 것도 같은 이야기다 ([Retention.Blog](https://www.retention.blog/p/whats-your-sign)). Starcrossed의 "90일 $70K"도 이미 있던 오디언스를 앱으로 옮긴 결과로 읽어야 한다. 팔로워 0에서 시작하는 앱의 기준선으로 쓸 수 없다. 오디언스가 없던 곳은 그 대신 **같은 포맷을 대량으로 반복**했다. 젠디는 Threads에 글을 대량으로 올리고 "100개 중 1개 바이럴"을 노렸다 ([언섹시 비즈니스](https://maily.so/unsexybusinesskr/posts/92zew8j7zep)). Pocket Insight는 얼굴 없는 계정 3개를 돌렸고, Puff Count는 바이럴 영상을 스프레드시트에 모아 재현 영상을 매일 올렸다. 그 결과 오가닉만으로 월 $10k MRR에 갔다는 자기신고가 있다 ([Cravotta](https://saas-accelerator.beehiiv.com/p/this-spreadsheet-got-me-to-44k-mrr)). Co-Star TikTok도 "Guess Their Sign" 한 포맷을 257번 반복했다(`adjacent-apps.md`).
+
+**둘째, 결과물이 곧 광고 소재다.** 포스텔러는 일 방문자의 35%가 공유했고, 공유 버튼과 전문 복사로 출시 한 달 만에 4만 명을 모았다 ([아시아경제](https://view.asiae.co.kr/article/2017042410090318478)). 타이트사주의 웹툰형 결과와 캐릭터 IP는 해외 분석지가 "사주를 웹툰으로 판다"며 따라 할 포맷으로 꼽았다 ([Trends.vc](https://trends.vc/ai-fortune-telling-apps-the-margin-flip-coffee-cup-readings-korean-playbook/)). Co-Star는 단톡방 같은 독설 톤으로 캡처를 불렀지만, 같은 기사에 알림을 끈 사용자도 함께 나온다 ([Yahoo](https://www.yahoo.com/lifestyle/meet-banu-guler-ceo-co-150000063.html)). 한국 대형 4사 중 셋이 캐릭터를 갖고 있다는 점도 같은 원리다. 캐릭터가 공유 이미지를 만든다.
+
+**셋째, 궁합이 초대 루프다.** Co-Star는 미가입 친구와 궁합을 보려면 $3를 받고, 친구가 가입하면 무료로 열어 주었다 ([Yahoo](https://www.yahoo.com/lifestyle/meet-banu-guler-ceo-co-150000063.html)). The Pattern은 Bonds를 무료로 하루 3회까지만 열었다 ([Hattie Crisell](https://www.hattiecrisell.com/new-blog/2023/7/7/meet-pattern-astrology-founder-lisa-donovan)). Starcrossed는 아이폰을 맞대 차트를 교환하게 했다. 두 사람이 있어야 완성되는 기능은 광고비 없이 두 번째 설치를 만든다.
+
+**넷째, 한국에서는 건별 판매가, 서구에서는 연간 구독이 먼저 돈이 됐다.** 타이트사주는 썸 → 연애운 → 속궁합·결혼운으로 이어지는 재구매 사다리로 컸다 ([서플](https://supple.kr/news/cmsuzfejp007cktk2dxglnctp)). 포스텔러는 구독 없이 코인 차감만으로 99억을 냈고 12개월 재구매율이 65.6%다 ([혁신의숲](https://www.innoforest.co.kr/report/NS00000275)). 젠디도 건별 상담이었다. **한국 대형 사례 중 순수 월 구독이 주력인 곳은 없다.** 서구 쪽 데이터는 반대 방향이다. 연간 플랜 중심 앱의 D60 RPI가 $0.46으로 월간 중심($0.24)의 약 2배이고, 체험은 17~32일이 4일 이하보다 체험→유료 전환이 높다(42.5% 대 25.5%) ([RevenueCat SOSA 2026](https://www.revenuecat.com/state-of-subscription-apps)). Moonly는 연간 플랜에만 체험을 붙여 설치 100건당 매출을 47% 올렸다 ([Adapty](https://adapty.io/case-studies/moonly/)).
+
+**다섯째, 달력이 성장의 박자를 정한다.** 한국 운세 앱은 12~2월에 이용자가 약 20% 늘고 ([유니콘팩토리](https://www.unicornfactory.co.kr/article/2025012414570018707)), 포스텔러의 콜라보는 신년에 몰려 있다. 점신은 매년 앱 이름과 부제를 다음 해 간지로 바꾼다("2027점신… 정미년") ([App Store](https://apps.apple.com/kr/app/id960571015)). 서구에서도 Sanctuary는 점성술 새해에 출시하며 언론 두 곳을 동시에 잡았다 ([Fortune](https://fortune.com/2019/03/23/new-astrology-app-sanctuary/)).
+
+이 패턴들 뒤에는 생존자 편향이 있다. 결제 대시보드로 검증된 소규모 운세 앱은 Tarot Go MRR $4, CosmicSage $73 수준이다 ([ProvenMRR](https://www.provenmrr.com/startup/tarot-go), [TrustMRR](https://trustmrr.com/category/mobile-apps)). Lifestyle 카테고리는 상위 10%가 매출의 97.9%를 가져가는, 가장 쏠린 카테고리다 ([Adapty](https://adapty.io/blog/lifestyle-app-subscription-benchmarks/)). 출시 1~6개월에 월 $3k~10k를 냈다는 인디 운세 앱 사례는 출처로 확인되는 것이 하나도 없었다.
+
+## 한 달 만에 ₩500만을 사려면 광고비가 매출보다 크다
+
+UNIT_ECONOMICS.xlsx의 "1개월 목표" 탭 계산을 사례 수치와 겹쳐 보면 문제가 분명하다. 월 매출 ₩500만을 해외에서만 내려면 RevenueCat 중앙값 RPI $0.34로 **월 약 10,500건 설치**가 필요하다. RPI를 더 좋게 가정해도 2,500~7,600건이고, 매출 절반을 한국에서 낸다고 해도 합계 4,200~7,300건이다. 월 $500으로 글로벌 CPI $1.50~3.50 ([Rocketship HQ](https://www.rocketshiphq.com/meta-cost-benchmarks-mobile-app-installs/))를 사면 설치는 **140~330건**이고, 중앙값 RPI로는 첫 달 매출이 $50~110이다. 공개된 획득 비용도 같은 결론이다. Hint의 CPA는 $30이고 ([House of Marketers](https://houseofmarketers.com/hint-app-influencer-marketing-case-study/)), Puff Count의 CAC는 $20~24였다 ([beehiiv](https://saas-accelerator.beehiiv.com/p/my-5-step-process-to-scale-past-10k-mrr)). $500으로는 유료 결제 17~25건을 산다. 연간 $49.99(수수료 15% 차감 후 약 $42.5)로 팔리면 첫 결제만으로 광고비를 겨우 회수하지만, 월간 $7.99(순 약 $6.8)로 팔리면 회수에 4개월 이상 걸린다 [추론]. 그래서 유료 광고는 첫 달 손익을 맞추는 도구가 될 수 없다. 이긴 포맷을 확인하고 키우는 도구로만 쓸 수 있다.
+
+해외 운세 앱의 전환 기준치는 따로 공개된 것이 없어 인접 카테고리로 가늠할 수밖에 없다. Health & Fitness는 다운로드 대비 유료 전환(D35)이 2.9%, RPI(D60)가 $0.66이다. 하드 페이월 앱의 다운로드 대비 유료 전환 중앙값은 10.7%로 프리미엄 구조(2.1%)의 약 5배다 ([RevenueCat SOSA 2026](https://www.revenuecat.com/state-of-subscription-apps)). Fatesaid는 무료 핵심(퀴즈, 검사×대화 카드 1장)이 있는 프리미엄 구조라 하드 페이월 수치를 그대로 기대하면 안 된다. 다만 "온보딩 끝에 연간 체험 페이월을 분명히 보여 주되 닫을 수 있게 둔다"는 절충안으로 RPI를 중앙값보다 끌어올릴 여지는 있다 [추론, 검증 필요]. 기간 기준치도 있다. 신규 구독 앱의 17.3%만 2년 안에 월 $1K MRR에 도달하고, 도달한 앱의 중앙값은 58일(Social & Lifestyle은 45일)이다 ([RevenueCat SOSA 2026](https://www.revenuecat.com/state-of-subscription-apps)). 될 앱은 빨리 된다는 뜻이다. 그러니 **출시 60~90일 안에 월 $1K 근처에 닿지 못하면 채널이나 포맷을 바꾸라는 신호**로 읽는 편이 맞다 [추론].
+
+한국 쪽 숫자는 상대적으로 덜 가파르다. 월 ₩500만은 리포트(₩22,000) 약 227건, 또는 구독(₩11,000) 약 455명이다. 포스텔러의 "가입자 대비 구매율 8%"를 대입하면 활성 가입자 3천~6천 명 규모에서 가능한 목표다 [추론]. 한국 사례가 구독보다 건별 판매로 먼저 돈을 벌었다는 점, 그리고 12~2월 신년 특수가 바로 앞이라는 점을 함께 보면, **3개월 안에 기준선을 넘길 현실적인 경로는 한국 신년 리포트 + 해외 연간 구독의 혼합**이다.
+
+## 가져올 것과 분석만 하고 버릴 것
+
+아래 표의 "바로 적용"은 Fatesaid 원칙(PRODUCT.md, CLAUDE.md 압박 규칙)과 사용자 결정(스토어 공개 전 게시 금지, Reddit 쓰기 자동화 금지, AI 음성 표기, AI 가짜 후기 금지)을 통과하는 것만 담았다.
+
+| 구분 | 무엇을 | 근거 사례 | Fatesaid식 변형·조건 |
+|---|---|---|---|
+| **바로 적용** | 포맷 하나를 정해 매일 반복 | Co-Star 257회, Starcrossed 별자리별 연재, Puff Count 재현 | 일간·띠·오행별 연재. `hook-analysis.md`의 "Part N" 연재형과 같은 방향. 스토어 공개 조건이 충족되기 전에는 제작만 하고 쌓아 둔다 |
+| **바로 적용** | Threads·릴스 대량 게시 | 젠디(100개 중 1개 바이럴) | 반자동만 한다. AI가 초안을 쓰고 사람이 검수해 올리며, AI 보조를 밝힌다. 자동 API 게시는 스팸 정책 위험이 있고 Reddit 방침과도 어긋나므로 쓰지 않는다 |
+| **바로 적용** | 공유 카드를 캐릭터·서사형으로 강화 | 포스텔러 공유율 35%, 타이트사주 웹툰, 헬로우봇 캐릭터 | 이미 있는 공유 카드에 캐릭터와 한 줄 서사를 더한다. "끌리는 사람 유형" 카드(소울메이트 스케치의 윤리적 변형)를 만들되, "정해진 운명의 상대" 같은 단정은 쓰지 않는다 |
+| **바로 적용** | 친구가 가입하면 열리는 궁합 | Co-Star $3/가입 시 무료, Pattern 하루 3회 | 궁합 리포트 $6.99는 유지한다. 상대가 가입하면 기본 궁합을 무료로 열어 초대 루프를 만든다 |
+| **바로 적용** | 연간 플랜에만 체험 + 첫 페이월 집중 | Moonly(+47%), RevenueCat(긴 체험일수록 전환 높음) | 연 $49.99에 7일 이상 체험. 광고·크리에이터 트래픽은 연간 플랜으로 보낸다 |
+| **바로 적용** | 한국은 건별 리포트를 앞세운 재구매 사다리 | 타이트사주, 포스텔러, 젠디 | 신년(2027) 리포트 → 궁합 → 딥 리포트 순서. 진입가가 낮은 상품(₩3,000~5,000대)은 검토 대상이다 [추론] |
+| **바로 적용** | 시즌 ASO | 점신 "2027 정미년" | 한국어 스토어 제목·부제에 2027 정미년·신년운세를 11월 안에 반영. 영어·스페인어는 Lunar New Year·입춘 훅 |
+| **바로 적용** | 신뢰를 차별점으로 | 천명(환불 보장), Nebula 해지 불만의 반대편 | "앱 설정에서 언제든 해지"를 페이월과 스토어 문구에 쓴다. 우리는 스토어 IAP만 써서 구조적으로 위험이 작다 |
+| **바로 적용** | 유료는 이긴 포맷 증폭에만 | Puff Count, RotateProduct(하루 $20 Meta) | `paid-plan.md`의 $200 Spark/Meta 트래픽 설계를 그대로 쓴다. 오가닉 상위 영상만 증폭한다 |
+| **선택지(사용자 결정 필요)** | K-culture 각도 | saju.com(K-pop 아이돌 포지셔닝), Korean Saju 앱(K-drama 팬 타깃), `competitors.md`의 #kdrama 해시태그 | 영어권 사주 시장에 리더가 없다는 근거는 있다 ([Trends.vc](https://trends.vc/ai-fortune-telling-apps-the-margin-flip-coffee-cup-readings-korean-playbook/)). 그러나 매출 효과를 공개한 곳은 없고, 실존 연예인 명식에는 퍼블리시티 위험이 있다. 보류 결정을 다시 열지는 사용자가 정한다 |
+| **선택지(사용자 결정 필요)** | 웹 결제·웹투앱 퍼널 | Nebula 웹 이용자 1,500만 | 지금 웹은 Q&A 리드젠 전용이다. 도입하면 해지 경로를 한 곳으로 모아야 한다 |
+| **분석만, 채택 불가** | 가짜 할인 타이머, "3%만 가진 표식" 희소성, 이탈 시 숨겨진 €1 가격 | Nebula 웹 퍼널 ([FunnelFox](https://blog.funnelfox.com/web2app-funnel-patterns-2026/)) | 가짜 카운트다운·희소성 금지 |
+| **분석만, 채택 불가** | 퀴즈 속 죽음 문항, 임신 예측 훅 | Nebula 퀴즈, Astrotalk ([Motion](https://motionapp.com/library/astrotalk)) | 건강·죽음 예측 금지 |
+| **분석만, 채택 불가** | "회의론자가 믿게 된" 연출 후기 | Astrotalk | 가짜 후기·AI 가짜 후기 금지 |
+| **분석만, 채택 불가** | 감정이 가장 고조될 때 끊는 페이월, 막연한 감정 예언 훅 | Pocket Insight ([SGE](https://www.socialgrowthengineers.com/63m-views-later-this-dead-app-still-makes-70k-a-month)) | 취약 사용자 원칙과 부정 예측 미끼 금지에 어긋남 |
+| **분석만, 채택 불가** | 저가 체험 뒤 고지 없는 고액 갱신, 해지 방해 | Nebula 불만 ([sikayetvar](https://www.sikayetvar.com/en/nebula-horoscope-astrology-us/nebula-keeps-charging-45-after-subscription-cancellation)) | 해지 다크패턴 금지. FTC가 ROSCA로 단속을 계속하고 있다 ([Cooley](https://www.cooley.com/news/insight/2024/2024-04-11-ftc-enhances-scrutiny-of-subscriptions-and-negative-option-features-under-rosca)) |
+| **분석만, 채택 불가** | 재회 상품("그 사람도 나를 생각할까?"), 연말 이별·재회운 | 타이트사주 '재회자미두수' ([서플](https://supple.kr/news/cmsfv0llz003ok37unrnqgyvx)), 포스텔러 연말 테마 | 헤어진 상대의 마음·재회는 다루지 않는다. 수요가 크다는 증거가 있어도 버린다 |
+| **분석만, 채택 불가** | 부적(액운을 막는다는 불안 해소형 상품) | 점신 매출원 | 부정 예측을 미끼로 판매로 이어지는 구조 |
+| **분석만, 채택 불가** | '29금 사주', 출처 없는 "세계 1위" 문구 | 타이트사주, Hint 대행사 문구 | 브랜드·연령등급 불일치, 허위·과장 광고 위험 |
+
+남은 Nebula 사례 하나는 미확인이다. 검색 요약에는 FTC가 2026-06에 OBRIO를 구독 고지 부족과 해지 방해로 제소했다고 나오지만, FTC 보도자료로 확인하지 못했다. 그래서 위 표에서는 근거로 쓰지 않았다.
+
+### iOS 1.2.0 심사와 Apple 4.3(b) 점술 조항
+
+Trends.vc는 Apple 가이드라인 4.3(b)(스팸·과포화 카테고리)가 "fortune telling"을 명시하며, 이미 올라와 있는 앱도 삭제될 수 있다고 경고한다 ([Trends.vc](https://trends.vc/ai-fortune-telling-apps-the-margin-flip-coffee-cup-readings-korean-playbook/)). Fatesaid는 iOS 1.0이 2.3.1(a)로 반려된 이력이 있고 지금 1.2.0이 심사 중이다. 그러니 이 조항은 이론상의 위험이 아니다. 심사 노트와 스토어 첫 화면은 "자기이해 심리검사 + 개인 맞춤 상담 + 자체 만세력 엔진"처럼 템플릿 운세 앱과 다른 점을 앞세우고, "fortune telling"이라는 표현은 줄이는 편이 안전하다. 마케팅 소재도 같은 방향이어야 심사 문구와 실제 광고가 어긋나지 않는다. 조항 원문은 [App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/)에서 직접 확인해야 한다. 이번 조사는 Trends.vc의 인용만 봤다.
+
+## 11월은 포맷을 찾고, 12~2월 신년 특수에 키운다
+
+아래 실행안은 사례와 계산에서 나온 후보이고, 실행 여부는 사용자가 정한다. 게시는 사용자가 정한 스토어 공개 조건(iOS 1.2.0 통과)이 충족된 뒤에 시작하고, 그 전에는 제작과 ASO만 한다.
+
+**1개월안(11월): 포맷 탐색 + 신년 준비.** 첫 주에는 4.3(b)에 대비해 스토어 문구를 점검하고, 한국어 스토어 제목·부제에 "2027 정미년 신년운세"를 넣는다. 연간 7일 이상 체험 페이월과 해지 안내 문구도 확인한다. 둘째 주부터는 TikTok(en/es)과 Threads·릴스(ko)에 포맷 2~3개를 하루 1~3개씩 올린다. 일간·띠별 연재, 유형 카드 공개, 심리 주제(애착 유형 등)와 일간 유형을 연결한 훅이다. `adjacent-apps.md`의 해시태그 규모 차이가 마지막 훅의 근거다. 셋째·넷째 주에는 저장·공유율이 중앙값의 5배를 넘는 영상만 골라 `paid-plan.md` R1~R2($130)로 증폭한다. 같은 달에 궁합 초대 무료화와 캐릭터형 공유 카드 개선을 TODO로 올린다. 이 달의 성공 기준은 매출이 아니다. **설치당 매출(RPI) 실측, 이긴 포맷 1개, 공유 카드 경유 설치 비율**을 얻는 것이다.
+
+**3개월안(11~1월): 신년 특수를 수확한다.** 12월에는 한국 2027 신년 리포트를 건별 상품의 주력으로 띄우고, 연말 Wrapped(12/1)와 궁합 초대를 묶어 두 번째 설치를 만든다. 오가닉으로 이긴 포맷은 TikTok Spark와 Meta 릴스로 증폭하고, 남은 예산은 월 $500 안에서 연간 플랜 트래픽에만 쓴다. 1월부터 2월 초에는 영어·스페인어권에 Lunar New Year·입춘 훅을 쓰고, Sanctuary처럼 날짜에 맞춘 보도자료와 App Store 피처링 요청을 시도한다. 중남미(es-419)는 경쟁 콘텐츠가 거의 없다(`competitors.md`)는 점을 이용해 소재 테스트 비용이 싼 시장으로 쓴다. 단, LTV도 낮으니 지역 가격을 함께 본다. 판단 지점은 출시 60~90일 시점이다. 월 $1K MRR 근처에 닿지 못하면 채널이나 포맷을 바꾼다 [추론, RevenueCat 기준치 역산].
+
+## Conclusion
+
+1개월 안에 월 ₩500만은 세 조건이 동시에 맞을 때만 가능하다. 첫째, 11월 안에 수백만 뷰 영상이 최소 하나 나와 해외 설치가 수천 건 단위로 들어와야 한다. 둘째, 연간 체험 페이월로 RPI가 중앙값 $0.34의 2~3배($0.7~1.0)로 올라가야 한다. 셋째, 한국 신년 리포트가 월 100건 이상 팔려야 한다. 사례로 보면 이 조합이 가장 가까웠던 곳은 오디언스를 이미 가진 Starcrossed나, 공유를 전제로 설계된 2017년의 포스텔러였다. 무명 앱이 첫 달에 이를 재현했다는 증거는 없다. 그러니 1개월 목표는 매출이 아니라 "이긴 포맷 하나와 실측 RPI"로 다시 정의하는 편이 정직하다. 그렇게 하면 12~2월 신년 특수가 실제 기준선을 넘을 수 있는 첫 창이 된다 [추론].
+
+조사에서 가장 의외였던 점은 Fatesaid의 차별점인 "AI 상담 + 구독"이 초기 매출 속도에서는 오히려 약점이라는 것이다. Fatesaid와 가장 비슷한 사주핑은 인당 40회 대화라는 높은 참여도에도 3개월 누적 ₩1,000만에 그쳤다. 반면 빨리 큰 한국 사례들은 모두 공유되는 결과물과 건별 판매로 돈을 벌었다. 상담과 구독은 사용자를 붙잡아 두는 장치로 쓰고, 첫 유입과 첫 매출은 공유 카드·궁합·신년 리포트가 담당하도록 순서를 바꾸는 것이 사례가 가리키는 방향이다. 이번 조사로 확인하지 못한 것도 남아 있다. Meta Ad Library와 TikTok Creative Center의 실제 광고 소재, 운세 카테고리 전용 CPI와 전환율, 타이트사주와 포스텔러의 건당 가격이다. 광고비를 늘리기 전에 사용자가 브라우저로 이 셋을 직접 확인하는 것이 다음 단계다.
