@@ -68,19 +68,22 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
     },
     7: {
       turn: 7,
-      question: "¿Por qué sientes el trabajo tan pesado?",
+      // Los turnos 2 y 8 ya ofrecen «la cantidad de trabajo», así que aquí se pregunta qué cambió cuando empezó el peso (2026-10-27).
+      question: "¿Qué cambió cuando empezó este peso?",
       options: [
-        o("Hay demasiado", "Pesa porque hay demasiado.", "la cantidad"),
-        o("No le veo sentido", "Pesa porque cuesta verle el sentido.", "el sentido"),
+        o("Se desdibujó el sentido del trabajo", "Lo primero que se fue apagando fue el porqué.", "el sentido del trabajo que se desdibujó"),
+        o("Cambió mi ritmo de vida", "El compás que movía tus días cambió en esa época.", "un cambio en tu ritmo de vida"),
+        o("Nada que pueda señalar", "No aparece un detonante concreto.", "un cambio difícil de señalar"),
       ],
     },
     8: {
       turn: 8,
       question: "¿Qué es lo que más energía te quita?",
       options: [
-        o("La cantidad de trabajo", "El montón que no deja de crecer es la mayor fuga.", "el montón de trabajo que no para"),
+        // «La cantidad de trabajo» ya es opción del turno 2; aquí se quita (demand_drain: trabajo emocional, lo que no controlas).
         o("Gestionar emociones", "Manejar lo que sientes es lo que más desgasta.", "gestionar emociones"),
         o("Que nada salga como quiero", "Lo que queda fuera de tu mano es lo que más desgasta.", "que nada salga como quieres"),
+        o("La presión de hacerlo bien", "Cumplir con lo esperado es por donde se te va la fuerza.", "la presión de hacerlo bien"),
       ],
     },
     10: {
@@ -89,7 +92,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       question: '¿De dónde viene la sensación de "no debo descansar"?',
       questionNoQuote: "Si algo te frena a la hora de descansar, ¿de dónde crees que viene?",
       options: [
-        o("De dentro de mí", "Muchas veces es una vara de medir que te pusiste tú.", "de ti mismo"),
+        o("De dentro de mí", "Muchas veces es una vara de medir que te pusiste tú.", "de ti"),
         o("De lo que pensarán los demás", "Una mirada de fuera se ha vuelto la vara de medir.", "lo que pensarán los demás"),
       ],
     },
@@ -199,7 +202,7 @@ export const MODULE3_SCRIPT_ES: ModuleScript = {
       "Al imaginar que esa sensación se fuera, lo que aparece es {g11}, y aun así {g13} te da un poco de energía.",
       "Cuando se cuelan pensamientos del trabajo, lo que sueles hacer es {g15}; sobre quién sabe cómo estás, la respuesta es {g17}; y el primer paso pequeño que elegiste para recuperar energía es {g19}.",
     ],
-    perspectiveLine: "Lo que te dijiste a ti mismo aquel primer día también lo guardo, con tus palabras.",
+    perspectiveLine: "Lo que le dijiste a tu yo de aquel primer día también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
   },
 };

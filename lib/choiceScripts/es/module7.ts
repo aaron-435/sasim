@@ -176,7 +176,7 @@ export const MODULE7_SCRIPT_ES: ModuleScript = {
       turn: 20,
       question: "Si recuerdas la primera vez que alguien te dijo «eres demasiado sensible», ¿cómo crees que estabas?",
       options: [
-        o("En silencio", "Guardándote las palabras sin hacer ruido.", "estar callado"),
+        o("En silencio", "Guardándote las palabras sin hacer ruido.", "guardar silencio"),
         o("Con dolor", "Se nota dónde cayeron las palabras.", "verse dolido"),
         o("No lo recuerdo", "Ese recuerdo se ha ido desdibujando con el tiempo.", "un recuerdo que se ha alejado"),
       ],

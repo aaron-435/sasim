@@ -97,7 +97,7 @@ export const MODULE5_SCRIPT_ES: ModuleScript = {
       question: "Cuando el resultado no llega al listón, ¿qué es lo que más te pesa?",
       options: [
         o("Que digan que el trabajo es malo", "Que digan que el trabajo es malo es lo que más te pesa.", "una mala opinión del trabajo"),
-        o("Que digan que no valgo", "Que digan que no vales es lo que más te pesa.", "una mala opinión de ti mismo"),
+        o("Que digan que no valgo", "Que digan que no vales es lo que más te pesa.", "una mala opinión sobre ti"),
         o("Aún no lo sé", "Lo que más te pesa aún no está claro.", "algo que todavía no tiene palabras"),
       ],
     },

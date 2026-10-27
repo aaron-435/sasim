@@ -1,5 +1,7 @@
 /**
  * lib/choiceScripts/en/module12.ts — Module 12 (new beginnings) fixed script, English. Adapted from ../module12.ts.
+ * Non-branching: from turn 2 on, every line must fit a breakup, a work/school change or a move alike, so it says
+ * "new everyday life" rather than "the new place" (2026-10-27). A place stays only as one option (turn 19).
  */
 
 import type { ModuleScript, ScriptOption } from "../types";
@@ -32,7 +34,7 @@ export const MODULE12_SCRIPT_EN: ModuleScript = {
       turn: 3,
       question: "When did that change feel most real?",
       options: [
-        o("When I was sorting through my things", "The change felt most real while sorting through your things.", "sorting through your things"),
+        o("When I first told people", "Saying it out loud is when the change became real.", "first telling the people around you"),
         o("When I felt the gap in my routine", "It felt most real when you felt the gap in your routine.", "feeling the gap in your routine"),
         o("The first day of my new everyday life", "It felt most real the first day of your new everyday life.", "the first day of the new everyday life"),
       ],
@@ -61,7 +63,7 @@ export const MODULE12_SCRIPT_EN: ModuleScript = {
       question: "If thoughts of the past do come up, when do they mostly come?",
       options: [
         o("When I'm alone", "They come up when a quiet gap opens.", "when you're alone"),
-        o("When the new place feels off", "When the present feels off, the past comes to mind.", "when the new place feels off"),
+        o("When my days feel off", "When the present feels off, the past comes to mind.", "when your days feel off"),
         o("Out of nowhere", "They cut in without warning.", "out of nowhere, at no particular time"),
       ],
     },
@@ -134,7 +136,7 @@ export const MODULE12_SCRIPT_EN: ModuleScript = {
       question: "In that undecided time, what do you do most often?",
       options: [
         o("Pack my schedule tight", "In that time, you pack your schedule tight.", "packing your schedule tight"),
-        o("Go back to the old place", "In that time, you go back to the old place.", "going back to the old place"),
+        o("Lean on what's familiar", "In that time, you drift toward what you already know.", "leaning on what's familiar"),
         o("Just watch", "In that time, what you do most often is just watch.", "just watching"),
       ],
     },
@@ -150,26 +152,26 @@ export const MODULE12_SCRIPT_EN: ModuleScript = {
       turn: 17,
       question: "Where does the most strength come from right now?",
       options: [
-        o("People who stayed at the old place", "Right now, people who stayed at the old place give you the most strength.", "people who stayed at the old place"),
-        o("People I met at the new place", "Right now, people you met at the new place give you the most strength.", "people you met at the new place"),
+        o("Someone who's been with me a long time", "A long-standing bond is what holds you up right now.", "someone who's been by your side a long time"),
+        o("Someone I met after the change", "Your strength comes from the newer connections.", "someone you met after the change"),
         o("People going through the same period", "People going through the same period give you the most strength right now.", "people going through the same period"),
       ],
     },
     18: {
       turn: 18,
       quote: true,
-      question: "Has even one spot in the new place started to feel familiar?",
+      question: "Has anything in your new everyday life started to feel familiar?",
       options: [
-        o("Yes", "There's one place your feet head to often.", "a familiar place has appeared"),
-        o("One is starting to", "The strangeness is thinning, little by little.", "a familiar place is forming"),
-        o("Not yet", "You're still in a guest-like stretch.", "no familiar place yet"),
+        o("Yes", "Something you can lean on has settled in.", "something has started to feel familiar"),
+        o("Something is starting to", "The strangeness is thinning, little by little.", "something is starting to feel familiar"),
+        o("Not yet", "You're still in a guest-like stretch.", "nothing feels familiar yet"),
       ],
     },
     19: {
       turn: 19,
-      question: "What one scene would make you feel \"this is my place\"?",
+      question: "What one scene would make this new everyday life feel like yours?",
       options: [
-        o("A regular spot", "It would be enough to have one regular spot.", "one regular spot"),
+        o("A place I go often", "It would be enough to have one place you go often.", "one place you go often"),
         o("One comfortable person", "It would be enough to have one comfortable person.", "one comfortable person"),
         o("A routine of my own", "It would be enough to have one routine of your own.", "one routine of your own"),
       ],
@@ -185,7 +187,7 @@ export const MODULE12_SCRIPT_EN: ModuleScript = {
     },
     21: {
       turn: 21,
-      question: "Is there something you'd like to say to the you of the last day before the change?",
+      question: "Is there something you'd like to say to the you of the day the change was just beginning?",
     },
   },
   checkpoint: [
@@ -197,9 +199,9 @@ export const MODULE12_SCRIPT_EN: ModuleScript = {
     summary: [
       "The first feeling after the change was closest to {g4}, and thoughts of the past mostly come {g6}.",
       "The standard for how quickly you settle in is {g11}, and holding on to what ended seems to you like {g13}.",
-      "In the undecided time, what you most often do is {g15}, your strength right now comes from {g17}, and you'd like to start putting down roots in the new place with {g19}.",
+      "In the undecided time, what you most often do is {g15}, your strength right now comes from {g17}, and you'd like to start anchoring your new everyday life with {g19}.",
     ],
-    perspectiveLine: "I'll also keep the words you wrote to the you of the last day before the change, just as you wrote them.",
+    perspectiveLine: "I'll also keep the words you wrote to the you of the day the change began, just as you wrote them.",
     finalLine: "Thank you for answering so thoughtfully. Now I'll bring together your saju, your quiz and everything you shared, and write your report.",
   },
 };

@@ -68,19 +68,22 @@ export const MODULE3_SCRIPT_EN: ModuleScript = {
     },
     7: {
       turn: 7,
-      question: "Why does the work feel so heavy to you?",
+      // Turns 2 and 8 already offer "the amount of work", so this asks what changed when the heaviness began (2026-10-27).
+      question: "Around the time this heaviness started, what changed?",
       options: [
-        o("There's too much of it", "So it feels heavy because there's so much of it.", "quantity"),
-        o("I can't see the point", "So it feels heavy because the point is hard to see.", "meaning"),
+        o("The point of the work blurred", "The reason for doing it faded first.", "the point of the work blurring"),
+        o("My daily rhythm shifted", "The beat that kept your days moving changed then.", "a shift in your daily rhythm"),
+        o("Nothing I can pin down", "No particular trigger comes to mind.", "a change you can't pin down"),
       ],
     },
     8: {
       turn: 8,
       question: "What drains your energy the most?",
       options: [
-        o("The amount of work", "The pile that keeps growing is the biggest leak.", "a pile that keeps growing"),
+        // "The amount of work" is already a turn-2 option, so it is left out here (demand_drain: emotional labor, things out of your control).
         o("Handling emotions", "Managing feelings takes the most.", "handling emotions"),
         o("Things not going my way", "What's out of your hands takes the most.", "things not going your way"),
+        o("Pressure to do well", "Living up to expectations is where your strength leaks out.", "the pressure to do well"),
       ],
     },
     10: {

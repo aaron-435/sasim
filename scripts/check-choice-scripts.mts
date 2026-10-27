@@ -11,12 +11,15 @@
  * 21턴 보기 없음, 반응 15~40자·물음표 없음, gist 비어 있지 않음(필수 턴),
  * 템플릿 {gN} 참조 유효성, 금지어(위로 공식·조언·예측), 위기 문구,
  * 이웃 턴 반응의 "~네요/~군요" 연속, 같은 질문 반응의 문자 유사도(바꿔치기 의심),
+ * es는 독자 성별 표지(lib/esGender.ts, 리포트와 같은 목록 + 챗 보조 목록),
  * 모듈 안 반응 중복. 끝맺음 반복은 경고로만 센다.
  * ------------------------------------------------------------------
  */
 
+import { getScriptCommon } from "../lib/choiceScripts/common.ts";
 import { getModuleScript } from "../lib/choiceScripts/index.ts";
 import type { ModuleScript, ScriptOption } from "../lib/choiceScripts/types.ts";
+import { matchEsGenderedReader } from "../lib/esGender.ts";
 
 const ALL_MODULE_IDS = Array.from({ length: 12 }, (_, i) => `module${i + 1}`);
 const CHOICE_TURNS = [...Array.from({ length: 8 }, (_, i) => i + 1), ...Array.from({ length: 12 }, (_, i) => i + 10)];
@@ -104,6 +107,8 @@ function checkText(moduleId: string, where: string, text: string, label: string)
     if (re.test(text)) err(moduleId, where, `${label}에 ${kind} 표현(${re.source.slice(0, 20)}…): "${text}"`);
   }
   if (CRISIS_PATTERN.test(text)) err(moduleId, where, `${label}에 위기 문구: "${text}"`);
+  const gendered = LOCALE === "es" ? matchEsGenderedReader(text) : null;
+  if (gendered) err(moduleId, where, `${label}에 독자 성별 표지 "${gendered}"(성별 중립으로): "${text}"`);
 }
 
 function checkOption(moduleId: string, turn: number, idx: number, opt: ScriptOption) {
@@ -249,5 +254,15 @@ const args = process.argv.slice(2);
 const targets = args.length ? args : ALL_MODULE_IDS;
 console.log(`고정 스크립트 린트(${LOCALE}): ${targets.join(", ")}`);
 for (const id of targets) checkModule(id);
+// 모든 모듈이 쓰는 공통 문구(직접 쓴 답 반응 풀, 인용 줄, 인사 등). 금지어 목록은 대화 문구용이라("안녕하세요"가 조언에 걸림) 언어 표지만 본다.
+const common = getScriptCommon(LOCALE);
+console.log("- common");
+for (const [key, value] of Object.entries(common)) {
+  const lines = typeof value === "string" ? [value] : [...value];
+  lines.forEach((line, i) => {
+    const gendered = LOCALE === "es" ? matchEsGenderedReader(line) : null;
+    if (gendered) err("common", lines.length > 1 ? `${key}[${i}]` : key, `독자 성별 표지 "${gendered}"(성별 중립으로): "${line}"`);
+  });
+}
 console.log(`\n오류 ${errors}개, 경고 ${warnings}개`);
 process.exit(errors > 0 ? 1 : 0);

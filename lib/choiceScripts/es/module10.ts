@@ -41,7 +41,7 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
       question: "Cuando se te dispersa, ¿qué sentimiento se acerca más al tuyo?",
       options: [
         o("Frustración", "Lo primero es una sensación de bloqueo.", "la frustración"),
-        o("Excitación inquieta", "Una energía que se acelera en vez de frenarse.", "la excitación inquieta"),
+        o("Inquietud acelerada", "Una energía que se acelera en vez de frenarse.", "la inquietud acelerada"),
         o("Autorreproche", "Las primeras palabras van dirigidas contra ti.", "el autorreproche"),
       ],
     },
@@ -178,7 +178,7 @@ export const MODULE10_SCRIPT_ES: ModuleScript = {
       question: "Cuando algo te absorbía y se te iba el tiempo, ¿cómo eras?",
       options: [
         o("Con los ojos brillantes", "Un brillo que los demás podían ver.", "unos ojos brillantes"),
-        o("En silencio total", "Te sumergías hondo sin hacer ruido.", "estar muy callado"),
+        o("En silencio total", "Te sumergías hondo sin hacer ruido.", "guardar silencio del todo"),
         o("No lo recuerdo bien", "La escena se ha desdibujado, aunque queda el tiempo perdido.", "un recuerdo borroso"),
       ],
     },

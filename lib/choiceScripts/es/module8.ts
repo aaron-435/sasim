@@ -40,7 +40,7 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
       turn: 4,
       question: "En ese momento, ¿qué se parece más a lo que sientes?",
       options: [
-        o("Inquietud", "Más cerca de no poder quedarte quieto.", "la inquietud"),
+        o("Inquietud", "Más cerca de que el cuerpo no te deje parar.", "la inquietud"),
         o("Ansiedad", "Ya te adelantas a lo que viene.", "la ansiedad"),
         o("Resentimiento", "Queda algo sin resolver.", "el resentimiento"),
       ],
@@ -175,9 +175,9 @@ export const MODULE8_SCRIPT_ES: ModuleScript = {
       turn: 20,
       question: "Esta noche, cuando apagues la luz y te acuestes, ¿cómo crees que estarás?",
       options: [
-        o("Sin energía", "Acostarte con el peso del día encima.", "estar agotado"),
+        o("Sin energía", "Acostarte con el peso del día encima.", "quedarte sin energía"),
         o("Con la cabeza llena", "Parece una cabeza que sigue ocupada.", "tener la cabeza llena"),
-        o("Ojalá en calma", "La escena que deseas fue la primera en venir.", "desear estar tranquilo"),
+        o("Ojalá en calma", "La escena que deseas fue la primera en venir.", "desear estar en calma"),
       ],
     },
     21: {

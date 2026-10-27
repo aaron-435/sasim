@@ -1,5 +1,7 @@
 /**
  * lib/choiceScripts/es/module12.ts — Módulo 12 (nuevos comienzos) guion fijo, español (tuteo). Adaptado de ../module12.ts.
+ * Sin ramas: desde el turno 2 todo debe valer igual para una separación, un cambio de trabajo/estudios o una mudanza,
+ * así que dice «tu nueva rutina» y no «el sitio nuevo» (2026-10-27). El lugar queda solo como una opción (turno 19).
  */
 
 import type { ModuleScript, ScriptOption } from "../types";
@@ -32,7 +34,7 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
       turn: 3,
       question: "¿Cuándo se te hizo más real ese cambio?",
       options: [
-        o("Al recoger mis cosas", "El cambio se te hizo más real al recoger tus cosas.", "recoger tus cosas"),
+        o("Al contárselo a alguien por primera vez", "Al decirlo en voz alta, el cambio se volvió real.", "contarlo por primera vez"),
         o("Al notar el vacío en mi rutina", "Se te hizo más real al notar el vacío en tu rutina.", "notar el vacío en tu rutina"),
         o("El primer día de mi nueva rutina", "Se te hizo más real el primer día de tu nueva rutina.", "el primer día de la nueva rutina"),
       ],
@@ -61,7 +63,7 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
       question: "Si te vienen pensamientos del pasado, ¿cuándo suelen llegar?",
       options: [
         o("Cuando estoy a solas", "Suben cuando se abre un hueco de silencio.", "cuando estás a solas"),
-        o("Cuando el sitio nuevo no encaja", "Cuando el presente no encaja, aparece el pasado.", "cuando el sitio nuevo no encaja"),
+        o("Cuando mis días no encajan", "Cuando el presente no encaja, aparece el pasado.", "cuando tus días no encajan"),
         o("De repente, sin motivo", "Pensamientos que se cuelan sin avisar.", "de repente, sin un momento especial"),
       ],
     },
@@ -134,7 +136,7 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
       question: "En ese tiempo sin decidir, ¿qué haces con más frecuencia?",
       options: [
         o("Lleno la agenda hasta arriba", "En ese tiempo llenas la agenda hasta arriba.", "llenar la agenda hasta arriba"),
-        o("Vuelvo al sitio de antes", "En ese tiempo vuelves al sitio de antes.", "volver al sitio de antes"),
+        o("Me apoyo en lo conocido", "En ese tiempo te vas hacia lo que ya te resulta conocido.", "apoyarte en lo conocido"),
         o("Solo observo", "En ese tiempo, lo que más haces es observar.", "solo observar"),
       ],
     },
@@ -150,28 +152,28 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
       turn: 17,
       question: "¿De dónde viene ahora la mayor fuerza?",
       options: [
-        o("De quienes se quedaron en el sitio de antes", "Ahora, quienes se quedaron en el sitio de antes te dan más fuerza.", "quienes se quedaron en el sitio de antes"),
-        o("De quienes conocí en el sitio nuevo", "Ahora, quienes conociste en el sitio nuevo te dan más fuerza.", "quienes conociste en el sitio nuevo"),
+        o("De quienes están conmigo desde siempre", "Un vínculo de muchos años es lo que hoy te sostiene.", "quienes están contigo desde siempre"),
+        o("De quienes conocí tras el cambio", "Los vínculos nuevos son de donde sacas fuerza ahora.", "quienes conociste tras el cambio"),
         o("De quienes pasan por la misma etapa", "Quienes pasan por la misma etapa te dan más fuerza ahora.", "quienes pasan por la misma etapa"),
       ],
     },
     18: {
       turn: 18,
       quote: true,
-      question: "¿Ya hay al menos un lugar del sitio nuevo que te resulte familiar?",
+      question: "¿Hay ya algo de tu nueva rutina que te resulte familiar?",
       options: [
-        o("Sí", "Hay un lugar al que van tus pasos a menudo.", "ya hay un lugar familiar"),
-        o("Uno se va formando", "La extrañeza se va aclarando poco a poco.", "se está formando un lugar familiar"),
-        o("Todavía no", "Sigues en una etapa como de invitado.", "todavía ningún lugar familiar"),
+        o("Sí", "Ya hay algo en lo que apoyarte.", "ya hay algo familiar"),
+        o("Algo se va formando", "La extrañeza se va aclarando poco a poco.", "algo familiar se va formando"),
+        o("Todavía no", "Todavía vives esta etapa como de visita.", "todavía nada familiar"),
       ],
     },
     19: {
       turn: 19,
-      question: "¿Qué escena bastaría para que pensaras «este es mi sitio»?",
+      question: "¿Qué escena bastaría para que tu nueva rutina se sintiera tuya?",
       options: [
-        o("Un lugar de siempre", "Bastaría con tener un lugar de siempre.", "un lugar de siempre"),
+        o("Un lugar al que vaya a menudo", "Bastaría con tener un lugar al que ir a menudo.", "un lugar al que ir a menudo"),
         o("Una persona con quien esté a gusto", "Bastaría con tener una persona con quien estés a gusto.", "una persona con quien estés a gusto"),
-        o("Una rutina que sea solo mía", "Bastaría con tener una rutina que sea solo tuya.", "una rutina que sea solo tuya"),
+        o("Un hábito que sea solo mío", "Bastaría con tener un hábito que sea solo tuyo.", "un hábito que sea solo tuyo"),
       ],
     },
     20: {
@@ -185,7 +187,7 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
     },
     21: {
       turn: 21,
-      question: "¿Hay algo que el tú de hoy quiera decirle al tú del último día antes del cambio?",
+      question: "¿Hay algo que el tú de hoy quiera decirle al tú del día en que empezaba el cambio?",
     },
   },
   checkpoint: [
@@ -197,9 +199,9 @@ export const MODULE12_SCRIPT_ES: ModuleScript = {
     summary: [
       "El primer sentimiento tras el cambio se parecía a {g4}, y los pensamientos del pasado suelen llegar {g6}.",
       "El listón de lo rápido que se espera que te asientes es {g11}, y aferrarte a lo que terminó te parece {g13}.",
-      "En el tiempo sin decidir, lo que más haces es {g15}, tu fuerza de ahora viene de {g17}, y querrías empezar a echar raíces en el sitio nuevo con {g19}.",
+      "En el tiempo sin decidir, lo que más haces es {g15}, tu fuerza de ahora viene de {g17}, y para anclar tu nueva rutina querrías empezar por {g19}.",
     ],
-    perspectiveLine: "Lo que le dijiste a tu yo del último día antes del cambio también lo guardo, con tus palabras.",
+    perspectiveLine: "Lo que le dijiste a tu yo del día en que empezó el cambio también lo guardo, con tus palabras.",
     finalLine: "Gracias por responder con tanto cuidado. Ahora reuniré tu saju, tu test y todo lo que me has contado para escribir tu informe.",
   },
 };

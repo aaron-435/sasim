@@ -179,7 +179,7 @@ export const MODULE9_SCRIPT_ES: ModuleScript = {
       question: "Imagínate cuando asumiste por primera vez ese lugar. ¿Cómo crees que eras?",
       options: [
         o("Muy formal, como un adulto", "Comportándote como un adulto.", "estar muy formal"),
-        o("En silencio, leyendo el ambiente", "Tiempo pasado leyendo el ambiente.", "estar callado, atento al ambiente"),
+        o("En silencio, leyendo el ambiente", "Tiempo pasado leyendo el ambiente.", "guardar silencio y leer el ambiente"),
         o("No lo recuerdo bien", "Ese recuerdo se ha ido desdibujando con el tiempo.", "un recuerdo que se ha alejado"),
       ],
     },

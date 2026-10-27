@@ -60,7 +60,7 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
       question: "¿Recuerdas cuándo empezaste a ajustarte así?",
       options: [
         o("Desde la infancia", "Una manera que lleva mucho tiempo en el cuerpo.", "desde la infancia"),
-        o("Al hacerme adulto", "Un hábito que nació al cambiar los lugares.", "desde que eres adulto"),
+        o("Al pasar a la vida adulta", "Un hábito que nació al cambiar los lugares.", "desde que empezó tu vida adulta"),
         o("No lo sé", "Ha seguido sin un punto de partida claro.", "algo sin un comienzo claro"),
       ],
     },
@@ -95,7 +95,7 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
       turn: 11,
       question: "Ahora mismo, ¿qué es lo que protege tu máscara?",
       options: [
-        o("A mí mismo", "La máscara te está protegiendo a ti ahora mismo.", "tu propia persona"),
+        o("A mí", "La máscara te está protegiendo a ti ahora mismo.", "tu propia persona"),
         o("La relación", "La máscara está protegiendo la relación ahora mismo.", "la relación"),
         o("Mi lugar", "La máscara está protegiendo tu lugar ahora mismo.", "tu lugar"),
       ],
@@ -178,7 +178,7 @@ export const MODULE4_SCRIPT_ES: ModuleScript = {
       turn: 20,
       question: "Alguien a tu lado sonríe exactamente igual en el mismo lugar. ¿Cómo crees que está por dentro?",
       options: [
-        o("Agotado", "Una imagen en la que se te va la vista al cansancio tras la sonrisa.", "una cara de agotamiento"),
+        o("Sin fuerzas", "Una imagen en la que se te va la vista al cansancio tras la sonrisa.", "una cara de agotamiento"),
         o("A gusto", "Alguien para quien ese lugar es natural.", "una cara de estar a gusto"),
         o("No lo sé", "Lo de dentro de los demás no se ve por fuera.", "una cara que no se puede leer"),
       ],

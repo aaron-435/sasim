@@ -44,7 +44,7 @@ export const MODULE1_SCRIPT_ES: ModuleScript = {
       options: [
         o("Ansiedad", "La preocupación crece en los huecos de silencio.", "la ansiedad"),
         o("Dolor por lo que no recibo", "El ánimo se queda enganchado en lo que no llegó.", "el dolor"),
-        o("Agobio", "Una sensación de estar atrapado ocupa el centro.", "el agobio"),
+        o("Agobio", "Una sensación de no tener salida ocupa el centro.", "el agobio"),
       ],
     },
     5: {

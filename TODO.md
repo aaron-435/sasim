@@ -18,13 +18,22 @@ SPEC: `SPEC.md`. 한 번에 한 항목(`/work`). 문구는 이 프로젝트의 C
   - QA: `npx tsx scripts/check-choice-scripts.mts module3 module12` → 오류 0, 경고 2(끝맺음 편중, 기존).
   - QA: `MODULE_ID=module3 PICK=0 npx tsx scripts/run-choice-script.mts` → `ko-module3-pick0-workload.txt`. 일의 양을 묻는 턴은 T2 하나다(6턴 보기 "일이 몰려 있었어요"는 지난 시기의 기억을 묻는 보기라 남겼다). PICK=1·2로 8턴 보기 3개가 모두 체크포인트("…압박처럼 보여요")와 마무리("…압박이었어요")에 들어가는 것을 확인했다.
   - QA: `npx tsc --noEmit` → 0, `npm run lint && npm run build` → ESLint 0, 빌드 성공.
-- [ ] 3. module12·module3 en/es 반영
+- [x] 3. module12·module3 en/es 반영
   - 선행: 1, 2
   - 변경: `lib/choiceScripts/en|es/module12.ts`, `en|es/module3.ts`. ko에서 바꾼 뜻을 번역투 없이 옮기고, es는 성별 중립으로 쓴다.
   - QA: `LOCALE=en` / `LOCALE=es` 린트 module3 module12 오류 0. 경로별 출력(en/es 각 module12 3경로, module3 일의 양 경로)을 확인한다.
-- [ ] 4. 스페인어 성별 표지 검사 공용화 + 스크립트 린트
+  - 결과(2026-10-27): module12는 ko와 같은 턴(3·6·15·17·18·19·21, 마무리 3줄째·perspectiveLine, 머리 주석)을 "new everyday life" / "tu nueva rutina" 기준으로 고쳤다. es 18턴 "como de invitado"(남성형)는 "como de visita"로, es 19턴 보기 "Una rutina que sea solo mía"는 질문과 rutina가 겹쳐 "Un hábito que sea solo mío"로 바꿨다. module3은 7턴 질문 교체(뜻 흐려짐 / 생활 리듬 / 딱 집히는 것 없음), 8턴은 일의 양을 빼고 "잘해야 한다는 압박"을 넣었다.
+  - QA: `LOCALE=en npx tsx scripts/check-choice-scripts.mts module3 module12` → 오류 0, 경고 0. `LOCALE=es …` → 오류 0, 경고 0.
+  - QA: `LOCALE=en|es MODULE_ID=module12 PICK=0|1|2 npx tsx scripts/run-choice-script.mts` → `.agents/qa/choice-paths-2026-10-27/{en,es}-module12-pick{0,1,2}.txt`. `grep -niE "old place|new place|regular spot|sorting|my place|last day|sitio|recoger|lugar de siempre|último día"` → 0건.
+  - QA: `LOCALE=en|es MODULE_ID=module3 PICK=0 …` → `{en,es}-module3-pick0-workload.txt`. 일의 양 grep(`amount|too much|cantidad|demasiado|montón`)은 T2 한 턴만 걸린다. PICK=1·2로 8턴 새 보기가 체크포인트·마무리("…is the pressure to do well" / "…es la presión de hacerlo bien")에 들어가는 것을 확인했다.
+- [x] 4. 스페인어 성별 표지 검사 공용화 + 스크립트 린트
   - 변경: `ES_GENDERED_READER`를 `lib/reportQuality.ts`에서 공용 모듈로 꺼낸다(리포트 동작은 그대로). `scripts/check-choice-scripts.mts`의 es 모드에서 보기, 반응, gist, 틀에 적용한다. 걸린 es 스크립트 문구(12개 모듈 + `common.ts`)를 고친다.
   - QA: `LOCALE=es npx tsx scripts/check-choice-scripts.mts` 전체 오류 0. 리포트 품질 기존 테스트가 있으면 통과. tsc 0.
+  - 결과(2026-10-27): 새 `lib/esGender.ts`에 `ES_GENDERED_READER`(리포트 목록, 글자 그대로 옮김)와 `ES_GENDERED_READER_CHAT`(보조 목록: `ti/mí mismo`, estar·sentirse·quedarse·hacerse·ser 바로 뒤 형용사 callado·quieto·despreciado·tranquilo·adulto 등), 둘을 차례로 보는 `matchEsGenderedReader`를 두었다. 리포트(`reportQuality.ts`)는 지금처럼 리포트 목록만 쓴다. 리포트 목록만으로는 스크립트에서 5건만 잡혀서(1건은 "Excitación inquieta" 오탐) 보조 목록을 더했다. 린트는 질문·보기·반응·gist·틀과 `common.ts` 공통 문구(성별 표지만)에 건다.
+  - 고친 곳: 린트 오류 21건(8개 모듈) + 엔진이 안 쓰는 짝수 턴 반응 2건. module1 T4 반응, module3 T10 gist·perspectiveLine("a ti mismo" → "a tu yo"), module4 T6·T11·T20 보기, module5 T11 gist, module6 T4·T7·T14, module7·module8·module9 T20 gist, module8 T4 반응, module10 T4·T20. `common.ts`는 걸린 곳이 없었다.
+  - QA: `LOCALE=es npx tsx scripts/check-choice-scripts.mts` → 오류 0, 경고 3(module4 `{g1}`·`{g14}` gist 필수 목록 밖, 기존). ko·en 전체도 오류 0.
+  - QA: 일회용 스크립트(스크래치패드 `same.mts`)로 옮긴 정규식이 HEAD의 `reportQuality.ts` 원문과 같은지(true), 걸림 3건·통과 4건("el mismo lugar", "ver a tu familia tranquila" 포함)을 확인했다. 리포트 품질 전용 테스트는 저장소에 없다.
+  - QA: `npx tsc --noEmit` → 0, `npm run lint && npm run build` → ESLint 0, 빌드 성공(3000번 dev 서버가 떠 있는 채로 빌드했다).
 - [ ] 5. 챗 모델 응답 es 성별 표지 후처리
   - 변경: 챗에서 아직 모델이 es 글을 쓰는 경로를 찾는다(위기 응답, v4가 아닌 흐름 등). 응답에 4번 검사를 건다. 걸리면 리포트의 방식(재시도 또는 교정)을 따른다. 어느 경로에 걸었는지 WIKI 또는 이 항목에 적는다.
   - 선행: 4
@@ -43,5 +52,8 @@ SPEC: `SPEC.md`. 한 번에 한 항목(`/work`). 문구는 이 프로젝트의 C
   - 스크립트는 서버 데이터라 웹 배포로 앱에도 반영된다. 앱 문구(`mobile/lib/i18n/es.ts`)를 고쳤다면 그 부분만 다음 OTA에 실린다(iOS 1.2.0 승인 뒤).
 
 ## 발견 사항
+- (3번) es module3 체크포인트·마무리 "lo que más pesa en tus días es las personas", "En tus días pesa sobre todo las personas": 2턴 gist가 복수일 때 동사 수 일치가 깨진다(기존 문장). 틀을 "lo que más pesa… son…" 꼴로 바꾸거나 gist를 단수로 써야 한다.
+- (4번) 짝수 턴 반응은 엔진이 쓰지 않는데 데이터에 남아 있고 린트도 보지 않는다. 이번에 성별 표지가 있던 짝수 턴 반응 2건(module1·module8 T4)은 같이 고쳤다.
+- (5번 참고) 챗 응답 검사는 `matchEsGenderedReader`(두 목록)를 쓰면 된다.
 - (1번) `lib/modulePlaybooks.ts` module12의 boundary·C단계·`anchor_in_new` 설명이 아직 "새 자리"라고 쓴다. v2 모델 프롬프트(지금 en/es 기본 흐름)와 리포트에 들어가는 문장이라 이번 범위(고정 스크립트) 밖. 같은 전제 문제가 있는지 다음 SPEC에서 볼 것.
 - (2번) `CHOICE_SCRIPT_GUIDE.md` 5절은 T7·T8 말고도 `module3.ts`와 이미 다르다(T1 반응 등이 코드에서 바뀜). 가이드를 원문으로 쓰려면 한 번 맞춰야 한다.

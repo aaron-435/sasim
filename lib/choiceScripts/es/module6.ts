@@ -43,7 +43,7 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
       options: [
         o("Sensación de injusticia", "La sensación de que no fue justo está en el fondo.", "la sensación de injusticia"),
         o("Dolor", "Donde lo que esperabas no llegó de vuelta.", "el dolor"),
-        o("Sentirme despreciado", "La sensación de que tu existencia se trató a la ligera.", "sentirte despreciado"),
+        o("Sentir que me menosprecian", "La sensación de que tu existencia se trató a la ligera.", "la sensación de que te menosprecian"),
       ],
     },
     5: {
@@ -70,7 +70,7 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
       question: "¿Hacia dónde apunta el enfado?",
       options: [
         o("Hacia el otro", "El enfado apunta hacia el otro.", "hacia el otro"),
-        o("Hacia mí mismo", "El enfado apunta hacia ti mismo.", "hacia ti mismo"),
+        o("Hacia mí", "El enfado apunta hacia dentro, hacia ti.", "hacia ti"),
       ],
     },
     8: {
@@ -124,7 +124,7 @@ export const MODULE6_SCRIPT_ES: ModuleScript = {
       question: "Cuando sube el enfado, ¿qué es lo primero que haces?",
       options: [
         o("Me aparto", "Una manera de poner distancia física.", "apartarte"),
-        o("Me quedo quieto", "Esperar a que pase sin moverte.", "quedarte quieto"),
+        o("No me muevo", "Esperar a que pase sin moverte.", "no moverte"),
         o("Lo digo enseguida", "Soltarlo en palabras en el momento.", "decirlo enseguida"),
       ],
     },
