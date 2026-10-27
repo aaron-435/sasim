@@ -110,11 +110,11 @@ export const MODULE5_DIMENSION_LABELS: Record<string, { high: string; low: strin
 
 export const MODULE5_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
   baseline: { title: "안정 실행형", hook: "완벽주의·회피·선택마비 어느 쪽도 뚜렷하지 않은, 비교적 실행이 원활한 상태입니다." },
-  perfectionism: { title: "완벽주의형", hook: "확신이 서지 않으면 시작 자체를 미루는, 높은 기준이 발목을 잡는 패턴입니다." },
-  avoidance: { title: "회피형", hook: "하기 싫은 일은 마감 직전까지 손을 대지 않는 패턴입니다." },
+  perfectionism: { title: "완벽주의형", hook: "확신이 서지 않으면 시작을 미루기 쉽고, 높은 기준이 발목을 잡을 때가 있어 보입니다." },
+  avoidance: { title: "회피형", hook: "하기 싫은 일은 마감이 가까워질 때까지 손이 잘 가지 않는 편입니다." },
   decisionParalysis: { title: "선택마비형", hook: "선택지 앞에서 머릿속이 복잡해지고, 결정을 내리는 것 자체가 큰 부담입니다." },
-  "perfectionism+avoidance": { title: "완벽주의적 회피형", hook: "완벽하지 않을 바엔 시작을 미루는, 회피와 완벽주의가 서로를 강화하는 패턴입니다." },
-  "perfectionism+decisionParalysis": { title: "정지된 완벽주의형", hook: "완벽한 선택을 하려다 결정 자체를 내리지 못하는 패턴입니다." },
-  "avoidance+decisionParalysis": { title: "미루는 우유부단형", hook: "결정도 실행도 뒤로 미루며, 둘 다 부담스럽게 느끼는 패턴입니다." },
+  "perfectionism+avoidance": { title: "완벽주의적 회피형", hook: "완벽하지 않을 것 같으면 시작을 미루게 되기 쉽고, 회피와 완벽주의가 서로를 키우기 쉬운 조합입니다." },
+  "perfectionism+decisionParalysis": { title: "정지된 완벽주의형", hook: "완벽한 선택을 찾다가 결정을 내리기 어려워지는 쪽으로 기울어 있습니다." },
+  "avoidance+decisionParalysis": { title: "미루는 우유부단형", hook: "결정도 실행도 뒤로 미루기 쉽고, 둘 다 부담스럽게 느끼는 편입니다." },
   "perfectionism+avoidance+decisionParalysis": { title: "복합 정체형", hook: "완벽주의, 회피, 선택마비가 모두 강하게 얽혀 실행이 크게 막혀 있는 상태입니다." },
 };

@@ -200,7 +200,7 @@ export const MODULE10_TYPE_NAMES: Record<Locale, Record<string, { title: string;
     impulsivity: { title: "충동형", hook: "생각보다 행동이 먼저 나가는 편으로, 즉흥적인 결정이 많습니다." },
     "distractibility+hyperfocus": { title: "극과 극 주의형", hook: "평소엔 쉽게 산만해지다가도, 흥미가 생기면 과할 정도로 몰입하는 양극단을 오갑니다." },
     "distractibility+impulsivity": { title: "즉흥 산만형", hook: "주의가 쉽게 흩어지는 동시에, 행동도 계획 없이 충동적으로 나가는 편입니다." },
-    "hyperfocus+impulsivity": { title: "몰아치는 몰입형", hook: "꽂히면 앞뒤 재지 않고 곧장 파고드는, 강렬하고 즉각적인 몰입 패턴입니다." },
+    "hyperfocus+impulsivity": { title: "몰아치는 몰입형", hook: "꽂히면 앞뒤 재기 전에 곧장 파고드는, 강렬하고 빠른 몰입을 보이는 편입니다." },
     "distractibility+hyperfocus+impulsivity": { title: "주의 조절 과부하형", hook: "산만함, 과몰입, 충동성이 모두 뚜렷하게 나타나는, 주의 조절의 진폭이 큰 상태입니다." },
   },
   en: {
@@ -210,7 +210,7 @@ export const MODULE10_TYPE_NAMES: Record<Locale, Record<string, { title: string;
     impulsivity: { title: "Impulsive Type", hook: "Action tends to come before thought, so you make a lot of spur-of-the-moment decisions." },
     "distractibility+hyperfocus": { title: "Two Extremes of Attention", hook: "You swing between getting easily distracted and, once interested, diving in to an almost excessive degree." },
     "distractibility+impulsivity": { title: "Scattered and Impulsive", hook: "Your attention scatters easily, and your actions also tend to jump ahead of any plan." },
-    "hyperfocus+impulsivity": { title: "All-In Focus", hook: "Once something hooks you, you dive straight in without weighing the consequences — an intense, immediate kind of focus." },
+    "hyperfocus+impulsivity": { title: "All-In Focus", hook: "Once something hooks you, you can dive straight in before weighing the consequences — an intense, fast kind of focus." },
     "distractibility+hyperfocus+impulsivity": { title: "Attention at Both Extremes", hook: "Distractibility, hyperfocus, and impulsivity are all clearly present — your attention swings across a wide range." },
   },
   es: {
@@ -220,7 +220,7 @@ export const MODULE10_TYPE_NAMES: Record<Locale, Record<string, { title: string;
     impulsivity: { title: "Primero la acción", hook: "La acción suele adelantarse al pensamiento, así que tomas muchas decisiones sobre la marcha." },
     "distractibility+hyperfocus": { title: "Entre la dispersión y la inmersión", hook: "Oscilas entre dispersarte con facilidad y, cuando algo te interesa, sumergirte en ello casi en exceso." },
     "distractibility+impulsivity": { title: "Dispersión e impulso", hook: "Tu atención se dispersa con facilidad, y tus acciones también suelen adelantarse a cualquier plan." },
-    "hyperfocus+impulsivity": { title: "Inmersión arrolladora", hook: "Cuando algo te atrapa, te lanzas de lleno sin medir las consecuencias: una concentración intensa e inmediata." },
+    "hyperfocus+impulsivity": { title: "Inmersión arrolladora", hook: "Cuando algo te atrapa, puedes lanzarte de lleno antes de medir las consecuencias: una concentración intensa y rápida." },
     "distractibility+hyperfocus+impulsivity": { title: "Atención de altibajos", hook: "La distracción, el hiperfoco y la impulsividad aparecen con claridad: tu atención oscila en un rango muy amplio." },
   },
 };

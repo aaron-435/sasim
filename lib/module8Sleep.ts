@@ -117,7 +117,7 @@ export const MODULE8_TYPE_NAMES: Record<string, { title: string; hook: string }>
   somaticArousal: { title: "몸 긴장형", hook: "머리는 비교적 조용해도, 몸이 좀처럼 이완되지 않아 잠들기 어렵습니다." },
   subconsciousLeak: { title: "무의식 누수형", hook: "낮의 감정이 꿈으로 새어나오고, 자고 일어나도 개운하지 않습니다." },
   "cognitiveArousal+somaticArousal": { title: "몸과 마음 모두 각성형", hook: "생각도 몸도 좀처럼 쉬지 못한 채 잠자리에 드는 상태입니다." },
-  "cognitiveArousal+subconsciousLeak": { title: "생각이 꿈까지 이어지는형", hook: "낮의 걱정이 잠들기 전부터 꿈속까지 계속 이어지는 패턴입니다." },
+  "cognitiveArousal+subconsciousLeak": { title: "생각이 꿈까지 이어지는형", hook: "낮의 걱정이 잠들기 전부터 꿈속까지 이어지기 쉬운 편입니다." },
   "somaticArousal+subconsciousLeak": { title: "긴장이 꿈에 새는형", hook: "몸의 긴장이 풀리지 않은 채로 잠들어, 그 여파가 꿈과 아침 컨디션까지 이어집니다." },
-  "cognitiveArousal+somaticArousal+subconsciousLeak": { title: "깊은 잠 결핍형", hook: "생각, 몸, 무의식 어느 쪽도 제대로 쉬지 못하는, 회복이 필요한 수면 상태입니다." },
+  "cognitiveArousal+somaticArousal+subconsciousLeak": { title: "생각·몸·꿈 모두 깨어 있는형", hook: "생각, 몸, 꿈 세 쪽 모두에서 쉽게 가라앉지 않는 신호가 이번 응답에 뚜렷하게 나타났습니다." },
 };

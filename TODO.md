@@ -30,21 +30,30 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
   - 결과(2026-10-27): 먼저 grep으로 확인 — `typeKey`는 서버·이벤트·리포트 프롬프트 어디에도 키로 쓰이지 않고(서버엔 `typeInfo.title`만 감) `resolveTypeName` 조회에만 쓰임. 그래서 분류(`classifyProfile`, `activeDimensions` 순서 포함)는 그대로 두고 `resolveTypeName`이 정확한 키가 없으면 차원 집합이 같은 키를 찾게 함(앱 `mobile/lib/quiz/quizProfile.ts`와 같은 코드인 웹 `lib/quizProfile.ts` 둘 다). 저장된 리포트(`reportStorage`)는 `typeInfo`를 그대로 저장하므로, 내 리포트에서 다시 열 때 `repairSavedTypeInfo`(`mobile/lib/quiz/modules.ts`)가 옛 대체 제목("<차원>+<차원> Combined Type" 꼴, 쓰인 언어 판별)만 정의된 제목으로 바꿈(`App.tsx`). 이미 생성된 리포트 본문 안의 옛 제목은 바꾸지 않음. 가면(module4)은 화면 이동 대신 돈(module2)으로 확인 — 같은 엔진이고 버그가 나던 순서를 정확히 만들 수 있어서.
   - QA: 새 `npx tsx scripts/quiz-type-names.test.mts` → "532 passed, fallback titles: 0"(앱 12모듈×3언어 + 웹 11모듈, 2개 이상 조합의 모든 순열 + 단일·기준 + 저장 복구 ko/en/es + 손대지 않는 경우). 대조: 예전 정확 키 조회는 en만 134개 중 89개를 놓침(임시 스크립트). mobile tsc(큰 스택) → exit 0. 루트 `npx tsc --noEmit` → exit 0. mobile-web(`?qa=free&persona=sam&lang=en`, 375x812): 돈 검사 이어 풀기 저장값에 29개 답(회피 > 결핍, 과시 0)을 넣고 30번 화면에서 마지막 답 → 키 `avoidance+scarcity`인데 정의된 제목 "Anxious Avoidant" 표시(예전이면 대체 제목).
 
-- [ ] 5. 개인정보 설명 정합성 (ko/en/es)
+- [x] 5. 개인정보 설명 정합성 (ko/en/es)
   - 변경: `lib/legalContent.ts`(KASI 호출 사실: 양력 날짜만 한국천문연구원 공공 API로), 보관 1년 → 실제 삭제 작업 SQL(`supabase/` 새 파일, 사용자 실행) 또는 문구를 실제에 맞추기. 앱 안 처리방침 사본이 있으면 함께.
   - QA: `grep -n "외부 계산\|outside calculation\|cálculo externo" lib/legalContent.ts` → 사실과 다른 문장 0. `npm run lint && npm run build` 통과. `/privacy?lang=en|ko|es` 웹 preview 확인. SQL을 만들었다면 파일 경로와 실행 절차를 18번에 적는다.
+  - 결과(2026-10-27): 보관 1년은 **삭제 작업을 만드는 쪽**을 골랐다. 근거: 서버의 세션·사주·검사·대화·리포트·사용량 행은 쓰기만 하고 다시 읽어 기능을 만들지 않으며(리포트는 기기 저장, 읽는 곳은 24시간짜리 넘김 코드뿐), 데이터 삭제 페이지(`app/(legal)/data-deletion`)도 이미 "최대 1년 후 자동 삭제"를 약속하고 있어 문구를 줄이는 것보다 약속을 지키는 편이 맞다. 새 `supabase/retention.sql`(pg_cron 매일 03:15 UTC → `purge_expired_data()`: 1년 지난 7개 테이블 행, 만료 초대, 연결 안 된 만료 커플 코드, 궁합 구매 기록은 제외). 처리방침 ko/en/es 3항 끝 문단 = 매일 자동 삭제 작업으로 지움, 4항 끝 문단 = 보정한 양력 날짜(연·월·일)만 서버가 한국천문연구원 공공 API(공공데이터포털)로 조회, 이름·시각·도시·성별·기기 식별자는 안 보냄. 방침 날짜 10월 7일 → 10월 27일(약관은 그대로). 앱 안에 처리방침 사본은 없음(웹 링크만).
+  - QA: `grep -n "외부 계산\|outside calculation\|cálculo externo" lib/legalContent.ts` → 0건(es 옛 문구 "proveedor externo de cálculo"도 0). `npx tsx scripts/check-es-text.mts <새 es 문장>` → 경고 0개. 루트 `npx tsc --noEmit` → exit 0. `npm run lint` → "No ESLint warnings or errors", `npm run build` → exit 0. 웹 preview(`work-dev`) `/privacy?lang=ko|en|es`: 새 KASI·자동 삭제 문장과 10월 27일 있음, 옛 문장 없음(페이지 안 텍스트로 확인), es 4항 캡처.
+  - 주의: 처리방침의 "매일 자동 삭제"는 18번에서 SQL을 실행해야 사실이 된다. **18번 SQL 실행을 19번 웹 배포보다 먼저** 한다.
 
-- [ ] 6. 결과 문구 단정·진단 표현 정리 (모듈 2·4~10, ko/en/es)
+- [x] 6. 결과 문구 단정·진단 표현 정리 (모듈 2·4~10, ko/en/es)
   - 변경: `mobile/lib/quiz/module{2,4,5,6,7,8,9,10}*.ts` 결과 `title`·`hook`, 웹 `lib/module*.ts`의 같은 문구. 수면 "Deep-Sleep Deprived", module7 "전형적인 고감각민감자(HSP)" 포함.
   - QA: `grep -rnE "패턴입니다|You tend to|Tiendes a|증후군|syndrome|síndrome|Deprived|전형적인" mobile/lib/quiz lib/module*.ts` → 결과 문구 0건(주석 제외). 루트·mobile tsc 0. `npx tsx scripts/check-es-text.mts`로 es 결과 문구 확인(필요하면 임시 추출 파일). mobile-web에서 수면 최고점 결과 캡처.
+  - 결과(2026-10-27): 앱 8개 모듈 ko/en/es와 웹 같은 ko 문구에서 20개 키를 관찰형으로 바꿈("~패턴입니다", "never/철저히/마감 직전까지 손대지 않음" 같은 단정, 어린 시절을 단정하던 module9 `parentification`, "전형적인 HSP" → "HSP라 부르는 기질과 닮은 조합", 2인칭 "A pattern of…"). 수면 최고점 제목 "깊은 잠 결핍형/Deep-Sleep Deprived/Falta de sueño profundo" → "생각·몸·꿈 모두 깨어 있는형/Mind, Body and Dreams All Awake/Mente, cuerpo y sueños en vela", hook에서 "회복이 필요한 수면 상태" 삭제. 키·분류는 그대로. "~편입니다/tend to"류 부드러운 서술은 그대로 둠.
+  - QA: `grep -rnE "패턴입니다|You tend to|Tiendes a|증후군|syndrome|síndrome|Deprived|전형적인" mobile/lib/quiz lib/module*.ts` → 1건(`quizProfile.ts:394` 주석)만. `npx tsx scripts/check-es-text.mts <바뀐 es 20줄>` → 경고 0개. `npx tsx scripts/quiz-type-names.test.mts` → "532 passed, fallback titles: 0". 루트 tsc exit 0, mobile tsc(큰 스택) exit 0, `npm run lint && npm run build` 통과. mobile-web(`?qa=free&persona=sam&lang=en`, 375x812): 수면 29문항 최고점 저장값 + 30번 최고 답 → "Mind, Body and Dreams All Awake" / "Your answers this time showed signs that…" 캡처.
 
-- [ ] 7. "AI Counseling" 용어 정리 (ko/en/es)
+- [x] 7. "AI Counseling" 용어 정리 (ko/en/es)
   - 변경: 결과 화면 버튼·안내 문구(`mobile/lib/i18n/*`, 해당 화면). 챗 프롬프트는 건드리지 않는다.
   - QA: `grep -rniE "counsel|asesor" mobile/lib/i18n` → 결과 화면 문구 0건(남는 것은 이유를 적음). mobile tsc 0. mobile-web 결과 화면 캡처.
+  - 결과(2026-10-27): es는 이미 "conversación con IA"였다. en·ko의 결과 화면 버튼(`continueToChatButton`)·안내(`moreDetail`)·대화 헤더·종료 배지·리포트 인용 라벨·리포트 페이월·홈 경로·내 리포트 빈 화면을 "AI conversation / AI 대화"로. ko 홈 안내의 "진단해보면" → "살펴보면"(같은 문장). `STYLE_GUIDE.md` 용어집 줄도 "AI 대화 / AI conversation"으로. 챗 프롬프트는 안 건드림.
+  - QA: `grep -rniE "counsel|asesor" mobile/lib/i18n` → 2건, 둘 다 남김: en.ts:703 리포트 면책("does not replace professional psychological counseling" — 전문 상담을 대체하지 않는다는 뜻이라 맞는 말), STYLE_GUIDE.md:14 브랜드 목소리 설명. ko는 "상담" 2건(리포트 면책, 위기 상담전화 이름)만 남김. mobile tsc exit 0. mobile-web 결과 화면 캡처: 버튼 "Continue to the AI Conversation", 안내 끝 "once you finish the AI conversation".
 
-- [ ] 8. 문서 사실 고치기
+- [x] 8. 문서 사실 고치기
   - 변경: `PRODUCT.md`(모듈 11 → 12 등), 코드와 어긋난 수치(대화 턴 수 등)를 대조해 고침.
   - QA: `grep -n "11 psych\|11 개\|11개" PRODUCT.md WIKI.md` → 0. 고친 수치마다 근거 파일을 커밋 메시지 초안에 적음.
+  - 결과(2026-10-27): `PRODUCT.md` 모듈 수 11 → 12(`mobile/lib/quiz/modules.ts`), 대화 25턴·10턴 점검 → 22턴·9턴 점검의 고정 스크립트 선택형(`mobile/lib/chatFlow.ts` 기본 V4, `lib/choiceScripts/common.ts` 인용 줄), "AI counseling chat" → "conversation with AI"(7번과 같은 용어). 대조해 맞았던 것: 무료 Q&A 1개·구독 10개(`mobile/lib/qaQuota.ts`), 질문 뱅크 530(`mobile/data/questionBank.json` 실제 합계), 리포트 $14.99(`mobile/lib/reportPricing.ts`), 사주 유형 50(일간 10 × 많은 오행 5). WIKI의 "페르소나 11개"는 sim-chat 모듈 1~11 페르소나 수라 사실이지만 오해 없게 표현만 바꿈.
+  - QA: `grep -n "11 psych\|11 개\|11개" PRODUCT.md WIKI.md` → 0건(exit 1). `grep -c counseling PRODUCT.md` → 0.
 
 ## B. 웹→앱 이동 (결제 없음)
 
@@ -95,6 +104,7 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
 
 - [ ] 18. (사용자 확인·실행) Supabase 삭제 작업 확인 / SQL 실행
   - 대시보드 Database → Cron(또는 Functions)에 보관 기간 삭제 작업이 있는지 확인. 5·9번에서 SQL 파일이 생기면 SQL Editor에서 실행.
+  - (5번, 19번 웹 배포 전에) ① Database → Extensions에서 `pg_cron` 켜기 ② SQL Editor에 `supabase/retention.sql` 전체를 붙여넣고 Run ③ `select jobname, schedule from cron.job;` → `fatesaid-retention | 15 3 * * *` 한 줄 ④ 바로 한 번 `select purge_expired_data();` → 오류 없이 끝나면 성공. 대시보드에 비슷한 작업이 이미 있으면 실행 전에 알려 주기.
 
 - [ ] 19. (사용자 실행) 커밋·푸시 → Vercel 웹 배포 확인
   - 웹 변경(2·3·5·9·10·12)이 실린다. 앱 OTA보다 먼저.
@@ -106,6 +116,8 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
   - 선행: 16, 그리고 19·20으로 넘김이 배포된 뒤가 좋다. 결과 기록표를 공유하면 13번 진행 여부와 주력 상품 판단에 쓴다.
 
 ## 발견 사항
+- (6번 중) 수면 최고점 옛 제목 "Deep-Sleep Deprived"가 영상 쪽에 남아 있다: `scripts/record-app-ab.mts:75` `highlight`, `marketing/tts-samples/scripts.json` A6x. 15번(A6x 재렌더)에서 새 제목으로 맞춘다. 이미 저장된 리포트의 옛 정의 제목(대체 제목이 아님)은 `repairSavedTypeInfo`가 바꾸지 않는다.
+- (6번 중) module2 en 제목 "All Show, No Substance"(겉과 속이 다른 형)는 진단은 아니지만 판단조라 다음 문구 작업 때 볼 만하다. 이번 범위(hook·건강 상태형 제목) 밖이라 두었다.
 - (3번 중) 히어로 본문 "about three minutes / 3분 만에"는 유형 카드 + 온보딩 + 첫 질문까지의 전체 시간이라 그대로 뒀다. 헤드라인 "Your birth chart, read as…"도 약속이 아니라 소개라 그대로. 필요하면 별도 문구 작업으로.
 - (3번 중) `landing_cta_click`의 뜻이 "온보딩 시작"에서 "유형 카드로 이동"으로 바뀌었다(funnel-report는 이 이벤트를 안 씀). 온보딩 시작은 `position: type_card` 클릭.
 - (4번 중) 이미 생성된 심층 리포트 본문은 생성 당시 대체 제목을 프롬프트로 받았다. 화면 제목은 고쳐지지만 본문 문장 안 언급은 다시 생성하기 전까지 남는다.

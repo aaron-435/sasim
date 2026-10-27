@@ -114,7 +114,7 @@ export const MODULE6_TYPE_NAMES: Record<string, { title: string; hook: string }>
   suppression: { title: "억압형", hook: "화가 나도 겉으로 잘 드러내지 않고 삼키는 데 익숙하지만, 그만큼 안에는 쌓여갑니다." },
   explosion: { title: "폭발형", hook: "화가 나면 순간적으로 통제가 어려울 만큼 확 터지는 편입니다." },
   rumination: { title: "반추형", hook: "화는 크게 표출되지 않지만, 지나간 뒤에도 오래도록 곱씹으며 놓지 못합니다." },
-  "suppression+explosion": { title: "참다가 터짐형", hook: "평소엔 웬만하면 삼키다가, 어느 순간 쌓인 게 걷잡을 수 없이 한꺼번에 터지는 패턴입니다." },
+  "suppression+explosion": { title: "참다가 터짐형", hook: "평소엔 웬만하면 삼키다가, 쌓인 것이 어느 순간 한꺼번에 터지기 쉬운 편입니다." },
   "suppression+rumination": { title: "억눌린 채 곱씹는형", hook: "겉으로 표현은 안 하지만, 마음속에서는 그 감정을 계속 재생하고 있습니다." },
   "explosion+rumination": { title: "폭발 후 자책형", hook: "순간적으로 강하게 터진 후에도 그 여운과 후회가 오래 남습니다." },
   "suppression+explosion+rumination": { title: "감정 과부하형", hook: "억누르다 터지고, 터진 뒤로도 오래 곱씹는 — 분노 조절의 세 축이 모두 무겁게 걸려있는 상태입니다." },

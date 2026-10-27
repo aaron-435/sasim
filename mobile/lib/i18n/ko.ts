@@ -148,7 +148,7 @@ export const ko = {
 
   myReports: {
     heading: "내 리포트",
-    empty: "아직 만든 리포트가 없어요. 심리테스트와 AI 상담을 마치면 여기에 저장돼요.",
+    empty: "아직 만든 리포트가 없어요. 심리테스트와 AI 대화를 마치면 여기에 저장돼요.",
     savedOn: (date: string) => `${date} 저장`,
   },
   shareCards: {
@@ -242,10 +242,10 @@ export const ko = {
     pathEyebrow: "나를 더 깊이",
     pathTitle: "5분 심리테스트로 시작하기",
     pathTitleNext: "다음 심리테스트 해 보기",
-    pathBody: "30문항에 답하면, 그 답을 바탕으로 한 AI 상담과 심층 리포트가 이어져요.",
+    pathBody: "30문항에 답하면, 그 답을 바탕으로 한 AI 대화와 심층 리포트가 이어져요.",
     pathCta: "테스트 고르기",
     featureQuizLabel: "심리테스트",
-    featureQuizDescription: "나를 이해하는 첫걸음 · 끝내면 AI 상담과 심층 리포트가 열려요",
+    featureQuizDescription: "나를 이해하는 첫걸음 · 끝내면 AI 대화와 심층 리포트가 열려요",
     featureCompatLabel: "궁합",
     featureCompatDescription: "그 사람과 나, 어떤 흐름일까요",
     philosophyLine: "사주는 미래를 맞히는 점술이 아니라, 타고난 기질과 지금의 흐름을 읽는 도구예요.",
@@ -286,7 +286,7 @@ export const ko = {
     pageTitle: "Fatesaid 활용법 · 사주 알아보기",
     usageHeading: "이렇게 활용해보세요",
     usageBody:
-      "먼저 사주 Q&A에서 지금 가장 궁금한 질문 하나를 편하게 물어보세요. 그다음 심리테스트로 나의 성향과 패턴을 진단해보면, 오행 데이터와 심리 데이터가 함께 맞물리면서 훨씬 입체적인 이해가 가능해져요. 심리테스트를 마치면 AI 상담으로 자연스럽게 이어지고, 상담이 끝나면 지금까지의 답변을 모두 엮은 나만의 심층 리포트를 받아볼 수 있어요.",
+      "먼저 사주 Q&A에서 지금 가장 궁금한 질문 하나를 편하게 물어보세요. 그다음 심리테스트로 나의 성향과 패턴을 살펴보면, 오행 데이터와 심리 데이터가 함께 맞물리면서 훨씬 입체적인 이해가 가능해져요. 심리테스트를 마치면 AI 대화로 자연스럽게 이어지고, 대화가 끝나면 지금까지의 답변을 모두 엮은 나만의 심층 리포트를 받아볼 수 있어요.",
     introHeading: "사주(四柱)란?",
     introBody:
       "사주는 태어난 연·월·일·시 네 기둥에 담긴 기운을 읽는 한국의 전통 방식이에요. 성격과 타고난 성향, 잘 맞는 환경, 관계에서 마찰이 생기기 쉬운 지점, 그리고 시기에 따라 삶의 초점이 어떻게 달라지는지를 함께 봐요.",
@@ -591,8 +591,8 @@ export const ko = {
     nextButton: "다음",
     doneHeader: "첫 블루프린트가 완성됐어요",
     elementBadgePrefix: "오행 ·",
-    moreDetail: "더 자세한 분석(오행 궁합, 성향 상세, 상담 대화 기반 인사이트)은 AI 상담을 마친 뒤 리포트에서 확인하실 수 있어요.",
-    continueToChatButton: "AI 상담으로 이어가기",
+    moreDetail: "더 자세한 분석(오행 궁합, 성향 상세, 대화에서 나온 인사이트)은 AI 대화를 마친 뒤 리포트에서 확인하실 수 있어요.",
+    continueToChatButton: "AI 대화로 이어가기",
     restartButton: "다시 풀기",
     combinedTypeSuffix: "복합형",
     combinedTypeHook: "여러 성향이 함께 나타나는 패턴입니다.",
@@ -605,10 +605,10 @@ export const ko = {
   },
 
   chat: {
-    headerLabel: "무료 AI 상담",
+    headerLabel: "무료 AI 대화",
     inputPlaceholder: "편하게 이야기해주세요",
     sendLabel: "보내기",
-    doneBadge: "상담 종료 — 리포트를 준비하고 있어요",
+    doneBadge: "대화 종료 — 리포트를 준비하고 있어요",
     errorDefault: "챗봇 응답을 받아오지 못했습니다.",
     errorNetwork: "네트워크 오류로 챗봇 응답을 받지 못했습니다.",
     timeUpLabel: "정리 중",
@@ -712,7 +712,7 @@ export const ko = {
     sectionSetCardsToc: "검사 × 대화",
     sectionSetCardsContinuedToc: (count: number) => `검사 × 대화 — 이어지는 ${count}장`,
     chatStoryIntro: "사주와 심리검사가 구조를 보여준다면, 방금 나눈 대화는 지금 이 순간의 실제 결을 보여줍니다.",
-    chatQuoteLabel: "상담 중 나온 이야기",
+    chatQuoteLabel: "대화 중 나온 이야기",
     chatStoryBodyPrefix: "직접 나눈 대화에서도",
     chatStoryBodyMiddle: "쪽 고민이 선명하게 드러났고, 그 안에 담긴 감정은",
     chatStoryBodySuffix: "에 가까웠습니다.",
@@ -730,7 +730,7 @@ export const ko = {
       "이 리포트는 자체 구축한 만세력 엔진의 정밀 사주 계산을 바탕으로 AI가 해석·작성한 콘텐츠이며, 전문적인 심리 상담이나 의학적 진단을 대체하지 않습니다.",
     disclaimer2: "재미와 자기 이해를 위한 참고 자료로 봐주세요.",
     paywallTitle: "여기부터는 심층 리포트예요",
-    paywallBody: "AI 상담에서 나눈 이야기를 내 사주와 함께 읽는 나머지 장들이에요.",
+    paywallBody: "AI 대화에서 나눈 이야기를 내 사주와 함께 읽는 나머지 장들이에요.",
     paywallExtras: "끝까지 열면 한 줄 요약과 다음 검사 추천, PDF 저장까지 함께 받아요.",
     paywallBuyLabel: (price: string) => `이 리포트 잠금해제 · ${price}`,
     paywallBundleBuyLabel: (count: number, price: string) => `전체 ${count}개 리포트 한번에 · ${price}`,

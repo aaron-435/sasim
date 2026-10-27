@@ -117,8 +117,8 @@ export const MODULE7_TYPE_NAMES: Record<string, { title: string; hook: string }>
   overstimulation: { title: "과부하형", hook: "여러 자극이 한꺼번에 몰리면 쉽게 압도되고, 혼자만의 시간이 꼭 필요합니다." },
   aestheticSensitivity: { title: "심미형", hook: "음악, 예술, 풍경 같은 아름다움과 감정적 울림에 남들보다 깊이 반응합니다." },
   lowSensoryThreshold: { title: "감각민감형", hook: "소리, 빛, 냄새, 촉감 같은 물리적 자극에 유독 예민하게 반응합니다." },
-  "overstimulation+aestheticSensitivity": { title: "감성 과몰입형", hook: "깊이 느끼는 만큼 그 감정에 쉽게 압도되기도 하는 패턴입니다." },
+  "overstimulation+aestheticSensitivity": { title: "감성 과몰입형", hook: "깊이 느끼는 만큼, 그 감정에 쉽게 압도되기도 하는 편입니다." },
   "overstimulation+lowSensoryThreshold": { title: "감각 과부하형", hook: "물리적 자극에도 민감하고, 여러 자극이 겹치면 쉽게 지치는 편입니다." },
   "aestheticSensitivity+lowSensoryThreshold": { title: "섬세한 감각형", hook: "아름다움은 깊이 느끼면서, 불편한 자극도 예민하게 감지하는 섬세한 감각을 가졌습니다." },
-  "overstimulation+aestheticSensitivity+lowSensoryThreshold": { title: "고감각민감형(HSP)", hook: "자극과부하, 심미적 민감성, 낮은 감각역치가 모두 뚜렷한, 전형적인 고감각민감자(HSP) 패턴입니다." },
+  "overstimulation+aestheticSensitivity+lowSensoryThreshold": { title: "고감각민감형(HSP)", hook: "자극 과부하, 심미적 민감성, 낮은 감각 역치가 이번 응답에서 모두 뚜렷했습니다. 고감각민감성(HSP)이라 부르는 기질과 닮은 조합입니다." },
 };

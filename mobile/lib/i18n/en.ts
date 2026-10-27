@@ -125,7 +125,7 @@ export const en: typeof ko = {
 
   myReports: {
     heading: "My reports",
-    empty: "No reports yet. Finish a psych test and the AI counseling and it will be saved here.",
+    empty: "No reports yet. Finish a psych test and the AI conversation and it will be saved here.",
     savedOn: (date: string) => `Saved ${date}`,
   },
   shareCards: {
@@ -222,7 +222,7 @@ export const en: typeof ko = {
     pathBody: "Answer 30 questions, then a conversation built on your answers leads into your in-depth report.",
     pathCta: "Choose a test",
     featureQuizLabel: "Psych test",
-    featureQuizDescription: "Finish one test to unlock AI counseling and your in-depth report",
+    featureQuizDescription: "Finish one test to unlock the AI conversation and your in-depth report",
     featureCompatLabel: "Compatibility",
     featureCompatDescription: "See how you and someone else flow together",
     philosophyLine: "Saju isn't fortune-telling. It's a way to read your temperament and the rhythm you're in right now.",
@@ -263,7 +263,7 @@ export const en: typeof ko = {
     pageTitle: "How to use Fatesaid · Learn about saju",
     usageHeading: "Try it this way",
     usageBody:
-      "Start by asking one question that's on your mind right now in Saju Q&A. Then take the psych test to see your tendencies and patterns — combining your element data with psychological data gives you a much richer picture. Once you finish the test, you'll naturally move into an AI counseling session, and afterward you'll get your own in-depth report weaving together everything you've shared so far.",
+      "Start by asking one question that's on your mind right now in Saju Q&A. Then take the psych test to see your tendencies and patterns — combining your element data with psychological data gives you a much richer picture. Once you finish the test, you'll naturally move into a conversation with AI, and afterward you'll get your own in-depth report weaving together everything you've shared so far.",
     introHeading: "What is saju (Four Pillars)?",
     introBody:
       "Saju is a Korean method of reading a birth chart built from the year, month, day, and hour you were born. A reading typically covers your natural temperament, the environments where you tend to thrive, where relationship or emotional friction tends to show up, and how longer stretches of your life shift in focus over time.",
@@ -564,8 +564,8 @@ export const en: typeof ko = {
     nextButton: "Next",
     doneHeader: "Your first blueprint is ready",
     elementBadgePrefix: "Element ·",
-    moreDetail: "A deeper analysis (element compatibility, detailed traits, counseling-based insights) is available in your report once you finish AI counseling.",
-    continueToChatButton: "Continue to AI Counseling",
+    moreDetail: "A deeper analysis (element compatibility, detailed traits, insights from your conversation) is available in your report once you finish the AI conversation.",
+    continueToChatButton: "Continue to the AI Conversation",
     restartButton: "Retake",
     combinedTypeSuffix: "Combined Type",
     combinedTypeHook: "A pattern where several tendencies show up together.",
@@ -578,7 +578,7 @@ export const en: typeof ko = {
   },
 
   chat: {
-    headerLabel: "Free AI counseling",
+    headerLabel: "Free AI conversation",
     inputPlaceholder: "Feel free to share what's on your mind",
     sendLabel: "Send",
     doneBadge: "Session ended — preparing your report",
@@ -685,7 +685,7 @@ export const en: typeof ko = {
     sectionSetCardsToc: "Test × conversation",
     sectionSetCardsContinuedToc: (count: number) => `Test × conversation, ${count} more cards`,
     chatStoryIntro: "If your saju and psych test show the structure, the conversation you just had shows the real texture of this moment.",
-    chatQuoteLabel: "From your counseling session",
+    chatQuoteLabel: "From your AI conversation",
     chatStoryBodyPrefix: "In our conversation, your concern around",
     chatStoryBodyMiddle: "came through clearly, and the feeling underneath it was closest to",
     chatStoryBodySuffix: ".",

@@ -113,11 +113,11 @@ export const MODULE2_DIMENSION_LABELS: Record<string, { high: string; low: strin
 
 export const MODULE2_TYPE_NAMES: Record<string, { title: string; hook: string }> = {
   baseline: { title: "균형형", hook: "돈에 대해 비교적 안정적이고 균형 잡힌 태도를 갖고 있습니다." },
-  scarcity: { title: "결핍공포형", hook: "충분히 있어도 늘 부족하다고 느끼며, 돈이 사라질 것에 대한 불안이 큽니다." },
+  scarcity: { title: "결핍공포형", hook: "충분히 있을 때도 부족하다고 느끼기 쉽고, 돈이 줄어드는 것에 대한 불안이 크게 나타났습니다." },
   ostentation: { title: "과시형", hook: "돈을 자기 가치를 증명하는 수단으로 여기고, 남에게 보이는 모습에 민감합니다." },
   avoidance: { title: "회피형", hook: "돈 문제를 마주하는 것 자체가 부담스러워 확인과 처리를 계속 미룹니다." },
-  "scarcity+ostentation": { title: "불안한 과시형", hook: "부족함에 대한 불안을 과시적 소비로 덮으려는 패턴입니다." },
+  "scarcity+ostentation": { title: "불안한 과시형", hook: "부족할까 하는 불안과, 그 불안을 눈에 띄는 소비로 덮으려는 마음이 함께 보입니다." },
   "scarcity+avoidance": { title: "불안 회피형", hook: "돈에 대한 불안이 크지만, 그 불안을 마주하기보다 회피하는 쪽을 택합니다." },
-  "ostentation+avoidance": { title: "겉과 속이 다른 형", hook: "보여지는 모습에는 신경 쓰지만, 실제 재정 관리는 회피하는 패턴입니다." },
-  "scarcity+ostentation+avoidance": { title: "복합형", hook: "결핍에 대한 불안, 과시 욕구, 회피가 모두 강하게 얽혀 있는 패턴입니다." },
+  "ostentation+avoidance": { title: "겉과 속이 다른 형", hook: "보이는 모습에는 신경을 쓰는 편이지만, 실제 돈 관리는 뒤로 미루는 쪽으로 기울어 있습니다." },
+  "scarcity+ostentation+avoidance": { title: "복합형", hook: "결핍에 대한 불안, 보여 주고 싶은 마음, 미루기가 이번 응답에서 모두 강하게 함께 나타났습니다." },
 };

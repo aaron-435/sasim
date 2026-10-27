@@ -16,7 +16,7 @@ Fatesaid reads a person's Korean saju (Four Pillars) chart from their birth date
 
 ## Positioning
 
-Saju and psychology fused on one person's data: a real calendar-based saju calculation (self-hosted engine on KASI astronomical data, not invented readings) feeds the same profile as the psych-test modules and the AI counseling chat, so the report can cross-analyze "what your chart says" with "what you actually answered and said."
+Saju and psychology fused on one person's data: a real calendar-based saju calculation (self-hosted engine on KASI astronomical data, not invented readings) feeds the same profile as the psych-test modules and the conversation with AI, so the report can cross-analyze "what your chart says" with "what you actually answered and said."
 
 ## Operating Context
 
@@ -30,7 +30,7 @@ Saju and psychology fused on one person's data: a real calendar-based saju calcu
 - Onboarding: language → intro (or web verification-code handoff) → nickname, gender, birth date, birth time (unknown allowed), birth city (worldwide) → concern (relationships vs. self & daily life) → Home.
 - Free core: saju reading (a four-pillars chart with the five-element distribution, saju type among 50, decade fortune), compatibility with another person, 1 Q&A question/day.
 - Subscription ($7.99/month, RevenueCat): 10 Q&A questions/day, daily/weekly/this-month/year fortune.
-- 11 psych-test modules → 25-turn AI counseling chat (five 5-turn sets, each opening on one of the user's own quiz answers) → paginated deep report whose test × conversation cards tie those answers to what the user said; the report's back half is sold per module ($14.99) or as a bundle.
+- 12 psych-test modules → 22-turn conversation with AI (a fixed script of mostly tap-to-choose replies in five sets that quote the user's own quiz answers, with a check-in at turn 9) → paginated deep report whose test × conversation cards tie those answers to what the user said; the report's back half is sold per module ($14.99) or as a bundle.
 - Share cards exported as images for social stories: saju type, compatibility, and 9:16 domain cards (how I find money, what sets my heart racing free; my bright spot this year is Pro).
 - Year-ahead report (one-time purchase per year, `year_report_<year>`), read in the same paged format as the deep report, both ending on a shared closing page (one-line summary, share, PDF, next step): five life areas, a 12-month timeline, a four-step action plan; generated on the server only after it verifies the purchase with RevenueCat. Finished reports (year and deep) can be exported as a magazine-style PDF via the OS share sheet.
 - Delivery: EAS OTA updates for JS-only changes; anything adding a native dependency needs a new store build.
@@ -41,7 +41,7 @@ Saju and psychology fused on one person's data: a real calendar-based saju calcu
 - Name: Fatesaid. Tagline (ko): "운명은 이미 말했습니다, 이제 답할 차례는 당신입니다".
 - Palette direction confirmed by the user on 2026-09-19: keep "Celadon & Hanji"; do not return to the earlier "Obsidian & Gold".
 - Fonts picked by the user on 2026-10-04: Newsreader for display moments (with its real italic for quotes and subtitles) and Plus Jakarta Sans for UI text, in the app, share cards and the PDF. Korean stays on the system font (PDF: Noto Sans KR); no Korean webfont is shipped.
-- Voice: warm counselor, never cynical. The AI chat is a completed 25-turn conversation (the user may wrap up early at the turn-10 check-in) with safety and no-direct-advice rules; no forced cut-offs or fake urgency timers.
+- Voice: warm counselor, never cynical. The AI chat is a completed 22-turn conversation (the user may wrap up early at the turn-9 check-in) with safety and no-direct-advice rules; no forced cut-offs or fake urgency timers.
 - Classical saju terms are re-expressed for EN/ES readers in non-frightening language rather than translated literally.
 
 ## Evidence on Hand

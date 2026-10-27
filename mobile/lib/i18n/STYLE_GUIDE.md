@@ -43,7 +43,7 @@ below, a `LOCALE_STYLE` entry, and run a native-reader pass with the persona tes
 | Twelve life stages (12운성) | 12운성 | twelve life stages | doce etapas de vida |
 | Deep report | 심층 리포트 | Deep Report | Informe profundo |
 | Year-ahead report | 신년 리포트 | Year-Ahead Report | Informe del año |
-| AI counseling chat | AI 상담 | AI counseling | conversación con IA |
+| AI conversation (post-test chat) | AI 대화 | AI conversation | conversación con IA |
 | Chart (the whole saju reading) | 사주 | chart | mapa (de saju) — not "carta" |
 | Manseryeok | 만세력 | Korean calendar engine — never "manseryeok" in UI copy | motor del calendario coreano — nunca "manseryeok" en la interfaz |
 

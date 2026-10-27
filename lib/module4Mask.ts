@@ -118,8 +118,8 @@ export const MODULE4_TYPE_NAMES: Record<string, { title: string; hook: string }>
   imageManagement: { title: "이미지관리형", hook: "상황과 상대에 맞춰 보여주는 모습을 세심하게 조정합니다." },
   concealment: { title: "은폐형", hook: "진짜 속마음은 가까운 사람에게도 잘 드러내지 않습니다." },
   socialFatigue: { title: "관계피로형", hook: "사람을 만나는 걸 좋아하면서도, 그만큼 크게 소진됩니다." },
-  "imageManagement+concealment": { title: "가면형", hook: "보여주는 모습을 관리하는 동시에 진짜 속마음은 철저히 숨기는 패턴입니다." },
+  "imageManagement+concealment": { title: "가면형", hook: "보여 주는 모습을 관리하면서, 진짜 속마음은 잘 드러내지 않는 쪽으로 기울어 있습니다." },
   "imageManagement+socialFatigue": { title: "연기하는 인싸형", hook: "밝은 모습을 보여주려 애쓰지만, 그만큼 관계에서 크게 지칩니다." },
-  "concealment+socialFatigue": { title: "고립된 은폐형", hook: "속마음을 숨기다 보니 관계에서 진짜 충전을 얻지 못하고 있습니다." },
-  "imageManagement+concealment+socialFatigue": { title: "완전 가면형", hook: "이미지관리, 은폐, 관계피로가 모두 뚜렷한, '가면'이 가장 무거운 패턴입니다." },
+  "concealment+socialFatigue": { title: "고립된 은폐형", hook: "속마음을 숨기다 보니, 사람을 만나도 충전되기보다 지치기 쉬운 쪽으로 보입니다." },
+  "imageManagement+concealment+socialFatigue": { title: "완전 가면형", hook: "이미지 관리, 숨기기, 관계 피로가 이번 응답에서 모두 뚜렷했습니다. '가면'이 가장 무겁게 느껴지는 조합입니다." },
 };

@@ -37,9 +37,11 @@ export interface LegalDocument {
 // invites, couple mode, journal, other people's birth dates). Earlier drafts described a free
 // web-only beta. privacyEn/privacyEs and termsEn/termsEs are section-for-section translations
 // of these two — keep all three in step. Still a draft pending legal review.
+// 2026-10-27: section 4 now names the KASI date lookup (lib/kasi.ts), and section 3 relies on
+// the daily deletion job in supabase/retention.sql — the policy is only true once that is run.
 const privacyKo: LegalDocument = {
   title: "개인정보처리방침",
-  updatedAt: "2026년 10월 7일",
+  updatedAt: "2026년 10월 27일",
   sections: [
     {
       body: [
@@ -128,7 +130,7 @@ const privacyKo: LegalDocument = {
             "기기에 저장된 정보: 앱을 삭제하거나 설정의 ‘내 정보 초기화’를 하면 삭제(초기화하면 커플 모드 연결도 서버에서 해제)",
           ],
         },
-        { type: "p", text: "보유 기간이 지나거나 이용자가 삭제를 요청하면 지체 없이 파기합니다. 전자적 파일은 복구할 수 없는 방법으로 삭제합니다." },
+        { type: "p", text: "보유 기간이 지난 서버 기록은 매일 돌아가는 자동 삭제 작업으로 지웁니다. 이용자가 삭제를 요청하면 지체 없이 파기합니다. 전자적 파일은 복구할 수 없는 방법으로 삭제합니다." },
       ],
     },
     {
@@ -145,7 +147,7 @@ const privacyKo: LegalDocument = {
             "**Apple Inc., Google LLC** — 앱 내 결제 처리와 앱 업데이트·알림 전달. 결제 정보는 각 회사의 개인정보처리방침을 따릅니다.",
           ],
         },
-        { type: "p", text: "사주 계산은 서비스가 직접 만든 계산 엔진으로 서비스 서버 안에서 하며, 생년월일을 외부 계산 업체로 보내지 않습니다. 위 업체 외에는 이용자의 정보를 제3자에게 제공하지 않습니다." },
+        { type: "p", text: "사주 계산은 서비스가 직접 만든 계산 엔진으로 서비스 서버에서 합니다. 다만 날짜별 간지(연·월·일의 60갑자)와 24절기 시각을 확인하기 위해, 출생 시각과 지역으로 보정한 **양력 날짜(연·월·일)만** 한국천문연구원의 공공 API(공공데이터포털, 대한민국)에 조회합니다. 이름·출생 시각·출생 도시·성별·기기 식별자 등 다른 정보는 함께 보내지 않으며, 조회는 서비스 서버가 합니다. 위 업체와 이 날짜 조회 외에는 이용자의 정보를 제3자에게 제공하지 않습니다." },
       ],
     },
     {
@@ -220,7 +222,7 @@ const privacyKo: LegalDocument = {
     {
       heading: "11. 고지의 의무",
       body: [
-        { type: "p", text: "본 방침이 변경되면 서비스 화면을 통해 알립니다. 이 방침은 2026년 10월 7일부터 적용됩니다." },
+        { type: "p", text: "본 방침이 변경되면 서비스 화면을 통해 알립니다. 이 방침은 2026년 10월 27일부터 적용됩니다." },
       ],
     },
     {
@@ -374,7 +376,7 @@ const termsKo: LegalDocument = {
 
 const privacyEn: LegalDocument = {
   title: "Privacy Policy",
-  updatedAt: "October 7, 2026",
+  updatedAt: "October 27, 2026",
   sections: [
     {
       body: [
@@ -463,7 +465,7 @@ const privacyEn: LegalDocument = {
             "Information on your device: deleted when you delete the app or use “Reset my info” in Settings (resetting also unlinks couple mode on our server)",
           ],
         },
-        { type: "p", text: "When a retention period ends or you ask us to delete your information, we delete it without delay, in a way that can't be recovered." },
+        { type: "p", text: "Server records past their retention period are removed by an automatic deletion job that runs every day. When you ask us to delete your information, we delete it without delay. Deleted data can't be recovered." },
       ],
     },
     {
@@ -480,7 +482,7 @@ const privacyEn: LegalDocument = {
             "**Apple Inc., Google LLC** — process in-app payments and deliver app updates and notifications. Payment information follows each company's privacy policy.",
           ],
         },
-        { type: "p", text: "Saju charts are calculated by our own engine on our own servers; birth dates are not sent to any outside calculation provider. We don't share your information with any third party other than the providers above." },
+        { type: "p", text: "Saju charts are calculated by our own engine on our own servers. To look up each date's sexagenary cycle (the 60-day calendar of stems and branches) and the 24 solar term times, our server sends **only a solar calendar date (year, month and day)**, adjusted for your birth time and place, to the public API of the Korea Astronomy and Space Science Institute (KASI, via Korea's Public Data Portal). Your name, birth time, birth city, gender, device identifiers and other information are not sent with it. Other than the providers above and this date lookup, we don't share your information with any third party." },
       ],
     },
     {
@@ -555,7 +557,7 @@ const privacyEn: LegalDocument = {
     {
       heading: "11. Changes to This Policy",
       body: [
-        { type: "p", text: "If this policy changes, we'll let you know in the Service. This policy applies from October 7, 2026." },
+        { type: "p", text: "If this policy changes, we'll let you know in the Service. This policy applies from October 27, 2026." },
       ],
     },
     {
@@ -709,7 +711,7 @@ const termsEn: LegalDocument = {
 
 const privacyEs: LegalDocument = {
   title: "Política de privacidad",
-  updatedAt: "7 de octubre de 2026",
+  updatedAt: "27 de octubre de 2026",
   sections: [
     {
       body: [
@@ -798,7 +800,7 @@ const privacyEs: LegalDocument = {
             "Información en tu dispositivo: se elimina al borrar la app o al usar “Restablecer mis datos” en Ajustes (restablecer también desvincula el modo pareja en nuestro servidor)",
           ],
         },
-        { type: "p", text: "Cuando termina el plazo de conservación o nos pides eliminar tu información, la borramos sin demora y de forma que no pueda recuperarse." },
+        { type: "p", text: "Los registros del servidor que superan su plazo de conservación se borran con un proceso automático que se ejecuta cada día. Si nos pides eliminar tu información, la borramos sin demora. Lo que se borra no se puede recuperar." },
       ],
     },
     {
@@ -815,7 +817,7 @@ const privacyEs: LegalDocument = {
             "**Apple Inc., Google LLC**: procesan los pagos dentro de la app y entregan las actualizaciones y notificaciones de la app. La información de pago sigue la política de privacidad de cada empresa.",
           ],
         },
-        { type: "p", text: "Las cartas de saju se calculan con nuestro propio motor en nuestros propios servidores; las fechas de nacimiento no se envían a ningún proveedor externo de cálculo. No compartimos tu información con terceros fuera de los proveedores anteriores." },
+        { type: "p", text: "Las cartas de saju se calculan con nuestro propio motor en nuestros propios servidores. Para consultar el ciclo sexagenario de cada fecha (el calendario de 60 combinaciones de troncos y ramas) y la hora de los 24 términos solares, nuestro servidor envía **solo una fecha del calendario solar (año, mes y día)**, ajustada según tu hora y lugar de nacimiento, a la API pública del Instituto Coreano de Astronomía y Ciencias Espaciales (KASI, a través del Portal de Datos Públicos de Corea). No se envían tu nombre, tu hora de nacimiento, tu ciudad de nacimiento, tu género, identificadores del dispositivo ni otros datos. Fuera de los proveedores anteriores y de esta consulta de fecha, no compartimos tu información con terceros." },
       ],
     },
     {
@@ -890,7 +892,7 @@ const privacyEs: LegalDocument = {
     {
       heading: "11. Cambios en esta política",
       body: [
-        { type: "p", text: "Si esta política cambia, te lo indicaremos en el Servicio. Esta política se aplica desde el 7 de octubre de 2026." },
+        { type: "p", text: "Si esta política cambia, te lo indicaremos en el Servicio. Esta política se aplica desde el 27 de octubre de 2026." },
       ],
     },
     {
