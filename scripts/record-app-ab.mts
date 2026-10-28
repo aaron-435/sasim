@@ -35,7 +35,7 @@ const CONFIGS: Record<string, Config> = {
     ],
     runAt: [0, 0],
     compare: /^One says/,
-    highlight: ["lowest", "highest", "Steady Pace", "Full Burnout", "Two different results"],
+    highlight: ["lowest", "highest", "Steady Pace", "Running on Empty", "Two different results"],
   },
   A1x: {
     persona: "mia",
@@ -72,7 +72,7 @@ const CONFIGS: Record<string, Config> = {
     ],
     runAt: [1, 1],
     compare: /^One says/,
-    highlight: ["lowest", "highest", "Peaceful Sleeper", "Deep-Sleep Deprived", "Two different results"],
+    highlight: ["lowest", "highest", "Peaceful Sleeper", "Mind, Body and Dreams All Awake", "Two different results"],
   },
   A7x: {
     persona: "riley",

@@ -100,18 +100,24 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
 
 ## C. 소재와 관찰 (돈 쓰지 않음)
 
-- [ ] 14. Year Wrapped 영상 5개 (12/1 마감)
+- [x] 14. Year Wrapped 영상 5개 (12/1 마감)
   - 변경: `video-kit.md` 8장 훅 16~20 → 대본·TTS(`marketing/tts-samples/`), 녹화 설정(`scripts/record-app*.mts`). 노출 기간 밖에서 Wrapped를 여는 방법이 필요하면 dev 전용.
   - QA: 녹화 명령 키마다 exit 0, `ffprobe` → 1080x1920 + 오디오, 프레임 몇 장으로 자막·화면 확인. 루트 tsc 0.
+  - 결과(2026-10-28): 대본 `scripts.json` `Y16`~`Y20`(훅 16~20, 화면에 실제로 적힌 말만), 음성 5개, 새 녹화 스크립트 `scripts/record-app-tour.mts`(키별 설정: 화면 열기 → 문장 박자마다 페이지 넘김·점프 컷). Wrapped는 개발용 `?date=2026-12-05` + 저장소에 Q&A 주제 횟수만 넣어 5장. 재물(Wealth)·money가 보이는 쪽, 페이월 미리보기는 찍지 않음(`video-kit.md` 8장 "제작 결과"에 계획과 달라진 점).
+  - QA: `CHROME_PATH=... node --import tsx scripts/record-app-tour.mts Y16`(Y17~Y20 같음) → 다섯 다 exit 0. `ffprobe` → 다섯 다 video 1080x1920 + audio(20.4·22.4·24.1·27.0·18.2초, 1장 목표 25~35초보다 짧은 것 셋). 2.5초 간격 프레임 묶음으로 확인: Y16 표지→영역→12개월 4쪽→실행 계획→마무리, Y17 영역 4쪽 제목 = 자막, Y18 카드 1~5 순서 = 자막, Y19 Fire Horse→Fire Goat, Y20 heart→bright spot(Learning), money 칩 글자 안 보임. 대본 금지어 정규식 → Y17·Y19의 `your `만(화면 문구를 그대로 읽은 부분). 루트 `npx tsc --noEmit` → exit 0. 증거는 mobile-web(네이티브 아님). 게시는 스토어 공개 뒤 사용자.
 
-- [ ] 15. A4x·A6x 재렌더
+- [x] 15. A4x·A6x 재렌더
   - 선행: 4, 6
   - 변경: `marketing/tts-samples/scripts.json` A4x·A6x 대본을 새 제목에 맞춤, TTS 재생성, `record-app-ab.mts` `highlight`. A3x의 옛 "Full Burnout"도 함께(이전 TODO 발견 사항).
   - QA: `node --import tsx scripts/record-app-ab.mts A4x|A6x|A3x` → exit 0, `ffprobe` 확인, 결과 화면 프레임이 대본과 같은 제목.
+  - 결과(2026-10-28): A3x "Full Burnout" → "Running on Empty", A6x "Deep-Sleep Deprived" → "Mind, Body and Dreams All Awake"(대본 `scripts.json` + `record-app-ab.mts` `highlight`), 두 음성 다시 생성. A4x는 제목이 그대로("Fully Masked")라 대본·음성은 두고 영상만 다시 찍음(옛 영상은 4번 버그 전 화면).
+  - QA: `CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" node --import tsx scripts/record-app-ab.mts A3x`(A4x·A6x 같음) → 셋 다 exit 0. `ffprobe` → 셋 다 video 1080x1920 + audio(17.4s·18.8s·20.5s). 끝에서 3.5초 프레임의 비교 화면 제목: Steady Pace/Running on Empty, Consistent Self/Fully Masked, Peaceful Sleeper/Mind, Body and Dreams All Awake = 대본과 같음. 증거는 mobile-web.
 
-- [ ] 16. 영어 사용자 5명 관찰 키트 (문서만)
+- [x] 16. 영어 사용자 5명 관찰 키트 (문서만)
   - 변경: 새 `marketing/user-observation-kit.md` — 모집 문구(규칙이 허용하는 커뮤니티 1~2곳, 무단 DM·자동 댓글 금지), 관찰 과제(유형 카드 → 앱 이동 → 애착 검사·대화 → 리포트 미리보기 → 페이월), 기록표(멈춘 곳, 낼 것/안 낼 것과 이유), 사례비와 구매비 보상 분리, 주력 상품을 바꿀 조건(SPEC 사업 가설).
   - QA: 키트 금지어 점검(압박·정확도 표현) 0. 사례비가 월 $300 예산 안의 항목으로 적혀 있는지 확인.
+  - 결과(2026-10-28): `marketing/user-observation-kit.md` — 5명으로 알 수 있는 것/없는 것, 준비(iOS 미공개면 Android만), 모집 글(r/alphaandbetausers, r/startups Feedback Friday 스레드만, 금지 행동 명시), 진행 대본 8단계, 기록표(개인 정보 칸 없음, P1~P5), 사례비 $15×5와 구매비 보전(상한 $15×5, 구매 요구 없음, 후기 조건 없음) 분리 = 최대 $150, 주력 상품을 바꿀 조건과 다음 SPEC 판단.
+  - QA: 모집 글·진행 대본 영어 줄 24줄에 금지어 정규식(accura|exact|proven|predict|fortune-tell|guarantee|unlucky|doom|last chance|hurry|only today|limited|spots|countdown|diagnos) → 0건. `grep '\$300'` → 98줄 "월 약 $300 마케팅 예산 안의 항목".
 
 ## 사용자 확인·실행
 
@@ -134,6 +140,7 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
   - 선행: 16, 그리고 19·20으로 넘김이 배포된 뒤가 좋다. 결과 기록표를 공유하면 13번 진행 여부와 주력 상품 판단에 쓴다.
 
 ## 발견 사항
+- (15번 중) `scripts/record-*.mts`의 기본 브라우저 경로(`~/Library/Caches/ms-playwright/chromium_headless_shell-1243/...`)가 지금 없다(Playwright 캐시가 비어 있음). 녹화는 `CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`로 시스템 Chrome을 써서 돌렸다. `npx playwright install chromium-headless-shell`을 다시 하거나 기본값을 바꾸면 된다.
 - (13번 중) 퍼널이 검사(퀴즈) 단계를 보지 못한다: `lib/eventSchema.ts` 허용 목록에 검사 시작·완료 이벤트가 없어 "유형 공개 → 검사 시작 → 검사 완료 → 대화" 중 어디서 멈추는지 숫자로 알 수 없다. SPEC의 "바꿀 조건"(애착 검사 30문항 전 이탈)과 13번 조건을 퍼널로 판단하려면 다음 측정 작업에서 `quiz_start`·`quiz_complete`(모듈 id만)를 앱에 넣어야 한다.
 - (12번 중) `handoff_redeem`은 성공만 센다. 만료·없는 코드·`update_app` 같은 실패는 기록하지 않아, 링크가 실패해서 멈춘 사람은 리포트에 안 보인다. 필요하면 다음 측정 작업에서 실패 코드를 `kind`로 따로 남긴다.
 - (12번 중) iPhone의 "앱에서 열기" 링크 탭은 기록하지 않는다(앱이 열리면 `handoff_redeem`으로 잡힘). 링크 탭 대비 꺼내기 비율이 필요하면 별도 이벤트가 있어야 한다.
