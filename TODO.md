@@ -121,8 +121,27 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
 
 ## 사용자 확인·실행
 
-- [ ] 17. (사용자 확인) 구매 성공 5건 대조
+- [x] 17. (사용자 확인) 구매 성공 5건 대조
   - RevenueCat 대시보드 → Customers/Transactions에서 구매 날짜·상품·샌드박스 여부·무료 체험·환불을 확인하고, 본인·테스터 구매인지 알려 주기. 키·원시 기록은 채팅이나 외부 도구에 붙이지 않는다.
+  - 대조용 이벤트 목록(2026-10-28, 운영 `events` 읽기 전용 조회, ID 비출력): `purchase_success`는 행 기준 16건, 기기 6대. 모두 `kind` 없음(구버전 빌드). "5건"은 리포트의 기기 단위 숫자였다.
+    | KST | 플랫폼 | 상품 | 기기 |
+    |---|---|---|---|
+    | 10-07 23:42, 23:49 · 10-08 09:03 | android | 구독(이름 없음) ×3 | #1 |
+    | 10-08 09:05 | android | compat_report | #1 |
+    | 10-12 09:22 | android | 구독 | #1 |
+    | 10-12 15:09 · 10-13 11:22 | android | 구독 ×2 | #2 |
+    | 10-12 15:20 / 15:23 · 10-13 11:27 | android | module3 / compat_report / module7 | #2 |
+    | 10-15 15:55 | android | 구독 (dev 빌드) | #3 |
+    | 10-16 10:09 | android | year_report_2027 | #4 |
+    | 10-17 09:25 / 09:34 | ios | qapro.annual / module1 | #5 |
+    | 10-26 13:27 | android | 구독 | #6 |
+  - 해석(가설, 미확정): 10-07~08은 Play 테스트 카드 확인 날, 10-12~13은 Android 빌드·PDF 수정 날, 10-17은 TestFlight 빌드 8 실기기 구매 확인 날과 겹친다. 10-16 #4와 10-26 #6은 기억에 기록이 없다. 이 두 건이 가장 먼저 볼 대상이다.
+  - 절차: ① RevenueCat → Customers에서 위 날짜·시각(KST, UTC는 9시간 빼기)으로 찾기 ② 각 거래의 Sandbox 표시·Trial 여부·Refund 여부 보기 ③ Play Console → 주문 관리에서 Android 건이 "테스트 구매"인지 보기 ④ 결과를 "#N: 본인/테스터/실사용자, 샌드박스 여부" 꼴로만 알려 주기. 실사용자 실제 청구가 0건이면 SPEC의 매출 0원과 맞는다.
+  - 결과(2026-10-28, 사용자 요청으로 Claude in Chrome에서 RevenueCat 대시보드를 읽기만 함): **실제 청구 0건.** All customers 77명 · Paid 0 · Trialing 0 · Total revenue $0. Sandbox 고객 3명 중 2명이 위 16건을 모두 설명한다.
+    - Android 테스트 고객 1명(별칭 2개, 재설치로 기기 ID가 바뀐 것): 10-07 무료 체험 → 연간·월간 구독 반복, compat_report ×2, module3, module7, year_report_2027(10-16), 월간 구독(10-26) — 위 #1·#2·#3·#4·#6 전부. 갱신이 30분·5분 간격이고 "billing error"로 끝나는 것은 Play 테스트 카드의 빠른 갱신이다.
+    - iOS 테스트 고객 1명: 10-17 연간 체험 + module1(#5, TestFlight). 이후 매일 "갱신"은 샌드박스 가속 갱신이다.
+    - 나머지 Sandbox 1명은 9-14~15(이벤트 기록 전 테스트).
+  - QA: RevenueCat All customers 화면 → "Paid subscribers 0, Total revenue $0" / Sandbox 화면 → 3명, 두 고객 상세 화면이 모두 "SANDBOX DATA". SPEC 미확인 1 해소.
 
 - [ ] 18. (사용자 확인·실행) Supabase 삭제 작업 확인 / SQL 실행
   - 대시보드 Database → Cron(또는 Functions)에 보관 기간 삭제 작업이 있는지 확인. 5·9번에서 SQL 파일이 생기면 SQL Editor에서 실행.
@@ -156,3 +175,4 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
 - (1번 중) 구독 SKU는 코드에 이름이 없고(RevenueCat 오퍼링에서 옴) 리포트에서 `other_or_missing_product`로 묶인다. 구독을 따로 세려면 ASC/Play의 실제 구독 상품 ID를 받아 `productFamily`에 넣는다(2번이나 12번에서).
 - (9번 중) `/api/verification-code`·`/api/handoff`의 `error` 문구는 한국어뿐인데, 앱 `VerifyCodeScreen`은 서버 `error`를 그대로 보여 줘서 en/es 사용자가 한국어 오류를 본다(예전부터). 새 `/api/handoff`는 `code`(`not_found`·`expired`·`update_app` 등)를 같이 주니 11번에서 앱이 `code`로 자기 언어 문구를 고르면 된다. 깔린 1.2.0은 그대로. → 11번 변경·QA에 넣음.
 - (9번 중) 옛 Q&A 코드 꺼내기는 읽고 나서 비우는 두 단계라 같은 코드를 동시에 두 번 내면 둘 다 받을 수 있다(예전부터, 24시간·한 사람용이라 그대로 둠). 새 넘김은 삭제가 성공한 요청만 받는다.
+- (17번 중) 테스터 표시(2번)는 그 기능이 들어간 빌드부터라, 10월 본인 구매 기기(#1·#2·#4·#5)는 리포트에서 사용자 섹션에 섞인다. 17번 대조 결과가 나오면 해당 기기에서 설정 © 7번 탭으로 테스터를 켜 두면 이후 행부터는 빠진다(옛 행도 같은 기기 ID면 함께 빠짐, 단 OTA 반영 뒤).
