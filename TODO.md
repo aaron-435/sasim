@@ -143,10 +143,13 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
     - 나머지 Sandbox 1명은 9-14~15(이벤트 기록 전 테스트).
   - QA: RevenueCat All customers 화면 → "Paid subscribers 0, Total revenue $0" / Sandbox 화면 → 3명, 두 고객 상세 화면이 모두 "SANDBOX DATA". SPEC 미확인 1 해소.
 
-- [ ] 18. (사용자 확인·실행) Supabase 삭제 작업 확인 / SQL 실행
+- [x] 18. (사용자 확인·실행) Supabase 삭제 작업 확인 / SQL 실행
   - 대시보드 Database → Cron(또는 Functions)에 보관 기간 삭제 작업이 있는지 확인. 5·9번에서 SQL 파일이 생기면 SQL Editor에서 실행.
   - (9번, retention.sql보다 먼저) SQL Editor에 `supabase/handoffs.sql` 전체를 붙여넣고 Run → `select count(*) from handoffs;` → 0. 그다음 9번 (사용자 확인) curl. retention.sql을 이미 실행했다면 다시 한 번 실행하면 함수가 넘김 삭제 줄까지 포함해 덮어써진다.
   - (5번, 19번 웹 배포 전에) ① Database → Extensions에서 `pg_cron` 켜기 ② SQL Editor에 `supabase/retention.sql` 전체를 붙여넣고 Run ③ `select jobname, schedule from cron.job;` → `fatesaid-retention | 15 3 * * *` 한 줄 ④ 바로 한 번 `select purge_expired_data();` → 오류 없이 끝나면 성공. 대시보드에 비슷한 작업이 이미 있으면 실행 전에 알려 주기.
+  - 사전 점검(2026-10-28, 운영 DB 읽기 전용, `supabase-js` service role로 `select … limit 0`·`count head`만): `retention.sql`이 지우는 9개 테이블과 쓰는 열(`created_at`·`expires_at`·`joined_at`·`code_expires_at`)이 모두 있음. `handoffs`만 없음(PGRST205, 예상대로 → 19번 전 `/api/handoff`는 503). 지금 실행해도 첫 `purge_expired_data()`가 지울 행은 0(1년 지난 행 7개 테이블 모두 0, 만료 초대 0, 연결 안 된 만료 커플 코드 0). `cron.job`은 API로 못 읽어 대시보드 확인은 사용자 몫.
+  - 결과(2026-10-28, Claude in Chrome으로 대시보드 조작, Run 클릭은 사용자): Integrations → Cron = "Cron is not installed" → 기존 삭제 작업 없음. SQL Editor에 `handoffs.sql` 넣음 → 사용자 Run → `handoffs_rows = 0`. 이어서 `retention.sql`(본문 동일, 머리 주석만 줄임, `pg_cron`은 파일의 `create extension`으로 켬) + `select purge_expired_data(); select jobname, schedule, active from cron.job;` → 사용자 Run → `fatesaid-retention | 15 3 * * * | true` 한 줄.
+  - QA: 읽기 전용 `select … limit 0` → `handoffs: ok`(전엔 PGRST205). 9번 (사용자 확인) curl을 `work-dev`(로컬, 운영 DB)로 실행: POST `/api/handoff` → 키 `code,token,deepLink,expiresAt` / 첫 GET `?code=` → 200 `"kind":"handoff"` + 생년월일 / 두 번째 GET → 404 `"code":"not_found"` / 뒤이어 `handoffs` 행 수 → 0(테스트 행 지워짐).
 
 - [ ] 19. (사용자 실행) 커밋·푸시 → Vercel 웹 배포 확인
   - 웹 변경(2·3·5·9·10·12)이 실린다. 앱 OTA보다 먼저.
