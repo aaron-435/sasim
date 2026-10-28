@@ -20,6 +20,9 @@ const SURFACES = new Set(["report", "qa", "qa_person", "compat_report", "year_re
 // Web→app handoff (2026-10-27): web entry points, store buttons, app redeem paths.
 const HANDOFF_SURFACES = new Set(["type_card", "calculator", "day_master", "invite", "qa"]);
 const STORE_SURFACES = new Set([...HANDOFF_SURFACES, "landing"]);
+// Quiz steps (2026-10-28): the 12 psych-test modules (mobile/lib/quiz/modules.ts).
+const MODULES = new Set(Array.from({ length: 12 }, (_, i) => `module${i + 1}`));
+const HANDOFF_ERRORS = new Set(["bad_request", "not_found", "expired", "update_app", "unavailable", "too_many", "network"]);
 const known = (set: Set<string>, value: unknown, fallback: string) => set.has(String(value)) ? String(value) : fallback;
 const PURCHASE_EVENTS = ["purchase_start", "purchase_success", "purchase_cancel", "purchase_error"];
 
@@ -156,9 +159,39 @@ export function buildFunnelReport(
       return d.events.some((e) => e.name === "onboarding_complete" && Date.parse(e.created_at) >= at);
     });
     lines.push(`redeemed devices with onboarding_complete after redeem: ${ratio(finished.length, redeemed.length)}`);
+    // Failures (app builds from the 2026-10-28 OTA on): a device may fail, then succeed.
+    lines.push(`app handoff_fail: ${ratio(count(app, (e) => e.name === "handoff_fail"), app.length)}`);
+    breakdown(app, "handoff_fail", "via", new Set(["link", "code"]), "other_or_missing_via");
+    breakdown(app, "handoff_fail", "kind", HANDOFF_ERRORS, "other_or_missing_error");
+  }
+
+  // Per module, unique devices at each step. quiz_* exist from the 2026-10-28 OTA on, so
+  // devices on older builds show chat/report without a quiz row.
+  function quizSection(title: string, group: Device[]) {
+    lines.push(`\n== ${title} ==`);
+    const mod = (e: FunnelEvent) => known(MODULES, e.props?.module, "other_or_missing_module");
+    const steps: [string, (e: FunnelEvent) => boolean][] = [
+      ["quiz_start new", (e) => e.name === "quiz_start" && e.props?.kind === "new"],
+      ["quiz_start resume", (e) => e.name === "quiz_start" && e.props?.kind === "resume"],
+      ["quiz_complete", (e) => e.name === "quiz_complete"],
+      ["chat_start", (e) => e.name === "chat_start"],
+      ["chat_complete", (e) => e.name === "chat_complete"],
+      ["report_generate", (e) => e.name === "report_generate"],
+    ];
+    const isStep = (e: FunnelEvent) => ["quiz_start", "quiz_complete", "chat_start", "chat_complete", "report_generate"].includes(e.name);
+    const modules = new Set<string>();
+    for (const d of group) for (const e of d.events) if (isStep(e)) modules.add(mod(e));
+    if (!modules.size) { lines.push("no quiz, chat or report events"); return; }
+    lines.push(`any quiz_start: ${ratio(count(group, (e) => e.name === "quiz_start"), group.length)}`);
+    const order = (m: string) => MODULES.has(m) ? Number(m.slice(6)) : 99;
+    for (const m of [...modules].sort((a, b) => order(a) - order(b))) {
+      lines.push(`${m}: ` + steps.map(([label, p]) => `${label}=${count(group, (e) => p(e) && mod(e) === m)}`).join(", "));
+    }
   }
 
   section("all observed native devices", ordered);
+  lines.push("\nQuiz steps by module: unique devices per step, not an ordered funnel (a device can resume, restart or take several modules).");
+  quizSection("quiz → chat → report by module (all observed native devices)", ordered);
   const firstRecentDay = kstDay(now) - 6;
   lines.push("\nRecent cohort = first observed on one of the last 7 KST calendar dates, including today's partial day; lifetime milestones through now.");
   section("first seen in last 7 KST calendar dates", ordered.filter((d) => kstDay(d.first) >= firstRecentDay));
@@ -170,6 +203,7 @@ export function buildFunnelReport(
   handoffSection("web handoff → app redeem (all time)", [...browsers.values()], ordered);
   lines.push("\nTester devices = hidden Settings switch or ?tester=1; use this to check that a build records each milestone, not as user data.");
   section("tester-marked native devices (excluded above)", testerDevices);
+  quizSection("tester-marked quiz → chat → report by module (excluded above)", testerDevices);
   handoffSection("tester-marked web handoff → app redeem (excluded above)", [...testerBrowsers.values()], testerDevices);
   lines.push("\nReconcile paid/trial signals, test purchases, refunds and renewals with RevenueCat/store records. Verified charges are not available in this report.");
   return lines.join("\n");

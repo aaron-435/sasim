@@ -118,4 +118,36 @@ check(!handoff.includes("surface=qa") && !handoff.includes("surface=invite"), "d
 check(testerHandoff.includes("web handoff_create: 1") && testerHandoff.includes("app handoff_redeem: 1/1"), "tester handoff rows have their own section");
 check(!/private-|1994-03-08|fridge/.test(withHandoff), "no IDs or unknown handoff values printed");
 check(section(report, "web handoff → app redeem (all time)").includes("app handoff_redeem: 0/3"), "handoff section present with no handoff events");
+// Quiz steps by module (2026-10-28) and handoff failures.
+const quizRows = [
+  ...rows,
+  event("private-q1", "2026-10-21T00:00:00Z", "quiz_start", { module: "module1", kind: "new" }),
+  event("private-q1", "2026-10-21T00:05:00Z", "quiz_start", { module: "module1", kind: "resume" }),
+  event("private-q1", "2026-10-21T00:10:00Z", "quiz_complete", { module: "module1" }),
+  event("private-q1", "2026-10-21T00:11:00Z", "chat_start", { module: "module1" }),
+  event("private-q2", "2026-10-21T00:00:00Z", "quiz_start", { module: "module1", kind: "new" }),
+  event("private-q2", "2026-10-21T00:01:00Z", "quiz_start", { module: "module1", kind: "new" }), // restart: same device
+  event("private-q3", "2026-10-21T00:00:00Z", "quiz_start", { module: "module12", kind: "new" }),
+  event("private-q4", "2026-10-21T00:00:00Z", "quiz_start", { module: "private-1994-03-08", kind: "new" }),
+  event("private-q-tester", "2026-10-21T00:00:00Z", "quiz_complete", { module: "module3", tester: true }),
+  event("private-f1", "2026-10-21T00:00:00Z", "handoff_fail", { via: "code", kind: "not_found" }),
+  event("private-f1", "2026-10-21T00:01:00Z", "handoff_fail", { via: "code", kind: "not_found" }),
+  event("private-f2", "2026-10-21T00:00:00Z", "handoff_fail", { via: "link", kind: "expired" }),
+  event("private-f3", "2026-10-21T00:00:00Z", "handoff_fail", { via: "link", kind: "Seoul-Korea" }),
+];
+const withQuiz = buildFunnelReport(quizRows, [], [], now);
+const quiz = section(withQuiz, "quiz → chat → report by module (all observed native devices)");
+check(quiz.includes("module1: quiz_start new=2, quiz_start resume=1, quiz_complete=1, chat_start=1, chat_complete=0, report_generate=0"), "module1 steps are unique devices, restarts deduplicated");
+check(quiz.includes("module12: quiz_start new=1"), "module12 counted (12 modules)");
+check(quiz.includes("other_or_missing_module: quiz_start new=1"), "unknown module masked");
+check(quiz.includes("any quiz_start: 4/"), "any quiz_start uses the native device denominator");
+check(quiz.indexOf("module1:") < quiz.indexOf("module12:"), "modules in numeric order");
+check(!quiz.includes("module3"), "tester quiz events stay out of the user section");
+check(section(withQuiz, "tester-marked quiz → chat → report by module (excluded above)").includes("module3: quiz_start new=0, quiz_start resume=0, quiz_complete=1"), "tester quiz events have their own section");
+check(section(report, "quiz → chat → report by module (all observed native devices)").includes("no quiz, chat or report events") || section(report, "quiz → chat → report by module (all observed native devices)").includes("module"), "quiz section present without quiz events");
+const fails = section(withQuiz, "web handoff → app redeem (all time)");
+check(fails.includes("app handoff_fail: 3/"), "handoff failures are unique devices");
+check(fails.includes("handoff_fail via=code: 1") && fails.includes("handoff_fail via=link: 2"), "failures split by path");
+check(fails.includes("handoff_fail kind=not_found: 1") && fails.includes("handoff_fail kind=expired: 1") && fails.includes("handoff_fail kind=other_or_missing_error: 1"), "failures split by error code, unknown masked");
+check(!/private-|1994-03-08|Seoul/.test(withQuiz), "no IDs or unknown values printed in quiz/failure rows");
 console.log(`funnel report tests: ${checks} passed (offline, synthetic data only)`);

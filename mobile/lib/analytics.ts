@@ -43,7 +43,10 @@ export type EventName =
   | "review_prompt"
   | "widget_tap"
   | "calendar_purpose"
-  | "handoff_redeem";
+  | "handoff_redeem"
+  | "handoff_fail"
+  | "quiz_start"
+  | "quiz_complete";
 
 type PropKey = "step" | "surface" | "product" | "kind" | "value" | "topic" | "position" | "module" | "via";
 export type EventProps = Partial<Record<PropKey, string | number | boolean>>;

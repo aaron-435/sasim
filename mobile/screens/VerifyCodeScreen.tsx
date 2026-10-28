@@ -57,9 +57,13 @@ export default function VerifyCodeScreen({
     setError(null);
     const result = await redeemHandoff(query);
     setLoading(false);
-    if (!result.ok) return setError(errorText(result.error));
-    // Counts only (lib/eventSchema.ts): how it arrived, which web page, how many fields came along.
+    // Counts only (lib/eventSchema.ts): how it arrived, which web page, how many fields came
+    // along — or, on failure, the error code. Never the code or token itself.
     const via = "t" in query ? "link" : "code";
+    if (!result.ok) {
+      track("handoff_fail", { via, kind: result.error });
+      return setError(errorText(result.error));
+    }
     if (result.kind === "session") {
       track("handoff_redeem", { via, kind: "session" });
       onVerified(result.session);

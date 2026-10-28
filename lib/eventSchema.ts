@@ -59,6 +59,11 @@ export const EVENT_NAMES = [
   "handoff_create",
   "store_click",
   "handoff_redeem",
+  // 2026-10-28: handoff_fail (via = link/code, kind = error code); quiz_start (module,
+  // kind = new/resume) and quiz_complete (module) — module ids only, never answers
+  "handoff_fail",
+  "quiz_start",
+  "quiz_complete",
 ] as const;
 
 export type EventName = (typeof EVENT_NAMES)[number];

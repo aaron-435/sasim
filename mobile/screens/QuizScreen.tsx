@@ -11,6 +11,7 @@ import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
+import { track } from "../lib/analytics";
 import { elementWithEmoji } from "../lib/elements";
 import { success } from "../lib/haptics";
 import { useLocale, useStrings } from "../lib/i18n";
@@ -105,6 +106,8 @@ export default function QuizScreen({
         setIndex(saved.length);
       }
       setLoaded(true);
+      // Module id and new/resume only — never the answers or the question number.
+      track("quiz_start", { module: moduleDef.id, kind: valid ? "resume" : "new" });
     });
     return () => {
       cancelled = true;
@@ -117,7 +120,9 @@ export default function QuizScreen({
   }, [answers, loaded, done, moduleDef.id, locale]);
 
   useEffect(() => {
-    if (done) clearQuizProgress(moduleDef.id);
+    if (!done) return;
+    clearQuizProgress(moduleDef.id);
+    track("quiz_complete", { module: moduleDef.id });
   }, [done, moduleDef.id]);
 
   const current = questions[index];
@@ -200,6 +205,7 @@ export default function QuizScreen({
 
   function handleRestart() {
     clearQuizProgress(moduleDef.id);
+    track("quiz_start", { module: moduleDef.id, kind: "new" });
     setIndex(0);
     setAnswers([]);
     setSliderValue(5);
