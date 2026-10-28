@@ -151,9 +151,11 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 순서: 1·2(측정)가 웹→앱(9~1
   - 결과(2026-10-28, Claude in Chrome으로 대시보드 조작, Run 클릭은 사용자): Integrations → Cron = "Cron is not installed" → 기존 삭제 작업 없음. SQL Editor에 `handoffs.sql` 넣음 → 사용자 Run → `handoffs_rows = 0`. 이어서 `retention.sql`(본문 동일, 머리 주석만 줄임, `pg_cron`은 파일의 `create extension`으로 켬) + `select purge_expired_data(); select jobname, schedule, active from cron.job;` → 사용자 Run → `fatesaid-retention | 15 3 * * * | true` 한 줄.
   - QA: 읽기 전용 `select … limit 0` → `handoffs: ok`(전엔 PGRST205). 9번 (사용자 확인) curl을 `work-dev`(로컬, 운영 DB)로 실행: POST `/api/handoff` → 키 `code,token,deepLink,expiresAt` / 첫 GET `?code=` → 200 `"kind":"handoff"` + 생년월일 / 두 번째 GET → 404 `"code":"not_found"` / 뒤이어 `handoffs` 행 수 → 0(테스트 행 지워짐).
 
-- [ ] 19. (사용자 실행) 커밋·푸시 → Vercel 웹 배포 확인
+- [x] 19. (사용자 실행) 커밋·푸시 → Vercel 웹 배포 확인
   - 웹 변경(2·3·5·9·10·12)이 실린다. 앱 OTA보다 먼저.
   - 9번의 `handoffs.sql`이 운영 DB에 없으면 `/api/handoff` 생성은 503이다. 옛 `/api/verification-code`(Q&A 코드)는 테이블이 없으면 "넘김 없음"으로 보고 그대로 동작한다(`lib/handoff.ts` `isMissingTable`). 그래도 10번 버튼이 함께 나가므로 18번 SQL을 이 배포 전에 실행한다.
+  - 결과(2026-10-28): 사용자 승인 뒤 `git push origin main`(cf38d7a..046f9be, 9커밋). Vercel 커밋 상태 success. 운영 DB에 넘김을 만들지 않으려고 쓰기 요청은 보내지 않음.
+  - QA: 푸시 전 루트 `npx tsc --noEmit` → exit 0, `npx tsx scripts/funnel-report.test.mts` → "42 passed", `npm run lint && npm run build` → 경고 0·빌드 성공. 배포 뒤 curl(www.fatesaidapp.com): `/`·`/privacy`·`/es` 200, `POST /api/handoff {}` → 400 bad_request(503 아님 = 테이블 있음), `GET /api/handoff?code=000000` → 404 not_found, 옛 `/api/verification-code?code=000000` → 404 not_found(응답 모양 유지), 랜딩 "See my saju type, free"·"about 10 seconds"·es "Ver mi tipo de saju gratis", 처리방침에 "Korea Astronomy and Space Science Institute (KASI" 노출.
 
 - [ ] 20. (사용자 실행) iOS 1.2.0 승인 뒤 `eas update`
   - 이전 TODO 11번(결과 문구 1·2)에 이번 앱 변경(2·4·6·7·11)까지 함께 실린다. 순서는 `HANDOFF_2026-10-25_ota_pending.md`(웹 먼저).
