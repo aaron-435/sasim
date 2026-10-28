@@ -24,7 +24,9 @@ SPEC: `SPEC.md`. 한 세션에 한 항목. 1 → 2 순서(2가 1의 이벤트를
 
 ## 사용자 확인·실행
 
-- [ ] 4. (사용자 실행) 커밋·푸시 → Vercel 배포 확인 — **OTA보다 먼저**. 배포 뒤 `curl`로 `/api/events`가 `quiz_start` 배치를 받는지(테스트 배치는 `dev: true`).
+- [x] 4. (사용자 실행) 커밋·푸시 → Vercel 배포 확인 — **OTA보다 먼저**. 배포 뒤 `curl`로 `/api/events`가 `quiz_start` 배치를 받는지(테스트 배치는 `dev: true`).
+  - 결과(2026-10-28): 사용자 요청으로 `git push origin main`(046f9be..5e120ce), Vercel 커밋 상태 success.
+  - QA: 운영 `POST /api/events`(`dev: true`, `platform: app-web`) — `quiz_start`·`quiz_complete`·`handoff_fail` 배치 → 200 `stored: 3`, 모르는 이름 `quiz_finish` → 400 `name`, `answers` 속성 → 400 `prop:answers`. dev 행 3개는 리포트에서 빠짐.
 - [ ] 5. (사용자 실행) iOS 1.2.0 승인 뒤 `eas update` 한 번(iOS·Android 함께) — 이전 TODO 20. 순서·명령은 `HANDOFF_2026-10-25_ota_pending.md`.
 - [ ] 6. (사용자 확인, 5 뒤) 앱 이어받기 실기 확인 — 이전 TODO 11의 절차 그대로(`TODO_2026-10-27_web2app.md` 11번). 같은 김에 설정 © 7번 탭으로 본인 기기 테스터 표시.
 - [ ] 7. (사용자 실행, 5 뒤) 영어 사용자 5명 관찰 — 이전 TODO 21. 기록표를 공유하면 웹 검사 맛보기와 주력 상품 판단에 쓴다.
