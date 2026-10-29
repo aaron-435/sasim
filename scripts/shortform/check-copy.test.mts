@@ -5,7 +5,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { checkConfig, checkFiles, checkText, loadConfigFile, parseConfig } from "./check-copy.mts";
+import { APP_COPY_EN, checkConfig, checkFiles, checkText, loadConfigFile, parseConfig } from "./check-copy.mts";
 import type { ShortformConfig, Violation } from "./check-copy.mts";
 
 let n = 0;
@@ -80,6 +80,17 @@ check(
   checkConfig(hookBad as ShortformConfig).some((v) => v.rule === "prediction" && v.field === "hook"),
   "checkConfig marks hook field",
 );
+
+// Verbatim app copy skips assume-viewer/accuracy on onScreen/script; a reworded line does not.
+const appLine = "They keep you sharp — that's exactly why they move you.";
+check(APP_COPY_EN.has(appLine), "app copy set has the otherChallengesSelf goodPoint");
+const onApp = { ...cfg, onScreen: [appLine, "You're the one who pushes"] };
+check(checkConfig(onApp as ShortformConfig).length === 0, "verbatim app copy on screen passes");
+const onEdited = { ...cfg, onScreen: ["They keep you sharp — that's exactly why."] };
+const editedVs = checkConfig(onEdited as ShortformConfig);
+check(hasRule(editedVs, "assume-viewer") && hasRule(editedVs, "accuracy"), "reworded app copy gets the full check");
+const hookApp = { ...cfg, hook: "You're the one who pushes" };
+check(hasRule(checkConfig(hookApp as ShortformConfig), "assume-viewer"), "app copy in the hook is not exempt");
 
 // Schema errors.
 const raw = JSON.parse(readFileSync(sample, "utf8")) as Record<string, unknown>;

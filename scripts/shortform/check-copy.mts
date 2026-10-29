@@ -4,6 +4,8 @@ import { readFileSync } from "node:fs";
 import { basename } from "node:path";
 import { pathToFileURL } from "node:url";
 import { SAJU_TYPE_CELEBRITIES } from "../../lib/sajuTypeCelebrities.ts";
+import { COMPATIBILITY_CONTENT } from "../../mobile/lib/compatibilityContent.ts";
+import { SAJU_TYPE_CONTENT } from "../../mobile/lib/sajuTypeContent.ts";
 
 export type Format = "F1" | "F2" | "F3" | "F4" | "F6";
 export type Platform = "tiktok" | "instagram" | "youtube";
@@ -146,7 +148,7 @@ export function parseConfig(raw: unknown, fileKey?: string): { config: Shortform
     obj.script.forEach((s, i) => {
       if (typeof s !== "string") err(`script[${i}]`, "must be a string");
     });
-    if (formatOk && format !== "F2" && format !== "F6" && obj.script.length < 1) err("script", "must not be empty");
+    if (formatOk && (format === "F1" || format === "F4") && obj.script.length < 1) err("script", "must not be empty"); // F2/F6 are silent, F3 may be
   }
   if (!("onScreen" in obj)) err("onScreen", "missing");
   else if (!Array.isArray(obj.onScreen)) err("onScreen", "must be an array");
@@ -189,11 +191,26 @@ export function parseConfig(raw: unknown, fileKey?: string): { config: Shortform
   return { config: obj as unknown as ShortformConfig, errors };
 }
 
+// Verbatim English app copy (relation headline/body/goodPoint, type name/tagline/body) that
+// F2/F6 cards quote. That copy is second person by design ("You're the one who pushes") and
+// says "the exact same point", so an exact match skips assume-viewer and accuracy; every
+// other rule still applies. Anything reworded is new copy and gets the full check.
+export const APP_COPY_EN: ReadonlySet<string> = new Set([
+  ...Object.values(COMPATIBILITY_CONTENT.en.relations).flatMap((r) => [r.headline, r.body, r.goodPoint]),
+  ...[...Object.values(SAJU_TYPE_CONTENT.en.archetypes), ...Object.values(SAJU_TYPE_CONTENT.en.modes)]
+    .flatMap((p) => [p.name, p.tagline, p.body]),
+]);
+const APP_COPY_EXEMPT = ["assume-viewer", "accuracy"];
+const checkLine = (field: string, text: string, strict: boolean): Violation[] => {
+  const vs = checkText(field, text, strict);
+  return APP_COPY_EN.has(text) ? vs.filter((v) => !APP_COPY_EXEMPT.includes(v.rule)) : vs;
+};
+
 export function checkConfig(config: ShortformConfig): Violation[] {
   const out: Violation[] = [
     ...checkText("hook", config.hook, true),
-    ...config.script.flatMap((s, i) => checkText(`script[${i}]`, s, false)),
-    ...config.onScreen.flatMap((s, i) => checkText(`onScreen[${i}]`, s, true)),
+    ...config.script.flatMap((s, i) => checkLine(`script[${i}]`, s, false)),
+    ...config.onScreen.flatMap((s, i) => checkLine(`onScreen[${i}]`, s, true)),
     ...checkText("caption", config.caption, false),
     ...config.hashtags.flatMap((h, i) => checkText(`hashtags[${i}]`, h, false)),
   ];

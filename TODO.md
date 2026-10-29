@@ -27,23 +27,31 @@ SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPE
   - 변경: `scripts/shortform/render-f1.mts`. 기존 `record-app.mts`의 CDP 녹화와 자막 방식을 재사용한다. 장면: 온보딩에 생년월일·시간·**해외 도시** 입력 → 유형 공개 → 유형 카드 → 끝 CTA "link in bio". TTS는 `marketing/tts-samples/generate.py`.
   - QA: `node --import tsx scripts/shortform/render-f1.mts F1-sample` → mp4. `ffprobe`로 1080×1920·35초 이하·오디오 트랙 확인. 0초·2초·끝 프레임을 뽑아 직접 본다(훅 글자, 앱 화면, CTA). mobile-web 렌더링이라 네이티브와 다를 수 있다고 적는다.
 
-- [ ] 3. F4 템플릿: 전/후 앱 화면(심리 검사 결과 → 사주 유형 카드)
+- [x] 3. F4 템플릿: 전/후 앱 화면(심리 검사 결과 → 사주 유형 카드) (2026-10-29, muse 지시서 `.agents/tasks/26-shortform-render-f4.md`, 브랜치 `task-26`. 렌더·수정은 이 세션)
+  - QA: `CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" node --env-file=.env.local --import tsx scripts/shortform/render-f4.mts F4-sample` → 3회 연속 `ok … 11.2s, 4 captions, test=Sleep, type=Ocean · Order`(TTS 194자 1회, 캐시). `ffprobe` → 1080×1920, audio, 11.17초. 프레임 8장(0~12초·끝): 0초 검사 목록+훅, 2초 질문(훅 숨김), 4초 결과 카드 `Peaceful Sleeper`+배지, 6~8초 유형 카드 `Ocean · Order`+배지(유명인 없음), 끝 `Link in bio`. 자막이 화면과 맞음. `check-copy` 통과.
+  - 결과: 설정 `onScreen = [검사 이름, 전 라벨, 후 라벨]`. 장면 박자는 대본 끝에서 센다(뒤에서 3번째 문장=결과, 2번째=유형, 마지막=CTA). 운영 쓰기 감시(GET·`/api/saju`·`/api/events` 외 요청이면 멈춤). 답하기는 문항 번호가 넘어갈 때까지 기다리고 한 번 재시도(자동 넘김 화면에서 문항을 건너뛰던 문제).
   - 선행: 1
   - 변경: `scripts/record-app-ab.mts` `CONFIGS` 확장 또는 `scripts/shortform/render-f4.mts`. 0초부터 앱 UI. "pov"류 시청자 감정 단정 문장 금지.
   - QA: 2번과 같은 ffprobe·프레임 확인. 훅·자막이 `check-copy` 통과.
 
-- [ ] 4. F2 템플릿: 유형 × 관계 카드 묶음
+- [x] 4. F2 템플릿: 유형 × 관계 카드 묶음 (2026-10-29, muse 지시서 `.agents/tasks/27-shortform-render-f2.md`, 브랜치 `task-26`)
+  - QA: `CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" node --import tsx scripts/shortform/render-f2.mts F2-sample` (sample2·3도) → `ok F2-sample selfChallengesOther 6 cards`, `ok F2-sample2 selfNurturesOther`, `ok F2-sample3 mirror`. PNG `file` → ig 1080×1350, tt 1080×1920. mp4 `ffprobe` → 1080×1920, audio, 18.0초. `--check`로 다른 관계 문구를 넣으면 `not app copy for Oak × Field (selfChallengesOther)` exit 1(muse 확인). 카드 접촉 시트(tt 6장 ×2세트, ig 6장)를 직접 봄: 잘림 없음, 대비 충분, 표지 두 유형 그림이 쌍과 맞음.
+  - 결과: 설정 `onScreen[0] = "<A> × <B>"`, 나머지는 그 쌍의 관계(headline·body·goodPoint) 또는 두 유형 tagline과 글자까지 같아야 한다. 관계는 `lib/compatibility.ts`로 계산. **사용자 결정(2026-10-29): 앱 원문과 정확히 같은 줄만 check-copy의 시청자 단정·정확도 규칙에서 빼준다**(`APP_COPY_EN`, 테스트 54개). 훅·캡션 등 새로 쓴 문장은 그대로 전체 검사.
   - 선행: 1
   - 변경: `scripts/shortform/render-f2.mts`. Playwright로 HTML → PNG. Instagram 캐러셀 1080×1350, TikTok 사진 1080×1920, YouTube용 슬라이드 mp4 각각. 색·글꼴은 Celadon & Hanji와 `FONTS` 기준(Newsreader, Plus Jakarta Sans).
   - 문구 출처는 `mobile/lib/compatibilityContent.ts`(en, 관계 5종 headline·body·goodPoint)와 `mobile/lib/sajuTypeContent.ts`(en, archetype·mode 조각)뿐이다. 스크립트가 카드 문장이 원문 문자열과 일치하는지 검사한다. 새 해석 문장 금지, "나쁜 궁합" 금지, % 금지.
   - QA: 3세트 렌더. 원문 일치 검사 통과, `check-copy` 통과. PNG 크기 확인. 카드 3장을 직접 본다(잘림, 대비).
 
-- [ ] 5. F6 템플릿: 한 줄 문구 카드 + 배경 아트 루프
+- [x] 5. F6 템플릿: 한 줄 문구 카드 + 배경 아트 루프 (2026-10-29, muse 지시서 `.agents/tasks/28-shortform-render-f6.md`, 브랜치 `task-26`)
+  - QA: `CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" node --import tsx scripts/shortform/render-f6.mts F6-sample` (sample2도) → `ok … 9.1s, type=Mountain · Rooted`, `type=Gem · Well`. `ffprobe` → 1080×1920, audio(무음), 9.1초. tagline이 그 생년월일 유형의 앱 원문과 일치(스크립트 검사). 프레임(0·2초·끝): 훅, 회전하는 생성 그림, tagline 3줄 안, `@fatesaidapp`. `check-copy` 통과.
+  - 결과: 배경은 앱 Home의 ElementMap SVG를 그 생년월일로 화면 밖 온보딩해 가져온 것(`common.mts`의 `elementMap`, `marketing/video/.art/` 캐시)이고 `art-layer.mts`가 키워 돌린다. 녹화 루프 mp4 대신 SVG를 재사용한다(F3도 같음).
   - 선행: 1
   - 변경: `scripts/shortform/render-f6.mts`. 배경은 mobile-web의 제너러티브 아트 화면을 한 번 녹화해 루프 mp4로 만든다. 그 위에 `sajuTypeContent` en tagline 한 줄과 계정 이름을 얹는다. 음성 없이 음원 자리만 둔다(음원은 게시할 때 플랫폼에서 고른다).
   - QA: 렌더 2개, ffprobe 1080×1920·7~12초. 문구 원문 일치, `check-copy` 통과. 프레임 확인.
 
-- [ ] 6. F3 템플릿 + 절기 날짜표
+- [x] 6. F3 템플릿 + 절기 날짜표 (2026-10-29, muse 지시서 `.agents/tasks/29-shortform-render-f3.md`, 브랜치 `task-26`)
+  - QA: `npx tsx scripts/shortform/solar-term-dates.mts` → 8행 + `check: lidong ok, dongzhi ok`(입동 2026-11-07 18:51 KST, 동지 2026-12-22 05:49 KST = 미 동부 12-21). `npm run validate:manseryeok` → `All golden samples match.` `CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" node --env-file=.env.local --import tsx scripts/shortform/render-f3.mts F3-sample` → `ok … 15.1s, 3 cards, voice=yes`(TTS 252자). `ffprobe` → 1080×1920, audio, 15.07초. 프레임 8장: 훅(상자 위), 카드 3장이 음성 순서대로, 끝 CTA. 카드 날짜 `Dec 21`이 표의 미 동부 날짜와 일치(스크립트 검사, 틀리면 exit 1). `check-copy` 8 files 0 failed.
+  - 결과: 날짜표 `marketing/shortform/dates.md`(엔진 출력, 손으로 고치지 않음). F3은 `aiVoice: false`면 `script: []` 허용(check-copy 스키마 수정).
   - 선행: 1, 5(배경 루프 재사용)
   - 변경: `scripts/shortform/solar-term-dates.mts`. 엔진 `lib/solarTerms.ts`에서 2026-11 ~ 2027-02 절기 시각을 KST와 UTC로 뽑는다. 여기에 Year Wrapped(12/1), 2027 신년을 더해 날짜표 `marketing/shortform/dates.md`를 만든다. `scripts/shortform/render-f3.mts`는 날짜 텍스트 카드 3~4장에 AI 음성을 선택으로 붙인다. 문장은 "리듬·흐름" 표현만 쓴다(예언 금지).
   - QA: `npm run validate:manseryeok` 통과(엔진은 바꾸지 않았으니 기존 결과 그대로). 날짜표의 입동·동지가 엔진 출력과 같다. 렌더 1개는 ffprobe와 프레임으로 확인, `check-copy` 통과.
@@ -81,6 +89,10 @@ SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPE
 - [ ] 16. (사용자 실행, 14 뒤) 영어 사용자 5명 관찰. 기록표를 공유하면 웹 검사 맛보기와 주력 상품 판단에 쓴다.
 
 ## 발견 사항
+- (3~6번) **F1 영상이 세로로 약 10% 늘어나 있다.** 설치된 Chrome(`CHROME_PATH`)은 headless 창 크기가 뷰포트와 달라 CDP 화면이 540×873, 1배율로 들어오고 ffmpeg가 1080×1920으로 늘린다. `common.mts`의 `launch`는 `--window-size=540,960 --force-device-scale-factor=2`로 고쳤고 프레임 크기가 다르면 멈춘다. `render-f1.mts`(와 `scripts/record-*.mts`)는 자체 launch라 그대로다. 8번 렌더 전에 render-f1을 `common.mts`의 `launch`/`recorder`로 바꾸는 게 맞다. 영상 길이도 끝 프레임 한 장이 1~1.3초 더 붙던 문제를 common에서 `-t`로 고쳤다(F1은 여전히 있음).
+- (5번) **앱 도시 검색이 악센트를 못 찾는다**: `/api/cities/search?q=São Paulo` → 결과 0, `Sao Paulo` → 브라질 상파울루. 스페인어·포르투갈어권 사용자가 온보딩에서 막힐 수 있다(앱·서버 코드라 이번 범위 밖). 샘플은 `Sao Paulo`로 씀.
+- (3번) F4 결과 카드 제목 읽기는 뺐다(로그용이었고 화면 요소를 안정적으로 못 골랐다). 유형 이름은 읽는다.
+- (4번) F2의 "You…" 문구는 카드 위쪽 쌍 라벨(`Oak × Field`)의 앞쪽 유형이 "나"라는 뜻인데, 화면에 그 설명은 없다. 7번에서 훅이나 캡션으로 "if you're Oak" 같은 틀을 줄지 정한다.
 - (2번) Playwright 브라우저 캐시(`~/Library/Caches/ms-playwright`)가 지워져 있다. `record-*.mts`와 `render-f1.mts`의 기본 `CHROME_PATH`가 없는 경로를 가리키므로 지금은 설치된 Chrome을 `CHROME_PATH`로 준다. 3~6번도 같다. 기본값을 바꿀지, `npx playwright install chromium-headless-shell`로 다시 받을지는 그때 정한다.
 - (2번) muse는 샌드박스에서 브라우저·localhost 접속이 막혀 렌더 결과를 못 본다. 3~6번 지시서는 "코드 + `--no-tts`/오프라인 검사까지"로 잡고, 렌더·프레임 검수는 이 세션이 한다.
 - (2번) 유형 화면(TypeScreen)의 유명인 섹션과 공유 이미지 미리보기 속 유명인 줄은 F4·F6 등 앱 화면을 녹화하는 다른 형식에서도 보일 수 있다. 그 템플릿에서도 같은 가림·검사를 넣는다.

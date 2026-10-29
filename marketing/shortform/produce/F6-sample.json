@@ -1,0 +1,23 @@
+{
+  "key": "F6-sample",
+  "format": "F6",
+  "hook": "A saju type in one line",
+  "script": [],
+  "onScreen": [
+    "Weight that becomes a landmark by not moving",
+    "Mountain · Rooted"
+  ],
+  "birth": {
+    "date": "1997-05-26",
+    "time": null,
+    "city": "Madrid"
+  },
+  "caption": "A saju type in one line.\nFree saju type card from a birth date: link in bio.\nSelf-reflection tool, not medical or psychological advice.",
+  "hashtags": [
+    "#saju",
+    "#koreansaju",
+    "#personalitytypes"
+  ],
+  "utmPlatform": "tiktok",
+  "aiVoice": false
+}

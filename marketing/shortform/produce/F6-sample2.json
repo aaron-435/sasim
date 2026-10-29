@@ -1,0 +1,22 @@
+{
+  "key": "F6-sample2",
+  "format": "F6",
+  "hook": "One birth date, one line",
+  "script": [],
+  "onScreen": [
+    "Metal that shines in proportion to what was cut away"
+  ],
+  "birth": {
+    "date": "1985-02-11",
+    "time": "21:45",
+    "city": "Sao Paulo"
+  },
+  "caption": "One birth date, one line.\nFree saju type card from a birth date: link in bio.\nSelf-reflection tool, not medical or psychological advice.",
+  "hashtags": [
+    "#saju",
+    "#fourpillars",
+    "#selfreflection"
+  ],
+  "utmPlatform": "instagram",
+  "aiVoice": false
+}

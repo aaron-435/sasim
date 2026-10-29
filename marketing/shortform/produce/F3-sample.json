@@ -1,0 +1,30 @@
+{
+  "key": "F3-sample",
+  "format": "F3",
+  "hook": "Winter Solstice arrives with the longest night.",
+  "script": [
+    "The longest night of the year is almost here.",
+    "Winter Solstice falls on December 21, when daylight starts its slow return.",
+    "The app reads this date as a turning point in the seasonal flow.",
+    "See the season's rhythm around this date in the app. Link in bio."
+  ],
+  "onScreen": [
+    "Winter Solstice, Dec 21 — the longest night of the year.",
+    "The app reads this date as a turning point in the seasonal flow.",
+    "See the season's rhythm around this date in the app."
+  ],
+  "birth": {
+    "date": "2001-12-09",
+    "time": "09:10",
+    "city": "Sydney"
+  },
+  "caption": "A seasonal turning point, marked on the calendar.\nWinter Solstice details and the season's rhythm in the app: link in bio.\nSelf-reflection tool, not medical or psychological advice.\nVoiceover is AI-generated.",
+  "hashtags": [
+    "#wintersolstice",
+    "#saju",
+    "#seasonalflow",
+    "#fourpillars"
+  ],
+  "utmPlatform": "tiktok",
+  "aiVoice": true
+}

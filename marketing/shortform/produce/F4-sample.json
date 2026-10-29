@@ -1,0 +1,30 @@
+{
+  "key": "F4-sample",
+  "format": "F4",
+  "hook": "Same person, two cards: a psych test result and a saju type.",
+  "script": [
+    "One person finishes a short sleep test inside the app.",
+    "The result card names a sleep pattern in plain words.",
+    "Then the same birth date opens a saju type card next to it.",
+    "Free to try. Link in bio."
+  ],
+  "onScreen": [
+    "Sleep",
+    "Psych test result",
+    "Saju type, same person"
+  ],
+  "birth": {
+    "date": "1988-11-03",
+    "time": "15:20",
+    "city": "Chicago"
+  },
+  "caption": "A sleep test result and a saju type card, side by side.\nSame birth date, two cards: link in bio.\nSelf-reflection tool, not medical or psychological advice.\nVoiceover is AI-generated.",
+  "hashtags": [
+    "#saju",
+    "#sleeptest",
+    "#personalitytypes",
+    "#selfreflection"
+  ],
+  "utmPlatform": "instagram",
+  "aiVoice": true
+}
