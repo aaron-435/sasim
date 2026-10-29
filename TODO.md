@@ -19,7 +19,10 @@ SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPE
     - `scripts/shortform/check-copy.test.mts`.
   - QA: `npx tsx scripts/shortform/check-copy.test.mts` 통과. 금지 사례와 통과 사례가 각각 하나 이상 있어야 한다. 루트 `npx tsc --noEmit` → 0.
 
-- [ ] 2. F1 템플릿: "내 사주 유형 찾는 법" 앱 화면 시연
+- [x] 2. F1 템플릿: "내 사주 유형 찾는 법" 앱 화면 시연 (2026-10-29, muse 지시서 `.agents/tasks/25-shortform-render-f1.md`, 브랜치 `task-25`. muse는 샌드박스에서 브라우저를 못 띄워 렌더 확인과 수정 4건은 이 세션이 함)
+  - QA: `CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" node --env-file=.env.local --import tsx scripts/shortform/render-f1.mts F1-sample` → `ok … 13.1s, 4 captions, city=Toronto, type=Field · Order`(TTS 197자 1회, 캐시 `marketing/video/.tts/`). `ffprobe` → video 1080×1920, audio 있음, 14.37초. 프레임 11장(0·2·4·6·7·8·9·10·11·12·끝)을 직접 봄: 0초 훅, 2초 생년월일 입력, 4~6초 시간·Toronto 검색, 7초 공개 연출, 8~11초 유형 카드(Field · Order), 12초~ `Link in bio`. 유명인 이름 안 보임. 루트 `npx tsc --noEmit` → exit 0, `check-copy.test.mts` → `ok 50 checks`, `check-copy.mts produce/*.json` → `1 files, 0 failed`.
+  - mobile-web 렌더링이라 네이티브 화면과 다를 수 있다(폰트 렌더링, 공개 연출). 광고로 쓸 장면은 시뮬레이터와 한 번 비교한다.
+  - 결과: 녹화 중 `/api/saju` 요청에서 `sessionId`·`nickname`을 빼(운영 DB 저장 없음) `/api/events`는 막는다. 유형 공개 화면은 첫 화면 안에 "People who share this type"(유명인)이 들어오므로 그 아래를 배경색으로 가리고, 가림막 위로 라벨이 보이면 스크린샷을 남기고 멈춘다. `--no-tts`는 무음 확인용.
   - 선행: 1
   - 변경: `scripts/shortform/render-f1.mts`. 기존 `record-app.mts`의 CDP 녹화와 자막 방식을 재사용한다. 장면: 온보딩에 생년월일·시간·**해외 도시** 입력 → 유형 공개 → 유형 카드 → 끝 CTA "link in bio". TTS는 `marketing/tts-samples/generate.py`.
   - QA: `node --import tsx scripts/shortform/render-f1.mts F1-sample` → mp4. `ffprobe`로 1080×1920·35초 이하·오디오 트랙 확인. 0초·2초·끝 프레임을 뽑아 직접 본다(훅 글자, 앱 화면, CTA). mobile-web 렌더링이라 네이티브와 다를 수 있다고 적는다.
@@ -78,6 +81,9 @@ SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPE
 - [ ] 16. (사용자 실행, 14 뒤) 영어 사용자 5명 관찰. 기록표를 공유하면 웹 검사 맛보기와 주력 상품 판단에 쓴다.
 
 ## 발견 사항
+- (2번) Playwright 브라우저 캐시(`~/Library/Caches/ms-playwright`)가 지워져 있다. `record-*.mts`와 `render-f1.mts`의 기본 `CHROME_PATH`가 없는 경로를 가리키므로 지금은 설치된 Chrome을 `CHROME_PATH`로 준다. 3~6번도 같다. 기본값을 바꿀지, `npx playwright install chromium-headless-shell`로 다시 받을지는 그때 정한다.
+- (2번) muse는 샌드박스에서 브라우저·localhost 접속이 막혀 렌더 결과를 못 본다. 3~6번 지시서는 "코드 + `--no-tts`/오프라인 검사까지"로 잡고, 렌더·프레임 검수는 이 세션이 한다.
+- (2번) 유형 화면(TypeScreen)의 유명인 섹션과 공유 이미지 미리보기 속 유명인 줄은 F4·F6 등 앱 화면을 녹화하는 다른 형식에서도 보일 수 있다. 그 템플릿에서도 같은 가림·검사를 넣는다.
 - (1번) `check-copy`는 금지어를 넓게 잡는다: `heal…`이 "healthy", `treat…`이 "treaty", `stock…`, `will` 단독도 걸린다. 7번에서 문장을 쓸 때 걸리면 단어를 바꾸고, 규칙을 풀어야 하면 그때 결정한다. 해시태그 `#astrology`는 규칙상 통과하지만 4.3(b) 이후 쓸지는 7번에서 판단.
 - (분석 중) yt-dlp는 TikTok 댓글을 0개로 받는다. 댓글은 Aside로 읽는다. TikTok은 요청을 가끔 막으니 계정 목록은 재시도가 필요하다(`marketing/shortform/tools/collect.py`).
 - (분석 중) 임시 폴더는 재부팅하면 지워진다. 영상·프레임은 `~/.cache/shortform_dl`에 둔다.
