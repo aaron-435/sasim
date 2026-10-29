@@ -809,8 +809,32 @@ export default function FortuneScreen({
               />
             </Animated.View>
 
+            <Animated.View style={sectionStyle(2)}>
+              <DetailList
+                title={strings.fortune.detailsLabel}
+                items={[
+                  {
+                    key: "stage",
+                    label: strings.fortune.lifeStageLabel,
+                    name: stagesContent.lifeStages[daily.lifeStageIndex]?.name ?? "",
+                    body: reconciledBody(locale, "stage", daily.lifeStageIndex, daily.compatibility.relation) ?? stagesContent.lifeStages[daily.lifeStageIndex]?.body ?? "",
+                  },
+                  ...(daily.sinsalIndex !== null
+                    ? [
+                        {
+                          key: "sinsal",
+                          label: strings.fortune.sinsalLabel,
+                          name: stagesContent.sinsal[daily.sinsalIndex]?.name ?? "",
+                          body: reconciledBody(locale, "sinsal", daily.sinsalIndex, daily.compatibility.relation) ?? stagesContent.sinsal[daily.sinsalIndex]?.body ?? "",
+                        },
+                      ]
+                    : []),
+                ]}
+              />
+            </Animated.View>
+
             {luckyPoint && luckyNumber && (
-              <Animated.View style={[styles.sectionCard, sectionStyle(2)]}>
+              <Animated.View style={[styles.sectionCard, sectionStyle(3)]}>
                 <Text style={styles.sectionLabel} accessibilityRole="header">{strings.fortune.luckyPointLabel}</Text>
                 <View style={styles.luckyRow}>
                   <View style={styles.luckyBlock}>
@@ -838,30 +862,6 @@ export default function FortuneScreen({
                 </View>
               </Animated.View>
             )}
-
-            <Animated.View style={sectionStyle(3)}>
-              <DetailList
-                title={strings.fortune.detailsLabel}
-                items={[
-                  {
-                    key: "stage",
-                    label: strings.fortune.lifeStageLabel,
-                    name: stagesContent.lifeStages[daily.lifeStageIndex]?.name ?? "",
-                    body: reconciledBody(locale, "stage", daily.lifeStageIndex, daily.compatibility.relation) ?? stagesContent.lifeStages[daily.lifeStageIndex]?.body ?? "",
-                  },
-                  ...(daily.sinsalIndex !== null
-                    ? [
-                        {
-                          key: "sinsal",
-                          label: strings.fortune.sinsalLabel,
-                          name: stagesContent.sinsal[daily.sinsalIndex]?.name ?? "",
-                          body: reconciledBody(locale, "sinsal", daily.sinsalIndex, daily.compatibility.relation) ?? stagesContent.sinsal[daily.sinsalIndex]?.body ?? "",
-                        },
-                      ]
-                    : []),
-                ]}
-              />
-            </Animated.View>
           </>
         )}
 

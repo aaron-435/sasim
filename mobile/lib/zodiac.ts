@@ -1,32 +1,3 @@
-// Ported from components/OnboardingWizard.jsx's ZODIAC/getZodiac — keep both in sync if
-// the date ranges ever change.
-export const ZODIAC = [
-  { nameKey: "capricorn", symbol: "♑", from: [12, 22], to: [1, 19] },
-  { nameKey: "aquarius", symbol: "♒", from: [1, 20], to: [2, 18] },
-  { nameKey: "pisces", symbol: "♓", from: [2, 19], to: [3, 20] },
-  { nameKey: "aries", symbol: "♈", from: [3, 21], to: [4, 19] },
-  { nameKey: "taurus", symbol: "♉", from: [4, 20], to: [5, 20] },
-  { nameKey: "gemini", symbol: "♊", from: [5, 21], to: [6, 20] },
-  { nameKey: "cancer", symbol: "♋", from: [6, 21], to: [7, 22] },
-  { nameKey: "leo", symbol: "♌", from: [7, 23], to: [8, 22] },
-  { nameKey: "virgo", symbol: "♍", from: [8, 23], to: [9, 22] },
-  { nameKey: "libra", symbol: "♎", from: [9, 23], to: [10, 22] },
-  { nameKey: "scorpio", symbol: "♏", from: [10, 23], to: [11, 21] },
-  { nameKey: "sagittarius", symbol: "♐", from: [11, 22], to: [12, 21] },
-] as const;
-
-export function getZodiac(month: number, day: number) {
-  if (!month || !day) return null;
-  return (
-    ZODIAC.find(({ from, to }) => {
-      const afterStart = month === from[0] ? day >= from[1] : month > from[0];
-      const beforeEnd = month === to[0] ? day <= to[1] : month < to[0];
-      if (from[0] > to[0]) return afterStart || beforeEnd;
-      return afterStart && beforeEnd;
-    }) ?? null
-  );
-}
-
 // year/month/day text fields -> "YYYY-MM-DD", or "" while incomplete/invalid.
 export function toISODateString(year: string, month: string, day: string): string {
   const y = parseInt(year, 10);

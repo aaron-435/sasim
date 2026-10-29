@@ -9,7 +9,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { dobFieldOrder, dobSeparator } from "../lib/dobOrder";
 import { ONBOARDING_STEP_INDEX } from "../lib/onboardingSteps";
 import { COLORS } from "../theme/colors";
-import { getZodiac, toISODateString } from "../lib/zodiac";
+import { toISODateString } from "../lib/zodiac";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 
@@ -49,7 +49,6 @@ export default function DobScreen({
   const age = useMemo(() => calculateAge(iso), [iso]);
   const isTooYoung = age !== null && age < MIN_AGE;
   const canProceed = iso !== "" && !isTooYoung;
-  const zodiac = useMemo(() => (iso !== "" ? getZodiac(Number(month), Number(day)) : null), [iso, month, day]);
 
   function digitsOnly(v: string) {
     return v.replace(/[^0-9]/g, "");
@@ -85,12 +84,6 @@ export default function DobScreen({
           ))}
         </Reveal>
 
-        {zodiac && (
-          <View style={styles.zodiacCard} accessible accessibilityLabel={strings.common.zodiacLabels[zodiac.nameKey]}>
-            <Text style={styles.zodiacSymbol} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{zodiac.symbol}</Text>
-            <Text style={styles.zodiacLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.common.zodiacLabels[zodiac.nameKey]}</Text>
-          </View>
-        )}
 
         {isTooYoung && <Text style={styles.ageWarning} accessibilityLiveRegion="polite" accessibilityRole="alert" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{strings.dob.ageWarning(MIN_AGE)}</Text>}
       </View>
@@ -141,29 +134,6 @@ const styles = StyleSheet.create({
   dot: {
     color: COLORS.footer,
     fontSize: 18,
-  },
-  zodiacCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: SPACE.md,
-    marginTop: SPACE.lg,
-    backgroundColor: "rgba(111,169,139,0.06)",
-    borderWidth: 1,
-    borderColor: "rgba(111,169,139,0.25)",
-    borderRadius: RADIUS.sm,
-    paddingVertical: SPACE.md,
-    paddingHorizontal: SPACE.lg,
-  },
-  zodiacSymbol: {
-    fontFamily: FONTS.display,
-    fontVariant: ["lining-nums"],
-    fontSize: 26,
-    color: COLORS.gold,
-  },
-  zodiacLabel: {
-    fontFamily: FONTS.medium,
-    fontSize: 14,
-    color: COLORS.headline,
   },
   ageWarning: {
     fontFamily: FONTS.regular,

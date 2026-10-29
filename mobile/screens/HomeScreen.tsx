@@ -46,10 +46,10 @@ import useReducedMotion from "../lib/useReducedMotion";
 
 // 2026-09-19 redesign (Impeccable critique of this screen, 25/40): Home used to be a
 // feature menu — seven same-size solid jade cards under a permanent philosophy essay,
-// with the daily fortune ritual fifth in line. It is now a quiet daily ritual:
-//   1. today's fortune as the one filled surface, right under the greeting — sealed /
-//      opened + streak for subscribers, a one-line teaser + honest "Pro" chip for free
-//      users (the old row looked free and then hit a paywall);
+// with the daily rhythm card fifth in line. It is now a path-first home:
+//   1. (2026-10-29, iOS 4.3(b) response) the test → conversation → report path card is the one
+//      filled surface, right under the greeting; today's rhythm is a quiet secondary card below
+//      it — sealed / opened + streak for subscribers, a one-line teaser for free users;
 //   2. the five-element chart as "my chart" (since 2026-10-03 the four-pillars picture,
 //      which also carries the "most present element" vs "your core" distinction that used
 //      to sit under the greeting);
@@ -385,6 +385,33 @@ export default function HomeScreen({
           </View>
           </Reveal>
 
+          <Reveal index={1}>
+          <PressableScale
+            onPress={onOpenQuiz}
+            style={styles.pathHero}
+            pressedScale={0.98}
+            accessibilityRole="button"
+            accessibilityLabel={`${hasSavedReports ? strings.home.pathTitleNext : strings.home.pathTitle}. ${strings.home.pathBody}`}
+          >
+            <LinearGradient
+              colors={["#86BCA0", COLORS.gold, "#5C957A"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={[StyleSheet.absoluteFill, styles.heroGradient]}
+            />
+            <View style={styles.pathEyebrowRow}>
+              <Brain size={14} strokeWidth={1.75} color={COLORS.ctaText} />
+              <Text style={styles.pathHeroEyebrow}>{strings.home.pathEyebrow}</Text>
+            </View>
+            <Text style={styles.pathHeroTitle}>{hasSavedReports ? strings.home.pathTitleNext : strings.home.pathTitle}</Text>
+            <Text style={styles.pathHeroBody}>{strings.home.pathBody}</Text>
+            <View style={styles.pathCtaRow}>
+              <Text style={styles.pathHeroCta}>{strings.home.pathCta}</Text>
+              <ArrowRight size={16} strokeWidth={2} color={COLORS.ctaText} />
+            </View>
+          </PressableScale>
+          </Reveal>
+
           {selfDayMasterChar && (
           // pressedScale=1: the custom hero spring (pressIn/pressOut) already handles the shrink.
           <PressableScale
@@ -409,12 +436,6 @@ export default function HomeScreen({
                 },
               ]}
             >
-              <LinearGradient
-                colors={["#86BCA0", COLORS.gold, "#5C957A"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={[StyleSheet.absoluteFill, styles.heroGradient]}
-              />
               <View style={styles.heroTopRow}>
                 <Text style={styles.heroTitle}>{heroTitle}</Text>
                 {heroChip && (
@@ -437,7 +458,7 @@ export default function HomeScreen({
               {today.kind !== "loading" && (
                 <View style={styles.heroCtaRow}>
                   <Text style={styles.heroCta}>{heroCta}</Text>
-                  <ArrowRight size={16} strokeWidth={2} color={COLORS.ctaText} />
+                  <ArrowRight size={15} strokeWidth={2} color={COLORS.gold} />
                 </View>
               )}
             </Animated.View>
@@ -524,26 +545,6 @@ export default function HomeScreen({
             </Reveal>
           )}
 
-          <Reveal index={5}>
-          <PressableScale
-            onPress={onOpenQuiz}
-            style={({ pressed }) => [styles.pathCard, pressed && styles.listRowPressed]}
-            pressedScale={0.98}
-            accessibilityRole="button"
-            accessibilityLabel={`${hasSavedReports ? strings.home.pathTitleNext : strings.home.pathTitle}. ${strings.home.pathBody}`}
-          >
-            <View style={styles.pathEyebrowRow}>
-              <Brain size={14} strokeWidth={1.75} color={COLORS.gold} />
-              <Text style={styles.pathEyebrow}>{strings.home.pathEyebrow}</Text>
-            </View>
-            <Text style={styles.pathTitle}>{hasSavedReports ? strings.home.pathTitleNext : strings.home.pathTitle}</Text>
-            <Text style={styles.pathBody}>{strings.home.pathBody}</Text>
-            <View style={styles.pathCtaRow}>
-              <Text style={styles.pathCta}>{strings.home.pathCta}</Text>
-              <ArrowRight size={15} strokeWidth={2} color={COLORS.gold} />
-            </View>
-          </PressableScale>
-          </Reveal>
 
           {showChart && elements && (
             <Reveal index={6}>
@@ -718,13 +719,25 @@ const styles = StyleSheet.create({
     color: COLORS.gold,
   },
   hero: {
+    marginTop: SPACE.md,
+    backgroundColor: SURFACE.raised,
+    borderRadius: RADIUS.md,
+    overflow: "hidden",
+    padding: SPACE.lg,
+    gap: SPACE.xs,
+    ...SHADOW.raised,
+  },
+  pathHero: {
     backgroundColor: COLORS.gold,
     borderRadius: RADIUS.lg,
     overflow: "hidden",
     padding: SPACE.xl,
-    gap: SPACE.sm,
     ...SHADOW.raised,
   },
+  pathHeroEyebrow: { fontFamily: FONTS.semibold, fontSize: 13, color: COLORS.ctaText },
+  pathHeroTitle: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 24, lineHeight: 29, color: COLORS.ctaText },
+  pathHeroBody: { fontFamily: FONTS.regular, fontSize: 14, lineHeight: 21, color: HERO_SECONDARY, marginTop: SPACE.sm },
+  pathHeroCta: { fontFamily: FONTS.bold, fontSize: 14, color: COLORS.ctaText },
   heroGradient: {
     borderRadius: RADIUS.lg,
   },
@@ -738,12 +751,12 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FONTS.display,
     fontVariant: ["lining-nums"],
-    fontSize: 24,
-    lineHeight: 29,
-    color: COLORS.ctaText,
+    fontSize: 18,
+    lineHeight: 24,
+    color: COLORS.headline,
   },
   heroChip: {
-    backgroundColor: "rgba(15,26,21,0.14)",
+    backgroundColor: "rgba(15,26,21,0.08)",
     borderRadius: RADIUS.pill,
     paddingVertical: SPACE.xs,
     paddingHorizontal: SPACE.md,
@@ -752,19 +765,19 @@ const styles = StyleSheet.create({
   heroChipText: {
     fontFamily: FONTS.bold,
     fontSize: 12,
-    color: COLORS.ctaText,
+    color: COLORS.gold,
   },
   heroHeadline: {
     fontFamily: FONTS.semibold,
-    fontSize: 16,
-    lineHeight: 23,
-    color: COLORS.ctaText,
+    fontSize: 15,
+    lineHeight: 22,
+    color: COLORS.headline,
   },
   heroBody: {
     fontFamily: FONTS.regular,
     fontSize: 14,
     lineHeight: 21,
-    color: HERO_SECONDARY,
+    color: COLORS.subheadline,
   },
   skeletonWrap: {
     gap: SPACE.sm,
@@ -773,7 +786,7 @@ const styles = StyleSheet.create({
   skeletonLine: {
     height: 12,
     borderRadius: RADIUS.sm,
-    backgroundColor: "rgba(15,26,21,0.14)",
+    backgroundColor: "rgba(15,26,21,0.08)",
   },
   skeletonLineShort: {
     width: "60%",
@@ -788,7 +801,7 @@ const styles = StyleSheet.create({
   heroCta: {
     fontFamily: FONTS.bold,
     fontSize: 14,
-    color: COLORS.ctaText,
+    color: COLORS.gold,
   },
   section: {
     marginTop: SPACE.xxl,

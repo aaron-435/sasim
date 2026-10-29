@@ -34,38 +34,40 @@ Korean Four Pillars, decoded
 
 ### iOS 키워드 (limit 100)
 ```text
-birth chart,horoscope,personality,astrology,zodiac,day master,compatibility,daily reading,elements
+personality test,reflection,personal report,day master,compatibility,elements,journal,guided chat
 ```
-메모: 쉼표 뒤 공백 없음. 이름·부제에 이미 있는 단어(saju, Korean, Four Pillars, Self-Insight)는 중복해 넣지 않았다. 남의 상표(MBTI, Co-Star 등)는 뺐다.
+메모: 2026-10-29 4.3(b) 대응으로 `horoscope, astrology, zodiac, birth chart, daily reading`를 빼고 실제 기능어(검사·대화·리포트·일지)로 교체. 쉼표 뒤 공백 없음. 이름·부제에 이미 있는 단어(saju, Korean, Four Pillars, Self-Insight)는 중복해 넣지 않았다. 남의 상표(MBTI, Co-Star 등)는 뺐다.
 
 ### iOS 프로모션 텍스트 (limit 170)
 ```text
-Enter your birth date and meet your saju type, the Korean Four Pillars pattern behind your temperament. Then ask questions, take a test, or talk it through.
+Take a self-insight test, talk it through in a guided conversation, and get a personal report. Start free with your saju type, found from your birth date.
 ```
 
 ### iOS 설명 (limit 4000)
 ```text
-Fate Said turns your birth date into a clear picture of your saju (Korean Four Pillars) and helps you reflect on it, one small step at a time.
+Fate Said is a self-insight app built around three steps: take a test, talk it through, and get a personal report. Your saju (Korean Four Pillars) chart, calculated from your birth date, gives the conversation its starting point.
 
-Saju is a centuries-old Korean way of reading a person through four pillars: year, month, day, and hour. Fate Said calculates your chart from your birth details, then explains it in plain language, with no jargon to decode.
+1. TAKE A TEST
+• Self-insight tests on themes like love and attachment, burnout, focus, sleep, sensitivity, and self-expression
+
+2. TALK IT THROUGH
+• A guided conversation that picks up from your test answers, in five short parts
+
+3. GET YOUR REPORT
+• A personal report that sets your chart beside what you actually answered and said, with a PDF you can keep
+• A yearly report with a month-by-month timeline and a step-by-step plan
 
 START FREE
 • Your saju type: one of 50 types, found from your birth date alone
 • Your Four Pillars chart and element balance, explained simply
 • Compatibility: see how two people's charts meet, with a relationship name and what each brings
 • Ask a question: pick from hundreds of topics and get a thoughtful answer built on your chart
-• A daily reading with a short overview of today's rhythm
+• Today's rhythm: a short overview of how today meets your chart
 • Invite a friend with a link so you can compare charts
-
-GO DEEPER
-• Self-insight tests on themes like love and attachment, burnout, focus, sleep, sensitivity, and self-expression
-• A guided conversation that picks up from your test answers, in five short parts
-• A personal report that sets your chart beside what you actually answered and said, with a PDF you can keep
-• A yearly report with a month-by-month timeline and a step-by-step plan
 
 FATE SAID PRO (optional subscription)
 • More questions per day
-• Today, this week, this month, and new-year readings
+• Today, this week, this month, and new-year rhythms
 • Find good days for an interview, a first date, a move, or a fresh start
 • Ask about a specific person using their birth date
 
@@ -94,20 +96,13 @@ Smoother, more readable reports and a refreshed look across the app.
 2026-10-16 실기기 캡처 4장을 6.9"(1290x2796)로 확대해 `mobile/store-assets/ios-screenshots/*-iphone69.png`로 저장. 원본이 924x2000이라 약간 부드럽다. 구독·구매 화면, "money"가 나오는 오늘 개요, Money 검사 카드가 보이는 화면은 뺐다.
 | # | 화면 | 파일 | 캡션 (글자 수) |
 |---|---|---|---|
-| 1 | 유형 공개 | `type-iphone69.png` | Your saju type, from one birth date (35) |
-| 2 | 홈(오늘의 리듬) | `home-iphone69.png` | Today's rhythm, in plain words (30) |
-| 3 | 사주 차트 | `chart-iphone69.png` | Your Four Pillars chart, explained (34) |
-| 4 | 심리검사 목록 | `tests-iphone69.png` | Self-insight tests, at your own pace (36) |
-| (대기) | 심층 리포트 | 구매 계약이 열린 뒤 실기기 캡처 | A report built from your own answers (36) |
+| 1 | 검사 목록 (새 캡처 필요) | `tests-iphone69.png` | Self-insight tests, at your own pace (36) |
+| 2 | 선택형 대화 (새 캡처 필요) | `chat-iphone69.png` | Talk it through, one step at a time (35) |
+| 3 | 리포트(구매 전 가능한 화면, 새 캡처 필요) | `report-iphone69.png` | A report built from your own answers (36) |
+| 4 | 유형 공개 | `type-iphone69.png` | Your saju type, from one birth date (35) |
+| 5 | 새 홈(경로 카드 + 오늘의 리듬, 새 캡처 필요) | `home-iphone69.png` | Test, talk, report: your path (29) |
 
-iPad 13"는 기존 3장(`home/qa/type-ipad13.png`)을 그대로 쓴다. 기존 iPhone 6.5" 3장은 이번 개편 전 화면이라 쓰지 않는다.
-
----|---|---|
-| 1 | 유형 공개 (기존 `type-iphone65.png`) | Your saju type, from one birth date |
-| 2 | Q&A (기존 `qa-iphone65.png`) | Ask what's on your mind |
-| 3 | 원국 차트 (유형 화면에 포함, 기존 `type-*`로 대체 가능) | Your Four Pillars chart, explained |
-| 4 | 오늘 운세 (새 캡처 필요) | Today's rhythm, in plain words |
-| 5 | 심층 리포트 (새 캡처 필요) | A report built from your own answers |
+순서 이유(2026-10-29, 4.3(b) 대응): 검사 → 대화 → 리포트를 앞 3장에 두고 유형·홈은 뒤로. 구독·구매 화면, "money"가 나오는 화면, Money 검사 카드가 보이는 화면은 뺀다. 이전 홈 캡처(`home-*.png`, "Today's fortune" 카드)는 쓰지 않는다. iPad 13"도 같은 순서로 새로 캡처한다(TODO 8, 사용자 실행).
 
 ---
 
