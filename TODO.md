@@ -43,6 +43,7 @@ SPEC: `SPEC.md`. 숏폼 TODO는 `TODO_2026-10-29_shortform.md`로 보관했다.
 - [ ] 8. (user check) 새 스크린샷 캡처
   - 단계(최신): 6번 캡션 순서는 검사 목록 → 대화 → 리포트 → 유형 → 새 홈(`marketing/aso-en.md` 표). 5번 화면 기준으로 iPhone 6.9"와 iPad 13"를 시뮬레이터 또는 실기기에서 캡처: 새 홈, 검사 목록, 대화 화면, 유형 화면, 리포트(구매 전 가능한 화면). 6번 캡션 순서대로 `mobile/store-assets/ios-screenshots/`에 저장. 구독·구매 화면과 "money"가 보이는 화면은 뺀다(기존 규칙).
   - QA: 파일이 해당 폴더에 있고 해상도가 App Store Connect 요구와 맞는다(업로드 시 확인).
+  - 진행(2026-10-29, Release 시뮬레이터 빌드 `expo run:ios --configuration Release`, 개발 도구 버튼 없음, 상태바 9:41): **완료** iPhone 6.9"(1320x2868) `home`·`tests`·`type`, iPad 13"(2064x2752) `home`·`tests`·`type` (`mobile/store-assets/ios-screenshots/`, `sips`로 해상도 확인). **남음** 2번 대화·3번 리포트 화면(iPhone·iPad): 검사 30문항을 끝내야 나오고 서버 호출이 들어가 자동 캡처를 하지 않았다. 리포트는 구매 전 화면만. 기존 `chart-iphone69.png`(1290x2796, 10-16)와 `qa-ipad13.png`(9-16)는 옛 화면이라 쓰지 않는다. 시뮬레이터에 테스트 프로필(Jordan, 1992-03-14, Seoul)이 들어 있다.
 
 - [ ] 9. (user check) 새 빌드 → 업로드 → 재제출
   - 순서(회신과 재제출은 한 번에):
@@ -52,6 +53,7 @@ SPEC: `SPEC.md`. 숏폼 TODO는 `TODO_2026-10-29_shortform.md`로 보관했다.
     4. Resolution Center에 7번 회신 보내고, 같은 화면에서 재제출.
     5. 긴급 심사 요청은 하지 않는다(필요하면 며칠 뒤 한 번만).
   - QA: 사용자 확인(상태가 "심사 대기 중"이 되었는지 스크린샷).
+  - 진행(2026-10-29): 1번 `eas build --platform ios --profile production` 실행 → 빌드 ID `e521055a-25eb-406b-93bb-a6d5a1c12f6b`, 상태 `finished`, iOS 1.2.0 **빌드 번호 9**, 런타임 1.2.0(`eas build:view`로 확인). 로그 https://expo.dev/accounts/aaron_435/projects/fatesaid/builds/e521055a-25eb-406b-93bb-a6d5a1c12f6b . App Store Connect 업로드 완료(사용자 승인 후 `eas submit --platform ios --profile production --id e521055a-…`): 제출 ID `22c2ba0f-8eb4-477a-852e-fa8cf1f4e1a2`, `eas submit:view` 상태 `finished`(Apple 처리는 별도, TestFlight에 빌드 9가 보이면 처리 끝). **남음** 위 2~5번(TestFlight 확인·빌드 8→9 교체·문구/스크린샷/Notes 입력·회신+재제출).
 
 - [ ] 10. (user check) 거절이 유지되면
   - 4.3(b)가 다시 오면 같은 빌드를 반복 제출하지 않는다. 선택지: App Review Board 이의제기(`7번 문서`를 줄여 사용), 심사 면담 요청, 조직 계정 전환(D-U-N-S 필요, 별도 SPEC), PWA·웹 중심 전환(별도 SPEC). 결과를 `HANDOFF_2026-10-29.md`에 한 줄 기록한다.
