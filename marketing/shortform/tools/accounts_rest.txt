@@ -1,0 +1,4 @@
+G3 psych.2.grow
+G3 zenfulnote
+G2 nebula_astrology_insight
+G2 alignastrologyapp

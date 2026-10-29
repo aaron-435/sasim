@@ -1,0 +1,256 @@
+== G1 getpalja.com
+== G1 dainsaju.letter
+ok dainsaju.letter 7700230727526337812 top+recent views=229
+ok dainsaju.letter 7697789414738545926 top+recent views=116
+ok dainsaju.letter 7697783067452116244 top+recent views=183
+ok dainsaju.letter 7696335567746813192 top+recent views=0
+ok dainsaju.letter 7696326592116821268 top+recent views=0
+ok dainsaju.letter 7695675430908529938 top+recent views=289
+== G1 jewelsjpj
+== G1 liryonni
+ok liryonni 7701367337848425780 recent views=647300
+ok liryonni 7701088849480535348 recent views=190800
+ok liryonni 7699612030956866823 recent views=237900
+ok liryonni 7698928251934199046 recent views=235000
+ok liryonni 7697384918548040976 recent views=1800000
+ok liryonni 7696307216042691847 recent views=131900
+ok liryonni 7693675877552508167 recent views=356600
+ok liryonni 7691124022230273288 top+recent views=5600000
+ok liryonni 7689888329021574418 recent views=275700
+ok liryonni 7688866400194104583 recent views=692600
+ok liryonni 7521550615323905288 top views=11800000
+ok liryonni 7672192672890686727 top views=7000000
+ok liryonni 7521745923253292295 top views=6900000
+ok liryonni 7657217083960347921 top views=6700000
+ok liryonni 7636956500304366855 top views=6000000
+ok liryonni 7601359771685375239 top views=6000000
+ok liryonni 7637183987013750032 top views=4900000
+ok liryonni 7577454515385863425 top views=4900000
+ok liryonni 7641993426065526032 top views=4800000
+== G1 hayanleekr
+ok hayanleekr 7695777768625179924 recent views=27600
+ok hayanleekr 7695044021768424725 recent views=4641
+ok hayanleekr 7693179814026562822 recent views=64300
+ok hayanleekr 7692800570851118337 recent views=192300
+ok hayanleekr 7691318442565111061 recent views=36100
+ok hayanleekr 7620808847963639061 top views=2300000
+ok hayanleekr 7663483114680749333 top views=1500000
+ok hayanleekr 7687605760351636756 top views=1300000
+ok hayanleekr 7630437342884515093 top views=995000
+ok hayanleekr 7638603877624941844 top views=884200
+ok hayanleekr 7629474572835900693 top views=882000
+ok hayanleekr 7654563615168630036 top views=852800
+ok hayanleekr 7676869696423054613 top views=732800
+ok hayanleekr 7627525205430258964 top views=707700
+== G1 saju.korea
+    main()
+    ~~~~^^
+  File "/Users/kwonhyunjo/Desktop/sasim/work/marketing/shortform/tools/collect.py", line 119, in main
+    lang, text = transcribe(wav)
+                 ~~~~~~~~~~^^^^^
+  File "/Users/kwonhyunjo/Desktop/sasim/work/marketing/shortform/tools/collect.py", line 41, in transcribe
+    r = run(["whisper-cli", "-m", WHISPER_MODEL, "-f", wav, "-l", "auto", "-nt"])
+  File "/Users/kwonhyunjo/Desktop/sasim/work/marketing/shortform/tools/collect.py", line 24, in run
+    return subprocess.run(cmd, capture_output=True, text=True, **kw)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/subprocess.py", line 671, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/subprocess.py", line 1395, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/subprocess.py", line 2446, in _communicate
+    stdout = self._translate_newlines(stdout,
+                                      self.stdout.encoding,
+                                      self.stdout.errors)
+  File "/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/subprocess.py", line 1274, in _translate_newlines
+    return _translate_newlines(data, encoding, errors)
+  File "/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/subprocess.py", line 403, in _translate_newlines
+    data = data.decode(encoding, errors)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xe1 in position 294: unexpected end of data
+== G1 korean_astrology_lab
+ok korean_astrology_lab 7700608384269110548 recent views=213
+ok korean_astrology_lab 7699767603136449812 recent views=168
+ok korean_astrology_lab 7699641559410543924 recent views=113
+ok korean_astrology_lab 7699249297803447558 recent views=13
+ok korean_astrology_lab 7698921108648512788 recent views=89
+ok korean_astrology_lab 7698166541178850561 recent views=395
+ok korean_astrology_lab 7697763069442657556 recent views=100
+ok korean_astrology_lab 7696309897071168788 recent views=99
+ok korean_astrology_lab 7695322288710847764 recent views=240
+ok korean_astrology_lab 7695087412090883348 recent views=189
+ok korean_astrology_lab 7367772889317149968 top views=9502
+ok korean_astrology_lab 7367628582484593936 top views=9423
+ok korean_astrology_lab 7370358033169354001 top views=9244
+ok korean_astrology_lab 7363879492571434258 top views=7129
+ok korean_astrology_lab 7362479998613114113 top views=6182
+ok korean_astrology_lab 7364764547879537936 top views=5795
+ok korean_astrology_lab 7375535651736784145 top views=5632
+ok korean_astrology_lab 7385914352190147856 top views=5330
+ok korean_astrology_lab 7369597637949017362 top views=3233
+ok korean_astrology_lab 7355136590768770312 top views=2884
+== G1 sophiesajuworld
+ok sophiesajuworld 7627810517398146312 recent views=1418
+ok sophiesajuworld 7625475063596305672 recent views=895
+ok sophiesajuworld 7624785511940492551 recent views=1445
+ok sophiesajuworld 7623996002361527560 recent views=3581
+ok sophiesajuworld 7623662497903447314 recent views=1196
+ok sophiesajuworld 7623307103008066824 recent views=1109
+ok sophiesajuworld 7622902956702076167 recent views=961
+ok sophiesajuworld 7622479031874735378 recent views=570
+ok sophiesajuworld 7622091663531314440 recent views=1037
+ok sophiesajuworld 7621751941726489863 recent views=1322
+ok sophiesajuworld 7610069555297242375 top views=43900
+ok sophiesajuworld 7608807792022998280 top views=28900
+ok sophiesajuworld 7609174306123222279 top views=24100
+ok sophiesajuworld 7614696917414481160 top views=23300
+ok sophiesajuworld 7621375651148303624 top views=21400
+ok sophiesajuworld 7618041552392178951 top views=20400
+ok sophiesajuworld 7614399412214795528 top views=11700
+ok sophiesajuworld 7611533154813283602 top views=10300
+ok sophiesajuworld 7614003482013486344 top views=8658
+ok sophiesajuworld 7607643907681193234 top views=5918
+== G2 costarastrology
+ok costarastrology 7535566542809926943 recent views=21000
+ok costarastrology 7535259621376740638 recent views=5019
+ok costarastrology 7535171262851599671 recent views=59300
+ok costarastrology 7524858817239141663 recent views=117800
+ok costarastrology 7524118888687144205 recent views=26700
+ok costarastrology 7520439203323333919 recent views=196600
+ok costarastrology 7517040230440963358 recent views=3806
+ok costarastrology 7516687365407034638 recent views=4989
+ok costarastrology 7514457960894975278 recent views=2250
+ok costarastrology 7512615997325462815 recent views=8378
+ok costarastrology 7175686719595924782 top views=17000000
+ok costarastrology 7193082388279266602 top views=4900000
+ok costarastrology 7197481948195884334 top views=3600000
+ok costarastrology 7167902279998377262 top views=3600000
+ok costarastrology 7186782770767760686 top views=2400000
+ok costarastrology 7130010794175073582 top views=2400000
+ok costarastrology 7218227197817982254 top views=2300000
+ok costarastrology 7173735349464714538 top views=2300000
+ok costarastrology 7124483504439610666 top views=2300000
+ok costarastrology 7161177221338795310 top views=2200000
+== G2 thepattern
+ok thepattern 7701351535879474463 recent views=1918
+ok thepattern 7698791096251403550 recent views=1996
+ok thepattern 7697772073912995102 recent views=1888
+ok thepattern 7695247337916091678 recent views=1592
+ok thepattern 7689717243839630622 recent views=2044
+ok thepattern 7683680276215647519 recent views=1079
+ok thepattern 7672966628237200670 recent views=13100
+ok thepattern 7671136843714366751 recent views=32500
+ok thepattern 7668082682227707166 recent views=3443
+ok thepattern 7661033076637699359 recent views=12800
+ok thepattern 7213447863840410922 top views=2600000
+ok thepattern 7568725170450369822 top views=701700
+ok thepattern 7557073357821201695 top views=688700
+ok thepattern 7158159083273588010 top views=510000
+ok thepattern 7229374723241594158 top views=488400
+ok thepattern 7283644951575956779 top views=456700
+ok thepattern 7212751569165569323 top views=451200
+ok thepattern 7223868228211051819 top views=230700
+ok thepattern 7218639106257980715 top views=197800
+ok thepattern 7262105040364653867 top views=197100
+== G2 ask_nebula
+ok ask_nebula 7701295502314278165 recent views=34300
+ok ask_nebula 7701295353210998036 recent views=15100
+ok ask_nebula 7700927275365109013 top+recent views=526000
+ok ask_nebula 7700927069135473940 recent views=166400
+ok ask_nebula 7700926748111817990 recent views=275700
+ok ask_nebula 7700924636455914773 recent views=51300
+ok ask_nebula 7700714358954904853 recent views=51500
+ok ask_nebula 7700713657382014229 recent views=41500
+ok ask_nebula 7700713067126033685 recent views=78600
+ok ask_nebula 7700712873370160405 recent views=261000
+ok ask_nebula 7467501276020903173 top views=5100000
+ok ask_nebula 7593325634244398348 top views=2000000
+ok ask_nebula 7466124857403542789 top views=1300000
+ok ask_nebula 7525472040325745938 top views=1100000
+ok ask_nebula 7685088129417923860 top views=1000000
+ok ask_nebula 7466863682094402821 top views=712000
+ok ask_nebula 7528421125425089808 top views=555600
+ok ask_nebula 7648724462912736532 top views=550700
+ok ask_nebula 7667539531532455188 top views=410500
+== G2 chaninicholas
+ok chaninicholas 7699972800878038286 recent views=3559
+ok chaninicholas 7699530316263804173 recent views=8766
+ok chaninicholas 7699193127902465293 recent views=3088
+ok chaninicholas 7696960172933106958 recent views=9352
+ok chaninicholas 7673204470481718542 recent views=37500
+ok chaninicholas 7654634019727985934 recent views=16400
+ok chaninicholas 7652069429680819470 recent views=36600
+ok chaninicholas 7651697360405269774 recent views=11700
+ok chaninicholas 7650161272503160078 recent views=7612
+ok chaninicholas 7649765593050074382 recent views=10900
+ok chaninicholas 7546288995542535479 top views=1800000
+ok chaninicholas 7507297361870196014 top views=438600
+ok chaninicholas 7515074394759204139 top views=418600
+ok chaninicholas 7585249973512506638 top views=329000
+ok chaninicholas 7545847712843975949 top views=299800
+ok chaninicholas 7524393636851666231 top views=297600
+ok chaninicholas 7567018538448227597 top views=237500
+ok chaninicholas 7568535524563045645 top views=204300
+ok chaninicholas 7551960296475118862 top views=182100
+ok chaninicholas 7567434453841087799 top views=165300
+== G2 sanctuarywrld
+ok sanctuarywrld 7701488647429721358 recent views=665
+ok sanctuarywrld 7700602684323138847 recent views=778
+ok sanctuarywrld 7699592390469831949 recent views=610
+ok sanctuarywrld 7698559214708428046 recent views=74200
+ok sanctuarywrld 7697457899328572702 recent views=485
+ok sanctuarywrld 7696677004338318605 recent views=669
+ok sanctuarywrld 7693962111109680398 recent views=512
+ok sanctuarywrld 7692131814005034253 top+recent views=876200
+ok sanctuarywrld 7689233933237554445 top+recent views=977900
+ok sanctuarywrld 7688787727713651998 recent views=327700
+ok sanctuarywrld 7348104129392201003 top views=1900000
+ok sanctuarywrld 7351815791777565995 top views=1600000
+ok sanctuarywrld 7371854974105537838 top views=1500000
+ok sanctuarywrld 7514069540913925407 top views=829600
+ok sanctuarywrld 7403822461696888095 top views=769200
+ok sanctuarywrld 7355534036917570862 top views=694200
+ok sanctuarywrld 7361824620841864491 top views=574000
+ok sanctuarywrld 7527802015158750494 top views=515000
+== G2 astroscope
+ok astroscope 7618704502316666144 recent views=43300
+ok astroscope 7580819119885356310 recent views=58800
+ok astroscope 7574162224387099927 top+recent views=673500
+ok astroscope 7574134890958949654 recent views=203900
+ok astroscope 7573818547982339350 recent views=43700
+ok astroscope 7573799028517899542 recent views=113500
+ok astroscope 7573740180717260054 recent views=34200
+ok astroscope 7573404917273070870 recent views=50300
+ok astroscope 7573387419551288579 recent views=49400
+ok astroscope 7573375374952828182 recent views=35100
+ok astroscope 7573064073093385494 top views=4100000
+ok astroscope 7571216886441069846 top views=2700000
+ok astroscope 7555189623396240662 top views=1500000
+ok astroscope 7570458785018416406 top views=1300000
+ok astroscope 7538859934990011670 top views=1100000
+ok astroscope 7554101135188053270 top views=529200
+ok astroscope 7566390108350598403 top views=423300
+ok astroscope 7561506690642808086 top views=409600
+ok astroscope 7540772248794238230 top views=371200
+== G3 olivelyapp
+ok olivelyapp 7701486613397867790 recent views=931
+ok olivelyapp 7701116182786608398 recent views=1017
+ok olivelyapp 7700744808876264717 recent views=1016
+ok olivelyapp 7700373157235920141 recent views=933
+ok olivelyapp 7700002694622170382 recent views=1012
+ok olivelyapp 7699630957854264590 recent views=928
+ok olivelyapp 7699375417303518477 recent views=1088
+ok olivelyapp 7698888762935266574 recent views=1072
+ok olivelyapp 7698518320630205709 recent views=4729
+ok olivelyapp 7698093772709629198 recent views=2086
+ok olivelyapp 7588413996517084429 top views=4200000
+ok olivelyapp 7622608608773065998 top views=1700000
+ok olivelyapp 7614769905027665165 top views=1100000
+ok olivelyapp 7599115140906175758 top views=1000000
+ok olivelyapp 7601300689624616206 top views=870700
+ok olivelyapp 7619395654476909837 top views=254000
+ok olivelyapp 7585708505697422605 top views=238800
+ok olivelyapp 7602059137559711031 top views=170800
+ok olivelyapp 7610163645162556685 top views=71400
+ok olivelyapp 7630779490171407630 top views=54900
+== G3 psych.2.grow
