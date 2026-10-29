@@ -44,7 +44,7 @@
 1. Business Suite → 만들기 → 릴스(F2는 게시물, 캐러셀로 `ig-*.png` 여러 장).
 2. 캡션·해시태그를 붙이고 "예약"으로 TikTok과 같은 날짜·시간을 넣는다.
 3. Business Suite는 Instagram이 Facebook 페이지에 연결돼 있어야 보인다. 연결이 없으면 Instagram 앱의 고급 설정 → 게시물 예약을 쓴다(프로페셔널 계정, 확인 필요).
-4. F6처럼 음원을 플랫폼에서 고르는 영상은 앱에서 음원을 붙여야 한다. Business Suite에서 음원 선택이 안 되면 앱으로 예약한다.
+4. F6처럼 음원을 플랫폼에서 고르는 영상은 앱에서 음원을 붙여야 한다. Business Suite에서 음원 선택이 안 되면 앱으로 예약한다. 음원은 상업 이용 가능 표시가 있는 것만 고른다(`marketing/video-kit.md` 5-1절).
 
 ### YouTube Studio (복사 게시)
 1. YouTube Studio → 만들기 → 동영상 업로드. 세로 mp4(3분 이하)는 Shorts로 분류된다.

@@ -97,17 +97,18 @@ SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPE
 - [ ] 16. (사용자 실행, 14 뒤) 영어 사용자 5명 관찰. 기록표를 공유하면 웹 검사 맛보기와 주력 상품 판단에 쓴다.
 
 ## 발견 사항
+- (실기기 iPhone, 2026-10-29) 퀴즈 슬라이더 양끝 라벨이 길면 화면 밖으로 잘렸다(모듈 5 D2 "Extremely tangled (…)"). 라벨이 줄의 절반씩 차지하고 줄바꿈하도록 고침. 같은 모양의 도시 검색 결과 줄(도시·국가), 퀴즈 결과 카드 아래 줄, 웹 퀴즈 슬라이더 라벨도 함께 고침. mobile-web 1번 문항에서 오른쪽 라벨 두 줄 확인. iPhone 실기 확인은 OTA 뒤.
 - (9번) 임시 D0(11-02) 기준 2주차에는 F3 행사가 없어 F2가 하나 더 필요하다(제작 필요 1개). 공개일이 11-07을 넘기면 V19(입동)는 못 쓰고 다른 절기로 다시 렌더해야 한다. 공개일이 정해지면 `calendar.mts --d0 <날짜> --write`의 "남은 일"을 보고 만든다.
 - (8번) F2 관계 중 otherNurturesSelf·mirror는 앱 원문 goodPoint가 body 앞부분과 거의 같다. 다음 F2 설정에서는 둘 중 하나만 카드로 쓴다. `render-f2`는 이 중복을 잡지 않는다.
 - (3~6번) F1 영상이 세로로 약 10% 늘어나 있었다(설치된 Chrome의 headless 창이 뷰포트와 달라 CDP 화면이 540×873·1배율). 2026-10-29 `render-f1.mts`를 `common.mts`(창 크기 고정·프레임 크기 검사·`-t` 길이)로 옮겨 고침. QA: `render-f1.mts F1-sample` → `ok … 14.2s, 4 captions, city=Toronto, type=Field · Order`, `ffprobe` 1080×1920·14.24초, 프레임 8장에서 둥근 버튼이 원형, 장면은 이전과 같음. `scripts/record-*.mts`(옛 광고 녹화)는 그대로라 다시 쓸 때 같은 플래그가 필요하다.
-- (5번) **앱 도시 검색이 악센트를 못 찾는다**: `/api/cities/search?q=São Paulo` → 결과 0, `Sao Paulo` → 브라질 상파울루. 스페인어·포르투갈어권 사용자가 온보딩에서 막힐 수 있다(앱·서버 코드라 이번 범위 밖). 샘플은 `Sao Paulo`로 씀.
-- (7번) 서버 `searchWorldCities("Montreal")`도 결과가 없다(São Paulo와 같은 악센트 문제로 보임, 확인 안 함). 이번 설정에서는 Montreal을 뺐다.
+- (5번) **앱 도시 검색이 악센트를 못 찾는다**: `/api/cities/search?q=São Paulo` → 결과 0, `Sao Paulo` → 브라질 상파울루. 스페인어·포르투갈어권 사용자가 온보딩에서 막힐 수 있다(앱·서버 코드라 이번 범위 밖). 샘플은 `Sao Paulo`로 씀. → 2026-10-29 고침: `lib/worldCities.ts` 검색이 악센트를 양쪽 다 무시한다(São Paulo·Bogotá·Montreal·Zurich·Malmo 확인, 한글 부분 일치 유지). 앱은 서버 API를 부르므로 웹 배포로 반영된다.
+- (7번) 서버 `searchWorldCities("Montreal")`도 결과가 없었다(데이터가 `Montréal`). 위 수정으로 해결. 이번 설정에서는 Montreal을 뺐다.
 - (3번) F4 결과 카드 제목 읽기는 뺐다(로그용이었고 화면 요소를 안정적으로 못 골랐다). 유형 이름은 읽는다.
 - (4번) F2의 "You…" 문구는 카드 위쪽 쌍 라벨(`Oak × Field`)의 앞쪽 유형이 "나"라는 뜻인데, 화면에 그 설명은 없다. 7번에서 훅이나 캡션으로 "if you're Oak" 같은 틀을 줄지 정한다.
-- (2번) Playwright 브라우저 캐시(`~/Library/Caches/ms-playwright`)가 지워져 있다. `record-*.mts`와 `render-f1.mts`의 기본 `CHROME_PATH`가 없는 경로를 가리키므로 지금은 설치된 Chrome을 `CHROME_PATH`로 준다. 3~6번도 같다. 기본값을 바꿀지, `npx playwright install chromium-headless-shell`로 다시 받을지는 그때 정한다.
+- (2번) Playwright 브라우저 캐시(`~/Library/Caches/ms-playwright`)가 지워져 있다. `record-*.mts`와 `render-f1.mts`의 기본 `CHROME_PATH`가 없는 경로를 가리키므로 지금은 설치된 Chrome을 `CHROME_PATH`로 준다. 3~6번도 같다. → 2026-10-29: `common.mts`가 `CHROME_PATH` → 설치된 Chrome → Playwright 셸 순으로 찾게 바꿨다(F1~F6 렌더). QA: `CHROME_PATH` 없이 `render-f6.mts F6-sample --no-tts` → ok 9.2초, `ffprobe` 1080×1920. 옛 `scripts/record-*.mts`는 창 크기 플래그가 없어 그대로 두었다(설치된 Chrome으로 돌리면 세로로 늘어난다).
 - (2번) muse는 샌드박스에서 브라우저·localhost 접속이 막혀 렌더 결과를 못 본다. 3~6번 지시서는 "코드 + `--no-tts`/오프라인 검사까지"로 잡고, 렌더·프레임 검수는 이 세션이 한다.
 - (2번) 유형 화면(TypeScreen)의 유명인 섹션과 공유 이미지 미리보기 속 유명인 줄은 F4·F6 등 앱 화면을 녹화하는 다른 형식에서도 보일 수 있다. 그 템플릿에서도 같은 가림·검사를 넣는다.
 - (1번) `check-copy`는 금지어를 넓게 잡는다: `heal…`이 "healthy", `treat…`이 "treaty", `stock…`, `will` 단독도 걸린다. 7번에서 문장을 쓸 때 걸리면 단어를 바꾸고, 규칙을 풀어야 하면 그때 결정한다. 해시태그 `#astrology`는 규칙상 통과하지만 4.3(b) 이후 쓸지는 7번에서 판단.
 - (분석 중) yt-dlp는 TikTok 댓글을 0개로 받는다. 댓글은 Aside로 읽는다. TikTok은 요청을 가끔 막으니 계정 목록은 재시도가 필요하다(`marketing/shortform/tools/collect.py`).
 - (분석 중) 임시 폴더는 재부팅하면 지워진다. 영상·프레임은 `~/.cache/shortform_dl`에 둔다.
-- (분석 중) TikTok을 비즈니스 계정으로 바꾸면 상업용 음원만 쓸 수 있다. 바꾸기 전에 F3·F6 음원 방침을 다시 정한다.
+- (분석 중) TikTok을 비즈니스 계정으로 바꾸면 상업용 음원만 쓸 수 있다. → 2026-10-29 결정: 계정 종류와 상관없이 상업 이용 가능 음원만 쓰고, 비즈니스로 전환한다(`marketing/video-kit.md` 5-1절, 전환은 사용자가 앱에서).

@@ -116,8 +116,21 @@ export function sentenceStarts(sentences: string[], duration: number): number[] 
   });
 }
 
-const chromeExe = process.env.CHROME_PATH ??
-  path.join(homedir(), "Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell");
+/**
+ * CHROME_PATH first, then the installed Chrome, then the Playwright headless shell. The
+ * Playwright cache has been wiped before (2026-10-29), and the window flags in launch() make a
+ * full Chrome give the same 1080x1920 frames, so the installed Chrome is the default.
+ */
+function findChrome(): string {
+  const candidates = [
+    process.env.CHROME_PATH,
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    path.join(homedir(), "Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell"),
+  ].filter((p): p is string => !!p);
+  const found = candidates.find((p) => existsSync(p));
+  if (!found) throw new Error(`Chrome not found. Install Google Chrome or set CHROME_PATH. Tried:\n  ${candidates.join("\n  ")}`);
+  return found;
+}
 
 /**
  * 540x960 @2x, en-US: the same phone frame as the record-*.mts scripts. The window flags
@@ -125,7 +138,7 @@ const chromeExe = process.env.CHROME_PATH ??
  * screencast otherwise comes back 540x873 at 1x and the mux stretches it to 1080x1920.
  */
 export async function launch(): Promise<{ browser: Browser; ctx: BrowserContext; page: Page }> {
-  const browser = await chromium.launch({ executablePath: chromeExe, args: ["--window-size=540,960", "--force-device-scale-factor=2"] });
+  const browser = await chromium.launch({ executablePath: findChrome(), args: ["--window-size=540,960", "--force-device-scale-factor=2"] });
   const ctx = await browser.newContext({ viewport: { width: 540, height: 960 }, deviceScaleFactor: 2, locale: "en-US" });
   const page = await ctx.newPage();
   return { browser, ctx, page };
