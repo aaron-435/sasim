@@ -348,8 +348,8 @@ const styles = StyleSheet.create({
   optionLabel: { fontFamily: FONTS.semibold, fontSize: 13.5, color: COLORS.subheadline },
   optionLabelActive: { color: COLORS.gold },
   resultsBox: { marginTop: SPACE.sm, backgroundColor: SURFACE.raised, borderRadius: RADIUS.md, overflow: "hidden", ...SHADOW.raised },
-  resultRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: SPACE.md, paddingHorizontal: SPACE.lg, borderBottomWidth: 1, borderBottomColor: SURFACE.hairline },
-  resultCity: { fontFamily: FONTS.medium, fontSize: 14.5, color: COLORS.headline },
-  resultCountry: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
+  resultRow: { flexDirection: "row", justifyContent: "space-between", gap: SPACE.md, paddingVertical: SPACE.md, paddingHorizontal: SPACE.lg, borderBottomWidth: 1, borderBottomColor: SURFACE.hairline },
+  resultCity: { flexShrink: 1, fontFamily: FONTS.medium, fontSize: 14.5, color: COLORS.headline },
+  resultCountry: { flexShrink: 1, textAlign: "right", fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   fieldError: { fontFamily: FONTS.regular, fontSize: 12.5, lineHeight: 18, color: COLORS.danger, marginTop: SPACE.sm },
 });

@@ -222,17 +222,23 @@ const styles = StyleSheet.create({
   resultRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    gap: SPACE.md,
     paddingVertical: SPACE.md,
     paddingHorizontal: SPACE.lg,
     borderBottomWidth: 1,
     borderBottomColor: SURFACE.hairline,
   },
+  // Long names ("Santa Cruz de la Sierra", "Democratic Republic of the Congo") wrap instead of
+  // pushing past the screen edge.
   resultCity: {
+    flexShrink: 1,
     fontFamily: FONTS.medium,
     fontSize: 14.5,
     color: COLORS.headline,
   },
   resultCountry: {
+    flexShrink: 1,
+    textAlign: "right",
     fontFamily: FONTS.regular,
     fontSize: 13,
     color: COLORS.subheadline,

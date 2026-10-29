@@ -370,7 +370,7 @@ export default function QuizScreen({
             <View>
               <View style={styles.sliderLabelRow} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
                 <Text style={styles.sliderEdgeLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{sliderOptions.minLabel}</Text>
-                <Text style={styles.sliderEdgeLabel} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{sliderOptions.maxLabel}</Text>
+                <Text style={[styles.sliderEdgeLabel, styles.sliderEdgeLabelEnd]} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{sliderOptions.maxLabel}</Text>
               </View>
               <Slider
                 minimumValue={1}
@@ -514,12 +514,20 @@ const styles = StyleSheet.create({
   sliderLabelRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: SPACE.md,
     marginBottom: SPACE.sm,
   },
+  // Long edge labels ("Extremely tangled (thoughts get all jumbled up)") ran off-screen on iPhone:
+  // each label gets half the row and wraps instead.
   sliderEdgeLabel: {
+    flex: 1,
     fontFamily: FONTS.regular,
     fontSize: 12,
     color: COLORS.subheadline,
+  },
+  sliderEdgeLabelEnd: {
+    textAlign: "right",
   },
   sliderValue: {
     fontFamily: FONTS.display,
@@ -618,12 +626,14 @@ const styles = StyleSheet.create({
   resultFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
+    gap: SPACE.md,
     alignItems: "center",
     paddingTop: SPACE.lg,
     borderTopWidth: 1,
     borderTopColor: "rgba(111,169,139,0.18)",
   },
   resultModuleTitle: {
+    flexShrink: 1,
     fontFamily: FONTS.regular,
     fontSize: 12,
     color: COLORS.footer,

@@ -196,9 +196,9 @@ export default function QuizScreen({ track: trackProp, moduleId, sajuElements, i
               </div>
             ) : (
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#9C9277", marginBottom: "10px" }}>
-                  <span>{current.options.minLabel}</span>
-                  <span>{current.options.maxLabel}</span>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: "16px", fontSize: "12px", color: "#9C9277", marginBottom: "10px" }}>
+                  <span style={{ flex: 1 }}>{current.options.minLabel}</span>
+                  <span style={{ flex: 1, textAlign: "right" }}>{current.options.maxLabel}</span>
                 </div>
                 <input
                   type="range"

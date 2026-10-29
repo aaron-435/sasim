@@ -180,23 +180,45 @@ function getAllCities(): WorldCity[] {
 }
 
 /**
+ * 검색용 비교 키: 소문자 + 발음 구별 기호 제거. "São Paulo"로 쳐도 "Sao Paulo"가,
+ * "Montreal"로 쳐도 "Montréal"이 나와야 한다(2026-10-29, 스페인어·포르투갈어권
+ * 사용자가 온보딩에서 도시를 못 찾던 문제). 끝에 NFC로 다시 합쳐 한글 음절이 자모로
+ * 갈라진 채 남지 않게 한다("뉴"가 "뉵…"에 걸리지 않도록).
+ */
+function foldForSearch(s: string): string {
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").normalize("NFC").toLowerCase();
+}
+
+type SearchKeys = { city: WorldCity; display: string; en: string; country: string };
+let cachedSearchKeys: SearchKeys[] | null = null;
+
+function getSearchKeys(): SearchKeys[] {
+  if (!cachedSearchKeys) {
+    cachedSearchKeys = getAllCities().map((city) => ({
+      city,
+      display: foldForSearch(city.cityDisplay),
+      en: foldForSearch(city.cityEn),
+      country: foldForSearch(city.countryDisplay),
+    }));
+  }
+  return cachedSearchKeys;
+}
+
+/**
  * Skyscanner/Agoda 스타일 도시 검색 — 접두 일치를 우선하고, 그 안에서는
  * 인구가 많은 도시가 먼저 나오도록 정렬. 한국어(Korean override가 있는
- * 경우만) 또는 영어 이름으로 검색 가능.
+ * 경우만) 또는 영어 이름으로 검색 가능. 악센트는 무시한다.
  */
 export function searchWorldCities(query: string, limit = 8): WorldCity[] {
-  const needle = query.trim().toLowerCase();
+  const needle = foldForSearch(query.trim());
   if (!needle) return getAllCities().slice(0, limit);
 
   const scored: { city: WorldCity; score: number }[] = [];
-  for (const city of getAllCities()) {
-    const koLower = city.cityDisplay.toLowerCase();
-    const enLower = city.cityEn.toLowerCase();
-    const countryKoLower = city.countryDisplay.toLowerCase();
+  for (const { city, display, en, country } of getSearchKeys()) {
     let score = -1;
-    if (koLower.startsWith(needle) || enLower.startsWith(needle)) score = 2;
-    else if (koLower.includes(needle) || enLower.includes(needle)) score = 1;
-    else if (countryKoLower.includes(needle)) score = 0;
+    if (display.startsWith(needle) || en.startsWith(needle)) score = 2;
+    else if (display.includes(needle) || en.includes(needle)) score = 1;
+    else if (country.includes(needle)) score = 0;
     if (score >= 0) scored.push({ city, score });
   }
 
