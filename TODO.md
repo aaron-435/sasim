@@ -40,12 +40,12 @@ SPEC: `SPEC.md`. 숏폼 TODO는 `TODO_2026-10-29_shortform.md`로 보관했다.
   - 변경: `APPEAL_2026-10-29_ios_4.3b.md`를 재작성한다. ① 맨 앞에 핵심 개념 한 줄("검사 결과 위에서 진행되는 구조화된 대화와 리포트로 자기 패턴을 이해하게 하는 도구"), ② 챗 설명 문장은 심사 빌드 기준으로 사실만(새 빌드에서 고정 스크립트가 기본인지 `mobile/lib/chatFlow.ts`로 확인 후 그 범위에서만 주장), ③ **이번 빌드에서 실제로 바꾼 것**(홈 위계, 문구, 스토어 등록정보)을 구체적으로, ④ 정당성 증거 문단은 사실만(개인 계정, 사업자 등록 완료, 처리방침·KASI 데이터 사용 — 등록번호·개인정보는 메시지에 넣지 않는다), ⑤ 통화 제안은 유지. 별도로 App Review Information Notes용 단계별 경로(Choose a test → 30문항 → 대화 → 리포트)와 "구독 화면까지 보려면" 안내를 영어 10줄 이내로 쓴다. 데모 계정이 필요하면 사용자가 만든 테스트 값을 쓰고 이 문서에는 적지 않는다.
   - QA: 문서 속 모든 사실 주장 옆에 근거(코드 위치 또는 사용자 확인) 체크리스트를 달고 미확인 항목 0개. 영어 문장에 `fortune-telling` 부정 표현 외의 운세 단어가 없는지 grep.
 
-- [ ] 8. (user check) 새 스크린샷 캡처
+- [x] 8. (user check) 새 스크린샷 캡처
   - 단계(최신): 6번 캡션 순서는 검사 목록 → 대화 → 리포트 → 유형 → 새 홈(`marketing/aso-en.md` 표). 5번 화면 기준으로 iPhone 6.9"와 iPad 13"를 시뮬레이터 또는 실기기에서 캡처: 새 홈, 검사 목록, 대화 화면, 유형 화면, 리포트(구매 전 가능한 화면). 6번 캡션 순서대로 `mobile/store-assets/ios-screenshots/`에 저장. 구독·구매 화면과 "money"가 보이는 화면은 뺀다(기존 규칙).
   - QA: 파일이 해당 폴더에 있고 해상도가 App Store Connect 요구와 맞는다(업로드 시 확인).
   - 진행(2026-10-29, Release 시뮬레이터 빌드 `expo run:ios --configuration Release`, 개발 도구 버튼 없음, 상태바 9:41): **완료** iPhone 6.9"(1320x2868) `home`·`tests`·`type`, iPad 13"(2064x2752) `home`·`tests`·`type` (`mobile/store-assets/ios-screenshots/`, `sips`로 해상도 확인). **추가(2026-10-29, 사용자가 TestFlight 빌드 9에서 찍은 `261029 스크린샷/` 28장 중 선별)**: 대화 `IMG_0121`(Part 2 of 5, 선택 칩·응답) → `chat-iphone69.png`, 리포트 `IMG_0128`(Follow-Through 분석 막대, 이름 없음) → `report-iphone69.png`. 원본이 1125x2436(5.8")이라 `sips -z 2868 1320`으로 6.9" 크기(1320x2868)에 맞춰 키웠다(가로세로 비율 차 0.3%, 약간 부드러움). 상단바 통일: 시뮬레이터 캡처는 깨끗한 9:41·만충전 상단바, TestFlight 원본은 12:42·배터리 낮음이라, `chat`·`report`의 상단 200px를 `tests-iphone69.png`의 상단바(배경색 동일 18,32,25)로 덮어 맞췄다(원본은 `261029 스크린샷/`에 있음). 쓰지 않은 것: 오늘 개요(`IMG_0111`)는 "money/wallet" 문구, `IMG_0125` 리포트 표지는 사용자 이름("Aaron")이 보임. **남음** iPad 13"용 대화·리포트(기기 없으면 iPad는 기존 3장 `home`·`tests`·`type`만 올린다). 기존 `chart-iphone69.png`(1290x2796, 10-16)와 `qa-ipad13.png`(9-16)는 옛 화면이라 쓰지 않는다. 시뮬레이터에 테스트 프로필(Jordan, 1992-03-14, Seoul)이 들어 있다.
 
-- [ ] 9. (user check) 새 빌드 → 업로드 → 재제출
+- [x] 9. (user check) 새 빌드 → 업로드 → 재제출
   - 순서(회신과 재제출은 한 번에):
     1. 버전은 1.2.0 유지(1번 결과). iOS buildNumber는 `eas.json`이 `appVersionSource: remote` + `autoIncrement: true`라서 `app.json`에 없고 EAS가 관리한다. 빌드 전 `cd mobile && eas build:version:get -p ios`로 현재 값을 보고, 빌드 뒤 결과가 9이고 ASC에 이미 있는 번호와 겹치지 않는지 확인한다(중복 금지, 8이 나오면 제출하지 않는다).
     2. `eas build`(iOS) 후 TestFlight에서 홈(경로 카드 첫 화면, iPad 포함)·검사·대화·리포트·구독 화면을 확인하고, 7번 체크리스트 4·15·16번(Notes의 구독 경로·소요 시간·구매 필요 여부)을 이때 확정한다.
@@ -54,12 +54,15 @@ SPEC: `SPEC.md`. 숏폼 TODO는 `TODO_2026-10-29_shortform.md`로 보관했다.
     5. 긴급 심사 요청은 하지 않는다(필요하면 며칠 뒤 한 번만).
   - QA: 사용자 확인(상태가 "심사 대기 중"이 되었는지 스크린샷).
   - 진행(2026-10-29): 1번 `eas build --platform ios --profile production` 실행 → 빌드 ID `e521055a-25eb-406b-93bb-a6d5a1c12f6b`, 상태 `finished`, iOS 1.2.0 **빌드 번호 9**, 런타임 1.2.0(`eas build:view`로 확인). 로그 https://expo.dev/accounts/aaron_435/projects/fatesaid/builds/e521055a-25eb-406b-93bb-a6d5a1c12f6b . App Store Connect 업로드 완료(사용자 승인 후 `eas submit --platform ios --profile production --id e521055a-…`): 제출 ID `22c2ba0f-8eb4-477a-852e-fa8cf1f4e1a2`, `eas submit:view` 상태 `finished`(Apple 처리는 별도, TestFlight에 빌드 9가 보이면 처리 끝). **남음** 위 2~5번(TestFlight 확인·빌드 8→9 교체·문구/스크린샷/Notes 입력·회신+재제출).
+  - 완료(2026-10-29 오후, Claude in Chrome으로 ASC 입력, 회신·재제출은 사용자 승인 후): 빌드 8→**9** 교체·저장. 스크린샷: ASC 새 화면은 iPhone **6.3"(1206x2622)가 필수 칸**이고 6.9"는 선택 칸이라, 6.9" 5장(tests→chat→report→type→home)을 6.9" 칸에 올리고 같은 5장을 `sips -z 2622 1206`로 줄여 필수 칸에 올렸다(줄인 파일은 저장소에 넣지 않음). 옛 6.3" 4장(Today's fortune 홈 포함)·6.5" 3장·iPad 3장 삭제, iPad 13" `home`·`tests`·`type` 업로드. 문구: 프로모션 154자·키워드 97자·설명 2336자를 새로고침 후 원본과 해시 대조로 일치 확인, 키워드에 horoscope·astrology·zodiac 없음. 현지화는 영어(미국)만 있음. What's New 칸은 출시된 버전이 없어 화면에 없음. Notes=[N](Contact: 이메일만, 사용자 결정), 저장 후 일치 확인. 회신 [A](`{confirm…}` 삭제, `**` 제거한 일반 텍스트) 전송 → 메시지 2개. "앱 심사에 다시 제출" → 제출 상태 **"심사 대기 중"**, 19개 항목 모두 심사 대기 중(ASC 화면으로 확인). 긴급 심사는 요청하지 않음.
 
 - [ ] 10. (user check) 거절이 유지되면
   - 4.3(b)가 다시 오면 같은 빌드를 반복 제출하지 않는다. 선택지: App Review Board 이의제기(`7번 문서`를 줄여 사용), 심사 면담 요청, 조직 계정 전환(D-U-N-S 필요, 별도 SPEC), PWA·웹 중심 전환(별도 SPEC). 결과를 `HANDOFF_2026-10-29.md`에 한 줄 기록한다.
   - QA: 사용자 판단.
 
 ## 발견 사항 (작업 중 추가)
+- ASC 스크린샷 필수 칸이 iPhone 6.3"(1206x2622)로 바뀌었다. 다음에 스크린샷을 바꿀 때 6.3" 칸도 같이 바꿔야 옛 화면이 남지 않는다.
+- Play 영어 등록정보에는 "A daily reading" 등 옛 문구가 남아 있다(6번 범위 밖). Android 심사 영향은 없지만 일관성을 원하면 후속.
 - iOS 키워드(`marketing/aso-en.md`)에 `horoscope, astrology, zodiac`가 있다 → 6번에서 해결.
 - `mobile/store-assets/subscription/paywall-fortune.png`: 파일명에 fortune. 구독 심사용 캡처 이름이라 심사 판단에는 영향이 없지만, 이미지 안 문구에 fortune이 보이면 새 캡처로 교체 여부를 8번에서 판단한다.
 - (해결: 4-추가) DOB 화면(`screens/DobScreen.tsx:88`)이 서양 별자리 카드(Capricorn 등)를 보여준다. grep의 `zodiac` 대상이고 온보딩 첫인상이 점성술이다. 제거 제안, 승인 시 4번에 추가(COPY 문서 §4-A). intro 헤드라인 "Your fate has already spoken."도 같은 이유로 교체 제안(§4-B).
