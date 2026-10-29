@@ -1,69 +1,84 @@
-# TODO (2026-10-29): iOS 4.3(b) 대응 — 홈 개편 + 재제출
+# TODO (2026-10-29): 숏폼 실행 1차, 주 10개 · 형식 5개
 
-SPEC: `SPEC.md`. 숏폼 TODO는 `TODO_2026-10-29_shortform.md`로 보관했다.
-순서: 1번(사용자 확인)과 2번은 바로 시작할 수 있고, 3→4→5는 이어서, 6·7은 5번 뒤, 8~10은 사용자 실행.
-항목마다 세션 하나로 끝낼 크기다. 3·4번은 파일이 3개 이상이라 muse 위임 가능(문구는 이 세션이 쓰고 muse는 적용만). 5번에서 diff와 출력으로 확인한다.
-결제·유료 프롬프트·엔진 코드는 건드리지 않는다.
+SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPEC·TODO는 1~9 완료 후 `*_2026-10-29_ios43b.md`로 보관, 남은 10번은 심사 결과 대기. 사용자 결정으로 숏폼 재개.) 근거 자료는 `marketing/shortform/REPORT_2026-10-28.md`, `REFERENCES_2026-10-28.md`.
 
-- [x] 1. (user check) 거절된 1.2.0에 새 빌드(9)를 붙일 수 있는지 확인
-  - 단계: App Store Connect → fate said → iOS 앱 1.2.0 → 빌드 섹션에서 빌드 교체(`편집`) 가능한지 본다. 불가하면 새 버전 1.2.1을 만들어야 한다.
-  - 결과 기록: 이 항목 아래에 "1.2.0(9) 가능" 또는 "1.2.1로 간다(iOS+Android)"를 적는다.
-  - **결과(2026-10-29): 1.2.0(9) 가능.** 근거: 사용자 스크린샷(ASC 1.2.0 빌드 섹션, 빌드 8 줄의 − 버튼 활성). 1.2.1·Android 버전 변경 없음, `mobile/app.json` 버전 1.2.0 유지.
-  - 1.2.1이면 `mobile/app.json` 버전과 Android 쪽 제출 계획(Play 관리형 게시)도 같이 정리한다. 1.2.0 OTA는 계속 보류한다.
-  - QA: 사용자 확인(스크린샷 또는 한 줄 답).
+순서: 1 먼저(나머지가 이 틀과 점검 스크립트를 쓴다). 2~6은 서로 독립이라 순서는 상관없다. 7은 2~6 뒤, 8은 7 뒤, 9는 7 뒤.
 
-- [x] 2. 문구 인벤토리와 새 문구표 (코드 변경 없음) — `COPY_2026-10-29_4.3b.md` 작성. QA: grep 출력 en 14줄·es 3줄이 모두 표에 있음(줄 번호 대조 스크립트로 확인). 사용자 결정 대기: 문서 §4 A(DOB 서양 별자리 카드 제거)·B(intro "Your fate has already spoken" 교체)·C(lucky points 위치)
-  - 변경: 새 파일 `COPY_2026-10-29_4.3b.md`(코드 없음). en·es에서 사용자에게 보이는 `fortune`/`horoscope`/`astrology`/`zodiac` 위치 전부와 바꿀 문구를 `파일:줄 | 현재 | 새 문구` 표로 쓴다. 대상: `home.*`(today*), `fortune.*`, 알림 `daily*`/`weekly*`/`notification*`, 봉인 카드. 홈의 "My saju chart" 새 이름과 경로 카드 문구(제목·본문·CTA)도 같은 표에 쓴다. "압박 규칙"과 "계산된 것만" 원칙을 지킨다.
-  - 새 이름 방향: "Today's fortune" → "Today's rhythm", "My saju chart" → "Your pattern". 문구는 이 세션이 쓰고 사용자가 훑어 본다.
-  - QA: `grep -rniE "fortune|horoscope|astrology|zodiac" mobile/lib/i18n/en.ts mobile/lib/i18n/es.ts` 출력의 모든 줄이 표에 들어 있거나 "사용자에게 안 보임"으로 분류됐다. 철학 문장(`philosophyLine`의 "isn't fortune-telling")은 유지 여부를 표에 표시한다.
+코딩 항목(1~6)은 CLAUDE.md 분담 규칙상 muse 위임 대상이다. 사업 핵심 로직이 아니기 때문이다. 단 F2·F6 문구 출처 확인은 이 세션이 직접 한다.
 
-- [x] 3. 홈 위계 개편 (`mobile/screens/HomeScreen.tsx`) — 경로 카드를 채움(gradient) 카드로 인사 바로 아래로 올리고 오늘 카드는 raised 표면·작은 제목으로 내림, 사주 차트는 경로 카드 아래 유지. QA: mobile tsc(큰 스택) exit 0(오류 없음)
-  - 변경: 경로 카드(검사 → 대화 → 리포트)를 인사·유형 배지 바로 아래의 채움 중심 표면으로 올린다. 오늘 카드는 보조 위계(채움 아님, 크기 축소)로 내리되 상태(봉인/열림/티저/연속일수)는 유지한다. 사주 차트 섹션은 경로 카드 아래. 파일 상단 주석의 "daily fortune ritual" 설명도 새 위계에 맞게 고친다. 새 모션 없음, reduced motion 유지, 팔레트·`FONTS`만 사용.
-  - iPad: 넓은 화면(`readableColumn`)에서도 경로 카드가 스크롤 전에 보이게 한다.
-  - QA: mobile tsc(큰 스택) → 오류 없음. 5번에서 화면 확인.
+공통 렌더 조건: mobile-web이 떠 있어야 한다. `cd mobile && npx expo start --web --port 8082`. 결과물 `marketing/video/`는 git에서 제외된다.
 
-- [x] 4. 앱 안 문구 교체 (en·es) — COPY 문서 §2·§3 적용(en·es 각 18줄 대칭 diff, `git diff --stat` 36줄씩). QA: grep 재실행 → 남은 줄은 `zodiacLabels`·`promptFortune` 키 이름·`philosophyLine`(유지)·`fortune: {` 키뿐, 화면에 보이는 문구 0(`philosophyLine` 제외). mobile tsc exit 0. §4 A·B·C(DOB 별자리 카드, intro 'fate' 문구, lucky points)는 사용자 결정 전이라 **적용 안 함**
-  - 변경: 2번 표를 `mobile/lib/i18n/en.ts`, `es.ts`에 적용(en·es 키 동기). 알림 문구·위젯(`widgets/`, `TodayWidget`)에 같은 단어가 있으면 함께 본다. ko는 이번에 건드리지 않는다(후속).
-  - QA: 2번의 grep 재실행 → 사용자에게 보이는 줄 0개(예외는 표의 "유지"뿐). mobile tsc(큰 스택) → 오류 없음. 키가 en에만 있고 es에 없는 경우가 없는지 diff로 확인.
+## 구현
 
-- [x] 4-추가. COPY §4 A·B·C 적용(사용자 승인 2026-10-29) — A: `DobScreen.tsx`의 서양 별자리 카드·`getZodiac` 호출 제거, `lib/zodiac.ts`의 `ZODIAC`·`getZodiac` 삭제(쓰는 곳이 DobScreen뿐이었음, `toISODateString`·`to24HourString`은 유지), `common.zodiacLabels`를 ko·en·es에서 삭제(`en: typeof ko` 타입 동기 때문에 ko 키 삭제 포함, 문구 변경 아님). B: `intro.headlineLine1/2` en·es 교체(ko 그대로, subheadline 그대로). C: `FortuneScreen.tsx`에서 lucky points 카드를 상세(DetailList) 뒤 맨 아래로 이동(문구·`lockedBenefits` 그대로, 섹션 애니메이션 인덱스 2·3으로 정리: `DAILY_SECTION_COUNT`가 4라 인덱스 4를 쓰면 깨짐). QA: mobile tsc(큰 스택) exit 0; grep(fortune|horoscope|astrology|zodiac) en·es → `promptFortune` 키, `philosophyLine`(유지), `fortune: {` 키뿐; `mobile-web`(8082, mobile 프리셋, 저장소 비우고 처음부터): 인트로 `get_page_text`에 새 헤드라인, DOB 화면에 유효한 날짜(05/14/1990)를 넣어도 별자리 카드 없이 레이아웃 정상·다음 버튼 활성, 콘솔 오류 0. **못 본 것**: 구독자 전용 오늘 화면(lucky points 새 위치)은 미리보기로 못 봄 → TestFlight에서 확인(9번 단계 2)
-- [x] 5. 홈 검증 (증거) — `mobile-web` 미리보기(8082, `?qa=free`): mobile 375x812·tablet 768x1024 스크린샷으로 경로 카드(채움)가 인사 바로 아래 첫 화면, 오늘 카드는 그 아래 보조, `get_page_text`에 'fortune/horoscope/astrology' 없음(철학 한 줄의 'fortune-telling' 제외), `read_console_messages` 오류 0. 구독자 전용 화면·iOS 시뮬레이터 iPad는 이번에 못 봄(미리보기 한계, dev-client 없음) → 9번 TestFlight 확인
-  - 단계: `mobile-web` 미리보기(8082)에서 `mobile` 프리셋과 `tablet` 프리셋(768x1024)으로 새 홈 스크린샷. iOS 시뮬레이터 dev-client가 있으면 iPad에서도 한 번. 어느 쪽에서 나온 증거인지 기록. 구독자 전용 화면은 미리보기로 못 본다고 명시.
-  - 확인: 스크롤 전에 경로 카드가 중심 표면인지, "fortune/horoscope/astrology"가 없는지, 오늘 카드가 보조로 보이는지, 콘솔 오류가 없는지(`read_console_messages`).
-  - QA: 스크린샷 + `grep` 출력 + tsc 출력. 문제 시 3·4번으로 돌아가 한 번에 고치고 한 번만 다시 본다.
+- [x] 1. 공통 제작 틀 + 문구 점검 스크립트 (2026-10-29, muse 지시서 `.agents/tasks/24-shortform-check-copy.md`, 브랜치 `task-24`)
+  - QA: `npx tsx scripts/shortform/check-copy.test.mts` → `ok 50 checks`(규칙 12종 각각 걸리는 사례 + 경계 통과 사례 + 구조·교차 파일·CLI exit 0/1/2), `npx tsx scripts/shortform/check-copy.mts marketing/shortform/produce/*.json` → `1 files, 0 failed`, 루트 `npx tsc --noEmit` → exit 0 출력 없음
+  - 결과: 설정 형식·로더 `loadConfigFile`은 `check-copy.mts`에 있다(렌더 2~6번이 import). 예시 `marketing/shortform/produce/F1-sample.json`(2번 QA의 `F1-sample`). 같은 `birth.date` 중복은 `duplicate-birth`로 잡혀 7번 QA의 중복 0 확인도 이 명령 하나로 된다.
+  - 변경:
+    - `marketing/shortform/produce/`: 영상 1개 = JSON 1개. 키, 형식(F1~F6), 훅, 대본 문장, 화면 글자, 생년월일·시간·도시, 캡션, 해시태그, UTM 플랫폼, AI 음성 여부.
+    - `scripts/shortform/check-copy.mts`: `video-kit.md` 9장 금지어를 넓힌다. 정확도·예언·불운, "worst/bad match", % 점수, 유명인 이름 목록, "comment your birth" 류, 가짜 후기 1인칭("I tried this app"). AI 음성이면 캡션에 "Voiceover is AI-generated."가 있는지도 본다.
+    - `scripts/shortform/check-copy.test.mts`.
+  - QA: `npx tsx scripts/shortform/check-copy.test.mts` 통과. 금지 사례와 통과 사례가 각각 하나 이상 있어야 한다. 루트 `npx tsc --noEmit` → 0.
 
-- [x] 6. 스토어 등록정보 새 초안 (`marketing/aso-en.md`) — iOS 키워드·프로모션·설명·캡션 순서 갱신. QA: 글자 수 스크립트 FAIL count 0(키워드 97/100, 프로모션 154/170, 설명 2336/4000, 캡션 29~36) + 금지어 grep은 규칙·메모 줄만 남음. Play 영어 문구는 건드리지 않음("A daily reading" 등 남아 있음, 원하면 후속)
-  - 변경: iOS 키워드에서 `horoscope,astrology,zodiac` 제거 후 자리에 `self-insight,reflection,personality test` 같은 실제 기능어로 교체(글자 수 100 이내, 남의 상표 없음). 설명은 맨 앞을 "30문항 검사 → 선택형 대화 → 개인 리포트"로 다시 배열하고 사주 유형·차트·궁합은 그 뒤로, "A daily reading"은 "Today's rhythm"으로 이름을 맞춘다. 프로모션 텍스트와 스크린샷 캡션 순서(검사 목록 → 대화 → 리포트 → 유형 → 오늘)를 새로 쓴다. 기존 규칙(금융어·예언어 금지, 면책, 구독 문구)은 그대로. Google Play 영어 문구는 이번에 건드리지 않는다(사용자가 원하면 후속).
-  - QA: `marketing/aso-en.md` 맨 아래 "글자 수 점검" 스크립트 실행 출력(모든 필드 제한 이내) + 금지어 grep.
+- [ ] 2. F1 템플릿: "내 사주 유형 찾는 법" 앱 화면 시연
+  - 선행: 1
+  - 변경: `scripts/shortform/render-f1.mts`. 기존 `record-app.mts`의 CDP 녹화와 자막 방식을 재사용한다. 장면: 온보딩에 생년월일·시간·**해외 도시** 입력 → 유형 공개 → 유형 카드 → 끝 CTA "link in bio". TTS는 `marketing/tts-samples/generate.py`.
+  - QA: `node --import tsx scripts/shortform/render-f1.mts F1-sample` → mp4. `ffprobe`로 1080×1920·35초 이하·오디오 트랙 확인. 0초·2초·끝 프레임을 뽑아 직접 본다(훅 글자, 앱 화면, CTA). mobile-web 렌더링이라 네이티브와 다를 수 있다고 적는다.
 
-- [x] 7. 회신 [A]·심사자 메모 최종본 — `APPEAL_2026-10-29_ios_4.3b.md` 재작성([A]·[N]·[B]·16행 체크리스트). QA: 영어 본문 grep 4줄 모두 허용 용도, 체크리스트 미확인 3건(4·15·16번)은 사용자 확인 후 문장 유지/삭제로 표시 → 미확인 0개 조건은 **사용자 확인 대기**. 이전 초안의 'KASI 검증' 문장은 근거 부족으로 삭제, 심사받은 빌드 8은 v2 챗이었다는 정정 포함
-  - 변경: `APPEAL_2026-10-29_ios_4.3b.md`를 재작성한다. ① 맨 앞에 핵심 개념 한 줄("검사 결과 위에서 진행되는 구조화된 대화와 리포트로 자기 패턴을 이해하게 하는 도구"), ② 챗 설명 문장은 심사 빌드 기준으로 사실만(새 빌드에서 고정 스크립트가 기본인지 `mobile/lib/chatFlow.ts`로 확인 후 그 범위에서만 주장), ③ **이번 빌드에서 실제로 바꾼 것**(홈 위계, 문구, 스토어 등록정보)을 구체적으로, ④ 정당성 증거 문단은 사실만(개인 계정, 사업자 등록 완료, 처리방침·KASI 데이터 사용 — 등록번호·개인정보는 메시지에 넣지 않는다), ⑤ 통화 제안은 유지. 별도로 App Review Information Notes용 단계별 경로(Choose a test → 30문항 → 대화 → 리포트)와 "구독 화면까지 보려면" 안내를 영어 10줄 이내로 쓴다. 데모 계정이 필요하면 사용자가 만든 테스트 값을 쓰고 이 문서에는 적지 않는다.
-  - QA: 문서 속 모든 사실 주장 옆에 근거(코드 위치 또는 사용자 확인) 체크리스트를 달고 미확인 항목 0개. 영어 문장에 `fortune-telling` 부정 표현 외의 운세 단어가 없는지 grep.
+- [ ] 3. F4 템플릿: 전/후 앱 화면(심리 검사 결과 → 사주 유형 카드)
+  - 선행: 1
+  - 변경: `scripts/record-app-ab.mts` `CONFIGS` 확장 또는 `scripts/shortform/render-f4.mts`. 0초부터 앱 UI. "pov"류 시청자 감정 단정 문장 금지.
+  - QA: 2번과 같은 ffprobe·프레임 확인. 훅·자막이 `check-copy` 통과.
 
-- [x] 8. (user check) 새 스크린샷 캡처
-  - 단계(최신): 6번 캡션 순서는 검사 목록 → 대화 → 리포트 → 유형 → 새 홈(`marketing/aso-en.md` 표). 5번 화면 기준으로 iPhone 6.9"와 iPad 13"를 시뮬레이터 또는 실기기에서 캡처: 새 홈, 검사 목록, 대화 화면, 유형 화면, 리포트(구매 전 가능한 화면). 6번 캡션 순서대로 `mobile/store-assets/ios-screenshots/`에 저장. 구독·구매 화면과 "money"가 보이는 화면은 뺀다(기존 규칙).
-  - QA: 파일이 해당 폴더에 있고 해상도가 App Store Connect 요구와 맞는다(업로드 시 확인).
-  - 진행(2026-10-29, Release 시뮬레이터 빌드 `expo run:ios --configuration Release`, 개발 도구 버튼 없음, 상태바 9:41): **완료** iPhone 6.9"(1320x2868) `home`·`tests`·`type`, iPad 13"(2064x2752) `home`·`tests`·`type` (`mobile/store-assets/ios-screenshots/`, `sips`로 해상도 확인). **추가(2026-10-29, 사용자가 TestFlight 빌드 9에서 찍은 `261029 스크린샷/` 28장 중 선별)**: 대화 `IMG_0121`(Part 2 of 5, 선택 칩·응답) → `chat-iphone69.png`, 리포트 `IMG_0128`(Follow-Through 분석 막대, 이름 없음) → `report-iphone69.png`. 원본이 1125x2436(5.8")이라 `sips -z 2868 1320`으로 6.9" 크기(1320x2868)에 맞춰 키웠다(가로세로 비율 차 0.3%, 약간 부드러움). 상단바 통일: 시뮬레이터 캡처는 깨끗한 9:41·만충전 상단바, TestFlight 원본은 12:42·배터리 낮음이라, `chat`·`report`의 상단 200px를 `tests-iphone69.png`의 상단바(배경색 동일 18,32,25)로 덮어 맞췄다(원본은 `261029 스크린샷/`에 있음). 쓰지 않은 것: 오늘 개요(`IMG_0111`)는 "money/wallet" 문구, `IMG_0125` 리포트 표지는 사용자 이름("Aaron")이 보임. **남음** iPad 13"용 대화·리포트(기기 없으면 iPad는 기존 3장 `home`·`tests`·`type`만 올린다). 기존 `chart-iphone69.png`(1290x2796, 10-16)와 `qa-ipad13.png`(9-16)는 옛 화면이라 쓰지 않는다. 시뮬레이터에 테스트 프로필(Jordan, 1992-03-14, Seoul)이 들어 있다.
+- [ ] 4. F2 템플릿: 유형 × 관계 카드 묶음
+  - 선행: 1
+  - 변경: `scripts/shortform/render-f2.mts`. Playwright로 HTML → PNG. Instagram 캐러셀 1080×1350, TikTok 사진 1080×1920, YouTube용 슬라이드 mp4 각각. 색·글꼴은 Celadon & Hanji와 `FONTS` 기준(Newsreader, Plus Jakarta Sans).
+  - 문구 출처는 `mobile/lib/compatibilityContent.ts`(en, 관계 5종 headline·body·goodPoint)와 `mobile/lib/sajuTypeContent.ts`(en, archetype·mode 조각)뿐이다. 스크립트가 카드 문장이 원문 문자열과 일치하는지 검사한다. 새 해석 문장 금지, "나쁜 궁합" 금지, % 금지.
+  - QA: 3세트 렌더. 원문 일치 검사 통과, `check-copy` 통과. PNG 크기 확인. 카드 3장을 직접 본다(잘림, 대비).
 
-- [x] 9. (user check) 새 빌드 → 업로드 → 재제출
-  - 순서(회신과 재제출은 한 번에):
-    1. 버전은 1.2.0 유지(1번 결과). iOS buildNumber는 `eas.json`이 `appVersionSource: remote` + `autoIncrement: true`라서 `app.json`에 없고 EAS가 관리한다. 빌드 전 `cd mobile && eas build:version:get -p ios`로 현재 값을 보고, 빌드 뒤 결과가 9이고 ASC에 이미 있는 번호와 겹치지 않는지 확인한다(중복 금지, 8이 나오면 제출하지 않는다).
-    2. `eas build`(iOS) 후 TestFlight에서 홈(경로 카드 첫 화면, iPad 포함)·검사·대화·리포트·구독 화면을 확인하고, 7번 체크리스트 4·15·16번(Notes의 구독 경로·소요 시간·구매 필요 여부)을 이때 확정한다.
-    3. 새 빌드 9의 처리(Processing)가 끝난 뒤 ASC 1.2.0 빌드 섹션에서 빌드 8을 − 로 제거하고 9를 추가한다. 그다음 새 빌드 선택, 6번 키워드·설명·프로모션 텍스트·캡션 입력, 8번 스크린샷 교체, 7번 [N] Notes 입력(미확인 줄 삭제 후). 문서 §4 A·B·C를 승인했다면 그 변경도 새 빌드에 들어갔는지 확인.
-    4. Resolution Center에 7번 회신 보내고, 같은 화면에서 재제출.
-    5. 긴급 심사 요청은 하지 않는다(필요하면 며칠 뒤 한 번만).
-  - QA: 사용자 확인(상태가 "심사 대기 중"이 되었는지 스크린샷).
-  - 진행(2026-10-29): 1번 `eas build --platform ios --profile production` 실행 → 빌드 ID `e521055a-25eb-406b-93bb-a6d5a1c12f6b`, 상태 `finished`, iOS 1.2.0 **빌드 번호 9**, 런타임 1.2.0(`eas build:view`로 확인). 로그 https://expo.dev/accounts/aaron_435/projects/fatesaid/builds/e521055a-25eb-406b-93bb-a6d5a1c12f6b . App Store Connect 업로드 완료(사용자 승인 후 `eas submit --platform ios --profile production --id e521055a-…`): 제출 ID `22c2ba0f-8eb4-477a-852e-fa8cf1f4e1a2`, `eas submit:view` 상태 `finished`(Apple 처리는 별도, TestFlight에 빌드 9가 보이면 처리 끝). **남음** 위 2~5번(TestFlight 확인·빌드 8→9 교체·문구/스크린샷/Notes 입력·회신+재제출).
-  - 완료(2026-10-29 오후, Claude in Chrome으로 ASC 입력, 회신·재제출은 사용자 승인 후): 빌드 8→**9** 교체·저장. 스크린샷: ASC 새 화면은 iPhone **6.3"(1206x2622)가 필수 칸**이고 6.9"는 선택 칸이라, 6.9" 5장(tests→chat→report→type→home)을 6.9" 칸에 올리고 같은 5장을 `sips -z 2622 1206`로 줄여 필수 칸에 올렸다(줄인 파일은 저장소에 넣지 않음). 옛 6.3" 4장(Today's fortune 홈 포함)·6.5" 3장·iPad 3장 삭제, iPad 13" `home`·`tests`·`type` 업로드. 문구: 프로모션 154자·키워드 97자·설명 2336자를 새로고침 후 원본과 해시 대조로 일치 확인, 키워드에 horoscope·astrology·zodiac 없음. 현지화는 영어(미국)만 있음. What's New 칸은 출시된 버전이 없어 화면에 없음. Notes=[N](Contact: 이메일만, 사용자 결정), 저장 후 일치 확인. 회신 [A](`{confirm…}` 삭제, `**` 제거한 일반 텍스트) 전송 → 메시지 2개. "앱 심사에 다시 제출" → 제출 상태 **"심사 대기 중"**, 19개 항목 모두 심사 대기 중(ASC 화면으로 확인). 긴급 심사는 요청하지 않음.
+- [ ] 5. F6 템플릿: 한 줄 문구 카드 + 배경 아트 루프
+  - 선행: 1
+  - 변경: `scripts/shortform/render-f6.mts`. 배경은 mobile-web의 제너러티브 아트 화면을 한 번 녹화해 루프 mp4로 만든다. 그 위에 `sajuTypeContent` en tagline 한 줄과 계정 이름을 얹는다. 음성 없이 음원 자리만 둔다(음원은 게시할 때 플랫폼에서 고른다).
+  - QA: 렌더 2개, ffprobe 1080×1920·7~12초. 문구 원문 일치, `check-copy` 통과. 프레임 확인.
 
-- [ ] 10. (user check) 거절이 유지되면
-  - 4.3(b)가 다시 오면 같은 빌드를 반복 제출하지 않는다. 선택지: App Review Board 이의제기(`7번 문서`를 줄여 사용), 심사 면담 요청, 조직 계정 전환(D-U-N-S 필요, 별도 SPEC), PWA·웹 중심 전환(별도 SPEC). 결과를 `HANDOFF_2026-10-29.md`에 한 줄 기록한다.
-  - QA: 사용자 판단.
+- [ ] 6. F3 템플릿 + 절기 날짜표
+  - 선행: 1, 5(배경 루프 재사용)
+  - 변경: `scripts/shortform/solar-term-dates.mts`. 엔진 `lib/solarTerms.ts`에서 2026-11 ~ 2027-02 절기 시각을 KST와 UTC로 뽑는다. 여기에 Year Wrapped(12/1), 2027 신년을 더해 날짜표 `marketing/shortform/dates.md`를 만든다. `scripts/shortform/render-f3.mts`는 날짜 텍스트 카드 3~4장에 AI 음성을 선택으로 붙인다. 문장은 "리듬·흐름" 표현만 쓴다(예언 금지).
+  - QA: `npm run validate:manseryeok` 통과(엔진은 바꾸지 않았으니 기존 결과 그대로). 날짜표의 입동·동지가 엔진 출력과 같다. 렌더 1개는 ffprobe와 프레임으로 확인, `check-copy` 통과.
 
-## 발견 사항 (작업 중 추가)
-- ASC 스크린샷 필수 칸이 iPhone 6.3"(1206x2622)로 바뀌었다. 다음에 스크린샷을 바꿀 때 6.3" 칸도 같이 바꿔야 옛 화면이 남지 않는다.
-- Play 영어 등록정보에는 "A daily reading" 등 옛 문구가 남아 있다(6번 범위 밖). Android 심사 영향은 없지만 일관성을 원하면 후속.
-- iOS 키워드(`marketing/aso-en.md`)에 `horoscope, astrology, zodiac`가 있다 → 6번에서 해결.
-- `mobile/store-assets/subscription/paywall-fortune.png`: 파일명에 fortune. 구독 심사용 캡처 이름이라 심사 판단에는 영향이 없지만, 이미지 안 문구에 fortune이 보이면 새 캡처로 교체 여부를 8번에서 판단한다.
-- (해결: 4-추가) DOB 화면(`screens/DobScreen.tsx:88`)이 서양 별자리 카드(Capricorn 등)를 보여준다. grep의 `zodiac` 대상이고 온보딩 첫인상이 점성술이다. 제거 제안, 승인 시 4번에 추가(COPY 문서 §4-A). intro 헤드라인 "Your fate has already spoken."도 같은 이유로 교체 제안(§4-B).
-- 새 홈 이후 `marketing/video-kit.md`·숏폼 대본의 "Today's fortune" 화면 소스가 바뀐다 → 숏폼 재개 때 반영.
+- [ ] 7. 첫 2주 설정 파일 20개(대본·캡션)
+  - 선행: 2~6
+  - 구성: F2 6, F1 4, F4 4, F6 4, F3 2. 영상마다 생년월일·유형·모듈이 달라야 한다. 캡션에 플랫폼별 UTM 링크 문구("link in bio"), AI 음성 표기, 해시태그를 넣는다.
+  - QA: `npx tsx scripts/shortform/check-copy.mts marketing/shortform/produce/*.json` → 20개 전부 통과. 같은 생년월일 중복 0(스크립트로 센다).
+
+- [ ] 8. 20개 렌더 + 검수
+  - 선행: 7
+  - QA: 20개 모두 렌더 성공. ffprobe 일괄 점검(크기·길이·오디오). 영상마다 0초·2초·끝 프레임 접촉 시트를 보고 문제 목록을 적은 뒤 고친다. TTS 비용(문자 수)도 적는다.
+
+- [ ] 9. 4주 게시 캘린더 + 성과 기록표 + 예약 게시 안내
+  - 선행: 7
+  - 변경:
+    - `marketing/shortform/CALENDAR.md`: 주 10개. 같은 형식을 연달아 두지 않는다. F3는 날짜에 맞춘다. 공개일을 D0로 둔 상대 날짜로 쓴다.
+    - `marketing/shortform/tracker.csv`: 영상 키, 플랫폼, 게시일, 48시간·7일 조회·공유·저장·프로필 방문·링크 클릭.
+    - TikTok Studio, Meta Business Suite, YouTube Studio 예약 게시 순서.
+  - QA: 캘린더 점검 스크립트로 주별 개수, 연속 같은 형식 0, F3 날짜 일치를 확인한다.
+
+## 사용자 확인·실행
+
+- [ ] 10. (user check) 스토어 공개 확인 → 첫 주 예약 게시
+  - 절차: iOS·Android 공개 확인 → 웹 "coming soon"을 스토어 링크로 바꿨는지 확인(이전 마케팅 TODO 7) → CALENDAR의 1주차 10개를 TikTok과 Instagram에 같은 날짜로 예약 → YouTube Shorts에 복사 예약 → 캡션의 AI 음성 표기 확인.
+- [ ] 11. (user check) 48시간·7일 수치 기록. `tracker.csv`에 직접 입력하거나, 사용자 승인 뒤 Aside로 각 플랫폼 분석 화면을 읽어 채운다(읽기만).
+- [ ] 12. 2주 리뷰(Claude). 형식별 중앙 조회·공유율·프로필 방문율과 퍼널 리포트(`npx tsx --env-file=.env.local scripts/funnel-report.mts`)의 UTM 플랫폼별 방문 → 유형 카드 → 스토어 클릭을 보고 3~4주차 구성을 조정한다.
+  - 선행: 11(2주치 수치)
+- [ ] 13. 4주 리뷰(Claude). 6개 이상 올렸는데 프로필 방문·링크 클릭이 사실상 0인 형식은 뺀다. 다음 SPEC을 제안한다(스페인어판, 승자 형식 확대, 광고 증폭).
+  - 선행: 12
+
+## 이전 TODO에서 옮긴 사용자 항목 (`TODO_2026-10-28_measurement.md` 5~7)
+- [ ] 14. (사용자 실행) iOS 1.2.0 승인 뒤 `eas update` 한 번(iOS·Android 함께). 순서·명령은 `HANDOFF_2026-10-25_ota_pending.md`.
+- [ ] 15. (사용자 확인, 14 뒤) 앱 이어받기 실기 확인. 절차는 `TODO_2026-10-27_web2app.md` 11번. 같은 김에 설정 © 7번 탭으로 본인 기기를 테스터로 표시한다.
+- [ ] 16. (사용자 실행, 14 뒤) 영어 사용자 5명 관찰. 기록표를 공유하면 웹 검사 맛보기와 주력 상품 판단에 쓴다.
+
+## 발견 사항
+- (1번) `check-copy`는 금지어를 넓게 잡는다: `heal…`이 "healthy", `treat…`이 "treaty", `stock…`, `will` 단독도 걸린다. 7번에서 문장을 쓸 때 걸리면 단어를 바꾸고, 규칙을 풀어야 하면 그때 결정한다. 해시태그 `#astrology`는 규칙상 통과하지만 4.3(b) 이후 쓸지는 7번에서 판단.
+- (분석 중) yt-dlp는 TikTok 댓글을 0개로 받는다. 댓글은 Aside로 읽는다. TikTok은 요청을 가끔 막으니 계정 목록은 재시도가 필요하다(`marketing/shortform/tools/collect.py`).
+- (분석 중) 임시 폴더는 재부팅하면 지워진다. 영상·프레임은 `~/.cache/shortform_dl`에 둔다.
+- (분석 중) TikTok을 비즈니스 계정으로 바꾸면 상업용 음원만 쓸 수 있다. 바꾸기 전에 F3·F6 음원 방침을 다시 정한다.

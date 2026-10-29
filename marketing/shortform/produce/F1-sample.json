@@ -1,0 +1,29 @@
+{
+  "key": "F1-sample",
+  "format": "F1",
+  "hook": "A Korean saju type, from one birth date and a city.",
+  "script": [
+    "Saju reads a birth date, time, and city as four pillars.",
+    "Here the birthday goes in, then a city outside Korea.",
+    "The app lands on one of fifty saju types and shows the card.",
+    "Free to try. Link in bio."
+  ],
+  "onScreen": [
+    "Birth date + city",
+    "One of 50 saju types"
+  ],
+  "birth": {
+    "date": "1994-08-21",
+    "time": "07:30",
+    "city": "Toronto"
+  },
+  "caption": "A Korean saju type, from one birth date and a city.\nFree saju type card from a birth date: link in bio.\nSelf-reflection tool, not medical or psychological advice.\nVoiceover is AI-generated.",
+  "hashtags": [
+    "#saju",
+    "#koreansaju",
+    "#fourpillars",
+    "#personalitytypes"
+  ],
+  "utmPlatform": "tiktok",
+  "aiVoice": true
+}
