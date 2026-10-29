@@ -56,10 +56,13 @@ SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPE
   - 변경: `scripts/shortform/solar-term-dates.mts`. 엔진 `lib/solarTerms.ts`에서 2026-11 ~ 2027-02 절기 시각을 KST와 UTC로 뽑는다. 여기에 Year Wrapped(12/1), 2027 신년을 더해 날짜표 `marketing/shortform/dates.md`를 만든다. `scripts/shortform/render-f3.mts`는 날짜 텍스트 카드 3~4장에 AI 음성을 선택으로 붙인다. 문장은 "리듬·흐름" 표현만 쓴다(예언 금지).
   - QA: `npm run validate:manseryeok` 통과(엔진은 바꾸지 않았으니 기존 결과 그대로). 날짜표의 입동·동지가 엔진 출력과 같다. 렌더 1개는 ffprobe와 프레임으로 확인, `check-copy` 통과.
 
-- [ ] 7. 첫 2주 설정 파일 20개(대본·캡션)
+- [x] 7. 첫 2주 설정 파일 20개(대본·캡션) (2026-10-29, 이 세션이 직접 씀)
+  - QA: `npx tsx scripts/shortform/check-copy.mts marketing/shortform/produce/V*.json` → `20 files, 0 failed`. 샘플 포함 `produce/*.json` → `28 files, 0 failed`(교차 파일 생년월일·키 중복 0). F2 6개 `node --import tsx scripts/shortform/render-f2.mts V0N-F2 --check` → 관계 selfNurturesOther·otherNurturesSelf×2·selfChallengesOther·otherChallengesSelf·mirror(5종 모두), 원문 일치 통과. 생년월일 14개를 엔진(`calculateManseryeok` + `classifySajuType`, 샘플 렌더 결과 5개와 일치 확인)으로 계산 → 유형 14개 전부 다름, 샘플 유형과도 안 겹침.
+  - 결과: 키 `V01-F2`~`V06-F2`, `V07-F1`~`V10-F1`, `V11-F4`~`V14-F4`, `V15-F6`~`V18-F6`, `V19-F3`·`V20-F3`. 도시는 전부 해외 14곳. F4 검사는 Burnout·The Mask·Love & Attachment·Focus(샘플의 Sleep 제외). F6 tagline은 Oak·Gem·Flame·Field(F2 카드엔 이 넷의 tagline을 안 씀). F3은 입동(Nov 7, 음성)과 Year Wrapped(Dec 1, 무음). F2 "You…" 시점 문제(발견 사항 4번)는 훅·캡션에 "read from <A>'s side"를 넣어 정함. 해시태그에 `#astrology`는 안 씀.
+  - 렌더 전 주의(8번): F6 tagline·F1/F4 유형은 엔진 계산값 기준이라, 앱 도시 검색이 다른 같은 이름 도시(예: London)를 먼저 고르면 F6 검사에서 멈출 수 있다. V19(Nov 7)는 공개일이 11월 7일을 넘기면 대설(US Eastern Dec 6)로 바꾼다.
   - 선행: 2~6
   - 구성: F2 6, F1 4, F4 4, F6 4, F3 2. 영상마다 생년월일·유형·모듈이 달라야 한다. 캡션에 플랫폼별 UTM 링크 문구("link in bio"), AI 음성 표기, 해시태그를 넣는다.
-  - QA: `npx tsx scripts/shortform/check-copy.mts marketing/shortform/produce/*.json` → 20개 전부 통과. 같은 생년월일 중복 0(스크립트로 센다).
+  - QA: `npx tsx scripts/shortform/check-copy.mts marketing/shortform/produce/V*.json` → 20개 전부 통과(샘플 8개는 `*.json`으로 함께 돌려 중복만 본다). 같은 생년월일 중복 0(스크립트로 센다).
 
 - [ ] 8. 20개 렌더 + 검수
   - 선행: 7
@@ -91,6 +94,7 @@ SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPE
 ## 발견 사항
 - (3~6번) F1 영상이 세로로 약 10% 늘어나 있었다(설치된 Chrome의 headless 창이 뷰포트와 달라 CDP 화면이 540×873·1배율). 2026-10-29 `render-f1.mts`를 `common.mts`(창 크기 고정·프레임 크기 검사·`-t` 길이)로 옮겨 고침. QA: `render-f1.mts F1-sample` → `ok … 14.2s, 4 captions, city=Toronto, type=Field · Order`, `ffprobe` 1080×1920·14.24초, 프레임 8장에서 둥근 버튼이 원형, 장면은 이전과 같음. `scripts/record-*.mts`(옛 광고 녹화)는 그대로라 다시 쓸 때 같은 플래그가 필요하다.
 - (5번) **앱 도시 검색이 악센트를 못 찾는다**: `/api/cities/search?q=São Paulo` → 결과 0, `Sao Paulo` → 브라질 상파울루. 스페인어·포르투갈어권 사용자가 온보딩에서 막힐 수 있다(앱·서버 코드라 이번 범위 밖). 샘플은 `Sao Paulo`로 씀.
+- (7번) 서버 `searchWorldCities("Montreal")`도 결과가 없다(São Paulo와 같은 악센트 문제로 보임, 확인 안 함). 이번 설정에서는 Montreal을 뺐다.
 - (3번) F4 결과 카드 제목 읽기는 뺐다(로그용이었고 화면 요소를 안정적으로 못 골랐다). 유형 이름은 읽는다.
 - (4번) F2의 "You…" 문구는 카드 위쪽 쌍 라벨(`Oak × Field`)의 앞쪽 유형이 "나"라는 뜻인데, 화면에 그 설명은 없다. 7번에서 훅이나 캡션으로 "if you're Oak" 같은 틀을 줄지 정한다.
 - (2번) Playwright 브라우저 캐시(`~/Library/Caches/ms-playwright`)가 지워져 있다. `record-*.mts`와 `render-f1.mts`의 기본 `CHROME_PATH`가 없는 경로를 가리키므로 지금은 설치된 Chrome을 `CHROME_PATH`로 준다. 3~6번도 같다. 기본값을 바꿀지, `npx playwright install chromium-headless-shell`로 다시 받을지는 그때 정한다.

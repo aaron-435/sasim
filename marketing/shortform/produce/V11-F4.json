@@ -1,0 +1,31 @@
+{
+  "key": "V11-F4",
+  "format": "F4",
+  "hook": "A burnout check, then a saju type, same birth date.",
+  "script": [
+    "Here is the short burnout test in the app.",
+    "A few questions about energy and rest.",
+    "The result card names the pattern in plain words.",
+    "Then the same birth date opens a saju type card.",
+    "Free to try. Link in bio."
+  ],
+  "onScreen": [
+    "Burnout",
+    "Psych test result",
+    "Saju type, same person"
+  ],
+  "birth": {
+    "date": "1987-09-15",
+    "time": "14:10",
+    "city": "Berlin"
+  },
+  "caption": "A burnout test result next to a saju type card.\nSame birth date, two cards: link in bio.\nSelf-reflection tool, not medical or psychological advice.\nVoiceover is AI-generated.",
+  "hashtags": [
+    "#saju",
+    "#burnout",
+    "#personalitytypes",
+    "#selfreflection"
+  ],
+  "utmPlatform": "tiktok",
+  "aiVoice": true
+}

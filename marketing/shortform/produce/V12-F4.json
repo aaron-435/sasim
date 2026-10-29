@@ -1,0 +1,30 @@
+{
+  "key": "V12-F4",
+  "format": "F4",
+  "hook": "Two cards for one person: The Mask test and a saju type.",
+  "script": [
+    "The Mask is a short test about the face shown to others.",
+    "The result card sums it up in a few words.",
+    "Then the saju type for the same birth date sits next to it.",
+    "Free to try. Link in bio."
+  ],
+  "onScreen": [
+    "The Mask",
+    "Psych test result",
+    "Saju type, same person"
+  ],
+  "birth": {
+    "date": "1989-05-30",
+    "time": "15:55",
+    "city": "Paris"
+  },
+  "caption": "The Mask test result and a saju type card, side by side.\nSame birth date, two cards: link in bio.\nSelf-reflection tool, not medical or psychological advice.\nVoiceover is AI-generated.",
+  "hashtags": [
+    "#saju",
+    "#personalitytest",
+    "#sajutypes",
+    "#selfreflection"
+  ],
+  "utmPlatform": "instagram",
+  "aiVoice": true
+}

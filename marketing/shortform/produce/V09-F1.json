@@ -1,0 +1,29 @@
+{
+  "key": "V09-F1",
+  "format": "F1",
+  "hook": "Saju from a London birth date, start to finish.",
+  "script": [
+    "Korean saju starts from the moment and place of birth.",
+    "This one is a morning birth in London.",
+    "Ten archetypes and five modes make fifty types, and this date gets one of them.",
+    "Free to try. Link in bio."
+  ],
+  "onScreen": [
+    "London, a morning birth",
+    "10 archetypes × 5 modes"
+  ],
+  "birth": {
+    "date": "1992-03-14",
+    "time": "10:15",
+    "city": "London"
+  },
+  "caption": "A London birth date, read the Korean saju way.\nFree saju type card from a birth date: link in bio.\nSelf-reflection tool, not medical or psychological advice.\nVoiceover is AI-generated.",
+  "hashtags": [
+    "#saju",
+    "#koreansaju",
+    "#personalitytypes",
+    "#london"
+  ],
+  "utmPlatform": "tiktok",
+  "aiVoice": true
+}

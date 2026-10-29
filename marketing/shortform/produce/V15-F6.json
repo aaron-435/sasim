@@ -1,0 +1,23 @@
+{
+  "key": "V15-F6",
+  "format": "F6",
+  "hook": "The Oak type, in one line",
+  "script": [],
+  "onScreen": [
+    "The tall tree that only grows upward",
+    "Oak · Harvest"
+  ],
+  "birth": {
+    "date": "1997-10-09",
+    "time": "08:30",
+    "city": "Dublin"
+  },
+  "caption": "The Oak saju type in one line.\nFree saju type card from a birth date: link in bio.\nSelf-reflection tool, not medical or psychological advice.",
+  "hashtags": [
+    "#saju",
+    "#koreansaju",
+    "#sajutypes"
+  ],
+  "utmPlatform": "tiktok",
+  "aiVoice": false
+}

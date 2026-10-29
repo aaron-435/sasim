@@ -1,0 +1,25 @@
+{
+  "key": "V20-F3",
+  "format": "F3",
+  "hook": "Year Wrapped arrives Dec 1.",
+  "script": [],
+  "onScreen": [
+    "Year Wrapped arrives in the app on Dec 1.",
+    "A look back at the year's flow, month by month.",
+    "One line to sum up the year, ready to share."
+  ],
+  "birth": {
+    "date": "1993-01-24",
+    "time": "11:50",
+    "city": "Lima"
+  },
+  "caption": "Year Wrapped arrives Dec 1: the year's flow, looked back on.\nGet the app before then: link in bio.\nSelf-reflection tool, not medical or psychological advice.",
+  "hashtags": [
+    "#saju",
+    "#yearwrapped",
+    "#yearinreview",
+    "#koreansaju"
+  ],
+  "utmPlatform": "instagram",
+  "aiVoice": false
+}

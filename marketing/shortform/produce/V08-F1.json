@@ -1,0 +1,30 @@
+{
+  "key": "V08-F1",
+  "format": "F1",
+  "hook": "How a saju type card gets made, step by step.",
+  "script": [
+    "Step one, the birth date.",
+    "Step two, the birth time, and Mexico City as the place.",
+    "Step three, the app reads the four pillars and shows the type card.",
+    "Try it with any birth date. Link in bio."
+  ],
+  "onScreen": [
+    "Step 1: birth date",
+    "Step 2: time and city",
+    "Step 3: the type card"
+  ],
+  "birth": {
+    "date": "1990-10-27",
+    "time": "08:05",
+    "city": "Mexico City"
+  },
+  "caption": "Three steps from a birth date to a saju type card.\nFree saju type card from a birth date: link in bio.\nSelf-reflection tool, not medical or psychological advice.\nVoiceover is AI-generated.",
+  "hashtags": [
+    "#saju",
+    "#fourpillars",
+    "#sajutypes",
+    "#selfreflection"
+  ],
+  "utmPlatform": "instagram",
+  "aiVoice": true
+}

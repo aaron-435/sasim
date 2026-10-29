@@ -1,0 +1,29 @@
+{
+  "key": "V07-F1",
+  "format": "F1",
+  "hook": "Born in Los Angeles? Saju still reads the city.",
+  "script": [
+    "Saju is a Korean way of reading a birth date as four pillars.",
+    "The date and time go in first, then Los Angeles as the birth city.",
+    "The app works out the pillars and lands on one of fifty types.",
+    "Free to try. Link in bio."
+  ],
+  "onScreen": [
+    "Date, time, Los Angeles",
+    "One of 50 saju types"
+  ],
+  "birth": {
+    "date": "1996-07-02",
+    "time": "16:40",
+    "city": "Los Angeles"
+  },
+  "caption": "Korean saju, with a birth city outside Korea.\nFree saju type card from a birth date: link in bio.\nSelf-reflection tool, not medical or psychological advice.\nVoiceover is AI-generated.",
+  "hashtags": [
+    "#saju",
+    "#koreansaju",
+    "#fourpillars",
+    "#personalitytypes"
+  ],
+  "utmPlatform": "tiktok",
+  "aiVoice": true
+}

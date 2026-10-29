@@ -1,0 +1,31 @@
+{
+  "key": "V19-F3",
+  "format": "F3",
+  "hook": "Start of Winter opens a new season on the saju calendar.",
+  "script": [
+    "A new season starts on the saju calendar.",
+    "Start of Winter falls on November 7 this year.",
+    "In saju, it opens the water season and its slower rhythm.",
+    "The app reads each day against that seasonal flow.",
+    "See this season's rhythm in the app. Link in bio."
+  ],
+  "onScreen": [
+    "Start of Winter, Nov 7 — the water season opens.",
+    "Saju reads it as a turn toward a slower, inward rhythm.",
+    "The app reads each day against the seasonal flow."
+  ],
+  "birth": {
+    "date": "1993-06-08",
+    "time": "11:20",
+    "city": "Manila"
+  },
+  "caption": "Start of Winter on the saju calendar.\nThe season's rhythm, day by day, in the app: link in bio.\nSelf-reflection tool, not medical or psychological advice.\nVoiceover is AI-generated.",
+  "hashtags": [
+    "#saju",
+    "#startofwinter",
+    "#seasonalflow",
+    "#fourpillars"
+  ],
+  "utmPlatform": "tiktok",
+  "aiVoice": true
+}

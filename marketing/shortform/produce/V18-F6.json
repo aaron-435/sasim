@@ -1,0 +1,23 @@
+{
+  "key": "V18-F6",
+  "format": "F6",
+  "hook": "Field: one type, one line",
+  "script": [],
+  "onScreen": [
+    "Soil that exists to grow something",
+    "Field · Well"
+  ],
+  "birth": {
+    "date": "1996-05-12",
+    "time": "10:05",
+    "city": "Johannesburg"
+  },
+  "caption": "The Field saju type in one line.\nFree saju type card from a birth date: link in bio.\nSelf-reflection tool, not medical or psychological advice.",
+  "hashtags": [
+    "#saju",
+    "#koreansaju",
+    "#personalitytypes"
+  ],
+  "utmPlatform": "instagram",
+  "aiVoice": false
+}

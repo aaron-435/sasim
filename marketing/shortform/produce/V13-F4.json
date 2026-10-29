@@ -1,0 +1,31 @@
+{
+  "key": "V13-F4",
+  "format": "F4",
+  "hook": "Attachment style card first, saju type card second.",
+  "script": [
+    "This is the Love and Attachment test inside the app.",
+    "It asks how closeness and distance usually feel.",
+    "The result card gives the pattern a name.",
+    "Then the same birth date turns into a saju type card.",
+    "Free to try. Link in bio."
+  ],
+  "onScreen": [
+    "Love & Attachment",
+    "Psych test result",
+    "Saju type, same person"
+  ],
+  "birth": {
+    "date": "1998-02-27",
+    "time": "07:50",
+    "city": "Vancouver"
+  },
+  "caption": "An attachment test result and a saju type card for one birth date.\nSame birth date, two cards: link in bio.\nSelf-reflection tool, not medical or psychological advice.\nVoiceover is AI-generated.",
+  "hashtags": [
+    "#saju",
+    "#attachmentstyle",
+    "#koreansaju",
+    "#personalitytypes"
+  ],
+  "utmPlatform": "tiktok",
+  "aiVoice": true
+}

@@ -1,0 +1,30 @@
+{
+  "key": "V14-F4",
+  "format": "F4",
+  "hook": "A focus test, then the saju side of the same person.",
+  "script": [
+    "One person takes the Focus test.",
+    "The result card shows how attention tends to move.",
+    "Then the birth date opens the saju type card.",
+    "Free to try. Link in bio."
+  ],
+  "onScreen": [
+    "Focus",
+    "Psych test result",
+    "Saju type, same person"
+  ],
+  "birth": {
+    "date": "2003-02-08",
+    "time": "12:20",
+    "city": "Auckland"
+  },
+  "caption": "A focus test result and a saju type card, same person.\nSame birth date, two cards: link in bio.\nSelf-reflection tool, not medical or psychological advice.\nVoiceover is AI-generated.",
+  "hashtags": [
+    "#saju",
+    "#focus",
+    "#fourpillars",
+    "#selfreflection"
+  ],
+  "utmPlatform": "youtube",
+  "aiVoice": true
+}
