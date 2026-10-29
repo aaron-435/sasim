@@ -64,8 +64,11 @@ SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPE
   - 구성: F2 6, F1 4, F4 4, F6 4, F3 2. 영상마다 생년월일·유형·모듈이 달라야 한다. 캡션에 플랫폼별 UTM 링크 문구("link in bio"), AI 음성 표기, 해시태그를 넣는다.
   - QA: `npx tsx scripts/shortform/check-copy.mts marketing/shortform/produce/V*.json` → 20개 전부 통과(샘플 8개는 `*.json`으로 함께 돌려 중복만 본다). 같은 생년월일 중복 0(스크립트로 센다).
 
-- [ ] 8. 20개 렌더 + 검수
-  - 선행: 7
+- [x] 8. 20개 렌더 + 검수 (2026-10-29, 이 세션)
+  - QA: 형식별 `CHROME_PATH=… node --env-file=.env.local --import tsx scripts/shortform/render-<f>.mts V<NN>-<F>` 20개 → 전부 `ok`(첫 회 V19만 실패, 아래 수정 뒤 `ok … 15.0s, 4 cards, voice=yes`). ffprobe 일괄 → `20/20 OK`(1080×1920, aac, 9.1~18.0초, 35초 이하). F2 PNG → 세트마다 ig 1080×1350·tt 1080×1920 같은 수. `check-copy.mts produce/*.json` → `28 files, 0 failed`. 프레임: 20개 0초·2초·끝 접촉 시트 + F1·F4 8개는 1초 간격 전체 + F2 ig 카드 전부를 직접 봄. F1 도시·유형이 설정대로(LA Steel·Harvest, Mexico City Vine·Harvest, London Field·Rooted, Melbourne Mountain·Voice), 유형 화면에 유명인 없음, F6 tagline 원문 검사 통과.
+  - 고친 것(설정 파일만): V19-F3 대본 5문장 vs 카드 3장 → CTA 카드 "See this season's rhythm in the app." 추가(4장). V14-F4 첫 문장이 짧아 결과 자막이 질문 화면에 먼저 뜸 → 질문 설명 문장 하나 추가. V02·V05-F2 goodPoint 카드가 다음 body 카드 앞부분과 같은 문장 → goodPoint 카드 뺌(새 문장 없음).
+  - TTS: 청구된 글자 2,028자(F1 803, F4 978 = V14 재렌더 155자 포함, F3 247). `gpt-4o-mini-tts`라 몇 센트 수준.
+  - 남은 것: mobile-web 렌더라 네이티브와 다를 수 있다. 광고로 증폭할 영상은 시뮬레이터와 한 번 비교. V19(Nov 7)는 공개일이 11/7을 넘기면 대설로 바꿔 다시 렌더.
   - QA: 20개 모두 렌더 성공. ffprobe 일괄 점검(크기·길이·오디오). 영상마다 0초·2초·끝 프레임 접촉 시트를 보고 문제 목록을 적은 뒤 고친다. TTS 비용(문자 수)도 적는다.
 
 - [ ] 9. 4주 게시 캘린더 + 성과 기록표 + 예약 게시 안내
@@ -92,6 +95,7 @@ SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPE
 - [ ] 16. (사용자 실행, 14 뒤) 영어 사용자 5명 관찰. 기록표를 공유하면 웹 검사 맛보기와 주력 상품 판단에 쓴다.
 
 ## 발견 사항
+- (8번) F2 관계 중 otherNurturesSelf·mirror는 앱 원문 goodPoint가 body 앞부분과 거의 같다. 다음 F2 설정에서는 둘 중 하나만 카드로 쓴다. `render-f2`는 이 중복을 잡지 않는다.
 - (3~6번) F1 영상이 세로로 약 10% 늘어나 있었다(설치된 Chrome의 headless 창이 뷰포트와 달라 CDP 화면이 540×873·1배율). 2026-10-29 `render-f1.mts`를 `common.mts`(창 크기 고정·프레임 크기 검사·`-t` 길이)로 옮겨 고침. QA: `render-f1.mts F1-sample` → `ok … 14.2s, 4 captions, city=Toronto, type=Field · Order`, `ffprobe` 1080×1920·14.24초, 프레임 8장에서 둥근 버튼이 원형, 장면은 이전과 같음. `scripts/record-*.mts`(옛 광고 녹화)는 그대로라 다시 쓸 때 같은 플래그가 필요하다.
 - (5번) **앱 도시 검색이 악센트를 못 찾는다**: `/api/cities/search?q=São Paulo` → 결과 0, `Sao Paulo` → 브라질 상파울루. 스페인어·포르투갈어권 사용자가 온보딩에서 막힐 수 있다(앱·서버 코드라 이번 범위 밖). 샘플은 `Sao Paulo`로 씀.
 - (7번) 서버 `searchWorldCities("Montreal")`도 결과가 없다(São Paulo와 같은 악센트 문제로 보임, 확인 안 함). 이번 설정에서는 Montreal을 뺐다.
