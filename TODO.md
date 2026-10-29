@@ -89,7 +89,7 @@ SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPE
 - [ ] 16. (사용자 실행, 14 뒤) 영어 사용자 5명 관찰. 기록표를 공유하면 웹 검사 맛보기와 주력 상품 판단에 쓴다.
 
 ## 발견 사항
-- (3~6번) **F1 영상이 세로로 약 10% 늘어나 있다.** 설치된 Chrome(`CHROME_PATH`)은 headless 창 크기가 뷰포트와 달라 CDP 화면이 540×873, 1배율로 들어오고 ffmpeg가 1080×1920으로 늘린다. `common.mts`의 `launch`는 `--window-size=540,960 --force-device-scale-factor=2`로 고쳤고 프레임 크기가 다르면 멈춘다. `render-f1.mts`(와 `scripts/record-*.mts`)는 자체 launch라 그대로다. 8번 렌더 전에 render-f1을 `common.mts`의 `launch`/`recorder`로 바꾸는 게 맞다. 영상 길이도 끝 프레임 한 장이 1~1.3초 더 붙던 문제를 common에서 `-t`로 고쳤다(F1은 여전히 있음).
+- (3~6번) F1 영상이 세로로 약 10% 늘어나 있었다(설치된 Chrome의 headless 창이 뷰포트와 달라 CDP 화면이 540×873·1배율). 2026-10-29 `render-f1.mts`를 `common.mts`(창 크기 고정·프레임 크기 검사·`-t` 길이)로 옮겨 고침. QA: `render-f1.mts F1-sample` → `ok … 14.2s, 4 captions, city=Toronto, type=Field · Order`, `ffprobe` 1080×1920·14.24초, 프레임 8장에서 둥근 버튼이 원형, 장면은 이전과 같음. `scripts/record-*.mts`(옛 광고 녹화)는 그대로라 다시 쓸 때 같은 플래그가 필요하다.
 - (5번) **앱 도시 검색이 악센트를 못 찾는다**: `/api/cities/search?q=São Paulo` → 결과 0, `Sao Paulo` → 브라질 상파울루. 스페인어·포르투갈어권 사용자가 온보딩에서 막힐 수 있다(앱·서버 코드라 이번 범위 밖). 샘플은 `Sao Paulo`로 씀.
 - (3번) F4 결과 카드 제목 읽기는 뺐다(로그용이었고 화면 요소를 안정적으로 못 골랐다). 유형 이름은 읽는다.
 - (4번) F2의 "You…" 문구는 카드 위쪽 쌍 라벨(`Oak × Field`)의 앞쪽 유형이 "나"라는 뜻인데, 화면에 그 설명은 없다. 7번에서 훅이나 캡션으로 "if you're Oak" 같은 틀을 줄지 정한다.
