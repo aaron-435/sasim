@@ -128,6 +128,7 @@ ko/en/es. 웹 `lib/i18n/`, 앱 `mobile/lib/i18n/`(스페인어 규칙은 `STYLE_
   - F4 렌더(`render-f4.mts`): 온보딩은 화면 밖, 심리 검사 목록 → 문항 2개 화면 → 결과 카드("전" 배지) → 새로 고침 후 Home 유형 타일 → 유형 카드("후" 배지) → CTA. 박자는 대본 끝에서 센다.
   - F2 렌더(`render-f2.mts <key> [--check]`): mobile-web 없이 HTML 카드를 그려 IG 1080×1350·TikTok 1080×1920 PNG와 YouTube용 슬라이드 mp4. 문장은 그 유형 쌍의 관계 문구(관계는 `lib/compatibility.ts` 계산)나 tagline과 글자까지 같아야 한다. 앱 원문과 정확히 같은 줄은 check-copy의 시청자 단정·정확도 규칙에서 빠진다(`APP_COPY_EN`).
   - F6 렌더(`render-f6.mts`)·F3 렌더(`render-f3.mts`): `art-layer.mts`가 생성 그림을 키워 천천히 돌리고 그 위에 글자. F6은 그 생년월일 유형의 tagline 원문 한 줄(무음), F3은 날짜 카드 3~4장(음성 선택)이고 카드 속 절기 날짜가 날짜표와 맞는지 검사한다. 날짜표 `marketing/shortform/dates.md`는 `solar-term-dates.mts`가 엔진(`lib/solarTerms.ts`)에서 만든다(KST·UTC·미 동부).
+  - 게시 계획(`calendar.mts`): 공개일 D0로 4주·주 10개 캘린더 `marketing/shortform/CALENDAR.md`를 만들고(`--d0 … --write`), `--check`로 주별 개수·같은 형식 연속 0·F3 날짜(날짜표 행사의 미 동부 날짜)·설정 파일 존재를 검사한다. 만든 영상은 `produce/V*.json` 번호 순으로 채우고 나머지는 "제작 필요". 성과 기록 `tracker.csv`(영상×플랫폼 한 행, 48시간·7일 수치), 예약 게시 순서 `POSTING.md`.
 - OpenAI 사용량 집계: `scripts/usage-report.mts`
 - 디자인 진단 기록: `/impeccable critique` 결과가 `.impeccable/critique/<시각>__<대상>.md`에 쌓인다(앱 전체는 `__mobile-screens`, 2026-10-03 27/40 → 2026-10-04 29/40 → 같은 날 두 차례 수정 후 30/40, P1 0). 탐지기 CLI는 RN StyleSheet를 읽지 못해 앱 코드에선 항상 0건이므로 화면 오버레이와 사람 리뷰가 근거다.
 - 앱 화면 확인: `mobile-web` 프리뷰(포트 8082) 또는 iOS 시뮬레이터 dev-client. 설정은 `.claude/launch.json`

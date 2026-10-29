@@ -71,7 +71,9 @@ SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPE
   - 남은 것: mobile-web 렌더라 네이티브와 다를 수 있다. 광고로 증폭할 영상은 시뮬레이터와 한 번 비교. V19(Nov 7)는 공개일이 11/7을 넘기면 대설로 바꿔 다시 렌더.
   - QA: 20개 모두 렌더 성공. ffprobe 일괄 점검(크기·길이·오디오). 영상마다 0초·2초·끝 프레임 접촉 시트를 보고 문제 목록을 적은 뒤 고친다. TTS 비용(문자 수)도 적는다.
 
-- [ ] 9. 4주 게시 캘린더 + 성과 기록표 + 예약 게시 안내
+- [x] 9. 4주 게시 캘린더 + 성과 기록표 + 예약 게시 안내 (2026-10-29, 이 세션)
+  - QA: `npx tsx scripts/shortform/calendar.mts --check` → `ok marketing/shortform/CALENDAR.md: weeks 10/10/10/10, back-to-back 0, F3 2026-11-07 Start of Winter; 2026-11-22 Minor Snow; 2026-11-29 Year Wrapped, made 20/40`. D0 6개(10-30·11-05·11-10·11-20·12-01·12-20)로 만든 캘린더도 전부 `--check` ok, D0가 11-07을 넘기면 "V19 기한 지남" 안내가 나옴. 일부러 망친 파일(같은 형식 연속, 키 중복, F3 날짜 이동) → 3건 FAIL, exit 1. 루트 `npx tsc --noEmit` → exit 0.
+  - 결과: `scripts/shortform/calendar.mts --d0 <날짜> [--provisional] [--write]`가 `CALENDAR.md`를 만들고 `--check`가 손으로 고친 파일도 검사한다. 지금 파일은 **임시 D0 2026-11-02**(공개일이 정해지면 다시 만든다). F3은 날짜표 행사(미 동부) 당일, 절기는 1일 전·Wrapped는 3일 전까지 허용. 그 주에 행사가 없으면 F3 자리는 F2로. 만든 20개는 V 번호 순으로 1~2주차에 들어가고 3~4주차 20개는 "제작 필요"(임시 D0 기준 V20 Wrapped는 4주차). `tracker.csv`는 20개 × 플랫폼 3 = 60행. 예약 순서는 `POSTING.md`(TikTok Studio, Business Suite/Instagram 앱, YouTube Studio). 메뉴·예약 기한 중 실제 화면으로 확인 못 한 곳은 "(확인 필요)"로 둠.
   - 선행: 7
   - 변경:
     - `marketing/shortform/CALENDAR.md`: 주 10개. 같은 형식을 연달아 두지 않는다. F3는 날짜에 맞춘다. 공개일을 D0로 둔 상대 날짜로 쓴다.
@@ -95,6 +97,7 @@ SPEC: `SPEC.md`. 한 세션에 한 항목만 한다. (2026-10-29: iOS 4.3(b) SPE
 - [ ] 16. (사용자 실행, 14 뒤) 영어 사용자 5명 관찰. 기록표를 공유하면 웹 검사 맛보기와 주력 상품 판단에 쓴다.
 
 ## 발견 사항
+- (9번) 임시 D0(11-02) 기준 2주차에는 F3 행사가 없어 F2가 하나 더 필요하다(제작 필요 1개). 공개일이 11-07을 넘기면 V19(입동)는 못 쓰고 다른 절기로 다시 렌더해야 한다. 공개일이 정해지면 `calendar.mts --d0 <날짜> --write`의 "남은 일"을 보고 만든다.
 - (8번) F2 관계 중 otherNurturesSelf·mirror는 앱 원문 goodPoint가 body 앞부분과 거의 같다. 다음 F2 설정에서는 둘 중 하나만 카드로 쓴다. `render-f2`는 이 중복을 잡지 않는다.
 - (3~6번) F1 영상이 세로로 약 10% 늘어나 있었다(설치된 Chrome의 headless 창이 뷰포트와 달라 CDP 화면이 540×873·1배율). 2026-10-29 `render-f1.mts`를 `common.mts`(창 크기 고정·프레임 크기 검사·`-t` 길이)로 옮겨 고침. QA: `render-f1.mts F1-sample` → `ok … 14.2s, 4 captions, city=Toronto, type=Field · Order`, `ffprobe` 1080×1920·14.24초, 프레임 8장에서 둥근 버튼이 원형, 장면은 이전과 같음. `scripts/record-*.mts`(옛 광고 녹화)는 그대로라 다시 쓸 때 같은 플래그가 필요하다.
 - (5번) **앱 도시 검색이 악센트를 못 찾는다**: `/api/cities/search?q=São Paulo` → 결과 0, `Sao Paulo` → 브라질 상파울루. 스페인어·포르투갈어권 사용자가 온보딩에서 막힐 수 있다(앱·서버 코드라 이번 범위 밖). 샘플은 `Sao Paulo`로 씀.
