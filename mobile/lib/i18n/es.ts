@@ -293,6 +293,13 @@ export const es: typeof ko = {
     weeklyBodyFree: "Tienes una pregunta gratuita al día: anímate a preguntar.",
   },
 
+  notificationPrompt: {
+    title: "¿Quieres un aviso por la mañana?",
+    body: "Te avisamos a las 9 a. m. cuando tu ritmo de hoy esté listo. Puedes cambiarlo cuando quieras en Ajustes.",
+    enable: "Activar",
+    later: "Ahora no",
+  },
+
   settings: {
     heading: "Ajustes",
     languageSectionLabel: "Idioma",

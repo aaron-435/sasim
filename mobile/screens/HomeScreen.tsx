@@ -15,6 +15,7 @@ import { AppState, Animated, Easing, ScrollView, StyleSheet, View } from "react-
 import Text from "../components/AppText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FourPillarsChart, { parseFourPillars } from "../components/FourPillarsChart";
+import NotificationPromptCard from "../components/NotificationPromptCard";
 import PatternBackground from "../components/PatternBackground";
 import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
@@ -123,6 +124,7 @@ export default function HomeScreen({
   qa,
   onOpenSajuLearn,
   onOpenSettings,
+  onNotificationsEnabled,
 }: {
   nickname: string;
   elements: Record<string, number> | null;
@@ -146,6 +148,8 @@ export default function HomeScreen({
   qa?: { level: string; persona: string | null; onOpenSampleReport: () => void; onOpenSampleReportV2?: () => void } | null;
   onOpenSajuLearn: () => void;
   onOpenSettings: () => void;
+  /** Called after the prompt card's "enable" tap gets permission granted, so App can schedule. */
+  onNotificationsEnabled: () => void;
 }) {
   const strings = useStrings();
   const { locale } = useLocale();
@@ -470,6 +474,10 @@ export default function HomeScreen({
               <ElementColorCard color={elementColor} compact onPress={onOpenFortune} />
             </Reveal>
           )}
+
+          <Reveal index={2}>
+            <NotificationPromptCard onEnabled={onNotificationsEnabled} />
+          </Reveal>
 
           {wrappedYear !== null && selfDayMasterChar && (
             <Reveal index={3}>

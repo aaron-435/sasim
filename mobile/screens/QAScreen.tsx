@@ -3,7 +3,7 @@ import ArrowLeft from "lucide-react-native/icons/arrow-left";
 import RefreshCw from "lucide-react-native/icons/refresh-cw";
 import Sparkles from "lucide-react-native/icons/sparkles";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BackHandler, ScrollView, StyleSheet, View } from "react-native";
+import { BackHandler, Linking, ScrollView, StyleSheet, View } from "react-native";
 import Text from "../components/AppText";
 import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -392,7 +392,17 @@ export default function QAScreen({
                   >
                     <Text style={styles.restoreLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{restoring ? strings.qa.restoring : strings.qa.restoreButton}</Text>
                   </PressableScale>
-                  {!!offer.trialLine && <Text style={styles.renewNoteText} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{offer.renewNote}</Text>}
+                  {/* Guideline 3.1.2: every screen that sells the subscription shows the renewal terms
+                      and working Terms/Privacy links — not only when a trial is attached. */}
+                  <Text style={styles.renewNoteText} maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{offer.renewNote}</Text>
+                  <View style={styles.legalRow}>
+                    <PressableScale onPress={() => Linking.openURL(`${API_BASE_URL}/terms?lang=${locale}`)} accessibilityRole="link" style={styles.legalLink} haptic="none">
+                      <Text style={styles.legalLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.fortune.termsLink}</Text>
+                    </PressableScale>
+                    <PressableScale onPress={() => Linking.openURL(`${API_BASE_URL}/privacy?lang=${locale}`)} accessibilityRole="link" style={styles.legalLink} haptic="none">
+                      <Text style={styles.legalLinkText} maxFontSizeMultiplier={MAX_FONT_SCALE.control}>{strings.fortune.privacyLink}</Text>
+                    </PressableScale>
+                  </View>
                   {purchaseNotice && <Text style={styles.subscribeNoticeText} accessibilityLiveRegion="polite" maxFontSizeMultiplier={MAX_FONT_SCALE.body}>{purchaseNotice}</Text>}
                 </View>
               </View>
@@ -555,6 +565,9 @@ const styles = StyleSheet.create({
     color: COLORS.subheadline,
     textAlign: "center",
   },
+  legalRow: { flexDirection: "row", justifyContent: "center", gap: SPACE.xl },
+  legalLink: { minHeight: 44, justifyContent: "center" },
+  legalLinkText: { fontFamily: FONTS.medium, fontSize: 12, color: COLORS.subheadline, textDecorationLine: "underline" },
   subscribeNoticeText: {
     fontFamily: FONTS.regular,
     fontSize: 12,

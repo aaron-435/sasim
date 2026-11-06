@@ -293,6 +293,13 @@ export const en: typeof ko = {
     weeklyBodyFree: "You get one free question a day — go ahead and ask.",
   },
 
+  notificationPrompt: {
+    title: "Want a morning reminder?",
+    body: "We'll let you know at 9 a.m. when today's rhythm is ready. You can change this anytime in Settings.",
+    enable: "Turn on",
+    later: "Not now",
+  },
+
   settings: {
     heading: "Settings",
     languageSectionLabel: "Language",

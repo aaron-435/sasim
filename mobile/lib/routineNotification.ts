@@ -27,9 +27,10 @@ async function cancelRoutineNotifications(): Promise<void> {
 }
 
 /** true if permission is (or becomes, after asking) granted. */
-async function ensurePermission(): Promise<boolean> {
+async function ensurePermission(askPermission: boolean): Promise<boolean> {
   const { status } = await Notifications.getPermissionsAsync();
   if (status === "granted") return true;
+  if (!askPermission) return false;
   const { status: requested } = await Notifications.requestPermissionsAsync();
   return requested === "granted";
 }
@@ -42,16 +43,22 @@ async function ensurePermission(): Promise<boolean> {
  * time (see file header), this only reflects subscription status as of the last
  * (re)schedule — callers reschedule on preference changes and on a fresh
  * subscribe/restore (see QAScreen.tsx's unlockAfterEntitlementChange).
+ *
+ * `askPermission` is true only behind an explicit user tap (the Settings choice,
+ * the Home prompt card's onEnabled) — App Store guideline 5.1.1(ii): the system
+ * permission dialog must only follow a direct user action. Silent callers pass
+ * false and skip scheduling when permission isn't already granted.
  */
 export async function applyNotificationPreference(
   pref: NotificationPreference,
   strings: Dictionary,
-  isSubscribed: boolean
+  isSubscribed: boolean,
+  { askPermission = true }: { askPermission?: boolean } = {}
 ): Promise<{ permissionDenied: boolean }> {
   await cancelRoutineNotifications();
   if (pref === "off") return { permissionDenied: false };
 
-  if (!(await ensurePermission())) return { permissionDenied: true };
+  if (!(await ensurePermission(askPermission))) return { permissionDenied: askPermission };
 
   const channelId = Platform.OS === "android" ? "default" : undefined;
 
@@ -92,5 +99,5 @@ export async function applyNotificationPreference(
  */
 export async function refreshRoutineNotification(strings: Dictionary): Promise<void> {
   const pref = await getNotificationPreference();
-  await applyNotificationPreference(pref, strings, await hasQaProEntitlement());
+  await applyNotificationPreference(pref, strings, await hasQaProEntitlement(), { askPermission: false });
 }

@@ -17,10 +17,11 @@ const NOTIFICATION_ID = "fatesaid-decade-transition";
 const HEADS_UP_DAYS = 7;
 
 /**
- * homeData가 갖춰질 때마다(앱 시작/온보딩 완료 시) 호출 — 이미 예약된 알림을 정리하고
- * 다음 대운 전환이 있으면 그 7일 전으로 새로 예약한다. 권한이 없거나 다음 전환이
- * 이미 7일 이내로 다가와 있거나 지나갔으면, 혹은 사용자가 설정에서 알림을 껐으면
- * 조용히 아무 것도 하지 않는다(에러 아님).
+ * Called whenever a saju reading is available (app start / onboarding done) — clears
+ * the already-scheduled heads-up and re-plans it 7 days before the next decade
+ * transition. Never prompts for permission (App Store guideline 5.1.1(ii): the system
+ * dialog only follows an explicit user tap) — without granted permission, or with no
+ * upcoming transition, or with routine reminders off, it quietly does nothing.
  */
 export async function scheduleDecadeTransitionNotification(
   strings: Dictionary,
@@ -45,10 +46,7 @@ export async function scheduleDecadeTransitionNotification(
   if (notifyDate.getTime() <= Date.now()) return; // already inside the heads-up window or past — skip rather than fire late
 
   const { status } = await Notifications.getPermissionsAsync();
-  if (status !== "granted") {
-    const { status: requested } = await Notifications.requestPermissionsAsync();
-    if (requested !== "granted") return;
-  }
+  if (status !== "granted") return;
 
   await Notifications.scheduleNotificationAsync({
     identifier: NOTIFICATION_ID,

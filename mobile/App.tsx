@@ -39,7 +39,7 @@ import ScreenTransition, { type ScreenDirection } from "./components/motion/Scre
 import * as Notifications from "expo-notifications";
 import { scheduleDecadeTransitionNotification } from "./lib/decadeNotification";
 import { setAnalyticsLocale, track, trackDaily } from "./lib/analytics";
-import { DEFAULT_NOTIFICATION_PREFERENCE, getStoredNotificationPreference, setNotificationPreference } from "./lib/notificationPreference";
+import { DEFAULT_NOTIFICATION_PREFERENCE, getNotificationPreference, getStoredNotificationPreference, setNotificationPreference } from "./lib/notificationPreference";
 import { applyNotificationPreference } from "./lib/routineNotification";
 import { clearSolarTermPreference, refreshSolarTermNotifications } from "./lib/solarTermNotification";
 import { clearLessonProgress } from "./lib/lessonProgress";
@@ -328,21 +328,41 @@ function AppContent() {
     refreshSolarTermNotifications(locale, dayMasterCharOf(homeData));
   }, [homeData, locale]);
 
-  // First time a user reaches Home, no explicit Settings choice exists yet — apply and
-  // persist the default (see notificationPreference.ts) so it's actually scheduled, not
-  // just what Settings would show if opened. A later explicit choice is never overwritten.
+  // First time a user reaches Home, no explicit Settings choice exists yet — persist
+  // the default (see notificationPreference.ts) so Settings shows something real, and
+  // schedule it only if permission is already granted. This never prompts (App Store
+  // guideline 5.1.1(ii): the system dialog only follows an explicit user tap) — the
+  // Home prompt card asks instead. A later explicit choice is never overwritten.
   useEffect(() => {
     if (!homeData) return;
     (async () => {
       const stored = await getStoredNotificationPreference();
       if (stored !== null) return;
       await setNotificationPreference(DEFAULT_NOTIFICATION_PREFERENCE);
-      await applyNotificationPreference(DEFAULT_NOTIFICATION_PREFERENCE, strings, await hasQaProEntitlement());
-      // Permission may have just been granted — plan the solar terms now instead of next launch.
+      await applyNotificationPreference(DEFAULT_NOTIFICATION_PREFERENCE, strings, await hasQaProEntitlement(), { askPermission: false });
       await refreshSolarTermNotifications(locale, dayMasterCharOf(homeData));
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [homeData]);
+
+  // The Home prompt card's "enable" tap just got permission granted — now the silent
+  // schedulers above can actually plan everything (routine, solar terms, decade shift).
+  function handleNotificationsEnabled() {
+    if (!homeData) return;
+    const data = homeData;
+    (async () => {
+      await applyNotificationPreference(await getNotificationPreference(), strings, await hasQaProEntitlement(), { askPermission: false });
+      await refreshSolarTermNotifications(locale, dayMasterCharOf(data));
+      await scheduleDecadeTransitionNotification(
+        strings,
+        data.sajuResult.decadeFortune,
+        data.sajuResult.currentAge,
+        data.sajuResult.birthYear,
+        data.sajuResult.birthMonth,
+        data.sajuResult.birthDay
+      );
+    })().catch(() => {});
+  }
 
   // A report's closing page recommends another module: straight into that module's quiz.
   function openModuleQuiz(id: string) {
@@ -641,6 +661,7 @@ function AppContent() {
             })()}
             onOpenSajuLearn={() => setStep("sajuLearn")}
             onOpenSettings={() => setStep("settings")}
+            onNotificationsEnabled={handleNotificationsEnabled}
           />
         )}
 

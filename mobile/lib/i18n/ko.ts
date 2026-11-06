@@ -319,6 +319,13 @@ export const ko = {
     weeklyBodyFree: "하루 1번, 사주에게 물어볼 기회가 기다리고 있어요.",
   },
 
+  notificationPrompt: {
+    title: "아침 알림 받을까요?",
+    body: "오전 9시에 오늘의 흐름이 준비됐다고 알려드려요. 설정에서 언제든 바꿀 수 있어요.",
+    enable: "알림 켜기",
+    later: "나중에",
+  },
+
   settings: {
     heading: "설정",
     languageSectionLabel: "언어",
