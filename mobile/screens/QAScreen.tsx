@@ -8,6 +8,7 @@ import Text from "../components/AppText";
 import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
+import { requestAiConsent } from "../lib/aiConsent";
 import { useLocale, useStrings } from "../lib/i18n";
 import { playPurchaseSuccess } from "../components/motion/PurchaseSuccess";
 import { localizedText } from "../lib/qaBankLocale";
@@ -148,6 +149,12 @@ export default function QAScreen({
   }, [view, questionBackView]);
 
   async function requestAnswer(questionText: string, topic?: string, person?: PersonAsk) {
+    // Guideline 5.1.2(i): nothing goes to the AI provider before the user allows it (lib/aiConsent.ts).
+    if (!(await requestAiConsent())) {
+      setErrorText(strings.aiConsent.declinedError);
+      setRetryQuestion({ text: questionText, person });
+      return;
+    }
     setBusy(true);
     setErrorText(null);
     try {

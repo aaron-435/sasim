@@ -11,6 +11,7 @@ import ReportPaywall, { PaywallHeader } from "../components/ReportPaywall";
 import ReportCover, { coverElement, elementBackdropColor } from "../components/ReportCover";
 import type { OtherBirthPayload } from "../components/OtherBirthForm";
 import { API_BASE_URL } from "../config";
+import { requestAiConsent } from "../lib/aiConsent";
 import { track } from "../lib/analytics";
 import {
   compatPairKey,
@@ -124,6 +125,12 @@ export default function CompatReportScreen({
 
   const generatePaid = useCallback(
     async (transactionId: string, freePart: CompatFreePart) => {
+      // Guideline 5.1.2(i): nothing goes to the AI provider before the user allows it (lib/aiConsent.ts).
+      if (!(await requestAiConsent())) {
+        setError({ kind: "paid", text: strings.aiConsent.declinedError });
+        setPhase("error");
+        return;
+      }
       setPhase("generating");
       setError(null);
       const appUserId = await getRevenueCatUserId();
@@ -163,7 +170,7 @@ export default function CompatReportScreen({
         clearTimeout(timeout);
       }
     },
-    [requestBody, errorText, pairKey, locale, otherName, other, s],
+    [requestBody, errorText, pairKey, locale, otherName, other, s, strings.aiConsent.declinedError],
   );
 
   const loadPreview = useCallback(async () => {
@@ -186,6 +193,13 @@ export default function CompatReportScreen({
         }
         setPhase("reader");
       } else {
+        // Guideline 5.1.2(i): nothing goes to the AI provider before the user allows it (lib/aiConsent.ts).
+        // Gated here, not at the top: a saved preview loads locally with no AI call.
+        if (!(await requestAiConsent())) {
+          setError({ kind: "preview", text: strings.aiConsent.declinedError });
+          setPhase("error");
+          return;
+        }
         const res = await fetch(`${API_BASE_URL}/api/compatReport`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -212,7 +226,7 @@ export default function CompatReportScreen({
       setError({ kind: "preview", text: s.errorNetwork });
       setPhase("error");
     }
-  }, [pairKey, locale, otherName, other, requestBody, errorText, generatePaid, s]);
+  }, [pairKey, locale, otherName, other, requestBody, errorText, generatePaid, s, strings.aiConsent.declinedError]);
 
   useEffect(() => {
     loadPreview();

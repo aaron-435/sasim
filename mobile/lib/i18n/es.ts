@@ -300,6 +300,27 @@ export const es: typeof ko = {
     later: "Ahora no",
   },
 
+  aiConsent: {
+    title: "Antes de usar la IA",
+    body: "Las respuestas del chat, las respuestas de Saju Q&A y los informes los escribe OpenAI, un servicio de IA con sede en EE. UU. Para eso, le enviamos a OpenAI la información de abajo.",
+    items: [
+      "Tu carta saju, calculada con tu fecha, hora y ciudad de nacimiento",
+      "Un resumen de los resultados de tus tests",
+      "Lo que eliges o escribes en conversaciones y preguntas, y tu apodo",
+      "En compatibilidad o preguntas sobre otra persona, la carta de esa persona; en el informe mensual, los registros de ese mes",
+    ],
+    footer: "Solo se usa para escribir tus respuestas, nunca para publicidad. Si no lo permites, las funciones de IA no funcionarán, pero los tests, Tu ritmo de hoy y Tu patrón sí. Puedes retirar este permiso cuando quieras en Ajustes.",
+    privacyLink: "Política de privacidad",
+    allow: "Permitir",
+    decline: "Ahora no",
+    declinedError: "Las funciones de IA necesitan tu permiso para enviar información a OpenAI. Toca Reintentar para ver la solicitud otra vez.",
+    settingsOn: "Envío de datos a la IA: permitido (retirar)",
+    settingsOff: "Envío de datos a la IA: no permitido",
+    revokeTitle: "¿Retirar el envío de datos a la IA?",
+    revokeBody: "Las conversaciones, Saju Q&A y los informes nuevos dejarán de funcionar. Los informes que ya tienes se quedan en este dispositivo.",
+    revokeConfirm: "Retirar",
+  },
+
   settings: {
     heading: "Ajustes",
     languageSectionLabel: "Idioma",

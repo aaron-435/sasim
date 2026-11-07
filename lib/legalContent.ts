@@ -41,7 +41,7 @@ export interface LegalDocument {
 // the daily deletion job in supabase/retention.sql — the policy is only true once that is run.
 const privacyKo: LegalDocument = {
   title: "개인정보처리방침",
-  updatedAt: "2026년 10월 27일",
+  updatedAt: "2026년 11월 7일",
   sections: [
     {
       body: [
@@ -141,7 +141,7 @@ const privacyKo: LegalDocument = {
         {
           type: "list",
           items: [
-            "**OpenAI, L.L.C. (미국)** — AI 상담, 사주 Q&A 답변, 리포트, 월말 패턴 리포트 생성. 상담 대화·고른 질문·심리테스트 결과 요약·사주 계산 결과(그 사람 질문·궁합 리포트는 상대의 사주 계산 결과 포함)·월말 리포트용 저널 기록이 생성 요청에 담겨 전송됩니다. 보유 기간은 OpenAI의 API 데이터 정책을 따릅니다.",
+            "**OpenAI, L.L.C. (미국)** — AI 상담, 사주 Q&A 답변, 리포트, 월말 패턴 리포트 생성. 상담 대화·고른 질문·심리테스트 결과 요약·사주 계산 결과(그 사람 질문·궁합 리포트는 상대의 사주 계산 결과 포함)·월말 리포트용 저널 기록이 생성 요청에 담겨 전송됩니다. 사주 Q&A와 궁합 리포트 요청에는 답변 문장에 쓰도록 닉네임도 함께 담깁니다. 보유 기간은 OpenAI의 API 데이터 정책을 따릅니다.",
             "**Supabase, Inc. (미국)** — 데이터베이스. 1항에서 서버에 저장한다고 적은 정보를 보관합니다. 보유 기간은 3항과 같습니다.",
             "**Vercel Inc. (미국)** — 웹사이트·API 서버 운영과 웹사이트 방문 통계.",
             "**RevenueCat, Inc. (미국)** — 앱 내 구매·구독 관리. 익명 사용자 식별자와 구매 내역을 처리합니다.",
@@ -377,7 +377,7 @@ const termsKo: LegalDocument = {
 
 const privacyEn: LegalDocument = {
   title: "Privacy Policy",
-  updatedAt: "October 27, 2026",
+  updatedAt: "November 7, 2026",
   sections: [
     {
       body: [
@@ -477,7 +477,7 @@ const privacyEn: LegalDocument = {
         {
           type: "list",
           items: [
-            "**OpenAI, L.L.C. (USA)** — writes AI conversation replies, Saju Q&A answers, reports and monthly pattern reports. Requests contain your conversation, the question you picked, a summary of your test results and your saju calculation (for “About someone” questions and the compatibility report, also the other person's saju calculation), and for the monthly report, that month's journal entries. Retention follows OpenAI's API data policy.",
+            "**OpenAI, L.L.C. (USA)** — writes AI conversation replies, Saju Q&A answers, reports and monthly pattern reports. Requests contain your conversation, the question you picked, a summary of your test results and your saju calculation (for “About someone” questions and the compatibility report, also the other person's saju calculation), and for the monthly report, that month's journal entries. Saju Q&A and compatibility report requests also include your nickname so the answer can address you. Retention follows OpenAI's API data policy.",
             "**Supabase, Inc. (USA)** — database. Stores the information section 1 says is kept on our servers, for the periods in section 3.",
             "**Vercel Inc. (USA)** — runs the website and API servers, and provides website visit statistics.",
             "**RevenueCat, Inc. (USA)** — manages in-app purchases and subscriptions; processes the anonymous user identifier and purchase history.",
@@ -713,7 +713,7 @@ const termsEn: LegalDocument = {
 
 const privacyEs: LegalDocument = {
   title: "Política de privacidad",
-  updatedAt: "27 de octubre de 2026",
+  updatedAt: "7 de noviembre de 2026",
   sections: [
     {
       body: [
@@ -813,7 +813,7 @@ const privacyEs: LegalDocument = {
         {
           type: "list",
           items: [
-            "**OpenAI, L.L.C. (EE. UU.)**: escribe las respuestas de la conversación con la IA, de Preguntas de saju, los informes y los informes mensuales de patrones. Las solicitudes incluyen tu conversación, la pregunta que elegiste, un resumen de tus resultados del test y el cálculo de tu saju (en las preguntas “Sobre una persona” y en el informe de compatibilidad, también el cálculo de la otra persona) y, para el informe mensual, las entradas del diario de ese mes. La conservación sigue la política de datos de la API de OpenAI.",
+            "**OpenAI, L.L.C. (EE. UU.)**: escribe las respuestas de la conversación con la IA, de Preguntas de saju, los informes y los informes mensuales de patrones. Las solicitudes incluyen tu conversación, la pregunta que elegiste, un resumen de tus resultados del test y el cálculo de tu saju (en las preguntas “Sobre una persona” y en el informe de compatibilidad, también el cálculo de la otra persona) y, para el informe mensual, las entradas del diario de ese mes. Las solicitudes de Preguntas de saju y del informe de compatibilidad también incluyen tu apodo para que la respuesta se dirija a ti. La conservación sigue la política de datos de la API de OpenAI.",
             "**Supabase, Inc. (EE. UU.)**: base de datos. Guarda la información que el apartado 1 indica que se conserva en nuestros servidores, durante los plazos del apartado 3.",
             "**Vercel Inc. (EE. UU.)**: aloja el sitio web y los servidores de la API, y ofrece estadísticas de visitas del sitio web.",
             "**RevenueCat, Inc. (EE. UU.)**: gestiona las compras y suscripciones dentro de la app; trata el identificador de usuario anónimo y el historial de compras.",

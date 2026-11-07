@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
 import { LOCALE_LABELS, useLocale, useStrings, type Locale } from "../lib/i18n";
+import { hasAiConsent, requestAiConsent, setAiConsent } from "../lib/aiConsent";
 import { getNotificationPreference, setNotificationPreference, type NotificationPreference } from "../lib/notificationPreference";
 import { applyNotificationPreference } from "../lib/routineNotification";
 import { getSolarTermPreference, refreshSolarTermNotifications, setSolarTermPreference } from "../lib/solarTermNotification";
@@ -64,10 +65,14 @@ export default function SettingsScreen({
     }
   }
 
+  // Third-party-AI consent (lib/aiConsent.ts): null until the mount-time read resolves.
+  const [aiConsent, setAiConsentState] = useState<boolean | null>(null);
+
   useEffect(() => {
     getNotificationPreference().then(setNotificationPrefState);
     getSolarTermPreference().then(setSolarTermsOn);
     getSavedPair().then(setPair);
+    hasAiConsent().then(setAiConsentState);
   }, []);
 
   // Couple mode: unlinking lives here too (either side can unlink from either place).
@@ -138,6 +143,24 @@ export default function SettingsScreen({
     setRestoring(false);
     Alert.alert(ok ? strings.settings.restoreDone : strings.settings.restoreFailed);
   }
+  async function handleAiConsentPress() {
+    if (aiConsent) {
+      Alert.alert(strings.aiConsent.revokeTitle, strings.aiConsent.revokeBody, [
+        { text: strings.settings.cancelLabel, style: "cancel" },
+        {
+          text: strings.aiConsent.revokeConfirm,
+          style: "destructive",
+          onPress: async () => {
+            await setAiConsent(false);
+            setAiConsentState(false);
+          },
+        },
+      ]);
+      return;
+    }
+    setAiConsentState(await requestAiConsent());
+  }
+
   const manageSubscriptionUrl =
     Platform.OS === "android" ? "https://play.google.com/store/account/subscriptions" : "https://apps.apple.com/account/subscriptions";
   const legalLinks = [
@@ -292,6 +315,15 @@ export default function SettingsScreen({
             >
               <Text style={styles.optionLabel}>{strings.qa.restoreButton}</Text>
               {restoring && <ActivityIndicator size="small" color={COLORS.gold} />}
+            </PressableScale>
+            <PressableScale
+              style={styles.option}
+              onPress={handleAiConsentPress}
+              accessibilityRole="button"
+              accessibilityLabel={aiConsent ? strings.aiConsent.settingsOn : strings.aiConsent.settingsOff}
+              haptic="none"
+            >
+              <Text style={styles.optionLabel}>{aiConsent ? strings.aiConsent.settingsOn : strings.aiConsent.settingsOff}</Text>
             </PressableScale>
             {legalLinks.map((link) => (
               <PressableScale key={link.label} style={styles.option} onPress={() => Linking.openURL(link.url)} accessibilityRole="link" haptic="none">

@@ -12,6 +12,7 @@ import ReportPaywall from "../components/ReportPaywall";
 import ReportCover, { coverElement, elementBackdropColor } from "../components/ReportCover";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
+import { requestAiConsent } from "../lib/aiConsent";
 import { track } from "../lib/analytics";
 import type { CompatibilityResult } from "../lib/compatibility";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
@@ -97,6 +98,12 @@ export default function YearReportScreen({
       if (qaFixture) {
         setReport({ ...qaFixture, year: forYear });
         setPhase("reader");
+        return;
+      }
+      // Guideline 5.1.2(i): nothing goes to the AI provider before the user allows it (lib/aiConsent.ts).
+      if (!(await requestAiConsent())) {
+        setErrorText(strings.aiConsent.declinedError);
+        setPhase("error");
         return;
       }
       setPhase("generating");

@@ -11,6 +11,7 @@ import JournalSafetyNote from "../components/JournalSafetyNote";
 import MonthGrid from "../components/MonthGrid";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_BASE_URL } from "../config";
+import { requestAiConsent } from "../lib/aiConsent";
 import { track } from "../lib/analytics";
 import { useLocale, useStrings } from "../lib/i18n";
 import {
@@ -109,6 +110,11 @@ export default function JournalScreen({
   }, [all, month]);
 
   async function handleGenerate() {
+    // Guideline 5.1.2(i): nothing goes to the AI provider before the user allows it (lib/aiConsent.ts).
+    if (!(await requestAiConsent())) {
+      setError(strings.aiConsent.declinedError);
+      return;
+    }
     const request = ++requestRef.current;
     setGenerating(true);
     setError(null);

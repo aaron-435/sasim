@@ -300,6 +300,27 @@ export const en: typeof ko = {
     later: "Not now",
   },
 
+  aiConsent: {
+    title: "Before we use AI",
+    body: "Chat replies, Saju Q&A answers and reports are written by OpenAI, an AI service based in the US. To do that, we send OpenAI the information below.",
+    items: [
+      "Your saju chart, calculated from your birth date, time and city",
+      "A summary of your test results",
+      "What you pick or type in conversations and questions, and your nickname",
+      "For compatibility or questions about someone else, that person's chart; for the monthly report, that month's entries",
+    ],
+    footer: "It's used only to write your answers, never for ads. If you don't allow it, AI features won't work, but tests, Today's rhythm and Your pattern still do. You can withdraw this anytime in Settings.",
+    privacyLink: "Privacy Policy",
+    allow: "Allow",
+    decline: "Not now",
+    declinedError: "AI features need your OK to send information to OpenAI. Tap Try again to see the request again.",
+    settingsOn: "AI data sharing: Allowed (withdraw)",
+    settingsOff: "AI data sharing: Not allowed",
+    revokeTitle: "Withdraw AI data sharing?",
+    revokeBody: "Conversations, Saju Q&A and new reports will stop working. Reports you already have stay on this device.",
+    revokeConfirm: "Withdraw",
+  },
+
   settings: {
     heading: "Settings",
     languageSectionLabel: "Language",

@@ -23,6 +23,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import useReducedMotion from "../lib/useReducedMotion";
 import { DURATION, EASING } from "../theme/motion";
 import { API_BASE_URL } from "../config";
+import { requestAiConsent } from "../lib/aiConsent";
 import { track } from "../lib/analytics";
 import { useLocale, useStrings, type Dictionary } from "../lib/i18n";
 import { playPurchaseSuccess } from "../components/motion/PurchaseSuccess";
@@ -326,6 +327,11 @@ export default function ReportScreen({
   }
 
   async function fetchReport() {
+    // Guideline 5.1.2(i): nothing goes to the AI provider before the user allows it (lib/aiConsent.ts).
+    if (!(await requestAiConsent())) {
+      setErrorText(strings.aiConsent.declinedError);
+      return;
+    }
     setErrorText(null);
     // The report is written, checked and reviewed before it is shown (up to ~2 minutes) — give up
     // after 175s (the server stops at 180s) instead of spinning forever.
@@ -393,6 +399,12 @@ export default function ReportScreen({
     }
     if (content.locked_pending) {
       // The back half is written now, after the purchase — continuing the front half the reader saw.
+      // Guideline 5.1.2(i): nothing goes to the AI provider before the user allows it (lib/aiConsent.ts).
+      // The unlock-token path below stays ungated — it opens already-written pages, no AI call.
+      if (!(await requestAiConsent())) {
+        setUnlockState("failed");
+        return;
+      }
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 115_000);
       try {

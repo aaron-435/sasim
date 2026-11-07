@@ -19,6 +19,7 @@ import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
 import { ChatBubble, TypingDots } from "../components/ChatBubbles";
 import { API_BASE_URL } from "../config";
+import { requestAiConsent } from "../lib/aiConsent";
 import { track } from "../lib/analytics";
 import { getChatFlow, setNumberForTurnV3, SKIP_ANSWER_TEXT } from "../lib/chatFlow";
 import { useLocale, useStrings } from "../lib/i18n";
@@ -158,6 +159,11 @@ export default function ChatScreen({
           { role: "assistant", content: CHECKPOINT_SKIP_STUB },
           { role: "user", content: SKIP_ANSWER_TEXT },
         ];
+      }
+      // Guideline 5.1.2(i): nothing goes to the AI provider before the user allows it (lib/aiConsent.ts).
+      if (!(await requestAiConsent())) {
+        setErrorText(strings.aiConsent.declinedError);
+        return;
       }
       setIsTyping(true);
       setErrorText(null);

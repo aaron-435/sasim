@@ -36,6 +36,8 @@ import TypeScreen from "./screens/TypeScreen";
 import TypeRevealScreen from "./screens/TypeRevealScreen";
 import VerifyCodeScreen, { type VerifiedData } from "./screens/VerifyCodeScreen";
 import ScreenTransition, { type ScreenDirection } from "./components/motion/ScreenTransition";
+import AiConsentHost from "./components/AiConsentHost";
+import { requestAiConsent, setAiConsent } from "./lib/aiConsent";
 import * as Notifications from "expo-notifications";
 import { scheduleDecadeTransitionNotification } from "./lib/decadeNotification";
 import { setAnalyticsLocale, track, trackDaily } from "./lib/analytics";
@@ -414,6 +416,7 @@ function AppContent() {
     clearJournal();
     clearLessonProgress();
     clearQaTopicCounts();
+    setAiConsent(false);
     resetTodayWidget(buildTodayWidgetData(strings, locale, null, null));
     clearSolarTermPreference();
     refreshSolarTermNotifications(locale, null);
@@ -608,9 +611,13 @@ function AppContent() {
           <ConcernScreen
             value={concern}
             onChange={setConcern}
-            onNext={() => {
+            onNext={async () => {
               if (concern) saveUserConcern(concern);
               track("onboarding_complete", { via: "app", ...(concern ? { topic: concern } : {}) });
+              // Guideline 5.1.2(i): ask once here, at the end of onboarding, so every new user (and the
+              // reviewer) sees the AI data consent before any AI feature. Declining still continues;
+              // each AI call asks again (lib/aiConsent.ts), so nothing is sent without a yes.
+              await requestAiConsent();
               // New users see their type once before Home; a reading without a type goes straight Home.
               setStep(homeData?.sajuResult.sajuType ? "typeReveal" : "home");
             }}
@@ -853,6 +860,7 @@ function AppContent() {
           />
         )}
       </ScreenTransition>
+      <AiConsentHost />
     </SafeAreaProvider>
   );
 }
