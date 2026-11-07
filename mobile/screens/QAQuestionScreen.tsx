@@ -10,6 +10,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import useReducedMotion from "../lib/useReducedMotion";
 import { localizedText } from "../lib/qaBankLocale";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 import { RADIUS, SCRIM, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
@@ -132,6 +133,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   content: {
+    ...readableColumn,
     paddingHorizontal: SPACE.xl,
     paddingTop: SPACE.sm,
     paddingBottom: SPACE.xxxl,

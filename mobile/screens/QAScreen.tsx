@@ -21,6 +21,7 @@ import { recordQaTopic, saveLastQuestion } from "../lib/qaHistory";
 import { onlySubcategory, PERSON_SUBCATEGORY, QA_TOPIC_GROUPS, type QaQuestion, type QaSubcategory, type QaTopicGroup } from "../lib/qaTopicGroups";
 import type { NormalizedSajuResult } from "../lib/saju";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import QAQuestionScreen from "./QAQuestionScreen";
 import QASubcategoryScreen from "./QASubcategoryScreen";
 import QAPersonFormScreen from "./QAPersonFormScreen";
@@ -445,6 +446,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   header: {
+    ...readableColumn,
     flexDirection: "row",
     alignItems: "center",
     gap: SPACE.sm,
@@ -484,6 +486,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    ...readableColumn,
     padding: SPACE.lg,
     paddingBottom: SPACE.xl,
   },

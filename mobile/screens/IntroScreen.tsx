@@ -10,6 +10,7 @@ import Reveal from "../components/motion/Reveal";
 import { API_BASE_URL } from "../config";
 import { useStrings, useLocale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 import { RADIUS, SPACE } from "../theme/tokens";
 import useReducedMotion from "../lib/useReducedMotion";
@@ -117,6 +118,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   content: {
+    ...readableColumn,
     alignItems: "center",
     paddingHorizontal: SPACE.xl,
     paddingTop: "10%",

@@ -11,6 +11,7 @@ import { SAJU_TYPE_CONTENT } from "../lib/sajuTypeContent";
 import type { SajuType } from "../lib/sajuType";
 import DayMasterLessonsScreen from "./DayMasterLessonsScreen";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
 import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
@@ -107,7 +108,7 @@ export default function SajuLearnScreen({ sajuType, onBack }: { sajuType?: SajuT
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
+  content: { ...readableColumn, paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
   backButton: { flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", padding: SPACE.sm, marginLeft: -SPACE.sm, marginBottom: SPACE.md, minHeight: 44 },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   pageTitle: {

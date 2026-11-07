@@ -5,6 +5,7 @@ import PatternBackground from "./PatternBackground";
 import PressableScale from "./motion/PressableScale";
 import Reveal from "./motion/Reveal";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { RADIUS, SPACE } from "../theme/tokens";
 import { ONBOARDING_STEP_IDS } from "../lib/onboardingSteps";
 import { useStrings } from "../lib/i18n";
@@ -70,6 +71,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    ...readableColumn,
     paddingHorizontal: SPACE.xl,
     paddingTop: SPACE.sm,
   },
@@ -93,6 +95,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.gold,
   },
   body: {
+    ...readableColumn,
     flex: 1,
     paddingHorizontal: SPACE.xl,
   },

@@ -29,6 +29,7 @@ import {
 import { clearQuizProgress, loadQuizProgress, saveQuizProgress } from "../lib/quizProgressStorage";
 import useReducedMotion from "../lib/useReducedMotion";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { EASING } from "../theme/motion";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
@@ -432,6 +433,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   header: {
+    ...readableColumn,
     flexDirection: "row",
     alignItems: "center",
     gap: SPACE.md,
@@ -461,6 +463,7 @@ const styles = StyleSheet.create({
     color: COLORS.footer,
   },
   content: {
+    ...readableColumn,
     paddingHorizontal: SPACE.xl,
     paddingTop: SPACE.xl,
     paddingBottom: SPACE.xxl,
@@ -564,6 +567,7 @@ const styles = StyleSheet.create({
     color: COLORS.ctaText,
   },
   doneContent: {
+    ...readableColumn,
     paddingHorizontal: SPACE.xl,
     paddingTop: SPACE.xxxl,
     paddingBottom: SPACE.xxl,

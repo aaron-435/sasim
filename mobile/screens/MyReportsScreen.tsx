@@ -13,6 +13,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { listSavedReports, type SavedReport } from "../lib/reportStorage";
 import { listPurchasedCompatReports, type SavedCompatReport } from "../lib/compatReportStorage";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { moduleDisplayTitle } from "../lib/quiz/modules";
 import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 import { FONTS } from "../theme/fonts";
@@ -105,7 +106,7 @@ export default function MyReportsScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
+  content: { ...readableColumn, paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
   backButton: { flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", minHeight: 44, marginLeft: -SPACE.sm, paddingHorizontal: SPACE.sm },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginTop: SPACE.xs, marginBottom: SPACE.lg },

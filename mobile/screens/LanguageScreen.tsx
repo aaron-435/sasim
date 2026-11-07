@@ -7,6 +7,7 @@ import PressableScale from "../components/motion/PressableScale";
 import Reveal from "../components/motion/Reveal";
 import { LOCALE_LABELS, useLocale, type Locale } from "../lib/i18n";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { FONTS, MAX_FONT_SCALE } from "../theme/fonts";
 import { RADIUS, SHADOW, SPACE, SURFACE } from "../theme/tokens";
 
@@ -68,6 +69,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   content: {
+    ...readableColumn,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",

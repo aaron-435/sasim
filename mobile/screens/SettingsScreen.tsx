@@ -17,6 +17,7 @@ import { getSavedPair, unlinkPair, type SavedPair } from "../lib/pairs";
 import { isTesterDevice, setTesterDevice, track } from "../lib/analytics";
 import { confirmUnlink } from "../components/CoupleModeSection";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 import { FONTS } from "../theme/fonts";
 
@@ -348,7 +349,7 @@ export default function SettingsScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
-  content: { paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
+  content: { ...readableColumn, paddingHorizontal: SPACE.xl, paddingTop: SPACE.sm, paddingBottom: SPACE.xxxl },
   backButton: { flexDirection: "row", alignItems: "center", gap: SPACE.xs, alignSelf: "flex-start", padding: SPACE.sm, marginLeft: -SPACE.sm, marginBottom: SPACE.md, minHeight: 44 },
   backLabel: { fontFamily: FONTS.regular, fontSize: 13, color: COLORS.subheadline },
   heading: { fontFamily: FONTS.display, fontVariant: ["lining-nums"], fontSize: 26, color: COLORS.headline, marginBottom: SPACE.xl },

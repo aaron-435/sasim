@@ -26,6 +26,7 @@ import { useLocale, useStrings } from "../lib/i18n";
 import { findTopAnswers, findTopAnswersOverall } from "../lib/quiz/quizProfile";
 import type { QuizDiagnosis } from "./QuizScreen";
 import { COLORS } from "../theme/colors";
+import { readableColumn } from "../theme/layout";
 import { FONTS } from "../theme/fonts";
 import { RADIUS, SPACE, SURFACE } from "../theme/tokens";
 
@@ -537,6 +538,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    ...readableColumn,
     flexDirection: "row",
     alignItems: "center",
     gap: SPACE.sm,
@@ -571,6 +573,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    ...readableColumn,
     padding: SPACE.lg,
     paddingBottom: SPACE.md,
   },
@@ -630,6 +633,7 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
   },
   checkpointRow: {
+    ...readableColumn,
     flexDirection: "row",
     gap: SPACE.md,
     paddingHorizontal: SPACE.lg,
@@ -668,6 +672,7 @@ const styles = StyleSheet.create({
   },
   // 2026-10-20: v3 answer-option chips — same tone as checkpointButtonSecondary.
   choiceRow: {
+    ...readableColumn,
     paddingHorizontal: SPACE.lg,
     paddingTop: SPACE.md,
     paddingBottom: SPACE.xl,
@@ -691,6 +696,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACE.lg,
   },
   skipRow: {
+    ...readableColumn,
     alignItems: "flex-end",
     paddingHorizontal: SPACE.lg,
     paddingTop: SPACE.sm,
@@ -710,6 +716,7 @@ const styles = StyleSheet.create({
     color: COLORS.headline,
   },
   inputRow: {
+    ...readableColumn,
     flexDirection: "row",
     gap: SPACE.sm,
     paddingHorizontal: SPACE.lg,
